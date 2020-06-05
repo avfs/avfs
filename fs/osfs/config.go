@@ -1,0 +1,69 @@
+//
+//  Copyright 2020 The AVFS authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//  	http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+
+package osfs
+
+import (
+	"github.com/avfs/avfs"
+)
+
+// New returns a new OsFs file system.
+// By default
+func New(opts ...Option) (*OsFs, error) {
+	fs := &OsFs{
+		idm: nil,
+	}
+
+	for _, opt := range opts {
+		err := opt(fs)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return fs, nil
+}
+
+// Features returns true if the file system provides a given feature.
+func (fs *OsFs) Features(feature avfs.Feature) bool {
+	return feature&(avfs.FeatBasicFs|
+		avfs.FeatChroot|
+		avfs.FeatMainDirs|
+		avfs.FeatHardlink|
+		avfs.FeatMultipleUsers|
+		avfs.FeatSymlink) != 0
+}
+
+// Name returns the name of the fileSystem.
+func (fs *OsFs) Name() string {
+	return fs.Type()
+}
+
+// Type returns the type of the fileSystem or Identity manager.
+func (fs *OsFs) Type() string {
+	return "OsFs"
+}
+
+// Options
+
+// OptIdm returns a function setting the identity manager for the file system.
+func OptIdm(idm avfs.IdentityMgr) Option {
+	return func(fs *OsFs) error {
+		fs.idm = idm
+
+		return nil
+	}
+}

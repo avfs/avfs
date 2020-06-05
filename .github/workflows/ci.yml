@@ -1,0 +1,29 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+        platform: [ubuntu-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: lint
+        run: make golangci
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Run tests as root
+        # preserve user environment variables :
+        # for some reason go version as root is different from user version.
+        run: sudo -E env "PATH=$PATH" make test
+
+      - name: Upload Codecov
+        run: bash <(curl -s https://codecov.io/bash)

@@ -1,0 +1,10 @@
+# https://github.com/github/gitignore
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# go test coverage
+coverage.txt

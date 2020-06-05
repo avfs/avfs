@@ -1,0 +1,4 @@
+.git
+*.md
+Dockerfile
+coverage.txt

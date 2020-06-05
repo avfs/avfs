@@ -1,0 +1,64 @@
+//
+//  Copyright 2020 The AVFS authors
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//  	http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+
+package memidm
+
+import (
+	"sync"
+)
+
+const (
+	// minUid is the minimum uid for a user.
+	minUid = 1000
+
+	// minGid is the minimum gid for a group.
+	minGid = 1000
+)
+
+// MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
+type MemIdm struct {
+	groupsByName   groupsByName
+	groupsById     groupsById
+	usersByName    usersByName
+	usersById      usersById
+	maxGid, maxUid int
+	grpMu, usrMu   sync.RWMutex
+}
+
+// groupsByName
+type groupsByName map[string]*Group
+
+// groupsById
+type groupsById map[int]*Group
+
+// usersByName
+type usersByName map[string]*User
+
+// usersById
+type usersById map[int]*User
+
+// User is the implementation of avfs.UserReader.
+type User struct {
+	name string
+	uid  int
+	gid  int
+}
+
+// Group is the implementation of avfs.GroupReader.
+type Group struct {
+	name string
+	gid  int
+}
