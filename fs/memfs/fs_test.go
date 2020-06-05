@@ -90,6 +90,14 @@ func TestMemFsOptionName(t *testing.T) {
 	}
 }
 
+// TestNilPtrReceiver
+func TestNilPtrReceiver(t *testing.T) {
+	f := (*memfs.MemFile)(nil)
+
+	test.SuiteNilPtrFile(t, f)
+}
+
+// BenchmarkMemFsCreate
 func BenchmarkMemFsCreate(b *testing.B) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {
