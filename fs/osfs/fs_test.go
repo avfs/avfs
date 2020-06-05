@@ -58,6 +58,13 @@ func TestOsFsPerm(t *testing.T) {
 	cf.SuitePerm()
 }
 
+// TestNilPtrReceiver
+func TestNilPtrReceiver(t *testing.T) {
+	f := (*os.File)(nil)
+
+	test.SuiteNilPtrFile(t, f)
+}
+
 // BenchmarkOsFsCreate
 func BenchmarkOsFsCreate(b *testing.B) {
 	fs, err := osfs.New()
