@@ -18,7 +18,6 @@ package test
 
 import (
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -438,59 +437,4 @@ func CreateSymlinks(t *testing.T, fs avfs.Fs, rootDir string) []*Symlink {
 	}
 
 	return symlinks
-}
-
-// CheckPathError checks errors of type os.PathError.
-func CheckPathError(t *testing.T, testName, wantOp, wantPath string, wantErr, gotErr error) {
-	t.Helper()
-
-	if gotErr == nil {
-		t.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)
-	}
-
-	err, ok := gotErr.(*os.PathError)
-	if !ok {
-		t.Fatalf("%s %s : want error type *os.PathError, got %v", testName, wantPath, reflect.TypeOf(gotErr))
-	}
-
-	if wantOp != err.Op || wantPath != err.Path || (wantErr != err.Err && wantErr.Error() != err.Err.Error()) {
-		wantPathErr := &os.PathError{Op: wantOp, Path: wantPath, Err: wantErr}
-		t.Errorf("%s %s: want error to be %v, got %v", testName, wantPath, wantPathErr, gotErr)
-	}
-}
-
-// CheckSyscallError checks errors of type os.SyscallError.
-func CheckSyscallError(t *testing.T, testName, wantOp, wantPath string, wantErr, gotErr error) {
-	t.Helper()
-
-	if gotErr == nil {
-		t.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)
-	}
-
-	err, ok := gotErr.(*os.SyscallError)
-	if !ok {
-		t.Fatalf("%s %s : want error type *os.SyscallError, got %v", testName, wantPath, reflect.TypeOf(gotErr))
-	}
-
-	if err.Syscall != wantOp || err.Err != wantErr {
-		t.Errorf("%s %s : want error to be %v, got %v", testName, wantPath, wantErr, err)
-	}
-}
-
-// CheckLinkError checks errors of type os.LinkError.
-func CheckLinkError(t *testing.T, testName, wantOp, oldPath, newPath string, wantErr, gotErr error) {
-	t.Helper()
-
-	if gotErr == nil {
-		t.Fatalf("%s %s : want error to be %v, got nil", testName, newPath, wantErr)
-	}
-
-	err, ok := gotErr.(*os.LinkError)
-	if !ok {
-		t.Fatalf("%s %s : want error type *os.LinkError,\n got %v", testName, newPath, reflect.TypeOf(gotErr))
-	}
-
-	if err.Op != wantOp || err.Err != wantErr {
-		t.Errorf("%s %s %s : want error to be %v,\n got %v", testName, oldPath, newPath, wantErr, err)
-	}
 }
