@@ -25,54 +25,49 @@ func (fs *RoFs) CurrentUser() avfs.UserReader {
 
 // GroupAdd adds a new group.
 func (fs *RoFs) GroupAdd(name string) (avfs.GroupReader, error) {
-	_ = name
-	return nil, avfs.ErrPermDenied
+	return nil, avfs.ErrNotImplemented
 }
 
 // GroupDel deletes an existing group.
 func (fs *RoFs) GroupDel(name string) error {
-	_ = name
-	return avfs.ErrPermDenied
+	return avfs.ErrNotImplemented
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
 func (fs *RoFs) LookupGroup(name string) (avfs.GroupReader, error) {
-	return fs.baseFs.LookupGroup(name)
+	return nil, avfs.ErrNotImplemented
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
 func (fs *RoFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	return fs.baseFs.LookupGroupId(gid)
+	return nil, avfs.ErrNotImplemented
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
 func (fs *RoFs) LookupUser(name string) (avfs.UserReader, error) {
-	return fs.baseFs.LookupUser(name)
+	return nil, avfs.ErrNotImplemented
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (fs *RoFs) LookupUserId(uid int) (avfs.UserReader, error) {
-	return fs.baseFs.LookupUserId(uid)
+	return nil, avfs.ErrNotImplemented
 }
 
 // User sets the current User.
 func (fs *RoFs) User(name string) (avfs.UserReader, error) {
-	_ = name
-	return nil, avfs.ErrPermDenied
+	return nil, avfs.ErrNotImplemented
 }
 
 // UserAdd adds a new user.
 func (fs *RoFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	_, _ = name, groupName
-	return nil, avfs.ErrPermDenied
+	return nil, avfs.ErrNotImplemented
 }
 
 // UserDel deletes an existing user.
 func (fs *RoFs) UserDel(name string) error {
-	_ = name
-	return avfs.ErrPermDenied
+	return avfs.ErrNotImplemented
 }

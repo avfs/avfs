@@ -48,8 +48,8 @@ func initTest(t *testing.T) *test.ConfigFs {
 	return cf
 }
 
-// TestReadOnlyFs
-func TestReadOnlyFs(t *testing.T) {
+// TestRoFs
+func TestRoFs(t *testing.T) {
 	cf := initTest(t)
 	cf.SuiteRead()
 	cf.SuiteReadOnly()
@@ -57,8 +57,8 @@ func TestReadOnlyFs(t *testing.T) {
 	cf.SuitePath()
 }
 
-// TestReadOnlyFsPerm
-func TestReadOnlyFsPerm(t *testing.T) {
+// TestRoFsPerm
+func TestRoFsPerm(t *testing.T) {
 	cf := initTest(t)
 	cf.SuitePermRead()
 }
