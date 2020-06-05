@@ -611,11 +611,10 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrNotImplemented, err)
 
 		f, err := fs.Open(rootDir)
-		if err != nil {
-			t.Fatalf("Open %s : want error to be nil, got %v", rootDir, err)
+		if err == nil {
+			// We just need a file handle, be it valid or not, however the handle is valid, it must be closed.
+			defer f.Close()
 		}
-
-		defer f.Close()
 
 		err = f.Chown(0, 0)
 		CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrNotImplemented, err)
