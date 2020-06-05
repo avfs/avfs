@@ -76,3 +76,34 @@ func CheckLinkError(t *testing.T, testName, wantOp, oldPath, newPath string, wan
 		t.Errorf("%s %s %s : want error to be %v,\n got %v", testName, oldPath, newPath, wantErr, err)
 	}
 }
+
+// CheckNoError check if there is no error.
+func CheckNoError(t *testing.T, funcName string, err error) {
+	t.Helper()
+
+	if err != nil {
+		t.Errorf("%s : want error to be nil, got %v", funcName, err)
+	}
+}
+
+// CheckInvalid checks if the error in os.ErrInvalid.
+func CheckInvalid(t *testing.T, funcName string, err error) {
+	t.Helper()
+
+	if err != os.ErrInvalid {
+		t.Errorf("%s : want error to be %v, got %v", funcName, os.ErrInvalid, err)
+	}
+}
+
+// CheckPanic checks that function f panics.
+func CheckPanic(t *testing.T, funcName string, f func()) {
+	t.Helper()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("%s : want function to panic, not panicing", funcName)
+		}
+	}()
+
+	f()
+}
