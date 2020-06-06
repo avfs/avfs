@@ -33,16 +33,6 @@ import (
 // the current goroutine is locked to the operating system thread just before calling the function.
 // For details see https://github.com/golang/go/issues/1435
 
-// New creates a new identity manager.
-func New() *OsIdm {
-	return &OsIdm{}
-}
-
-// Type returns the type of the fileSystem or Identity manager.
-func (idm *OsIdm) Type() string {
-	return "OsIdm"
-}
-
 // CurrentUser returns the current user.
 func (idm *OsIdm) CurrentUser() avfs.UserReader {
 	runtime.LockOSThread()
