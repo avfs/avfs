@@ -58,6 +58,13 @@ func TestOrefaFsIdm(t *testing.T) {
 	ci.SuiteNotImplemented()
 }
 
+// TestNilPtrReceiver
+func TestNilPtrReceiver(t *testing.T) {
+	f := (*orefafs.OrefaFile)(nil)
+
+	test.SuiteNilPtrFile(t, f)
+}
+
 // BenchmarkOrefaFsCreate
 func BenchmarkOrefaFsCreate(b *testing.B) {
 	fs, err := orefafs.New(orefafs.OptMainDirs())
