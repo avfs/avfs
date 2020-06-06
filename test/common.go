@@ -19,7 +19,6 @@ package test
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"sort"
 	"testing"
 	"time"
@@ -97,78 +96,6 @@ func (cf *ConfigFs) SuiteEvalSymlink() {
 				t.Errorf("EvalSymlinks %s : error"+
 					"\nwant : Op: %s, Path: %s, Err: %v\ngot  : Op: %s, Path: %s, Err: %v",
 					sl.NewName, wantOp, wantPath, sl.WantErr, e.Op, e.Path, e.Err)
-			}
-		}
-	})
-}
-
-// SuiteGlob tests Glob function.
-func (cf *ConfigFs) SuiteGlob() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	fs := cf.GetFsWrite()
-
-	_ = CreateDirs(t, fs, rootDir)
-	_ = CreateFiles(t, fs, rootDir)
-	sl := len(CreateSymlinks(t, fs, rootDir))
-
-	fs = cf.GetFsRead()
-
-	t.Run("GlobNormal", func(t *testing.T) {
-		pattern := rootDir + "/*/*/[A-Z0-9]"
-		dirNames, err := fs.Glob(pattern)
-		if err != nil {
-			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
-		} else {
-			wantDirs := 3
-			if sl > 0 {
-				wantDirs += 5
-			}
-
-			if len(dirNames) != wantDirs {
-				t.Errorf("Glob %s : want dirs to be %d, got %d", pattern, wantDirs, len(dirNames))
-				for _, dirName := range dirNames {
-					t.Log(dirName)
-				}
-			}
-		}
-	})
-
-	t.Run("GlobWithoutMeta", func(t *testing.T) {
-		pattern := rootDir
-		dirNames, err := fs.Glob(pattern)
-		if err != nil {
-			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
-			return
-		}
-
-		if len(dirNames) != 1 {
-			t.Errorf("Glob %s : want dirs to be %d, got %d", pattern, 1, len(dirNames))
-			for _, dirName := range dirNames {
-				t.Log(dirName)
-			}
-		}
-	})
-
-	t.Run("GlobWithoutMetaNonExisting", func(t *testing.T) {
-		pattern := rootDir + "/NonExisiting"
-		dirNames, err := fs.Glob(pattern)
-		if dirNames != nil || err != nil {
-			t.Errorf("Glob %s : want error and result to be nil, got %s, %v", pattern, dirNames, err)
-		}
-	})
-
-	t.Run("GlobError", func(t *testing.T) {
-		patterns := []string{
-			"[]",
-			rootDir + "/[A-Z",
-		}
-
-		for _, pattern := range patterns {
-			_, err := fs.Glob(pattern)
-			if err != filepath.ErrBadPattern {
-				t.Errorf("Glob %s : want error to be %v, got %v", pattern, filepath.ErrBadPattern, err)
 			}
 		}
 	})
