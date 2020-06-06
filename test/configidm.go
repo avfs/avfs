@@ -21,20 +21,26 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // ConfigIdm is a test configuration for an identity manager.
 type ConfigIdm struct {
-	t   *testing.T
-	idm avfs.IdentityMgr
+	t        *testing.T
+	idm      avfs.IdentityMgr
+	cantTest bool
 }
 
 // NewConfigIdm returns a new test configuration for an identity manager.
 func NewConfigIdm(t *testing.T, idm avfs.IdentityMgr) *ConfigIdm {
 	ci := &ConfigIdm{t: t, idm: idm}
 
-	CreateGroups(t, idm, "")
-	CreateUsers(t, idm, "")
+	ci.cantTest = idm != dummyidm.NotImplementedIdm
+
+	if ci.cantTest {
+		CreateGroups(t, idm, "")
+		CreateUsers(t, idm, "")
+	}
 
 	return ci
 }
@@ -42,15 +48,6 @@ func NewConfigIdm(t *testing.T, idm avfs.IdentityMgr) *ConfigIdm {
 // Type returns the type of the identity manager.
 func (ci *ConfigIdm) Type() string {
 	return ci.idm.Type()
-}
-
-// SuiteAll run all identity manager tests.
-func (ci *ConfigIdm) SuiteAll() {
-	ci.SuiteGroupAddDel()
-	ci.SuiteUserAddDel()
-	ci.SuiteLookup()
-	ci.SuiteUser()
-	ci.SuiteUserDenied()
 }
 
 // Group contains the data to test groups.
@@ -90,7 +87,6 @@ func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) []*Group {
 		_, err := idm.GroupAdd(groupName)
 		if err != nil &&
 			err != exec.ErrNotFound &&
-			err != avfs.ErrNotImplemented &&
 			err != avfs.AlreadyExistsGroupError(groupName) {
 			t.Fatalf("GroupAdd %s : want error to be nil, got %v", groupName, err)
 		}
