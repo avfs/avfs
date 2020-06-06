@@ -23,7 +23,18 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
+
+// SuiteAll run all identity manager tests.
+func (ci *ConfigIdm) SuiteAll() {
+	ci.SuiteGroupAddDel()
+	ci.SuiteUserAddDel()
+	ci.SuiteLookup()
+	ci.SuiteNotImplemented()
+	ci.SuiteUser()
+	ci.SuiteUserDenied()
+}
 
 // SuiteGroupAddDel tests GroupAdd and GroupDel functions.
 func (ci *ConfigIdm) SuiteGroupAddDel() {
@@ -434,6 +445,10 @@ func (ci *ConfigIdm) SuiteUserDenied() {
 
 // SuiteNotImplemented tests if the identity manager is not implemented.
 func (ci *ConfigIdm) SuiteNotImplemented() {
+	if ci.cantTest {
+		return
+	}
+
 	t, idm := ci.t, ci.idm
 
 	const name = ""
@@ -441,8 +456,9 @@ func (ci *ConfigIdm) SuiteNotImplemented() {
 	uc, ok := idm.(avfs.UserConnecter)
 	if ok {
 		u := uc.CurrentUser()
-		if u.Name() == "" {
-			t.Errorf("CurrentUser : want name != '', got %v", u)
+		if u != dummyidm.NotImplementedUser && u != dummyidm.RootUser {
+			t.Errorf("CurrentUser : want user to be %s or %s, got %s",
+				dummyidm.NotImplementedUser.Name(), dummyidm.RootUser.Name(), u.Name())
 		}
 
 		_, err := uc.User(name)
