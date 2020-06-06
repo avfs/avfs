@@ -159,11 +159,17 @@ func (cf *ConfigFs) SuiteGlob() {
 		}
 	})
 
-	t.Run("GlobSyntaxError", func(t *testing.T) {
-		pattern := rootDir + "/[A-Z"
-		_, err := fs.Glob(pattern)
-		if err != filepath.ErrBadPattern {
-			t.Errorf("Glob %s : want error to be %v, got %v", pattern, filepath.ErrBadPattern, err)
+	t.Run("GlobError", func(t *testing.T) {
+		patterns := []string{
+			"[]",
+			rootDir + "/[A-Z",
+		}
+
+		for _, pattern := range patterns {
+			_, err := fs.Glob(pattern)
+			if err != filepath.ErrBadPattern {
+				t.Errorf("Glob %s : want error to be %v, got %v", pattern, filepath.ErrBadPattern, err)
+			}
 		}
 	})
 }
