@@ -19,7 +19,6 @@ package test
 import (
 	"fmt"
 	"os"
-	"sort"
 	"testing"
 	"time"
 
@@ -595,62 +594,6 @@ func (cf *ConfigFs) SuiteSymlink() {
 
 			if oldPath != gotPath {
 				t.Errorf("ReadLink %s : want link to be %s, got %s", newPath, oldPath, gotPath)
-			}
-		}
-	})
-}
-
-// SuiteWalk tests Walk function.
-func (cf *ConfigFs) SuiteWalk() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	fs := cf.GetFsWrite()
-	dirs := CreateDirs(t, fs, rootDir)
-	files := CreateFiles(t, fs, rootDir)
-	symlinks := CreateSymlinks(t, fs, rootDir)
-
-	fs = cf.GetFsRead()
-	lnames := len(dirs) + len(files) + len(symlinks)
-	wantNames := make([]string, 0, lnames)
-
-	wantNames = append(wantNames, rootDir)
-	for _, dir := range dirs {
-		wantNames = append(wantNames, fs.Join(rootDir, dir.Path))
-	}
-
-	for _, file := range files {
-		wantNames = append(wantNames, fs.Join(rootDir, file.Path))
-	}
-
-	if fs.Features(avfs.FeatSymlink) {
-		for _, sl := range symlinks {
-			wantNames = append(wantNames, fs.Join(rootDir, sl.NewName))
-		}
-	}
-
-	sort.Strings(wantNames)
-
-	t.Run("Walk", func(t *testing.T) {
-		gotNames := make(map[string]int)
-		err := fs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-			gotNames[path]++
-
-			return nil
-		})
-
-		if err != nil {
-			t.Errorf("Walk %s : want error to be nil, got %v", rootDir, err)
-		}
-
-		if len(wantNames) != len(gotNames) {
-			t.Errorf("Walk %s : want %d files or dirs, got %d", rootDir, len(wantNames), len(gotNames))
-		}
-
-		for _, wantName := range wantNames {
-			n, ok := gotNames[wantName]
-			if !ok || n != 1 {
-				t.Errorf("Walk %s : path %s not found", rootDir, wantName)
 			}
 		}
 	})

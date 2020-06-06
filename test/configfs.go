@@ -257,7 +257,6 @@ func (cf *ConfigFs) SuiteRead() {
 	cf.SuiteReadFile()
 	cf.SuiteReadlink()
 	cf.SuiteStat()
-	cf.SuiteWalk()
 }
 
 // Dir contains the data to test directories.
