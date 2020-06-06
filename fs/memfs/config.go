@@ -41,7 +41,6 @@ func New(opts ...Option) (*MemFs, error) {
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
 			avfs.FeatInescapableChroot |
-			avfs.FeatMultipleUsers |
 			avfs.FeatSymlink,
 		umask: int32(fsutil.UMask.Get()),
 	}
@@ -55,6 +54,8 @@ func New(opts ...Option) (*MemFs, error) {
 
 	if fs.idm == nil {
 		fs.user = dummyidm.RootUser
+	} else {
+		fs.feature |= avfs.FeatMultipleUsers
 	}
 
 	if fs.feature&avfs.FeatMainDirs != 0 {
