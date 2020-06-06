@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs/fs/memfs"
-	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 )
 
 // TestPath
 func TestPath(t *testing.T) {
-	fs, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
