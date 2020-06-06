@@ -69,8 +69,8 @@ func New(opts ...Option) (*MemFs, error) {
 	return fs, nil
 }
 
-// Features returns true if the file system supports a given feature.
-func (fs *MemFs) Features(feature avfs.Feature) bool {
+// HasFeatures returns true if the file system supports a given feature.
+func (fs *MemFs) HasFeatures(feature avfs.Feature) bool {
 	return fs.feature&feature != 0
 }
 

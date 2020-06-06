@@ -44,7 +44,7 @@ func New(opts ...Option) (*OsFs, error) {
 }
 
 // HasFeatures returns true if the file system provides a given feature.
-func (fs *OsFs) Features(feature avfs.Feature) bool {
+func (fs *OsFs) HasFeatures(feature avfs.Feature) bool {
 	return fs.feature&feature == feature
 }
 

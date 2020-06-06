@@ -23,8 +23,8 @@ func New() (*DummyFs, error) {
 	return &DummyFs{}, nil
 }
 
-// Features returns true if the file system support a given feature.
-func (fs *DummyFs) Features(feature avfs.Feature) bool {
+// HasFeatures returns true if the file system support a given feature.
+func (fs *DummyFs) HasFeatures(feature avfs.Feature) bool {
 	return false
 }
 

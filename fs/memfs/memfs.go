@@ -42,7 +42,7 @@ import (
 func (fs *MemFs) searchNode(path string, slMode slMode) (
 	parent *dirNode, child node, absPath string, start, end int, err error) {
 	absPath = path
-	if !fs.Features(avfs.FeatAbsPath) {
+	if !fs.HasFeatures(avfs.FeatAbsPath) {
 		absPath, _ = fsutil.Abs(fs, path)
 	}
 

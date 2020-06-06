@@ -58,8 +58,8 @@ func New(opts ...Option) (*OrefaFs, error) {
 	return fs, nil
 }
 
-// Features returns true if the file system supports a given feature.
-func (fs *OrefaFs) Features(feature avfs.Feature) bool {
+// HasFeatures returns true if the file system supports a given feature.
+func (fs *OrefaFs) HasFeatures(feature avfs.Feature) bool {
 	return fs.feature&feature != 0
 }
 

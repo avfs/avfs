@@ -40,8 +40,8 @@ func TestDummyFs(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	if fs.Features(avfs.Feature(math.MaxUint64)) {
-		t.Error("Features : want Features(whatever) to be false, got true")
+	if fs.HasFeatures(avfs.Feature(math.MaxUint64)) {
+		t.Error("HasFeatures : want HasFeatures(whatever) to be false, got true")
 	}
 
 	cf := test.NewConfigFs(t, fs)

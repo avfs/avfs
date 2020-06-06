@@ -23,9 +23,9 @@ func New(baseFs avfs.Fs) *RoFs {
 	return &RoFs{baseFs: baseFs}
 }
 
-// Features returns true if the file system supports a given feature.
-func (fs *RoFs) Features(feature avfs.Feature) bool {
-	return (feature&avfs.FeatReadOnly != 0) || fs.baseFs.Features(feature)
+// HasFeatures returns true if the file system supports a given feature.
+func (fs *RoFs) HasFeatures(feature avfs.Feature) bool {
+	return (feature&avfs.FeatReadOnly != 0) || fs.baseFs.HasFeatures(feature)
 }
 
 // Name returns the name of the fileSystem.

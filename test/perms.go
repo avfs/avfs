@@ -393,7 +393,7 @@ func (cf *ConfigFs) SuiteChroot() {
 		}
 
 		// Restore the original file system root if possible.
-		if !fs.Features(avfs.FeatInescapableChroot) {
+		if !fs.HasFeatures(avfs.FeatInescapableChroot) {
 			err = fSave.Chdir()
 			if err != nil {
 				t.Errorf("Chdir : want error to be nil, got %v", err)
@@ -659,7 +659,7 @@ func (cf *ConfigFs) SuiteWriteDenied() {
 			err = fs.Rename(pathFile, pathNewDirOrFile)
 			CheckLinkError(t, "Rename", "rename", pathFile, pathNewDirOrFile, avfs.ErrPermDenied, err)
 
-			if fs.Features(avfs.FeatSymlink) {
+			if fs.HasFeatures(avfs.FeatSymlink) {
 				err = fs.Symlink(pathDir, pathNewDirOrFile)
 				CheckLinkError(t, "Symlink", "symlink", pathDir, pathNewDirOrFile, avfs.ErrPermDenied, err)
 			}

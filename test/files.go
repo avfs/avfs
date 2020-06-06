@@ -142,7 +142,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 			t.Errorf("Chmod : want error to be nil, got %v", err)
 		}
 
-		if fs.Features(avfs.FeatIdentityMgr) {
+		if fs.HasFeatures(avfs.FeatIdentityMgr) {
 			u := fs.CurrentUser()
 			err = f.Chown(u.Uid(), u.Gid())
 			if err != nil {
@@ -229,7 +229,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 			t.Errorf("Chmod : want error to be nil, got %v", err)
 		}
 
-		if fs.Features(avfs.FeatIdentityMgr) {
+		if fs.HasFeatures(avfs.FeatIdentityMgr) {
 			u := fs.CurrentUser()
 			err = f.Chown(u.Uid(), u.Gid())
 			if err != nil {
@@ -870,7 +870,7 @@ func (cf *ConfigFs) SuiteLink() {
 	defer removeDir()
 
 	fs := cf.GetFsWrite()
-	if !fs.Features(avfs.FeatHardlink) {
+	if !fs.HasFeatures(avfs.FeatHardlink) {
 		return
 	}
 
@@ -971,7 +971,7 @@ func (cf *ConfigFs) SuiteSameFile() {
 	CreateDirs(t, fs, rootDir2)
 
 	t.Run("SameFileLink", func(t *testing.T) {
-		if !fs.Features(avfs.FeatHardlink) {
+		if !fs.HasFeatures(avfs.FeatHardlink) {
 			return
 		}
 
@@ -1006,7 +1006,7 @@ func (cf *ConfigFs) SuiteSameFile() {
 	})
 
 	t.Run("SameFileSymlink", func(t *testing.T) {
-		if !fs.Features(avfs.FeatSymlink) {
+		if !fs.HasFeatures(avfs.FeatSymlink) {
 			return
 		}
 

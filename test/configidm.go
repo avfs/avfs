@@ -21,7 +21,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // ConfigIdm is a test configuration for an identity manager.
@@ -35,7 +34,7 @@ type ConfigIdm struct {
 func NewConfigIdm(t *testing.T, idm avfs.IdentityMgr) *ConfigIdm {
 	ci := &ConfigIdm{t: t, idm: idm}
 
-	ci.cantTest = idm != dummyidm.NotImplementedIdm
+	ci.cantTest = idm.Features(avfs.FeatIdentityMgr)
 
 	if ci.cantTest {
 		CreateGroups(t, idm, "")

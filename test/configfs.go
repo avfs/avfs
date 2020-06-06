@@ -60,7 +60,7 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 	}
 
 	currentUser := fsRoot.CurrentUser()
-	canTestPerm := fsRoot.Features(avfs.FeatIdentityMgr) && currentUser.IsRoot()
+	canTestPerm := fsRoot.HasFeatures(avfs.FeatIdentityMgr) && currentUser.IsRoot()
 	fs := fsRoot
 
 	t.Logf("Info fs : type = %s, name = %s", fs.Type(), fs.Name())
@@ -158,7 +158,7 @@ func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 
 	fs, _ := cf.GetFsAsUser(userName)
 
-	if !fs.Features(avfs.FeatBasicFs) {
+	if !fs.HasFeatures(avfs.FeatBasicFs) {
 		return t, avfs.TmpDir, func() {}
 	}
 
@@ -360,7 +360,7 @@ type Symlink struct {
 
 // GetSymlinks returns the symbolic links to create.
 func GetSymlinks(fs avfs.Featurer) []*Symlink {
-	if !fs.Features(avfs.FeatSymlink) {
+	if !fs.HasFeatures(avfs.FeatSymlink) {
 		return nil
 	}
 
@@ -389,7 +389,7 @@ type SymlinkEval struct {
 
 // GetSymlinksEval return the symbolic links to evaluate.
 func GetSymlinksEval(fs avfs.Featurer) []*SymlinkEval {
-	if !fs.Features(avfs.FeatSymlink) {
+	if !fs.HasFeatures(avfs.FeatSymlink) {
 		return nil
 	}
 

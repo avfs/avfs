@@ -135,7 +135,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 
 	rt.Files = append(rt.Files, files...)
 
-	if rt.fs.Features(avfs.FeatSymlink) {
+	if rt.fs.HasFeatures(avfs.FeatSymlink) {
 		symLinks, err := rt.randSymlinks(parent) //nolint:govet
 		if err != nil {
 			return err

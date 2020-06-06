@@ -435,8 +435,8 @@ type Cloner interface {
 
 // Featurer is the interface that wraps the Feature method.
 type Featurer interface {
-	// Features returns true if the file system provides a given feature.
-	Features(feature Feature) bool
+	// HasFeatures returns true if the file system provides a given feature.
+	HasFeatures(feature Feature) bool
 }
 
 // HardLinker is the interface that wraps the Link method.

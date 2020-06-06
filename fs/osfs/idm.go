@@ -24,10 +24,6 @@ import (
 
 // CurrentUser returns the current user.
 func (fs *OsFs) CurrentUser() avfs.UserReader {
-	if fs.idm == nil {
-		return dummyidm.NotImplementedUser
-	}
-
 	uc, ok := fs.idm.(avfs.UserConnecter)
 	if ok {
 		return uc.CurrentUser()
@@ -38,10 +34,6 @@ func (fs *OsFs) CurrentUser() avfs.UserReader {
 
 // GroupAdd adds a new group.
 func (fs *OsFs) GroupAdd(name string) (avfs.GroupReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	if !fs.CurrentUser().IsRoot() {
 		return nil, avfs.ErrPermDenied
 	}
@@ -51,10 +43,6 @@ func (fs *OsFs) GroupAdd(name string) (avfs.GroupReader, error) {
 
 // GroupDel deletes an existing group.
 func (fs *OsFs) GroupDel(name string) error {
-	if fs.idm == nil {
-		return avfs.ErrNotImplemented
-	}
-
 	if !fs.CurrentUser().IsRoot() {
 		return avfs.ErrPermDenied
 	}
@@ -65,50 +53,30 @@ func (fs *OsFs) GroupDel(name string) error {
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
 func (fs *OsFs) LookupGroup(name string) (avfs.GroupReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupGroup(name)
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
 func (fs *OsFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupGroupId(gid)
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
 func (fs *OsFs) LookupUser(name string) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupUser(name)
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (fs *OsFs) LookupUserId(uid int) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupUserId(uid)
 }
 
 // User sets the current user of the file system to uid.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (fs *OsFs) User(name string) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	uc, ok := fs.idm.(avfs.UserConnecter)
 	if ok {
 		return uc.User(name)
@@ -119,10 +87,6 @@ func (fs *OsFs) User(name string) (avfs.UserReader, error) {
 
 // UserAdd adds a new user.
 func (fs *OsFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	if !fs.CurrentUser().IsRoot() {
 		return nil, avfs.ErrPermDenied
 	}
@@ -137,10 +101,6 @@ func (fs *OsFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
 
 // UserDel deletes an existing group.
 func (fs *OsFs) UserDel(name string) error {
-	if fs.idm == nil {
-		return avfs.ErrNotImplemented
-	}
-
 	if !fs.CurrentUser().IsRoot() {
 		return avfs.ErrPermDenied
 	}
