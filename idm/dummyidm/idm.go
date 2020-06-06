@@ -20,16 +20,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// New create a new identity manager.
-func New() *DummyIdm {
-	return &DummyIdm{}
-}
-
-// Type returns the type of the fileSystem or Identity manager.
-func (idm *DummyIdm) Type() string {
-	return "DummyIdm"
-}
-
 // CurrentUser returns the current user of the identity manager.
 func (idm *DummyIdm) CurrentUser() avfs.UserReader {
 	return NotImplementedUser
