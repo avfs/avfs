@@ -42,7 +42,9 @@ func New(opts ...Option) (*MemFs, error) {
 			avfs.FeatHardlink |
 			avfs.FeatInescapableChroot |
 			avfs.FeatSymlink,
+		idm:   dummyidm.NotImplementedIdm,
 		umask: int32(fsutil.UMask.Get()),
+		user:  dummyidm.RootUser,
 	}
 
 	for _, opt := range opts {
@@ -50,10 +52,6 @@ func New(opts ...Option) (*MemFs, error) {
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	if fs.idm == nil {
-		fs.user = dummyidm.RootUser
 	}
 
 	if fs.feature&avfs.FeatMainDirs != 0 {
