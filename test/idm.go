@@ -28,10 +28,14 @@ import (
 
 // SuiteAll run all identity manager tests.
 func (ci *ConfigIdm) SuiteAll() {
+	if !ci.cantTest {
+		ci.SuiteNotImplemented()
+		return
+	}
+
 	ci.SuiteGroupAddDel()
 	ci.SuiteUserAddDel()
 	ci.SuiteLookup()
-	ci.SuiteNotImplemented()
 	ci.SuiteUser()
 	ci.SuiteUserDenied()
 }
