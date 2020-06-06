@@ -845,6 +845,13 @@ func (fs *OrefaFs) WriteFile(filename string, data []byte, perm os.FileMode) err
 func (f *OrefaFile) Chdir() error {
 	const op = "chdir"
 
+	if f == nil {
+		return os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	if f.name == "" {
 		return os.ErrInvalid
 	}
@@ -867,6 +874,13 @@ func (f *OrefaFile) Chdir() error {
 func (f *OrefaFile) Chmod(mode os.FileMode) error {
 	const op = "chmod"
 
+	if f == nil {
+		return os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	if f.name == "" {
 		return os.ErrInvalid
 	}
@@ -888,6 +902,10 @@ func (f *OrefaFile) Chmod(mode os.FileMode) error {
 func (f *OrefaFile) Chown(uid, gid int) error {
 	const op = "chown"
 
+	if f == nil {
+		return os.ErrInvalid
+	}
+
 	return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotImplemented}
 }
 
@@ -896,6 +914,10 @@ func (f *OrefaFile) Chown(uid, gid int) error {
 // be canceled and return immediately with an error.
 func (f *OrefaFile) Close() error {
 	const op = "close"
+
+	if f == nil {
+		return os.ErrInvalid
+	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -933,28 +955,42 @@ func (f *OrefaFile) Name() string {
 func (f *OrefaFile) Read(b []byte) (n int, err error) {
 	const op = "read"
 
+	if f == nil {
+		return 0, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+
 	if f.name == "" {
+		f.mu.RUnlock()
+
 		return 0, os.ErrInvalid
 	}
 
 	if f.nd == nil {
+		f.mu.RUnlock()
+
 		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
 	nd := f.nd
 	if nd.mode.IsDir() {
+		f.mu.RUnlock()
+
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
 	}
 
 	if f.wantMode&avfs.WantRead == 0 {
+		f.mu.RUnlock()
+
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
-	f.mu.RLock()
+	f.mu.RUnlock()
+
 	nd.mu.RLock()
 	n = copy(b, nd.data[f.at:])
 	nd.mu.RUnlock()
-	f.mu.RUnlock()
 
 	f.mu.Lock()
 	f.at += int64(n)
@@ -973,6 +1009,13 @@ func (f *OrefaFile) Read(b []byte) (n int, err error) {
 // At end of file, that error is io.EOF.
 func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 	const op = "read"
+
+	if f == nil {
+		return 0, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
 
 	if f.name == "" {
 		return 0, os.ErrInvalid
@@ -994,9 +1037,6 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 	if f.wantMode&avfs.WantRead == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
-
-	f.mu.RLock()
-	defer f.mu.RUnlock()
 
 	nd.mu.RLock()
 	defer nd.mu.RUnlock()
@@ -1031,18 +1071,32 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 func (f *OrefaFile) Readdir(n int) (fi []os.FileInfo, err error) {
 	const op = "readdirent"
 
+	if f == nil {
+		return nil, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+
 	if f.name == "" {
+		f.mu.RUnlock()
+
 		return nil, os.ErrInvalid
 	}
 
 	if f.nd == nil {
+		f.mu.RUnlock()
+
 		return nil, avfs.ErrFileClosing
 	}
 
 	nd := f.nd
 	if !nd.mode.IsDir() {
+		f.mu.RUnlock()
+
 		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
 	}
+
+	f.mu.RUnlock()
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -1095,18 +1149,32 @@ func (f *OrefaFile) Readdir(n int) (fi []os.FileInfo, err error) {
 func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	const op = "readdirent"
 
+	if f == nil {
+		return nil, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+
 	if f.name == "" {
+		f.mu.RUnlock()
+
 		return nil, os.ErrInvalid
 	}
 
 	if f.nd == nil {
+		f.mu.RUnlock()
+
 		return nil, avfs.ErrFileClosing
 	}
 
 	nd := f.nd
 	if !nd.mode.IsDir() {
+		f.mu.RUnlock()
+
 		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
 	}
+
+	f.mu.RUnlock()
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -1152,18 +1220,32 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 	const op = "seek"
 
+	if f == nil {
+		return 0, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+
 	if f.name == "" {
+		f.mu.RUnlock()
+
 		return 0, os.ErrInvalid
 	}
 
 	if f.nd == nil {
+		f.mu.RUnlock()
+
 		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
 	nd := f.nd
 	if nd.mode.IsDir() {
+		f.mu.RUnlock()
+
 		return 0, nil
 	}
+
+	f.mu.RUnlock()
 
 	f.mu.Lock()
 
@@ -1190,6 +1272,13 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 func (f *OrefaFile) Stat() (os.FileInfo, error) {
 	const op = "stat"
 
+	if f == nil {
+		return nil, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	if f.name == "" {
 		return fStat{}, os.ErrInvalid
 	}
@@ -1210,6 +1299,13 @@ func (f *OrefaFile) Stat() (os.FileInfo, error) {
 func (f *OrefaFile) Sync() error {
 	const op = "sync"
 
+	if f == nil {
+		return os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	if f.name == "" {
 		return os.ErrInvalid
 	}
@@ -1226,6 +1322,13 @@ func (f *OrefaFile) Sync() error {
 // If there is an error, it will be of type *PathError.
 func (f *OrefaFile) Truncate(size int64) error {
 	const op = "truncate"
+
+	if f == nil {
+		return os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
 
 	if f.name == "" {
 		return os.ErrInvalid
@@ -1256,6 +1359,13 @@ func (f *OrefaFile) Truncate(size int64) error {
 func (f *OrefaFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
+	if f == nil {
+		return 0, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	if f.name == "" {
 		return 0, os.ErrInvalid
 	}
@@ -1263,9 +1373,6 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 	if f.nd == nil {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
-
-	f.mu.Lock()
-	defer f.mu.Unlock()
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.wantMode&avfs.WantWrite == 0 {
@@ -1295,6 +1402,13 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
+	if f == nil {
+		return 0, os.ErrInvalid
+	}
+
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	if f.name == "" {
 		return 0, os.ErrInvalid
 	}
@@ -1302,9 +1416,6 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 	if f.nd == nil {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
-
-	f.mu.RLock()
-	defer f.mu.RUnlock()
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.wantMode&avfs.WantWrite == 0 {
