@@ -54,8 +54,6 @@ func New(opts ...Option) (*MemFs, error) {
 
 	if fs.idm == nil {
 		fs.user = dummyidm.RootUser
-	} else {
-		fs.feature |= avfs.FeatIdentityMgr
 	}
 
 	if fs.feature&avfs.FeatMainDirs != 0 {
@@ -109,6 +107,7 @@ func OptIdm(idm avfs.IdentityMgr) Option {
 		}
 
 		fs.user = u
+		fs.feature |= avfs.FeatIdentityMgr
 
 		return nil
 	}
