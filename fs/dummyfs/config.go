@@ -23,6 +23,11 @@ func New() (*DummyFs, error) {
 	return &DummyFs{}, nil
 }
 
+// Features returns the set of features provided by the file system or identity manager.
+func (fs *DummyFs) Features() avfs.Feature {
+	return 0
+}
+
 // HasFeatures returns true if the file system provides all the given features.
 func (fs *DummyFs) HasFeatures(feature avfs.Feature) bool {
 	return false
