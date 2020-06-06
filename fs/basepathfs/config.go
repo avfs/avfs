@@ -52,7 +52,7 @@ func New(baseFs avfs.Fs, basePath string) (*BasePathFs, error) {
 	return fs, nil
 }
 
-// HasFeatures returns true if the file system supports a given feature.
+// HasFeatures returns true if the file system provides all the given features.
 func (fs *BasePathFs) HasFeatures(feature avfs.Feature) bool {
 	return fs.baseFs.HasFeatures(feature &^ avfs.FeatSymlink)
 }

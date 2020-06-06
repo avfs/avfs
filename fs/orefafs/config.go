@@ -58,9 +58,9 @@ func New(opts ...Option) (*OrefaFs, error) {
 	return fs, nil
 }
 
-// HasFeatures returns true if the file system supports a given feature.
+// HasFeatures returns true if the file system provides all the given features.
 func (fs *OrefaFs) HasFeatures(feature avfs.Feature) bool {
-	return fs.feature&feature != 0
+	return fs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
