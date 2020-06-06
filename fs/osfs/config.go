@@ -18,13 +18,19 @@ package osfs
 
 import (
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // New returns a new OsFs file system.
 // By default
 func New(opts ...Option) (*OsFs, error) {
 	fs := &OsFs{
-		idm: nil,
+		idm: dummyidm.NotImplementedIdm,
+		feature: avfs.FeatBasicFs |
+			avfs.FeatChroot |
+			avfs.FeatMainDirs |
+			avfs.FeatHardlink |
+			avfs.FeatSymlink,
 	}
 
 	for _, opt := range opts {
@@ -37,14 +43,9 @@ func New(opts ...Option) (*OsFs, error) {
 	return fs, nil
 }
 
-// Features returns true if the file system provides a given feature.
+// HasFeatures returns true if the file system provides a given feature.
 func (fs *OsFs) Features(feature avfs.Feature) bool {
-	return feature&(avfs.FeatBasicFs|
-		avfs.FeatChroot|
-		avfs.FeatMainDirs|
-		avfs.FeatHardlink|
-		avfs.FeatIdentityMgr|
-		avfs.FeatSymlink) != 0
+	return fs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
@@ -63,6 +64,7 @@ func (fs *OsFs) Type() string {
 func OptIdm(idm avfs.IdentityMgr) Option {
 	return func(fs *OsFs) error {
 		fs.idm = idm
+		fs.feature |= avfs.FeatIdentityMgr
 
 		return nil
 	}
