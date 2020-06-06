@@ -22,7 +22,8 @@ import (
 
 // OsFs represents the file system.
 type OsFs struct {
-	idm avfs.IdentityMgr
+	idm     avfs.IdentityMgr
+	feature avfs.Feature
 }
 
 // Option defines the option function used for initializing OsFs.
