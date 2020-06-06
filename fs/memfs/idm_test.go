@@ -33,7 +33,7 @@ func TestMemFsWithNoIdm(t *testing.T) {
 	}
 
 	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteNotImplemented()
+	ci.SuiteAll()
 }
 
 // TestMemFsWithMemIdm
