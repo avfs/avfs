@@ -28,10 +28,6 @@ func (fs *MemFs) CurrentUser() avfs.UserReader {
 
 // GroupAdd adds a new group.
 func (fs *MemFs) GroupAdd(name string) (avfs.GroupReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	if !fs.user.IsRoot() {
 		return nil, avfs.ErrPermDenied
 	}
@@ -41,10 +37,6 @@ func (fs *MemFs) GroupAdd(name string) (avfs.GroupReader, error) {
 
 // GroupDel deletes an existing group.
 func (fs *MemFs) GroupDel(name string) error {
-	if fs.idm == nil {
-		return avfs.ErrNotImplemented
-	}
-
 	if !fs.user.IsRoot() {
 		return avfs.ErrPermDenied
 	}
@@ -55,50 +47,30 @@ func (fs *MemFs) GroupDel(name string) error {
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
 func (fs *MemFs) LookupGroup(name string) (avfs.GroupReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupGroup(name)
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
 func (fs *MemFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupGroupId(gid)
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
 func (fs *MemFs) LookupUser(name string) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupUser(name)
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (fs *MemFs) LookupUserId(uid int) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	return fs.idm.LookupUserId(uid)
 }
 
 // User sets the current user of the file system.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (fs *MemFs) User(name string) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	if fs.user.Name() == name {
 		return fs.user, nil
 	}
@@ -116,10 +88,6 @@ func (fs *MemFs) User(name string) (avfs.UserReader, error) {
 
 // UserAdd adds a new user.
 func (fs *MemFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	if fs.idm == nil {
-		return nil, avfs.ErrNotImplemented
-	}
-
 	if !fs.user.IsRoot() {
 		return nil, avfs.ErrPermDenied
 	}
@@ -134,10 +102,6 @@ func (fs *MemFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
 
 // UserDel deletes an existing group.
 func (fs *MemFs) UserDel(name string) error {
-	if fs.idm == nil {
-		return avfs.ErrNotImplemented
-	}
-
 	if !fs.user.IsRoot() {
 		return avfs.ErrPermDenied
 	}
