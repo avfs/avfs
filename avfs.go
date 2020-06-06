@@ -213,7 +213,6 @@ type Fs interface {
 	ChOwner
 	ChRooter
 	ChTimer
-	Featurer
 	IdentityMgr
 	HardLinker
 	Namer
@@ -435,7 +434,10 @@ type Cloner interface {
 
 // Featurer is the interface that wraps the Feature method.
 type Featurer interface {
-	// HasFeatures returns true if the file system provides all the given features.
+	// Features returns the set of features provided by the file system or identity manager.
+	Features() Feature
+
+	// HasFeatures returns true if the file system or identity manager provides all the given features.
 	HasFeatures(feature Feature) bool
 }
 
@@ -686,6 +688,7 @@ type FileSyncer interface {
 
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
+	Featurer
 	GroupMgr
 	UserMgr
 	Typer
