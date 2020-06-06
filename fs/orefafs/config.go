@@ -58,6 +58,11 @@ func New(opts ...Option) (*OrefaFs, error) {
 	return fs, nil
 }
 
+// Features returns the set of features provided by the file system or identity manager.
+func (fs *OrefaFs) Features() avfs.Feature {
+	return fs.feature
+}
+
 // HasFeatures returns true if the file system provides all the given features.
 func (fs *OrefaFs) HasFeatures(feature avfs.Feature) bool {
 	return fs.feature&feature == feature
@@ -79,6 +84,7 @@ func (fs *OrefaFs) Type() string {
 func OptMainDirs() Option {
 	return func(fs *OrefaFs) error {
 		fs.feature |= avfs.FeatMainDirs
+
 		return nil
 	}
 }
