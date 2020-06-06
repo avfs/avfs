@@ -77,15 +77,6 @@ func CheckLinkError(t *testing.T, testName, wantOp, oldPath, newPath string, wan
 	}
 }
 
-// CheckNoError check if there is no error.
-func CheckNoError(t *testing.T, funcName string, err error) {
-	t.Helper()
-
-	if err != nil {
-		t.Errorf("%s : want error to be nil, got %v", funcName, err)
-	}
-}
-
 // CheckInvalid checks if the error in os.ErrInvalid.
 func CheckInvalid(t *testing.T, funcName string, err error) {
 	t.Helper()
