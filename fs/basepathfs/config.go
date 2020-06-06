@@ -52,9 +52,14 @@ func New(baseFs avfs.Fs, basePath string) (*BasePathFs, error) {
 	return fs, nil
 }
 
+// Features returns the set of features provided by the file system or identity manager.
+func (fs *BasePathFs) Features() avfs.Feature {
+	return fs.baseFs.Features() &^ avfs.FeatSymlink
+}
+
 // HasFeatures returns true if the file system provides all the given features.
 func (fs *BasePathFs) HasFeatures(feature avfs.Feature) bool {
-	return fs.baseFs.HasFeatures(feature &^ avfs.FeatSymlink)
+	return (feature&avfs.FeatSymlink == 0) && fs.baseFs.HasFeatures(feature)
 }
 
 // Name returns the name of the fileSystem.
