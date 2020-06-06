@@ -69,6 +69,11 @@ func New(opts ...Option) (*MemFs, error) {
 	return fs, nil
 }
 
+// Features returns the set of features provided by the file system or identity manager.
+func (fs *MemFs) Features() avfs.Feature {
+	return fs.feature
+}
+
 // HasFeatures returns true if the file system provides all the given features.
 func (fs *MemFs) HasFeatures(feature avfs.Feature) bool {
 	return fs.feature&feature == feature
@@ -104,8 +109,8 @@ func OptIdm(idm avfs.IdentityMgr) Option {
 			return err
 		}
 
+		fs.feature |= idm.Features()
 		fs.user = u
-		fs.feature |= avfs.FeatIdentityMgr
 
 		return nil
 	}
