@@ -24,6 +24,19 @@ import (
 	"github.com/avfs/avfs"
 )
 
+// SuitePath tests all path related functions.
+func (cf *ConfigFs) SuitePath() {
+	cf.SuiteAbs()
+	cf.SuiteBase()
+	cf.SuiteClean()
+	cf.SuiteDir()
+	cf.SuiteGlob()
+	cf.SuiteIsAbsPath()
+	cf.SuiteJoin()
+	cf.SuiteRel()
+	cf.SuiteSplit()
+}
+
 type pathTest struct {
 	path, result string
 }

@@ -260,18 +260,6 @@ func (cf *ConfigFs) SuiteRead() {
 	cf.SuiteWalk()
 }
 
-// SuitePath tests all path related functions.
-func (cf *ConfigFs) SuitePath() {
-	cf.SuiteAbs()
-	cf.SuiteBase()
-	cf.SuiteClean()
-	cf.SuiteDir()
-	cf.SuiteIsAbsPath()
-	cf.SuiteJoin()
-	cf.SuiteRel()
-	cf.SuiteSplit()
-}
-
 // Dir contains the data to test directories.
 type Dir struct {
 	Path      string
