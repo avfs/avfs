@@ -50,7 +50,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 		err := fs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 
-		if fs.Features(avfs.FeatMultipleUsers) {
+		if fs.Features(avfs.FeatIdentityMgr) {
 			err = fs.Chown(nonExistingFile, 0, 0)
 			CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
@@ -63,7 +63,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 			CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
 
-		if fs.Features(avfs.FeatMultipleUsers) && fs.Features(avfs.FeatSymlink) {
+		if fs.Features(avfs.FeatIdentityMgr) && fs.Features(avfs.FeatSymlink) {
 			err = fs.Lchown(nonExistingFile, 0, 0)
 			CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
@@ -123,7 +123,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 			t.Errorf("Chmod : want error to be %v, got %v", os.ErrInvalid, err)
 		}
 
-		if fs.Features(avfs.FeatMultipleUsers) {
+		if fs.Features(avfs.FeatIdentityMgr) {
 			err = f.Chown(0, 0)
 			if err != os.ErrInvalid {
 				t.Errorf("Chown : want error to be %v, got %v", os.ErrInvalid, err)
@@ -402,7 +402,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		err = f.Chmod(avfs.DefaultFilePerm)
 		CheckPathError(t, "Chmod", "chmod", existingFile, os.ErrClosed, err)
 
-		if fs.Features(avfs.FeatMultipleUsers) {
+		if fs.Features(avfs.FeatIdentityMgr) {
 			err = f.Chown(0, 0)
 			CheckPathError(t, "Chown", "chown", existingFile, os.ErrClosed, err)
 		}
@@ -603,7 +603,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrNotImplemented, err)
 	}
 
-	if !fs.Features(avfs.FeatMultipleUsers) {
+	if !fs.Features(avfs.FeatIdentityMgr) {
 		err := fs.Chown(rootDir, 0, 0)
 		CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrNotImplemented, err)
 
@@ -612,7 +612,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 
 		f, err := fs.Open(rootDir)
 		if err == nil {
-			// We just need a file handle, be it valid or not, however the handle is valid, it must be closed.
+			// We just need a file handle, be it valid or not, however if the handle is valid, it must be closed.
 			defer f.Close()
 		}
 

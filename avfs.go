@@ -176,9 +176,9 @@ const (
 	// FeatInescapableChroot indicates that the file system provides an inescapable Chroot (see MemFs).
 	FeatInescapableChroot
 
-	// FeatMultipleUsers indicates that the file system supports multiple users
+	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
 	// (Chown(), User(), CurrentUser(), ... functions).
-	FeatMultipleUsers
+	FeatIdentityMgr
 
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
 	FeatReadOnly

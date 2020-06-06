@@ -60,7 +60,7 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 	}
 
 	currentUser := fsRoot.CurrentUser()
-	canTestPerm := fsRoot.Features(avfs.FeatMultipleUsers) && currentUser.IsRoot()
+	canTestPerm := fsRoot.Features(avfs.FeatIdentityMgr) && currentUser.IsRoot()
 	fs := fsRoot
 
 	t.Logf("Info fs : type = %s, name = %s", fs.Type(), fs.Name())

@@ -43,7 +43,7 @@ func (fs *OsFs) Features(feature avfs.Feature) bool {
 		avfs.FeatChroot|
 		avfs.FeatMainDirs|
 		avfs.FeatHardlink|
-		avfs.FeatMultipleUsers|
+		avfs.FeatIdentityMgr|
 		avfs.FeatSymlink) != 0
 }
 

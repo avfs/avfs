@@ -142,7 +142,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 			t.Errorf("Chmod : want error to be nil, got %v", err)
 		}
 
-		if fs.Features(avfs.FeatMultipleUsers) {
+		if fs.Features(avfs.FeatIdentityMgr) {
 			u := fs.CurrentUser()
 			err = f.Chown(u.Uid(), u.Gid())
 			if err != nil {
@@ -229,7 +229,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 			t.Errorf("Chmod : want error to be nil, got %v", err)
 		}
 
-		if fs.Features(avfs.FeatMultipleUsers) {
+		if fs.Features(avfs.FeatIdentityMgr) {
 			u := fs.CurrentUser()
 			err = f.Chown(u.Uid(), u.Gid())
 			if err != nil {
