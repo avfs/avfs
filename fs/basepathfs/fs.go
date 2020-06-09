@@ -171,7 +171,7 @@ func (fs *BasePathFs) Dir(path string) string {
 func (fs *BasePathFs) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
-	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // GetTempDir returns the default directory to use for temporary files.
@@ -347,7 +347,7 @@ func (fs *BasePathFs) ReadFile(filename string) ([]byte, error) {
 func (fs *BasePathFs) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -426,7 +426,7 @@ func (fs *BasePathFs) Stat(path string) (os.FileInfo, error) {
 func (fs *BasePathFs) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNotImplemented}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
 // TempDir creates a new temporary directory in the directory dir
