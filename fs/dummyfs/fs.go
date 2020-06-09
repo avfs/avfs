@@ -49,7 +49,7 @@ func (fs *DummyFs) Base(path string) string {
 func (fs *DummyFs) Chdir(dir string) error {
 	const op = "chdir"
 
-	return &os.PathError{Op: op, Path: dir, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 }
 
 // Chmod changes the mode of the named file to mode.
@@ -73,7 +73,7 @@ func (fs *DummyFs) Chdir(dir string) error {
 func (fs *DummyFs) Chmod(name string, mode os.FileMode) error {
 	const op = "chmod"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -86,7 +86,7 @@ func (fs *DummyFs) Chmod(name string, mode os.FileMode) error {
 func (fs *DummyFs) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Chroot changes the root to that specified in path.
@@ -94,7 +94,7 @@ func (fs *DummyFs) Chown(name string, uid, gid int) error {
 func (fs *DummyFs) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -106,7 +106,7 @@ func (fs *DummyFs) Chroot(path string) error {
 func (fs *DummyFs) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Clean returns the shortest path name equivalent to path
@@ -168,7 +168,7 @@ func (fs *DummyFs) Dir(path string) string {
 func (fs *DummyFs) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
-	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // GetTempDir returns the default directory to use for temporary files.
@@ -196,7 +196,7 @@ func (fs *DummyFs) GetUMask() os.FileMode {
 func (fs *DummyFs) Getwd() (dir string, err error) {
 	const op = "getwd"
 
-	return "", &os.PathError{Op: op, Path: dir, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 }
 
 // Glob returns the names of all files matching pattern or nil
@@ -251,7 +251,7 @@ func (fs *DummyFs) Join(elem ...string) string {
 func (fs *DummyFs) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Link creates newname as a hard link to the oldname file.
@@ -259,7 +259,7 @@ func (fs *DummyFs) Lchown(name string, uid, gid int) error {
 func (fs *DummyFs) Link(oldname, newname string) error {
 	const op = "link"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNotImplemented}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
 // Lstat returns a FileInfo describing the named file.
@@ -269,7 +269,7 @@ func (fs *DummyFs) Link(oldname, newname string) error {
 func (fs *DummyFs) Lstat(name string) (os.FileInfo, error) {
 	const op = "lstat"
 
-	return nil, &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return nil, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Mkdir creates a new directory with the specified name and permission
@@ -278,7 +278,7 @@ func (fs *DummyFs) Lstat(name string) (os.FileInfo, error) {
 func (fs *DummyFs) Mkdir(name string, perm os.FileMode) error {
 	const op = "mkdir"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // MkdirAll creates a directory named path,
@@ -291,7 +291,7 @@ func (fs *DummyFs) Mkdir(name string, perm os.FileMode) error {
 func (fs *DummyFs) MkdirAll(path string, perm os.FileMode) error {
 	const op = "mkdir"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // Open opens the named file for reading. If successful, methods on
@@ -311,7 +311,7 @@ func (fs *DummyFs) Open(name string) (avfs.File, error) {
 func (fs *DummyFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
 	const op = "open"
 
-	return &DummyFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &DummyFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // ReadDir reads the directory named by dirname and returns
@@ -325,7 +325,7 @@ func (fs *DummyFs) ReadDir(dirname string) ([]os.FileInfo, error) {
 func (fs *DummyFs) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // ReadFile reads the file named by filename and returns the contents.
@@ -353,7 +353,7 @@ func (fs *DummyFs) Rel(basepath, targpath string) (string, error) {
 func (fs *DummyFs) Remove(name string) error {
 	const op = "remove"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // RemoveAll removes path and any children it contains.
@@ -364,7 +364,7 @@ func (fs *DummyFs) Remove(name string) error {
 func (fs *DummyFs) RemoveAll(path string) error {
 	const op = "removeall"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // Rename renames (moves) oldpath to newpath.
@@ -374,7 +374,7 @@ func (fs *DummyFs) RemoveAll(path string) error {
 func (fs *DummyFs) Rename(oldname, newname string) error {
 	const op = "rename"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNotImplemented}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
 // SameFile reports whether fi1 and fi2 describe the same file.
@@ -401,7 +401,7 @@ func (fs *DummyFs) Split(path string) (dir, file string) {
 func (fs *DummyFs) Stat(name string) (os.FileInfo, error) {
 	const op = "stat"
 
-	return nil, &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return nil, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Symlink creates newname as a symbolic link to oldname.
@@ -409,7 +409,7 @@ func (fs *DummyFs) Stat(name string) (os.FileInfo, error) {
 func (fs *DummyFs) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNotImplemented}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
 // TempDir creates a new temporary directory in the directory dir
@@ -444,7 +444,7 @@ func (fs *DummyFs) TempFile(dir, pattern string) (f avfs.File, err error) {
 func (fs *DummyFs) Truncate(name string, size int64) error {
 	const op = "truncate"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // UMask sets the file mode creation mask.
@@ -477,7 +477,7 @@ func (fs *DummyFs) WriteFile(filename string, data []byte, perm os.FileMode) err
 func (f *DummyFile) Chdir() error {
 	const op = "chdir"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Chmod changes the mode of the file to mode.
@@ -485,7 +485,7 @@ func (f *DummyFile) Chdir() error {
 func (f *DummyFile) Chmod(mode os.FileMode) error {
 	const op = "chmod"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -496,7 +496,7 @@ func (f *DummyFile) Chmod(mode os.FileMode) error {
 func (f *DummyFile) Chown(uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Close closes the DummyFile, rendering it unusable for I/O.
@@ -505,7 +505,7 @@ func (f *DummyFile) Chown(uid, gid int) error {
 func (f *DummyFile) Close() error {
 	const op = "close"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Fd returns the integer Unix file descriptor referencing the open file.
@@ -526,7 +526,7 @@ func (f *DummyFile) Name() string {
 func (f *DummyFile) Read(b []byte) (n int, err error) {
 	const op = "read"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // ReadAt reads len(b) bytes from the DummyFile starting at byte offset off.
@@ -536,7 +536,7 @@ func (f *DummyFile) Read(b []byte) (n int, err error) {
 func (f *DummyFile) ReadAt(b []byte, off int64) (n int, err error) {
 	const op = "read"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Readdir reads the contents of the directory associated with file and
@@ -557,7 +557,7 @@ func (f *DummyFile) ReadAt(b []byte, off int64) (n int, err error) {
 func (f *DummyFile) Readdir(n int) ([]os.FileInfo, error) {
 	const op = "readdirent"
 
-	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Readdirnames reads and returns a slice of names from the directory f.
@@ -575,7 +575,7 @@ func (f *DummyFile) Readdir(n int) ([]os.FileInfo, error) {
 func (f *DummyFile) Readdirnames(n int) (names []string, err error) {
 	const op = "readdirent"
 
-	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Seek sets the offset for the next Read or Write on file to offset, interpreted
@@ -586,7 +586,7 @@ func (f *DummyFile) Readdirnames(n int) (names []string, err error) {
 func (f *DummyFile) Seek(offset int64, whence int) (ret int64, err error) {
 	const op = "seek"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Stat returns the FileInfo structure describing file.
@@ -594,7 +594,7 @@ func (f *DummyFile) Seek(offset int64, whence int) (ret int64, err error) {
 func (f *DummyFile) Stat() (os.FileInfo, error) {
 	const op = "stat"
 
-	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Sync commits the current contents of the file to stable storage.
@@ -603,7 +603,7 @@ func (f *DummyFile) Stat() (os.FileInfo, error) {
 func (f *DummyFile) Sync() error {
 	const op = "sync"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Truncate changes the size of the file.
@@ -612,7 +612,7 @@ func (f *DummyFile) Sync() error {
 func (f *DummyFile) Truncate(size int64) error {
 	const op = "truncate"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Write writes len(b) bytes to the DummyFile.
@@ -621,7 +621,7 @@ func (f *DummyFile) Truncate(size int64) error {
 func (f *DummyFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // WriteAt writes len(b) bytes to the DummyFile starting at byte offset off.
@@ -630,7 +630,7 @@ func (f *DummyFile) Write(b []byte) (n int, err error) {
 func (f *DummyFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrNotImplemented}
+	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // WriteString is like Write, but writes the contents of string s rather than

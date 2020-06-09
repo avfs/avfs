@@ -31,5 +31,5 @@ func TestDummyFsIdm(t *testing.T) {
 	}
 
 	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteNotImplemented()
+	ci.SuitePermDenied()
 }
