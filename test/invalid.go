@@ -631,7 +631,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		CheckLinkError(t, "Symlink", "symlink", rootDir, newPath, avfs.ErrPermDenied, err)
 	}
 
-	if !fs.HasFeatures(avfs.FeatChroot | avfs.FeatInescapableChroot) {
+	if !fs.HasFeatures(avfs.FeatChroot) {
 		err := fs.Chroot(rootDir)
 		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 	}
