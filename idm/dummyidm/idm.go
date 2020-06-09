@@ -28,60 +28,60 @@ func (idm *DummyIdm) CurrentUser() avfs.UserReader {
 // GroupAdd adds a new group.
 func (idm *DummyIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	_ = name
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // GroupDel deletes an existing group.
 func (idm *DummyIdm) GroupDel(name string) error {
 	_ = name
-	return avfs.ErrNotImplemented
+	return avfs.ErrPermDenied
 }
 
 // LookupGroup looks up a group by name.
 // If the group cannot be found, the returned error is of type UnknownGroupError.
 func (idm *DummyIdm) LookupGroup(name string) (avfs.GroupReader, error) {
 	_ = name
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // LookupGroupId looks up a group by groupid.
 // If the group cannot be found, the returned error is of type UnknownGroupIdError.
 func (idm *DummyIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 	_ = gid
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // LookupUser looks up a user by username.
 // If the user cannot be found, the returned error is of type UnknownUserError.
 func (idm *DummyIdm) LookupUser(name string) (avfs.UserReader, error) {
 	_ = name
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // LookupUserId looks up a user by userid.
 // If the user cannot be found, the returned error is of type UnknownUserIdError.
 func (idm *DummyIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	_ = uid
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // User sets the current user of the identity manager.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (idm *DummyIdm) User(name string) (avfs.UserReader, error) {
 	_ = name
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // UserAdd adds a new user.
 func (idm *DummyIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	_, _ = name, groupName
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // UserDel deletes an existing group.
 func (idm *DummyIdm) UserDel(name string) error {
 	_ = name
-	return avfs.ErrNotImplemented
+	return avfs.ErrPermDenied
 }
 
 // Group
