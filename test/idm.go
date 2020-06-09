@@ -55,9 +55,9 @@ func (ci *ConfigIdm) SuiteGroupAddDel() {
 	t.Run("GroupAdd", func(t *testing.T) {
 		for _, group := range groups {
 			groupName := group.Name + suffix
+			wantGroupErr := avfs.UnknownGroupError(groupName)
 
 			_, err := idm.LookupGroup(groupName)
-			wantGroupErr := avfs.UnknownGroupError(groupName)
 			if err != wantGroupErr {
 				t.Errorf("LookupGroupName %s : want error to be %v, got %v", groupName, wantGroupErr, err)
 			}
@@ -93,6 +93,7 @@ func (ci *ConfigIdm) SuiteGroupAddDel() {
 	t.Run("GroupAddExists", func(t *testing.T) {
 		for _, group := range groups {
 			groupName := group.Name + suffix
+
 			_, err := idm.GroupAdd(groupName)
 			if err != avfs.AlreadyExistsGroupError(groupName) {
 				t.Errorf("GroupAdd %s : want error to be %v, got %v",
@@ -104,6 +105,7 @@ func (ci *ConfigIdm) SuiteGroupAddDel() {
 	t.Run("GroupDel", func(t *testing.T) {
 		for _, group := range groups {
 			groupName := group.Name + suffix
+
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
 				t.Fatalf("LookupGroup %s : want error to be nil, got %v", groupName, err)
@@ -152,14 +154,16 @@ func (ci *ConfigIdm) SuiteUserAddDel() {
 	t.Run("UserAdd", func(t *testing.T) {
 		for _, user := range users {
 			groupName := user.GroupName + suffix
+
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
 				t.Fatalf("LookupGroup %s : want error to be nil, got %v", groupName, err)
 			}
 
 			userName := user.Name + suffix
-			_, err = idm.LookupUser(userName)
 			wantUserErr := avfs.UnknownUserError(userName)
+
+			_, err = idm.LookupUser(userName)
 			if err != wantUserErr {
 				t.Errorf("LookupUser %s : want error to be %v, got %v", userName, wantUserErr, err)
 			}
@@ -218,6 +222,7 @@ func (ci *ConfigIdm) SuiteUserAddDel() {
 			}
 
 			groupNameNotFound := user.GroupName + "NotFound"
+
 			_, err = idm.UserAdd(userName, groupNameNotFound)
 			if err != avfs.UnknownGroupError(groupNameNotFound) {
 				t.Errorf("UserAdd %s : want error to be %v, got %v", userName,
@@ -225,6 +230,7 @@ func (ci *ConfigIdm) SuiteUserAddDel() {
 			}
 
 			userNameNotFound := user.Name + "NotFound"
+
 			err = idm.UserDel(userNameNotFound)
 			if err != avfs.UnknownUserError(userNameNotFound) {
 				t.Errorf("UserDel %s : want error to be %v, got %v", userName,
@@ -236,6 +242,7 @@ func (ci *ConfigIdm) SuiteUserAddDel() {
 	t.Run("UserDel", func(t *testing.T) {
 		for _, user := range users {
 			userName := user.Name + suffix
+
 			u, err := idm.LookupUser(userName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
@@ -277,6 +284,7 @@ func (ci *ConfigIdm) SuiteLookup() {
 	t.Run("LookupGroup", func(t *testing.T) {
 		for _, group := range groups {
 			groupName := group.Name + suffix
+
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
 				t.Errorf("LookupGroup %s : want error to be nil, got %v", groupName, err)
@@ -296,6 +304,7 @@ func (ci *ConfigIdm) SuiteLookup() {
 	t.Run("LookupUser", func(t *testing.T) {
 		for _, user := range users {
 			userName := user.Name + suffix
+
 			u, err := idm.LookupUser(userName)
 			if err != nil {
 				t.Errorf("LookupUser %s : want error to be nil, got %v", userName, err)
@@ -352,6 +361,7 @@ func (ci *ConfigIdm) SuiteUser() {
 	t.Run("UserExists", func(t *testing.T) {
 		for _, user := range users {
 			userName := user.Name + suffix
+
 			lu, err := idm.LookupUser(userName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)

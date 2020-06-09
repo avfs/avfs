@@ -34,7 +34,7 @@ import (
 // absPath, the absolute path of the input path
 // start and end, the beginning and ending position of the last found segment of absPath
 // err, one of the following errors :
-// 	ErrNoSuchFileOrDir when the node is not found
+//  ErrNoSuchFileOrDir when the node is not found
 //  ErrFileExists when the node is a file or directory
 //  ErrPermDenied when the current user doesn't have permissions on one of the nodes on the path
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
