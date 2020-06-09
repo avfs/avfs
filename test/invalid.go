@@ -436,16 +436,16 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 
 	if !fs.HasFeatures(avfs.FeatBasicFs) {
 		err := fs.Chdir(rootDir)
-		CheckPathError(t, "Chdir", "chdir", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chdir", "chdir", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Chmod(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "Chmod", "chmod", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chmod", "chmod", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Chtimes(rootDir, time.Now(), time.Now())
-		CheckPathError(t, "Chtimes", "chtimes", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chtimes", "chtimes", rootDir, avfs.ErrPermDenied, err)
 
 		fsC, ok := fs.(avfs.Cloner)
 		if ok {
@@ -456,7 +456,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		_, err = fs.Create(rootDir)
-		CheckPathError(t, "Create", "open", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Create", "open", rootDir, avfs.ErrPermDenied, err)
 
 		u := fs.CurrentUser()
 		if u != dummyidm.NotImplementedUser {
@@ -468,7 +468,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		_, err = fs.Getwd()
-		CheckPathError(t, "Getwd", "getwd", "", avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Getwd", "getwd", "", avfs.ErrPermDenied, err)
 
 		_, err = fs.Glob("")
 		if err != nil {
@@ -476,13 +476,13 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		_, err = fs.Lstat(rootDir)
-		CheckPathError(t, "Lstat", "lstat", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Lstat", "lstat", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Mkdir(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.MkdirAll(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrPermDenied, err)
 
 		name := fs.Name()
 		if name != avfs.NotImplemented {
@@ -490,32 +490,32 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		_, err = fs.Open(rootDir)
-		CheckPathError(t, "Open", "open", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Open", "open", rootDir, avfs.ErrPermDenied, err)
 
 		_, err = fs.OpenFile(rootDir, os.O_RDONLY, avfs.DefaultFilePerm)
-		CheckPathError(t, "OpenFile", "open", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "OpenFile", "open", rootDir, avfs.ErrPermDenied, err)
 
 		_, err = fs.ReadDir(rootDir)
-		CheckPathError(t, "ReadDir", "open", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "ReadDir", "open", rootDir, avfs.ErrPermDenied, err)
 
 		_, err = fs.ReadFile(rootDir)
-		CheckPathError(t, "ReadFile", "open", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "ReadFile", "open", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Remove(rootDir)
-		CheckPathError(t, "Remove", "remove", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Remove", "remove", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.RemoveAll(rootDir)
-		CheckPathError(t, "RemoveAll", "removeall", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "RemoveAll", "removeall", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Rename(rootDir, newPath)
-		CheckLinkError(t, "Rename", "rename", rootDir, newPath, avfs.ErrNotImplemented, err)
+		CheckLinkError(t, "Rename", "rename", rootDir, newPath, avfs.ErrPermDenied, err)
 
 		if fs.SameFile(nil, nil) {
 			t.Errorf("SameFile : want SameFile to be false, got true")
 		}
 
 		_, err = fs.Stat(rootDir)
-		CheckPathError(t, "Stat", "stat", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Stat", "stat", rootDir, avfs.ErrPermDenied, err)
 
 		tmp := fs.GetTempDir()
 		if tmp != avfs.TmpDir {
@@ -523,23 +523,23 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		_, err = fs.TempDir(rootDir, "")
-		if err.(*os.PathError).Err != avfs.ErrNotImplemented {
-			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		_, err = fs.TempFile(rootDir, "")
-		if err.(*os.PathError).Err != avfs.ErrNotImplemented {
-			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		err = fs.Truncate(rootDir, 0)
-		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrPermDenied, err)
 
 		fs.UMask(0)
 
 		_, err = fs.User(UsrTest)
-		if err != avfs.ErrNotImplemented {
-			t.Errorf("User : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+		if err != avfs.ErrPermDenied {
+			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		walkFunc := func(rootDir string, info os.FileInfo, err error) error { return nil }
@@ -550,7 +550,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		err = fs.WriteFile(rootDir, []byte{0}, avfs.DefaultFilePerm)
-		CheckPathError(t, "WriteFile", "open", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "WriteFile", "open", rootDir, avfs.ErrPermDenied, err)
 
 		_, err = fs.Abs(rootDir)
 		if err != nil {
@@ -600,15 +600,15 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 
 	if !fs.HasFeatures(avfs.FeatHardlink) {
 		err := fs.Link(oldName, newName)
-		CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrNotImplemented, err)
+		CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrPermDenied, err)
 	}
 
 	if !fs.HasFeatures(avfs.FeatIdentityMgr) {
 		err := fs.Chown(rootDir, 0, 0)
-		CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Lchown(rootDir, 0, 0)
-		CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
 
 		f, err := fs.Open(rootDir)
 		if err == nil {
@@ -617,36 +617,36 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		err = f.Chown(0, 0)
-		CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
 	}
 
 	if !fs.HasFeatures(avfs.FeatSymlink) {
 		_, err := fs.EvalSymlinks(rootDir)
-		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
 
 		_, err = fs.Readlink(rootDir)
-		CheckPathError(t, "Readlink", "readlink", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Readlink", "readlink", rootDir, avfs.ErrPermDenied, err)
 
 		err = fs.Symlink(rootDir, newPath)
-		CheckLinkError(t, "Symlink", "symlink", rootDir, newPath, avfs.ErrNotImplemented, err)
+		CheckLinkError(t, "Symlink", "symlink", rootDir, newPath, avfs.ErrPermDenied, err)
 	}
 
 	if !fs.HasFeatures(avfs.FeatChroot | avfs.FeatInescapableChroot) {
 		err := fs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 	}
 
 	if !fs.HasFeatures(avfs.FeatBasicFs) {
 		f, _ := fs.Open(rootDir)
 
 		err := f.Chdir()
-		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrPermDenied, err)
 
 		err = f.Chmod(0)
-		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
 
 		err = f.Close()
-		CheckPathError(t, "Close", "close", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Close", "close", f.Name(), avfs.ErrPermDenied, err)
 
 		fd := f.Fd()
 		if fd != 0 {
@@ -659,37 +659,37 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		_, err = f.Read([]byte{})
-		CheckPathError(t, "Read", "read", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Read", "read", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.ReadAt([]byte{}, 0)
-		CheckPathError(t, "ReadAt", "read", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "ReadAt", "read", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.Readdir(0)
-		CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.Readdirnames(0)
-		CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.Seek(0, io.SeekStart)
-		CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.Stat()
-		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrPermDenied, err)
 
 		err = f.Sync()
-		CheckPathError(t, "Sync", "sync", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Sync", "sync", f.Name(), avfs.ErrPermDenied, err)
 
 		err = f.Truncate(0)
-		CheckPathError(t, "Truncate", "truncate", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Truncate", "truncate", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.Write([]byte{})
-		CheckPathError(t, "Write", "write", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "Write", "write", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.WriteAt([]byte{}, 0)
-		CheckPathError(t, "WriteAt", "write", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "WriteAt", "write", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.WriteString("")
-		CheckPathError(t, "WriteString", "write", f.Name(), avfs.ErrNotImplemented, err)
+		CheckPathError(t, "WriteString", "write", f.Name(), avfs.ErrPermDenied, err)
 	}
 }
 

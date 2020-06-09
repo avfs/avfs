@@ -86,6 +86,7 @@ func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) []*Group {
 		_, err := idm.GroupAdd(groupName)
 		if err != nil &&
 			err != exec.ErrNotFound &&
+			err != avfs.ErrPermDenied &&
 			err != avfs.AlreadyExistsGroupError(groupName) {
 			t.Fatalf("GroupAdd %s : want error to be nil, got %v", groupName, err)
 		}
@@ -133,7 +134,7 @@ func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*User {
 		_, err := idm.UserAdd(userName, groupName)
 		if err != nil &&
 			err != exec.ErrNotFound &&
-			err != avfs.ErrNotImplemented &&
+			err != avfs.ErrPermDenied &&
 			err != avfs.AlreadyExistsUserError(userName) {
 			t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
 		}
