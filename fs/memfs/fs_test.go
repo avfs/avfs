@@ -61,8 +61,8 @@ func TestMemFsPerm(t *testing.T) {
 // TestMemFsOptionError
 func TestMemFsOptionError(t *testing.T) {
 	_, err := memfs.New(memfs.OptIdm(dummyidm.New()))
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("New : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("New : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 }
 
