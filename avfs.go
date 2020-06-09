@@ -83,9 +83,6 @@ const (
 	// ErrNotADirectory is the Error Not a directory.
 	ErrNotADirectory = syscall.ENOTDIR
 
-	// ErrNotImplemented is the Error Function not implemented.
-	ErrNotImplemented = syscall.ENOSYS
-
 	// ErrOpNotPermitted is the Error Operation not permitted.
 	ErrOpNotPermitted = syscall.EPERM
 
