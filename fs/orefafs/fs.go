@@ -113,7 +113,7 @@ func (fs *OrefaFs) Chmod(name string, mode os.FileMode) error {
 func (fs *OrefaFs) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Chroot changes the root to that specified in path.
@@ -121,7 +121,7 @@ func (fs *OrefaFs) Chown(name string, uid, gid int) error {
 func (fs *OrefaFs) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -198,7 +198,7 @@ func (fs *OrefaFs) Dir(path string) string {
 // EvalSymlinks calls Clean on the result.
 func (fs *OrefaFs) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
-	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // GetTempDir returns the default directory to use for temporary files.
@@ -283,7 +283,7 @@ func (fs *OrefaFs) Join(elem ...string) string {
 func (fs *OrefaFs) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Link creates newname as a hard link to the oldname file.
@@ -291,7 +291,7 @@ func (fs *OrefaFs) Lchown(name string, uid, gid int) error {
 func (fs *OrefaFs) Link(oldname, newname string) error {
 	const op = "link"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNotImplemented}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
 // Lstat returns a FileInfo describing the named file.
@@ -511,7 +511,7 @@ func (fs *OrefaFs) ReadFile(filename string) ([]byte, error) {
 func (fs *OrefaFs) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrNotImplemented}
+	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -759,7 +759,7 @@ func (fs *OrefaFs) stat(path, op string) (os.FileInfo, error) {
 func (fs *OrefaFs) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNotImplemented}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
 // TempDir creates a new temporary directory in the directory dir
@@ -906,7 +906,7 @@ func (f *OrefaFile) Chown(uid, gid int) error {
 		return os.ErrInvalid
 	}
 
-	return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrPermDenied}
 }
 
 // Close closes the File, rendering it unusable for I/O.

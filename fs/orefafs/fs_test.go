@@ -50,14 +50,6 @@ func TestOrefaFs(t *testing.T) {
 	cf.SuiteAll()
 }
 
-// TestOrefaFsIdm
-func TestOrefaFsIdm(t *testing.T) {
-	fs := initTest(t)
-
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteNotImplemented()
-}
-
 // TestNilPtrReceiver
 func TestNilPtrReceiver(t *testing.T) {
 	f := (*orefafs.OrefaFile)(nil)
