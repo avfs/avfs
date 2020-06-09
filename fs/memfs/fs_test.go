@@ -97,6 +97,27 @@ func TestNilPtrReceiver(t *testing.T) {
 	test.SuiteNilPtrFile(t, f)
 }
 
+// TestMemFsFeatures
+func TestMemFsFeatures(t *testing.T) {
+	fs, err := memfs.New()
+	if err != nil {
+		t.Fatalf("memfs.New : want error to be nil, got %v", err)
+	}
+
+	if fs.Features()&avfs.FeatIdentityMgr != 0 {
+		t.Errorf("Features : want FeatIdentityMgr missing, got present")
+	}
+
+	fs, err = memfs.New(memfs.OptIdm(memidm.New()))
+	if err != nil {
+		t.Fatalf("memfs.New : want error to be nil, got %v", err)
+	}
+
+	if fs.Features()&avfs.FeatIdentityMgr == 0 {
+		t.Errorf("Features : want FeatIdentityMgr present, got missing")
+	}
+}
+
 // BenchmarkMemFsCreate
 func BenchmarkMemFsCreate(b *testing.B) {
 	fs, err := memfs.New(memfs.OptMainDirs())
