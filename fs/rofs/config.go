@@ -25,12 +25,12 @@ func New(baseFs avfs.Fs) *RoFs {
 
 // Features returns the set of features provided by the file system or identity manager.
 func (fs *RoFs) Features() avfs.Feature {
-	return fs.baseFs.Features() | avfs.FeatReadOnly
+	return (fs.baseFs.Features() &^ avfs.FeatIdentityMgr) | avfs.FeatReadOnly
 }
 
 // HasFeatures returns true if the file system provides all the given features.
 func (fs *RoFs) HasFeatures(feature avfs.Feature) bool {
-	return (feature&avfs.FeatReadOnly != 0) || fs.baseFs.HasFeatures(feature)
+	return ((fs.baseFs.Features()|avfs.FeatReadOnly)&^avfs.FeatIdentityMgr)&feature == feature
 }
 
 // Name returns the name of the fileSystem.
