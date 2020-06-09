@@ -40,50 +40,50 @@ func (idm *OsIdm) CurrentUser() avfs.UserReader {
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // GroupDel deletes an existing group.
 func (idm *OsIdm) GroupDel(name string) error {
-	return avfs.ErrNotImplemented
+	return avfs.ErrPermDenied
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
 func (idm *OsIdm) LookupGroup(name string) (avfs.GroupReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
 func (idm *OsIdm) LookupUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // User sets the current user of the file system to uid.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // UserAdd adds a new user.
 func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // UserDel deletes an existing user.
 func (idm *OsIdm) UserDel(name string) error {
-	return avfs.ErrNotImplemented
+	return avfs.ErrPermDenied
 }
