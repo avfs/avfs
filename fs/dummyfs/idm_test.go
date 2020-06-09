@@ -15,3 +15,21 @@
 //
 
 package dummyfs_test
+
+import (
+	"testing"
+
+	"github.com/avfs/avfs/fs/dummyfs"
+	"github.com/avfs/avfs/test"
+)
+
+// TestDummyFsIdm
+func TestDummyFsIdm(t *testing.T) {
+	fs, err := dummyfs.New()
+	if err != nil {
+		t.Fatalf("New : want err to be nil, got %s", err)
+	}
+
+	ci := test.NewConfigIdm(t, fs)
+	ci.SuiteNotImplemented()
+}

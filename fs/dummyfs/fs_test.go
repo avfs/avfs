@@ -47,14 +47,3 @@ func TestDummyFs(t *testing.T) {
 	cf := test.NewConfigFs(t, fs)
 	cf.SuiteNotImplemented()
 }
-
-// TestDummyFsPerms
-func TestDummyFsPerms(t *testing.T) {
-	fs, err := dummyfs.New()
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
-
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteNotImplemented()
-}
