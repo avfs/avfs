@@ -29,5 +29,5 @@ import (
 func (fs *OsFs) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrNotImplemented}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }

@@ -82,7 +82,7 @@ func (fs *OsFs) User(name string) (avfs.UserReader, error) {
 		return uc.User(name)
 	}
 
-	return nil, avfs.ErrNotImplemented
+	return nil, avfs.ErrPermDenied
 }
 
 // UserAdd adds a new user.
