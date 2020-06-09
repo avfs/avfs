@@ -23,13 +23,12 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fsutil"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // SuiteAll run all identity manager tests.
 func (ci *ConfigIdm) SuiteAll() {
 	if !ci.cantTest {
-		ci.SuiteNotImplemented()
+		ci.SuitePermDenied()
 		return
 	}
 
@@ -447,12 +446,8 @@ func (ci *ConfigIdm) SuiteUserDenied() {
 	}
 }
 
-// SuiteNotImplemented tests if the identity manager is not implemented.
-func (ci *ConfigIdm) SuiteNotImplemented() {
-	if ci.cantTest {
-		return
-	}
-
+// SuitePermDenied tests if all functions of the identity manager return avfs.ErrPermDenied.
+func (ci *ConfigIdm) SuitePermDenied() {
 	t, idm := ci.t, ci.idm
 
 	const name = ""
@@ -460,55 +455,54 @@ func (ci *ConfigIdm) SuiteNotImplemented() {
 	uc, ok := idm.(avfs.UserConnecter)
 	if ok {
 		u := uc.CurrentUser()
-		if u != dummyidm.NotImplementedUser && u != dummyidm.RootUser {
-			t.Errorf("CurrentUser : want user to be %s or %s, got %s",
-				dummyidm.NotImplementedUser.Name(), dummyidm.RootUser.Name(), u.Name())
+		if u == nil {
+			t.Fatal("CurrentUser : want user to be not nil, got nil")
 		}
 
 		_, err := uc.User(name)
-		if err != avfs.ErrNotImplemented {
-			t.Errorf("User : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+		if err != avfs.ErrPermDenied {
+			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 	}
 
 	_, err := idm.GroupAdd(name)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("GroupAdd : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("GroupAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	err = idm.GroupDel(name)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	_, err = idm.LookupGroup(name)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("LookupGroupName : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("LookupGroupName : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	_, err = idm.LookupGroupId(0)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("LookupGroupId : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("LookupGroupId : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	_, err = idm.LookupUser(name)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("LookupUser : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("LookupUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	_, err = idm.LookupUserId(0)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("LookupUserId : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("LookupUserId : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	_, err = idm.UserAdd(name, name)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("UserAdd : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("UserAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 
 	err = idm.UserDel(name)
-	if err != avfs.ErrNotImplemented {
-		t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrNotImplemented, err)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 }
 
