@@ -34,7 +34,7 @@ type ConfigIdm struct {
 func NewConfigIdm(t *testing.T, idm avfs.IdentityMgr) *ConfigIdm {
 	ci := &ConfigIdm{t: t, idm: idm}
 
-	ci.cantTest = idm.HasFeatures(avfs.FeatIdentityMgr)
+	ci.cantTest = idm.HasFeature(avfs.FeatIdentityMgr)
 
 	if ci.cantTest {
 		CreateGroups(t, idm, "")

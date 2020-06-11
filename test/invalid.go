@@ -50,7 +50,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 		err := fs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 
-		if fs.HasFeatures(avfs.FeatIdentityMgr) {
+		if fs.HasFeature(avfs.FeatIdentityMgr) {
 			err = fs.Chown(nonExistingFile, 0, 0)
 			CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
@@ -58,12 +58,12 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 		err = fs.Chtimes(nonExistingFile, time.Now(), time.Now())
 		CheckPathError(t, "Chtimes", "chtimes", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 
-		if fs.HasFeatures(avfs.FeatHardlink) {
+		if fs.HasFeature(avfs.FeatHardlink) {
 			err = fs.Link(nonExistingFile, existingFile)
 			CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
 
-		if fs.HasFeatures(avfs.FeatIdentityMgr) && fs.HasFeatures(avfs.FeatSymlink) {
+		if fs.HasFeature(avfs.FeatIdentityMgr) && fs.HasFeature(avfs.FeatSymlink) {
 			err = fs.Lchown(nonExistingFile, 0, 0)
 			CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
@@ -71,7 +71,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 		_, err = fs.Lstat(nonExistingFile)
 		CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 
-		if fs.HasFeatures(avfs.FeatSymlink) {
+		if fs.HasFeature(avfs.FeatSymlink) {
 			_, err = fs.Readlink(nonExistingFile)
 			CheckPathError(t, "Readlink", "readlink", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
@@ -123,7 +123,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 			t.Errorf("Chmod : want error to be %v, got %v", os.ErrInvalid, err)
 		}
 
-		if fs.HasFeatures(avfs.FeatIdentityMgr) {
+		if fs.HasFeature(avfs.FeatIdentityMgr) {
 			err = f.Chown(0, 0)
 			if err != os.ErrInvalid {
 				t.Errorf("Chown : want error to be %v, got %v", os.ErrInvalid, err)
@@ -219,7 +219,7 @@ func (cf *ConfigFs) SuiteDirFuncOnFile() {
 		err = fs.Chdir(existingFile)
 		CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrNotADirectory, err)
 
-		if fs.HasFeatures(avfs.FeatSymlink) {
+		if fs.HasFeature(avfs.FeatSymlink) {
 			_, err = fs.Lstat(nonExistingFile)
 			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNotADirectory, err)
 		}
@@ -310,7 +310,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 			t.Errorf("Seek : want error to be nil, got %v", err)
 		}
 
-		if fs.HasFeatures(avfs.FeatReadOnly) {
+		if fs.HasFeature(avfs.FeatReadOnly) {
 			return
 		}
 
@@ -392,7 +392,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		err = f.Sync()
 		CheckPathError(t, "Sync", "sync", existingFile, os.ErrClosed, err)
 
-		if fs.HasFeatures(avfs.FeatReadOnly) {
+		if fs.HasFeature(avfs.FeatReadOnly) {
 			return
 		}
 
@@ -402,7 +402,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		err = f.Chmod(avfs.DefaultFilePerm)
 		CheckPathError(t, "Chmod", "chmod", existingFile, os.ErrClosed, err)
 
-		if fs.HasFeatures(avfs.FeatIdentityMgr) {
+		if fs.HasFeature(avfs.FeatIdentityMgr) {
 			err = f.Chown(0, 0)
 			CheckPathError(t, "Chown", "chown", existingFile, os.ErrClosed, err)
 		}
@@ -434,7 +434,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		newPath = ""
 	)
 
-	if !fs.HasFeatures(avfs.FeatBasicFs) {
+	if !fs.HasFeature(avfs.FeatBasicFs) {
 		err := fs.Chdir(rootDir)
 		CheckPathError(t, "Chdir", "chdir", rootDir, avfs.ErrPermDenied, err)
 
@@ -598,12 +598,12 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 	}
 
-	if !fs.HasFeatures(avfs.FeatHardlink) {
+	if !fs.HasFeature(avfs.FeatHardlink) {
 		err := fs.Link(oldName, newName)
 		CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrPermDenied, err)
 	}
 
-	if !fs.HasFeatures(avfs.FeatIdentityMgr) {
+	if !fs.HasFeature(avfs.FeatIdentityMgr) {
 		err := fs.Chown(rootDir, 0, 0)
 		CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
 
@@ -620,7 +620,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
 	}
 
-	if !fs.HasFeatures(avfs.FeatSymlink) {
+	if !fs.HasFeature(avfs.FeatSymlink) {
 		_, err := fs.EvalSymlinks(rootDir)
 		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
 
@@ -631,12 +631,12 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		CheckLinkError(t, "Symlink", "symlink", rootDir, newPath, avfs.ErrPermDenied, err)
 	}
 
-	if !fs.HasFeatures(avfs.FeatChroot) {
+	if !fs.HasFeature(avfs.FeatChroot) {
 		err := fs.Chroot(rootDir)
 		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 	}
 
-	if !fs.HasFeatures(avfs.FeatBasicFs) {
+	if !fs.HasFeature(avfs.FeatBasicFs) {
 		f, _ := fs.Open(rootDir)
 
 		err := f.Chdir()

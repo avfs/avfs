@@ -63,8 +63,8 @@ func (fs *OrefaFs) Features() avfs.Feature {
 	return fs.feature
 }
 
-// HasFeatures returns true if the file system provides all the given features.
-func (fs *OrefaFs) HasFeatures(feature avfs.Feature) bool {
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (fs *OrefaFs) HasFeature(feature avfs.Feature) bool {
 	return fs.feature&feature == feature
 }
 

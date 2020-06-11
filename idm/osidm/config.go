@@ -17,7 +17,7 @@ func (idm *OsIdm) Features() avfs.Feature {
 	return avfs.FeatIdentityMgr
 }
 
-// HasFeatures returns true if the file system or identity manager provides all the given features.
-func (idm *OsIdm) HasFeatures(feature avfs.Feature) bool {
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (idm *OsIdm) HasFeature(feature avfs.Feature) bool {
 	return avfs.FeatIdentityMgr&feature == feature
 }

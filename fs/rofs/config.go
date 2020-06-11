@@ -28,8 +28,8 @@ func (fs *RoFs) Features() avfs.Feature {
 	return (fs.baseFs.Features() &^ avfs.FeatIdentityMgr) | avfs.FeatReadOnly
 }
 
-// HasFeatures returns true if the file system provides all the given features.
-func (fs *RoFs) HasFeatures(feature avfs.Feature) bool {
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (fs *RoFs) HasFeature(feature avfs.Feature) bool {
 	return ((fs.baseFs.Features()|avfs.FeatReadOnly)&^avfs.FeatIdentityMgr)&feature == feature
 }
 

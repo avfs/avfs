@@ -74,8 +74,8 @@ func (fs *MemFs) Features() avfs.Feature {
 	return fs.feature
 }
 
-// HasFeatures returns true if the file system provides all the given features.
-func (fs *MemFs) HasFeatures(feature avfs.Feature) bool {
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (fs *MemFs) HasFeature(feature avfs.Feature) bool {
 	return fs.feature&feature == feature
 }
 

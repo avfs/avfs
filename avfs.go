@@ -434,8 +434,8 @@ type Featurer interface {
 	// Features returns the set of features provided by the file system or identity manager.
 	Features() Feature
 
-	// HasFeatures returns true if the file system or identity manager provides all the given features.
-	HasFeatures(feature Feature) bool
+	// HasFeature returns true if the file system or identity manager provides a given feature.
+	HasFeature(feature Feature) bool
 }
 
 // HardLinker is the interface that wraps the Link method.

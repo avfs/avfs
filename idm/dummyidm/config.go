@@ -33,7 +33,7 @@ func (idm *DummyIdm) Features() avfs.Feature {
 	return 0
 }
 
-// HasFeatures returns true if the file system or identity manager provides all the given features.
-func (idm *DummyIdm) HasFeatures(feature avfs.Feature) bool {
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (idm *DummyIdm) HasFeature(feature avfs.Feature) bool {
 	return false
 }

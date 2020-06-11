@@ -61,7 +61,7 @@ func (cf *ConfigFs) SuiteEvalSymlink() {
 	defer removeDir()
 
 	fs := cf.GetFsWrite()
-	if !fs.HasFeatures(avfs.FeatSymlink) {
+	if !fs.HasFeature(avfs.FeatSymlink) {
 		return
 	}
 
@@ -196,7 +196,7 @@ func (cf *ConfigFs) SuiteLstat() {
 
 // SuiteReadlink tests Readlink function.
 func (cf *ConfigFs) SuiteReadlink() {
-	if !cf.fsW.HasFeatures(avfs.FeatSymlink) {
+	if !cf.fsW.HasFeature(avfs.FeatSymlink) {
 		return
 	}
 
@@ -569,7 +569,7 @@ func (cf *ConfigFs) SuiteSymlink() {
 	defer removeDir()
 
 	fs := cf.GetFsWrite()
-	if !fs.HasFeatures(avfs.FeatSymlink) {
+	if !fs.HasFeature(avfs.FeatSymlink) {
 		return
 	}
 
@@ -616,8 +616,8 @@ func (cf *ConfigFs) SuiteReadOnly() {
 	newFile := fs.Join(existingFile, "newFile")
 
 	fs = cf.GetFsRead()
-	if !fs.HasFeatures(avfs.FeatReadOnly) {
-		t.Errorf("HasFeatures : want read only file system")
+	if !fs.HasFeature(avfs.FeatReadOnly) {
+		t.Errorf("HasFeature : want read only file system")
 	}
 
 	t.Run("ReadOnlyFs", func(t *testing.T) {

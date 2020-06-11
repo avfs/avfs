@@ -28,8 +28,8 @@ func (fs *DummyFs) Features() avfs.Feature {
 	return 0
 }
 
-// HasFeatures returns true if the file system provides all the given features.
-func (fs *DummyFs) HasFeatures(feature avfs.Feature) bool {
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (fs *DummyFs) HasFeature(feature avfs.Feature) bool {
 	return false
 }
 

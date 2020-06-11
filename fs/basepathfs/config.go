@@ -57,9 +57,9 @@ func (fs *BasePathFs) Features() avfs.Feature {
 	return fs.baseFs.Features() &^ avfs.FeatSymlink
 }
 
-// HasFeatures returns true if the file system provides all the given features.
-func (fs *BasePathFs) HasFeatures(feature avfs.Feature) bool {
-	return (feature&avfs.FeatSymlink == 0) && fs.baseFs.HasFeatures(feature)
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (fs *BasePathFs) HasFeature(feature avfs.Feature) bool {
+	return (feature&avfs.FeatSymlink == 0) && fs.baseFs.HasFeature(feature)
 }
 
 // Name returns the name of the fileSystem.

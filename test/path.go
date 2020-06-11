@@ -588,7 +588,7 @@ func (cf *ConfigFs) SuiteWalk() {
 		wantNames = append(wantNames, fs.Join(rootDir, file.Path))
 	}
 
-	if fs.HasFeatures(avfs.FeatSymlink) {
+	if fs.HasFeature(avfs.FeatSymlink) {
 		for _, sl := range symlinks {
 			wantNames = append(wantNames, fs.Join(rootDir, sl.NewName))
 		}
