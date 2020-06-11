@@ -57,6 +57,18 @@ func TestNilPtrReceiver(t *testing.T) {
 	test.SuiteNilPtrFile(t, f)
 }
 
+// TestOrefaFsFeatures
+func TestOrefaFsFeatures(t *testing.T) {
+	fs, err := orefafs.New()
+	if err != nil {
+		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
+	}
+
+	if fs.Features() != avfs.FeatBasicFs {
+		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatBasicFs, fs.Features())
+	}
+}
+
 // BenchmarkOrefaFsCreate
 func BenchmarkOrefaFsCreate(b *testing.B) {
 	fs, err := orefafs.New(orefafs.OptMainDirs())
