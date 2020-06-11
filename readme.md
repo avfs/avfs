@@ -2,7 +2,6 @@
 Another Virtual File System for Go
 
 ![CI](https://github.com/avfs/avfs/workflows/CI/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/avfs/avfs)](https://goreportcard.com/report/github.com/avfs/avfs)
 [![codecov](https://codecov.io/gh/avfs/avfs/branch/master/graph/badge.svg)](https://codecov.io/gh/avfs/avfs)
 [![GoDoc](https://godoc.org/github.com/avfs/avfs?status.svg)](https://godoc.org/github.com/avfs/avfs) 
 
@@ -26,74 +25,65 @@ the variable used to initialize the file system (`fs` in the following examples)
 - import the package of the file system and, if necessary, the `avfs` package
 ```go
 import (
-	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/osfs"
+    "github.com/avfs/avfs"
+    "github.com/avfs/avfs/fs/osfs"
 )
 ```
 - initialize the file system variable :  
 ```go
-	fs, err := osfs.New()
+fs, err := osfs.New()
 ```
-- some file system provide specific options available at initialisation.
+- some file system provide specific options available at initialization.
 For instance `MemFs` needs `OptMainDirs` option to create `/home`, `/root` and `/tmp` directories :
 ```go
-	fs, err := memfs.New(memfs.OptMainDirs())
+fs, err := memfs.New(memfs.OptMainDirs())
 ```
 
 ## Example
-The example below demonstrates and test the creation of a file and symbolic link to this file :
+The example below demonstrates the creation of memory file system, a file, a symbolic link and a hard link to this file.
+Error management has been omitted for the sake of simplicity :
 
 ```go
 package main
 
 import (
-	"bytes"
-	"log"
-
-	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/memfs"
+    "bytes"
+    "log"
+    
+    "github.com/avfs/avfs"
+    "github.com/avfs/avfs/fs/memfs"
 )
 
 func main() {
-	fs, err := memfs.New(memfs.OptMainDirs())
-	if err != nil {
-		log.Fatalf("New : want error to be nil, got %v", err)
-	}
+    fs, _ := memfs.New(memfs.OptMainDirs())
+    
+    rootDir, _ := fs.TempDir("", avfs.Avfs)
+    defer fs.RemoveAll(rootDir)
 
-    if !fs.Features(avfs.FeatSymlink) {
-		log.Fatalf("file system of type %s does not support symbolic links", fs.Type())
+    aFilePath := fs.Join(rootDir, "aFile.txt")
+
+    content := []byte("randomContent")
+    _ = fs.WriteFile(aFilePath, content, 0o644)
+    
+    aFilePathSl := fs.Join(rootDir, "aFileSymlink.txt")
+    _ = fs.Symlink(aFilePath, aFilePathSl)
+    
+    gotContentSl, _ := fs.ReadFile(aFilePathSl)
+    if !bytes.Equal(content, gotContentSl) {
+        log.Fatalf("Symlink %s : want content to be %v, got %v", aFilePathSl, content, gotContentSl)
+    }
+    
+    log.Printf("content from symbolic link %s : %s", aFilePathSl, gotContentSl)
+
+    aFilePathHl := fs.Join(rootDir, "aFileHardLink.txt")
+    _ = fs.Link(aFilePath, aFilePathHl)
+    
+    gotContentHl, _ := fs.ReadFile(aFilePathHl)
+    if !bytes.Equal(content, gotContentHl) {
+        log.Fatalf("Hardlink %s : want content to be %v, got %v", aFilePathHl, content, gotContentHl)
     }
 
-	rootDir, err := fs.TempDir("", avfs.Avfs)
-	if err != nil {
-		log.Fatalf("TempDir : want error to be nil, got %v", err)
-	}
-
-	aFilePath := fs.Join(rootDir, "aFile.txt")
-	content := []byte("randomContent")
-
-	err = fs.WriteFile(aFilePath, content, 0o644)
-	if err != nil {
-		log.Fatalf("WriteFile %s : want error to be nil, got %v", aFilePath, err)
-	}
-
-	aFilePathSl := fs.Join(rootDir, "aFileSymlink.txt")
-
-	err = fs.Symlink(aFilePath, aFilePathSl)
-	if err != nil {
-		log.Fatalf("Symlink %s : want error to be nil, got %v", aFilePathSl, err)
-	}
-
-	gotContentSl, err := fs.ReadFile(aFilePathSl)
-	if err != nil {
-		log.Fatalf("ReadFile %s : want error to be nil, got %v", aFilePathSl, err)
-	}
-
-	if !bytes.Equal(content, gotContentSl) {
-		log.Fatalf("ReadFile %s : want content to be %v, got %v", aFilePathSl, content, gotContentSl)
-	}
-
-	log.Printf("content from %s : %s", aFilePathSl, gotContentSl)
+    log.Printf("content from hard link %s : %s", aFilePathHl, gotContentHl)
 }
 ```
 
@@ -193,4 +183,5 @@ Identity Manager methods|Comments
 Misc. methods|Comments
 ---------------|--------
 `Clone`| returns a shallow copy of the current file system (see MemFs)
-`Features`| indicates if the file system provides a given feature
+`Features`| returns the set of features provided by the file system or identity manager
+`HasFeature`| returns true if the file system or identity manager provides a given feature
