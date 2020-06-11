@@ -17,6 +17,7 @@
 package memfs_test
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/avfs/avfs/fs/memfs"
@@ -49,6 +50,10 @@ func TestMemFsWithMemIdm(t *testing.T) {
 
 // TestMemFsWithOsIdm
 func TestMemFsWithOsIdm(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("OsIdm only works on a linux platform, skipping")
+	}
+
 	fs, err := memfs.New(memfs.OptIdm(osidm.New()), memfs.OptMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
