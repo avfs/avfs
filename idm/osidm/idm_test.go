@@ -14,8 +14,6 @@
 //  limitations under the License.
 //
 
-// +build linux
-
 package osidm_test
 
 import (

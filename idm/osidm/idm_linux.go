@@ -33,6 +33,16 @@ import (
 // the current goroutine is locked to the operating system thread just before calling the function.
 // For details see https://github.com/golang/go/issues/1435
 
+// Features returns the set of features provided by the file system or identity manager.
+func (idm *OsIdm) Features() avfs.Feature {
+	return avfs.FeatIdentityMgr
+}
+
+// HasFeature returns true if the file system or identity manager provides a given feature.
+func (idm *OsIdm) HasFeature(feature avfs.Feature) bool {
+	return avfs.FeatIdentityMgr&feature == feature
+}
+
 // CurrentUser returns the current user.
 func (idm *OsIdm) CurrentUser() avfs.UserReader {
 	runtime.LockOSThread()
