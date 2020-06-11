@@ -47,3 +47,15 @@ func TestDummyFs(t *testing.T) {
 	cf := test.NewConfigFs(t, fs)
 	cf.SuiteNotImplemented()
 }
+
+// TestDummyFsFeatures
+func TestDummyFsFeatures(t *testing.T) {
+	fs, err := dummyfs.New()
+	if err != nil {
+		t.Fatalf("dummy.New : want error to be nil, got %v", err)
+	}
+
+	if fs.Features() != 0 {
+		t.Errorf("Features : want Features to be 0, got %d", fs.Features())
+	}
+}
