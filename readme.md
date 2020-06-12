@@ -8,9 +8,8 @@ Another Virtual File System for Go
 ## Overview
 **AVFS** is a virtual file system abstraction, 
 inspired mostly by [Afero](http://github.com/spf13/afero) and Go standard library.
-It provides an abstraction layer to emulate the behavior of a **Linux file system**
-and provides several features :
-- a common set of **interfaces**, **types** and a **test suite** are shared by all file systems (emulated or real)
+It provides an abstraction layer to emulate the behavior of a **Linux file system** and provides several features :
+- a common set of **interfaces**, **types**, and a **test suite** are shared by all file systems (emulated or real)
 - a very basic **identity manager** allows testing of user related functions (Chown, Lchown) and file system permissions
 - all file systems support user file creation mode mask (**Umask**) 
 - **symbolic links**, **hard links** and **chroot** are fully supported for some file systems (MemFs, OsFs) 
@@ -19,28 +18,41 @@ and provides several features :
 
 ## Getting started
 To make an existing code work with **AVFS** :
-- replace all references of `os`, `path/filepath` and `ioutil` with 
-the variable used to initialize the file system (`fs` in the following examples)
+- replace all references of `os`, `path/filepath` and `ioutil` 
+with the variable used to initialize the file system
+(`fs` in the following examples)
 - replace all references of `os.TempDir()` by `fs.GetTempDir()`
-- import the package of the file system and, if necessary, the `avfs` package
+- import the package of the file system and, if necessary, the `avfs` package 
+and initialize the file system variable :  
 ```go
 import (
     "github.com/avfs/avfs"
     "github.com/avfs/avfs/fs/osfs"
 )
-```
-- initialize the file system variable :  
-```go
+
+// ...
+
 fs, err := osfs.New()
 ```
-- some file system provide specific options available at initialization.
+- some file systems provide specific options available at initialization.
 For instance `MemFs` needs `OptMainDirs` option to create `/home`, `/root` and `/tmp` directories :
 ```go
+import (
+    "github.com/avfs/avfs"
+    "github.com/avfs/avfs/fs/memfs"
+)
+
+// ...
+
 fs, err := memfs.New(memfs.OptMainDirs())
 ```
 
-## Example
-The example below demonstrates the creation of memory file system, a file, a symbolic link and a hard link to this file.
+## Examples
+
+### Symbolic and hard links
+The example below demonstrates the creation of a file, a symbolic link 
+and a hard link to this file for a memory file system (MemFs)
+
 Error management has been omitted for the sake of simplicity :
 
 ```go
@@ -88,25 +100,29 @@ func main() {
 ```
 
 ## Status
-Everything is a work in progress, all the file systems pass the common suite test,
-but you should not use this in a production environment at this time.
+Don't be fooled by the coverage percentages, everything is a work in progress.
+All the file systems pass the common test suite, but you should not use this in a production environment at this time.
 
 ## File systems
-The following file systems are available
+The following file systems are available :
 
 File system  |Comments
 -------------|--------
 BasePathFs|file system that restricts all operations to a given path within a file system
 DummyFs|Non implemented file system to be used as model
-MemFs|In memory file system supporting major features of a linux file system
+MemFs|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
+OrefaFs|Afero like in memory file system
 OsFs|Operating system native file system
 ReadOnlyFs|Read only file system
 
 ## Supported methods
-Supported method are the most commonly used from packages `os`, `path/filepath` and `ioutil`.
+All file systems implement at least `avfs.Fs` and `avfs.File` interfaces.
+By default, each file system 
+Supported methods are the most commonly used from packages `os`, `path/filepath` and `ioutil`.
+All methods (except `TempDir` which is found in packages `os` and `ioutil`) have identical names as their functions equivalents. 
 
-File system methods|Comments
----------------------|--------
+File system methods <br> `avfs.Fs`|Comments
+----------------------------------|--------
 `Abs`|equivalent to `filepath.Abs`
 `Base`|equivalent to `filepath.Base`
 `Chdir`|equivalent to `os.Chdir`
@@ -118,9 +134,11 @@ File system methods|Comments
 `Create`|equivalent to `os.Create`
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
+`Features`| returns the set of features provided by the file system or identity manager
 `GetTempDir`|equivalent to `os.TempDir`
 `Getwd`|equivalent to `os.Getwd`
 `Glob`|equivalent to `filepath.Glob`
+`HasFeature`| returns true if the file system or identity manager provides a given feature
 `IsAbs`|equivalent to `filepath.IsAbs
 `IsPathSeparator`|equivalent to `filepath.IsPathSeparator`
 `Join`|equivalent to `filepath.Join`
@@ -148,8 +166,8 @@ File system methods|Comments
 `Walk`|equivalent to `filepath.Walk`
 `WriteFile`|equivalent to `ioutil.WriteFile`
 
-File methods|Comments
---------------|--------
+File methods <br> `avfs.File`|Comments
+-----------------------------|--------
 `Chdir`|equivalent to `os.File.Chdir`
 `Chmod`|equivalent to `os.File.Chmod`
 `Chown`|equivalent to `os.File.Chown`
@@ -167,8 +185,8 @@ File methods|Comments
 `WriteAt`|equivalent to `os.File.WriteAt`
 `WriteString`|equivalent to `os.File.WriteString`
 
-Identity Manager methods|Comments
---------------------------|--------
+Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
+-------------------------------------------------------------|--------
 `CurrentUser`| returns the current user
 `GroupAdd`| adds a new group
 `GroupDel`| deletes an existing group
@@ -183,5 +201,3 @@ Identity Manager methods|Comments
 Misc. methods|Comments
 ---------------|--------
 `Clone`| returns a shallow copy of the current file system (see MemFs)
-`Features`| returns the set of features provided by the file system or identity manager
-`HasFeature`| returns true if the file system or identity manager provides a given feature
