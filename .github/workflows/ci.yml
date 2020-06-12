@@ -29,6 +29,4 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           file: ./coverage.txt
-          env_vars: ${{ matrix.platform }} ${{ matrix.go-version }}
-          name: codecov-umbrella
-          fail_ci_if_error: true
+
