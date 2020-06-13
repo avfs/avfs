@@ -21,18 +21,44 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs/fs/memfs"
+	"github.com/avfs/avfs/fs/orefafs"
+	"github.com/avfs/avfs/fs/osfs"
 	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/idm/memidm"
+	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 )
 
 func TestAsStatT(t *testing.T) {
-	fs, err := memfs.New(memfs.OptMainDirs())
-	if err != nil {
-		t.Errorf("memfs.New : want error to be nil, got %v", err)
-	}
+	t.Run("StatT MemFs", func(t *testing.T) {
+		fs, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+		if err != nil {
+			t.Errorf("memfs.New : want error to be nil, got %v", err)
+		}
 
-	cf := test.NewConfigFs(t, fs)
-	cf.SuiteStatT()
+		cf := test.NewConfigFs(t, fs)
+		cf.SuiteStatT()
+	})
+
+	t.Run("StatT OsFs", func(t *testing.T) {
+		fs, err := osfs.New(osfs.OptIdm(osidm.New()))
+		if err != nil {
+			t.Errorf("osfs.New : want error to be nil, got %v", err)
+		}
+
+		cf := test.NewConfigFs(t, fs)
+		cf.SuiteStatT()
+	})
+
+	t.Run("StatT OrefaFs", func(t *testing.T) {
+		fs, err := orefafs.New(orefafs.OptMainDirs())
+		if err != nil {
+			t.Errorf("orefafs.New : want error to be nil, got %v", err)
+		}
+
+		cf := test.NewConfigFs(t, fs)
+		cf.SuiteStatT()
+	})
 }
 
 func TestCreateBaseDirs(t *testing.T) {

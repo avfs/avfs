@@ -18,6 +18,7 @@ package test
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"testing"
 	"time"
@@ -604,9 +605,15 @@ func (cf *ConfigFs) SuiteStatT() {
 		t.Errorf("Stat : want error be nil, got %v", err)
 	}
 
+	wantUid, wantGid := uint32(0), uint32(0)
+	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+		wantUid, wantGid = math.MaxUint32, math.MaxUint32
+	}
+
 	statT := fsutil.AsStatT(info.Sys())
-	if statT.Uid != 0 || statT.Gid != 0 {
-		t.Errorf("AsStatT : want Uid = 0, Gid = 0, got Uid = %d, Gid = %d", statT.Uid, statT.Gid)
+	if statT.Uid != wantUid || statT.Gid != wantGid {
+		t.Errorf("AsStatT : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+			wantUid, wantGid, statT.Uid, statT.Gid)
 	}
 }
 
