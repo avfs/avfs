@@ -17,6 +17,7 @@
 package fsutil_test
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -25,13 +26,24 @@ import (
 )
 
 var (
-	ErrNameOutOfRange     = fsutil.ErrOutOfRange("name")
 	ErrDepthOutOfRange    = fsutil.ErrOutOfRange("depth")
+	ErrNameOutOfRange     = fsutil.ErrOutOfRange("name")
 	ErrDirsOutOfRange     = fsutil.ErrOutOfRange("dirs")
 	ErrFilesOutOfRange    = fsutil.ErrOutOfRange("files")
 	ErrFileLenOutOfRange  = fsutil.ErrOutOfRange("file length")
 	ErrSymlinksOutOfRange = fsutil.ErrOutOfRange("symbolic links")
 )
+
+// TestErrOutOfRange
+func TestErrOutOfRange(t *testing.T) {
+	parameter := "Some"
+	wantErrStr := parameter + " parameter out of range"
+
+	err := fsutil.ErrOutOfRange(parameter)
+	if err.Error() != wantErrStr {
+		t.Errorf("ErrOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
+	}
+}
 
 // TestRndTree
 func TestRndTree(t *testing.T) {
@@ -40,75 +52,117 @@ func TestRndTree(t *testing.T) {
 		t.Errorf("New : want error to be nil, got %v", err)
 	}
 
-	rtrTests := []struct {
-		params  fsutil.RndTreeParams
-		wantErr error
-	}{
-		{params: fsutil.RndTreeParams{MinName: 0, MaxName: 0}, wantErr: ErrNameOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 0}, wantErr: ErrNameOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinDepth: -1, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinDepth: 1, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: -1, MaxDirs: 0}, wantErr: ErrDirsOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: 1, MaxDirs: 0}, wantErr: ErrDirsOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: -1, MaxFiles: 0}, wantErr: ErrFilesOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: 1, MaxFiles: 0}, wantErr: ErrFilesOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinFileLen: -1, MaxFileLen: 0}, wantErr: ErrFileLenOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinFileLen: 1, MaxFileLen: 0}, wantErr: ErrFileLenOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: -1, MaxSymlinks: 0}, wantErr: ErrSymlinksOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: 1, MaxSymlinks: 0}, wantErr: ErrSymlinksOutOfRange},
-		{params: fsutil.RndTreeParams{MinName: 10, MaxName: 20, MinDepth: 0, MaxDepth: 0, MinDirs: 5, MaxDirs: 10,
-			MinFiles: 5, MaxFiles: 10, MinFileLen: 5, MaxFileLen: 10, MinSymlinks: 5, MaxSymlinks: 10}, wantErr: nil},
-		{params: fsutil.RndTreeParams{MinName: 10, MaxName: 10, MinDepth: 1, MaxDepth: 3, MinDirs: 3, MaxDirs: 3,
-			MinFiles: 3, MaxFiles: 3, MinFileLen: 3, MaxFileLen: 3, MinSymlinks: 3, MaxSymlinks: 3}, wantErr: nil},
+	tmpDir, err := fs.TempDir("", avfs.Avfs)
+	if err != nil {
+		t.Fatalf("TempDir : want error to be nil, got %v", err)
 	}
 
-	for i, rtrTest := range rtrTests {
-		rtr, err := fsutil.NewRndTree(fs, rtrTest.params)
+	defer fs.RemoveAll(tmpDir)
 
-		if rtrTest.wantErr == nil {
-			if err != nil {
-				t.Errorf("NewRndTree %d: want error to be nil, got %v", i, err)
+	t.Run("RndTreeMain", func(t *testing.T) {
+		rtrTests := []struct {
+			params  fsutil.RndTreeParams
+			wantErr error
+		}{
+			{params: fsutil.RndTreeParams{MinDepth: 0, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 0, MaxName: 0}, wantErr: ErrNameOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 0}, wantErr: ErrNameOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinDirs: -1, MaxDirs: 0}, wantErr: ErrDirsOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinDirs: 1, MaxDirs: 0}, wantErr: ErrDirsOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinFiles: -1, MaxFiles: 0}, wantErr: ErrFilesOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinFiles: 1, MaxFiles: 0}, wantErr: ErrFilesOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinFileLen: -1, MaxFileLen: 0}, wantErr: ErrFileLenOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinFileLen: 1, MaxFileLen: 0}, wantErr: ErrFileLenOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinSymlinks: -1, MaxSymlinks: 0}, wantErr: ErrSymlinksOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1, MinSymlinks: 1, MaxSymlinks: 0}, wantErr: ErrSymlinksOutOfRange},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 10, MaxName: 20, MinDirs: 5, MaxDirs: 10,
+				MinFiles: 5, MaxFiles: 10, MinFileLen: 5, MaxFileLen: 10, MinSymlinks: 5, MaxSymlinks: 10}, wantErr: nil},
+			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 3, MinName: 10, MaxName: 10, MinDirs: 3, MaxDirs: 3,
+				MinFiles: 3, MaxFiles: 3, MinFileLen: 3, MaxFileLen: 3, MinSymlinks: 3, MaxSymlinks: 3}, wantErr: nil},
+		}
+
+		for i, rtrTest := range rtrTests {
+			rtr, err := fsutil.NewRndTree(fs, rtrTest.params)
+
+			if rtrTest.wantErr == nil {
+				if err != nil {
+					t.Errorf("NewRndTree %d: want error to be nil, got %v", i, err)
+
+					continue
+				}
+			} else {
+				if err == nil {
+					t.Errorf("NewRndTree %d : want error to be %v, got nil", i, rtrTest.wantErr)
+				} else if rtrTest.wantErr != err {
+					t.Errorf("NewRndTree %d : want error to be %v, got %v", i, rtrTest.wantErr, err)
+				}
 
 				continue
 			}
-		} else {
-			if err == nil {
-				t.Errorf("NewRndTree %d : want error to be %v, got nil", i, rtrTest.wantErr)
-			} else if rtrTest.wantErr != err {
-				t.Errorf("NewRndTree %d : want error to be %v, got %v", i, rtrTest.wantErr, err)
+
+			path := fs.Join(tmpDir, "Main", strconv.Itoa(i))
+
+			err = fs.MkdirAll(path, avfs.DefaultDirPerm)
+			if err != nil {
+				t.Fatalf("MkdirAll %s : want error to be nil, got %v", path, err)
 			}
 
-			continue
-		}
+			err = rtr.CreateTree(path)
+			if err != nil {
+				t.Errorf("CreateTree : want error to be nil, got %v", err)
+			}
 
-		tmpDir, err := fs.TempDir("", avfs.Avfs)
+			if rtr.MaxDepth == 0 {
+				ld := len(rtr.Dirs)
+				if ld < rtr.MinDirs || ld > rtr.MaxDirs {
+					t.Errorf("CreateTree : want dirs number to to be between %d and %d, got %d",
+						rtr.MinDirs, rtr.MaxDirs, ld)
+				}
+
+				lf := len(rtr.Files)
+				if lf < rtr.MinFiles || lf > rtr.MaxFiles {
+					t.Errorf("CreateTree : want files number to to be between %d and %d, got %d",
+						rtr.MinFiles, rtr.MaxFiles, lf)
+				}
+
+				ls := len(rtr.SymLinks)
+				if ls < rtr.MinSymlinks || ls > rtr.MaxSymlinks {
+					t.Errorf("CreateTree : want symbolic linls number to to be between %d and %d, got %d",
+						rtr.MinSymlinks, rtr.MaxSymlinks, ls)
+				}
+			}
+		}
+	})
+
+	t.Run("RndTreeDepth", func(t *testing.T) {
+		rtr, err := fsutil.NewRndTree(fs, fsutil.RndTreeParams{
+			MinDepth: 3, MaxDepth: 3,
+			MinName: 10, MaxName: 10,
+			MinDirs: 2, MaxDirs: 2,
+			MinFiles: 1, MaxFiles: 1,
+		})
+
+		path := fs.Join(tmpDir, "Depth")
+
+		err = fs.MkdirAll(path, avfs.DefaultDirPerm)
 		if err != nil {
-			t.Fatalf("TempDir : want error to be nil, got %v", err)
+			t.Fatalf("MkdirAll %s : want error to be nil, got %v", path, err)
 		}
 
-		err = rtr.CreateTree(tmpDir)
+		err = rtr.CreateTree(path)
 		if err != nil {
 			t.Errorf("CreateTree : want error to be nil, got %v", err)
 		}
 
-		if rtr.MaxDepth == 0 {
-			ld := len(rtr.Dirs)
-			if ld < rtr.MinDirs || ld > rtr.MaxDirs {
-				t.Errorf("CreateTree : want dirs number to to be between %d and %d, got %d",
-					rtr.MinDirs, rtr.MaxDirs, ld)
-			}
-
-			lf := len(rtr.Files)
-			if lf < rtr.MinFiles || lf > rtr.MaxFiles {
-				t.Errorf("CreateTree : want files number to to be between %d and %d, got %d",
-					rtr.MinFiles, rtr.MaxFiles, lf)
-			}
-
-			ls := len(rtr.SymLinks)
-			if ls < rtr.MinSymlinks || ls > rtr.MaxSymlinks {
-				t.Errorf("CreateTree : want symbolic linls number to to be between %d and %d, got %d",
-					rtr.MinSymlinks, rtr.MaxSymlinks, ls)
-			}
+		wantDirs := 14
+		if len(rtr.Dirs) != wantDirs {
+			t.Errorf("CreateTree : want number of directories to be %d, got %d", wantDirs, len(rtr.Dirs))
 		}
-	}
+
+		wantFiles := 7
+		if len(rtr.Files) != wantFiles {
+			t.Errorf("CreateTree : want number of directories to be %d, got %d", wantFiles, len(rtr.Files))
+		}
+	})
 }

@@ -34,44 +34,44 @@ func (e ErrOutOfRange) Error() string {
 // RndTreeParams defines the parameters to generate
 // a random file system tree of directories, files and symbolic links.
 type RndTreeParams struct {
-	// MinName is the minimum length of a name.
-	MinName int
-
-	// MaxName is the minimum length of a name.
-	MaxName int
-
-	// MinDepth is the minimum depth of the file system tree.
+	// MinDepth is the minimum depth of the file system tree (must be >= 1).
 	MinDepth int
 
-	// MaxDepth is the maximum depth of the file system tree.
+	// MaxDepth is the maximum depth of the file system tree (must be >= MinDepth).
 	MaxDepth int
 
-	// MinDirs is the minimum number of directories of a parent directory.
+	// MinName is the minimum length of a name (must be >= 1).
+	MinName int
+
+	// MaxName is the minimum length of a name (must be >= MinName).
+	MaxName int
+
+	// MinDirs is the minimum number of directories of a parent directory (must be >= 0).
 	MinDirs int
 
-	// MaxDirs is the maximum number of directories of a parent directory.
+	// MaxDirs is the maximum number of directories of a parent directory (must be >= MinDirs).
 	MaxDirs int
 
-	// MinFiles is the minimum number of files of a parent directory.
+	// MinFiles is the minimum number of files of a parent directory (must be >= 0).
 	MinFiles int
 
-	// MaxFiles is the maximum number of Files of a parent directory.
+	// MaxFiles is the maximum number of Files of a parent directory (must be >= MinFiles).
 	MaxFiles int
 
-	// MinFileLen is minimum size of a file.
+	// MinFileLen is minimum size of a file (must be >= 0).
 	MinFileLen int
 
-	// MaxFileLen is maximum size of a file.
+	// MaxFileLen is maximum size of a file (must be >= MinFileLen).
 	MaxFileLen int
 
-	// MinSymlinks is the minimum number of symbolic links of a parent directory.
+	// MinSymlinks is the minimum number of symbolic links of a parent directory (must be >= 0).
 	MinSymlinks int
 
-	// MaxSymlinks is the maximum number of symbolic links of a parent directory.
+	// MaxSymlinks is the maximum number of symbolic links of a parent directory (must be >= MinSymlinks).
 	MaxSymlinks int
 }
 
-// RndTree is a random file system tree of directories, files and symbolic links.
+// RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
 	RndTreeParams
 	fs       avfs.Fs
@@ -82,12 +82,12 @@ type RndTree struct {
 
 // NewRndTree returns a new random tree generator.
 func NewRndTree(fs avfs.Fs, p RndTreeParams) (*RndTree, error) { //nolint:gocritic
-	if p.MinName < 1 || p.MinName > p.MaxName {
-		return nil, ErrOutOfRange("name")
+	if p.MinDepth < 1 || p.MinDepth > p.MaxDepth {
+		return nil, ErrOutOfRange("depth")
 	}
 
-	if p.MinDepth < 0 || p.MinDepth > p.MaxDepth {
-		return nil, ErrOutOfRange("depth")
+	if p.MinName < 1 || p.MinName > p.MaxName {
+		return nil, ErrOutOfRange("name")
 	}
 
 	if p.MinDirs < 0 || p.MinDirs > p.MaxDirs {
@@ -116,7 +116,7 @@ func NewRndTree(fs avfs.Fs, p RndTreeParams) (*RndTree, error) { //nolint:gocrit
 
 // CreateTree creates a random tree structure on a given path.
 func (rt *RndTree) CreateTree(path string) error {
-	return rt.randTree(path, 0)
+	return rt.randTree(path, 1)
 }
 
 // randTree generates recursively a random subtree of directories, files and symbolic links.
@@ -150,7 +150,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 	}
 
 	depth++
-	if depth >= maxDepth {
+	if depth > maxDepth {
 		return nil
 	}
 

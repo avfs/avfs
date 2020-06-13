@@ -26,10 +26,10 @@ import (
 
 // RndParamsOneDir are the parameters of fsutil.RndTree.
 var RndParamsOneDir = fsutil.RndTreeParams{ //nolint:gochecknoglobals
+	MinDepth:    1,
+	MaxDepth:    1,
 	MinName:     4,
 	MaxName:     32,
-	MinDepth:    0,
-	MaxDepth:    0,
 	MinDirs:     10,
 	MaxDirs:     20,
 	MinFiles:    50,
@@ -77,7 +77,12 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 	canTestPerm := fsRoot.HasFeature(avfs.FeatIdentityMgr) && currentUser.IsRoot()
 	fs := fsRoot
 
-	t.Logf("Info fs : type = %s, name = %s", fs.Type(), fs.Name())
+	info := "Info fs : type = " + fs.Type()
+	if fs.Name() != "" {
+		info += ", name = " + fs.Name()
+	}
+
+	t.Log(info)
 
 	if canTestPerm {
 		CreateGroups(t, fs, "")
