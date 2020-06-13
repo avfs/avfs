@@ -59,6 +59,7 @@ func (cf *ConfigFs) SuitePermRead() {
 
 	cf.SuiteAccessDir()
 	cf.SuiteAccessFile()
+	cf.SuiteStatT()
 }
 
 // SuiteChown tests Chown function.
@@ -591,6 +592,22 @@ func (cf *ConfigFs) SuiteAccessFile() {
 
 		return nil
 	})
+}
+
+// SuiteStatT
+func (cf *ConfigFs) SuiteStatT() {
+	t := cf.t
+	fs := cf.GetFsWrite()
+
+	info, err := fs.Stat(avfs.TmpDir)
+	if err != nil {
+		t.Errorf("Stat : want error be nil, got %v", err)
+	}
+
+	statT := fsutil.AsStatT(info.Sys())
+	if statT.Uid != 0 || statT.Gid != 0 {
+		t.Errorf("AsStatT : want Uid = 0, Gid = 0, got Uid = %d, Gid = %d", statT.Uid, statT.Gid)
+	}
 }
 
 // SuiteWriteDenied tests functions on directories and files where write is denied.

@@ -19,6 +19,7 @@
 package fsutil
 
 import (
+	"math"
 	"os"
 	"sync"
 	"syscall"
@@ -73,6 +74,6 @@ func AsStatT(value interface{}) *avfs.StatT {
 	case *syscall.Stat_t:
 		return &avfs.StatT{Uid: s.Uid, Gid: s.Gid}
 	default:
-		return &avfs.StatT{Uid: 0, Gid: 0}
+		return &avfs.StatT{Uid: math.MaxUint32, Gid: math.MaxUint32}
 	}
 }

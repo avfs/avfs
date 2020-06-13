@@ -19,6 +19,7 @@
 package fsutil
 
 import (
+	"math"
 	"os"
 
 	"github.com/avfs/avfs"
@@ -46,6 +47,6 @@ func AsStatT(value interface{}) *avfs.StatT {
 	case *avfs.StatT:
 		return s
 	default:
-		return &avfs.StatT{Uid: 0, Gid: 0}
+		return &avfs.StatT{Uid: math.MaxUint32, Gid: math.MaxUint32}
 	}
 }
