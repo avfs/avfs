@@ -17,54 +17,120 @@
 package test
 
 import (
-	"os"
-	"strconv"
 	"sync"
 	"sync/atomic"
+	"testing"
 
 	"github.com/avfs/avfs"
 )
 
-// TestRaceMkdir tests race conditions for mkdir function.
-func (cf *ConfigFs) TestRaceMkdir() {
+// SuiteRace
+func (cf *ConfigFs) SuiteRace() {
 	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	const maxGo = 10000
-
-	var (
-		simCount int32
-		simMax   int32
-		wg       sync.WaitGroup
-	)
-
 	fs := cf.GetFsWrite()
 
-	wg.Add(maxGo)
+	t.Run("Race", func(t *testing.T) {
+		path := fs.Join(rootDir, "mkdDirNew")
 
-	for i := 0; i < maxGo; i++ {
-		go func(i int) {
+		cf.SuiteRaceFunc("Mkdir", RaceOneOk, func() error {
+			return fs.Mkdir(path, avfs.DefaultDirPerm)
+		})
+
+		cf.SuiteRaceFunc("Remove", RaceOneOk, func() error {
+			return fs.Remove(path)
+		})
+
+		cf.SuiteRaceFunc("MkdirAll", RaceAllOk, func() error {
+			return fs.MkdirAll(path, avfs.DefaultDirPerm)
+		})
+
+		cf.SuiteRaceFunc("Lstat Ok", RaceAllOk, func() error {
+			_, err := fs.Lstat(path)
+			return err
+		})
+
+		cf.SuiteRaceFunc("Stat Ok", RaceAllOk, func() error {
+			_, err := fs.Stat(path)
+			return err
+		})
+
+		cf.SuiteRaceFunc("RemoveAll", RaceAllOk, func() error {
+			return fs.RemoveAll(path)
+		})
+
+		cf.SuiteRaceFunc("Lstat Error", RaceNoneOk, func() error {
+			_, err := fs.Lstat(path)
+			return err
+		})
+
+		cf.SuiteRaceFunc("Stat Error", RaceNoneOk, func() error {
+			_, err := fs.Stat(path)
+			return err
+		})
+	})
+}
+
+// RaceResult defines the type of result expected from a race test.
+type RaceResult uint8
+
+const (
+	// RaceNoneOk expects that all the results will return an error.
+	RaceNoneOk RaceResult = iota
+
+	// RaceOneOk expects that only one result will be without error.
+	RaceOneOk
+
+	// RaceAllOk expects that all results will return an error.
+	RaceAllOk
+)
+
+// SuiteRaceFunc tests data race conditions on a function f expecting a result rr.
+func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
+	var (
+		t       = cf.t
+		wg      sync.WaitGroup
+		wantOk  int32
+		gotOk   int32
+		wantErr int32
+		gotErr  int32
+	)
+
+	wg.Add(cf.maxRace)
+
+	for i := 0; i < cf.maxRace; i++ {
+		go func() {
 			defer wg.Done()
 
-			path := fs.Join(rootDir, strconv.Itoa(i))
-			scm := atomic.LoadInt32(&simMax)
-
-			sc := atomic.AddInt32(&simCount, 1)
-			if sc > scm {
-				atomic.CompareAndSwapInt32(&simMax, scm, sc)
-			}
-
-			err := fs.Mkdir(path, avfs.DefaultDirPerm)
+			err := f()
 			if err != nil {
-				if e, ok := err.(*os.PathError); !ok || e.Err != avfs.ErrFileExists {
-					t.Errorf("mkdir %s : want error to be nil or %v, got %v", path, avfs.ErrFileExists, err)
-				}
+				atomic.AddInt32(&gotErr, 1)
+				return
 			}
 
-			atomic.AddInt32(&simCount, -1)
-		}(i)
+			atomic.AddInt32(&gotOk, 1)
+		}()
 	}
+
 	wg.Wait()
 
-	t.Logf("max= %d", simMax)
+	switch rr {
+	case RaceNoneOk:
+		wantOk = 0
+	case RaceOneOk:
+		wantOk = 1
+	case RaceAllOk:
+		wantOk = int32(cf.maxRace)
+	}
+
+	wantErr = int32(cf.maxRace) - wantOk
+
+	if gotOk != wantOk {
+		t.Errorf("Race %s : want number of responses without error to be %d, got %d ", name, wantOk, gotOk)
+	}
+
+	if gotErr != wantErr {
+		t.Errorf("Race %s : want number of responses with errors to be %d, got %d", name, wantErr, gotErr)
+	}
 }

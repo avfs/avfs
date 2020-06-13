@@ -42,11 +42,25 @@ var RndParamsOneDir = fsutil.RndTreeParams{ //nolint:gochecknoglobals
 
 // ConfigFs represents a test configuration for a file system.
 type ConfigFs struct {
-	t           *testing.T
-	fsRoot      avfs.Fs
-	fsW         avfs.Fs
-	fsR         avfs.Fs
-	rootDir     string
+	// t is passed to Test functions to manage test state and support formatted test logs.
+	t *testing.T
+
+	// fsRoot is the file system as a root user.
+	fsRoot avfs.Fs
+
+	// fsW is the file system as test user with read and write permissions.
+	fsW avfs.Fs
+
+	// fsR is the file system as test user with read only permissions.
+	fsR avfs.Fs
+
+	// rootDir is the root directory for tests, it can be generated automatically or specified with OptRootDir().
+	rootDir string
+
+	// maxRace is the maximum number of concurrent goroutines used in race tests.
+	maxRace int
+
+	// canTestPerm indicates if permissions can be tested.
 	canTestPerm bool
 }
 
@@ -81,6 +95,7 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 		fsW:         fs,
 		fsR:         fs,
 		rootDir:     "",
+		maxRace:     1000,
 		canTestPerm: canTestPerm,
 	}
 
