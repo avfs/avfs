@@ -15,5 +15,6 @@
 //
 
 // Package osidm implements an identity manager using os functions.
+//
 // Copied from standard library os/user/*_unix.go with few modifications.
 package osidm

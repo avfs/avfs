@@ -41,7 +41,6 @@ var (
 
 // CreateBaseDirs creates base directories on a file system.
 func CreateBaseDirs(fs avfs.Fs) error {
-
 	for _, dir := range BaseDirs {
 		err := fs.Mkdir(dir.Path, dir.Perm)
 		if err != nil {
