@@ -51,8 +51,7 @@ fs, err := memfs.New(memfs.OptMainDirs())
 
 ### Symbolic and hard links
 The example below demonstrates the creation of a file, a symbolic link 
-and a hard link to this file for a memory file system (MemFs)
-
+and a hard link to this file, for a memory file system (MemFs).
 Error management has been omitted for the sake of simplicity :
 
 ```go
@@ -104,22 +103,24 @@ Don't be fooled by the coverage percentages, everything is a work in progress.
 All the file systems pass the common test suite, but you should not use this in a production environment at this time.
 
 ## File systems
-The following file systems are available :
+All file systems implement at least `avfs.Fs` and `avfs.File` interfaces.
 
-File system  |Comments
--------------|--------
-BasePathFs|file system that restricts all operations to a given path within a file system
-DummyFs|Non implemented file system to be used as model
-MemFs|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
-OrefaFs|Afero like in memory file system
-OsFs|Operating system native file system
-ReadOnlyFs|Read only file system
+By default, each file system supported methods are the most commonly used from packages `os`, `path/filepath` and `ioutil`.
+
+All methods (except `TempDir` which is found in packages `os` and `ioutil`) have identical names as their functions counterparts. 
+
+The following file systems are currently available :
+
+File system |Comments
+------------|--------
+[BasePathFs](fs/basepathfs)|file system that restricts all operations to a given path within a file system
+[DummyFs](fs/dummyfs)|Non implemented file system to be used as model
+[MemFs](fs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
+[OrefaFs](fs/orefafs)|Afero like in memory file system
+[OsFs](fs/osfs)|Operating system native file system
+[RoFs](fs/rofs)|Read only file system
 
 ## Supported methods
-All file systems implement at least `avfs.Fs` and `avfs.File` interfaces.
-By default, each file system 
-Supported methods are the most commonly used from packages `os`, `path/filepath` and `ioutil`.
-All methods (except `TempDir` which is found in packages `os` and `ioutil`) have identical names as their functions equivalents. 
 
 File system methods <br> `avfs.Fs`|Comments
 ----------------------------------|--------
@@ -184,6 +185,19 @@ File methods <br> `avfs.File`|Comments
 `Write`|equivalent to `os.File.Write`
 `WriteAt`|equivalent to `os.File.WriteAt`
 `WriteString`|equivalent to `os.File.WriteString`
+
+## Identity Managers
+Identity managers allow users and groups management.
+The ones implemented in `avfs` are just here to allow testing of functions related to users (Chown, Lchown)
+and access rights, so they just allow one default group per user.
+
+Each file system implement at least the identity manager `DummyIdm` where all functions returns `avfs.ErrPermDenied`. 
+
+Identity Manager |Comments
+-----------------|--------
+[DummyIdm](idm/dummyidm)|dummy identity manager where all functions are not implemented
+[MemIdm](idm/memidm)|In memory identity manager
+[OsIdm](idm/osidm)|Identity manager using os functions
 
 Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
 -------------------------------------------------------------|--------
