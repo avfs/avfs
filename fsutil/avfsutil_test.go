@@ -17,10 +17,36 @@
 package fsutil_test
 
 import (
+	"os"
 	"testing"
 
+	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/fsutil"
 )
+
+func TestCreateBaseDirs(t *testing.T) {
+	fs, err := memfs.New()
+	if err != nil {
+		t.Fatalf("memfs.New : want error to be nil, got %v", err)
+	}
+
+	err = fsutil.CreateBaseDirs(fs)
+	if err != nil {
+		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
+	}
+
+	for _, dir := range fsutil.BaseDirs {
+		info, err := fs.Stat(dir.Path)
+		if err != nil {
+			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
+		}
+
+		gotMode := info.Mode() & os.ModePerm
+		if gotMode != dir.Perm {
+			t.Errorf("CreateBaseDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
+		}
+	}
+}
 
 // TestUMask tests Umask and GetYMask functions.
 func TestUMask(t *testing.T) {

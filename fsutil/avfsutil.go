@@ -24,8 +24,38 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// UMask is the global variable containing the file mode creation mask.
-var UMask UMaskType //nolint:gochecknoglobals
+var (
+	// UMask is the global variable containing the file mode creation mask.
+	UMask UMaskType //nolint:gochecknoglobals
+
+	// BaseDirs are the base directories present in a file system.
+	BaseDirs = []struct { //nolint:gochecknoglobals
+		Path string
+		Perm os.FileMode
+	}{
+		{Path: avfs.HomeDir, Perm: 0o755},
+		{Path: avfs.RootDir, Perm: 0o700},
+		{Path: avfs.TmpDir, Perm: 0o777},
+	}
+)
+
+// CreateBaseDirs creates base directories on a file system.
+func CreateBaseDirs(fs avfs.Fs) error {
+
+	for _, dir := range BaseDirs {
+		err := fs.Mkdir(dir.Path, dir.Perm)
+		if err != nil {
+			return err
+		}
+
+		err = fs.Chmod(dir.Path, dir.Perm)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 // CheckPermission returns true is a user 'u' has 'want' permission on a file or directory represented by 'info'.
 func CheckPermission(info os.FileInfo, want avfs.WantMode, u avfs.UserReader) bool {
@@ -48,32 +78,6 @@ func CheckPermission(info os.FileInfo, want avfs.WantMode, u avfs.UserReader) bo
 	want &= avfs.WantRWX
 
 	return avfs.WantMode(mode)&want == want
-}
-
-// CreateBaseDirs creates base directories on a file system.
-func CreateBaseDirs(fs avfs.Fs) error {
-	dirs := []struct {
-		path string
-		perm os.FileMode
-	}{
-		{path: avfs.HomeDir, perm: 0o755},
-		{path: avfs.RootDir, perm: 0o700},
-		{path: avfs.TmpDir, perm: 0o1777},
-	}
-
-	for _, dir := range dirs {
-		err := fs.Mkdir(dir.path, dir.perm)
-		if err != nil {
-			return err
-		}
-
-		err = fs.Chmod(dir.path, dir.perm)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // CreateHomeDir creates the home directory of a user.
