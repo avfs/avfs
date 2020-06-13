@@ -58,9 +58,7 @@ func New(opts ...Option) (*MemFs, error) {
 		um := fs.umask
 		fs.umask = 0
 
-		_ = fs.createDir(fs.rootNode, avfs.HomeDir[1:], 0o755)
-		_ = fs.createDir(fs.rootNode, avfs.RootDir[1:], 0o700)
-		_ = fs.createDir(fs.rootNode, avfs.TmpDir[1:], 0o1777)
+		_ = fsutil.CreateBaseDirs(fs)
 
 		fs.umask = um
 		fs.curDir = avfs.RootDir
