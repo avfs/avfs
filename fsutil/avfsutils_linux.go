@@ -66,7 +66,7 @@ func (um *UMaskType) Set(mask os.FileMode) {
 	um.mu.Unlock()
 }
 
-// AsStatT converts a value as an avfs.StatT
+// AsStatT converts a value as an avfs.StatT.
 func AsStatT(value interface{}) *avfs.StatT {
 	switch s := value.(type) {
 	case *avfs.StatT:

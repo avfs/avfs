@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-package orefafs
+package orefafs //nolint:testpackage
 
 import (
 	"os"

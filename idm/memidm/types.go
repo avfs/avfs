@@ -38,16 +38,16 @@ type MemIdm struct {
 	grpMu, usrMu   sync.RWMutex
 }
 
-// groupsByName
+// groupsByName is the map of groups by group name.
 type groupsByName map[string]*Group
 
-// groupsById
+// groupsById is the map of the groups by group id.
 type groupsById map[int]*Group
 
-// usersByName
+// usersByName is the map of the users by user name.
 type usersByName map[string]*User
 
-// usersById
+// usersById is the map of the users by user id.
 type usersById map[int]*User
 
 // User is the implementation of avfs.UserReader.

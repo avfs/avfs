@@ -265,7 +265,7 @@ func (fs *OsFs) MkdirAll(path string, perm os.FileMode) error {
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
 func (fs *OsFs) Open(name string) (avfs.File, error) {
-	return os.Open(name) //nolint:gosec
+	return os.Open(name)
 }
 
 // OpenFile is the generalized open call; most users will use Open
@@ -289,7 +289,7 @@ func (fs *OsFs) ReadDir(dirname string) ([]os.FileInfo, error) {
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
 func (fs *OsFs) ReadFile(filename string) ([]byte, error) {
-	return ioutil.ReadFile(filename) //nolint:gosec
+	return ioutil.ReadFile(filename)
 }
 
 // Readlink returns the destination of the named symbolic link.

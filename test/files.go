@@ -339,7 +339,7 @@ func (cf *ConfigFs) SuiteWriteString() {
 			t.Errorf("WriteString : want written bytes to be %d, got %d", len(data), n)
 		}
 
-		f.Close() //nolint:errcheck
+		f.Close()
 
 		rb, err := fs.ReadFile(path)
 		if err != nil {

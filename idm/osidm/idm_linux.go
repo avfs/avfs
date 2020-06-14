@@ -63,7 +63,7 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("groupadd", name) //nolint:gosec
+	cmd := exec.Command("groupadd", name)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -96,7 +96,7 @@ func (idm *OsIdm) GroupDel(name string) error {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("groupdel", name) //nolint:gosec
+	cmd := exec.Command("groupdel", name)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -220,7 +220,7 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("useradd", "-M", "-g", groupName, "-s", "/usr/sbin/nologin", name) //nolint:gosec
+	cmd := exec.Command("useradd", "-M", "-g", groupName, "-s", "/usr/sbin/nologin", name)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -255,7 +255,7 @@ func (idm *OsIdm) UserDel(name string) error {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("userdel", name) //nolint:gosec
+	cmd := exec.Command("userdel", name)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr

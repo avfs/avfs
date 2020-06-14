@@ -21,7 +21,7 @@ import (
 	"strings"
 )
 
-// toBasePath returns the
+// toBasePath returns the real absolute path of the base file system from the BasePathFs path.
 func (fs *BasePathFs) toBasePath(path string) string {
 	if path == "" {
 		return ""
@@ -32,7 +32,7 @@ func (fs *BasePathFs) toBasePath(path string) string {
 	return fs.basePath + absPath
 }
 
-// restoreError
+// restoreError paths in errors if necessary.
 func (fs *BasePathFs) restoreError(err error) error {
 	if err == nil {
 		return nil

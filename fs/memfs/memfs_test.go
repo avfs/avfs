@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-package memfs
+package memfs //nolint:testpackage
 
 import (
 	"os"

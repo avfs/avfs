@@ -113,6 +113,7 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
 			err := f()
 			if err != nil {
 				atomic.AddInt32(&gotErr, 1)
+
 				return
 			}
 
