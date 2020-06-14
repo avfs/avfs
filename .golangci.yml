@@ -60,6 +60,7 @@ linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
+    - asciicheck
     - bodyclose
     - deadcode
     - depguard
@@ -73,7 +74,9 @@ linters:
     - goconst
     - gocritic
     #- gocyclo
+    - godot
     - godox
+    #- goerr113
     - gofmt
     - goimports
     - golint
@@ -88,45 +91,28 @@ linters:
     - maligned
     - misspell
     - nakedret
+    #- nestif
+    - nolintlint
     - prealloc
     - rowserrcheck
     - scopelint
     - staticcheck
     - structcheck
     - stylecheck
+    - testpackage
     - typecheck
     - unconvert
     - unparam
     - unused
     - varcheck
     - vet
-    - vetshadow
     - whitespace
     - wsl
 
 issues:
   # Excluding configuration per-path, per-linter, per-text and per-source
   exclude-rules:
-    - path: _test\.go
-      linters:
-        - funlen
-        - gocognit
-        - gomnd
-
-    - path: test/[^\.]+\.go
-      linters:
-        - funlen
-        - gocognit
-        - gomnd
-
     - linters:
         - golint
         - stylecheck
       text: ".*id.* should be .*ID.*"
-
-run:
-  skip-dirs:
-    - test/testdata_etc
-    - internal/cache
-    - internal/renameio
-    - internal/robustio
