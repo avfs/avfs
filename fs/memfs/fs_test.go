@@ -118,8 +118,8 @@ func TestMemFsFeatures(t *testing.T) {
 	}
 }
 
-// TestRace
-func TestRace(t *testing.T) {
+// TestRaceMemFs
+func TestRaceMemFs(t *testing.T) {
 	cf := initTest(t)
 
 	cf.SuiteRace()

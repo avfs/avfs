@@ -65,6 +65,13 @@ func TestNilPtrReceiver(t *testing.T) {
 	test.SuiteNilPtrFile(t, f)
 }
 
+// TestRaceOsFs
+func TestRaceOsFs(t *testing.T) {
+	cf := initTest(t)
+
+	cf.SuiteRace()
+}
+
 // BenchmarkOsFsCreate
 func BenchmarkOsFsCreate(b *testing.B) {
 	fs, err := osfs.New()
