@@ -82,7 +82,7 @@ const (
 	// RaceOneOk expects that only one result will be without error.
 	RaceOneOk
 
-	// RaceAllOk expects that all results will return an error.
+	// RaceAllOk expects that all results will be without error.
 	RaceAllOk
 )
 
@@ -91,6 +91,7 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
 	var (
 		t       = cf.t
 		wg      sync.WaitGroup
+		starter sync.RWMutex
 		wantOk  int32
 		gotOk   int32
 		wantErr int32
@@ -98,10 +99,16 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
 	)
 
 	wg.Add(cf.maxRace)
+	starter.Lock()
 
 	for i := 0; i < cf.maxRace; i++ {
 		go func() {
-			defer wg.Done()
+			defer func() {
+				starter.RUnlock()
+				wg.Done()
+			}()
+
+			starter.RLock()
 
 			err := f()
 			if err != nil {
@@ -113,6 +120,7 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
 		}()
 	}
 
+	starter.Unlock()
 	wg.Wait()
 
 	switch rr {
