@@ -73,6 +73,10 @@ test: env coverage_init
 cover:
 	@go tool cover -html=$(COVERAGE_FILE)
 
+.PHONY: race
+race:
+	@go test -run=TestRace -race -v -count=$(COUNT) ./...
+
 .PHONY: bench
 bench:
 	@go test -run=^a -bench=. -benchmem -count=5 ./...
