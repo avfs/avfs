@@ -26,6 +26,7 @@ DOCKER_IMAGE := avfs-docker
 COVERAGE_FILE := coverage.txt
 
 RUNTEST?=.
+COUNT?=5
 
 .PHONY: all
 all: golangci dockertest
