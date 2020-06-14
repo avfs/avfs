@@ -49,10 +49,10 @@ type OrefaFile struct {
 // Option defines the option function used for initializing OrefaFs.
 type Option func(*OrefaFs) error
 
-// nodes
+// nodes is the map of nodes (files or directory) where the key is the absolute path.
 type nodes map[string]*node
 
-// children
+// children is the map of children (files or directory) of a directory where the key is the relative path.
 type children nodes
 
 // node is the common structure of directories and files.
