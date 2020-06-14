@@ -35,7 +35,7 @@ func TestOsFsWithOsIdm(t *testing.T) {
 	ci.SuiteAll()
 }
 
-// TestOsFsWithoutIdm
+// TestOsFsWithoutIdm test OsFs without and identity manager.
 func TestOsFsWithoutIdm(t *testing.T) {
 	fs, err := osfs.New()
 	if err != nil {

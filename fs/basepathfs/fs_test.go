@@ -34,7 +34,6 @@ var (
 	_ avfs.File = &basepathfs.BasePathFile{}
 )
 
-// initTest
 func initTest(t *testing.T) *basepathfs.BasePathFs {
 	const basePath = "/base/path"
 
@@ -56,7 +55,6 @@ func initTest(t *testing.T) *basepathfs.BasePathFs {
 	return fs
 }
 
-// TestMemFs tests BasePathFs
 func TestBasePathFs(t *testing.T) {
 	fs := initTest(t)
 	cf := test.NewConfigFs(t, fs)
@@ -64,7 +62,6 @@ func TestBasePathFs(t *testing.T) {
 	cf.SuiteAll()
 }
 
-// TestMemFsPerm tests BasePathFs permissions.
 func TestBasePathFsPerm(t *testing.T) {
 	fs := initTest(t)
 	cf := test.NewConfigFs(t, fs)
@@ -72,8 +69,8 @@ func TestBasePathFsPerm(t *testing.T) {
 	cf.SuitePerm()
 }
 
-// TestBasePathFsConfig tests BasePathFs configuration options.
-func TestBasePathFsConfig(t *testing.T) {
+// TestBasePathFsOptions tests BasePathFs configuration options.
+func TestBasePathFsOptions(t *testing.T) {
 	const (
 		nonExistingDir = "/non/existing/dir"
 		existingFile   = "/tmp/existingFile"
@@ -105,7 +102,6 @@ func TestBasePathFsConfig(t *testing.T) {
 	test.CheckPathError(t, "BasePath", "mkdir", "/tmp", avfs.ErrFileExists, err)
 }
 
-// TestBasePathFsFeatures
 func TestBasePathFsFeatures(t *testing.T) {
 	mfs, err := memfs.New()
 	if err != nil {

@@ -22,7 +22,6 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-// TestOrefaFsIdm
 func TestOrefaFsIdm(t *testing.T) {
 	fs := initTest(t)
 

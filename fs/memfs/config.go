@@ -123,7 +123,6 @@ func OptName(name string) Option {
 	}
 }
 
-// OptAbsPath returns an option function which sets
 func OptAbsPath() Option {
 	return func(fs *MemFs) error {
 		fs.feature |= avfs.FeatAbsPath

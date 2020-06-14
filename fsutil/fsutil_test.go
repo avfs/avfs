@@ -7,7 +7,6 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-// TestPath
 func TestPath(t *testing.T) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {

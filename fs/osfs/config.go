@@ -22,7 +22,6 @@ import (
 )
 
 // New returns a new OsFs file system.
-// By default
 func New(opts ...Option) (*OsFs, error) {
 	fs := &OsFs{
 		idm: dummyidm.NotImplementedIdm,

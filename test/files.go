@@ -1050,7 +1050,7 @@ func (cf *ConfigFs) SuiteSameFile() {
 	})
 }
 
-// SuiteFileWriteTime
+// SuiteFileWriteTime checks that modification time is updated on write operations.
 func (cf *ConfigFs) SuiteFileWriteTime() {
 	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
 	defer removeDir()

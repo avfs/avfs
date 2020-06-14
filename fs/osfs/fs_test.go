@@ -34,7 +34,6 @@ var (
 	_ avfs.File = &os.File{}
 )
 
-// initTest
 func initTest(t *testing.T) *test.ConfigFs {
 	fsRoot, err := osfs.New(osfs.OptIdm(osidm.New()))
 	if err != nil {
@@ -46,33 +45,30 @@ func initTest(t *testing.T) *test.ConfigFs {
 	return cf
 }
 
-// TestOsFs
 func TestOsFs(t *testing.T) {
 	cf := initTest(t)
 	cf.SuiteAll()
 }
 
-// TestOsFsPerm
 func TestOsFsPerm(t *testing.T) {
 	cf := initTest(t)
 	cf.SuitePerm()
 }
 
-// TestNilPtrReceiver
 func TestNilPtrReceiver(t *testing.T) {
 	f := (*os.File)(nil)
 
 	test.SuiteNilPtrFile(t, f)
 }
 
-// TestRaceOsFs
 func TestRaceOsFs(t *testing.T) {
+	t.Skip()
+
 	cf := initTest(t)
 
 	cf.SuiteRace()
 }
 
-// BenchmarkOsFsCreate
 func BenchmarkOsFsCreate(b *testing.B) {
 	fs, err := osfs.New()
 	if err != nil {

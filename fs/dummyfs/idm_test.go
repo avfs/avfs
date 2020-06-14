@@ -23,7 +23,6 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-// TestDummyFsIdm
 func TestDummyFsIdm(t *testing.T) {
 	fs, err := dummyfs.New()
 	if err != nil {

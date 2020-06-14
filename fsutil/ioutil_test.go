@@ -191,8 +191,8 @@ func TestTempDir(t *testing.T) {
 	})
 }
 
-// test that we return a nice error message if the dir argument to TempDir doesn't
-// exist (or that it's empty and os.TempDir doesn't exist)
+// TestTempDir_BadDir tests that we return a nice error message if the dir argument to TempDir doesn't
+// exist (or that it's empty and os.TempDir doesn't exist).
 func TestTempDir_BadDir(t *testing.T) {
 	fs := InitTest(t)
 

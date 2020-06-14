@@ -34,7 +34,6 @@ var (
 	ErrSymlinksOutOfRange = fsutil.ErrOutOfRange("symbolic links")
 )
 
-// TestErrOutOfRange
 func TestErrOutOfRange(t *testing.T) {
 	parameter := "Some"
 	wantErrStr := parameter + " parameter out of range"
@@ -45,7 +44,6 @@ func TestErrOutOfRange(t *testing.T) {
 	}
 }
 
-// TestRndTree
 func TestRndTree(t *testing.T) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {

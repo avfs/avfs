@@ -595,7 +595,7 @@ func (cf *ConfigFs) SuiteAccessFile() {
 	})
 }
 
-// SuiteStatT
+// SuiteStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
 func (cf *ConfigFs) SuiteStatT() {
 	t := cf.t
 	fs := cf.GetFsWrite()

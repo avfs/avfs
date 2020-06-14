@@ -48,7 +48,6 @@ func initTest(t *testing.T) *test.ConfigFs {
 	return cf
 }
 
-// TestRoFs
 func TestRoFs(t *testing.T) {
 	cf := initTest(t)
 	cf.SuiteRead()
@@ -57,7 +56,6 @@ func TestRoFs(t *testing.T) {
 	cf.SuitePath()
 }
 
-// TestRoFsPerm
 func TestRoFsPerm(t *testing.T) {
 	cf := initTest(t)
 	cf.SuitePermRead()

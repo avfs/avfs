@@ -24,7 +24,7 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// SuiteRace
+// SuiteRace tests data race conditions for some functions.
 func (cf *ConfigFs) SuiteRace() {
 	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
 	defer removeDir()

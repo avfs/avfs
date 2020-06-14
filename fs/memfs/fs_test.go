@@ -34,7 +34,6 @@ var (
 	_ avfs.File = &memfs.MemFile{}
 )
 
-// initTest
 func initTest(t *testing.T) *test.ConfigFs {
 	fsRoot, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
 	if err != nil {
@@ -46,19 +45,16 @@ func initTest(t *testing.T) *test.ConfigFs {
 	return cf
 }
 
-// TestMemFs
 func TestMemFs(t *testing.T) {
 	cf := initTest(t)
 	cf.SuiteAll()
 }
 
-// TestMemFsPerm
 func TestMemFsPerm(t *testing.T) {
 	cf := initTest(t)
 	cf.SuitePerm()
 }
 
-// TestMemFsOptionError
 func TestMemFsOptionError(t *testing.T) {
 	_, err := memfs.New(memfs.OptIdm(dummyidm.New()))
 	if err != avfs.ErrPermDenied {
@@ -66,7 +62,7 @@ func TestMemFsOptionError(t *testing.T) {
 	}
 }
 
-// TestMemFsOptionName
+// TestMemFsOptionName tests MemFs initialization with or without option name (OptName()).
 func TestMemFsOptionName(t *testing.T) {
 	const wantName = "whatever"
 
@@ -90,14 +86,12 @@ func TestMemFsOptionName(t *testing.T) {
 	}
 }
 
-// TestNilPtrReceiver
 func TestNilPtrReceiver(t *testing.T) {
 	f := (*memfs.MemFile)(nil)
 
 	test.SuiteNilPtrFile(t, f)
 }
 
-// TestMemFsFeatures
 func TestMemFsFeatures(t *testing.T) {
 	fs, err := memfs.New()
 	if err != nil {
@@ -118,14 +112,14 @@ func TestMemFsFeatures(t *testing.T) {
 	}
 }
 
-// TestRaceMemFs
 func TestRaceMemFs(t *testing.T) {
+	t.Skip()
+
 	cf := initTest(t)
 
 	cf.SuiteRace()
 }
 
-// BenchmarkMemFsCreate
 func BenchmarkMemFsCreate(b *testing.B) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {

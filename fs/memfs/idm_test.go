@@ -26,7 +26,6 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-// TestMemFsWithNoIdm
 func TestMemFsWithNoIdm(t *testing.T) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {
@@ -37,7 +36,6 @@ func TestMemFsWithNoIdm(t *testing.T) {
 	ci.SuiteAll()
 }
 
-// TestMemFsWithMemIdm
 func TestMemFsWithMemIdm(t *testing.T) {
 	fs, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
 	if err != nil {
@@ -48,7 +46,6 @@ func TestMemFsWithMemIdm(t *testing.T) {
 	ci.SuiteAll()
 }
 
-// TestMemFsWithOsIdm
 func TestMemFsWithOsIdm(t *testing.T) {
 	if runtime.GOOS != "linux" {
 		t.Skip("OsIdm only works on a linux platform, skipping")

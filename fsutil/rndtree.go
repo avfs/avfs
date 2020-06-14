@@ -23,10 +23,9 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// ErrOutOfRange
+// ErrOutOfRange defines the generic error for out of range parameters RndTreeParams.
 type ErrOutOfRange string
 
-// Error
 func (e ErrOutOfRange) Error() string {
 	return string(e) + " parameter out of range"
 }

@@ -22,7 +22,6 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-// TestBasePathFsFsWithMemIdm
 func TestBasePathFsFsWithMemIdm(t *testing.T) {
 	fs := initTest(t)
 	ci := test.NewConfigIdm(t, fs)

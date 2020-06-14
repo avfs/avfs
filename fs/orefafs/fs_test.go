@@ -32,7 +32,6 @@ var (
 	_ avfs.File = &orefafs.OrefaFile{}
 )
 
-// initTest
 func initTest(t *testing.T) avfs.Fs {
 	fs, err := orefafs.New(orefafs.OptMainDirs())
 	if err != nil {
@@ -42,7 +41,6 @@ func initTest(t *testing.T) avfs.Fs {
 	return fs
 }
 
-// TestOrefaFs
 func TestOrefaFs(t *testing.T) {
 	fs := initTest(t)
 
@@ -50,14 +48,12 @@ func TestOrefaFs(t *testing.T) {
 	cf.SuiteAll()
 }
 
-// TestNilPtrReceiver
 func TestNilPtrReceiver(t *testing.T) {
 	f := (*orefafs.OrefaFile)(nil)
 
 	test.SuiteNilPtrFile(t, f)
 }
 
-// TestOrefaFsFeatures
 func TestOrefaFsFeatures(t *testing.T) {
 	fs, err := orefafs.New()
 	if err != nil {
@@ -69,7 +65,6 @@ func TestOrefaFsFeatures(t *testing.T) {
 	}
 }
 
-// BenchmarkOrefaFsCreate
 func BenchmarkOrefaFsCreate(b *testing.B) {
 	fs, err := orefafs.New(orefafs.OptMainDirs())
 	if err != nil {

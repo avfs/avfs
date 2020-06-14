@@ -22,7 +22,6 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-// TestRoFsIdm
 func TestRoFsIdm(t *testing.T) {
 	cf := initTest(t)
 	ci := test.NewConfigIdm(t, cf.GetFsRead())

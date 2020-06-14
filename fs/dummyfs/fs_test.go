@@ -48,7 +48,6 @@ func TestDummyFs(t *testing.T) {
 	cf.SuiteNotImplemented()
 }
 
-// TestDummyFsFeatures
 func TestDummyFsFeatures(t *testing.T) {
 	fs, err := dummyfs.New()
 	if err != nil {

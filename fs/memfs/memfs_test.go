@@ -37,7 +37,6 @@ var (
 	_ os.FileInfo = &fStat{}
 )
 
-// TestSearchNode
 func TestSearchNode(t *testing.T) {
 	fs, err := New()
 	if err != nil {

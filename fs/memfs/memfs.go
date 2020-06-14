@@ -421,19 +421,16 @@ func (sn *symlinkNode) setMode(mode os.FileMode, u avfs.UserReader) error {
 	return avfs.ErrOpNotPermitted
 }
 
-// size
 func (sn *symlinkNode) size() int64 {
 	return 1
 }
 
 // removeStack
 
-// push
 func (rs *removeStack) push(parent *dirNode) {
 	rs.stack = append(rs.stack, parent)
 }
 
-// pop
 func (rs *removeStack) pop() *dirNode {
 	n := len(rs.stack) - 1
 	parent := rs.stack[n]
@@ -442,7 +439,6 @@ func (rs *removeStack) pop() *dirNode {
 	return parent
 }
 
-// len
 func (rs *removeStack) len() int {
 	return len(rs.stack)
 }
