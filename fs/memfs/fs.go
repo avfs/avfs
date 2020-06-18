@@ -410,15 +410,19 @@ func (fs *MemFs) Mkdir(name string, perm os.FileMode) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !parent.checkPermissionLck(avfs.WantWrite|avfs.WantLookup, fs.user) {
+	parent.mu.Lock()
+	defer parent.mu.Unlock()
+
+	if !parent.checkPermission(avfs.WantWrite|avfs.WantLookup, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 
 	part := absPath[start:end]
+	if parent.child(part) != nil {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+	}
 
-	parent.mu.Lock()
 	_ = fs.createDir(parent, part, perm)
-	parent.mu.Unlock()
 
 	return nil
 }
