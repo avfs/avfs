@@ -58,8 +58,8 @@ type Option func(*MemFs) error
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {
-	// checkPermission returns true if the current user has the wanted permissions (want) on the node.
-	checkPermission(want avfs.WantMode, u avfs.UserReader) bool
+	// checkPermissionLck returns true if the current user has the wanted permissions (want) on the node.
+	checkPermissionLck(want avfs.WantMode, u avfs.UserReader) bool
 
 	// fillStatFrom returns a fStat (implementation of os.FileInfo) from a node named name.
 	fillStatFrom(name string) fStat

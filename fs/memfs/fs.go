@@ -63,7 +63,7 @@ func (fs *MemFs) Chdir(dir string) error {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrNotADirectory}
 	}
 
-	if !c.checkPermission(avfs.WantLookup, fs.user) {
+	if !c.checkPermissionLck(avfs.WantLookup, fs.user) {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 	}
 
@@ -121,7 +121,7 @@ func (fs *MemFs) Chown(name string, uid, gid int) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !child.checkPermission(avfs.WantWrite, fs.user) {
+	if !child.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -168,7 +168,7 @@ func (fs *MemFs) Chtimes(name string, atime, mtime time.Time) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !child.checkPermission(avfs.WantWrite, fs.user) {
+	if !child.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -332,7 +332,7 @@ func (fs *MemFs) Lchown(name string, uid, gid int) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !child.checkPermission(avfs.WantWrite, fs.user) {
+	if !child.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -356,7 +356,7 @@ func (fs *MemFs) Link(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
-	if !nParent.checkPermission(avfs.WantWrite, fs.user) {
+	if !nParent.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -410,7 +410,7 @@ func (fs *MemFs) Mkdir(name string, perm os.FileMode) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !parent.checkPermission(avfs.WantWrite|avfs.WantLookup, fs.user) {
+	if !parent.checkPermissionLck(avfs.WantWrite|avfs.WantLookup, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 
@@ -447,7 +447,7 @@ func (fs *MemFs) MkdirAll(path string, perm os.FileMode) error {
 		return &os.PathError{Op: op, Path: absPath[:end], Err: err}
 	}
 
-	if parent == nil || !parent.checkPermission(avfs.WantWrite|avfs.WantLookup, fs.user) {
+	if parent == nil || !parent.checkPermissionLck(avfs.WantWrite|avfs.WantLookup, fs.user) {
 		return &os.PathError{Op: op, Path: absPath[:end], Err: avfs.ErrPermDenied}
 	}
 
@@ -510,7 +510,7 @@ func (fs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, e
 			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: err}
 		}
 
-		if wm&avfs.WantWrite == 0 || parent == nil || !parent.checkPermission(wm, fs.user) {
+		if wm&avfs.WantWrite == 0 || parent == nil || !parent.checkPermissionLck(wm, fs.user) {
 			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 
@@ -523,7 +523,7 @@ func (fs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, e
 	case avfs.ErrFileExists:
 		switch c := child.(type) {
 		case *fileNode:
-			if !c.checkPermission(wm, fs.user) {
+			if !c.checkPermissionLck(wm, fs.user) {
 				return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 			}
 
@@ -546,7 +546,7 @@ func (fs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, e
 				return nilFile, &os.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
 			}
 
-			if !c.checkPermission(wm, fs.user) {
+			if !c.checkPermissionLck(wm, fs.user) {
 				return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 			}
 
@@ -623,7 +623,7 @@ func (fs *MemFs) Remove(name string) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !parent.checkPermission(avfs.WantWrite, fs.user) {
+	if !parent.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 
@@ -674,7 +674,7 @@ func (fs *MemFs) RemoveAll(path string) error {
 		return &os.PathError{Op: op, Path: path, Err: err}
 	}
 
-	if !parent.checkPermission(avfs.WantWrite, fs.user) {
+	if !parent.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
 
@@ -728,12 +728,12 @@ func (fs *MemFs) Rename(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: oerr}
 	}
 
-	if oparent == nil || !oparent.checkPermission(avfs.WantWrite, fs.user) {
+	if oparent == nil || !oparent.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 	}
 
 	nparent, nchild, nabsPath, nstart, nend, nerr := fs.searchNode(newname, slmLstat)
-	if nparent == nil || !nparent.checkPermission(avfs.WantWrite, fs.user) {
+	if nparent == nil || !nparent.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 	}
 
@@ -830,7 +830,7 @@ func (fs *MemFs) Symlink(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
-	if !parent.checkPermission(avfs.WantWrite, fs.user) {
+	if !parent.checkPermissionLck(avfs.WantWrite, fs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 	}
 
@@ -999,7 +999,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
-	if !f.nd.checkPermission(avfs.WantWrite, f.fs.user) {
+	if !f.nd.checkPermissionLck(avfs.WantWrite, f.fs.user) {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
 	}
 

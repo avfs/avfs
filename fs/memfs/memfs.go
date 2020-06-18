@@ -73,7 +73,7 @@ func (fs *MemFs) searchNode(path string, slMode slMode) (
 				return
 			}
 
-			if !c.checkPermission(avfs.WantLookup, fs.user) {
+			if !c.checkPermissionLck(avfs.WantLookup, fs.user) {
 				err = avfs.ErrPermDenied
 
 				return
@@ -189,8 +189,9 @@ func (fs *MemFs) createSymlink(parent *dirNode, name, link string) *symlinkNode 
 
 // baseNode
 
-// checkPermission returns true if the current user has the wanted permissions (want) on the node.
-func (bn *baseNode) checkPermission(want avfs.WantMode, u avfs.UserReader) bool {
+// checkPermissionLck checks if the current user has the wanted permissions (want)
+// on the node using a read lock on the node.
+func (bn *baseNode) checkPermissionLck(want avfs.WantMode, u avfs.UserReader) bool {
 	if u.IsRoot() {
 		return true
 	}
