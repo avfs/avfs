@@ -192,20 +192,24 @@ func (fs *MemFs) createSymlink(parent *dirNode, name, link string) *symlinkNode 
 // checkPermissionLck checks if the current user has the wanted permissions (want)
 // on the node using a read lock on the node.
 func (bn *baseNode) checkPermissionLck(want avfs.WantMode, u avfs.UserReader) bool {
+	bn.mu.RLock()
+	defer bn.mu.RUnlock()
+
+	return bn.checkPermission(want, u)
+}
+
+// checkPermissionLck checks if the current user has the wanted permissions (want) on the node.
+func (bn *baseNode) checkPermission(want avfs.WantMode, u avfs.UserReader) bool {
 	if u.IsRoot() {
 		return true
 	}
 
-	bn.mu.RLock()
 	mode := bn.mode
-	uid := bn.uid
-	gid := bn.gid
-	bn.mu.RUnlock()
 
 	switch {
-	case uid == u.Uid():
+	case bn.uid == u.Uid():
 		mode >>= 6
-	case gid == u.Gid():
+	case bn.gid == u.Gid():
 		mode >>= 3
 	}
 
