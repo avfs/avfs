@@ -439,34 +439,33 @@ func (fs *MemFs) MkdirAll(path string, perm os.FileMode) error {
 
 	parent, child, absPath, start, end, err := fs.searchNode(path, slmEval)
 	if err == avfs.ErrFileExists {
-		_, ok := child.(*dirNode)
-		if !ok {
+		if _, ok := child.(*dirNode); !ok {
 			return &os.PathError{Op: op, Path: path, Err: avfs.ErrNotADirectory}
 		}
 
 		return nil
 	}
 
-	if err != avfs.ErrNoSuchFileOrDir {
+	if parent == nil || err != avfs.ErrNoSuchFileOrDir {
 		return &os.PathError{Op: op, Path: absPath[:end], Err: err}
 	}
 
-	if parent == nil || !parent.checkPermissionLck(avfs.WantWrite|avfs.WantLookup, fs.user) {
+	parent.mu.Lock()
+	defer parent.mu.Unlock()
+
+	if !parent.checkPermission(avfs.WantWrite|avfs.WantLookup, fs.user) {
 		return &os.PathError{Op: op, Path: absPath[:end], Err: avfs.ErrPermDenied}
 	}
 
-	dn := parent
-
-	for isLast := len(absPath) <= 1; !isLast; start = end + 1 {
+	for dn, isLast := parent, len(absPath) <= 1; !isLast; start = end + 1 {
 		end, isLast = fsutil.SegmentPath(absPath, start)
 
 		part := absPath[start:end]
+		if dn.child(part) != nil {
+			return nil
+		}
 
-		dn.mu.Lock()
-		newDn := fs.createDir(dn, part, perm)
-		dn.mu.Unlock()
-
-		dn = newDn
+		dn = fs.createDir(dn, part, perm)
 	}
 
 	return nil
