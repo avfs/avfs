@@ -626,25 +626,25 @@ func (fs *MemFs) Remove(name string) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !parent.checkPermissionLck(avfs.WantWrite, fs.user) {
+	parent.mu.Lock()
+	defer parent.mu.Unlock()
+
+	if !parent.checkPermission(avfs.WantWrite, fs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 
 	if c, ok := child.(*dirNode); ok {
-		c.mu.RLock()
-		l := len(c.children)
-		c.mu.RUnlock()
-
-		if l != 0 {
+		if len(c.children) != 0 {
 			return &os.PathError{Op: op, Path: name, Err: avfs.ErrDirNotEmpty}
 		}
 	}
 
 	part := absPath[start:end]
+	if parent.child(part) == nil {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+	}
 
-	parent.mu.Lock()
 	parent.removeChild(part)
-	parent.mu.Unlock()
 
 	if c, ok := child.(*fileNode); ok {
 		c.mu.Lock()
