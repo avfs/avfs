@@ -113,8 +113,6 @@ func TestMemFsFeatures(t *testing.T) {
 }
 
 func TestRaceMemFs(t *testing.T) {
-	t.Skip()
-
 	cf := initTest(t)
 
 	cf.SuiteRace()
