@@ -14,6 +14,8 @@
 //  limitations under the License.
 //
 
+// +build !race
+
 package memfs //nolint:testpackage
 
 import (
