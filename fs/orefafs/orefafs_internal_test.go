@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package orefafs //nolint:testpackage
+package orefafs
 
 import (
 	"os"

@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package memfs //nolint:testpackage
+package memfs
 
 import (
 	"os"
