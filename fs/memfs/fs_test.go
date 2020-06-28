@@ -112,12 +112,6 @@ func TestMemFsFeatures(t *testing.T) {
 	}
 }
 
-func TestRaceMemFs(t *testing.T) {
-	cf := initTest(t)
-
-	cf.SuiteRace()
-}
-
 func BenchmarkMemFsCreate(b *testing.B) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {
