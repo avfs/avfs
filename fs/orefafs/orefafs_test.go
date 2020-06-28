@@ -16,13 +16,62 @@
 
 // +build !datarace
 
-package orefafs //nolint:testpackage
+package orefafs_test
 
 import (
-	"os"
+	"testing"
+
+	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/fs/orefafs"
+	"github.com/avfs/avfs/test"
 )
 
 var (
-	// fStat struct implements os.FileInfo interface.
-	_ os.FileInfo = &fStat{}
+	// orefafs.OrefaFs struct implements avfs.OrefaFs interface.
+	_ avfs.Fs = &orefafs.OrefaFs{}
+
+	// orefafs.MemFile struct implements avfs.File interface.
+	_ avfs.File = &orefafs.OrefaFile{}
 )
+
+func initTest(t *testing.T) avfs.Fs {
+	fs, err := orefafs.New(orefafs.OptMainDirs())
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	return fs
+}
+
+func TestOrefaFs(t *testing.T) {
+	fs := initTest(t)
+
+	cf := test.NewConfigFs(t, fs)
+	cf.SuiteAll()
+}
+
+func TestNilPtrReceiver(t *testing.T) {
+	f := (*orefafs.OrefaFile)(nil)
+
+	test.SuiteNilPtrFile(t, f)
+}
+
+func TestOrefaFsFeatures(t *testing.T) {
+	fs, err := orefafs.New()
+	if err != nil {
+		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
+	}
+
+	if fs.Features() != avfs.FeatBasicFs {
+		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatBasicFs, fs.Features())
+	}
+}
+
+func BenchmarkOrefaFsCreate(b *testing.B) {
+	fs, err := orefafs.New(orefafs.OptMainDirs())
+	if err != nil {
+		b.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	test.BenchmarkCreate(b, fs)
+}

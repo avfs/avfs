@@ -14,5 +14,15 @@
 //  limitations under the License.
 //
 
-// Package orefafs implements an Afero like in memory file system.
-package orefafs
+// +build !datarace
+
+package orefafs //nolint:testpackage
+
+import (
+	"os"
+)
+
+var (
+	// fStat struct implements os.FileInfo interface.
+	_ os.FileInfo = &fStat{}
+)
