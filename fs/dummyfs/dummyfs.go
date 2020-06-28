@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+// Package dummyfs implements a dummy file system where all functions are not implemented.
 package dummyfs
 
 import (
