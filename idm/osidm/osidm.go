@@ -18,3 +18,37 @@
 //
 // Copied from standard library os/user/*_unix.go with few modifications.
 package osidm
+
+// group
+
+// Gid returns the group ID.
+func (g *Group) Gid() int {
+	return g.gid
+}
+
+// Name returns the group name.
+func (g *Group) Name() string {
+	return g.name
+}
+
+// user
+
+// Gid returns the primary group ID of the user.
+func (u *User) Gid() int {
+	return u.gid
+}
+
+// IsRoot returns true if the user has root privileges.
+func (u *User) IsRoot() bool {
+	return u.uid == 0 || u.gid == 0
+}
+
+// Name returns the user name.
+func (u *User) Name() string {
+	return u.name
+}
+
+// Uid returns the user ID.
+func (u *User) Uid() int {
+	return u.uid
+}
