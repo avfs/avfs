@@ -14,6 +14,8 @@
 //  limitations under the License.
 //
 
+// +build !race
+
 package osfs_test
 
 import (
