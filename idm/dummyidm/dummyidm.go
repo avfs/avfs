@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+// Package dummyidm implements a dummy identity manager where all functions are not implemented.
 package dummyidm
 
 import (
