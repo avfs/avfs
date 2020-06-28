@@ -21,8 +21,8 @@ import (
 	"strings"
 )
 
-// toBasePath returns the real absolute path of the base file system from the BasePathFs path.
-func (fs *BasePathFs) toBasePath(path string) string {
+// pathFsToBpFs transforms the absolute path of the base file system from the BasePathFs path.
+func (fs *BasePathFs) pathFsToBpFs(path string) string {
 	if path == "" {
 		return ""
 	}
@@ -32,7 +32,12 @@ func (fs *BasePathFs) toBasePath(path string) string {
 	return fs.basePath + absPath
 }
 
-// restoreError paths in errors if necessary.
+// pathBpFsToFs transforms the absolute path of the BasePathFs path to the base file system path.
+func (fs *BasePathFs) pathBpFsToFs(path string) string {
+	return strings.TrimPrefix(path, fs.basePath)
+}
+
+// restoreError restore paths in errors if necessary.
 func (fs *BasePathFs) restoreError(err error) error {
 	if err == nil {
 		return nil
@@ -42,14 +47,14 @@ func (fs *BasePathFs) restoreError(err error) error {
 	case *os.PathError:
 		return &os.PathError{
 			Op:   e.Op,
-			Path: strings.TrimPrefix(e.Path, fs.basePath),
+			Path: fs.pathBpFsToFs(e.Path),
 			Err:  e.Err,
 		}
 	case *os.LinkError:
 		return &os.LinkError{
 			Op:  e.Op,
-			Old: strings.TrimPrefix(e.Old, fs.basePath),
-			New: strings.TrimPrefix(e.New, fs.basePath),
+			Old: fs.pathBpFsToFs(e.Old),
+			New: fs.pathBpFsToFs(e.New),
 			Err: e.Err,
 		}
 	case *os.SyscallError:
