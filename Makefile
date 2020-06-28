@@ -75,7 +75,7 @@ cover:
 
 .PHONY: race
 race:
-	@go test -tags=race -run=TestRace -race -v -count=$(COUNT) ./...
+	@go test -tags=datarace -run=TestRace -race -v -count=$(COUNT) ./...
 
 .PHONY: bench
 bench:

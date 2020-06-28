@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-// +build !race
+// +build !datarace
 
 package memfs //nolint:testpackage
 
