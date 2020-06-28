@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+// Package rofs provides a read only file system on top of any other Avfs file system.
 package rofs
 
 import (
