@@ -14,6 +14,8 @@
 //  limitations under the License.
 //
 
+// +build !datarace
+
 package osidm_test
 
 import (
