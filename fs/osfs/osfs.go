@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+// Package osfs implements a file system using functions from os, ioutil and path/filepath packages.
 package osfs
 
 import (
