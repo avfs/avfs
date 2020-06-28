@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+// Package memidm implements an in memory identity manager.
 package memidm
 
 import (
