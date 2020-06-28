@@ -14,27 +14,19 @@
 //  limitations under the License.
 //
 
+// +build race
+
 package osfs_test
 
 import (
-	"os"
 	"testing"
 
-	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/osfs"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 )
 
-var (
-	// osfs.OsFs struct implements avfs.Fs interface
-	_ avfs.Fs = &osfs.OsFs{}
-
-	// os.File struct implements avfs.File interface
-	_ avfs.File = &os.File{}
-)
-
-func initTest(t *testing.T) *test.ConfigFs {
+func TestRaceOsFs(t *testing.T) {
 	fsRoot, err := osfs.New(osfs.OptIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
@@ -42,30 +34,5 @@ func initTest(t *testing.T) *test.ConfigFs {
 
 	cf := test.NewConfigFs(t, fsRoot)
 
-	return cf
-}
-
-func TestOsFs(t *testing.T) {
-	cf := initTest(t)
-	cf.SuiteAll()
-}
-
-func TestOsFsPerm(t *testing.T) {
-	cf := initTest(t)
-	cf.SuitePerm()
-}
-
-func TestNilPtrReceiver(t *testing.T) {
-	f := (*os.File)(nil)
-
-	test.SuiteNilPtrFile(t, f)
-}
-
-func BenchmarkOsFsCreate(b *testing.B) {
-	fs, err := osfs.New()
-	if err != nil {
-		b.Fatalf("New : want error to be nil, got %v", err)
-	}
-
-	test.BenchmarkCreate(b, fs)
+	cf.SuiteRace()
 }
