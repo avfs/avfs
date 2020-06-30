@@ -491,24 +491,26 @@ func (fs *MemFs) Open(path string) (avfs.File, error) {
 func (fs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
 	const op = "open"
 
-	var (
-		at      int64
-		wm      avfs.WantMode
-		nilFile *MemFile
-	)
+	f := &MemFile{
+		fs:   fs,
+		name: name,
+	}
 
 	if flag == os.O_RDONLY || flag&os.O_RDWR != 0 {
-		wm = avfs.WantRead
+		f.wantMode = avfs.WantRead
 	}
 
 	if flag&(os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC|os.O_WRONLY) != 0 {
-		wm |= avfs.WantWrite
+		f.wantMode |= avfs.WantWrite
 	}
 
 	parent, child, absPath, start, end, err := fs.searchNode(name, slmEval)
-	switch err {
-	case avfs.ErrNoSuchFileOrDir:
-		if end < len(absPath) {
+	if err != avfs.ErrFileExists && err != avfs.ErrNoSuchFileOrDir {
+		return &MemFile{}, &os.PathError{Op: op, Path: name, Err: err}
+	}
+
+	if err == avfs.ErrNoSuchFileOrDir {
+		if end < len(absPath) || parent == nil {
 			return nil, &os.PathError{Op: op, Path: name, Err: err}
 		}
 
@@ -516,61 +518,62 @@ func (fs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, e
 			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: err}
 		}
 
-		if wm&avfs.WantWrite == 0 || parent == nil || !parent.checkPermissionLck(wm, fs.user) {
+		parent.mu.Lock()
+		defer parent.mu.Unlock()
+
+		if f.wantMode&avfs.WantWrite == 0 || !parent.checkPermission(f.wantMode, fs.user) {
 			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 
 		part := absPath[start:end]
 
-		parent.mu.Lock()
-		child = fs.createFile(parent, part, perm)
-		parent.mu.Unlock()
+		child = parent.child(part)
+		if child == nil {
+			child = fs.createFile(parent, part, perm)
+			f.nd = child
 
-	case avfs.ErrFileExists:
-		switch c := child.(type) {
-		case *fileNode:
-			if !c.checkPermissionLck(wm, fs.user) {
-				return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
-			}
+			return f, nil
+		}
+	}
 
-			if flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
-				return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
-			}
+	switch c := child.(type) {
+	case *fileNode:
+		c.mu.Lock()
+		defer c.mu.Unlock()
 
-			if flag&os.O_TRUNC != 0 {
-				c.mu.Lock()
-				c.truncate(0)
-				c.mu.Unlock()
-			}
+		if !c.checkPermission(f.wantMode, fs.user) {
+			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+		}
 
-			if flag&os.O_APPEND != 0 {
-				at = c.Size()
-			}
+		if flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
+			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+		}
 
-		case *dirNode:
-			if wm&avfs.WantWrite != 0 {
-				return nilFile, &os.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
-			}
+		if flag&os.O_TRUNC != 0 {
+			c.truncate(0)
+		}
 
-			if !c.checkPermissionLck(wm, fs.user) {
-				return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
-			}
+		if flag&os.O_APPEND != 0 {
+			f.at = c.size()
+		}
 
-		default:
-			return &MemFile{}, os.ErrInvalid
+	case *dirNode:
+		c.mu.Lock()
+		defer c.mu.Unlock()
+
+		if f.wantMode&avfs.WantWrite != 0 {
+			return (*MemFile)(nil), &os.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
+		}
+
+		if !c.checkPermission(f.wantMode, fs.user) {
+			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 
 	default:
-		return &MemFile{}, &os.PathError{Op: op, Path: name, Err: err}
+		return &MemFile{}, os.ErrInvalid
 	}
 
-	f := &MemFile{
-		fs:       fs,
-		nd:       child,
-		wantMode: wm,
-		name:     name,
-		at:       at,
-	}
+	f.nd = child
 
 	return f, nil
 }
