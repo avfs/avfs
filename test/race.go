@@ -17,6 +17,7 @@
 package test
 
 import (
+	"os"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -66,6 +67,26 @@ func (cf *ConfigFs) SuiteRace() {
 
 	cf.SuiteRaceFunc("Stat Error", RaceNoneOk, func() error {
 		_, err := fs.Stat(path)
+		return err
+	})
+
+	cf.SuiteRaceFunc("Create", RaceAllOk, func() error {
+		newFile := fs.Join(rootDir, "newFile")
+		f, err := fs.Create(newFile)
+		if err == nil {
+			defer f.Close()
+		}
+
+		return err
+	})
+
+	cf.SuiteRaceFunc("Open Excl", RaceOneOk, func() error {
+		newFile := fs.Join(rootDir, "newFileExcl")
+		f, err := fs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
+		if err == nil {
+			defer f.Close()
+		}
+
 		return err
 	})
 }
