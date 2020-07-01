@@ -19,7 +19,6 @@
 package memfs_test
 
 import (
-	"runtime"
 	"testing"
 
 	"github.com/avfs/avfs/fs/memfs"
@@ -49,11 +48,12 @@ func TestMemFsWithMemIdm(t *testing.T) {
 }
 
 func TestMemFsWithOsIdm(t *testing.T) {
-	if runtime.GOOS != "linux" {
-		t.Skip("OsIdm only works on a linux platform, skipping")
+	idm := osidm.New()
+	if !idm.CurrentUser().IsRoot() {
+		t.Skip("OsIdm only works on when connected as root on a linux platform, skipping")
 	}
 
-	fs, err := memfs.New(memfs.OptIdm(osidm.New()), memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(idm))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
