@@ -394,7 +394,7 @@ func (fs *DummyFs) SameFile(fi1, fi2 os.FileInfo) bool {
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (fs *DummyFs) Split(path string) (dir, file string) {
-	return fsutil.Split(path)
+	return fsutil.Split(fs, path)
 }
 
 // Stat returns a FileInfo describing the named file.

@@ -247,7 +247,7 @@ func Glob(fs avfs.Fs, pattern string) (matches []string, err error) {
 		return []string{pattern}, nil
 	}
 
-	dir, file := Split(pattern)
+	dir, file := Split(fs, pattern)
 	dir = cleanGlobPath(dir)
 
 	if !hasMeta(dir) {
@@ -455,9 +455,9 @@ func Rel(basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func Split(path string) (dir, file string) {
+func Split(fs avfs.Fs, path string) (dir, file string) {
 	i := len(path) - 1
-	for i >= 0 && !os.IsPathSeparator(path[i]) {
+	for i >= 0 && !fs.IsPathSeparator(path[i]) {
 		i--
 	}
 
