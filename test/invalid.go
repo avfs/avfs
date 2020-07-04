@@ -711,7 +711,7 @@ func SuiteNilPtrFile(t *testing.T, f avfs.File) {
 
 	fd := f.Fd()
 	if fd != math.MaxUint64 {
-		t.Errorf("Name : want fd to be %d, got %d", 0, fd)
+		t.Errorf("Fd : want fd to be %d, got %d", 0, fd)
 	}
 
 	_, err = f.Read([]byte{})
