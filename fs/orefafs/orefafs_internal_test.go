@@ -22,7 +22,5 @@ import (
 	"os"
 )
 
-var (
-	// fStat struct implements os.FileInfo interface.
-	_ os.FileInfo = &fStat{}
-)
+// fStat struct implements os.FileInfo interface.
+var _ os.FileInfo = &fStat{}

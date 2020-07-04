@@ -603,7 +603,6 @@ func (cf *ConfigFs) SuiteWalk() {
 
 			return nil
 		})
-
 		if err != nil {
 			t.Errorf("Walk %s : want error to be nil, got %v", rootDir, err)
 		}

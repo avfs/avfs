@@ -108,10 +108,14 @@ func TestSearchNode(t *testing.T) {
 		{path: "/a/az", parent: da, first: "az", rest: "", err: avfs.ErrNoSuchFileOrDir},
 		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: avfs.ErrNoSuchFileOrDir},
 		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist",
-			err: avfs.ErrNoSuchFileOrDir},
-		{path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir",
-			err: avfs.ErrNotADirectory},
+		{
+			path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist",
+			err: avfs.ErrNoSuchFileOrDir,
+		},
+		{
+			path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir",
+			err: avfs.ErrNotADirectory,
+		},
 	}
 
 	for _, test := range tests {

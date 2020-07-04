@@ -68,28 +68,48 @@ func TestRndTree(t *testing.T) {
 			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
 			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 0, MaxName: 0}, wantErr: ErrNameOutOfRange},
 			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 0}, wantErr: ErrNameOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinDirs: -1, MaxDirs: 0}, wantErr: ErrDirsOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinDirs: 1, MaxDirs: 0}, wantErr: ErrDirsOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinFiles: -1, MaxFiles: 0}, wantErr: ErrFilesOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinFiles: 1, MaxFiles: 0}, wantErr: ErrFilesOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinFileLen: -1, MaxFileLen: 0}, wantErr: ErrFileLenOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinFileLen: 1, MaxFileLen: 0}, wantErr: ErrFileLenOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinSymlinks: -1, MaxSymlinks: 0}, wantErr: ErrSymlinksOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
-				MinSymlinks: 1, MaxSymlinks: 0}, wantErr: ErrSymlinksOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 10, MaxName: 20,
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinDirs: -1, MaxDirs: 0,
+			}, wantErr: ErrDirsOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinDirs: 1, MaxDirs: 0,
+			}, wantErr: ErrDirsOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinFiles: -1, MaxFiles: 0,
+			}, wantErr: ErrFilesOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinFiles: 1, MaxFiles: 0,
+			}, wantErr: ErrFilesOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinFileLen: -1, MaxFileLen: 0,
+			}, wantErr: ErrFileLenOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinFileLen: 1, MaxFileLen: 0,
+			}, wantErr: ErrFileLenOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinSymlinks: -1, MaxSymlinks: 0,
+			}, wantErr: ErrSymlinksOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
+				MinSymlinks: 1, MaxSymlinks: 0,
+			}, wantErr: ErrSymlinksOutOfRange},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 1, MinName: 10, MaxName: 20,
 				MinDirs: 5, MaxDirs: 10, MinFiles: 5, MaxFiles: 10, MinFileLen: 5, MaxFileLen: 10,
-				MinSymlinks: 5, MaxSymlinks: 10}, wantErr: nil},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 3, MinName: 10, MaxName: 10,
+				MinSymlinks: 5, MaxSymlinks: 10,
+			}, wantErr: nil},
+			{params: fsutil.RndTreeParams{
+				MinDepth: 1, MaxDepth: 3, MinName: 10, MaxName: 10,
 				MinDirs: 3, MaxDirs: 3, MinFiles: 3, MaxFiles: 3, MinFileLen: 3, MaxFileLen: 3,
-				MinSymlinks: 3, MaxSymlinks: 3}, wantErr: nil},
+				MinSymlinks: 3, MaxSymlinks: 3,
+			}, wantErr: nil},
 		}
 
 		for i, rtrTest := range rtrTests {
@@ -152,7 +172,6 @@ func TestRndTree(t *testing.T) {
 			MinDirs: 2, MaxDirs: 2,
 			MinFiles: 1, MaxFiles: 1,
 		})
-
 		if err != nil {
 			t.Errorf("NewRndTree : want error to be nil, got %v", err)
 		}

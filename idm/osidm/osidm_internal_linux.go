@@ -29,8 +29,10 @@ import (
 	"github.com/avfs/avfs"
 )
 
-const groupFile = "/etc/group"
-const userFile = "/etc/passwd"
+const (
+	groupFile = "/etc/group"
+	userFile  = "/etc/passwd"
+)
 
 var colon = []byte{':'} //nolint:gochecknoglobals
 

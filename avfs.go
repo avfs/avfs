@@ -420,7 +420,7 @@ type ChTimer interface {
 	// The underlying file system may truncate or round the values to a
 	// less precise time unit.
 	// If there is an error, it will be of type *PathError.
-	Chtimes(name string, atime time.Time, mtime time.Time) error
+	Chtimes(name string, atime, mtime time.Time) error
 }
 
 // Cloner is the interface that wraps the Clone method.

@@ -482,8 +482,8 @@ func (cf *ConfigFs) SuiteStat() {
 	t.Run("StatDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := fs.Join(rootDir, dir.Path)
-			info, err := fs.Stat(path)
 
+			info, err := fs.Stat(path)
 			if err != nil {
 				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 				continue

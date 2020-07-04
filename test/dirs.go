@@ -318,7 +318,6 @@ func (cf *ConfigFs) SuiteReadDir() {
 	fs := cf.GetFsWrite()
 
 	rndTree, err := fsutil.NewRndTree(fs, RndParamsOneDir)
-
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -436,7 +435,6 @@ func (cf *ConfigFs) SuiteReadDirNames() {
 	fs := cf.GetFsWrite()
 
 	rndTree, err := fsutil.NewRndTree(fs, RndParamsOneDir)
-
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
