@@ -252,10 +252,6 @@ func (dn *dirNode) removeChild(name string) {
 // child returns the child node named name from the parent node dn.
 // it returns nil if the child is not found or if there is no children.
 func (dn *dirNode) child(name string) node {
-	if dn.children == nil {
-		return nil
-	}
-
 	return dn.children[name]
 }
 
