@@ -1059,9 +1059,10 @@ func (f *MemFile) Name() string {
 	}
 
 	f.mu.RLock()
-	defer f.mu.RUnlock()
+	name := f.name
+	f.mu.RUnlock()
 
-	return f.name
+	return name
 }
 
 // Read reads up to len(b) bytes from the MemFile.
