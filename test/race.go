@@ -85,6 +85,23 @@ func (cf *ConfigFs) SuiteRaceFile() {
 	})
 
 	func() {
+		roFile := fs.Join(rootDir, "roFile")
+		err := fs.WriteFile(roFile, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want err to be nil, got %v", err)
+		}
+
+		cf.SuiteRaceFunc("Open Read Only", RaceAllOk, func() error {
+			f, err := fs.Open(roFile)
+			if err == nil {
+				defer f.Close()
+			}
+
+			return err
+		})
+	}()
+
+	func() {
 		newFile := fs.Join(rootDir, "newFileClose")
 
 		f, err := fs.Create(newFile)
