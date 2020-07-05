@@ -25,8 +25,14 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// SuiteRace tests data race conditions for some functions.
+// SuiteRace tests data race conditions.
 func (cf *ConfigFs) SuiteRace() {
+	cf.SuiteRaceDir()
+	cf.SuiteRaceFile()
+}
+
+// SuiteRaceDir tests data race conditions for some directory functions.
+func (cf *ConfigFs) SuiteRaceDir() {
 	_, rootDir, removeDir := cf.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -46,29 +52,17 @@ func (cf *ConfigFs) SuiteRace() {
 		return fs.MkdirAll(path, avfs.DefaultDirPerm)
 	})
 
-	cf.SuiteRaceFunc("Lstat Ok", RaceAllOk, func() error {
-		_, err := fs.Lstat(path)
-		return err
-	})
-
-	cf.SuiteRaceFunc("Stat Ok", RaceAllOk, func() error {
-		_, err := fs.Stat(path)
-		return err
-	})
-
 	cf.SuiteRaceFunc("RemoveAll", RaceAllOk, func() error {
 		return fs.RemoveAll(path)
 	})
+}
 
-	cf.SuiteRaceFunc("Lstat Error", RaceNoneOk, func() error {
-		_, err := fs.Lstat(path)
-		return err
-	})
+// SuiteRaceFile tests data race conditions for some files functions.
+func (cf *ConfigFs) SuiteRaceFile() {
+	_, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+	defer removeDir()
 
-	cf.SuiteRaceFunc("Stat Error", RaceNoneOk, func() error {
-		_, err := fs.Stat(path)
-		return err
-	})
+	fs := cf.GetFsWrite()
 
 	cf.SuiteRaceFunc("Create", RaceAllOk, func() error {
 		newFile := fs.Join(rootDir, "newFile")
