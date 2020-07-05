@@ -59,7 +59,7 @@ func (cf *ConfigFs) SuiteRaceDir() {
 
 // SuiteRaceFile tests data race conditions for some files functions.
 func (cf *ConfigFs) SuiteRaceFile() {
-	_, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	fs := cf.GetFsWrite()
@@ -83,6 +83,17 @@ func (cf *ConfigFs) SuiteRaceFile() {
 
 		return err
 	})
+
+	func() {
+		newFile := fs.Join(rootDir, "newFileClose")
+
+		f, err := fs.Create(newFile)
+		if err != nil {
+			t.Fatalf("Create : want err to be nil, got %v", err)
+		}
+
+		cf.SuiteRaceFunc("Close", RaceOneOk, f.Close)
+	}()
 }
 
 // RaceResult defines the type of result expected from a race test.
