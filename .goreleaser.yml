@@ -1,0 +1,6 @@
+project_name: avfs
+build:
+  skip: true
+release:
+  github:
+  prerelease: auto
