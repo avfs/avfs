@@ -22,9 +22,11 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-DOCKER_IMAGE := avfs-docker
-COVERAGE_FILE := coverage.txt
-
+## Local variables
+GO:=GO111MODULE=on go
+GOPATH:=$(shell go env GOPATH)
+DOCKER_IMAGE:=avfs-docker
+COVERAGE_FILE:=coverage.txt
 RUNTEST?=.
 COUNT?=5
 
@@ -33,16 +35,16 @@ all: golangci dockertest
 
 .PHONY: build
 build:
-	@go build ./...
+	@$(GO) build ./...
 
 .PHONY: env
 env:
-	@go version && echo "PATH=$(PATH)" && go env
+	@$(GO) version && echo "PATH=$(PATH)" && $(GO) env
 
 .PHONY: fmt_install
 fmt_install:
 	@if [ -z $(shell which gofumpt) ]; then
-		go get mvdan.cc/gofumpt
+		$(GO) get mvdan.cc/gofumpt
 	fi
 
 .PHONY: fmt
@@ -51,7 +53,7 @@ fmt: fmt_install
 
 .PHONY: vet
 vet:
-	@go vet -all ./...
+	@$(GO) vet -all ./...
 
 .PHONY:golangci_install
 golangci_install:
@@ -60,12 +62,12 @@ golangci_install:
 		version=`git ls-remote --tags --refs --sort="v:refname" https://github.com/golangci/golangci-lint/ | tail -n1 | sed "s/.*\///"`
 
 		## binary will be $(shell go env GOPATH)/bin/golangci-lint
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin $$version
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin $$version
 	fi
 
 .PHONY:golangci
 golangci: golangci_install
-	@$(shell go env GOPATH)/bin/golangci-lint run
+	@$(GOPATH)/bin/golangci-lint run
 
 .PHONY: coverage_init
 coverage_init:
@@ -73,19 +75,19 @@ coverage_init:
 
 .PHONY: test
 test: env coverage_init
-	@go test -run=$(RUNTEST) -race -v -coverprofile=$(COVERAGE_FILE) -covermode=atomic ./...
+	@$(GO) test -run=$(RUNTEST) -race -v -coverprofile=$(COVERAGE_FILE) -covermode=atomic ./...
 
 .PHONY: cover
 cover:
-	@go tool cover -html=$(COVERAGE_FILE)
+	@$(GO) tool cover -html=$(COVERAGE_FILE)
 
 .PHONY: race
 race:
-	@go test -tags=datarace -run=TestRace -race -v -count=$(COUNT) ./...
+	@$(GO) test -tags=datarace -run=TestRace -race -v -count=$(COUNT) ./...
 
 .PHONY: bench
 bench:
-	@go test -run=^a -bench=. -benchmem -count=5 ./...
+	@$(GO) test -run=^a -bench=. -benchmem -count=5 ./...
 
 .PHONY: dockerbuild
 dockerbuild:
