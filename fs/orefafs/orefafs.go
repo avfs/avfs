@@ -173,6 +173,11 @@ func (fs *OrefaFs) Clean(path string) string {
 	return fsutil.Clean(path)
 }
 
+// Clone returns the file system itself since if does not support this feature (FeatClonable).
+func (fs *OrefaFs) Clone() avfs.Fs {
+	return fs
+}
+
 // Create creates or truncates the named file. If the file already exists,
 // it is truncated. If the file does not exist, it is created with mode 0666
 // (before umask). If successful, methods on the returned File can
