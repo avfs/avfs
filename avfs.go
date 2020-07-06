@@ -164,14 +164,14 @@ const (
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
 
+	// FeatClonable indicates if a file system can be cloned.
+	FeatClonable
+
 	// FeatMainDirs indicates that the main directories of the filesystem (/home, /root and /tmp) are present.
 	FeatMainDirs
 
 	// FeatHardlink indicates that the file system supports hard links (link(), readlink() functions).
 	FeatHardlink
-
-	// FeatInescapableChroot indicates that the file system provides an inescapable Chroot (see MemFs).
-	FeatInescapableChroot
 
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
 	// (Chown(), User(), CurrentUser(), ... functions).
@@ -210,6 +210,7 @@ type Fs interface {
 	ChOwner
 	ChRooter
 	ChTimer
+	Cloner
 	IdentityMgr
 	HardLinker
 	Namer
@@ -425,7 +426,8 @@ type ChTimer interface {
 
 // Cloner is the interface that wraps the Clone method.
 type Cloner interface {
-	// Clone returns a shallow copy of the current file system (see MemFs),
+	// Clone returns a shallow copy of the current file system (see MemFs)
+	// or the file system itself if does not support this feature (FeatClonable).
 	Clone() Fs
 }
 
