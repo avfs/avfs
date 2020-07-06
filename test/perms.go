@@ -355,10 +355,7 @@ func (cf *ConfigFs) SuiteChroot() {
 		// Some file systems (MemFs) don't permit exit from a chroot.
 		// A shallow clone of the file system is then used to perform the chroot
 		// without loosing access to the original root of the file system.
-		fsC, ok := fs.(avfs.Cloner)
-		if ok {
-			fs = fsC.Clone()
-		}
+		fsSave := fs.Clone()
 
 		chrootDir := fs.Join(rootDir, "chroot")
 
@@ -394,22 +391,27 @@ func (cf *ConfigFs) SuiteChroot() {
 			t.Errorf("Stat : want error to be nil, got %v", err)
 		}
 
+		// if the file system can be cloned it can be restored from the saved one.
+		if fs.HasFeature(avfs.FeatClonable) {
+			fs = fsSave
+
+			return
+		}
+
 		// Restore the original file system root if possible.
-		if !fs.HasFeature(avfs.FeatInescapableChroot) {
-			err = fSave.Chdir()
-			if err != nil {
-				t.Errorf("Chdir : want error to be nil, got %v", err)
-			}
+		err = fSave.Chdir()
+		if err != nil {
+			t.Errorf("Chdir : want error to be nil, got %v", err)
+		}
 
-			err = fs.Chroot(".")
-			if err != nil {
-				t.Errorf("Chroot : want error to be nil, got %v", err)
-			}
+		err = fs.Chroot(".")
+		if err != nil {
+			t.Errorf("Chroot : want error to be nil, got %v", err)
+		}
 
-			_, err = fs.Stat(chrootFilePath)
-			if err != nil {
-				t.Errorf("Stat : want error to be nil, got %v", err)
-			}
+		_, err = fs.Stat(chrootFilePath)
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
 		}
 	})
 }
