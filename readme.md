@@ -4,6 +4,8 @@ Another Virtual File System for Go
 ![CI](https://github.com/avfs/avfs/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/avfs/avfs/branch/master/graph/badge.svg)](https://codecov.io/gh/avfs/avfs)
 [![GoDoc](https://godoc.org/github.com/avfs/avfs?status.svg)](https://godoc.org/github.com/avfs/avfs) 
+[![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
+[![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
 
 ## Overview
 **AVFS** is a virtual file system abstraction, 
@@ -132,6 +134,7 @@ File system methods <br> `avfs.Fs`|Comments
 `Chroot`|equivalent to `syscall.Chroot`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
+`Clone`| returns a shallow copy of the current file system (see MemFs) or the file system itself
 `Create`|equivalent to `os.Create`
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
@@ -191,7 +194,7 @@ Identity managers allow users and groups management.
 The ones implemented in `avfs` are just here to allow testing of functions related to users (Chown, Lchown)
 and access rights, so they just allow one default group per user.
 
-Each file system implement at least the identity manager `DummyIdm` where all functions returns `avfs.ErrPermDenied`. 
+Each file system implements by default the identity manager `DummyIdm` where all functions returns `avfs.ErrPermDenied`. 
 
 Identity Manager |Comments
 -----------------|--------
@@ -200,7 +203,7 @@ Identity Manager |Comments
 [OsIdm](idm/osidm)|Identity manager using os functions
 
 Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
--------------------------------------------------------------|--------
+--------------------------------------------------------------|--------
 `CurrentUser`| returns the current user
 `GroupAdd`| adds a new group
 `GroupDel`| deletes an existing group
@@ -211,7 +214,3 @@ Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
 `User`| sets and returns the current user
 `UserAdd`| adds a new user
 `UserDel`| deletes an existing user
-
-Misc. methods|Comments
----------------|--------
-`Clone`| returns a shallow copy of the current file system (see MemFs)
