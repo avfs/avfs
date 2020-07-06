@@ -137,7 +137,8 @@ func (fs *DummyFs) Clean(path string) string {
 	return fsutil.Clean(path)
 }
 
-// Clone returns a shallow copy of the current file system.
+// Clone returns a shallow copy of the current file system (see MemFs)
+// or the file system itself if does not support this feature (FeatClonable).
 func (fs *DummyFs) Clone() avfs.Fs {
 	return fs
 }
