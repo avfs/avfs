@@ -27,24 +27,28 @@ import (
 
 // New returns a new memory file system (MemFs).
 func New(opts ...Option) (*MemFs, error) {
-	fs := &MemFs{
-		rootNode: &dirNode{
-			baseNode: baseNode{
-				mode:  os.ModeDir | 0o755,
-				mtime: time.Now().UnixNano(),
-				uid:   0,
-				gid:   0,
-			},
-		},
-		curDir: string(avfs.PathSeparator),
+	fsa := &fsAttrs{
+		idm: dummyidm.NotImplementedIdm,
 		feature: avfs.FeatBasicFs |
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
 			avfs.FeatInescapableChroot |
 			avfs.FeatSymlink,
-		idm:   dummyidm.NotImplementedIdm,
 		umask: int32(fsutil.UMask.Get()),
-		user:  dummyidm.RootUser,
+	}
+
+	fs := &MemFs{
+		rootNode: &dirNode{
+			baseNode: baseNode{
+				mtime: time.Now().UnixNano(),
+				mode:  os.ModeDir | 0o755,
+				uid:   0,
+				gid:   0,
+			},
+		},
+		fsAttrs: fsa,
+		user:    dummyidm.RootUser,
+		curDir:  string(avfs.PathSeparator),
 	}
 
 	for _, opt := range opts {
@@ -54,13 +58,13 @@ func New(opts ...Option) (*MemFs, error) {
 		}
 	}
 
-	if fs.feature&avfs.FeatMainDirs != 0 {
-		um := fs.umask
-		fs.umask = 0
+	if fs.fsAttrs.feature&avfs.FeatMainDirs != 0 {
+		um := fsa.umask
+		fsa.umask = 0
 
 		_ = fsutil.CreateBaseDirs(fs)
 
-		fs.umask = um
+		fsa.umask = um
 		fs.curDir = avfs.RootDir
 	}
 
@@ -69,17 +73,17 @@ func New(opts ...Option) (*MemFs, error) {
 
 // Features returns the set of features provided by the file system or identity manager.
 func (fs *MemFs) Features() avfs.Feature {
-	return fs.feature
+	return fs.fsAttrs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (fs *MemFs) HasFeature(feature avfs.Feature) bool {
-	return fs.feature&feature == feature
+	return fs.fsAttrs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
 func (fs *MemFs) Name() string {
-	return fs.name
+	return fs.fsAttrs.name
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -92,7 +96,7 @@ func (fs *MemFs) Type() string {
 // OptMainDirs returns an option function to create main directories.
 func OptMainDirs() Option {
 	return func(fs *MemFs) error {
-		fs.feature |= avfs.FeatMainDirs
+		fs.fsAttrs.feature |= avfs.FeatMainDirs
 		return nil
 	}
 }
@@ -100,14 +104,13 @@ func OptMainDirs() Option {
 // OptIdm returns an option function which sets the identity manager.
 func OptIdm(idm avfs.IdentityMgr) Option {
 	return func(fs *MemFs) error {
-		fs.idm = idm
-
 		u, err := idm.LookupUser(avfs.UsrRoot)
 		if err != nil {
 			return err
 		}
 
-		fs.feature |= idm.Features()
+		fs.fsAttrs.idm = idm
+		fs.fsAttrs.feature |= idm.Features()
 		fs.user = u
 
 		return nil
@@ -117,7 +120,7 @@ func OptIdm(idm avfs.IdentityMgr) Option {
 // OptName returns an option function which sets the name of the file system.
 func OptName(name string) Option {
 	return func(fs *MemFs) error {
-		fs.name = name
+		fs.fsAttrs.name = name
 
 		return nil
 	}
@@ -125,7 +128,7 @@ func OptName(name string) Option {
 
 func OptAbsPath() Option {
 	return func(fs *MemFs) error {
-		fs.feature |= avfs.FeatAbsPath
+		fs.fsAttrs.feature |= avfs.FeatAbsPath
 
 		return nil
 	}

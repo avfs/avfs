@@ -86,6 +86,7 @@ func (cf *ConfigFs) SuiteRaceFile() {
 
 	func() {
 		roFile := fs.Join(rootDir, "roFile")
+
 		err := fs.WriteFile(roFile, nil, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want err to be nil, got %v", err)

@@ -32,12 +32,17 @@ const (
 // MemFs implements a memory file system using the avfs.Fs interface.
 type MemFs struct {
 	rootNode *dirNode
-	idm      avfs.IdentityMgr
+	fsAttrs  *fsAttrs
 	user     avfs.UserReader
 	curDir   string
-	umask    int32
-	feature  avfs.Feature
-	name     string
+}
+
+// fsAttrs represents the file system attributes for MemFs.
+type fsAttrs struct {
+	idm     avfs.IdentityMgr
+	feature avfs.Feature
+	name    string
+	umask   int32
 }
 
 // MemFile represents an open file descriptor.
@@ -77,15 +82,6 @@ type node interface {
 	size() int64
 }
 
-// baseNode is the common structure of directories, files and symbolic links.
-type baseNode struct {
-	mu    sync.RWMutex
-	mtime int64
-	mode  os.FileMode
-	uid   int
-	gid   int
-}
-
 // dirNode is the structure for a directory.
 type dirNode struct {
 	baseNode
@@ -106,6 +102,15 @@ type fileNode struct {
 type symlinkNode struct {
 	baseNode
 	link string
+}
+
+// baseNode is the common structure of directories, files and symbolic links.
+type baseNode struct {
+	mu    sync.RWMutex
+	mtime int64
+	mode  os.FileMode
+	uid   int
+	gid   int
 }
 
 // slMode defines the behavior of searchNode function relatively to symlinks.

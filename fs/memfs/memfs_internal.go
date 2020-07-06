@@ -46,7 +46,8 @@ func (fs *MemFs) searchNode(path string, slMode slMode) (
 		absPath, _ = fsutil.Abs(fs, path)
 	}
 
-	parent = fs.rootNode
+	rootNode := fs.rootNode
+	parent = rootNode
 	slCount := 0
 	slResolved := false
 
@@ -127,7 +128,7 @@ func (fs *MemFs) searchNode(path string, slMode slMode) (
 				absPath = fsutil.Join(absPath[:start], link, absPath[end:])
 			}
 
-			parent = fs.rootNode
+			parent = rootNode
 			end = 0
 			isLast = len(absPath) <= 1
 		}
@@ -141,7 +142,7 @@ func (fs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dirN
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  os.ModeDir | (perm & os.ModePerm &^ os.FileMode(fs.umask)),
+			mode:  os.ModeDir | (perm & os.ModePerm &^ os.FileMode(fs.fsAttrs.umask)),
 			uid:   fs.user.Uid(),
 			gid:   fs.user.Gid(),
 		},
@@ -158,7 +159,7 @@ func (fs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fil
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  perm & os.ModePerm &^ os.FileMode(fs.umask),
+			mode:  perm & os.ModePerm &^ os.FileMode(fs.fsAttrs.umask),
 			uid:   fs.user.Uid(),
 			gid:   fs.user.Gid(),
 		},

@@ -32,7 +32,7 @@ func (fs *MemFs) GroupAdd(name string) (avfs.GroupReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return fs.idm.GroupAdd(name)
+	return fs.fsAttrs.idm.GroupAdd(name)
 }
 
 // GroupDel deletes an existing group.
@@ -41,31 +41,31 @@ func (fs *MemFs) GroupDel(name string) error {
 		return avfs.ErrPermDenied
 	}
 
-	return fs.idm.GroupDel(name)
+	return fs.fsAttrs.idm.GroupDel(name)
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
 func (fs *MemFs) LookupGroup(name string) (avfs.GroupReader, error) {
-	return fs.idm.LookupGroup(name)
+	return fs.fsAttrs.idm.LookupGroup(name)
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
 func (fs *MemFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	return fs.idm.LookupGroupId(gid)
+	return fs.fsAttrs.idm.LookupGroupId(gid)
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
 func (fs *MemFs) LookupUser(name string) (avfs.UserReader, error) {
-	return fs.idm.LookupUser(name)
+	return fs.fsAttrs.idm.LookupUser(name)
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (fs *MemFs) LookupUserId(uid int) (avfs.UserReader, error) {
-	return fs.idm.LookupUserId(uid)
+	return fs.fsAttrs.idm.LookupUserId(uid)
 }
 
 // User sets the current user of the file system.
@@ -75,7 +75,7 @@ func (fs *MemFs) User(name string) (avfs.UserReader, error) {
 		return fs.user, nil
 	}
 
-	user, err := fs.idm.LookupUser(name)
+	user, err := fs.fsAttrs.idm.LookupUser(name)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (fs *MemFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	u, err := fs.idm.UserAdd(name, groupName)
+	u, err := fs.fsAttrs.idm.UserAdd(name, groupName)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (fs *MemFs) UserDel(name string) error {
 		return avfs.ErrPermDenied
 	}
 
-	err := fs.idm.UserDel(name)
+	err := fs.fsAttrs.idm.UserDel(name)
 	if err != nil {
 		return err
 	}
