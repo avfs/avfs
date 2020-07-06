@@ -122,6 +122,11 @@ func (fs *OsFs) Clean(path string) string {
 	return filepath.Clean(path)
 }
 
+// Clone returns the file system itself since it does not support this feature (FeatClonable).
+func (fs *OsFs) Clone() avfs.Fs {
+	return fs
+}
+
 // Create creates the named file with mode 0666 (before umask), truncating
 // it if it already exists. If successful, methods on the returned
 // OsFile can be used for I/O; the associated file descriptor has mode
