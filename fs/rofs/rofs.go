@@ -134,9 +134,10 @@ func (fs *RoFs) Clean(path string) string {
 	return fsutil.Clean(path)
 }
 
-// Clone returns the file system itself, there is no need to clone a read only file system.
+// Clone returns a shallow copy of the current file system (see MemFs)
+// or the file system itself if does not support this feature (FeatClonable).
 func (fs *RoFs) Clone() avfs.Fs {
-	return fs
+	return fs.baseFs.Clone()
 }
 
 // Create creates the named file with mode 0666 (before umask), truncating
