@@ -39,16 +39,22 @@ build:
 env:
 	@go version && echo "PATH=$(PATH)" && go env
 
+.PHONY: fmt_install
+fmt_install:
+	@if [ -z $(shell which gofumpt) ]; then
+		go get mvdan.cc/gofumpt
+	fi
+
 .PHONY: fmt
-fmt:
-	@gofmt -l -s -w .
+fmt: fmt_install
+	@gofumpt -l -s -w -extra .
 
 .PHONY: vet
 vet:
 	@go vet -all ./...
 
-.PHONY:golangci_local
-golangci_local:
+.PHONY:golangci_install
+golangci_install:
 	@if [ -z $(shell which golangci-lint) ]; then
 		## get the latest tagged version of golangci-lint
 		version=`git ls-remote --tags --refs --sort="v:refname" https://github.com/golangci/golangci-lint/ | tail -n1 | sed "s/.*\///"`
@@ -58,7 +64,7 @@ golangci_local:
 	fi
 
 .PHONY:golangci
-golangci: golangci_local
+golangci: golangci_install
 	@$(shell go env GOPATH)/bin/golangci-lint run
 
 .PHONY: coverage_init
