@@ -69,12 +69,8 @@ golangci_install:
 golangci: golangci_install
 	@$(GOPATH)/bin/golangci-lint run
 
-.PHONY: coverage_init
-coverage_init:
-	@install -m 777 /dev/null $(COVERAGE_FILE)
-
 .PHONY: test
-test: env coverage_init
+test: env
 	@$(GO) test -run=$(RUNTEST) -race -v -coverprofile=$(COVERAGE_FILE) -covermode=atomic ./...
 
 .PHONY: cover
@@ -94,7 +90,7 @@ dockerbuild:
 	@docker build . -t $(DOCKER_IMAGE)
 
 .PHONY: dockertest
-dockertest: dockerbuild coverage_init
+dockertest: dockerbuild
 	-@docker run -ti $(DOCKER_IMAGE)
 	-@docker cp `docker ps -alq`:/go/src/$(COVERAGE_FILE) $(COVERAGE_FILE)
 
