@@ -414,7 +414,13 @@ func (ci *ConfigIdm) SuiteUserDenied() {
 
 	uc, ok := idm.(avfs.UserConnecter)
 	if !ok {
-		t.Skipf("%s does not implement avfs.UserConnecter : skipping", ci.Type())
+		t.Logf("%s does not implement avfs.UserConnecter, skipping", ci.Type())
+		return
+	}
+
+	if !uc.CurrentUser().IsRoot() {
+		t.Logf("%s only works only when connected as root, skipping", idm.Type())
+		return
 	}
 
 	_, err := uc.User(UsrTest)
