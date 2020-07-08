@@ -29,6 +29,7 @@ import (
 func (cf *ConfigFs) SuiteRace() {
 	cf.SuiteRaceDir()
 	cf.SuiteRaceFile()
+	cf.SuiteRaceMkdirRemoveAll()
 }
 
 // SuiteRaceDir tests data race conditions for some directory functions.
@@ -57,7 +58,7 @@ func (cf *ConfigFs) SuiteRaceDir() {
 	})
 }
 
-// SuiteRaceFile tests data race conditions for some files functions.
+// SuiteRaceFile tests data race conditions for some file functions.
 func (cf *ConfigFs) SuiteRaceFile() {
 	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
 	defer removeDir()
@@ -114,54 +115,76 @@ func (cf *ConfigFs) SuiteRaceFile() {
 	}()
 }
 
+// SuiteRaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
+func (cf *ConfigFs) SuiteRaceMkdirRemoveAll() {
+	_, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+	defer removeDir()
+
+	fs := cf.GetFsWrite()
+
+	path := fs.Join(rootDir, "new/path/to/test")
+
+	cf.SuiteRaceFunc("Complex", RaceUndefined, func() error {
+		return fs.MkdirAll(path, avfs.DefaultDirPerm)
+	}, func() error {
+		return fs.RemoveAll(path)
+	})
+}
+
 // RaceResult defines the type of result expected from a race test.
 type RaceResult uint8
 
 const (
 	// RaceNoneOk expects that all the results will return an error.
-	RaceNoneOk RaceResult = iota
+	RaceNoneOk RaceResult = iota + 1
 
 	// RaceOneOk expects that only one result will be without error.
 	RaceOneOk
 
 	// RaceAllOk expects that all results will be without error.
 	RaceAllOk
+
+	// RaceUndefined does not expect anything (unpredictable results).
+	RaceUndefined
 )
 
-// SuiteRaceFunc tests data race conditions on a function f expecting a result rr.
-func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
+// SuiteRaceFunc tests data race conditions by running simultaneously all testFuncs in cf.maxRace goroutines
+// and expecting a result rr.
+func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func() error) {
 	var (
 		t       = cf.t
 		wg      sync.WaitGroup
 		starter sync.RWMutex
-		wantOk  int32
-		gotOk   int32
-		wantErr int32
-		gotErr  int32
+		wantOk  uint32
+		gotOk   uint32
+		wantErr uint32
+		gotErr  uint32
 	)
 
 	t.Run("Race_"+name, func(t *testing.T) {
-		wg.Add(cf.maxRace)
+		wg.Add(cf.maxRace * len(testFuncs))
 		starter.Lock()
 
 		for i := 0; i < cf.maxRace; i++ {
-			go func() {
-				defer func() {
-					starter.RUnlock()
-					wg.Done()
-				}()
+			for _, testFunc := range testFuncs {
+				go func(f func() error) {
+					defer func() {
+						starter.RUnlock()
+						wg.Done()
+					}()
 
-				starter.RLock()
+					starter.RLock()
 
-				err := f()
-				if err != nil {
-					atomic.AddInt32(&gotErr, 1)
+					err := f()
+					if err != nil {
+						atomic.AddUint32(&gotErr, 1)
 
-					return
-				}
+						return
+					}
 
-				atomic.AddInt32(&gotOk, 1)
-			}()
+					atomic.AddUint32(&gotOk, 1)
+				}(testFunc)
+			}
 		}
 
 		starter.Unlock()
@@ -173,10 +196,14 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, f func() error) {
 		case RaceOneOk:
 			wantOk = 1
 		case RaceAllOk:
-			wantOk = int32(cf.maxRace)
+			wantOk = uint32(cf.maxRace)
+		case RaceUndefined:
+			t.Logf("Race %s : ok = %d, error = %d", name, gotOk, gotErr)
+
+			return
 		}
 
-		wantErr = int32(cf.maxRace) - wantOk
+		wantErr = uint32(cf.maxRace) - wantOk
 
 		if gotOk != wantOk {
 			t.Errorf("Race %s : want number of responses without error to be %d, got %d ", name, wantOk, gotOk)
