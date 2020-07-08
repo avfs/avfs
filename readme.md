@@ -6,6 +6,7 @@ Another Virtual File System for Go
 [![GoDoc](https://godoc.org/github.com/avfs/avfs?status.svg)](https://godoc.org/github.com/avfs/avfs) 
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
+[![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 
 ## Overview
 **AVFS** is a virtual file system abstraction, 
