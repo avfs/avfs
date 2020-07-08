@@ -54,7 +54,7 @@ func (fs *OsFs) HasFeature(feature avfs.Feature) bool {
 
 // Name returns the name of the fileSystem.
 func (fs *OsFs) Name() string {
-	return fs.Type()
+	return ""
 }
 
 // Type returns the type of the fileSystem or Identity manager.
