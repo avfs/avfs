@@ -21,7 +21,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
@@ -33,7 +34,6 @@ import (
 )
 
 const (
-	curlCmd      = "curl"
 	dockerCmd    = "docker"
 	goFumptCmd   = "gofumpt"
 	gitCmd       = "git"
@@ -79,13 +79,9 @@ func Lint() error {
 
 		fmt.Printf("\nversion = %s\n", version)
 
-		out, err := sh.Output(curlCmd, " -sSfL", "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh")
-		if err != nil {
-			return err
-		}
-
 		script := golangCiCmd + ".sh"
-		err = ioutil.WriteFile(script, []byte(out), 0o755)
+
+		err = downloadFile(script, "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh")
 		if err != nil {
 			return err
 		}
@@ -144,7 +140,7 @@ func Bench() error {
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
 	if !isExecutable(dockerCmd) {
-		fmt.Errorf("Can't find %s in the current path", dockerCmd)
+		fmt.Errorf("can't find %s in the current path", dockerCmd)
 	}
 
 	return sh.RunV(dockerCmd, "build", ".", "-t", dockerImage)
@@ -219,4 +215,25 @@ func gitLastVersion(repo string) (string, error) {
 	}
 
 	return version, nil
+}
+
+// downloadFile downloads a url to a local file.
+func downloadFile(path string, url string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	_, err = io.Copy(f, resp.Body)
+
+	return err
 }
