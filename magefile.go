@@ -218,7 +218,7 @@ func gitLastVersion(repo string) (string, error) {
 }
 
 // downloadFile downloads a url to a local file.
-func downloadFile(path string, url string) error {
+func downloadFile(path, url string) error {
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
