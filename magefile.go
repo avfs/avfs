@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -39,6 +40,7 @@ const (
 	gitCmd       = "git"
 	golangCiCmd  = "golangci-lint"
 	golangCiGit  = "github.com/golangci/golangci-lint"
+	golangCiBin  = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
 	goCmd        = "go"
 	dockerImage  = "avfs-docker"
 	coverageFile = "coverage.txt"
@@ -69,7 +71,7 @@ func Fmt() error {
 	return sh.RunV(goFumptCmd, "-l", "-s", "-w", "-extra", ".")
 }
 
-// Lint runs golangci-lint.
+// Lint runs golangci-lint (on Windows it must be run from bash shell like git bash).
 func Lint() error {
 	if !isExecutable(golangCiCmd) {
 		version, err := gitLastVersion(golangCiGit)
@@ -77,22 +79,22 @@ func Lint() error {
 			return err
 		}
 
-		fmt.Printf("\nversion = %s\n", version)
+		fmt.Printf("version = %s\n", version)
 
-		script := golangCiCmd + ".sh"
+		script := filepath.Join(os.TempDir(), golangCiCmd+".sh")
 
-		err = downloadFile(script, "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh")
+		err = downloadFile(script, golangCiBin)
 		if err != nil {
 			return err
 		}
+
+		defer os.Remove(script)
 
 		gopath := os.Getenv("GOPATH")
 		err = sh.RunV("sh", script, "-b", gopath+"/bin", version)
 		if err != nil {
 			return err
 		}
-
-		return nil
 	}
 
 	return sh.RunV(golangCiCmd, "run", "-v")
