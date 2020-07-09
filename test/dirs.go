@@ -119,6 +119,7 @@ func (cf *ConfigFs) SuiteChdir() {
 			if err != nil {
 				t.Errorf("Chdir %s : want error to be nil, got %v", path, err)
 			}
+
 			_ = f.Close()
 
 			curDir, err := fs.Getwd()
@@ -133,7 +134,7 @@ func (cf *ConfigFs) SuiteChdir() {
 	})
 }
 
-// SuiteGetTempDir tests GetTempdir function.
+// SuiteGetTempDir tests GetTempDir function.
 func (cf *ConfigFs) SuiteGetTempDir() {
 	t, fs := cf.t, cf.GetFsRead()
 
