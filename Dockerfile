@@ -19,4 +19,5 @@
 FROM golang:buster
 WORKDIR /go/src
 COPY . .
-CMD make test
+RUN go run magebuild.go
+CMD mage test
