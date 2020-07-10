@@ -17,6 +17,7 @@
 // +build bootstrap_mage
 
 // Download an build Mage.
+// Use "go run magebuild.go" to install Mage.
 package main
 
 import (
@@ -29,36 +30,45 @@ import (
 func main() {
 	const mageGitUrl = "https://github.com/magefile/mage"
 
+	if isExecutable("mage") {
+		os.Exit(0)
+	}
+
 	rootDir, err := ioutil.TempDir("", "mage")
 	if err != nil {
-		fmt.Printf("TempDir : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "TempDir : want error to be nil, got %v", err)
+		os.Exit(1)
 	}
 
 	defer os.RemoveAll(rootDir)
 
 	err = os.Chdir(rootDir)
 	if err != nil {
-		fmt.Printf("Chdir : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "Chdir : want error to be nil, got %v", err)
+		os.Exit(2)
 	}
 
 	err = run("git", "clone", "--depth", "1", mageGitUrl)
 	if err != nil {
-		fmt.Printf("Git : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "Git : want error to be nil, got %v", err)
+		os.Exit(3)
 	}
 
 	err = os.Chdir("mage")
 	if err != nil {
-		fmt.Printf("Chdir : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "Chdir : want error to be nil, got %v", err)
+		os.Exit(4)
 	}
 
 	err = run("go", "run", "bootstrap.go")
 	if err != nil {
-		fmt.Printf("Chdir : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "go run : want error to be nil, got %v", err)
 	}
 
 	err = run("mage", "--version")
 	if err != nil {
-		fmt.Printf("Mage : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "Mage : want error to be nil, got %v", err)
+		os.Exit(5)
 	}
 }
 
@@ -69,4 +79,10 @@ func run(cmd string, args ...string) error {
 	c.Stdout = os.Stdout
 
 	return c.Run()
+}
+
+// isExecutable checks if name is an executable in the current path.
+func isExecutable(name string) bool {
+	_, err := exec.LookPath(name)
+	return err == nil
 }
