@@ -17,16 +17,19 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v1
+        with:
+          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
+          version: v1.28
+
       - name: Install Mage
         run: go run magebuild.go
-
-      - name: Lint
-        run: mage lint
 
       - name: Run tests as root
         # preserve user environment variables :
         # for some reason go version as root is different from user version.
-        run: sudo -E env "PATH=$PATH" make test
+        run: sudo -E env "PATH=$PATH" mage test
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
