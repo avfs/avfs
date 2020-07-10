@@ -197,7 +197,7 @@ func isCI() bool {
 	return os.Getenv("CI") != ""
 }
 
-// gitLastVersion return the latest tagged version of a git repository.
+// gitLastVersion return the latest tagged version of a remote git repository.
 func gitLastVersion(repo string) (string, error) {
 	const semverRegexp = "v\\d+\\.\\d+\\.\\d+$"
 
@@ -213,7 +213,7 @@ func gitLastVersion(repo string) (string, error) {
 	re := regexp.MustCompile(semverRegexp)
 	version := re.FindString(out)
 	if version == "" {
-		return "", fmt.Errorf("error : can't find last version")
+		return "", fmt.Errorf("version : incorrect format :\n%s", out)
 	}
 
 	return version, nil
