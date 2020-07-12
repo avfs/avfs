@@ -19,6 +19,7 @@ package test
 import (
 	"io"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -107,6 +108,11 @@ func (cf *ConfigFs) SuiteChdir() {
 	})
 
 	t.Run("ChdirFile", func(t *testing.T) {
+		if fs.Type() == "OsFs" && runtime.GOOS == "windows" {
+			t.Logf("File.Chdir() is not supported by windows")
+			return
+		}
+
 		for _, dir := range dirs {
 			path := fs.Join(rootDir, dir.Path)
 
@@ -120,7 +126,7 @@ func (cf *ConfigFs) SuiteChdir() {
 				t.Errorf("Chdir %s : want error to be nil, got %v", path, err)
 			}
 
-			_ = f.Close()
+			f.Close()
 
 			curDir, err := fs.Getwd()
 			if err != nil {
