@@ -38,7 +38,7 @@ func (cf *ConfigFs) SuitePermWrite() {
 	t := cf.t
 
 	if !cf.canTestPerm {
-		t.Log("Info - Fs Perm Write : skipping tests.\nuse 'make dockertest' to run tests a root.")
+		t.Log("Info - Fs Perm Write : skipping tests.\nuse 'mage dockertest' to run tests a root.")
 		return
 	}
 
@@ -54,7 +54,7 @@ func (cf *ConfigFs) SuitePermRead() {
 	t := cf.t
 
 	if !cf.canTestPerm {
-		t.Log("Info - Fs Perm Read : skipping tests.\nuse 'make dockertest' to run tests a root.")
+		t.Log("Info - Fs Perm Read : skipping tests.\nuse 'mage dockertest' to run tests a root.")
 		return
 	}
 
