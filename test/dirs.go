@@ -19,7 +19,6 @@ package test
 import (
 	"io"
 	"os"
-	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -108,8 +107,8 @@ func (cf *ConfigFs) SuiteChdir() {
 	})
 
 	t.Run("ChdirFile", func(t *testing.T) {
-		if fs.Type() == "OsFs" && runtime.GOOS == "windows" {
-			t.Logf("File.Chdir() is not supported by windows")
+		if fs.OSType() == avfs.OsWindows {
+			t.Logf("File.Chdir() is not supported by windows, skipping")
 			return
 		}
 
