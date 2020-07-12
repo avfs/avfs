@@ -135,3 +135,6 @@ issues:
         - golint
         - stylecheck
       text: ".*id.* should be .*ID.*"
+    - linters:
+        - godox
+      text: "Line contains TODO/BUG/FIXME"
