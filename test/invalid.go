@@ -376,7 +376,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		_, err = f.Seek(0, io.SeekStart)
 		CheckPathError(t, "Seek", "seek", existingFile, os.ErrClosed, err)
 
-		switch cf.os {
+		switch cf.osType {
 		case avfs.OsLinux:
 			_, err = f.Readdir(-1)
 			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
