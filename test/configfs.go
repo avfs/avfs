@@ -18,6 +18,7 @@ package test
 
 import (
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -218,7 +219,7 @@ func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 		fs, _ := cf.GetFsAsUser(avfs.UsrRoot)
 
 		err = fs.RemoveAll(rootDir)
-		if err != nil {
+		if err != nil && runtime.GOOS != "windows" {
 			t.Logf("RemoveAll : want error to be nil, got %s", err)
 		}
 	}
