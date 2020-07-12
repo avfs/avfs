@@ -28,9 +28,9 @@ type OrefaFs struct {
 	mu      sync.RWMutex
 	nodes   nodes
 	curDir  string
-	umask   int32
-	feature avfs.Feature
 	name    string
+	feature avfs.Feature
+	umask   int32
 	osType  avfs.OSType
 }
 
