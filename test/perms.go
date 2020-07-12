@@ -602,7 +602,7 @@ func (cf *ConfigFs) SuiteStatT() {
 	t := cf.t
 	fs := cf.GetFsWrite()
 
-	info, err := fs.Stat(avfs.TmpDir)
+	info, err := fs.Stat(fs.GetTempDir())
 	if err != nil {
 		t.Errorf("Stat : want error be nil, got %v", err)
 	}
