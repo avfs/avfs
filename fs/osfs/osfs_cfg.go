@@ -20,6 +20,7 @@ import (
 	"runtime"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/dummyidm"
 )
 
@@ -57,6 +58,11 @@ func (fs *OsFs) HasFeature(feature avfs.Feature) bool {
 // Name returns the name of the fileSystem.
 func (fs *OsFs) Name() string {
 	return ""
+}
+
+// OSType returns the operating system type of the file system.
+func (fs *OsFs) OSType() avfs.OSType {
+	return fsutil.RunTimeOS()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
