@@ -18,7 +18,6 @@ package test
 
 import (
 	"os"
-	"runtime"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -63,6 +62,9 @@ type ConfigFs struct {
 
 	// canTestPerm indicates if permissions can be tested.
 	canTestPerm bool
+
+	// os is the operating system of the filesystem te test.
+	os avfs.OSType
 }
 
 // Option defines the option function used for initializing ConfigFs.
@@ -103,6 +105,7 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 		rootDir:     "",
 		maxRace:     1000,
 		canTestPerm: canTestPerm,
+		os:          fsutil.RunTimeOS(),
 	}
 
 	for _, opt := range opts {
@@ -119,6 +122,18 @@ func OptRootDir(rootDir string) Option {
 	return func(cf *ConfigFs) {
 		cf.rootDir = rootDir
 	}
+}
+
+// OptOs returns an option function which sets the operating system for the tests.
+func OptOs(OS avfs.OSType) Option {
+	return func(cf *ConfigFs) {
+		cf.os = OS
+	}
+}
+
+// OS returns the operating system, real or simulated.
+func (cf *ConfigFs) OS() avfs.OSType {
+	return cf.os
 }
 
 // GetFsAsUser sets the test user to userName.
@@ -219,7 +234,7 @@ func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 		fs, _ := cf.GetFsAsUser(avfs.UsrRoot)
 
 		err = fs.RemoveAll(rootDir)
-		if err != nil && runtime.GOOS != "windows" {
+		if err != nil && cf.os != avfs.OsWindows {
 			t.Logf("RemoveAll : want error to be nil, got %s", err)
 		}
 	}
