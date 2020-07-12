@@ -144,9 +144,11 @@ func (cf *ConfigFs) SuiteChdir() {
 func (cf *ConfigFs) SuiteGetTempDir() {
 	t, fs := cf.t, cf.GetFsRead()
 
-	tmp := fs.GetTempDir()
-	if tmp != avfs.TmpDir {
-		t.Fatalf("GetTempDir : want temp dir to be %s, got %s", avfs.TmpDir, tmp)
+	wantTmp := os.Getenv("TMP")
+
+	gotTmp := fs.GetTempDir()
+	if gotTmp != wantTmp {
+		t.Fatalf("GetTempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
 	}
 }
 
