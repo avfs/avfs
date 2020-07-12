@@ -19,6 +19,7 @@ package fsutil
 import (
 	"errors"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/avfs/avfs"
@@ -108,6 +109,16 @@ func IsExist(err error) bool {
 // ErrNotExist as well as some syscall errors.
 func IsNotExist(err error) bool {
 	return errors.Is(err, avfs.ErrNoSuchFileOrDir)
+}
+
+// RunTimeOS returns the current Operating System type.
+func RunTimeOS() avfs.OSType {
+	switch runtime.GOOS {
+	case "windows":
+		return avfs.OsWindows
+	default:
+		return avfs.OsLinux
+	}
 }
 
 // SegmentPath segments string key paths by separator (using avfs.PathSeparator).
