@@ -67,6 +67,11 @@ func (fs *BasePathFs) Name() string {
 	return fs.baseFs.Name()
 }
 
+// OSType returns the operating system type of the file system.
+func (fs *BasePathFs) OSType() avfs.OSType {
+	return fs.baseFs.OSType()
+}
+
 // Type returns the type of the fileSystem or Identity manager.
 func (fs *BasePathFs) Type() string {
 	return "BasePathFs"
