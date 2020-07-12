@@ -38,6 +38,11 @@ func (fs *RoFs) Name() string {
 	return fs.baseFs.Name()
 }
 
+// OSType returns the operating system type of the file system.
+func (fs *RoFs) OSType() avfs.OSType {
+	return fs.baseFs.OSType()
+}
+
 // Type returns the type of the fileSystem or Identity manager.
 func (fs *RoFs) Type() string {
 	return "RoFs"
