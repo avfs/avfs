@@ -184,6 +184,17 @@ const (
 	FeatSymlink
 )
 
+// OSType defines the operating system type.
+type OSType uint8
+
+const (
+	// OsLinux is the Linux operating system.
+	OsLinux OSType = iota + 1
+
+	// OsWindows is the Windows operating system.
+	OsWindows
+)
+
 // WantMode defines the permissions to check for CheckPermission() function.
 type WantMode uint8
 
@@ -214,6 +225,7 @@ type Fs interface {
 	IdentityMgr
 	HardLinker
 	Namer
+	OSTyper
 	Pather
 	SymLinker
 	UMasker
@@ -575,6 +587,12 @@ type SymLinker interface {
 type Typer interface {
 	// Type returns the type of the fileSystem or Identity manager.
 	Type() string
+}
+
+// OSTyper is the interface that wraps the OSType method.
+type OSTyper interface {
+	// OSType returns the operating system type of the file system.
+	OSType() OSType
 }
 
 // UMasker is the interface that groups functions related to file mode creation mask.
