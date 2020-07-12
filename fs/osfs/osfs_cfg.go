@@ -17,6 +17,8 @@
 package osfs
 
 import (
+	"runtime"
+
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/dummyidm"
 )
@@ -24,12 +26,12 @@ import (
 // New returns a new OsFs file system.
 func New(opts ...Option) (*OsFs, error) {
 	fs := &OsFs{
-		idm: dummyidm.NotImplementedIdm,
-		feature: avfs.FeatBasicFs |
-			avfs.FeatChroot |
-			avfs.FeatMainDirs |
-			avfs.FeatHardlink |
-			avfs.FeatSymlink,
+		idm:     dummyidm.NotImplementedIdm,
+		feature: avfs.FeatBasicFs | avfs.FeatMainDirs,
+	}
+
+	if runtime.GOOS != "windows" {
+		fs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
 	}
 
 	for _, opt := range opts {
