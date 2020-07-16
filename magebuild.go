@@ -14,9 +14,9 @@
 //  limitations under the License.
 //
 
-// +build bootstrap_mage
+// +build magebuild
 
-// Download an build Mage.
+// Download, build and install Mage in $GOPATH/bin.
 // Use "go run magebuild.go" to install Mage.
 package main
 
@@ -48,7 +48,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	err = run("git", "clone", "--depth", "1", mageGitUrl)
+	err = run("git", "clone", mageGitUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Git : want error to be nil, got %v", err)
 		os.Exit(3)
@@ -63,13 +63,16 @@ func main() {
 	err = run("go", "run", "bootstrap.go")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "go run : want error to be nil, got %v", err)
+		os.Exit(5)
 	}
 
 	err = run("mage", "--version")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Mage : want error to be nil, got %v", err)
-		os.Exit(5)
+		os.Exit(6)
 	}
+
+	os.Exit(0)
 }
 
 func run(cmd string, args ...string) error {
