@@ -34,8 +34,7 @@ func New(opts ...Option) (*MemFs, error) {
 			avfs.FeatClonable |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
-		umask:  int32(fsutil.UMask.Get()),
-		osType: fsutil.RunTimeOS(),
+		umask: int32(fsutil.UMask.Get()),
 	}
 
 	fs := &MemFs{
@@ -89,7 +88,7 @@ func (fs *MemFs) Name() string {
 
 // OSType returns the operating system type of the file system.
 func (fs *MemFs) OSType() avfs.OSType {
-	return fs.fsAttrs.osType
+	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -127,15 +126,6 @@ func OptIdm(idm avfs.IdentityMgr) Option {
 func OptName(name string) Option {
 	return func(fs *MemFs) error {
 		fs.fsAttrs.name = name
-
-		return nil
-	}
-}
-
-// OptOSType returns an option function which sets the Operating System type of the file system.
-func OptOSType(osType avfs.OSType) Option {
-	return func(fs *MemFs) error {
-		fs.fsAttrs.osType = osType
 
 		return nil
 	}
