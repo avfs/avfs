@@ -17,8 +17,6 @@
 package osfs
 
 import (
-	"runtime"
-
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/dummyidm"
@@ -31,7 +29,7 @@ func New(opts ...Option) (*OsFs, error) {
 		feature: avfs.FeatBasicFs | avfs.FeatMainDirs,
 	}
 
-	if runtime.GOOS != "windows" {
+	if fsutil.RunTimeOS() != avfs.OsWindows {
 		fs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
 	}
 
