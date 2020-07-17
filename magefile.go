@@ -42,6 +42,7 @@ const (
 	golangCiGit  = "github.com/golangci/golangci-lint"
 	golangCiBin  = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
 	goCmd        = "go"
+	mageCmd      = "mage"
 	dockerImage  = "avfs-docker"
 	coverageFile = "coverage.txt"
 	raceCount    = 5
@@ -152,16 +153,21 @@ func DockerBuild() error {
 	return sh.RunV(dockerCmd, "build", ".", "-t", dockerImage)
 }
 
+// DockerMage builds a static mage version of these scripts to be used in docker.
+func DockerMage() error {
+	return sh.RunV(mageCmd, "-compile", "./bin/dockermage", "-goos=linux")
+}
+
 // DockerConsole opens a shell as root in the docker image for AVFS.
 func DockerConsole() error {
-	mg.Deps(DockerBuild)
+	mg.Deps(DockerMage, DockerBuild)
 
 	return sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage, "/bin/bash")
 }
 
 // DockerTest runs tests in the docker image for AVFS.
 func DockerTest() error {
-	mg.Deps(DockerBuild)
+	mg.Deps(DockerMage, DockerBuild)
 
 	err := sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage)
 	if err != nil {

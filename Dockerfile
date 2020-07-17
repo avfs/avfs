@@ -19,5 +19,5 @@
 FROM golang:buster
 WORKDIR /go/src
 COPY . .
-RUN go run magebuild.go
+RUN ln ./bin/dockermage ../bin/mage
 CMD mage test

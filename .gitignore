@@ -7,4 +7,7 @@
 *.dylib
 
 # go test coverage
-coverage.txt
+coverage*.txt
+
+# binaries
+bin
