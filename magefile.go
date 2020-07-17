@@ -102,6 +102,10 @@ func Lint() error {
 
 // Cover opens a web browser with the latest coverage file.
 func Cover() error {
+	if isCI() {
+		return nil
+	}
+
 	return sh.RunV(goCmd, "tool", "cover", "-html="+coverageFile)
 }
 
@@ -152,14 +156,14 @@ func DockerBuild() error {
 func DockerConsole() error {
 	mg.Deps(DockerBuild)
 
-	return sh.RunV(dockerCmd, "run", "-ti", dockerImage, "/bin/bash")
+	return sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage, "/bin/bash")
 }
 
 // DockerTest runs tests in the docker image for AVFS.
 func DockerTest() error {
 	mg.Deps(DockerBuild)
 
-	err := sh.RunV(dockerCmd, "run", "-ti", dockerImage)
+	err := sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage)
 	if err != nil {
 		return err
 	}
@@ -174,9 +178,7 @@ func DockerTest() error {
 		return err
 	}
 
-	if !isCI() {
-		Cover()
-	}
+	Cover()
 
 	return nil
 }
