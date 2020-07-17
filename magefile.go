@@ -144,8 +144,15 @@ func Bench() error {
 		"-count="+strconv.Itoa(benchCount), "./...")
 }
 
+// DockerMage builds a static mage version of these scripts to be used in docker.
+func DockerMage() error {
+	return sh.RunV(mageCmd, "-compile", "./bin/dockermage", "-goos=linux")
+}
+
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
+	mg.Deps(DockerMage)
+
 	if !isExecutable(dockerCmd) {
 		fmt.Errorf("can't find %s in the current path", dockerCmd)
 	}
@@ -153,21 +160,16 @@ func DockerBuild() error {
 	return sh.RunV(dockerCmd, "build", ".", "-t", dockerImage)
 }
 
-// DockerMage builds a static mage version of these scripts to be used in docker.
-func DockerMage() error {
-	return sh.RunV(mageCmd, "-compile", "./bin/dockermage", "-goos=linux")
-}
-
 // DockerConsole opens a shell as root in the docker image for AVFS.
 func DockerConsole() error {
-	mg.Deps(DockerMage, DockerBuild)
+	mg.Deps(DockerBuild)
 
 	return sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage, "/bin/bash")
 }
 
 // DockerTest runs tests in the docker image for AVFS.
 func DockerTest() error {
-	mg.Deps(DockerMage, DockerBuild)
+	mg.Deps(DockerBuild)
 
 	err := sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage)
 	if err != nil {
