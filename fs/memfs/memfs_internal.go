@@ -142,7 +142,7 @@ func (fs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dirN
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  os.ModeDir | (perm & os.ModePerm &^ os.FileMode(fs.fsAttrs.umask)),
+			mode:  os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(fs.fsAttrs.umask)),
 			uid:   fs.user.Uid(),
 			gid:   fs.user.Gid(),
 		},
@@ -159,7 +159,7 @@ func (fs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fil
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  perm & os.ModePerm &^ os.FileMode(fs.fsAttrs.umask),
+			mode:  perm & avfs.FileModeMask &^ os.FileMode(fs.fsAttrs.umask),
 			uid:   fs.user.Uid(),
 			gid:   fs.user.Gid(),
 		},
@@ -317,7 +317,8 @@ func (dn *dirNode) setMode(mode os.FileMode, u avfs.UserReader) error {
 		return avfs.ErrOpNotPermitted
 	}
 
-	dn.mode = (dn.mode &^ os.ModePerm) | (mode & os.ModePerm)
+	dn.mode &^= avfs.FileModeMask
+	dn.mode |= mode & avfs.FileModeMask
 
 	return nil
 }
@@ -365,7 +366,8 @@ func (fn *fileNode) setMode(mode os.FileMode, u avfs.UserReader) error {
 		return avfs.ErrPermDenied
 	}
 
-	fn.mode = (fn.mode &^ os.ModePerm) | (mode & os.ModePerm)
+	fn.mode &^= avfs.FileModeMask
+	fn.mode |= mode & avfs.FileModeMask
 
 	return nil
 }

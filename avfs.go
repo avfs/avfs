@@ -44,6 +44,9 @@ const (
 	// HomeDirPerm is the default permission for home directories.
 	HomeDirPerm = 0o700
 
+	// FileModeMask is the bitmask used for permissions (see os.Chmod() comment).
+	FileModeMask = os.ModePerm | os.ModeSticky | os.ModeSetuid | os.ModeSetgid
+
 	// HomeDir is the home directory.
 	HomeDir = "/home"
 

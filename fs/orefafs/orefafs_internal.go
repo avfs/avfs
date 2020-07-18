@@ -20,6 +20,8 @@ import (
 	"os"
 	"sort"
 	"time"
+
+	"github.com/avfs/avfs"
 )
 
 // split splits path immediately following the final Separator,
@@ -42,14 +44,14 @@ func split(path string) (dir, file string) {
 
 // createDir creates a new directory.
 func (fs *OrefaFs) createDir(parent *node, absPath, fileName string, perm os.FileMode) *node {
-	mode := os.ModeDir | (perm & os.ModePerm &^ os.FileMode(fs.umask))
+	mode := os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(fs.umask))
 
 	return fs.createNode(parent, absPath, fileName, mode)
 }
 
 // createFile creates a new file.
 func (fs *OrefaFs) createFile(parent *node, absPath, fileName string, perm os.FileMode) *node {
-	mode := perm & os.ModePerm &^ os.FileMode(fs.umask)
+	mode := perm & avfs.FileModeMask &^ os.FileMode(fs.umask)
 
 	return fs.createNode(parent, absPath, fileName, mode)
 }
@@ -137,7 +139,10 @@ func (nd *node) remove() {
 // setMode sets the permissions of the file node.
 func (nd *node) setMode(mode os.FileMode) {
 	nd.mu.Lock()
-	nd.mode = (nd.mode &^ os.ModePerm) | (mode & os.ModePerm)
+
+	nd.mode &^= avfs.FileModeMask
+	nd.mode |= mode & avfs.FileModeMask
+
 	nd.mu.Unlock()
 }
 
