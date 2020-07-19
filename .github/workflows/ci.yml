@@ -23,13 +23,13 @@ jobs:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: v1.28
 
-      - name: Install Mage
-        run: go run magebuild.go
+      - name: Install mage & avfs binaries
+        run: go run mage/build.go
 
       - name: Run tests as root
         # preserve user environment variables :
         # for some reason go version as root is different from user version.
-        run: sudo -E env "PATH=$PATH" mage test
+        run: sudo -E env "PATH=$PATH" avfs test
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

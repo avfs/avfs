@@ -35,6 +35,8 @@ import (
 )
 
 const (
+	appName      = "avfs"
+	appMageCmd   = "bin/" + appName
 	dockerCmd    = "docker"
 	goFumptCmd   = "gofumpt"
 	gitCmd       = "git"
@@ -48,6 +50,28 @@ const (
 	raceCount    = 5
 	benchCount   = 5
 )
+
+// CompileLocal builds a static mage version of these scripts to be used on the current operating system.
+func CompileLocal() error {
+	goPath := os.Getenv("GOPATH")
+	appMage := filepath.Join(goPath, appMageCmd)
+	_, err := os.Stat(appMage)
+	if os.IsExist(err) {
+		return nil
+	}
+
+	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appMage)
+}
+
+// CompileDocker builds a static mage version of these scripts to be used in docker.
+func CompileDocker() error {
+	_, err := os.Stat(appMageCmd)
+	if os.IsExist(err) {
+		return nil
+	}
+
+	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appMageCmd, "-goos=linux")
+}
 
 // Env returns the go environment variables.
 func Env() {
@@ -125,9 +149,7 @@ func Test() error {
 		return err
 	}
 
-	if !isCI() {
-		Cover()
-	}
+	Cover()
 
 	return nil
 }
@@ -144,14 +166,9 @@ func Bench() error {
 		"-count="+strconv.Itoa(benchCount), "./...")
 }
 
-// DockerMage builds a static mage version of these scripts to be used in docker.
-func DockerMage() error {
-	return sh.RunV(mageCmd, "-compile", "./bin/dockermage", "-goos=linux")
-}
-
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
-	mg.Deps(DockerMage)
+	mg.Deps(CompileDocker)
 
 	if !isExecutable(dockerCmd) {
 		fmt.Errorf("can't find %s in the current path", dockerCmd)

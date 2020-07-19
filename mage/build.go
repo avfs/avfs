@@ -16,8 +16,8 @@
 
 // +build magebuild
 
-// Download, build and install Mage in $GOPATH/bin.
-// Use "go run magebuild.go" to install Mage.
+// Download, build and install Mage and Avfs binaries in $GOPATH/bin.
+// Use "go run build.go" to install Mage.
 package main
 
 import (
@@ -28,53 +28,68 @@ import (
 )
 
 func main() {
+	err := buildMage()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	err = buildAvfs()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Mage : want error to be nil, got %v", err)
+		os.Exit(2)
+	}
+}
+
+// buildMage builds mage binary and saves it in $GOPATH/bin.
+func buildMage() error {
 	const mageGitUrl = "https://github.com/magefile/mage"
 
 	if isExecutable("mage") {
-		os.Exit(0)
+		return nil
 	}
 
 	rootDir, err := ioutil.TempDir("", "mage")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "TempDir : want error to be nil, got %v", err)
-		os.Exit(1)
+		return fmt.Errorf("TempDir : want error to be nil, got %v", err)
 	}
 
 	defer os.RemoveAll(rootDir)
 
 	err = os.Chdir(rootDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Chdir : want error to be nil, got %v", err)
-		os.Exit(2)
+		return fmt.Errorf("Chdir : want error to be nil, got %v", err)
 	}
 
 	err = run("git", "clone", mageGitUrl)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Git : want error to be nil, got %v", err)
-		os.Exit(3)
+		return fmt.Errorf("Git : want error to be nil, got %v", err)
 	}
 
 	err = os.Chdir("mage")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Chdir : want error to be nil, got %v", err)
-		os.Exit(4)
+		return fmt.Errorf("Chdir : want error to be nil, got %v", err)
 	}
 
 	err = run("go", "run", "bootstrap.go")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "go run : want error to be nil, got %v", err)
-		os.Exit(5)
+		return fmt.Errorf("Bootstap : want error to be nil, got %v", err)
 	}
 
-	err = run("mage", "--version")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Mage : want error to be nil, got %v", err)
-		os.Exit(6)
-	}
-
-	os.Exit(0)
+	return nil
 }
 
+// buildAvfs builds avfs binary as saves it in $GOPATH/bin.
+func buildAvfs() error {
+	err := run("mage", "-d", "mage", "-w", ".", "CompileLocal")
+	if err != nil {
+		return fmt.Errorf("mage : want error to be nil, got %v", err)
+	}
+
+	return nil
+}
+
+// run runs a command cmd with arguments args.
 func run(cmd string, args ...string) error {
 	c := exec.Command(cmd, args...)
 	c.Env = os.Environ()

@@ -19,5 +19,5 @@
 FROM golang:buster
 WORKDIR /go/src
 COPY . .
-RUN ln ./bin/dockermage ../bin/mage
-CMD mage test
+RUN ln ./mage/bin/avfs ../bin/avfs
+CMD avfs test
