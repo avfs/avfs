@@ -28,6 +28,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -54,6 +55,10 @@ const (
 // BinLocal builds a static binary of this script to be used on the current operating system.
 func BinLocal() error {
 	appNamePath := filepath.Join(build.Default.GOPATH, "bin", appName)
+
+	if runtime.GOOS == "windows" {
+		appNamePath += ".exe"
+	}
 
 	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appNamePath)
 }
