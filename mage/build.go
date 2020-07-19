@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-// +build magebuild
+// +build ignore
 
 // Download, build and install Mage and Avfs binaries in $GOPATH/bin.
 // Use "go run build.go" to install Mage.
@@ -38,6 +38,12 @@ func main() {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "BuildAvfs : %v\n", err)
 		os.Exit(2)
+	}
+
+	err = run("avfs")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "RunAvfs : %v\n", err)
+		os.Exit(3)
 	}
 }
 
@@ -91,7 +97,7 @@ func buildMage() error {
 
 // buildAvfs builds avfs binary as saves it in $GOPATH/bin.
 func buildAvfs() error {
-	err := run("mage", "-d", "mage", "-w", ".", "CompileLocal")
+	err := run("mage", "-d", "mage", "-w", ".", "BinLocal")
 	if err != nil {
 		return fmt.Errorf("mage : want error to be nil, got %v", err)
 	}

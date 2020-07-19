@@ -36,7 +36,6 @@ import (
 
 const (
 	appName      = "avfs"
-	appMageCmd   = "bin/" + appName
 	dockerCmd    = "docker"
 	goFumptCmd   = "gofumpt"
 	gitCmd       = "git"
@@ -51,26 +50,19 @@ const (
 	benchCount   = 5
 )
 
-// CompileLocal builds a static mage version of these scripts to be used on the current operating system.
-func CompileLocal() error {
+// BinLocal builds a static binary of this script to be used on the current operating system.
+func BinLocal() error {
 	goPath := os.Getenv("GOPATH")
-	appMage := filepath.Join(goPath, appMageCmd)
-	_, err := os.Stat(appMage)
-	if os.IsExist(err) {
-		return nil
-	}
+	appNamePath := filepath.Join(goPath, "bin", appName)
 
-	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appMage)
+	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appNamePath)
 }
 
-// CompileDocker builds a static mage version of these scripts to be used in docker.
-func CompileDocker() error {
-	_, err := os.Stat(appMageCmd)
-	if os.IsExist(err) {
-		return nil
-	}
+// BinDocker builds a static binary of this script to be used in docker.
+func BinDocker() error {
+	appNamePath := filepath.Join("bin", appName)
 
-	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appMageCmd, "-goos=linux")
+	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appNamePath, "-goos=linux")
 }
 
 // Env returns the go environment variables.
@@ -96,7 +88,7 @@ func Fmt() error {
 	return sh.RunV(goFumptCmd, "-l", "-s", "-w", "-extra", ".")
 }
 
-// Lint runs golangci-lint (on Windows it must be run from bash shell like git bash).
+// Lint runs golangci-lint (on Windows it must be run from a bash shell like git bash).
 func Lint() error {
 	if !isExecutable(golangCiCmd) {
 		version, err := gitLastVersion(golangCiGit)
@@ -168,7 +160,7 @@ func Bench() error {
 
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
-	mg.Deps(CompileDocker)
+	mg.Deps(BinDocker)
 
 	if !isExecutable(dockerCmd) {
 		fmt.Errorf("can't find %s in the current path", dockerCmd)
