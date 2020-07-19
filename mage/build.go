@@ -30,13 +30,13 @@ import (
 func main() {
 	err := buildMage()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "BuildMage : %v\n", err)
 		os.Exit(1)
 	}
 
 	err = buildAvfs()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Mage : want error to be nil, got %v", err)
+		fmt.Fprintf(os.Stderr, "BuildAvfs : %v\n", err)
 		os.Exit(2)
 	}
 }
@@ -47,6 +47,11 @@ func buildMage() error {
 
 	if isExecutable("mage") {
 		return nil
+	}
+
+	appDir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("Getwd : want error to be nil, got %v", err)
 	}
 
 	rootDir, err := ioutil.TempDir("", "mage")
@@ -74,6 +79,11 @@ func buildMage() error {
 	err = run("go", "run", "bootstrap.go")
 	if err != nil {
 		return fmt.Errorf("Bootstap : want error to be nil, got %v", err)
+	}
+
+	err = os.Chdir(appDir)
+	if err != nil {
+		return fmt.Errorf("Chdir : want error to be nil, got %v", err)
 	}
 
 	return nil
