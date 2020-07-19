@@ -194,8 +194,14 @@ const (
 	// OsLinux is the Linux operating system.
 	OsLinux OSType = iota + 1
 
+	// OsLinuxWSL is the Windows Subsystem for Linux.
+	OsLinuxWSL
+
 	// OsWindows is the Windows operating system.
 	OsWindows
+
+	// OsUnknown is an unknown operating system.
+	OsUnknown
 )
 
 // WantMode defines the permissions to check for CheckPermission() function.

@@ -116,8 +116,15 @@ func RunTimeOS() avfs.OSType {
 	switch runtime.GOOS {
 	case "windows":
 		return avfs.OsWindows
-	default:
+	case "linux":
+		if IsLinuxWSL() {
+			return avfs.OsLinuxWSL
+		}
+
 		return avfs.OsLinux
+
+	default:
+		return avfs.OsUnknown
 	}
 }
 

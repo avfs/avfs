@@ -19,6 +19,7 @@
 package fsutil
 
 import (
+	"bytes"
 	"math"
 	"os"
 	"sync"
@@ -76,4 +77,24 @@ func AsStatT(value interface{}) *avfs.StatT {
 	default:
 		return &avfs.StatT{Uid: math.MaxUint32, Gid: math.MaxUint32}
 	}
+}
+
+// IsLinuxWSL indicates if the current operating system is Windows Subsystem for Linux.
+func IsLinuxWSL() bool {
+	var uname syscall.Utsname
+	if err := syscall.Uname(&uname); err != nil {
+		return false
+	}
+
+	buf := make([]byte, 0, len(uname.Version))
+
+	for _, c := range uname.Version {
+		if c == 0 {
+			break
+		}
+
+		buf = append(buf, byte(c))
+	}
+
+	return bytes.Contains(buf, []byte("microsoft"))
 }

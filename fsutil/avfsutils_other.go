@@ -50,3 +50,8 @@ func AsStatT(value interface{}) *avfs.StatT {
 		return &avfs.StatT{Uid: math.MaxUint32, Gid: math.MaxUint32}
 	}
 }
+
+// IsLinuxWSL indicates if the current operating system is Windows Subsystem for Linux.
+func IsLinuxWSL() bool {
+	return false
+}
