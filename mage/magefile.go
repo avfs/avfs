@@ -16,11 +16,12 @@
 
 // +build mage
 
-// This is the build script for AVFS.
+// avfs is the build script for AVFS.
 package main
 
 import (
 	"fmt"
+	"go/build"
 	"io"
 	"net/http"
 	"os"
@@ -52,8 +53,7 @@ const (
 
 // BinLocal builds a static binary of this script to be used on the current operating system.
 func BinLocal() error {
-	goPath := os.Getenv("GOPATH")
-	appNamePath := filepath.Join(goPath, "bin", appName)
+	appNamePath := filepath.Join(build.Default.GOPATH, "bin", appName)
 
 	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appNamePath)
 }
@@ -107,8 +107,7 @@ func Lint() error {
 
 		defer os.Remove(script)
 
-		gopath := os.Getenv("GOPATH")
-		err = sh.RunV("sh", script, "-b", gopath+"/bin", version)
+		err = sh.RunV("sh", script, "-b", build.Default.GOPATH+"/bin", version)
 		if err != nil {
 			return err
 		}
