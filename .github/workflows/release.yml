@@ -3,9 +3,6 @@ on:
   push:
     tags:
       - v[0-9]+\.[0-9]+\.[0-9]+
-    branches:
-      - master
-      - releases/*
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
