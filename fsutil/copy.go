@@ -79,6 +79,21 @@ func CopyFile(dstFs, srcFs avfs.Fs, dstPath, srcPath string, hasher hash.Hash) (
 		return nil, err
 	}
 
+	err = dst.Sync()
+	if err != nil {
+		return nil, err
+	}
+
+	info, err := srcFs.Stat(srcPath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = dstFs.Chmod(dstPath, info.Mode())
+	if err != nil {
+		return nil, err
+	}
+
 	if hasher == nil {
 		return nil, nil
 	}
