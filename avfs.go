@@ -114,6 +114,9 @@ const (
 
 	// ErrWinAccessDenied is the error Access is denied.
 	ErrWinAccessDenied = syscall.Errno(0x5)
+
+	// ErrWinFileExists is the error The file exists (syscall.ERROR_FILE_EXISTS).
+	ErrWinFileExists = syscall.Errno(80)
 )
 
 var (

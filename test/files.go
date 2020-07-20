@@ -298,13 +298,26 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 		f.Close()
 
 		_, err = fs.OpenFile(fileExcl, os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
-		CheckPathError(t, "OpenFile", "open", fileExcl, avfs.ErrFileExists, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "OpenFile", "open", fileExcl, avfs.ErrWinFileExists, err)
+		default:
+			CheckPathError(t, "OpenFile", "open", fileExcl, avfs.ErrFileExists, err)
+		}
 	})
 
 	t.Run("OpenFileNonExistingPath", func(t *testing.T) {
 		nonExistingPath := fs.Join(rootDir, "non/existing/path")
 		_, err := fs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
-		CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrNoSuchFileOrDir, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrWinPathNotFound, err)
+		default:
+			CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrNoSuchFileOrDir, err)
+
+		}
 	})
 }
 
