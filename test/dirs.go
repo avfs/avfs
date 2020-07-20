@@ -208,6 +208,10 @@ func (cf *ConfigFs) SuiteMkdir() {
 				}
 
 				wantMode &^= fs.GetUMask()
+				if fs.OSType() == avfs.OsWindows {
+					wantMode = os.ModePerm
+				}
+
 				mode := info.Mode() & os.ModePerm
 				if wantMode != mode {
 					t.Errorf("stat %s %s : want mode to be %s, got %s", path, curPath, wantMode, mode)
