@@ -668,7 +668,12 @@ func (cf *ConfigFs) SuiteWriteDenied() {
 			CheckPathError(t, "Lchown", "lchown", pathDir, avfs.ErrOpNotPermitted, err)
 
 			err = fs.Link(pathFile, pathNewDirOrFile)
-			CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrOpNotPermitted, err)
+			switch fs.OSType() {
+			case avfs.OsLinuxWSL:
+				CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrPermDenied, err)
+			default:
+				CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrOpNotPermitted, err)
+			}
 
 			err = fs.Mkdir(pathNewDirOrFile, avfs.DefaultDirPerm)
 			CheckPathError(t, "Mkdir", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)
