@@ -302,7 +302,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		_, err = f.Read(b)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "Read", "read", pathDir, avfs.ErrNotSupported, err)
+			CheckPathError(t, "Read", "read", pathDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			CheckPathError(t, "Read", "read", pathDir, avfs.ErrIsADirectory, err)
 		}
@@ -310,7 +310,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		_, err = f.ReadAt(b, 0)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrNotSupported, err)
+			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrIsADirectory, err)
 		}
@@ -318,7 +318,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		_, err = f.Seek(0, io.SeekStart)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "Seek", "seek", pathDir, avfs.ErrNotSupported, err)
+			CheckPathError(t, "Seek", "seek", pathDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			if err != nil {
 				t.Errorf("Seek : want error to be nil, got %v", err)
@@ -332,7 +332,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		err = f.Truncate(0)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "Truncate", "truncate", pathDir, avfs.ErrNotSupported, err)
+			CheckPathError(t, "Truncate", "truncate", pathDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			CheckPathError(t, "Truncate", "truncate", pathDir, os.ErrInvalid, err)
 		}
@@ -340,7 +340,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		_, err = f.Write(b)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "Write", "write", pathDir, avfs.ErrNotSupported, err)
+			CheckPathError(t, "Write", "write", pathDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			CheckPathError(t, "Write", "write", pathDir, avfs.ErrBadFileDesc, err)
 		}
@@ -348,7 +348,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		_, err = f.WriteAt(b, 0)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrNotSupported, err)
+			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrBadFileDesc, err)
 		}
@@ -409,7 +409,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		_, err = f.Readdir(-1)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "Readdir", "Readdir", existingFile, avfs.ErrPathNotFound, err)
+			CheckPathError(t, "Readdir", "Readdir", existingFile, avfs.ErrWinPathNotFound, err)
 		default:
 			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
 				t.Errorf("Readdir %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
@@ -419,7 +419,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		_, err = f.Readdirnames(-1)
 		switch fs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, "Readdirnames", "Readdir", existingFile, avfs.ErrPathNotFound, err)
+			CheckPathError(t, "Readdirnames", "Readdir", existingFile, avfs.ErrWinPathNotFound, err)
 		default:
 			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
 				t.Errorf("Readdirnames %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)

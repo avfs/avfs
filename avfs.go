@@ -100,11 +100,11 @@ const (
 
 // Errors on windows operating systems only.
 const (
-	// ErrNotSupported is the Error The handle is invalid.
-	ErrNotSupported = syscall.Errno(0x6)
+	// ErrWinInvalidHandle is the Error The handle is invalid.
+	ErrWinInvalidHandle = syscall.Errno(0x6)
 
-	// ErrPathNotFound is the Error The system cannot find the path specified (syscall.ERROR_PATH_NOT_FOUND)
-	ErrPathNotFound = syscall.Errno(0x3)
+	// ErrWinPathNotFound is the Error The system cannot find the path specified (syscall.ERROR_PATH_NOT_FOUND)
+	ErrWinPathNotFound = syscall.Errno(0x3)
 )
 
 var (
