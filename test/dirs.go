@@ -236,11 +236,23 @@ func (cf *ConfigFs) SuiteMkdir() {
 			path := fs.Join(rootDir, dir.Path, "can't", "create", "this")
 
 			err := fs.Mkdir(path, avfs.DefaultDirPerm)
-			CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrNoSuchFileOrDir, err)
+
+			switch fs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrWinPathNotFound, err)
+			default:
+				CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrNoSuchFileOrDir, err)
+			}
 		}
 
 		err := fs.Mkdir("", avfs.DefaultFilePerm)
-		CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrNoSuchFileOrDir, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrWinPathNotFound, err)
+		default:
+			CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrNoSuchFileOrDir, err)
+		}
 	})
 }
 
