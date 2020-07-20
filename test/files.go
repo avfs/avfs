@@ -850,7 +850,12 @@ func (cf *ConfigFs) SuiteFileTruncate() {
 	})
 	t.Run("FsTruncateErrors", func(t *testing.T) {
 		err := fs.Truncate(rootDir, 0)
-		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrIsADirectory, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "open", rootDir, avfs.ErrIsADirectory, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrIsADirectory, err)
+		}
 
 		f, err := fs.Open(rootDir)
 		if err != nil {
@@ -860,7 +865,12 @@ func (cf *ConfigFs) SuiteFileTruncate() {
 		defer f.Close()
 
 		err = f.Truncate(0)
-		CheckPathError(t, "Truncate", "truncate", rootDir, os.ErrInvalid, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrWinInvalidHandle, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", rootDir, os.ErrInvalid, err)
+		}
 	})
 }
 
