@@ -108,6 +108,9 @@ const (
 
 	// ErrWinNotSupported is the Error Not supported by windows (syscall.EWINDOWS)
 	ErrWinNotSupported = syscall.Errno(0x20000082)
+
+	// ErrWinDirNameInvalid is the Error The directory name is invalid
+	ErrWinDirNameInvalid = syscall.Errno(0x10B)
 )
 
 var (

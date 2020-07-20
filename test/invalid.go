@@ -217,7 +217,13 @@ func (cf *ConfigFs) SuiteDirFuncOnFile() {
 
 	t.Run("DirFuncOnFileFs", func(t *testing.T) {
 		err = fs.Chdir(existingFile)
-		CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrNotADirectory, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrWinDirNameInvalid, err)
+		default:
+			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrNotADirectory, err)
+		}
 
 		if fs.HasFeature(avfs.FeatSymlink) {
 			_, err = fs.Lstat(nonExistingFile)
@@ -234,10 +240,22 @@ func (cf *ConfigFs) SuiteDirFuncOnFile() {
 		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
 
 		_, err = fs.ReadDir(existingFile)
-		CheckSyscallError(t, "ReadDir", "readdirent", "", avfs.ErrNotADirectory, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "ReadDir", "readdirent", "", avfs.ErrNotADirectory, err)
+		}
 
 		_, err = fs.Stat(nonExistingFile)
-		CheckPathError(t, "Stat", "stat", nonExistingFile, avfs.ErrNotADirectory, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Stat", "CreateFile", nonExistingFile, avfs.ErrNotADirectory, err)
+		default:
+			CheckPathError(t, "Stat", "stat", nonExistingFile, avfs.ErrNotADirectory, err)
+		}
 
 		_, err = fs.TempDir(existingFile, "")
 
@@ -263,13 +281,31 @@ func (cf *ConfigFs) SuiteDirFuncOnFile() {
 
 	t.Run("DirFuncOnFileF", func(t *testing.T) {
 		_, err = f.Readdir(-1)
-		CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdir", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+		}
 
 		_, err = f.Readdirnames(-1)
-		CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdirnames", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+		}
 
 		err = f.Chdir()
-		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotADirectory, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotADirectory, err)
+		}
 	})
 }
 
