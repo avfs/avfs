@@ -86,9 +86,9 @@ func IsLinuxWSL() bool {
 		return false
 	}
 
-	buf := make([]byte, 0, len(uname.Version))
+	buf := make([]byte, 0, len(uname.Release))
 
-	for _, c := range uname.Version {
+	for _, c := range uname.Release {
 		if c == 0 {
 			break
 		}
