@@ -106,8 +106,8 @@ const (
 	// ErrWinPathNotFound is the Error The system cannot find the path specified (syscall.ERROR_PATH_NOT_FOUND)
 	ErrWinPathNotFound = syscall.Errno(0x3)
 
-	// ErrWinNotSupported is the Error Not supported by windows.
-	ErrWinNotSupported = syscall.EWINDOWS
+	// ErrWinNotSupported is the Error Not supported by windows (syscall.EWINDOWS)
+	ErrWinNotSupported = syscall.Errno(0x20000082)
 )
 
 var (
