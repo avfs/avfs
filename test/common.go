@@ -282,7 +282,13 @@ func (cf *ConfigFs) SuiteRemove() {
 			}
 
 			_, err = fs.Stat(path)
-			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
+
+			switch fs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, "Stat", "CreateFile", path, avfs.ErrNoSuchFileOrDir, err)
+			default:
+				CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
+			}
 		}
 	})
 
