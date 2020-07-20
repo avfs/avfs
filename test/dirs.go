@@ -143,9 +143,9 @@ func (cf *ConfigFs) SuiteChdir() {
 func (cf *ConfigFs) SuiteGetTempDir() {
 	t, fs := cf.t, cf.GetFsRead()
 
-	wantTmp := os.Getenv("TMP")
-	if wantTmp == "" {
-		wantTmp = avfs.TmpDir
+	wantTmp := avfs.TmpDir
+	if fs.OSType() == avfs.OsWindows {
+		wantTmp = os.Getenv("TMP")
 	}
 
 	gotTmp := fs.GetTempDir()
