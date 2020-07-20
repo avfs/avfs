@@ -126,6 +126,10 @@ func (cf *ConfigFs) SuiteLstat() {
 			}
 
 			wantMode := (dir.Mode | os.ModeDir) &^ fs.GetUMask()
+			if fs.OSType() == avfs.OsWindows {
+				wantMode = os.ModeDir | os.ModePerm
+			}
+
 			if wantMode != info.Mode() {
 				t.Errorf("Lstat %s : want mode to be %s, got %s", path, wantMode, info.Mode())
 			}
@@ -146,6 +150,10 @@ func (cf *ConfigFs) SuiteLstat() {
 			}
 
 			wantMode := file.Mode &^ fs.GetUMask()
+			if fs.OSType() == avfs.OsWindows {
+				wantMode = 0o666
+			}
+
 			if wantMode != info.Mode() {
 				t.Errorf("Lstat %s : want mode to be %s, got %s", path, wantMode, info.Mode())
 			}
