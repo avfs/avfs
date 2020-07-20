@@ -233,20 +233,39 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 		defer f.Close()
 
 		n, err := f.Write(whateverData)
-		CheckPathError(t, "Write", "write", existingFile, avfs.ErrBadFileDesc, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Write", "write", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
 		if n != 0 {
 			t.Errorf("Write : want bytes written to be 0, got %d", n)
 		}
 
 		n, err = f.WriteAt(whateverData, 3)
-		CheckPathError(t, "WriteAt", "write", existingFile, avfs.ErrBadFileDesc, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "WriteAt", "write", existingFile, avfs.ErrBadFileDesc, err)
+		}
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)
 		}
 
 		err = f.Chmod(0o777)
-		if err != nil {
-			t.Errorf("Chmod : want error to be nil, got %v", err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrWinNotSupported, err)
+		default:
+			if err != nil {
+				t.Errorf("Chmod : want error to be nil, got %v", err)
+			}
 		}
 
 		if fs.HasFeature(avfs.FeatIdentityMgr) {
@@ -268,7 +287,13 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 		}
 
 		err = f.Truncate(0)
-		CheckPathError(t, "Truncate", "truncate", existingFile, os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", existingFile, os.ErrInvalid, err)
+		}
 	})
 
 	t.Run("OpenFileDir", func(t *testing.T) {
@@ -316,7 +341,6 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 			CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrWinPathNotFound, err)
 		default:
 			CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrNoSuchFileOrDir, err)
-
 		}
 	})
 }
