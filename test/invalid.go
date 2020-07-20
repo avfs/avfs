@@ -645,6 +645,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 
 	if !fs.HasFeature(avfs.FeatHardlink) {
 		err := fs.Link(oldName, newName)
+
 		switch fs.OSType() {
 		case avfs.OsWindows:
 			CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrWinPathNotFound, err)
@@ -655,6 +656,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 
 	if !fs.HasFeature(avfs.FeatIdentityMgr) {
 		err := fs.Chown(rootDir, 0, 0)
+
 		switch fs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrWinNotSupported, err)
@@ -663,6 +665,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		err = fs.Lchown(rootDir, 0, 0)
+
 		switch fs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrWinNotSupported, err)
@@ -677,6 +680,7 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		err = f.Chown(0, 0)
+
 		switch fs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrWinNotSupported, err)
