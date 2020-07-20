@@ -645,15 +645,30 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 
 	if !fs.HasFeature(avfs.FeatHardlink) {
 		err := fs.Link(oldName, newName)
-		CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrPermDenied, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrWinPathNotFound, err)
+		default:
+			CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrPermDenied, err)
+		}
 	}
 
 	if !fs.HasFeature(avfs.FeatIdentityMgr) {
 		err := fs.Chown(rootDir, 0, 0)
-		CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
+		}
 
 		err = fs.Lchown(rootDir, 0, 0)
-		CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
+		}
 
 		f, err := fs.Open(rootDir)
 		if err == nil {
@@ -662,10 +677,15 @@ func (cf *ConfigFs) SuiteNotImplemented() {
 		}
 
 		err = f.Chown(0, 0)
-		CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
+		}
 	}
 
-	if !fs.HasFeature(avfs.FeatSymlink) {
+	if !fs.HasFeature(avfs.FeatSymlink) && fs.OSType() != avfs.OsWindows {
 		_, err := fs.EvalSymlinks(rootDir)
 		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
 
