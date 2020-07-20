@@ -440,7 +440,13 @@ func (cf *ConfigFs) SuiteRename() {
 			}
 
 			_, err = fs.Stat(oldPath)
-			CheckPathError(t, "Stat", "stat", oldPath, avfs.ErrNoSuchFileOrDir, err)
+
+			switch fs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, "Stat", "CreateFile", oldPath, avfs.ErrNoSuchFileOrDir, err)
+			default:
+				CheckPathError(t, "Stat", "stat", oldPath, avfs.ErrNoSuchFileOrDir, err)
+			}
 
 			_, err = fs.Stat(newPath)
 			if err != nil {
@@ -470,7 +476,13 @@ func (cf *ConfigFs) SuiteRename() {
 					t.Errorf("Stat %s : want error to be nil, got %v", oldPath, err)
 				}
 			default:
-				CheckPathError(t, "Stat", "stat", oldPath, avfs.ErrNoSuchFileOrDir, err)
+
+				switch fs.OSType() {
+				case avfs.OsWindows:
+					CheckPathError(t, "Stat", "CreateFile", oldPath, avfs.ErrNoSuchFileOrDir, err)
+				default:
+					CheckPathError(t, "Stat", "stat", oldPath, avfs.ErrNoSuchFileOrDir, err)
+				}
 			}
 
 			_, err = fs.Stat(newPath)
