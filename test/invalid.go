@@ -239,38 +239,80 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 		}
 
 		_, err = f.Stat()
-		if err != os.ErrInvalid {
-			t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Stat", "GetFileType", nonExistingFile, avfs.ErrFileClosing, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 
 		err = f.Sync()
-		if err != os.ErrInvalid {
-			t.Errorf("Sync : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Sync", "sync", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Sync : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 
 		err = f.Truncate(0)
-		if err != os.ErrInvalid {
-			t.Errorf("Truncate : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Truncate : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 
 		_, err = f.Write(buf)
-		if err != os.ErrInvalid {
-			t.Errorf("Write : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Write : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 
 		_, err = f.WriteAt(buf, 0)
-		if err != os.ErrInvalid {
-			t.Errorf("WriteAt : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("WriteAt : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 
 		_, err = f.WriteString("")
-		if err != os.ErrInvalid {
-			t.Errorf("WriteString : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteString", "write", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("WriteString : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 
 		err = f.Close()
-		if err != os.ErrInvalid {
-			t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Close", "close", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
+			}
 		}
 	})
 }
