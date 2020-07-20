@@ -300,14 +300,29 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		b := make([]byte, 1)
 
 		_, err = f.Read(b)
-		CheckPathError(t, "Read", "read", pathDir, avfs.ErrIsADirectory, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Read", "read", pathDir, avfs.ErrNotSupported, err)
+		default:
+			CheckPathError(t, "Read", "read", pathDir, avfs.ErrIsADirectory, err)
+		}
 
 		_, err = f.ReadAt(b, 0)
-		CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrIsADirectory, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrNotSupported, err)
+		default:
+			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrIsADirectory, err)
+		}
 
 		_, err = f.Seek(0, io.SeekStart)
-		if err != nil {
-			t.Errorf("Seek : want error to be nil, got %v", err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Seek", "seek", pathDir, avfs.ErrNotSupported, err)
+		default:
+			if err != nil {
+				t.Errorf("Seek : want error to be nil, got %v", err)
+			}
 		}
 
 		if fs.HasFeature(avfs.FeatReadOnly) {
@@ -315,13 +330,28 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		}
 
 		err = f.Truncate(0)
-		CheckPathError(t, "Truncate", "truncate", pathDir, os.ErrInvalid, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", pathDir, avfs.ErrNotSupported, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", pathDir, os.ErrInvalid, err)
+		}
 
 		_, err = f.Write(b)
-		CheckPathError(t, "Write", "write", pathDir, avfs.ErrBadFileDesc, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", pathDir, avfs.ErrNotSupported, err)
+		default:
+			CheckPathError(t, "Write", "write", pathDir, avfs.ErrBadFileDesc, err)
+		}
 
 		_, err = f.WriteAt(b, 0)
-		CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrBadFileDesc, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrNotSupported, err)
+		default:
+			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrBadFileDesc, err)
+		}
 	})
 }
 

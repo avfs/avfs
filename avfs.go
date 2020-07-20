@@ -61,10 +61,12 @@ const (
 
 	// NotImplemented is the return string of a non implemented feature.
 	NotImplemented = "not implemented"
+)
 
-	// Most of the errors below can be found there :
-	// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
-
+// Errors on linux and Windows operating systems.
+// Most of the errors below can be found there :
+// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
+const (
 	// ErrBadFileDesc is the error Bad file descriptor.
 	ErrBadFileDesc = syscall.EBADF
 
@@ -94,6 +96,11 @@ const (
 
 	// ErrTooManySymlinks is the Error Too many levels of symbolic links.
 	ErrTooManySymlinks = syscall.ELOOP
+)
+
+// Errors on windows operating systems only.
+const (
+	ErrNotSupported = syscall.Errno(0x6)
 )
 
 var (
