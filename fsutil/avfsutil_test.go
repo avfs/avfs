@@ -22,6 +22,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/avfs/avfs"
+
 	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/fs/orefafs"
 	"github.com/avfs/avfs/fs/osfs"
@@ -89,17 +91,20 @@ func TestCreateBaseDirs(t *testing.T) {
 
 // TestUMask tests Umask and GetYMask functions.
 func TestUMask(t *testing.T) {
-	const (
-		umaskOs   = 0o22
-		umaskTest = 0o77
-	)
+	umaskOs := os.FileMode(0o22)
+	umaskSet := os.FileMode(0o77)
+	umaskTest := umaskSet
+
+	if fsutil.RunTimeOS() == avfs.OsWindows {
+		umaskTest = umaskOs
+	}
 
 	umask := fsutil.UMask.Get()
 	if umask != umaskOs {
 		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
 	}
 
-	fsutil.UMask.Set(umaskTest)
+	fsutil.UMask.Set(umaskSet)
 
 	umask = fsutil.UMask.Get()
 	if umask != umaskTest {
