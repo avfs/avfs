@@ -82,35 +82,38 @@ const (
 	// ErrIsADirectory is the error Is a directory.
 	ErrIsADirectory = syscall.EISDIR
 
-	// ErrNoSuchFileOrDir is the Error No such file or directory.
+	// ErrNoSuchFileOrDir is the error No such file or directory.
 	ErrNoSuchFileOrDir = syscall.ENOENT
 
-	// ErrNotADirectory is the Error Not a directory.
+	// ErrNotADirectory is the error Not a directory.
 	ErrNotADirectory = syscall.ENOTDIR
 
-	// ErrOpNotPermitted is the Error Operation not permitted.
+	// ErrOpNotPermitted is the error Operation not permitted.
 	ErrOpNotPermitted = syscall.EPERM
 
-	// ErrPermDenied is the Error Permission denied.
+	// ErrPermDenied is the error Permission denied.
 	ErrPermDenied = syscall.EACCES
 
-	// ErrTooManySymlinks is the Error Too many levels of symbolic links.
+	// ErrTooManySymlinks is the error Too many levels of symbolic links.
 	ErrTooManySymlinks = syscall.ELOOP
 )
 
 // Errors on windows operating systems only.
 const (
-	// ErrWinInvalidHandle is the Error The handle is invalid.
+	// ErrWinInvalidHandle is the error The handle is invalid.
 	ErrWinInvalidHandle = syscall.Errno(0x6)
 
-	// ErrWinPathNotFound is the Error The system cannot find the path specified (syscall.ERROR_PATH_NOT_FOUND)
+	// ErrWinPathNotFound is the error The system cannot find the path specified (syscall.ERROR_PATH_NOT_FOUND).
 	ErrWinPathNotFound = syscall.Errno(0x3)
 
-	// ErrWinNotSupported is the Error Not supported by windows (syscall.EWINDOWS)
+	// ErrWinNotSupported is the error Not supported by windows (syscall.EWINDOWS).
 	ErrWinNotSupported = syscall.Errno(0x20000082)
 
-	// ErrWinDirNameInvalid is the Error The directory name is invalid
+	// ErrWinDirNameInvalid is the error The directory name is invalid.
 	ErrWinDirNameInvalid = syscall.Errno(0x10B)
+
+	// ErrWinAccessDenied is the error Access is denied.
+	ErrWinAccessDenied = syscall.Errno(0x5)
 )
 
 var (

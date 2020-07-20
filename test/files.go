@@ -590,9 +590,15 @@ func (cf *ConfigFs) SuiteFileReadEdgeCases() {
 		defer f.Close()
 
 		b := make([]byte, len(data)*2)
-
 		n, err := f.Write(b)
-		CheckPathError(t, "Write", "write", path, avfs.ErrBadFileDesc, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", path, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Write", "write", path, avfs.ErrBadFileDesc, err)
+		}
+
 		if n != 0 {
 			t.Errorf("Write : want bytes written to be 0, got %d", n)
 		}
@@ -607,7 +613,14 @@ func (cf *ConfigFs) SuiteFileReadEdgeCases() {
 		}
 
 		n, err = f.WriteAt(b, 0)
-		CheckPathError(t, "WriteAt", "write", path, avfs.ErrBadFileDesc, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", path, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "WriteAt", "write", path, avfs.ErrBadFileDesc, err)
+		}
+
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes read to be 0, got %d", n)
 		}
