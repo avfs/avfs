@@ -407,17 +407,32 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		CheckPathError(t, "Seek", "seek", existingFile, os.ErrClosed, err)
 
 		_, err = f.Readdir(-1)
-		if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
-			t.Errorf("Readdir %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdir", "Readdir", existingFile, avfs.ErrPathNotFound, err)
+		default:
+			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
+				t.Errorf("Readdir %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+			}
 		}
 
 		_, err = f.Readdirnames(-1)
-		if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
-			t.Errorf("Readdirnames %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdirnames", "Readdir", existingFile, avfs.ErrPathNotFound, err)
+		default:
+			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
+				t.Errorf("Readdirnames %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+			}
 		}
 
 		_, err = f.Stat()
-		CheckPathError(t, "Stat", "stat", existingFile, avfs.ErrFileClosing, err)
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Stat", "GetFileType", existingFile, avfs.ErrFileClosing, err)
+		default:
+			CheckPathError(t, "Stat", "stat", existingFile, avfs.ErrFileClosing, err)
+		}
 
 		err = f.Sync()
 		CheckPathError(t, "Sync", "sync", existingFile, os.ErrClosed, err)
