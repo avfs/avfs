@@ -126,20 +126,40 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 		}
 
 		n, err = f.Read(buf3)
-		CheckPathError(t, "Read", "read", existingFile, avfs.ErrBadFileDesc, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Read", "read", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Read", "read", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
 		if n != 0 {
 			t.Errorf("Read : want bytes written to be 0, got %d", n)
 		}
 
 		n, err = f.ReadAt(buf3, 3)
-		CheckPathError(t, "ReadAt", "read", existingFile, avfs.ErrBadFileDesc, err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadAt", "read", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "ReadAt", "read", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
 		if n != 0 {
 			t.Errorf("ReadAt : want bytes written to be 0, got %d", n)
 		}
 
 		err = f.Chmod(0o777)
-		if err != nil {
-			t.Errorf("Chmod : want error to be nil, got %v", err)
+
+		switch fs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrWinNotSupported, err)
+		default:
+			if err != nil {
+				t.Errorf("Chmod : want error to be nil, got %v", err)
+			}
 		}
 
 		if fs.HasFeature(avfs.FeatIdentityMgr) {
