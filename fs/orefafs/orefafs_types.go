@@ -31,7 +31,6 @@ type OrefaFs struct {
 	name    string
 	feature avfs.Feature
 	umask   int32
-	osType  avfs.OSType
 }
 
 // OrefaFile represents an open file descriptor.

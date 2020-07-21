@@ -31,7 +31,6 @@ func New(opts ...Option) (*OrefaFs, error) {
 		curDir:  string(avfs.PathSeparator),
 		umask:   int32(fsutil.UMask.Get()),
 		feature: avfs.FeatBasicFs,
-		osType:  fsutil.RunTimeOS(),
 	}
 
 	fs.nodes[string(avfs.PathSeparator)] = &node{
@@ -76,7 +75,7 @@ func (fs *OrefaFs) Name() string {
 
 // OSType returns the operating system type of the file system.
 func (fs *OrefaFs) OSType() avfs.OSType {
-	return fs.osType
+	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
