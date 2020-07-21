@@ -19,6 +19,7 @@ package test
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -143,9 +144,15 @@ func (cf *ConfigFs) SuiteChdir() {
 func (cf *ConfigFs) SuiteGetTempDir() {
 	t, fs := cf.t, cf.GetFsRead()
 
-	wantTmp := avfs.TmpDir
-	if fs.OSType() == avfs.OsWindows {
+	var wantTmp string
+
+	switch fs.OSType() {
+	case avfs.OsDarwin:
+		wantTmp, _ = filepath.EvalSymlinks(os.TempDir())
+	case avfs.OsWindows:
 		wantTmp = os.Getenv("TMP")
+	default:
+		wantTmp = avfs.TmpDir
 	}
 
 	gotTmp := fs.GetTempDir()
