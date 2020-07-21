@@ -114,15 +114,12 @@ func IsNotExist(err error) bool {
 // RunTimeOS returns the current Operating System type.
 func RunTimeOS() avfs.OSType {
 	switch runtime.GOOS {
+	case "linux":
+		return avfs.OsLinux
+	case "darwin":
+		return avfs.OsDarwin
 	case "windows":
 		return avfs.OsWindows
-	case "linux":
-		if IsLinuxWSL() {
-			return avfs.OsLinuxWSL
-		}
-
-		return avfs.OsLinux
-
 	default:
 		return avfs.OsUnknown
 	}

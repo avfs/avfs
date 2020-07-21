@@ -214,17 +214,17 @@ const (
 type OSType uint8
 
 const (
+	// OsDarwin is the Darwin operating system.
+	OsDarwin OSType = iota + 1
+
 	// OsLinux is the Linux operating system.
-	OsLinux OSType = iota + 1
-
-	// OsLinuxWSL is the Windows Subsystem for Linux.
-	OsLinuxWSL
-
-	// OsWindows is the Windows operating system.
-	OsWindows
+	OsLinux
 
 	// OsUnknown is an unknown operating system.
 	OsUnknown
+
+	// OsWindows is the Windows operating system.
+	OsWindows
 )
 
 // WantMode defines the permissions to check for CheckPermission() function.

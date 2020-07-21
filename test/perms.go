@@ -668,10 +668,9 @@ func (cf *ConfigFs) SuiteWriteDenied() {
 			CheckPathError(t, "Lchown", "lchown", pathDir, avfs.ErrOpNotPermitted, err)
 
 			err = fs.Link(pathFile, pathNewDirOrFile)
-			switch fs.OSType() {
-			case avfs.OsLinuxWSL:
+			if fsutil.IsLinuxWSL() {
 				CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrPermDenied, err)
-			default:
+			} else {
 				CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrOpNotPermitted, err)
 			}
 
