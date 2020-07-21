@@ -213,6 +213,10 @@ func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 		}
 	}
 
+	if fsutil.RunTimeOS() == avfs.OsDarwin {
+		rootDir, _ = fs.EvalSymlinks(rootDir)
+	}
+
 	_, err = fs.Stat(rootDir)
 	if err != nil {
 		t.Fatalf("Stat : want error to be nil, got %s", err)
