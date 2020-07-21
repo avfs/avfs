@@ -1,4 +1,10 @@
 .git
+.github
+.gitignore
+.idea
+.vscode
 *.md
-Dockerfile
-coverage.txt
+coverage*.txt
+Dockerfile*
+LICENSE
+third_party_licenses

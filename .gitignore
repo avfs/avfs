@@ -11,3 +11,7 @@ coverage*.txt
 
 # binaries
 bin
+
+# editors
+.idea
+.vscode
