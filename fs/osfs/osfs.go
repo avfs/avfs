@@ -155,6 +155,13 @@ func (fs *OsFs) EvalSymlinks(path string) (string, error) {
 	return filepath.EvalSymlinks(path)
 }
 
+// FromSlash returns the result of replacing each slash ('/') character
+// in path with a separator character. Multiple slashes are replaced
+// by multiple separators.
+func (fs *OsFs) FromSlash(path string) string {
+	return filepath.FromSlash(path)
+}
+
 // GetTempDir returns the default directory to use for temporary files.
 //
 // On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
@@ -394,6 +401,13 @@ func (fs *OsFs) TempDir(dir, prefix string) (name string, err error) {
 // to remove the file when no longer needed.
 func (fs *OsFs) TempFile(dir, pattern string) (f avfs.File, err error) {
 	return ioutil.TempFile(dir, pattern)
+}
+
+// ToSlash returns the result of replacing each separator character
+// in path with a slash ('/') character. Multiple separators are
+// replaced by multiple slashes.
+func (fs *OsFs) ToSlash(path string) string {
+	return filepath.ToSlash(path)
 }
 
 // Truncate changes the size of the named file.

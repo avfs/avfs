@@ -180,6 +180,13 @@ func (fs *BasePathFs) EvalSymlinks(path string) (string, error) {
 	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
+// FromSlash returns the result of replacing each slash ('/') character
+// in path with a separator character. Multiple slashes are replaced
+// by multiple separators.
+func (fs *BasePathFs) FromSlash(path string) string {
+	return fs.baseFs.FromSlash(path)
+}
+
 // GetTempDir returns the default directory to use for temporary files.
 //
 // On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
@@ -459,6 +466,13 @@ func (fs *BasePathFs) TempDir(dir, prefix string) (name string, err error) {
 // to removeNodes the file when no longer needed.
 func (fs *BasePathFs) TempFile(dir, pattern string) (f avfs.File, err error) {
 	return fsutil.TempFile(fs, dir, pattern)
+}
+
+// ToSlash returns the result of replacing each separator character
+// in path with a slash ('/') character. Multiple separators are
+// replaced by multiple slashes.
+func (fs *BasePathFs) ToSlash(path string) string {
+	return fs.baseFs.ToSlash(path)
 }
 
 // Truncate changes the size of the named file.

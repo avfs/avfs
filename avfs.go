@@ -544,6 +544,11 @@ type Pather interface {
 	// The returned path does not end in a separator unless it is the root directory.
 	Dir(path string) string
 
+	// FromSlash returns the result of replacing each slash ('/') character
+	// in path with a separator character. Multiple slashes are replaced
+	// by multiple separators.
+	FromSlash(path string) string
+
 	// Glob returns the names of all files matching pattern or nil
 	// if there is no matching file. The syntax of patterns is the same
 	// as in Match. The pattern may describe hierarchical names such as
@@ -581,6 +586,11 @@ type Pather interface {
 	// and file set to path.
 	// The returned values have the property that path = dir+file.
 	Split(path string) (dir, file string)
+
+	// ToSlash returns the result of replacing each separator character
+	// in path with a slash ('/') character. Multiple separators are
+	// replaced by multiple slashes.
+	ToSlash(path string) string
 
 	// Walk walks the file tree rooted at root, calling walkFn for each file or
 	// directory in the tree, including root. All errors that arise visiting files
