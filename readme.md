@@ -3,7 +3,7 @@ Another Virtual File System for Go
 
 ![CI](https://github.com/avfs/avfs/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/avfs/avfs/branch/master/graph/badge.svg)](https://codecov.io/gh/avfs/avfs)
-[![GoDoc](https://godoc.org/github.com/avfs/avfs?status.svg)](https://godoc.org/github.com/avfs/avfs) 
+[![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/avfs/avfs?tab=doc)
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
@@ -52,9 +52,9 @@ fs, err := memfs.New(memfs.OptMainDirs())
 
 ## Examples
 
-### Symbolic and hard links
-The example below demonstrates the creation of a file, a symbolic link 
-and a hard link to this file, for a memory file system (MemFs).
+### Symbolic links
+The example below demonstrates the creation of a file, a symbolic link to this file, 
+for a memory file system (MemFs).
 Error management has been omitted for the sake of simplicity :
 
 ```go
@@ -88,16 +88,6 @@ func main() {
     }
     
     log.Printf("content from symbolic link %s : %s", aFilePathSl, gotContentSl)
-
-    aFilePathHl := fs.Join(rootDir, "aFileHardLink.txt")
-    _ = fs.Link(aFilePath, aFilePathHl)
-    
-    gotContentHl, _ := fs.ReadFile(aFilePathHl)
-    if !bytes.Equal(content, gotContentHl) {
-        log.Fatalf("Hardlink %s : want content to be %v, got %v", aFilePathHl, content, gotContentHl)
-    }
-
-    log.Printf("content from hard link %s : %s", aFilePathHl, gotContentHl)
 }
 ```
 
@@ -139,12 +129,13 @@ File system methods <br> `avfs.Fs`|Comments
 `Create`|equivalent to `os.Create`
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
+`FromSlash`|equivalent to `filepath.FromSlash`
 `Features`| returns the set of features provided by the file system or identity manager
 `GetTempDir`|equivalent to `os.TempDir`
 `Getwd`|equivalent to `os.Getwd`
 `Glob`|equivalent to `filepath.Glob`
 `HasFeature`| returns true if the file system or identity manager provides a given feature
-`IsAbs`|equivalent to `filepath.IsAbs
+`IsAbs`|equivalent to `filepath.IsAbs`
 `IsPathSeparator`|equivalent to `filepath.IsPathSeparator`
 `Join`|equivalent to `filepath.Join`
 `Lchown`|equivalent to `os.Lchown`
@@ -154,6 +145,7 @@ File system methods <br> `avfs.Fs`|Comments
 `MkdirAll`|equivalent to `os.MkdirAll`
 `Open`|equivalent to `os.Open`
 `OpenFile`|equivalent to `os.OpenFile`
+`OSType`| returns the operating system type of the file system
 `ReadDir`|equivalent to `ioutil.ReadDir`
 `ReadFile`|equivalent to `ioutil.ReadFile`
 `Readlink`|equivalent to `os.Readlink`
@@ -167,6 +159,7 @@ File system methods <br> `avfs.Fs`|Comments
 `Symlink`|equivalent to `os.Symlink`
 `TempDir`|equivalent to `ioutil.TempDir`
 `TempFile`|equivalent to `ioutil.TempFile`
+`ToSlash`|equivalent to `filepath.ToSlash`
 `Truncate`|equivalent to `os.Truncate`
 `Walk`|equivalent to `filepath.Walk`
 `WriteFile`|equivalent to `ioutil.WriteFile`
@@ -195,23 +188,31 @@ Identity managers allow users and groups management.
 The ones implemented in `avfs` are just here to allow testing of functions related to users (Chown, Lchown)
 and access rights, so they just allow one default group per user.
 
-Each file system implements by default the identity manager `DummyIdm` where all functions returns `avfs.ErrPermDenied`. 
+All file systems supporting identity manager implement by default the identity manager `DummyIdm`
+where all functions returns `avfs.ErrPermDenied`. 
 
 Identity Manager |Comments
 -----------------|--------
 [DummyIdm](idm/dummyidm)|dummy identity manager where all functions are not implemented
 [MemIdm](idm/memidm)|In memory identity manager
 [OsIdm](idm/osidm)|Identity manager using os functions
+[SQLiteIdm](https://github.com/avfs/sqliteidm)|Identity manager backed by a SQLite database
 
 Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
 --------------------------------------------------------------|--------
-`CurrentUser`| returns the current user
 `GroupAdd`| adds a new group
 `GroupDel`| deletes an existing group
 `LookupGroup`| looks up a group by name
 `LookupGroupId`| looks up a group by groupid
 `LookupUser`| looks up a user by username
 `LookupUserId`| looks up a user by userid
-`User`| sets and returns the current user
 `UserAdd`| adds a new user
 `UserDel`| deletes an existing user
+
+All the file systems and some Identity managers (see OsFs) provide an additional interface `UserConnecter`
+
+UserConnecter methods <br>`avfs.Fs`|Comments
+------------------------------------|--------
+`CurrentUser`| returns the current user
+`User`| sets and returns the current user
+
