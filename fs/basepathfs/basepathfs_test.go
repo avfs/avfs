@@ -76,7 +76,6 @@ func TestBasePathFsOptions(t *testing.T) {
 	const (
 		nonExistingDir = "/non/existing/dir"
 		existingFile   = "/tmp/existingFile"
-		basePathTmp    = "/tmp/base/path/tmp"
 	)
 
 	fs, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
@@ -94,14 +93,6 @@ func TestBasePathFsOptions(t *testing.T) {
 
 	_, err = basepathfs.New(fs, existingFile)
 	test.CheckPathError(t, "BasePath", "basepath", existingFile, avfs.ErrNotADirectory, err)
-
-	err = fs.MkdirAll(basePathTmp, avfs.DefaultDirPerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
-	_, err = basepathfs.New(fs, fs.Dir(basePathTmp))
-	test.CheckPathError(t, "BasePath", "mkdir", "/tmp", avfs.ErrFileExists, err)
 }
 
 func TestBasePathFsFeatures(t *testing.T) {
