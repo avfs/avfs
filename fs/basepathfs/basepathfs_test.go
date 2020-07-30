@@ -141,3 +141,20 @@ func TestBasePathFsFeatures(t *testing.T) {
 		t.Errorf("Features : want FeatIdentityMgr present, got missing")
 	}
 }
+
+func TestBasepathFsOSType(t *testing.T) {
+	fsBase, err := memfs.New(memfs.OptMainDirs())
+	if err != nil {
+		t.Fatalf("New : want err to be nil, got %v", err)
+	}
+
+	fs, err := basepathfs.New(fsBase, avfs.TmpDir)
+	if err != nil {
+		t.Fatalf("basepathfs.New : want err to be nil, got %v", err)
+	}
+
+	ost := fs.OSType()
+	if ost != fsBase.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", fsBase.OSType(), ost)
+	}
+}
