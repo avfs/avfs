@@ -27,7 +27,7 @@ func (fs *BasePathFs) pathFsToBpFs(path string) string {
 		return ""
 	}
 
-	absPath, _ := fs.baseFs.Abs(path)
+	absPath, _ := fs.Abs(path)
 
 	return fs.basePath + absPath
 }
