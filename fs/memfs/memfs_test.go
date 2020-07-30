@@ -114,6 +114,18 @@ func TestMemFsFeatures(t *testing.T) {
 	}
 }
 
+func TestMemFsOSType(t *testing.T) {
+	fs, err := memfs.New()
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	ost := fs.OSType()
+	if ost != avfs.OsLinux {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
+	}
+}
+
 func BenchmarkMemFsCreate(b *testing.B) {
 	fs, err := memfs.New(memfs.OptMainDirs())
 	if err != nil {
