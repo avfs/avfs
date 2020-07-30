@@ -62,3 +62,17 @@ func TestRoFsPerm(t *testing.T) {
 	cf := initTest(t)
 	cf.SuitePermRead()
 }
+
+func TestRoFsOSType(t *testing.T) {
+	fsBase, err := memfs.New()
+	if err != nil {
+		t.Fatalf("New : want err to be nil, got %v", err)
+	}
+
+	fs := rofs.New(fsBase)
+
+	ost := fs.OSType()
+	if ost != fsBase.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", fsBase.OSType(), ost)
+	}
+}
