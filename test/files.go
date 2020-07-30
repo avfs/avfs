@@ -699,6 +699,7 @@ func (cf *ConfigFs) SuiteFileSeek() {
 	defer removeDir()
 
 	fs := cf.GetFsWrite()
+
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestFileSeek.txt")
 
@@ -716,8 +717,9 @@ func (cf *ConfigFs) SuiteFileSeek() {
 
 	defer f.Close()
 
+	var pos int64
+
 	t.Run("FileSeek", func(t *testing.T) {
-		var pos int64
 		for i := 0; i < len(data); i++ {
 			pos, err = f.Seek(int64(i), io.SeekStart)
 			if err != nil {
@@ -746,7 +748,7 @@ func (cf *ConfigFs) SuiteFileSeek() {
 		}
 
 		for i := len(data) - 1; i >= 0; i-- {
-			pos, err := f.Seek(-1, io.SeekCurrent)
+			pos, err = f.Seek(-1, io.SeekCurrent)
 			if err != nil {
 				t.Errorf("Seek : want error to be nil, got %v", err)
 			}
@@ -754,6 +756,82 @@ func (cf *ConfigFs) SuiteFileSeek() {
 			if int(pos) != i {
 				t.Errorf("Seek : want position to be %d, got %d", i, pos)
 			}
+		}
+	})
+
+	t.Run("FileSeekInvalid", func(t *testing.T) {
+		lenData := int64(len(data))
+
+		// Invalid SeekStart
+
+		pos, err = f.Seek(-1, io.SeekStart)
+		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+
+		if pos != 0 {
+			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
+		}
+
+		wantPos := lenData * 2
+
+		pos, err = f.Seek(wantPos, io.SeekStart)
+		if err != nil {
+			t.Errorf("Seek : want error to be nil, got %v", err)
+		}
+
+		if pos != wantPos {
+			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
+		}
+
+		// Invalid SeekEnd
+
+		pos, err = f.Seek(1, io.SeekEnd)
+		if err != nil {
+			t.Errorf("Seek : want error to be nil, got %v", err)
+		}
+
+		wantPos = lenData + 1
+		if pos != wantPos {
+			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
+		}
+
+		pos, err = f.Seek(-lenData*2, io.SeekEnd)
+		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+
+		if pos != 0 {
+			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
+		}
+
+		// Invalid SeekCur
+
+		wantPos = lenData / 2
+		pos, err = f.Seek(wantPos, io.SeekStart)
+		if err != nil || pos != wantPos {
+			t.Fatalf("Seek : want  pos to be 0 and error to be nil, got %d, %v", pos, err)
+		}
+
+		pos, err = f.Seek(-lenData, io.SeekCurrent)
+		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+
+		if pos != 0 {
+			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
+		}
+
+		pos, err = f.Seek(lenData, io.SeekCurrent)
+		if err != nil {
+			t.Errorf("Seek : want error to be nil, got %v", err)
+		}
+
+		if pos != lenData/2+lenData {
+			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
+		}
+
+		// Invalid Whence
+
+		pos, err = f.Seek(0, 10)
+		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+
+		if pos != 0 {
+			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
 		}
 	})
 }
