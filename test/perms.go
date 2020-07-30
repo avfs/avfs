@@ -76,6 +76,7 @@ func (cf *ConfigFs) SuiteChown() {
 	t.Run("ChownDir", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
+
 			u, err := fs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
@@ -83,6 +84,7 @@ func (cf *ConfigFs) SuiteChown() {
 
 			for _, dir := range dirs {
 				path := fs.Join(rootDir, dir.Path)
+
 				err := fs.Chown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Chown %s : want error to be nil, got %v", path, err)
@@ -109,6 +111,7 @@ func (cf *ConfigFs) SuiteChown() {
 	t.Run("ChownFile", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
+
 			u, err := fs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
@@ -156,6 +159,7 @@ func (cf *ConfigFs) SuiteLchown() {
 	t.Run("LchownDir", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
+
 			u, err := fs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
@@ -163,6 +167,7 @@ func (cf *ConfigFs) SuiteLchown() {
 
 			for _, dir := range dirs {
 				path := fs.Join(rootDir, dir.Path)
+
 				err := fs.Lchown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
@@ -189,6 +194,7 @@ func (cf *ConfigFs) SuiteLchown() {
 	t.Run("LchownFile", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
+
 			u, err := fs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
@@ -223,6 +229,7 @@ func (cf *ConfigFs) SuiteLchown() {
 	t.Run("LchownSymlink", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
+
 			u, err := fs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)

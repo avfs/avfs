@@ -83,6 +83,7 @@ func (cf *ConfigFs) SuiteEvalSymlink() {
 				if wantPath != gotPath {
 					t.Errorf("EvalSymlinks %s : want Path to be %s, got %s", slPath, wantPath, gotPath)
 				}
+
 				continue
 			}
 
@@ -115,6 +116,7 @@ func (cf *ConfigFs) SuiteLstat() {
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := fs.Join(rootDir, dir.Path)
+
 			info, err := fs.Lstat(path)
 			if err != nil {
 				t.Errorf("Lstat %s : want error to be nil, got %v", path, err)
@@ -139,6 +141,7 @@ func (cf *ConfigFs) SuiteLstat() {
 	t.Run("LstatFile", func(t *testing.T) {
 		for _, file := range files {
 			path := fs.Join(rootDir, file.Path)
+
 			info, err := fs.Lstat(path)
 			if err != nil {
 				t.Errorf("Lstat %s : want error to be nil, got %v", path, err)
@@ -169,12 +172,15 @@ func (cf *ConfigFs) SuiteLstat() {
 		for _, sl := range GetSymlinksEval(fs) {
 			newPath := fs.Join(rootDir, sl.NewName)
 			oldPath := fs.Join(rootDir, sl.OldName)
+
 			info, err := fs.Lstat(newPath)
 			if err != nil {
 				if sl.WantErr == nil {
 					t.Errorf("Lstat %s : want error to be nil, got %v", newPath, err)
 				}
+
 				CheckPathError(t, "Lstat", "stat", newPath, sl.WantErr, err)
+
 				continue
 			}
 

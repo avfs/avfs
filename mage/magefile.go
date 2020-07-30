@@ -234,6 +234,7 @@ func gitLastVersion(repo string) (string, error) {
 	}
 
 	re := regexp.MustCompile(semverRegexp)
+
 	version := re.FindString(out)
 	if version == "" {
 		return "", fmt.Errorf("version : incorrect format :\n%s", out)

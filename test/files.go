@@ -620,22 +620,24 @@ func (cf *ConfigFs) SuiteFileReadEdgeCases() {
 
 		defer f.Close()
 
-		bLen := len(data) * 2
-		b := make([]byte, bLen)
+		b := make([]byte, 1)
 
-		n, err := f.ReadAt(b, int64(bLen))
+		off := int64(len(data) * 2)
+
+		n, err := f.ReadAt(b, off)
 		if err != io.EOF {
 			t.Errorf("ReadAt : want error to be %v, got %v", io.EOF, err)
 		}
 
 		if n != 0 {
-			t.Errorf("ReadAt : want byte read to be 0, got %d", n)
+			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
 		}
 
 		n, err = f.ReadAt(b, -1)
 		CheckPathError(t, "ReadAt", "readat", path, avfs.ErrNegativeOffset, err)
+
 		if n != 0 {
-			t.Errorf("ReadAt : want byte read to be 0, got %d", n)
+			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
 		}
 	})
 
