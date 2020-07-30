@@ -22,6 +22,8 @@ import (
 	"math"
 	"testing"
 
+	"github.com/avfs/avfs/fsutil"
+
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/dummyfs"
 	"github.com/avfs/avfs/test"
@@ -48,6 +50,18 @@ func TestDummyFs(t *testing.T) {
 
 	cf := test.NewConfigFs(t, fs)
 	cf.SuiteNotImplemented()
+}
+
+func TestDummyFsOSType(t *testing.T) {
+	fs, err := dummyfs.New()
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	ost := fs.OSType()
+	if ost != fsutil.RunTimeOS() {
+		t.Errorf("OSType : want os type to be %v, got %v", fsutil.RunTimeOS(), ost)
+	}
 }
 
 func TestDummyFsFeatures(t *testing.T) {
