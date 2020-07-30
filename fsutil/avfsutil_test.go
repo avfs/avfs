@@ -71,7 +71,7 @@ func TestCreateBaseDirs(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	err = fsutil.CreateBaseDirs(fs)
+	err = fsutil.CreateBaseDirs(fs, "")
 	if err != nil {
 		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 	}

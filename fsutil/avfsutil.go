@@ -41,14 +41,16 @@ var (
 )
 
 // CreateBaseDirs creates base directories on a file system.
-func CreateBaseDirs(fs avfs.Fs) error {
+func CreateBaseDirs(fs avfs.Fs, basePath string) error {
 	for _, dir := range BaseDirs {
-		err := fs.Mkdir(dir.Path, dir.Perm)
+		path := fs.Join(basePath, dir.Path)
+
+		err := fs.Mkdir(path, dir.Perm)
 		if err != nil {
 			return err
 		}
 
-		err = fs.Chmod(dir.Path, dir.Perm)
+		err = fs.Chmod(path, dir.Perm)
 		if err != nil {
 			return err
 		}

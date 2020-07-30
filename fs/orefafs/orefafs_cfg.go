@@ -49,7 +49,7 @@ func New(opts ...Option) (*OrefaFs, error) {
 		um := fs.umask
 		fs.umask = 0
 
-		_ = fsutil.CreateBaseDirs(fs)
+		_ = fsutil.CreateBaseDirs(fs, "")
 
 		fs.umask = um
 		fs.curDir = avfs.RootDir

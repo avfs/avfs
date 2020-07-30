@@ -45,7 +45,7 @@ func New(baseFs avfs.Fs, basePath string) (*BasePathFs, error) {
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
-		err = fsutil.CreateBaseDirs(fs)
+		err = fsutil.CreateBaseDirs(fs.baseFs, fs.basePath)
 		if err != nil {
 			return nil, err
 		}

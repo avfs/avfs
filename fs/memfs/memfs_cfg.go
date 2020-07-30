@@ -62,7 +62,7 @@ func New(opts ...Option) (*MemFs, error) {
 		um := fsa.umask
 		fsa.umask = 0
 
-		_ = fsutil.CreateBaseDirs(fs)
+		_ = fsutil.CreateBaseDirs(fs, "")
 
 		fsa.umask = um
 		fs.curDir = avfs.RootDir
