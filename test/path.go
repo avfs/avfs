@@ -32,6 +32,7 @@ func (cf *ConfigFs) SuitePath() {
 	cf.SuiteBase()
 	cf.SuiteClean()
 	cf.SuiteDir()
+	cf.SuiteFromToSlash()
 	cf.SuiteGlob()
 	cf.SuiteIsAbsPath()
 	cf.SuiteJoin()
@@ -304,6 +305,47 @@ func (cf *ConfigFs) SuiteDir() {
 		s := fs.Dir(test.path)
 		if s != test.result {
 			t.Errorf("Dir(%q) = %q, want %q", test.path, s, test.result)
+		}
+	}
+}
+
+func (cf *ConfigFs) SuiteFromToSlash() {
+	t := cf.t
+
+	// TODO : Add test cases for windows.
+	pathtests := []*struct {
+		path, from, to string
+	}{
+		{"/a/b/c", "", ""},
+		{"C:\\A\\b/c", "", ""},
+	}
+
+	fs := cf.GetFsRead()
+	ost := fs.OSType()
+
+	for _, pt := range pathtests {
+		var want string
+
+		if ost == avfs.OsWindows {
+			want = pt.from
+		} else {
+			want = pt.path
+		}
+
+		got := fs.FromSlash(pt.path)
+		if got != want {
+			t.Errorf("FromSlash %s, want %s, got %s", pt.path, want, got)
+		}
+
+		if ost == avfs.OsWindows {
+			want = pt.to
+		} else {
+			want = pt.path
+		}
+
+		got = fs.ToSlash(pt.path)
+		if got != want {
+			t.Errorf("FromSlash %s, want %s, got %s", pt.path, want, got)
 		}
 	}
 }
