@@ -32,8 +32,11 @@ const (
 	// Avfs is the name of the framework.
 	Avfs = "avfs"
 
-	// PathSeparator is defined as a forward slash for all systems.
+	// PathSeparator is defined as a forward slash for all unix systems.
 	PathSeparator = '/'
+
+	// PathSeparatorWin is defined as a forward slash for Windows systems.
+	PathSeparatorWin = '\\'
 
 	// DefaultDirPerm is the default permission for directories.
 	DefaultDirPerm = 0o755

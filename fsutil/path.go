@@ -229,6 +229,13 @@ func Dir(path string) string {
 	return dir
 }
 
+// FromSlash returns the result of replacing each slash ('/') character
+// in path with a separator character. Multiple slashes are replaced
+// by multiple separators.
+func FromSlash(path string) string {
+	return strings.ReplaceAll(path, "/", string(avfs.PathSeparatorWin))
+}
+
 // Glob returns the names of all files matching pattern or nil
 // if there is no matching file. The syntax of patterns is the same
 // as in Match. The pattern may describe hierarchical names such as
@@ -462,6 +469,13 @@ func Split(fs avfs.Fs, path string) (dir, file string) {
 	}
 
 	return path[:i+1], path[i+1:]
+}
+
+// ToSlash returns the result of replacing each separator character
+// in path with a slash ('/') character. Multiple separators are
+// replaced by multiple slashes.
+func ToSlash(path string) string {
+	return strings.ReplaceAll(path, string(avfs.PathSeparatorWin), "/")
 }
 
 // Walk walks the file tree rooted at root, calling walkFn for each file or
