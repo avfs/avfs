@@ -67,6 +67,18 @@ func TestOrefaFsFeatures(t *testing.T) {
 	}
 }
 
+func TestOrefaFsOSType(t *testing.T) {
+	fs, err := orefafs.New()
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	ost := fs.OSType()
+	if ost != avfs.OsLinux {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
+	}
+}
+
 func BenchmarkOrefaFsCreate(b *testing.B) {
 	fs, err := orefafs.New(orefafs.OptMainDirs())
 	if err != nil {
