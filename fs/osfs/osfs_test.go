@@ -24,6 +24,7 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/osfs"
+	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 )
@@ -61,6 +62,18 @@ func TestNilPtrReceiver(t *testing.T) {
 	f := (*os.File)(nil)
 
 	test.SuiteNilPtrFile(t, f)
+}
+
+func TestOsFsOSType(t *testing.T) {
+	fs, err := osfs.New()
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	ost := fs.OSType()
+	if ost != fsutil.RunTimeOS() {
+		t.Errorf("OSType : want os type to be %v, got %v", fsutil.RunTimeOS(), ost)
+	}
 }
 
 func BenchmarkOsFsCreate(b *testing.B) {
