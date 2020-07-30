@@ -1332,45 +1332,50 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 		return 0, os.ErrInvalid
 	}
 
-	f.mu.RLock()
+	f.mu.Lock()
+	defer f.mu.Unlock()
 
 	if f.name == "" {
-		f.mu.RUnlock()
-
 		return 0, os.ErrInvalid
 	}
 
 	if f.nd == nil {
-		f.mu.RUnlock()
-
 		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		f.mu.RUnlock()
-
 		return 0, nil
 	}
 
+	nd.mu.RLock()
+	size := int64(len(nd.data))
+	nd.mu.RUnlock()
+
 	switch whence {
 	case io.SeekStart:
+		if offset < 0 {
+			return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+		}
+
 		f.at = offset
 	case io.SeekCurrent:
+		if f.at+offset < 0 {
+			return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+		}
+
 		f.at += offset
 	case io.SeekEnd:
-		nd.mu.RLock()
-		f.at = int64(len(nd.data)) + offset
-		nd.mu.RUnlock()
+		if size+offset < 0 {
+			return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+		}
+
+		f.at = size + offset
+	default:
+		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
 	}
 
-	f.mu.RUnlock()
-
-	f.mu.Lock()
-	at := f.at
-	f.mu.Unlock()
-
-	return at, nil
+	return f.at, nil
 }
 
 // Stat returns the FileInfo structure describing file.
