@@ -18,7 +18,6 @@ package test
 
 import (
 	"os"
-	"runtime"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -27,14 +26,27 @@ import (
 
 // SuiteAll run all identity manager tests.
 func (ci *ConfigIdm) SuiteAll() {
-	if !ci.cantTest {
+	t := ci.t
+
+	if !ci.idm.HasFeature(avfs.FeatIdentityMgr) {
 		ci.SuitePermDenied()
+
+		t.Logf("%s does not provide an indentity manager, skipping", ci.idm.Type())
+
 		return
 	}
 
 	ci.SuiteGroupAddDel()
 	ci.SuiteUserAddDel()
 	ci.SuiteLookup()
+
+	uc, ok := ci.idm.(avfs.UserConnecter)
+	if !ok || uc.CurrentUser().IsRoot() {
+		t.Logf("%s does not provide avfs.UserConnecter or is not connected as root, skipping", ci.idm.Type())
+
+		return
+	}
+
 	ci.SuiteUser()
 	ci.SuiteUserDenied()
 }
@@ -43,11 +55,6 @@ func (ci *ConfigIdm) SuiteAll() {
 func (ci *ConfigIdm) SuiteGroupAddDel() {
 	suffix := "GroupAddDel" + ci.Type()
 	t, idm := ci.t, ci.idm
-
-	uc, ok := idm.(avfs.UserConnecter)
-	if ok && !uc.CurrentUser().IsRoot() {
-		return
-	}
 
 	groups := GetGroups()
 	prevGid := 0
@@ -140,11 +147,6 @@ func (ci *ConfigIdm) SuiteGroupAddDel() {
 func (ci *ConfigIdm) SuiteUserAddDel() {
 	suffix := "UserAddDel" + ci.Type()
 	t, idm := ci.t, ci.idm
-
-	uc, ok := idm.(avfs.UserConnecter)
-	if ok && !uc.CurrentUser().IsRoot() {
-		return
-	}
 
 	_ = CreateGroups(t, idm, suffix)
 	users := GetUsers()
@@ -273,11 +275,6 @@ func (ci *ConfigIdm) SuiteLookup() {
 	suffix := "Lookup" + ci.Type()
 	t, idm := ci.t, ci.idm
 
-	uc, ok := idm.(avfs.UserConnecter)
-	if ok && !uc.CurrentUser().IsRoot() {
-		return
-	}
-
 	groups := CreateGroups(t, idm, suffix)
 	users := CreateUsers(t, idm, suffix)
 
@@ -288,6 +285,7 @@ func (ci *ConfigIdm) SuiteLookup() {
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
 				t.Errorf("LookupGroup %s : want error to be nil, got %v", groupName, err)
+
 				continue
 			}
 
@@ -308,6 +306,8 @@ func (ci *ConfigIdm) SuiteLookup() {
 			u, err := idm.LookupUser(userName)
 			if err != nil {
 				t.Errorf("LookupUser %s : want error to be nil, got %v", userName, err)
+
+				continue
 			}
 
 			if u.Name() != userName {
@@ -335,7 +335,7 @@ func (ci *ConfigIdm) SuiteUser() {
 	t, idm := ci.t, ci.idm
 
 	uc, ok := idm.(avfs.UserConnecter)
-	if !ok || !uc.CurrentUser().IsRoot() {
+	if !ok {
 		return
 	}
 
@@ -414,12 +414,6 @@ func (ci *ConfigIdm) SuiteUserDenied() {
 
 	uc, ok := idm.(avfs.UserConnecter)
 	if !ok {
-		t.Logf("%s does not implement avfs.UserConnecter, skipping", ci.Type())
-		return
-	}
-
-	if !uc.CurrentUser().IsRoot() {
-		t.Logf("%s only works only when connected as root, skipping", idm.Type())
 		return
 	}
 
@@ -475,6 +469,10 @@ func (ci *ConfigIdm) SuitePermDenied() {
 			t.Fatal("CurrentUser : want user to be not nil, got nil")
 		}
 
+		if u.IsRoot() {
+			t.Errorf("CurrentUser : want user to not be root, user is root")
+		}
+
 		_, err := uc.User(name)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
@@ -525,7 +523,7 @@ func (ci *ConfigIdm) SuitePermDenied() {
 // checkHomeDir tests that the user home directory exists and has the correct permissions.
 func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 	fs, ok := idm.(avfs.Fs)
-	if !ok || (fs.Type() == "OsFs" && runtime.GOOS == "Windows") {
+	if !ok || fs.OSType() == avfs.OsWindows {
 		return
 	}
 
