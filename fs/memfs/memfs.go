@@ -1517,6 +1517,10 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 		return 0, os.ErrInvalid
 	}
 
+	if off < 0 {
+		return 0, &os.PathError{Op: "writeat", Path: f.name, Err: avfs.ErrNegativeOffset}
+	}
+
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
