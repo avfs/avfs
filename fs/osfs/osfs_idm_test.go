@@ -38,12 +38,12 @@ func TestOsFsWithOsIdm(t *testing.T) {
 }
 
 // TestOsFsWithoutIdm test OsFs without and identity manager.
-func TestOsFsWithoutIdm(t *testing.T) {
+func TestOsFsWithNoIdm(t *testing.T) {
 	fs, err := osfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
 	ci := test.NewConfigIdm(t, fs)
-	ci.SuitePermDenied()
+	ci.SuiteAll()
 }
