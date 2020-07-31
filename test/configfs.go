@@ -259,6 +259,7 @@ func (cf *ConfigFs) SuiteWrite() {
 	cf.SuiteDirFuncOnFile()
 	cf.SuiteFileReadEdgeCases()
 	cf.SuiteFileWrite()
+	cf.SuiteFileWriteEdgeCases()
 	cf.SuiteFileWriteTime()
 	cf.SuiteFileCloseWrite()
 	cf.SuiteFuncNonExistingFile()

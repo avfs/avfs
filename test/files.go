@@ -253,6 +253,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 		default:
 			CheckPathError(t, "WriteAt", "write", existingFile, avfs.ErrBadFileDesc, err)
 		}
+
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)
 		}
@@ -522,6 +523,61 @@ func (cf *ConfigFs) SuiteFileWrite() {
 
 		if !bytes.Equal(rb, data) {
 			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
+		}
+	})
+}
+
+// SuiteFileWriteEdgeCases tests Write and WriteAt functions edge cases.
+func (cf *ConfigFs) SuiteFileWriteEdgeCases() {
+	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+	defer removeDir()
+
+	fs := cf.GetFsWrite()
+	path := fs.Join(rootDir, "TestFileWriteEdgeCases.txt")
+	data := []byte("AAABBBCCCDDD")
+
+	err := fs.WriteFile(path, data, avfs.DefaultFilePerm)
+	if err != nil {
+		t.Fatalf("WriteFile : want error to be nil, got %v", err)
+	}
+
+	t.Run("FileWriteEdgeCases", func(t *testing.T) {
+		f, err := fs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		n, err := f.WriteAt(data, -1)
+		CheckPathError(t, "WriteAt", "writeat", path, avfs.ErrNegativeOffset, err)
+
+		if n != 0 {
+			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)
+		}
+
+		off := int64(len(data) * 3)
+
+		n, err = f.WriteAt(data, off)
+		if err != nil {
+			t.Errorf("WriteAt : want error to be nil, got %v", err)
+		}
+
+		if n != len(data) {
+			t.Errorf("WriteAt : want bytes written to be %d, got %d", len(data), n)
+		}
+
+		want := make([]byte, int(off)+len(data))
+		_ = copy(want, data)
+		_ = copy(want[off:], data)
+
+		got, err := fs.ReadFile(path)
+		if err != nil {
+			t.Errorf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(want, got) {
+			t.Errorf("want : %s\ngot  : %s", want, got)
 		}
 	})
 }
