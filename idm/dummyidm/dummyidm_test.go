@@ -33,10 +33,10 @@ var (
 	// DummyIdm implements avfs.UserConnecter interface.
 	_ avfs.UserConnecter = &dummyidm.DummyIdm{}
 
-	// DummyIdm.User struct implements avfs.UserReader interface
+	// DummyIdm.User struct implements avfs.UserReader interface.
 	_ avfs.UserReader = &dummyidm.User{}
 
-	// DummyIdm.Group struct implements avfs.GroupReader interface
+	// DummyIdm.Group struct implements avfs.GroupReader interface.
 	_ avfs.GroupReader = &dummyidm.Group{}
 )
 

@@ -73,9 +73,6 @@ const (
 	// ErrBadFileDesc is the error Bad file descriptor.
 	ErrBadFileDesc = syscall.EBADF
 
-	// ErrCrossDevLink is the error Cross-device link.
-	// ErrCrossDevLink = syscall.EXDEV
-
 	// ErrDirNotEmpty is the error Directory not empty.
 	ErrDirNotEmpty = syscall.ENOTEMPTY
 

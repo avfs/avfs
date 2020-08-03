@@ -30,10 +30,10 @@ import (
 )
 
 var (
-	// dummyFs.DummyFs struct implements avfs.DummyFs interface
+	// dummyFs.DummyFs struct implements avfs.DummyFs interface.
 	_ avfs.Fs = &dummyfs.DummyFs{}
 
-	// dummyfs.DummyFile struct implements avfs.DummyFile interface
+	// dummyfs.DummyFile struct implements avfs.DummyFile interface.
 	_ avfs.File = &dummyfs.DummyFile{}
 )
 
