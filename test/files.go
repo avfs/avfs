@@ -76,6 +76,8 @@ func (cf *ConfigFs) SuiteOpenFileRead() {
 			t.Errorf("OpenFile : want error to be nil, got %v", err)
 		}
 
+		defer f.Close()
+
 		dirs, err := f.Readdir(-1)
 		if err != nil {
 			t.Errorf("Readdir : want error to be nil, got %v", err)
@@ -83,11 +85,6 @@ func (cf *ConfigFs) SuiteOpenFileRead() {
 
 		if len(dirs) != 0 {
 			t.Errorf("Readdir : want number of directories to be 0, got %d", len(dirs))
-		}
-
-		err = f.Close()
-		if err != nil {
-			t.Errorf("Close : want error to be nil, got %v", err)
 		}
 	})
 }
@@ -148,7 +145,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 		}
 
 		if n != 0 {
-			t.Errorf("ReadAt : want bytes written to be 0, got %d", n)
+			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
 		}
 
 		err = f.Chmod(0o777)
@@ -220,7 +217,7 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 
 		wantContent := append(data, whateverData...)
 		if !bytes.Equal(wantContent, gotContent) {
-			t.Errorf("ReadAll : want content to be  %s, got %s", wantContent, gotContent)
+			t.Errorf("ReadAll : want content to be %s, got %s", wantContent, gotContent)
 		}
 	})
 
