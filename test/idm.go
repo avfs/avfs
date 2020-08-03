@@ -40,9 +40,9 @@ func (ci *ConfigIdm) SuiteAll() {
 	ci.SuiteUserAddDel()
 	ci.SuiteLookup()
 
-	uc, ok := ci.idm.(avfs.UserConnecter)
-	if !ok || uc.CurrentUser().IsRoot() {
-		t.Logf("%s does not provide avfs.UserConnecter or is not connected as root, skipping", ci.idm.Type())
+	_, ok := ci.idm.(avfs.UserConnecter)
+	if !ok {
+		t.Logf("%s does not provide avfs.UserConnecter, skipping", ci.idm.Type())
 
 		return
 	}
