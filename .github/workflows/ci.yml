@@ -31,9 +31,6 @@ jobs:
       - name: golangci-lint on linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: golangci/golangci-lint-action@v2
-        with:
-          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.28
 
       - name: Install mage & avfs binaries
         run: go run mage/build.go
