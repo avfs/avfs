@@ -32,16 +32,16 @@ type SuiteIdm struct {
 
 // NewSuiteIdm returns a new test suite for an identity manager.
 func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
-	ci := &SuiteIdm{t: t, idm: idm}
+	sidm := &SuiteIdm{t: t, idm: idm}
 
-	ci.cantTest = idm.HasFeature(avfs.FeatIdentityMgr)
+	sidm.cantTest = idm.HasFeature(avfs.FeatIdentityMgr)
 
-	if ci.cantTest {
+	if sidm.cantTest {
 		CreateGroups(t, idm, "")
 		CreateUsers(t, idm, "")
 	}
 
-	return ci
+	return sidm
 }
 
 // Type returns the type of the identity manager.

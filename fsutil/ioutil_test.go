@@ -38,8 +38,8 @@ func InitTest(t *testing.T) avfs.Fs {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	cf := test.NewSuiteFs(t, fsRoot)
-	fs := cf.GetFsRead()
+	sfs := test.NewSuiteFs(t, fsRoot)
+	fs := sfs.GetFsRead()
 
 	return fs
 }
@@ -50,10 +50,10 @@ func TestIOUtil(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	cf := test.NewSuiteFs(t, fsRoot)
-	cf.ReadDir()
-	cf.ReadFile()
-	cf.WriteFile()
+	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs.ReadDir()
+	sfs.ReadFile()
+	sfs.WriteFile()
 }
 
 func TestReadOnlyWriteFile(t *testing.T) {

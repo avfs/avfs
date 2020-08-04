@@ -355,7 +355,7 @@ func (sfs *SuiteFs) ReadDir() {
 
 	fs := sfs.GetFsWrite()
 
-	rndTree, err := fsutil.NewRndTree(fs, RndParamsOneDir)
+	rndTree, err := fsutil.NewRndTree(fs, fsutil.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -472,7 +472,7 @@ func (sfs *SuiteFs) ReadDirNames() {
 
 	fs := sfs.GetFsWrite()
 
-	rndTree, err := fsutil.NewRndTree(fs, RndParamsOneDir)
+	rndTree, err := fsutil.NewRndTree(fs, fsutil.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}

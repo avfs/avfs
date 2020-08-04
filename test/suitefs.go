@@ -24,22 +24,6 @@ import (
 	"github.com/avfs/avfs/fsutil"
 )
 
-// RndParamsOneDir are the parameters of fsutil.RndTree.
-var RndParamsOneDir = fsutil.RndTreeParams{ //nolint:gochecknoglobals
-	MinDepth:    1,
-	MaxDepth:    1,
-	MinName:     4,
-	MaxName:     32,
-	MinDirs:     10,
-	MaxDirs:     20,
-	MinFiles:    50,
-	MaxFiles:    100,
-	MinFileLen:  0,
-	MaxFileLen:  0,
-	MinSymlinks: 5,
-	MaxSymlinks: 10,
-}
-
 // SuiteFs is a test suite for file systems.
 type SuiteFs struct {
 	// t is passed to Test functions to manage test state and support formatted test logs.
@@ -97,7 +81,7 @@ func NewSuiteFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *SuiteFs {
 		}
 	}
 
-	cf := &SuiteFs{
+	sfs := &SuiteFs{
 		t:           t,
 		fsRoot:      fsRoot,
 		fsW:         fs,
@@ -109,25 +93,25 @@ func NewSuiteFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *SuiteFs {
 	}
 
 	for _, opt := range opts {
-		opt(cf)
+		opt(sfs)
 	}
 
-	return cf
+	return sfs
 }
 
 // Options
 
 // OptRootDir returns an option function which sets the root directory for the tests.
 func OptRootDir(rootDir string) Option {
-	return func(cf *SuiteFs) {
-		cf.rootDir = rootDir
+	return func(sfs *SuiteFs) {
+		sfs.rootDir = rootDir
 	}
 }
 
 // OptOs returns an option function which sets the operating system for the tests.
 func OptOs(osType avfs.OSType) Option {
-	return func(cf *SuiteFs) {
-		cf.osType = osType
+	return func(sfs *SuiteFs) {
+		sfs.osType = osType
 	}
 }
 
