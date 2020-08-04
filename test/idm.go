@@ -29,16 +29,16 @@ func (sidm *SuiteIdm) SuiteAll() {
 	t := sidm.t
 
 	if !sidm.idm.HasFeature(avfs.FeatIdentityMgr) {
-		sidm.SuitePermDenied()
+		sidm.PermDenied()
 
 		t.Logf("%s does not provide an indentity manager, skipping", sidm.idm.Type())
 
 		return
 	}
 
-	sidm.SuiteGroupAddDel()
-	sidm.SuiteUserAddDel()
-	sidm.SuiteLookup()
+	sidm.GroupAddDel()
+	sidm.UserAddDel()
+	sidm.Lookup()
 
 	_, ok := sidm.idm.(avfs.UserConnecter)
 	if !ok {
@@ -47,12 +47,12 @@ func (sidm *SuiteIdm) SuiteAll() {
 		return
 	}
 
-	sidm.SuiteUser()
-	sidm.SuiteUserDenied()
+	sidm.User()
+	sidm.UserDenied()
 }
 
-// SuiteGroupAddDel tests GroupAdd and GroupDel functions.
-func (sidm *SuiteIdm) SuiteGroupAddDel() {
+// GroupAddDel tests GroupAdd and GroupDel functions.
+func (sidm *SuiteIdm) GroupAddDel() {
 	suffix := "GroupAddDel" + sidm.Type()
 	t, idm := sidm.t, sidm.idm
 
@@ -143,8 +143,8 @@ func (sidm *SuiteIdm) SuiteGroupAddDel() {
 	})
 }
 
-// SuiteUserAddDel tests UserAdd and UserDel functions.
-func (sidm *SuiteIdm) SuiteUserAddDel() {
+// UserAddDel tests UserAdd and UserDel functions.
+func (sidm *SuiteIdm) UserAddDel() {
 	suffix := "UserAddDel" + sidm.Type()
 	t, idm := sidm.t, sidm.idm
 
@@ -270,8 +270,8 @@ func (sidm *SuiteIdm) SuiteUserAddDel() {
 	})
 }
 
-// SuiteLookup tests Lookup* functions.
-func (sidm *SuiteIdm) SuiteLookup() {
+// Lookup tests Lookup* functions.
+func (sidm *SuiteIdm) Lookup() {
 	suffix := "Lookup" + sidm.Type()
 	t, idm := sidm.t, sidm.idm
 
@@ -329,8 +329,8 @@ func (sidm *SuiteIdm) SuiteLookup() {
 	})
 }
 
-// SuiteUser tests User and CurrentUser functions.
-func (sidm *SuiteIdm) SuiteUser() {
+// User tests User and CurrentUser functions.
+func (sidm *SuiteIdm) User() {
 	suffix := "User" + sidm.Type()
 	t, idm := sidm.t, sidm.idm
 
@@ -407,8 +407,8 @@ func (sidm *SuiteIdm) SuiteUser() {
 	})
 }
 
-// SuiteUserDenied tests if non root users are denied write access.
-func (sidm *SuiteIdm) SuiteUserDenied() {
+// UserDenied tests if non root users are denied write access.
+func (sidm *SuiteIdm) UserDenied() {
 	suffix := "Denied" + sidm.Type()
 	t, idm := sidm.t, sidm.idm
 
@@ -456,8 +456,8 @@ func (sidm *SuiteIdm) SuiteUserDenied() {
 	}
 }
 
-// SuitePermDenied tests if all functions of the identity manager return avfs.ErrPermDenied.
-func (sidm *SuiteIdm) SuitePermDenied() {
+// PermDenied tests if all functions of the identity manager return avfs.ErrPermDenied.
+func (sidm *SuiteIdm) PermDenied() {
 	t, idm := sidm.t, sidm.idm
 
 	const name = ""

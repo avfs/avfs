@@ -28,5 +28,5 @@ func TestOrefaFsIdm(t *testing.T) {
 	fs := initTest(t)
 
 	sidm := test.NewSuiteIdm(t, fs)
-	sidm.SuitePermDenied()
+	sidm.PermDenied()
 }
