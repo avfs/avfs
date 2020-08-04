@@ -12,65 +12,62 @@ Another Virtual File System for Go
 **AVFS** is a virtual file system abstraction, 
 inspired mostly by [Afero](http://github.com/spf13/afero) and Go standard library.
 It provides an abstraction layer to emulate the behavior of a **Linux file system** and provides several features :
-- a common set of **interfaces**, **types**, and a **test suite** are shared by all file systems (emulated or real)
+- a set of **constants**, **interfaces** and **types** for all file systems
+- a **test suite** for all file systems (emulated or real)
 - a very basic **identity manager** allows testing of user related functions (Chown, Lchown) and file system permissions
 - all file systems support user file creation mode mask (**Umask**) 
 - **symbolic links**, **hard links** and **chroot** are fully supported for some file systems (MemFs, OsFs) 
 - some file systems support **multiple users concurrently**  (MemFs)
 - each file system has its **own package**
 
+## Installation
+This package can be installed with the go get command :
+```
+go get github.com/avfs/avfs
+```
+It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >= 1.13
+
 ## Getting started
 To make an existing code work with **AVFS** :
 - replace all references of `os`, `path/filepath` and `ioutil` 
-with the variable used to initialize the file system
-(`fs` in the following examples)
-- replace all references of `os.TempDir()` by `fs.GetTempDir()`
-- import the package of the file system and, if necessary, the `avfs` package 
-and initialize the file system variable :  
-```go
-import (
-    "github.com/avfs/avfs"
-    "github.com/avfs/avfs/fs/osfs"
-)
-
-// ...
-
-fs, err := osfs.New()
-```
+with the variable used to initialize the file system (`fs` in the following examples)
+- replace all references of `os.TempDir()` by `fs.GetTempDir()`.
+- import the packages of the file systems and, if necessary, the `avfs` package 
+and initialize the file system variable.
 - some file systems provide specific options available at initialization.
-For instance `MemFs` needs `OptMainDirs` option to create `/home`, `/root` and `/tmp` directories :
-```go
-import (
-    "github.com/avfs/avfs"
-    "github.com/avfs/avfs/fs/memfs"
-)
-
-// ...
-
-fs, err := memfs.New(memfs.OptMainDirs())
-```
+For instance `MemFs` needs `OptMainDirs` option to create `/home`, `/root` and `/tmp` directories.
 
 ## Examples
 
 ### Symbolic links
 The example below demonstrates the creation of a file, a symbolic link to this file, 
-for a memory file system (MemFs).
+for a different file systems (depending on an environment variable).
 Error management has been omitted for the sake of simplicity :
-
+  
 ```go
 package main
 
 import (
     "bytes"
     "log"
-    
+    "os"
+
     "github.com/avfs/avfs"
     "github.com/avfs/avfs/fs/memfs"
+    "github.com/avfs/avfs/fs/osfs"
 )
 
 func main() {
-    fs, _ := memfs.New(memfs.OptMainDirs())
-    
+    var fs avfs.Fs	
+
+    switch os.Getenv("ENV") {
+    case "PROD": // The real file system for production.
+        fs, _ = osfs.New()
+    default: // in memory for tests.
+        fs, _ = memfs.New(memfs.OptMainDirs())   
+    }
+        
+    // From this point all references of 'os', 'path/filepath' and 'ioutil' should be replaced by 'fs'
     rootDir, _ := fs.TempDir("", avfs.Avfs)
     defer fs.RemoveAll(rootDir)
 
@@ -91,17 +88,84 @@ func main() {
 }
 ```
 
+### Multiple users creating simultaneously directories
+The example below demonstrates the concurrent creation of subdirectories under a root directory 
+by several users in different goroutines (works only with MemFs) :
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+
+	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/fs/memfs"
+	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/idm/memidm"
+)
+
+func main() {
+	const (
+		maxUsers  = 100
+		groupName = "test_users"
+	)
+
+	fs, _ := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+
+	rootDir, _ := fs.TempDir("", avfs.Avfs)
+	fs.Chmod(rootDir, 0o777)
+
+	g, _ := fs.GroupAdd(groupName)
+
+	var wg sync.WaitGroup
+	wg.Add(maxUsers)
+
+	for i := 0; i < maxUsers; i++ {
+		go func(i int) {
+			defer wg.Done()
+
+			userName := fmt.Sprintf("user_%08d", i)
+			fs.UserAdd(userName, g.Name())
+
+			fsU := fs.Clone()
+			fsU.User(userName)
+
+			path := fsU.Join(rootDir, userName)
+			fsU.Mkdir(path, avfs.DefaultDirPerm)
+		}(i)
+	}
+
+	wg.Wait()
+
+	infos, _ := fs.ReadDir(rootDir)
+
+	fmt.Println("number of dirs :", len(infos))
+	for _, info := range infos {
+		statT := fsutil.AsStatT(info.Sys())
+		u, _ := fs.LookupUserId(int(statT.Uid))
+
+		fmt.Println("directory :", info.Name(), ", mode :", info.Mode(), ", owner :", u.Name())
+	}
+}
+```
+
 ## Status
 Don't be fooled by the coverage percentages, everything is a work in progress.
-All the file systems pass the common test suite, but you should not use this in a production environment at this time.
+All the file systems pass the common test suite, but you should not use this 
+in a production environment at this time.
+
+## Diagram
+The interface diagram below represents the main interfaces, methods and relations between them :
+
+<img src="avfs_diagram.svg" style="max-width:100%;">
 
 ## File systems
 All file systems implement at least `avfs.Fs` and `avfs.File` interfaces.
-
-By default, each file system supported methods are the most commonly used from packages `os`, `path/filepath` and `ioutil`.
-
-All methods (except `TempDir` which is found in packages `os` and `ioutil`) have identical names as their functions counterparts. 
-
+By default, each file system supported methods are the most commonly used
+from packages `os`, `path/filepath` and `ioutil`.
+All methods (except `TempDir` which is found in packages `os` and `ioutil`)
+have identical names as their functions counterparts. 
 The following file systems are currently available :
 
 File system |Comments
@@ -114,7 +178,6 @@ File system |Comments
 [RoFs](fs/rofs)|Read only file system
 
 ## Supported methods
-
 File system methods <br> `avfs.Fs`|Comments
 ----------------------------------|--------
 `Abs`|equivalent to `filepath.Abs`
