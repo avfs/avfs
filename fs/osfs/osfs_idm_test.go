@@ -33,8 +33,8 @@ func TestOsFsWithOsIdm(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteAll()
+	sidm := test.NewSuiteIdm(t, fs)
+	sidm.SuiteAll()
 }
 
 // TestOsFsWithoutIdm test OsFs without and identity manager.
@@ -44,6 +44,6 @@ func TestOsFsWithNoIdm(t *testing.T) {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteAll()
+	sidm := test.NewSuiteIdm(t, fs)
+	sidm.SuiteAll()
 }

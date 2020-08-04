@@ -31,6 +31,6 @@ func TestDummyFsIdm(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuitePermDenied()
+	sidm := test.NewSuiteIdm(t, fs)
+	sidm.SuitePermDenied()
 }

@@ -45,8 +45,8 @@ func TestDummyIdm(t *testing.T) {
 
 	t.Logf("Idm = %v", idm.Type())
 
-	ci := test.NewConfigIdm(t, idm)
-	ci.SuitePermDenied()
+	sidm := test.NewSuiteIdm(t, idm)
+	sidm.SuitePermDenied()
 
 	u := idm.CurrentUser()
 

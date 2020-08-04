@@ -23,16 +23,16 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// ConfigIdm is a test configuration for an identity manager.
-type ConfigIdm struct {
+// SuiteIdm is a test suite for an identity manager.
+type SuiteIdm struct {
 	t        *testing.T
 	idm      avfs.IdentityMgr
 	cantTest bool
 }
 
-// NewConfigIdm returns a new test configuration for an identity manager.
-func NewConfigIdm(t *testing.T, idm avfs.IdentityMgr) *ConfigIdm {
-	ci := &ConfigIdm{t: t, idm: idm}
+// NewSuiteIdm returns a new test suite for an identity manager.
+func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
+	ci := &SuiteIdm{t: t, idm: idm}
 
 	ci.cantTest = idm.HasFeature(avfs.FeatIdentityMgr)
 
@@ -45,8 +45,8 @@ func NewConfigIdm(t *testing.T, idm avfs.IdentityMgr) *ConfigIdm {
 }
 
 // Type returns the type of the identity manager.
-func (ci *ConfigIdm) Type() string {
-	return ci.idm.Type()
+func (sidm *SuiteIdm) Type() string {
+	return sidm.idm.Type()
 }
 
 // Group contains the data to test groups.

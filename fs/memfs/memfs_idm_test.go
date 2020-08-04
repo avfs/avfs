@@ -33,8 +33,8 @@ func TestMemFsWithNoIdm(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteAll()
+	sidm := test.NewSuiteIdm(t, fs)
+	sidm.SuiteAll()
 }
 
 func TestMemFsWithMemIdm(t *testing.T) {
@@ -43,8 +43,8 @@ func TestMemFsWithMemIdm(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteAll()
+	sidm := test.NewSuiteIdm(t, fs)
+	sidm.SuiteAll()
 }
 
 func TestMemFsWithOsIdm(t *testing.T) {
@@ -58,6 +58,6 @@ func TestMemFsWithOsIdm(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	ci := test.NewConfigIdm(t, fs)
-	ci.SuiteAll()
+	sidm := test.NewSuiteIdm(t, fs)
+	sidm.SuiteAll()
 }

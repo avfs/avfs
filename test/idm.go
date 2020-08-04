@@ -25,36 +25,36 @@ import (
 )
 
 // SuiteAll run all identity manager tests.
-func (ci *ConfigIdm) SuiteAll() {
-	t := ci.t
+func (sidm *SuiteIdm) SuiteAll() {
+	t := sidm.t
 
-	if !ci.idm.HasFeature(avfs.FeatIdentityMgr) {
-		ci.SuitePermDenied()
+	if !sidm.idm.HasFeature(avfs.FeatIdentityMgr) {
+		sidm.SuitePermDenied()
 
-		t.Logf("%s does not provide an indentity manager, skipping", ci.idm.Type())
+		t.Logf("%s does not provide an indentity manager, skipping", sidm.idm.Type())
 
 		return
 	}
 
-	ci.SuiteGroupAddDel()
-	ci.SuiteUserAddDel()
-	ci.SuiteLookup()
+	sidm.SuiteGroupAddDel()
+	sidm.SuiteUserAddDel()
+	sidm.SuiteLookup()
 
-	_, ok := ci.idm.(avfs.UserConnecter)
+	_, ok := sidm.idm.(avfs.UserConnecter)
 	if !ok {
-		t.Logf("%s does not provide avfs.UserConnecter, skipping", ci.idm.Type())
+		t.Logf("%s does not provide avfs.UserConnecter, skipping", sidm.idm.Type())
 
 		return
 	}
 
-	ci.SuiteUser()
-	ci.SuiteUserDenied()
+	sidm.SuiteUser()
+	sidm.SuiteUserDenied()
 }
 
 // SuiteGroupAddDel tests GroupAdd and GroupDel functions.
-func (ci *ConfigIdm) SuiteGroupAddDel() {
-	suffix := "GroupAddDel" + ci.Type()
-	t, idm := ci.t, ci.idm
+func (sidm *SuiteIdm) SuiteGroupAddDel() {
+	suffix := "GroupAddDel" + sidm.Type()
+	t, idm := sidm.t, sidm.idm
 
 	groups := GetGroups()
 	prevGid := 0
@@ -144,9 +144,9 @@ func (ci *ConfigIdm) SuiteGroupAddDel() {
 }
 
 // SuiteUserAddDel tests UserAdd and UserDel functions.
-func (ci *ConfigIdm) SuiteUserAddDel() {
-	suffix := "UserAddDel" + ci.Type()
-	t, idm := ci.t, ci.idm
+func (sidm *SuiteIdm) SuiteUserAddDel() {
+	suffix := "UserAddDel" + sidm.Type()
+	t, idm := sidm.t, sidm.idm
 
 	_ = CreateGroups(t, idm, suffix)
 	users := GetUsers()
@@ -271,9 +271,9 @@ func (ci *ConfigIdm) SuiteUserAddDel() {
 }
 
 // SuiteLookup tests Lookup* functions.
-func (ci *ConfigIdm) SuiteLookup() {
-	suffix := "Lookup" + ci.Type()
-	t, idm := ci.t, ci.idm
+func (sidm *SuiteIdm) SuiteLookup() {
+	suffix := "Lookup" + sidm.Type()
+	t, idm := sidm.t, sidm.idm
 
 	groups := CreateGroups(t, idm, suffix)
 	users := CreateUsers(t, idm, suffix)
@@ -330,9 +330,9 @@ func (ci *ConfigIdm) SuiteLookup() {
 }
 
 // SuiteUser tests User and CurrentUser functions.
-func (ci *ConfigIdm) SuiteUser() {
-	suffix := "User" + ci.Type()
-	t, idm := ci.t, ci.idm
+func (sidm *SuiteIdm) SuiteUser() {
+	suffix := "User" + sidm.Type()
+	t, idm := sidm.t, sidm.idm
 
 	uc, ok := idm.(avfs.UserConnecter)
 	if !ok {
@@ -408,9 +408,9 @@ func (ci *ConfigIdm) SuiteUser() {
 }
 
 // SuiteUserDenied tests if non root users are denied write access.
-func (ci *ConfigIdm) SuiteUserDenied() {
-	suffix := "Denied" + ci.Type()
-	t, idm := ci.t, ci.idm
+func (sidm *SuiteIdm) SuiteUserDenied() {
+	suffix := "Denied" + sidm.Type()
+	t, idm := sidm.t, sidm.idm
 
 	uc, ok := idm.(avfs.UserConnecter)
 	if !ok {
@@ -457,8 +457,8 @@ func (ci *ConfigIdm) SuiteUserDenied() {
 }
 
 // SuitePermDenied tests if all functions of the identity manager return avfs.ErrPermDenied.
-func (ci *ConfigIdm) SuitePermDenied() {
-	t, idm := ci.t, ci.idm
+func (sidm *SuiteIdm) SuitePermDenied() {
+	t, idm := sidm.t, sidm.idm
 
 	const name = ""
 

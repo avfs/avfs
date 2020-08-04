@@ -44,6 +44,6 @@ func TestOsIdmAll(t *testing.T) {
 		t.Skip("OsIdm only works on when connected as root on a linux platform, skipping")
 	}
 
-	ci := test.NewConfigIdm(t, idm)
-	ci.SuiteAll()
+	sidm := test.NewSuiteIdm(t, idm)
+	sidm.SuiteAll()
 }

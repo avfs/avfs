@@ -26,7 +26,7 @@ import (
 
 func TestBasePathFsFsWithMemIdm(t *testing.T) {
 	fs := initTest(t)
-	ci := test.NewConfigIdm(t, fs)
+	sidm := test.NewSuiteIdm(t, fs)
 
-	ci.SuiteAll()
+	sidm.SuiteAll()
 }

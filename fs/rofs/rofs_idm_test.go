@@ -26,6 +26,6 @@ import (
 
 func TestRoFsIdm(t *testing.T) {
 	cf := initTest(t)
-	ci := test.NewConfigIdm(t, cf.GetFsRead())
-	ci.SuitePermDenied()
+	sidm := test.NewSuiteIdm(t, cf.GetFsRead())
+	sidm.SuitePermDenied()
 }
