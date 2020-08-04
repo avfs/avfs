@@ -67,7 +67,8 @@ func main() {
         fs, _ = memfs.New(memfs.OptMainDirs())   
     }
         
-    // From this point all references of 'os', 'path/filepath' and 'ioutil' should be replaced by 'fs'
+    // From this point all references of 'os', 'path/filepath' and 'ioutil'
+    // should be replaced by 'fs'
     rootDir, _ := fs.TempDir("", avfs.Avfs)
     defer fs.RemoveAll(rootDir)
 
@@ -81,7 +82,8 @@ func main() {
     
     gotContentSl, _ := fs.ReadFile(aFilePathSl)
     if !bytes.Equal(content, gotContentSl) {
-        log.Fatalf("Symlink %s : want content to be %v, got %v", aFilePathSl, content, gotContentSl)
+        log.Fatalf("Symlink %s : want content to be %v, got %v",
+                    aFilePathSl, content, gotContentSl)
     }
     
     log.Printf("content from symbolic link %s : %s", aFilePathSl, gotContentSl)
@@ -145,7 +147,9 @@ func main() {
 		statT := fsutil.AsStatT(info.Sys())
 		u, _ := fs.LookupUserId(int(statT.Uid))
 
-		fmt.Println("directory :", info.Name(), ", mode :", info.Mode(), ", owner :", u.Name())
+		fmt.Println("directory :", info.Name(), 
+                    ", mode :", info.Mode(),
+                    ", owner :", u.Name())
 	}
 }
 ```
