@@ -50,7 +50,7 @@ func initTest(t *testing.T) *test.SuiteFs {
 
 func TestOsFs(t *testing.T) {
 	sfs := initTest(t)
-	sfs.SuiteAll()
+	sfs.All()
 }
 
 func TestOsFsPerm(t *testing.T) {

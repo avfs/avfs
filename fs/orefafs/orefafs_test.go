@@ -47,7 +47,7 @@ func TestOrefaFs(t *testing.T) {
 	fs := initTest(t)
 
 	sfs := test.NewSuiteFs(t, fs)
-	sfs.SuiteAll()
+	sfs.All()
 }
 
 func TestNilPtrReceiver(t *testing.T) {

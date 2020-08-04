@@ -52,10 +52,10 @@ func initTest(t *testing.T) *test.SuiteFs {
 
 func TestRoFs(t *testing.T) {
 	sfs := initTest(t)
-	sfs.SuiteRead()
-	sfs.SuiteReadOnly()
-	sfs.SuiteEvalSymlink()
-	sfs.SuitePath()
+	sfs.Read()
+	sfs.WriteOnReadOnly()
+	sfs.EvalSymlink()
+	sfs.Path()
 }
 
 func TestRoFsPerm(t *testing.T) {

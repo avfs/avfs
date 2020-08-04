@@ -29,8 +29,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// SuiteOpenFileRead tests OpenFile function for read.
-func (sfs *SuiteFs) SuiteOpenFileRead() {
+// OpenFileRead tests OpenFile function for read.
+func (sfs *SuiteFs) OpenFileRead() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -89,8 +89,8 @@ func (sfs *SuiteFs) SuiteOpenFileRead() {
 	})
 }
 
-// SuiteOpenFileWrite tests OpenFile function for write.
-func (sfs *SuiteFs) SuiteOpenFileWrite() {
+// OpenFileWrite tests OpenFile function for write.
+func (sfs *SuiteFs) OpenFileWrite() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -343,8 +343,8 @@ func (sfs *SuiteFs) SuiteOpenFileWrite() {
 	})
 }
 
-// SuiteWriteFile tests WriteFile function.
-func (sfs *SuiteFs) SuiteWriteFile() {
+// WriteFile tests WriteFile function.
+func (sfs *SuiteFs) WriteFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -370,8 +370,8 @@ func (sfs *SuiteFs) SuiteWriteFile() {
 	})
 }
 
-// SuiteWriteFile tests WriteString function.
-func (sfs *SuiteFs) SuiteWriteString() {
+// WriteFile tests WriteString function.
+func (sfs *SuiteFs) WriteString() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -407,8 +407,8 @@ func (sfs *SuiteFs) SuiteWriteString() {
 	})
 }
 
-// SuiteReadFile tests ReadFile function.
-func (sfs *SuiteFs) SuiteReadFile() {
+// ReadFile tests ReadFile function.
+func (sfs *SuiteFs) ReadFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -447,8 +447,8 @@ func (sfs *SuiteFs) SuiteReadFile() {
 	})
 }
 
-// SuiteFileWrite tests Write, WriteAt functions.
-func (sfs *SuiteFs) SuiteFileWrite() {
+// FileWrite tests Write and WriteAt functions.
+func (sfs *SuiteFs) FileWrite() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -524,8 +524,8 @@ func (sfs *SuiteFs) SuiteFileWrite() {
 	})
 }
 
-// SuiteFileWriteEdgeCases tests Write and WriteAt functions edge cases.
-func (sfs *SuiteFs) SuiteFileWriteEdgeCases() {
+// FileWriteEdgeCases tests Write and WriteAt functions edge cases.
+func (sfs *SuiteFs) FileWriteEdgeCases() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -579,8 +579,8 @@ func (sfs *SuiteFs) SuiteFileWriteEdgeCases() {
 	})
 }
 
-// SuiteFileRead tests Read, ReadAt functions.
-func (sfs *SuiteFs) SuiteFileRead() {
+// FileRead tests Read and ReadAt functions.
+func (sfs *SuiteFs) FileRead() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -649,8 +649,8 @@ func (sfs *SuiteFs) SuiteFileRead() {
 	})
 }
 
-// SuiteFileReadEdgeCases tests Read and ReadAt functions edge cases.
-func (sfs *SuiteFs) SuiteFileReadEdgeCases() {
+// FileReadEdgeCases tests Read and ReadAt functions edge cases.
+func (sfs *SuiteFs) FileReadEdgeCases() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -748,8 +748,8 @@ func (sfs *SuiteFs) SuiteFileReadEdgeCases() {
 	})
 }
 
-// SuiteFileSeek tests Seek function.
-func (sfs *SuiteFs) SuiteFileSeek() {
+// FileSeek tests Seek function.
+func (sfs *SuiteFs) FileSeek() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -891,8 +891,8 @@ func (sfs *SuiteFs) SuiteFileSeek() {
 	})
 }
 
-// SuiteFileCloseRead tests file Close function for read only files.
-func (sfs *SuiteFs) SuiteFileCloseRead() {
+// FileCloseRead tests file Close function for read only files.
+func (sfs *SuiteFs) FileCloseRead() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -937,8 +937,8 @@ func (sfs *SuiteFs) SuiteFileCloseRead() {
 	})
 }
 
-// SuiteFileCloseWrite tests file Close function for read/write files.
-func (sfs *SuiteFs) SuiteFileCloseWrite() {
+// FileCloseWrite tests file Close function for read/write files.
+func (sfs *SuiteFs) FileCloseWrite() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -990,8 +990,8 @@ func (sfs *SuiteFs) SuiteFileCloseWrite() {
 	})
 }
 
-// SuiteFileTruncate tests Truncate function.
-func (sfs *SuiteFs) SuiteFileTruncate() {
+// FileTruncate tests Truncate function.
+func (sfs *SuiteFs) FileTruncate() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -1077,8 +1077,8 @@ func (sfs *SuiteFs) SuiteFileTruncate() {
 	})
 }
 
-// SuiteLink tests Link function.
-func (sfs *SuiteFs) SuiteLink() {
+// Link tests Link function.
+func (sfs *SuiteFs) Link() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -1170,8 +1170,8 @@ func (sfs *SuiteFs) SuiteLink() {
 	})
 }
 
-// SuiteSameFile tests SameFile function.
-func (sfs *SuiteFs) SuiteSameFile() {
+// SameFile tests SameFile function.
+func (sfs *SuiteFs) SameFile() {
 	t, rootDir1, removeDir1 := sfs.CreateRootDir(UsrTest)
 	defer removeDir1()
 
@@ -1263,8 +1263,8 @@ func (sfs *SuiteFs) SuiteSameFile() {
 	})
 }
 
-// SuiteFileWriteTime checks that modification time is updated on write operations.
-func (sfs *SuiteFs) SuiteFileWriteTime() {
+// FileWriteTime checks that modification time is updated on write operations.
+func (sfs *SuiteFs) FileWriteTime() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 

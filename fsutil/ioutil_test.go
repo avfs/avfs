@@ -51,9 +51,9 @@ func TestIOUtil(t *testing.T) {
 	}
 
 	cf := test.NewSuiteFs(t, fsRoot)
-	cf.SuiteReadDir()
-	cf.SuiteReadFile()
-	cf.SuiteWriteFile()
+	cf.ReadDir()
+	cf.ReadFile()
+	cf.WriteFile()
 }
 
 func TestReadOnlyWriteFile(t *testing.T) {

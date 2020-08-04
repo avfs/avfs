@@ -27,8 +27,8 @@ import (
 	"github.com/avfs/avfs/idm/dummyidm"
 )
 
-// SuiteFuncNonExistingFile tests functions on non existing files.
-func (sfs *SuiteFs) SuiteFuncNonExistingFile() {
+// FuncNonExistingFile tests functions on non existing files.
+func (sfs *SuiteFs) FuncNonExistingFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -317,8 +317,8 @@ func (sfs *SuiteFs) SuiteFuncNonExistingFile() {
 	})
 }
 
-// SuiteDirFuncOnFile tests directory functions on files.
-func (sfs *SuiteFs) SuiteDirFuncOnFile() {
+// DirFuncOnFile tests directory functions on files.
+func (sfs *SuiteFs) DirFuncOnFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -429,8 +429,8 @@ func (sfs *SuiteFs) SuiteDirFuncOnFile() {
 	})
 }
 
-// SuiteFileFuncOnDir test file functions on directories.
-func (sfs *SuiteFs) SuiteFileFuncOnDir() {
+// FileFuncOnDir test file functions on directories.
+func (sfs *SuiteFs) FileFuncOnDir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -511,8 +511,8 @@ func (sfs *SuiteFs) SuiteFileFuncOnDir() {
 	})
 }
 
-// SuiteFileFuncOnClosed tests functions on closed files.
-func (sfs *SuiteFs) SuiteFileFuncOnClosed() {
+// FileFuncOnClosed tests functions on closed files.
+func (sfs *SuiteFs) FileFuncOnClosed() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -622,8 +622,8 @@ func (sfs *SuiteFs) SuiteFileFuncOnClosed() {
 	})
 }
 
-// SuiteNotImplemented tests non implemented functions.
-func (sfs *SuiteFs) SuiteNotImplemented() {
+// NotImplemented tests non implemented functions.
+func (sfs *SuiteFs) NotImplemented() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 

@@ -61,7 +61,7 @@ func TestBasePathFs(t *testing.T) {
 	fs := initTest(t)
 	sfs := test.NewSuiteFs(t, fs)
 
-	sfs.SuiteAll()
+	sfs.All()
 }
 
 func TestBasePathFsPerm(t *testing.T) {

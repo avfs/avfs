@@ -25,8 +25,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// SuiteChtimes tests Chtimes function.
-func (sfs *SuiteFs) SuiteChtimes() {
+// Chtimes tests Chtimes function.
+func (sfs *SuiteFs) Chtimes() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -55,8 +55,8 @@ func (sfs *SuiteFs) SuiteChtimes() {
 	}
 }
 
-// SuiteEvalSymlink tests EvalSymlink function.
-func (sfs *SuiteFs) SuiteEvalSymlink() {
+// EvalSymlink tests EvalSymlink function.
+func (sfs *SuiteFs) EvalSymlink() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -101,8 +101,8 @@ func (sfs *SuiteFs) SuiteEvalSymlink() {
 	})
 }
 
-// SuiteLstat tests Lstat function.
-func (sfs *SuiteFs) SuiteLstat() {
+// Lstat tests Lstat function.
+func (sfs *SuiteFs) Lstat() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -208,8 +208,8 @@ func (sfs *SuiteFs) SuiteLstat() {
 	})
 }
 
-// SuiteReadlink tests Readlink function.
-func (sfs *SuiteFs) SuiteReadlink() {
+// Readlink tests Readlink function.
+func (sfs *SuiteFs) Readlink() {
 	if !sfs.fsW.HasFeature(avfs.FeatSymlink) {
 		return
 	}
@@ -259,8 +259,8 @@ func (sfs *SuiteFs) SuiteReadlink() {
 	})
 }
 
-// SuiteRemove test Remove function.
-func (sfs *SuiteFs) SuiteRemove() {
+// Remove tests Remove function.
+func (sfs *SuiteFs) Remove() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -347,8 +347,8 @@ func (sfs *SuiteFs) SuiteRemove() {
 	})
 }
 
-// SuiteRemoveAll test RemoveAll function.
-func (sfs *SuiteFs) SuiteRemoveAll() {
+// RemoveAll tests RemoveAll function.
+func (sfs *SuiteFs) RemoveAll() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -401,8 +401,8 @@ func (sfs *SuiteFs) SuiteRemoveAll() {
 	})
 }
 
-// SuiteRemoveAllEdgeCases test RemoveAll function.
-func (sfs *SuiteFs) SuiteRemoveAllEdgeCases() {
+// RemoveAllEdgeCases tests edge cases of RemoveAll function.
+func (sfs *SuiteFs) RemoveAllEdgeCases() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -426,8 +426,8 @@ func (sfs *SuiteFs) SuiteRemoveAllEdgeCases() {
 	})
 }
 
-// SuiteRename tests Rename function.
-func (sfs *SuiteFs) SuiteRename() {
+// Rename tests Rename function.
+func (sfs *SuiteFs) Rename() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -499,8 +499,8 @@ func (sfs *SuiteFs) SuiteRename() {
 	})
 }
 
-// SuiteStat tests Stat function.
-func (sfs *SuiteFs) SuiteStat() {
+// Stat tests Stat function.
+func (sfs *SuiteFs) Stat() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -603,8 +603,8 @@ func (sfs *SuiteFs) SuiteStat() {
 	})
 }
 
-// SuiteSymlink tests Symlink function.
-func (sfs *SuiteFs) SuiteSymlink() {
+// Symlink tests Symlink function.
+func (sfs *SuiteFs) Symlink() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -639,8 +639,8 @@ func (sfs *SuiteFs) SuiteSymlink() {
 	})
 }
 
-// SuiteReadOnly tests all write functions of a read only file system..
-func (sfs *SuiteFs) SuiteReadOnly() {
+// WriteOnReadOnly tests all write functions of a read only file system.
+func (sfs *SuiteFs) WriteOnReadOnly() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -746,8 +746,8 @@ func (sfs *SuiteFs) SuiteReadOnly() {
 	})
 }
 
-// SuiteUmask tests UMask and GetUMask functions.
-func (sfs *SuiteFs) SuiteUmask() {
+// Umask tests UMask and GetUMask functions.
+func (sfs *SuiteFs) Umask() {
 	const umaskTest = 0o077
 
 	t, fs := sfs.t, sfs.GetFsWrite()

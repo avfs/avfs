@@ -246,58 +246,58 @@ func (sfs *SuiteFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 	return t, rootDir, removeDir
 }
 
-// SuiteAll runs all file systems tests.
-func (sfs *SuiteFs) SuiteAll() {
-	sfs.SuiteRead()
-	sfs.SuiteWrite()
-	sfs.SuitePath()
+// All runs all file systems tests.
+func (sfs *SuiteFs) All() {
+	sfs.Read()
+	sfs.Write()
+	sfs.Path()
 }
 
-// SuiteWrite runs all file systems tests with write access.
-func (sfs *SuiteFs) SuiteWrite() {
-	sfs.SuiteChtimes()
-	sfs.SuiteDirFuncOnFile()
-	sfs.SuiteFileReadEdgeCases()
-	sfs.SuiteFileWrite()
-	sfs.SuiteFileWriteEdgeCases()
-	sfs.SuiteFileWriteTime()
-	sfs.SuiteFileCloseWrite()
-	sfs.SuiteFuncNonExistingFile()
-	sfs.SuiteLink()
-	sfs.SuiteMkdir()
-	sfs.SuiteMkdirAll()
-	sfs.SuiteOpenFileWrite()
-	sfs.SuiteRemove()
-	sfs.SuiteRemoveAll()
-	sfs.SuiteRemoveAllEdgeCases()
-	sfs.SuiteRename()
-	sfs.SuiteSameFile()
-	sfs.SuiteSymlink()
-	sfs.SuiteWriteFile()
-	sfs.SuiteWriteString()
-	sfs.SuiteUmask()
+// Write runs all file systems tests with write access.
+func (sfs *SuiteFs) Write() {
+	sfs.Chtimes()
+	sfs.DirFuncOnFile()
+	sfs.FileReadEdgeCases()
+	sfs.FileWrite()
+	sfs.FileWriteEdgeCases()
+	sfs.FileWriteTime()
+	sfs.FileCloseWrite()
+	sfs.FuncNonExistingFile()
+	sfs.Link()
+	sfs.Mkdir()
+	sfs.MkdirAll()
+	sfs.OpenFileWrite()
+	sfs.Remove()
+	sfs.RemoveAll()
+	sfs.RemoveAllEdgeCases()
+	sfs.Rename()
+	sfs.SameFile()
+	sfs.Symlink()
+	sfs.WriteFile()
+	sfs.WriteString()
+	sfs.Umask()
 }
 
-// SuiteRead runs all file systems tests with read access.
-func (sfs *SuiteFs) SuiteRead() {
-	sfs.SuiteChdir()
-	sfs.SuiteEvalSymlink()
-	sfs.SuiteFileFuncOnClosed()
-	sfs.SuiteFileFuncOnDir()
-	sfs.SuiteFileRead()
-	sfs.SuiteFileSeek()
-	sfs.SuiteFileCloseRead()
-	sfs.SuiteFileTruncate()
-	sfs.SuiteGetTempDir()
-	sfs.SuiteGlob()
-	sfs.SuiteLstat()
-	sfs.SuiteNotImplemented()
-	sfs.SuiteOpenFileRead()
-	sfs.SuiteReadDir()
-	sfs.SuiteReadDirNames()
-	sfs.SuiteReadFile()
-	sfs.SuiteReadlink()
-	sfs.SuiteStat()
+// Read runs all file systems tests with read access.
+func (sfs *SuiteFs) Read() {
+	sfs.Chdir()
+	sfs.EvalSymlink()
+	sfs.FileFuncOnClosed()
+	sfs.FileFuncOnDir()
+	sfs.FileRead()
+	sfs.FileSeek()
+	sfs.FileCloseRead()
+	sfs.FileTruncate()
+	sfs.GetTempDir()
+	sfs.Glob()
+	sfs.Lstat()
+	sfs.NotImplemented()
+	sfs.OpenFileRead()
+	sfs.ReadDir()
+	sfs.ReadDirNames()
+	sfs.ReadFile()
+	sfs.Readlink()
+	sfs.Stat()
 }
 
 // Dir contains the data to test directories.

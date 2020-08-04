@@ -26,27 +26,27 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// SuitePath tests all path related functions.
-func (sfs *SuiteFs) SuitePath() {
-	sfs.SuiteAbs()
-	sfs.SuiteBase()
-	sfs.SuiteClean()
-	sfs.SuiteDir()
-	sfs.SuiteFromToSlash()
-	sfs.SuiteGlob()
-	sfs.SuiteIsAbsPath()
-	sfs.SuiteJoin()
-	sfs.SuiteRel()
-	sfs.SuiteSplit()
-	sfs.SuiteWalk()
+// Path tests all path related functions.
+func (sfs *SuiteFs) Path() {
+	sfs.Abs()
+	sfs.Base()
+	sfs.Clean()
+	sfs.Dir()
+	sfs.FromToSlash()
+	sfs.Glob()
+	sfs.IsAbs()
+	sfs.Join()
+	sfs.Rel()
+	sfs.Split()
+	sfs.Walk()
 }
 
 type pathTest struct {
 	path, result string
 }
 
-// SuiteAbs test Abs function.
-func (sfs *SuiteFs) SuiteAbs() {
+// Abs test Abs function.
+func (sfs *SuiteFs) Abs() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -177,8 +177,8 @@ func (sfs *SuiteFs) SuiteAbs() {
 	})
 }
 
-// SuiteBase tests Base function.
-func (sfs *SuiteFs) SuiteBase() {
+// Base tests Base function.
+func (sfs *SuiteFs) Base() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -206,8 +206,8 @@ func (sfs *SuiteFs) SuiteBase() {
 	}
 }
 
-// SuiteClean tests Clean function.
-func (sfs *SuiteFs) SuiteClean() {
+// Clean tests Clean function.
+func (sfs *SuiteFs) Clean() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -279,8 +279,8 @@ func (sfs *SuiteFs) SuiteClean() {
 	}
 }
 
-// SuiteDir tests Dir function.
-func (sfs *SuiteFs) SuiteDir() {
+// Dir tests Dir function.
+func (sfs *SuiteFs) Dir() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -309,7 +309,7 @@ func (sfs *SuiteFs) SuiteDir() {
 	}
 }
 
-func (sfs *SuiteFs) SuiteFromToSlash() {
+func (sfs *SuiteFs) FromToSlash() {
 	t := sfs.t
 
 	// TODO : Add test cases for windows.
@@ -350,8 +350,8 @@ func (sfs *SuiteFs) SuiteFromToSlash() {
 	}
 }
 
-// SuiteIsAbsPath tests IsAbs function.
-func (sfs *SuiteFs) SuiteIsAbsPath() {
+// IsAbs tests IsAbs function.
+func (sfs *SuiteFs) IsAbs() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -400,8 +400,8 @@ func (sfs *SuiteFs) SuiteIsAbsPath() {
 	})
 }
 
-// SuiteJoin tests Join function.
-func (sfs *SuiteFs) SuiteJoin() {
+// Join tests Join function.
+func (sfs *SuiteFs) Join() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -437,8 +437,8 @@ func (sfs *SuiteFs) SuiteJoin() {
 	}
 }
 
-// SuiteRel tests Rel function.
-func (sfs *SuiteFs) SuiteRel() {
+// Rel tests Rel function.
+func (sfs *SuiteFs) Rel() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -510,8 +510,8 @@ func (sfs *SuiteFs) SuiteRel() {
 	}
 }
 
-// SuiteSplit tests Split function.
-func (sfs *SuiteFs) SuiteSplit() {
+// Split tests Split function.
+func (sfs *SuiteFs) Split() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -535,8 +535,8 @@ func (sfs *SuiteFs) SuiteSplit() {
 	}
 }
 
-// SuiteGlob tests Glob function.
-func (sfs *SuiteFs) SuiteGlob() {
+// Glob tests Glob function.
+func (sfs *SuiteFs) Glob() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -607,8 +607,8 @@ func (sfs *SuiteFs) SuiteGlob() {
 	})
 }
 
-// SuiteWalk tests Walk function.
-func (sfs *SuiteFs) SuiteWalk() {
+// Walk tests Walk function.
+func (sfs *SuiteFs) Walk() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 

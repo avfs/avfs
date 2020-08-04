@@ -49,7 +49,7 @@ func initTest(t *testing.T) *test.SuiteFs {
 
 func TestMemFs(t *testing.T) {
 	sfs := initTest(t)
-	sfs.SuiteAll()
+	sfs.All()
 }
 
 func TestMemFsPerm(t *testing.T) {

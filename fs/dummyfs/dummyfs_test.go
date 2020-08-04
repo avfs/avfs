@@ -49,7 +49,7 @@ func TestDummyFs(t *testing.T) {
 	}
 
 	cf := test.NewSuiteFs(t, fs)
-	cf.SuiteNotImplemented()
+	cf.NotImplemented()
 }
 
 func TestDummyFsOSType(t *testing.T) {
