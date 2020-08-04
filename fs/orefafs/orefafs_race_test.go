@@ -31,7 +31,7 @@ func TestRacOrefaFs(t *testing.T) {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	cf := test.NewConfigFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, fsRoot)
 
-	cf.SuiteRace()
+	sfs.SuiteRace()
 }

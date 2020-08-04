@@ -59,16 +59,16 @@ func initTest(t *testing.T) *basepathfs.BasePathFs {
 
 func TestBasePathFs(t *testing.T) {
 	fs := initTest(t)
-	cf := test.NewConfigFs(t, fs)
+	sfs := test.NewSuiteFs(t, fs)
 
-	cf.SuiteAll()
+	sfs.SuiteAll()
 }
 
 func TestBasePathFsPerm(t *testing.T) {
 	fs := initTest(t)
-	cf := test.NewConfigFs(t, fs)
+	sfs := test.NewSuiteFs(t, fs)
 
-	cf.SuitePerm()
+	sfs.SuitePerm()
 }
 
 // TestBasePathFsOptions tests BasePathFs configuration options.

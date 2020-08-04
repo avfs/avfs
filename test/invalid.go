@@ -28,11 +28,11 @@ import (
 )
 
 // SuiteFuncNonExistingFile tests functions on non existing files.
-func (cf *ConfigFs) SuiteFuncNonExistingFile() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFuncNonExistingFile() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	existingFile := fs.Join(rootDir, "existingFile")
 
@@ -44,7 +44,7 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 	nonExistingFile := fs.Join(rootDir, "nonExistingFile")
 	buf := make([]byte, 1)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("FsNonExistingFile", func(t *testing.T) {
 		err := fs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
@@ -318,11 +318,11 @@ func (cf *ConfigFs) SuiteFuncNonExistingFile() {
 }
 
 // SuiteDirFuncOnFile tests directory functions on files.
-func (cf *ConfigFs) SuiteDirFuncOnFile() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteDirFuncOnFile() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	existingFile := fs.Join(rootDir, "existingFile")
 
@@ -333,7 +333,7 @@ func (cf *ConfigFs) SuiteDirFuncOnFile() {
 
 	nonExistingFile := fs.Join(existingFile, "invalid", "path")
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("DirFuncOnFileFs", func(t *testing.T) {
 		err = fs.Chdir(existingFile)
@@ -430,11 +430,11 @@ func (cf *ConfigFs) SuiteDirFuncOnFile() {
 }
 
 // SuiteFileFuncOnDir test file functions on directories.
-func (cf *ConfigFs) SuiteFileFuncOnDir() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileFuncOnDir() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	pathDir := fs.Join(rootDir, "existingDir")
 
@@ -443,7 +443,7 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 		t.Fatalf("Mkdir : want error to be nil, got %v", err)
 	}
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("FileFuncOnDir", func(t *testing.T) {
 		f, err := fs.Open(pathDir)
@@ -512,11 +512,11 @@ func (cf *ConfigFs) SuiteFileFuncOnDir() {
 }
 
 // SuiteFileFuncOnClosed tests functions on closed files.
-func (cf *ConfigFs) SuiteFileFuncOnClosed() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileFuncOnClosed() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	existingFile := fs.Join(rootDir, "existingFile")
 
@@ -525,7 +525,7 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("FuncOnFileClosed", func(t *testing.T) {
 		f, err := fs.Open(existingFile)
@@ -623,11 +623,11 @@ func (cf *ConfigFs) SuiteFileFuncOnClosed() {
 }
 
 // SuiteNotImplemented tests non implemented functions.
-func (cf *ConfigFs) SuiteNotImplemented() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteNotImplemented() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	var (
 		oldName = ""

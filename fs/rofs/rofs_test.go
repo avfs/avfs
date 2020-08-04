@@ -36,31 +36,31 @@ var (
 	_ avfs.File = &rofs.RoFile{}
 )
 
-func initTest(t *testing.T) *test.ConfigFs {
+func initTest(t *testing.T) *test.SuiteFs {
 	fsRoot, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	cf := test.NewConfigFs(t, fsRoot)
-	fsW := cf.GetFsWrite()
+	sfs := test.NewSuiteFs(t, fsRoot)
+	fsW := sfs.GetFsWrite()
 	fsR := rofs.New(fsW)
-	cf.FsRead(fsR)
+	sfs.FsRead(fsR)
 
-	return cf
+	return sfs
 }
 
 func TestRoFs(t *testing.T) {
-	cf := initTest(t)
-	cf.SuiteRead()
-	cf.SuiteReadOnly()
-	cf.SuiteEvalSymlink()
-	cf.SuitePath()
+	sfs := initTest(t)
+	sfs.SuiteRead()
+	sfs.SuiteReadOnly()
+	sfs.SuiteEvalSymlink()
+	sfs.SuitePath()
 }
 
 func TestRoFsPerm(t *testing.T) {
-	cf := initTest(t)
-	cf.SuitePermRead()
+	sfs := initTest(t)
+	sfs.SuitePermRead()
 }
 
 func TestRoFsOSType(t *testing.T) {

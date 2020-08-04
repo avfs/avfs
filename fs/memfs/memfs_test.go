@@ -36,25 +36,25 @@ var (
 	_ avfs.File = &memfs.MemFile{}
 )
 
-func initTest(t *testing.T) *test.ConfigFs {
+func initTest(t *testing.T) *test.SuiteFs {
 	fsRoot, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	cf := test.NewConfigFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, fsRoot)
 
-	return cf
+	return sfs
 }
 
 func TestMemFs(t *testing.T) {
-	cf := initTest(t)
-	cf.SuiteAll()
+	sfs := initTest(t)
+	sfs.SuiteAll()
 }
 
 func TestMemFsPerm(t *testing.T) {
-	cf := initTest(t)
-	cf.SuitePerm()
+	sfs := initTest(t)
+	sfs.SuitePerm()
 }
 
 func TestMemFsOptionError(t *testing.T) {

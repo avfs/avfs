@@ -27,18 +27,18 @@ import (
 )
 
 // SuitePath tests all path related functions.
-func (cf *ConfigFs) SuitePath() {
-	cf.SuiteAbs()
-	cf.SuiteBase()
-	cf.SuiteClean()
-	cf.SuiteDir()
-	cf.SuiteFromToSlash()
-	cf.SuiteGlob()
-	cf.SuiteIsAbsPath()
-	cf.SuiteJoin()
-	cf.SuiteRel()
-	cf.SuiteSplit()
-	cf.SuiteWalk()
+func (sfs *SuiteFs) SuitePath() {
+	sfs.SuiteAbs()
+	sfs.SuiteBase()
+	sfs.SuiteClean()
+	sfs.SuiteDir()
+	sfs.SuiteFromToSlash()
+	sfs.SuiteGlob()
+	sfs.SuiteIsAbsPath()
+	sfs.SuiteJoin()
+	sfs.SuiteRel()
+	sfs.SuiteSplit()
+	sfs.SuiteWalk()
 }
 
 type pathTest struct {
@@ -46,11 +46,11 @@ type pathTest struct {
 }
 
 // SuiteAbs test Abs function.
-func (cf *ConfigFs) SuiteAbs() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteAbs() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	t.Run("Abs", func(t *testing.T) {
 		// Test directories relative to temporary directory.
@@ -103,7 +103,7 @@ func (cf *ConfigFs) SuiteAbs() {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		fs = cf.GetFsRead()
+		fs = sfs.GetFsRead()
 
 		for _, path := range absTests {
 			path = strings.ReplaceAll(path, "$", rootDir)
@@ -178,8 +178,8 @@ func (cf *ConfigFs) SuiteAbs() {
 }
 
 // SuiteBase tests Base function.
-func (cf *ConfigFs) SuiteBase() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteBase() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	basetests := []*pathTest{
@@ -196,7 +196,7 @@ func (cf *ConfigFs) SuiteBase() {
 		{"a/b/c.x", "c.x"},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	for _, test := range basetests {
 		s := fs.Base(test.path)
@@ -207,8 +207,8 @@ func (cf *ConfigFs) SuiteBase() {
 }
 
 // SuiteClean tests Clean function.
-func (cf *ConfigFs) SuiteClean() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteClean() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	cleantests := []*pathTest{
@@ -264,7 +264,7 @@ func (cf *ConfigFs) SuiteClean() {
 		{"abc/../../././../def", "../../def"},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	for _, test := range cleantests {
 		s := fs.Clean(test.path)
@@ -280,8 +280,8 @@ func (cf *ConfigFs) SuiteClean() {
 }
 
 // SuiteDir tests Dir function.
-func (cf *ConfigFs) SuiteDir() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteDir() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	dirtests := []*pathTest{
@@ -299,7 +299,7 @@ func (cf *ConfigFs) SuiteDir() {
 		{"a/b/c.x", "a/b"},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	for _, test := range dirtests {
 		s := fs.Dir(test.path)
@@ -309,8 +309,8 @@ func (cf *ConfigFs) SuiteDir() {
 	}
 }
 
-func (cf *ConfigFs) SuiteFromToSlash() {
-	t := cf.t
+func (sfs *SuiteFs) SuiteFromToSlash() {
+	t := sfs.t
 
 	// TODO : Add test cases for windows.
 	pathtests := []*struct {
@@ -320,7 +320,7 @@ func (cf *ConfigFs) SuiteFromToSlash() {
 		{"C:\\A\\b/c", "", ""},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 	ost := fs.OSType()
 
 	for _, pt := range pathtests {
@@ -351,11 +351,11 @@ func (cf *ConfigFs) SuiteFromToSlash() {
 }
 
 // SuiteIsAbsPath tests IsAbs function.
-func (cf *ConfigFs) SuiteIsAbsPath() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteIsAbsPath() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	t.Run("IsAbs", func(t *testing.T) {
 		isabstests := []struct {
@@ -401,8 +401,8 @@ func (cf *ConfigFs) SuiteIsAbsPath() {
 }
 
 // SuiteJoin tests Join function.
-func (cf *ConfigFs) SuiteJoin() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteJoin() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	jointests := []*struct {
@@ -427,7 +427,7 @@ func (cf *ConfigFs) SuiteJoin() {
 		{[]string{"", ""}, ""},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	for _, test := range jointests {
 		p := fs.Join(test.elem...)
@@ -438,8 +438,8 @@ func (cf *ConfigFs) SuiteJoin() {
 }
 
 // SuiteRel tests Rel function.
-func (cf *ConfigFs) SuiteRel() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRel() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	reltests := []*struct {
@@ -488,7 +488,7 @@ func (cf *ConfigFs) SuiteRel() {
 		{"/a", "a", "err"},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	for _, test := range reltests {
 		got, err := fs.Rel(test.root, test.path)
@@ -511,8 +511,8 @@ func (cf *ConfigFs) SuiteRel() {
 }
 
 // SuiteSplit tests Split function.
-func (cf *ConfigFs) SuiteSplit() {
-	t, _, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteSplit() {
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	unixsplittests := []*struct {
@@ -525,7 +525,7 @@ func (cf *ConfigFs) SuiteSplit() {
 		{"/", "/", ""},
 	}
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	for _, test := range unixsplittests {
 		d, f := fs.Split(test.path)
@@ -536,17 +536,17 @@ func (cf *ConfigFs) SuiteSplit() {
 }
 
 // SuiteGlob tests Glob function.
-func (cf *ConfigFs) SuiteGlob() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteGlob() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	_ = CreateDirs(t, fs, rootDir)
 	_ = CreateFiles(t, fs, rootDir)
 	sl := len(CreateSymlinks(t, fs, rootDir))
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("GlobNormal", func(t *testing.T) {
 		pattern := rootDir + "/*/*/[A-Z0-9]"
@@ -608,16 +608,16 @@ func (cf *ConfigFs) SuiteGlob() {
 }
 
 // SuiteWalk tests Walk function.
-func (cf *ConfigFs) SuiteWalk() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteWalk() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	symlinks := CreateSymlinks(t, fs, rootDir)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 	lnames := len(dirs) + len(files) + len(symlinks)
 	wantNames := make([]string, 0, lnames)
 

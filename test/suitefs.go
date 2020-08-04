@@ -40,8 +40,8 @@ var RndParamsOneDir = fsutil.RndTreeParams{ //nolint:gochecknoglobals
 	MaxSymlinks: 10,
 }
 
-// ConfigFs represents a test configuration for a file system.
-type ConfigFs struct {
+// SuiteFs is a test suite for file systems.
+type SuiteFs struct {
 	// t is passed to Test functions to manage test state and support formatted test logs.
 	t *testing.T
 
@@ -67,11 +67,11 @@ type ConfigFs struct {
 	osType avfs.OSType
 }
 
-// Option defines the option function used for initializing ConfigFs.
-type Option func(*ConfigFs)
+// Option defines the option function used for initializing SuiteFs.
+type Option func(*SuiteFs)
 
-// newFs creates a new test configuration for a file system.
-func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
+// NewSuiteFs creates a new test suite for a file system.
+func NewSuiteFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *SuiteFs {
 	if fsRoot == nil {
 		t.Fatal("New : want FsRoot to be set, got nil")
 	}
@@ -97,7 +97,7 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 		}
 	}
 
-	cf := &ConfigFs{
+	cf := &SuiteFs{
 		t:           t,
 		fsRoot:      fsRoot,
 		fsW:         fs,
@@ -119,93 +119,93 @@ func NewConfigFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *ConfigFs {
 
 // OptRootDir returns an option function which sets the root directory for the tests.
 func OptRootDir(rootDir string) Option {
-	return func(cf *ConfigFs) {
+	return func(cf *SuiteFs) {
 		cf.rootDir = rootDir
 	}
 }
 
 // OptOs returns an option function which sets the operating system for the tests.
 func OptOs(osType avfs.OSType) Option {
-	return func(cf *ConfigFs) {
+	return func(cf *SuiteFs) {
 		cf.osType = osType
 	}
 }
 
 // OS returns the operating system, real or simulated.
-func (cf *ConfigFs) OS() avfs.OSType {
-	return cf.osType
+func (sfs *SuiteFs) OS() avfs.OSType {
+	return sfs.osType
 }
 
 // GetFsAsUser sets the test user to userName.
-func (cf *ConfigFs) GetFsAsUser(name string) (avfs.Fs, avfs.UserReader) {
-	fs := cf.fsRoot
+func (sfs *SuiteFs) GetFsAsUser(name string) (avfs.Fs, avfs.UserReader) {
+	fs := sfs.fsRoot
 
 	u := fs.CurrentUser()
-	if !cf.canTestPerm || u.Name() == name {
+	if !sfs.canTestPerm || u.Name() == name {
 		return fs, u
 	}
 
 	u, err := fs.User(name)
 	if err != nil {
-		cf.t.Fatalf("User %s : want error to be nil, got %s", name, err)
+		sfs.t.Fatalf("User %s : want error to be nil, got %s", name, err)
 	}
 
 	return fs, u
 }
 
 // GetFsRead returns the file system for read only functions.
-func (cf *ConfigFs) GetFsRead() avfs.Fs {
-	return cf.fsR
+func (sfs *SuiteFs) GetFsRead() avfs.Fs {
+	return sfs.fsR
 }
 
 // GetFsRoot return the root file system.
-func (cf *ConfigFs) GetFsRoot() avfs.Fs {
-	return cf.fsRoot
+func (sfs *SuiteFs) GetFsRoot() avfs.Fs {
+	return sfs.fsRoot
 }
 
 // GetFsWrite returns the file system for read and write functions.
-func (cf *ConfigFs) GetFsWrite() avfs.Fs {
-	return cf.fsW
+func (sfs *SuiteFs) GetFsWrite() avfs.Fs {
+	return sfs.fsW
 }
 
 // FsRead sets the file system for read functions.
-func (cf *ConfigFs) FsRead(fsR avfs.Fs) {
+func (sfs *SuiteFs) FsRead(fsR avfs.Fs) {
 	if fsR == nil {
-		cf.t.Fatal("ConfigFs : want FsR to be set, got nil")
+		sfs.t.Fatal("SuiteFs : want FsR to be set, got nil")
 	}
 
-	cf.fsR = fsR
+	sfs.fsR = fsR
 }
 
 // FsWrite sets the file system for write functions.
-func (cf *ConfigFs) FsWrite(fsW avfs.Fs) {
+func (sfs *SuiteFs) FsWrite(fsW avfs.Fs) {
 	if fsW == nil {
-		cf.t.Fatal("ConfigFs : want FsW to be set, got nil")
+		sfs.t.Fatal("SuiteFs : want FsW to be set, got nil")
 	}
 
-	cf.fsW = fsW
+	sfs.fsW = fsW
 }
 
 // CreateRootDir creates the root directory for the tests.
 // Each test have its own directory in /tmp/avfs.../
 // this directory and its descendants are removed by removeDir() function.
-func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string, removeDir func()) {
-	t = cf.t
+func (sfs *SuiteFs) CreateRootDir(userName string) (t *testing.T, rootDir string, removeDir func()) {
+	t = sfs.t
 
-	fs, _ := cf.GetFsAsUser(userName)
+	fs, _ := sfs.GetFsAsUser(userName)
 
 	if !fs.HasFeature(avfs.FeatBasicFs) {
 		return t, avfs.TmpDir, func() {}
 	}
 
 	var err error
-	if cf.rootDir == "" {
+	if sfs.rootDir == "" {
 		rootDir, err = fs.TempDir("", avfs.Avfs)
 		if err != nil {
 			t.Fatalf("TempDir : want error to be nil, got %s", err)
 		}
 	} else {
-		rootDir = cf.rootDir
+		rootDir = sfs.rootDir
 
 		err = fs.MkdirAll(rootDir, 0o700)
 		if err != nil {
@@ -235,10 +235,10 @@ func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 	}
 
 	removeDir = func() {
-		fs, _ := cf.GetFsAsUser(avfs.UsrRoot)
+		fs, _ := sfs.GetFsAsUser(avfs.UsrRoot)
 
 		err = fs.RemoveAll(rootDir)
-		if err != nil && cf.osType != avfs.OsWindows {
+		if err != nil && sfs.osType != avfs.OsWindows {
 			t.Logf("RemoveAll : want error to be nil, got %s", err)
 		}
 	}
@@ -247,57 +247,57 @@ func (cf *ConfigFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 }
 
 // SuiteAll runs all file systems tests.
-func (cf *ConfigFs) SuiteAll() {
-	cf.SuiteRead()
-	cf.SuiteWrite()
-	cf.SuitePath()
+func (sfs *SuiteFs) SuiteAll() {
+	sfs.SuiteRead()
+	sfs.SuiteWrite()
+	sfs.SuitePath()
 }
 
 // SuiteWrite runs all file systems tests with write access.
-func (cf *ConfigFs) SuiteWrite() {
-	cf.SuiteChtimes()
-	cf.SuiteDirFuncOnFile()
-	cf.SuiteFileReadEdgeCases()
-	cf.SuiteFileWrite()
-	cf.SuiteFileWriteEdgeCases()
-	cf.SuiteFileWriteTime()
-	cf.SuiteFileCloseWrite()
-	cf.SuiteFuncNonExistingFile()
-	cf.SuiteLink()
-	cf.SuiteMkdir()
-	cf.SuiteMkdirAll()
-	cf.SuiteOpenFileWrite()
-	cf.SuiteRemove()
-	cf.SuiteRemoveAll()
-	cf.SuiteRemoveAllEdgeCases()
-	cf.SuiteRename()
-	cf.SuiteSameFile()
-	cf.SuiteSymlink()
-	cf.SuiteWriteFile()
-	cf.SuiteWriteString()
-	cf.SuiteUmask()
+func (sfs *SuiteFs) SuiteWrite() {
+	sfs.SuiteChtimes()
+	sfs.SuiteDirFuncOnFile()
+	sfs.SuiteFileReadEdgeCases()
+	sfs.SuiteFileWrite()
+	sfs.SuiteFileWriteEdgeCases()
+	sfs.SuiteFileWriteTime()
+	sfs.SuiteFileCloseWrite()
+	sfs.SuiteFuncNonExistingFile()
+	sfs.SuiteLink()
+	sfs.SuiteMkdir()
+	sfs.SuiteMkdirAll()
+	sfs.SuiteOpenFileWrite()
+	sfs.SuiteRemove()
+	sfs.SuiteRemoveAll()
+	sfs.SuiteRemoveAllEdgeCases()
+	sfs.SuiteRename()
+	sfs.SuiteSameFile()
+	sfs.SuiteSymlink()
+	sfs.SuiteWriteFile()
+	sfs.SuiteWriteString()
+	sfs.SuiteUmask()
 }
 
 // SuiteRead runs all file systems tests with read access.
-func (cf *ConfigFs) SuiteRead() {
-	cf.SuiteChdir()
-	cf.SuiteEvalSymlink()
-	cf.SuiteFileFuncOnClosed()
-	cf.SuiteFileFuncOnDir()
-	cf.SuiteFileRead()
-	cf.SuiteFileSeek()
-	cf.SuiteFileCloseRead()
-	cf.SuiteFileTruncate()
-	cf.SuiteGetTempDir()
-	cf.SuiteGlob()
-	cf.SuiteLstat()
-	cf.SuiteNotImplemented()
-	cf.SuiteOpenFileRead()
-	cf.SuiteReadDir()
-	cf.SuiteReadDirNames()
-	cf.SuiteReadFile()
-	cf.SuiteReadlink()
-	cf.SuiteStat()
+func (sfs *SuiteFs) SuiteRead() {
+	sfs.SuiteChdir()
+	sfs.SuiteEvalSymlink()
+	sfs.SuiteFileFuncOnClosed()
+	sfs.SuiteFileFuncOnDir()
+	sfs.SuiteFileRead()
+	sfs.SuiteFileSeek()
+	sfs.SuiteFileCloseRead()
+	sfs.SuiteFileTruncate()
+	sfs.SuiteGetTempDir()
+	sfs.SuiteGlob()
+	sfs.SuiteLstat()
+	sfs.SuiteNotImplemented()
+	sfs.SuiteOpenFileRead()
+	sfs.SuiteReadDir()
+	sfs.SuiteReadDirNames()
+	sfs.SuiteReadFile()
+	sfs.SuiteReadlink()
+	sfs.SuiteStat()
 }
 
 // Dir contains the data to test directories.

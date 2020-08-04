@@ -31,6 +31,6 @@ func TestPath(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	cf := test.NewConfigFs(t, fs)
+	cf := test.NewSuiteFs(t, fs)
 	cf.SuitePath()
 }

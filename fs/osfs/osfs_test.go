@@ -37,25 +37,25 @@ var (
 	_ avfs.File = &os.File{}
 )
 
-func initTest(t *testing.T) *test.ConfigFs {
+func initTest(t *testing.T) *test.SuiteFs {
 	fsRoot, err := osfs.New(osfs.OptIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	cf := test.NewConfigFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, fsRoot)
 
-	return cf
+	return sfs
 }
 
 func TestOsFs(t *testing.T) {
-	cf := initTest(t)
-	cf.SuiteAll()
+	sfs := initTest(t)
+	sfs.SuiteAll()
 }
 
 func TestOsFsPerm(t *testing.T) {
-	cf := initTest(t)
-	cf.SuitePerm()
+	sfs := initTest(t)
+	sfs.SuitePerm()
 }
 
 func TestNilPtrReceiver(t *testing.T) {

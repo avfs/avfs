@@ -40,8 +40,8 @@ func TestAsStatT(t *testing.T) {
 			t.Errorf("memfs.New : want error to be nil, got %v", err)
 		}
 
-		cf := test.NewConfigFs(t, fs)
-		cf.SuiteStatT()
+		sfs := test.NewSuiteFs(t, fs)
+		sfs.SuiteStatT()
 	})
 
 	t.Run("StatT OsFs", func(t *testing.T) {
@@ -50,8 +50,8 @@ func TestAsStatT(t *testing.T) {
 			t.Errorf("osfs.New : want error to be nil, got %v", err)
 		}
 
-		cf := test.NewConfigFs(t, fs)
-		cf.SuiteStatT()
+		sfs := test.NewSuiteFs(t, fs)
+		sfs.SuiteStatT()
 	})
 
 	t.Run("StatT OrefaFs", func(t *testing.T) {
@@ -60,8 +60,8 @@ func TestAsStatT(t *testing.T) {
 			t.Errorf("orefafs.New : want error to be nil, got %v", err)
 		}
 
-		cf := test.NewConfigFs(t, fs)
-		cf.SuiteStatT()
+		sfs := test.NewSuiteFs(t, fs)
+		sfs.SuiteStatT()
 	})
 }
 

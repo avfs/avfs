@@ -46,8 +46,8 @@ func initTest(t *testing.T) avfs.Fs {
 func TestOrefaFs(t *testing.T) {
 	fs := initTest(t)
 
-	cf := test.NewConfigFs(t, fs)
-	cf.SuiteAll()
+	sfs := test.NewSuiteFs(t, fs)
+	sfs.SuiteAll()
 }
 
 func TestNilPtrReceiver(t *testing.T) {

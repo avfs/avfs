@@ -26,11 +26,11 @@ import (
 )
 
 // SuiteChtimes tests Chtimes function.
-func (cf *ConfigFs) SuiteChtimes() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteChtimes() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	_ = CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
@@ -56,11 +56,11 @@ func (cf *ConfigFs) SuiteChtimes() {
 }
 
 // SuiteEvalSymlink tests EvalSymlink function.
-func (cf *ConfigFs) SuiteEvalSymlink() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteEvalSymlink() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	if !fs.HasFeature(avfs.FeatSymlink) {
 		return
 	}
@@ -69,7 +69,7 @@ func (cf *ConfigFs) SuiteEvalSymlink() {
 	_ = CreateFiles(t, fs, rootDir)
 	_ = CreateSymlinks(t, fs, rootDir)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("EvalSymlink", func(t *testing.T) {
 		symlinks := GetSymlinksEval(fs)
@@ -102,16 +102,16 @@ func (cf *ConfigFs) SuiteEvalSymlink() {
 }
 
 // SuiteLstat tests Lstat function.
-func (cf *ConfigFs) SuiteLstat() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteLstat() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	CreateSymlinks(t, fs, rootDir)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -209,20 +209,20 @@ func (cf *ConfigFs) SuiteLstat() {
 }
 
 // SuiteReadlink tests Readlink function.
-func (cf *ConfigFs) SuiteReadlink() {
-	if !cf.fsW.HasFeature(avfs.FeatSymlink) {
+func (sfs *SuiteFs) SuiteReadlink() {
+	if !sfs.fsW.HasFeature(avfs.FeatSymlink) {
 		return
 	}
 
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	symlinks := CreateSymlinks(t, fs, rootDir)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("ReadlinkLink", func(t *testing.T) {
 		for _, sl := range symlinks {
@@ -260,11 +260,11 @@ func (cf *ConfigFs) SuiteReadlink() {
 }
 
 // SuiteRemove test Remove function.
-func (cf *ConfigFs) SuiteRemove() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRemove() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	symlinks := CreateSymlinks(t, fs, rootDir)
@@ -348,11 +348,11 @@ func (cf *ConfigFs) SuiteRemove() {
 }
 
 // SuiteRemoveAll test RemoveAll function.
-func (cf *ConfigFs) SuiteRemoveAll() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRemoveAll() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	symlinks := CreateSymlinks(t, fs, rootDir)
@@ -402,11 +402,11 @@ func (cf *ConfigFs) SuiteRemoveAll() {
 }
 
 // SuiteRemoveAllEdgeCases test RemoveAll function.
-func (cf *ConfigFs) SuiteRemoveAllEdgeCases() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRemoveAllEdgeCases() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 
 	t.Run("RemoveAllPathEmpty", func(t *testing.T) {
@@ -427,11 +427,11 @@ func (cf *ConfigFs) SuiteRemoveAllEdgeCases() {
 }
 
 // SuiteRename tests Rename function.
-func (cf *ConfigFs) SuiteRename() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRename() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	t.Run("RenameDir", func(t *testing.T) {
 		dirs := CreateDirs(t, fs, rootDir)
@@ -500,16 +500,16 @@ func (cf *ConfigFs) SuiteRename() {
 }
 
 // SuiteStat tests Stat function.
-func (cf *ConfigFs) SuiteStat() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteStat() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	_ = CreateSymlinks(t, fs, rootDir)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("StatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -604,11 +604,11 @@ func (cf *ConfigFs) SuiteStat() {
 }
 
 // SuiteSymlink tests Symlink function.
-func (cf *ConfigFs) SuiteSymlink() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteSymlink() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	if !fs.HasFeature(avfs.FeatSymlink) {
 		return
 	}
@@ -640,11 +640,11 @@ func (cf *ConfigFs) SuiteSymlink() {
 }
 
 // SuiteReadOnly tests all write functions of a read only file system..
-func (cf *ConfigFs) SuiteReadOnly() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteReadOnly() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	existingFile := fs.Join(rootDir, "existingFile")
 
@@ -655,7 +655,7 @@ func (cf *ConfigFs) SuiteReadOnly() {
 
 	newFile := fs.Join(existingFile, "newFile")
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 	if !fs.HasFeature(avfs.FeatReadOnly) {
 		t.Errorf("HasFeature : want read only file system")
 	}
@@ -747,10 +747,10 @@ func (cf *ConfigFs) SuiteReadOnly() {
 }
 
 // SuiteUmask tests UMask and GetUMask functions.
-func (cf *ConfigFs) SuiteUmask() {
+func (sfs *SuiteFs) SuiteUmask() {
 	const umaskTest = 0o077
 
-	t, fs := cf.t, cf.GetFsWrite()
+	t, fs := sfs.t, sfs.GetFsWrite()
 
 	umaskStart := fs.GetUMask()
 	fs.UMask(umaskTest)

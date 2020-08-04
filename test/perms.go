@@ -28,47 +28,47 @@ import (
 )
 
 // SuitePerm runs all file systems permission tests.
-func (cf *ConfigFs) SuitePerm() {
-	cf.SuitePermRead()
-	cf.SuitePermWrite()
+func (sfs *SuiteFs) SuitePerm() {
+	sfs.SuitePermRead()
+	sfs.SuitePermWrite()
 }
 
 // SuitePermWrite runs all file systems permission tests with write access.
-func (cf *ConfigFs) SuitePermWrite() {
-	t := cf.t
+func (sfs *SuiteFs) SuitePermWrite() {
+	t := sfs.t
 
-	if !cf.canTestPerm {
+	if !sfs.canTestPerm {
 		t.Log("Info - Fs Perm Write : skipping tests.\nuse 'mage dockertest' to run tests a root.")
 		return
 	}
 
-	cf.SuiteChown()
-	cf.SuiteLchown()
-	cf.SuiteChmod()
-	cf.SuiteWriteDenied()
-	cf.SuiteChroot()
+	sfs.SuiteChown()
+	sfs.SuiteLchown()
+	sfs.SuiteChmod()
+	sfs.SuiteWriteDenied()
+	sfs.SuiteChroot()
 }
 
 // SuitePermRead runs all file systems permission tests with read access.
-func (cf *ConfigFs) SuitePermRead() {
-	t := cf.t
+func (sfs *SuiteFs) SuitePermRead() {
+	t := sfs.t
 
-	if !cf.canTestPerm {
+	if !sfs.canTestPerm {
 		t.Log("Info - Fs Perm Read : skipping tests.\nuse 'mage dockertest' to run tests a root.")
 		return
 	}
 
-	cf.SuiteAccessDir()
-	cf.SuiteAccessFile()
-	cf.SuiteStatT()
+	sfs.SuiteAccessDir()
+	sfs.SuiteAccessFile()
+	sfs.SuiteStatT()
 }
 
 // SuiteChown tests Chown function.
-func (cf *ConfigFs) SuiteChown() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteChown() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := cf.GetFsRoot()
+	fs := sfs.GetFsRoot()
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
 	users := GetUsers()
@@ -145,11 +145,11 @@ func (cf *ConfigFs) SuiteChown() {
 }
 
 // SuiteLchown tests Lchown function.
-func (cf *ConfigFs) SuiteLchown() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteLchown() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := cf.GetFsRoot()
+	fs := sfs.GetFsRoot()
 
 	dirs := CreateDirs(t, fs, rootDir)
 	files := CreateFiles(t, fs, rootDir)
@@ -263,11 +263,11 @@ func (cf *ConfigFs) SuiteLchown() {
 }
 
 // SuiteChmod tests Chmod function.
-func (cf *ConfigFs) SuiteChmod() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteChmod() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := cf.GetFsRoot()
+	fs := sfs.GetFsRoot()
 
 	t.Run("ChmodDir", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
@@ -335,11 +335,11 @@ func (cf *ConfigFs) SuiteChmod() {
 }
 
 // SuiteChroot tests Chroot function.
-func (cf *ConfigFs) SuiteChroot() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteChroot() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := cf.GetFsRoot()
+	fs := sfs.GetFsRoot()
 
 	t.Run("ChrootInvalid", func(t *testing.T) {
 		existingFile := fs.Join(rootDir, "existingFile")
@@ -424,13 +424,13 @@ func (cf *ConfigFs) SuiteChroot() {
 }
 
 // SuiteAccessDir tests functions on directories where read is denied.
-func (cf *ConfigFs) SuiteAccessDir() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteAccessDir() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
 	const baseDir = "baseDir"
 
-	fsRoot := cf.GetFsRoot()
+	fsRoot := sfs.GetFsRoot()
 	users := GetUsers()
 
 	ut, err := fsRoot.LookupUser(UsrTest)
@@ -469,7 +469,7 @@ func (cf *ConfigFs) SuiteAccessDir() {
 	t.Run("AccessDir", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
-			fs, _ := cf.GetFsAsUser(wantName)
+			fs, _ := sfs.GetFsAsUser(wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := os.FileMode(1); mode <= 6; mode++ {
@@ -520,11 +520,11 @@ func (cf *ConfigFs) SuiteAccessDir() {
 }
 
 // SuiteAccessFile tests functions on files where read is denied.
-func (cf *ConfigFs) SuiteAccessFile() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteAccessFile() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fsRoot := cf.GetFsRoot()
+	fsRoot := sfs.GetFsRoot()
 	users := GetUsers()
 
 	usrTest, err := fsRoot.LookupUser(UsrTest)
@@ -558,7 +558,7 @@ func (cf *ConfigFs) SuiteAccessFile() {
 	t.Run("AccessFile", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
-			fs, _ := cf.GetFsAsUser(wantName)
+			fs, _ := sfs.GetFsAsUser(wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := 1; mode <= 6; mode++ {
@@ -605,9 +605,9 @@ func (cf *ConfigFs) SuiteAccessFile() {
 }
 
 // SuiteStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
-func (cf *ConfigFs) SuiteStatT() {
-	t := cf.t
-	fs := cf.GetFsWrite()
+func (sfs *SuiteFs) SuiteStatT() {
+	t := sfs.t
+	fs := sfs.GetFsWrite()
 
 	info, err := fs.Stat(fs.GetTempDir())
 	if err != nil {
@@ -627,11 +627,11 @@ func (cf *ConfigFs) SuiteStatT() {
 }
 
 // SuiteWriteDenied tests functions on directories and files where write is denied.
-func (cf *ConfigFs) SuiteWriteDenied() {
-	t, rootDir, removeDir := cf.CreateRootDir(avfs.UsrRoot)
+func (sfs *SuiteFs) SuiteWriteDenied() {
+	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fsRoot := cf.GetFsRoot()
+	fsRoot := sfs.GetFsRoot()
 	pathDir := fsRoot.Join(rootDir, "testDir")
 	pathNewDirOrFile := fsRoot.Join(pathDir, "NewDirOrFile")
 	pathDirChild := fsRoot.Join(pathDir, "DirChild")
@@ -654,7 +654,7 @@ func (cf *ConfigFs) SuiteWriteDenied() {
 
 	t.Run("WriteDenied", func(t *testing.T) {
 		for _, u := range GetUsers() {
-			fs, u := cf.GetFsAsUser(u.Name)
+			fs, u := sfs.GetFsAsUser(u.Name)
 
 			err := fs.Chmod(pathDir, avfs.DefaultDirPerm)
 			CheckPathError(t, "Chmod", "chmod", pathDir, avfs.ErrOpNotPermitted, err)

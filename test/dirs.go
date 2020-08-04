@@ -29,14 +29,14 @@ import (
 )
 
 // SuiteChdir tests Chdir function.
-func (cf *ConfigFs) SuiteChdir() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteChdir() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, fs, rootDir)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("ChdirFs", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -141,8 +141,8 @@ func (cf *ConfigFs) SuiteChdir() {
 }
 
 // SuiteGetTempDir tests GetTempDir function.
-func (cf *ConfigFs) SuiteGetTempDir() {
-	t, fs := cf.t, cf.GetFsRead()
+func (sfs *SuiteFs) SuiteGetTempDir() {
+	t, fs := sfs.t, sfs.GetFsRead()
 
 	var wantTmp string
 
@@ -162,11 +162,11 @@ func (cf *ConfigFs) SuiteGetTempDir() {
 }
 
 // SuiteMkdir tests Mkdir function.
-func (cf *ConfigFs) SuiteMkdir() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteMkdir() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 	dirs := GetDirs()
 
 	t.Run("MkdirNew", func(t *testing.T) {
@@ -264,11 +264,11 @@ func (cf *ConfigFs) SuiteMkdir() {
 }
 
 // SuiteMkdirAll tests MkdirAll function.
-func (cf *ConfigFs) SuiteMkdirAll() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteMkdirAll() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	dirs := GetDirsAll()
 
 	t.Run("MkdirAll", func(t *testing.T) {
@@ -347,13 +347,13 @@ func (cf *ConfigFs) SuiteMkdirAll() {
 }
 
 // SuiteReadDir tests ReadDir function.
-func (cf *ConfigFs) SuiteReadDir() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteReadDir() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
 	const maxRead = 7
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	rndTree, err := fsutil.NewRndTree(fs, RndParamsOneDir)
 	if err != nil {
@@ -369,7 +369,7 @@ func (cf *ConfigFs) SuiteReadDir() {
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("ReadDirAll", func(t *testing.T) {
 		rdInfos, err := fs.ReadDir(rootDir)
@@ -466,11 +466,11 @@ func (cf *ConfigFs) SuiteReadDir() {
 }
 
 // SuiteReadDirNames tests Readdirnames function.
-func (cf *ConfigFs) SuiteReadDirNames() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteReadDirNames() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	rndTree, err := fsutil.NewRndTree(fs, RndParamsOneDir)
 	if err != nil {
@@ -484,7 +484,7 @@ func (cf *ConfigFs) SuiteReadDirNames() {
 
 	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("ReadDirNamesAll", func(t *testing.T) {
 		f, err := fs.Open(rootDir)

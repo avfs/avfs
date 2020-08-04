@@ -48,7 +48,7 @@ func TestDummyFs(t *testing.T) {
 		t.Error("HasFeature : want HasFeature(whatever) to be false, got true")
 	}
 
-	cf := test.NewConfigFs(t, fs)
+	cf := test.NewSuiteFs(t, fs)
 	cf.SuiteNotImplemented()
 }
 

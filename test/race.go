@@ -26,46 +26,46 @@ import (
 )
 
 // SuiteRace tests data race conditions.
-func (cf *ConfigFs) SuiteRace() {
-	cf.SuiteRaceDir()
-	cf.SuiteRaceFile()
-	cf.SuiteRaceMkdirRemoveAll()
+func (sfs *SuiteFs) SuiteRace() {
+	sfs.SuiteRaceDir()
+	sfs.SuiteRaceFile()
+	sfs.SuiteRaceMkdirRemoveAll()
 }
 
 // SuiteRaceDir tests data race conditions for some directory functions.
-func (cf *ConfigFs) SuiteRaceDir() {
-	_, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRaceDir() {
+	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	path := fs.Join(rootDir, "mkdDirNew")
 
-	cf.SuiteRaceFunc("Mkdir", RaceOneOk, func() error {
+	sfs.SuiteRaceFunc("Mkdir", RaceOneOk, func() error {
 		return fs.Mkdir(path, avfs.DefaultDirPerm)
 	})
 
-	cf.SuiteRaceFunc("Remove", RaceOneOk, func() error {
+	sfs.SuiteRaceFunc("Remove", RaceOneOk, func() error {
 		return fs.Remove(path)
 	})
 
-	cf.SuiteRaceFunc("MkdirAll", RaceAllOk, func() error {
+	sfs.SuiteRaceFunc("MkdirAll", RaceAllOk, func() error {
 		return fs.MkdirAll(path, avfs.DefaultDirPerm)
 	})
 
-	cf.SuiteRaceFunc("RemoveAll", RaceAllOk, func() error {
+	sfs.SuiteRaceFunc("RemoveAll", RaceAllOk, func() error {
 		return fs.RemoveAll(path)
 	})
 }
 
 // SuiteRaceFile tests data race conditions for some file functions.
-func (cf *ConfigFs) SuiteRaceFile() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRaceFile() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
-	cf.SuiteRaceFunc("Create", RaceAllOk, func() error {
+	sfs.SuiteRaceFunc("Create", RaceAllOk, func() error {
 		newFile := fs.Join(rootDir, "newFile")
 		f, err := fs.Create(newFile)
 		if err == nil {
@@ -75,7 +75,7 @@ func (cf *ConfigFs) SuiteRaceFile() {
 		return err
 	})
 
-	cf.SuiteRaceFunc("Open Excl", RaceOneOk, func() error {
+	sfs.SuiteRaceFunc("Open Excl", RaceOneOk, func() error {
 		newFile := fs.Join(rootDir, "newFileExcl")
 		f, err := fs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
 		if err == nil {
@@ -93,7 +93,7 @@ func (cf *ConfigFs) SuiteRaceFile() {
 			t.Fatalf("WriteFile : want err to be nil, got %v", err)
 		}
 
-		cf.SuiteRaceFunc("Open Read Only", RaceAllOk, func() error {
+		sfs.SuiteRaceFunc("Open Read Only", RaceAllOk, func() error {
 			f, err := fs.Open(roFile)
 			if err == nil {
 				defer f.Close()
@@ -111,20 +111,20 @@ func (cf *ConfigFs) SuiteRaceFile() {
 			t.Fatalf("Create : want err to be nil, got %v", err)
 		}
 
-		cf.SuiteRaceFunc("Close", RaceOneOk, f.Close)
+		sfs.SuiteRaceFunc("Close", RaceOneOk, f.Close)
 	}()
 }
 
 // SuiteRaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
-func (cf *ConfigFs) SuiteRaceMkdirRemoveAll() {
-	_, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteRaceMkdirRemoveAll() {
+	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	path := fs.Join(rootDir, "new/path/to/test")
 
-	cf.SuiteRaceFunc("Complex", RaceUndefined, func() error {
+	sfs.SuiteRaceFunc("Complex", RaceUndefined, func() error {
 		return fs.MkdirAll(path, avfs.DefaultDirPerm)
 	}, func() error {
 		return fs.RemoveAll(path)
@@ -150,9 +150,9 @@ const (
 
 // SuiteRaceFunc tests data race conditions by running simultaneously all testFuncs in cf.maxRace goroutines
 // and expecting a result rr.
-func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func() error) {
+func (sfs *SuiteFs) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func() error) {
 	var (
-		t       = cf.t
+		t       = sfs.t
 		wg      sync.WaitGroup
 		starter sync.RWMutex
 		wantOk  uint32
@@ -162,10 +162,10 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func(
 	)
 
 	t.Run("Race_"+name, func(t *testing.T) {
-		wg.Add(cf.maxRace * len(testFuncs))
+		wg.Add(sfs.maxRace * len(testFuncs))
 		starter.Lock()
 
-		for i := 0; i < cf.maxRace; i++ {
+		for i := 0; i < sfs.maxRace; i++ {
 			for _, testFunc := range testFuncs {
 				go func(f func() error) {
 					defer func() {
@@ -196,14 +196,14 @@ func (cf *ConfigFs) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func(
 		case RaceOneOk:
 			wantOk = 1
 		case RaceAllOk:
-			wantOk = uint32(cf.maxRace)
+			wantOk = uint32(sfs.maxRace)
 		case RaceUndefined:
 			t.Logf("Race %s : ok = %d, error = %d", name, gotOk, gotErr)
 
 			return
 		}
 
-		wantErr = uint32(cf.maxRace) - wantOk
+		wantErr = uint32(sfs.maxRace) - wantOk
 
 		if gotOk != wantOk {
 			t.Errorf("Race %s : want number of responses without error to be %d, got %d ", name, wantOk, gotOk)

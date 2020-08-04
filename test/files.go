@@ -30,11 +30,11 @@ import (
 )
 
 // SuiteOpenFileRead tests OpenFile function for read.
-func (cf *ConfigFs) SuiteOpenFileRead() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteOpenFileRead() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 	existingFile := fs.Join(rootDir, "ExistingFile.txt")
 
@@ -50,7 +50,7 @@ func (cf *ConfigFs) SuiteOpenFileRead() {
 		t.Fatalf("Mkdir : want error to be nil, got %v", err)
 	}
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
 		f, err := fs.Open(existingFile)
@@ -90,11 +90,11 @@ func (cf *ConfigFs) SuiteOpenFileRead() {
 }
 
 // SuiteOpenFileWrite tests OpenFile function for write.
-func (cf *ConfigFs) SuiteOpenFileWrite() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteOpenFileWrite() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 	whateverData := []byte("whatever")
 	existingFile := fs.Join(rootDir, "ExistingFile.txt")
@@ -344,11 +344,11 @@ func (cf *ConfigFs) SuiteOpenFileWrite() {
 }
 
 // SuiteWriteFile tests WriteFile function.
-func (cf *ConfigFs) SuiteWriteFile() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteWriteFile() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 
 	t.Run("WriteFile", func(t *testing.T) {
@@ -371,11 +371,11 @@ func (cf *ConfigFs) SuiteWriteFile() {
 }
 
 // SuiteWriteFile tests WriteString function.
-func (cf *ConfigFs) SuiteWriteString() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteWriteString() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestWriteString.txt")
 
@@ -408,11 +408,11 @@ func (cf *ConfigFs) SuiteWriteString() {
 }
 
 // SuiteReadFile tests ReadFile function.
-func (cf *ConfigFs) SuiteReadFile() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteReadFile() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsRead()
+	fs := sfs.GetFsRead()
 
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestReadFile.txt")
@@ -427,14 +427,14 @@ func (cf *ConfigFs) SuiteReadFile() {
 			t.Errorf("ReadFile : want read bytes to be 0, got %d", len(rb))
 		}
 
-		fs = cf.GetFsWrite()
+		fs = sfs.GetFsWrite()
 
 		err = fs.WriteFile(path, data, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
-		fs = cf.GetFsRead()
+		fs = sfs.GetFsRead()
 
 		rb, err = fs.ReadFile(path)
 		if err != nil {
@@ -448,11 +448,11 @@ func (cf *ConfigFs) SuiteReadFile() {
 }
 
 // SuiteFileWrite tests Write, WriteAt functions.
-func (cf *ConfigFs) SuiteFileWrite() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileWrite() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 
 	t.Run("FileWriteSeq", func(t *testing.T) {
@@ -525,11 +525,11 @@ func (cf *ConfigFs) SuiteFileWrite() {
 }
 
 // SuiteFileWriteEdgeCases tests Write and WriteAt functions edge cases.
-func (cf *ConfigFs) SuiteFileWriteEdgeCases() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileWriteEdgeCases() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	path := fs.Join(rootDir, "TestFileWriteEdgeCases.txt")
 	data := []byte("AAABBBCCCDDD")
 
@@ -580,11 +580,11 @@ func (cf *ConfigFs) SuiteFileWriteEdgeCases() {
 }
 
 // SuiteFileRead tests Read, ReadAt functions.
-func (cf *ConfigFs) SuiteFileRead() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileRead() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestFileReadSeq.txt")
@@ -594,7 +594,7 @@ func (cf *ConfigFs) SuiteFileRead() {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("FileRead", func(t *testing.T) {
 		const bufSize = 5
@@ -650,11 +650,11 @@ func (cf *ConfigFs) SuiteFileRead() {
 }
 
 // SuiteFileReadEdgeCases tests Read and ReadAt functions edge cases.
-func (cf *ConfigFs) SuiteFileReadEdgeCases() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileReadEdgeCases() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	path := fs.Join(rootDir, "TestFileReadEdgeCases.txt")
 	data := []byte("AAABBBCCCDDD")
 
@@ -663,7 +663,7 @@ func (cf *ConfigFs) SuiteFileReadEdgeCases() {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	t.Run("FileReadEdgeCases", func(t *testing.T) {
 		f, err := fs.Open(path)
@@ -749,11 +749,11 @@ func (cf *ConfigFs) SuiteFileReadEdgeCases() {
 }
 
 // SuiteFileSeek tests Seek function.
-func (cf *ConfigFs) SuiteFileSeek() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileSeek() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestFileSeek.txt")
@@ -763,7 +763,7 @@ func (cf *ConfigFs) SuiteFileSeek() {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	fs = cf.GetFsRead()
+	fs = sfs.GetFsRead()
 
 	f, err := fs.Open(path)
 	if err != nil {
@@ -892,11 +892,11 @@ func (cf *ConfigFs) SuiteFileSeek() {
 }
 
 // SuiteFileCloseRead tests file Close function for read only files.
-func (cf *ConfigFs) SuiteFileCloseRead() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileCloseRead() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestFileCloseRead.txt")
 
@@ -911,7 +911,7 @@ func (cf *ConfigFs) SuiteFileCloseRead() {
 	}
 
 	t.Run("FileCloseReadOnly", func(t *testing.T) {
-		fs = cf.GetFsRead()
+		fs = sfs.GetFsRead()
 
 		f, err := fs.Open(path)
 		if err != nil {
@@ -938,11 +938,11 @@ func (cf *ConfigFs) SuiteFileCloseRead() {
 }
 
 // SuiteFileCloseWrite tests file Close function for read/write files.
-func (cf *ConfigFs) SuiteFileCloseWrite() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileCloseWrite() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestFileCloseWrite.txt")
 
@@ -991,11 +991,11 @@ func (cf *ConfigFs) SuiteFileCloseWrite() {
 }
 
 // SuiteFileTruncate tests Truncate function.
-func (cf *ConfigFs) SuiteFileTruncate() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileTruncate() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 	path := fs.Join(rootDir, "TestFileTruncate.txt")
 
@@ -1078,11 +1078,11 @@ func (cf *ConfigFs) SuiteFileTruncate() {
 }
 
 // SuiteLink tests Link function.
-func (cf *ConfigFs) SuiteLink() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteLink() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	if !fs.HasFeature(avfs.FeatHardlink) {
 		return
 	}
@@ -1171,15 +1171,15 @@ func (cf *ConfigFs) SuiteLink() {
 }
 
 // SuiteSameFile tests SameFile function.
-func (cf *ConfigFs) SuiteSameFile() {
-	t, rootDir1, removeDir1 := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteSameFile() {
+	t, rootDir1, removeDir1 := sfs.CreateRootDir(UsrTest)
 	defer removeDir1()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 	CreateDirs(t, fs, rootDir1)
 	files := CreateFiles(t, fs, rootDir1)
 
-	_, rootDir2, removeDir2 := cf.CreateRootDir(UsrTest)
+	_, rootDir2, removeDir2 := sfs.CreateRootDir(UsrTest)
 	defer removeDir2()
 	CreateDirs(t, fs, rootDir2)
 
@@ -1264,11 +1264,11 @@ func (cf *ConfigFs) SuiteSameFile() {
 }
 
 // SuiteFileWriteTime checks that modification time is updated on write operations.
-func (cf *ConfigFs) SuiteFileWriteTime() {
-	t, rootDir, removeDir := cf.CreateRootDir(UsrTest)
+func (sfs *SuiteFs) SuiteFileWriteTime() {
+	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := cf.GetFsWrite()
+	fs := sfs.GetFsWrite()
 
 	data := []byte("AAABBBCCCDDD")
 	existingFile := fs.Join(rootDir, "ExistingFile.txt")
