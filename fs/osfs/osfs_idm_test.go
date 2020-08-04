@@ -34,7 +34,7 @@ func TestOsFsWithOsIdm(t *testing.T) {
 	}
 
 	sidm := test.NewSuiteIdm(t, fs)
-	sidm.SuiteAll()
+	sidm.All()
 }
 
 // TestOsFsWithoutIdm test OsFs without and identity manager.
@@ -45,5 +45,5 @@ func TestOsFsWithNoIdm(t *testing.T) {
 	}
 
 	sidm := test.NewSuiteIdm(t, fs)
-	sidm.SuiteAll()
+	sidm.All()
 }

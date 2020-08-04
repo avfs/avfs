@@ -27,14 +27,14 @@ import (
 	"github.com/avfs/avfs/fsutil"
 )
 
-// SuitePerm runs all file systems permission tests.
-func (sfs *SuiteFs) SuitePerm() {
-	sfs.SuitePermRead()
-	sfs.SuitePermWrite()
+// Perm runs all file systems permission tests.
+func (sfs *SuiteFs) Perm() {
+	sfs.PermRead()
+	sfs.PermWrite()
 }
 
-// SuitePermWrite runs all file systems permission tests with write access.
-func (sfs *SuiteFs) SuitePermWrite() {
+// PermWrite runs all file systems permission tests with write access.
+func (sfs *SuiteFs) PermWrite() {
 	t := sfs.t
 
 	if !sfs.canTestPerm {
@@ -42,15 +42,15 @@ func (sfs *SuiteFs) SuitePermWrite() {
 		return
 	}
 
-	sfs.SuiteChown()
-	sfs.SuiteLchown()
-	sfs.SuiteChmod()
+	sfs.Chown()
+	sfs.Lchown()
+	sfs.Chmod()
 	sfs.SuiteWriteDenied()
-	sfs.SuiteChroot()
+	sfs.Chroot()
 }
 
-// SuitePermRead runs all file systems permission tests with read access.
-func (sfs *SuiteFs) SuitePermRead() {
+// PermRead runs all file systems permission tests with read access.
+func (sfs *SuiteFs) PermRead() {
 	t := sfs.t
 
 	if !sfs.canTestPerm {
@@ -58,13 +58,13 @@ func (sfs *SuiteFs) SuitePermRead() {
 		return
 	}
 
-	sfs.SuiteAccessDir()
-	sfs.SuiteAccessFile()
-	sfs.SuiteStatT()
+	sfs.AccessDir()
+	sfs.AccessFile()
+	sfs.StatT()
 }
 
-// SuiteChown tests Chown function.
-func (sfs *SuiteFs) SuiteChown() {
+// Chown tests Chown function.
+func (sfs *SuiteFs) Chown() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -144,8 +144,8 @@ func (sfs *SuiteFs) SuiteChown() {
 	})
 }
 
-// SuiteLchown tests Lchown function.
-func (sfs *SuiteFs) SuiteLchown() {
+// Lchown tests Lchown function.
+func (sfs *SuiteFs) Lchown() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -262,8 +262,8 @@ func (sfs *SuiteFs) SuiteLchown() {
 	})
 }
 
-// SuiteChmod tests Chmod function.
-func (sfs *SuiteFs) SuiteChmod() {
+// Chmod tests Chmod function.
+func (sfs *SuiteFs) Chmod() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -334,8 +334,8 @@ func (sfs *SuiteFs) SuiteChmod() {
 	})
 }
 
-// SuiteChroot tests Chroot function.
-func (sfs *SuiteFs) SuiteChroot() {
+// Chroot tests Chroot function.
+func (sfs *SuiteFs) Chroot() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -423,8 +423,8 @@ func (sfs *SuiteFs) SuiteChroot() {
 	})
 }
 
-// SuiteAccessDir tests functions on directories where read is denied.
-func (sfs *SuiteFs) SuiteAccessDir() {
+// AccessDir tests functions on directories where read is denied.
+func (sfs *SuiteFs) AccessDir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -519,8 +519,8 @@ func (sfs *SuiteFs) SuiteAccessDir() {
 	})
 }
 
-// SuiteAccessFile tests functions on files where read is denied.
-func (sfs *SuiteFs) SuiteAccessFile() {
+// AccessFile tests functions on files where read is denied.
+func (sfs *SuiteFs) AccessFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -604,8 +604,8 @@ func (sfs *SuiteFs) SuiteAccessFile() {
 	})
 }
 
-// SuiteStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
-func (sfs *SuiteFs) SuiteStatT() {
+// StatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
+func (sfs *SuiteFs) StatT() {
 	t := sfs.t
 	fs := sfs.GetFsWrite()
 

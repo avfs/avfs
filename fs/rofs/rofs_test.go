@@ -60,7 +60,7 @@ func TestRoFs(t *testing.T) {
 
 func TestRoFsPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.SuitePermRead()
+	sfs.PermRead()
 }
 
 func TestRoFsOSType(t *testing.T) {

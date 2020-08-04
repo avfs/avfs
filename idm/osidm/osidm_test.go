@@ -45,5 +45,5 @@ func TestOsIdmAll(t *testing.T) {
 	}
 
 	sidm := test.NewSuiteIdm(t, idm)
-	sidm.SuiteAll()
+	sidm.All()
 }

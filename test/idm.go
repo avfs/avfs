@@ -24,8 +24,8 @@ import (
 	"github.com/avfs/avfs/fsutil"
 )
 
-// SuiteAll run all identity manager tests.
-func (sidm *SuiteIdm) SuiteAll() {
+// All run all identity manager tests.
+func (sidm *SuiteIdm) All() {
 	t := sidm.t
 
 	if !sidm.idm.HasFeature(avfs.FeatIdentityMgr) {

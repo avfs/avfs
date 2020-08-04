@@ -54,7 +54,7 @@ func TestMemFs(t *testing.T) {
 
 func TestMemFsPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.SuitePerm()
+	sfs.Perm()
 }
 
 func TestMemFsOptionError(t *testing.T) {

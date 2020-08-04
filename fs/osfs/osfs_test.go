@@ -55,7 +55,7 @@ func TestOsFs(t *testing.T) {
 
 func TestOsFsPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.SuitePerm()
+	sfs.Perm()
 }
 
 func TestNilPtrReceiver(t *testing.T) {

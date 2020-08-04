@@ -68,7 +68,7 @@ func TestBasePathFsPerm(t *testing.T) {
 	fs := initTest(t)
 	sfs := test.NewSuiteFs(t, fs)
 
-	sfs.SuitePerm()
+	sfs.Perm()
 }
 
 // TestBasePathFsOptions tests BasePathFs configuration options.

@@ -41,7 +41,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFs(t, fs)
-		sfs.SuiteStatT()
+		sfs.StatT()
 	})
 
 	t.Run("StatT OsFs", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFs(t, fs)
-		sfs.SuiteStatT()
+		sfs.StatT()
 	})
 
 	t.Run("StatT OrefaFs", func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFs(t, fs)
-		sfs.SuiteStatT()
+		sfs.StatT()
 	})
 }
 

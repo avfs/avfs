@@ -28,5 +28,5 @@ func TestBasePathFsFsWithMemIdm(t *testing.T) {
 	fs := initTest(t)
 	sidm := test.NewSuiteIdm(t, fs)
 
-	sidm.SuiteAll()
+	sidm.All()
 }
