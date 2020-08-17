@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go-version: [1.13.x, 1.14.x]
+        go-version: [1.14.x, 1.15.x]
         ## TODO: os: [ubuntu-latest, windows-latest, macos-latest]
         os: [ubuntu-latest]
 
