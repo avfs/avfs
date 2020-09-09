@@ -163,7 +163,7 @@ func (fs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fil
 			uid:   fs.user.Uid(),
 			gid:   fs.user.Gid(),
 		},
-		refCount: 1,
+		nlink: 1,
 	}
 
 	parent.addChild(name, child)
@@ -333,8 +333,8 @@ func (dn *dirNode) size() int64 {
 // deleteData decrements the reference counter of the fileNode.
 // if there is no more references, the data is deleted.
 func (fn *fileNode) deleteData() {
-	fn.refCount--
-	if fn.refCount == 0 {
+	fn.nlink--
+	if fn.nlink == 0 {
 		fn.data = nil
 	}
 }

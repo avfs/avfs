@@ -380,7 +380,7 @@ func (fs *MemFs) Link(oldname, newname string) error {
 	nParent.mu.Lock()
 	c.mu.Lock()
 	nParent.addChild(part, c)
-	c.refCount++
+	c.nlink++
 	c.mu.Unlock()
 	nParent.mu.Unlock()
 

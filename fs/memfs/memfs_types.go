@@ -94,8 +94,8 @@ type children = map[string]node
 // fileNode is the structure for a file.
 type fileNode struct {
 	baseNode
-	data     []byte
-	refCount int
+	data  []byte
+	nlink int
 }
 
 // symlinkNode is the structure for a symbolic link.
