@@ -47,7 +47,7 @@ func TestErrOutOfRange(t *testing.T) {
 }
 
 func TestRndTree(t *testing.T) {
-	fs, err := memfs.New(memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Errorf("New : want error to be nil, got %v", err)
 	}

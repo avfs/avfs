@@ -35,7 +35,7 @@ import (
 
 func TestAsStatT(t *testing.T) {
 	t.Run("StatT MemFs", func(t *testing.T) {
-		fs, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+		fs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 		if err != nil {
 			t.Errorf("memfs.New : want error to be nil, got %v", err)
 		}
@@ -45,7 +45,7 @@ func TestAsStatT(t *testing.T) {
 	})
 
 	t.Run("StatT OsFs", func(t *testing.T) {
-		fs, err := osfs.New(osfs.OptIdm(osidm.New()))
+		fs, err := osfs.New(osfs.WithIdm(osidm.New()))
 		if err != nil {
 			t.Errorf("osfs.New : want error to be nil, got %v", err)
 		}
@@ -55,7 +55,7 @@ func TestAsStatT(t *testing.T) {
 	})
 
 	t.Run("StatT OrefaFs", func(t *testing.T) {
-		fs, err := orefafs.New(orefafs.OptMainDirs())
+		fs, err := orefafs.New(orefafs.WithMainDirs())
 		if err != nil {
 			t.Errorf("orefafs.New : want error to be nil, got %v", err)
 		}

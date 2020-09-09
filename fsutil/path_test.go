@@ -26,7 +26,7 @@ import (
 )
 
 func TestPath(t *testing.T) {
-	fs, err := memfs.New(memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}

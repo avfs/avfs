@@ -85,8 +85,8 @@ func (fs *OrefaFs) Type() string {
 
 // Options
 
-// OptMainDirs returns an option function to create main directories (/home, /root and /tmp).
-func OptMainDirs() Option {
+// WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
+func WithMainDirs() Option {
 	return func(fs *OrefaFs) error {
 		fs.feature |= avfs.FeatMainDirs
 

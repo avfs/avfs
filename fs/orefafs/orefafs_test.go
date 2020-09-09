@@ -35,7 +35,7 @@ var (
 )
 
 func initTest(t *testing.T) avfs.Fs {
-	fs, err := orefafs.New(orefafs.OptMainDirs())
+	fs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
@@ -80,7 +80,7 @@ func TestOrefaFsOSType(t *testing.T) {
 }
 
 func BenchmarkOrefaFsCreate(b *testing.B) {
-	fs, err := orefafs.New(orefafs.OptMainDirs())
+	fs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
 	}

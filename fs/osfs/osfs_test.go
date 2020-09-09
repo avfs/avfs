@@ -38,7 +38,7 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFs {
-	fsRoot, err := osfs.New(osfs.OptIdm(osidm.New()))
+	fsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}

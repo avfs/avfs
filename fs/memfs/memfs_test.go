@@ -37,7 +37,7 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFs {
-	fsRoot, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
+	fsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
@@ -58,13 +58,13 @@ func TestMemFsPerm(t *testing.T) {
 }
 
 func TestMemFsOptionError(t *testing.T) {
-	_, err := memfs.New(memfs.OptIdm(dummyidm.New()))
+	_, err := memfs.New(memfs.WithIdm(dummyidm.New()))
 	if err != avfs.ErrPermDenied {
 		t.Errorf("New : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 }
 
-// TestMemFsOptionName tests MemFs initialization with or without option name (OptName()).
+// TestMemFsOptionName tests MemFs initialization with or without option name (WithName()).
 func TestMemFsOptionName(t *testing.T) {
 	const wantName = "whatever"
 
@@ -77,7 +77,7 @@ func TestMemFsOptionName(t *testing.T) {
 		t.Errorf("New : want name to be '', got %s", fs.Name())
 	}
 
-	fs, err = memfs.New(memfs.OptName(wantName))
+	fs, err = memfs.New(memfs.WithName(wantName))
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
@@ -104,7 +104,7 @@ func TestMemFsFeatures(t *testing.T) {
 		t.Errorf("Features : want FeatIdentityMgr missing, got present")
 	}
 
-	fs, err = memfs.New(memfs.OptIdm(memidm.New()))
+	fs, err = memfs.New(memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
@@ -127,7 +127,7 @@ func TestMemFsOSType(t *testing.T) {
 }
 
 func BenchmarkMemFsCreate(b *testing.B) {
-	fs, err := memfs.New(memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
 	}

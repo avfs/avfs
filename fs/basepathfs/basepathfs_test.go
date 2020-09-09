@@ -39,7 +39,7 @@ var (
 func initTest(t *testing.T) *basepathfs.BasePathFs {
 	const basePath = "/base/path"
 
-	baseFs, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
+	baseFs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
@@ -78,7 +78,7 @@ func TestBasePathFsOptions(t *testing.T) {
 		existingFile   = "/tmp/existingFile"
 	)
 
-	fs, err := memfs.New(memfs.OptIdm(memidm.New()), memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
@@ -118,7 +118,7 @@ func TestBasePathFsFeatures(t *testing.T) {
 		t.Errorf("Features : want FeatIdentityMgr missing, got present")
 	}
 
-	mfs, err = memfs.New(memfs.OptIdm(memidm.New()))
+	mfs, err = memfs.New(memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
@@ -134,7 +134,7 @@ func TestBasePathFsFeatures(t *testing.T) {
 }
 
 func TestBasepathFsOSType(t *testing.T) {
-	fsBase, err := memfs.New(memfs.OptMainDirs())
+	fsBase, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}

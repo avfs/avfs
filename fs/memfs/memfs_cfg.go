@@ -98,16 +98,16 @@ func (fs *MemFs) Type() string {
 
 // Options
 
-// OptMainDirs returns an option function to create main directories.
-func OptMainDirs() Option {
+// WithMainDirs returns an option function to create main directories.
+func WithMainDirs() Option {
 	return func(fs *MemFs) error {
 		fs.fsAttrs.feature |= avfs.FeatMainDirs
 		return nil
 	}
 }
 
-// OptIdm returns an option function which sets the identity manager.
-func OptIdm(idm avfs.IdentityMgr) Option {
+// WithIdm returns an option function which sets the identity manager.
+func WithIdm(idm avfs.IdentityMgr) Option {
 	return func(fs *MemFs) error {
 		u, err := idm.LookupUser(avfs.UsrRoot)
 		if err != nil {
@@ -122,8 +122,8 @@ func OptIdm(idm avfs.IdentityMgr) Option {
 	}
 }
 
-// OptName returns an option function which sets the name of the file system.
-func OptName(name string) Option {
+// WithName returns an option function which sets the name of the file system.
+func WithName(name string) Option {
 	return func(fs *MemFs) error {
 		fs.fsAttrs.name = name
 
@@ -131,7 +131,7 @@ func OptName(name string) Option {
 	}
 }
 
-func OptAbsPath() Option {
+func WithAbsPath() Option {
 	return func(fs *MemFs) error {
 		fs.fsAttrs.feature |= avfs.FeatAbsPath
 

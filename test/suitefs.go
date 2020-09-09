@@ -38,7 +38,7 @@ type SuiteFs struct {
 	// fsR is the file system as test user with read only permissions.
 	fsR avfs.Fs
 
-	// rootDir is the root directory for tests, it can be generated automatically or specified with OptRootDir().
+	// rootDir is the root directory for tests, it can be generated automatically or specified with WithRootDir().
 	rootDir string
 
 	// maxRace is the maximum number of concurrent goroutines used in race tests.
@@ -101,15 +101,15 @@ func NewSuiteFs(t *testing.T, fsRoot avfs.Fs, opts ...Option) *SuiteFs {
 
 // Options
 
-// OptRootDir returns an option function which sets the root directory for the tests.
-func OptRootDir(rootDir string) Option {
+// WithRootDir returns an option function which sets the root directory for the tests.
+func WithRootDir(rootDir string) Option {
 	return func(sfs *SuiteFs) {
 		sfs.rootDir = rootDir
 	}
 }
 
-// OptOs returns an option function which sets the operating system for the tests.
-func OptOs(osType avfs.OSType) Option {
+// WithOs returns an option function which sets the operating system for the tests.
+func WithOs(osType avfs.OSType) Option {
 	return func(sfs *SuiteFs) {
 		sfs.osType = osType
 	}

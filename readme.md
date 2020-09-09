@@ -64,7 +64,7 @@ func main() {
     case "PROD": // The real file system for production.
         fs, _ = osfs.New()
     default: // in memory for tests.
-        fs, _ = memfs.New(memfs.OptMainDirs())   
+        fs, _ = memfs.New(memfs.WithMainDirs())   
     }
         
     // From this point all references of 'os', 'path/filepath' and 'ioutil'
@@ -113,7 +113,7 @@ func main() {
 		groupName = "test_users"
 	)
 
-	fs, _ := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+	fs, _ := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
 	rootDir, _ := fs.TempDir("", avfs.Avfs)
 	fs.Chmod(rootDir, 0o777)

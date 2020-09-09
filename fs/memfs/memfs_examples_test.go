@@ -24,8 +24,8 @@ func ExampleNew() {
 	// Output: /tmp does not exist
 }
 
-func ExampleOptMainDirs() {
-	fs, err := memfs.New(memfs.OptMainDirs())
+func ExampleWithMainDirs() {
+	fs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
@@ -40,10 +40,10 @@ func ExampleOptMainDirs() {
 	// Output: tmp
 }
 
-func ExampleOptIdm() {
+func ExampleWithIdm() {
 	idm := memidm.New()
 
-	fs, err := memfs.New(memfs.OptIdm(idm), memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.WithIdm(idm), memfs.WithMainDirs())
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
@@ -54,7 +54,7 @@ func ExampleOptIdm() {
 }
 
 func ExampleMemFs_Clone() {
-	fsRoot, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+	fsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
@@ -80,7 +80,7 @@ func ExampleMemFs_Clone() {
 }
 
 func ExampleMemFs_User() {
-	fs, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+	fs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
@@ -105,7 +105,7 @@ func ExampleMemFs_User() {
 }
 
 func ExampleMemFs_UserAdd() {
-	fs, err := memfs.New(memfs.OptMainDirs(), memfs.OptIdm(memidm.New()))
+	fs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}

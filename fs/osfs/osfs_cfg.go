@@ -70,8 +70,8 @@ func (fs *OsFs) Type() string {
 
 // Options
 
-// OptIdm returns a function setting the identity manager for the file system.
-func OptIdm(idm avfs.IdentityMgr) Option {
+// WithIdm returns a function setting the identity manager for the file system.
+func WithIdm(idm avfs.IdentityMgr) Option {
 	return func(fs *OsFs) error {
 		fs.idm = idm
 		fs.feature |= idm.Features()

@@ -26,7 +26,7 @@ import (
 )
 
 func TestRacOrefaFs(t *testing.T) {
-	fsRoot, err := orefafs.New(orefafs.OptMainDirs())
+	fsRoot, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}

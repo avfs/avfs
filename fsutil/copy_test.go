@@ -30,7 +30,7 @@ import (
 )
 
 func TestHashFile(t *testing.T) {
-	fs, err := memfs.New(memfs.OptMainDirs())
+	fs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
@@ -114,7 +114,7 @@ func TestCopyFile(t *testing.T) {
 		t.Fatalf("CreateTree : want error to be nil, got %v", err)
 	}
 
-	dstFs, err := memfs.New(memfs.OptMainDirs())
+	dstFs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}

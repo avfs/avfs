@@ -28,7 +28,7 @@ import (
 
 // TestOsFsWithOsIdm tests OsFs identity manager functions with OsIdn identity manager.
 func TestOsFsWithOsIdm(t *testing.T) {
-	fs, err := osfs.New(osfs.OptIdm(osidm.New()))
+	fs, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
