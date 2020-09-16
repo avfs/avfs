@@ -3,7 +3,7 @@ Another Virtual File System for Go
 
 ![CI](https://github.com/avfs/avfs/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/avfs/avfs/branch/master/graph/badge.svg)](https://codecov.io/gh/avfs/avfs)
-[![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/avfs/avfs?tab=doc)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/avfs/avfs)](https://pkg.go.dev/github.com/avfs/avfs)
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
