@@ -30,7 +30,7 @@ func New(opts ...Option) (*OrefaFs, error) {
 		nodes:   make(nodes),
 		curDir:  string(avfs.PathSeparator),
 		umask:   int32(fsutil.UMask.Get()),
-		feature: avfs.FeatBasicFs,
+		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
 	}
 
 	fs.nodes[string(avfs.PathSeparator)] = &node{

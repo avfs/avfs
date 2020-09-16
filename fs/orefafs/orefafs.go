@@ -304,7 +304,44 @@ func (fs *OrefaFs) Lchown(name string, uid, gid int) error {
 func (fs *OrefaFs) Link(oldname, newname string) error {
 	const op = "link"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	oAbsPath, _ := fs.Abs(oldname)
+	nAbsPath, _ := fs.Abs(newname)
+
+	if oAbsPath == nAbsPath {
+		return nil
+	}
+
+	nDirName, nFileName := split(nAbsPath)
+
+	fs.mu.RLock()
+	oChild, oChildOk := fs.nodes[oAbsPath]
+	nChild, nChildOk := fs.nodes[nAbsPath]
+	nParent, nParentOk := fs.nodes[nDirName]
+	fs.mu.RUnlock()
+
+	if !oChildOk || !nParentOk {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNoSuchFileOrDir}
+	}
+
+	if oChild.mode.IsDir() && nChildOk {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
+	}
+
+	if !oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir() {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrIsADirectory}
+	}
+
+	fs.mu.Lock()
+	fs.nodes[nAbsPath] = oChild
+	fs.mu.Unlock()
+
+	nParent.addChild(nFileName, oChild)
+
+	oChild.mu.Lock()
+	oChild.nlink++
+	oChild.mu.Unlock()
+
+	return nil
 }
 
 // Lstat returns a FileInfo describing the named file.

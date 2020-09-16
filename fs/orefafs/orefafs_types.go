@@ -62,6 +62,7 @@ type node struct {
 	mode     os.FileMode
 	children children
 	data     []byte
+	nlink    int
 }
 
 // fStat is the implementation of os.FileInfo returned by Stat and Lstat.

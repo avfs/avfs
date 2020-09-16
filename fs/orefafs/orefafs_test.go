@@ -62,7 +62,7 @@ func TestOrefaFsFeatures(t *testing.T) {
 		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
 	}
 
-	if fs.Features() != avfs.FeatBasicFs {
+	if fs.Features() != avfs.FeatBasicFs|avfs.FeatHardlink {
 		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatBasicFs, fs.Features())
 	}
 }
