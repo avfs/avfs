@@ -307,15 +307,11 @@ func (fs *OrefaFs) Link(oldname, newname string) error {
 	oAbsPath, _ := fs.Abs(oldname)
 	nAbsPath, _ := fs.Abs(newname)
 
-	if oAbsPath == nAbsPath {
-		return nil
-	}
-
 	nDirName, nFileName := split(nAbsPath)
 
 	fs.mu.RLock()
 	oChild, oChildOk := fs.nodes[oAbsPath]
-	nChild, nChildOk := fs.nodes[nAbsPath]
+	_, nChildOk := fs.nodes[nAbsPath]
 	nParent, nParentOk := fs.nodes[nDirName]
 	fs.mu.RUnlock()
 
@@ -323,12 +319,18 @@ func (fs *OrefaFs) Link(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNoSuchFileOrDir}
 	}
 
-	if oChild.mode.IsDir() && nChildOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
+	oChild.mu.Lock()
+	defer oChild.mu.Unlock()
+
+	nParent.mu.Lock()
+	defer nParent.mu.Unlock()
+
+	if oChild.mode.IsDir() {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
 	}
 
-	if !oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir() {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrIsADirectory}
+	if nChildOk {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
 	}
 
 	fs.mu.Lock()
@@ -336,10 +338,7 @@ func (fs *OrefaFs) Link(oldname, newname string) error {
 	fs.mu.Unlock()
 
 	nParent.addChild(nFileName, oChild)
-
-	oChild.mu.Lock()
 	oChild.nlink++
-	oChild.mu.Unlock()
 
 	return nil
 }

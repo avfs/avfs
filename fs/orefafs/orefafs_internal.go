@@ -44,15 +44,11 @@ func split(path string) (dir, file string) {
 
 // addChild adds a child to a node.
 func (nd *node) addChild(name string, child *node) {
-	nd.mu.Lock()
-
 	if nd.children == nil {
 		nd.children = make(children)
 	}
 
 	nd.children[name] = child
-
-	nd.mu.Unlock()
 }
 
 // createDir creates a new directory.
@@ -77,7 +73,9 @@ func (fs *OrefaFs) createNode(parent *node, absPath, fileName string, mode os.Fi
 		nlink: 1,
 	}
 
+	parent.mu.Lock()
 	parent.addChild(fileName, nd)
+	parent.mu.Unlock()
 
 	fs.mu.Lock()
 	fs.nodes[absPath] = nd
