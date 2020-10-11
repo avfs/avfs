@@ -18,7 +18,6 @@ package dummyfs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
 )
 
 // New creates a new DummyFs file system.
@@ -43,7 +42,7 @@ func (fs *DummyFs) Name() string {
 
 // OSType returns the operating system type of the file system.
 func (fs *DummyFs) OSType() avfs.OSType {
-	return fsutil.RunTimeOS()
+	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.

@@ -22,8 +22,6 @@ import (
 	"math"
 	"testing"
 
-	"github.com/avfs/avfs/fsutil"
-
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/dummyfs"
 	"github.com/avfs/avfs/test"
@@ -58,9 +56,8 @@ func TestDummyFsOSType(t *testing.T) {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	ost := fs.OSType()
-	if ost != fsutil.RunTimeOS() {
-		t.Errorf("OSType : want os type to be %v, got %v", fsutil.RunTimeOS(), ost)
+	if fs.OSType() != avfs.OsLinux {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, fs.OSType())
 	}
 }
 
