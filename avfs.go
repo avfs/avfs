@@ -220,6 +220,9 @@ const (
 	// OsLinux is the Linux operating system.
 	OsLinux
 
+	// OsLinuxWSL is the Windows Subsystem for Linux.
+	OsLinuxWSL
+
 	// OsUnknown is an unknown operating system.
 	OsUnknown
 
