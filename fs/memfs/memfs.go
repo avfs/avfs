@@ -367,7 +367,12 @@ func (fs *MemFs) Link(oldname, newname string) error {
 	}
 
 	if !nParent.checkPermissionLck(avfs.WantWrite, fs.user) {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
+		err := avfs.ErrOpNotPermitted
+		if fs.fsAttrs.osType == avfs.OsLinuxWSL {
+			err = avfs.ErrPermDenied
+		}
+
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
 	}
 
 	c, ok := oChild.(*fileNode)
