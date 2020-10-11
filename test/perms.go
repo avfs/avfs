@@ -675,11 +675,13 @@ func (sfs *SuiteFs) SuiteWriteDenied() {
 			CheckPathError(t, "Lchown", "lchown", pathDir, avfs.ErrOpNotPermitted, err)
 
 			err = fs.Link(pathFile, pathNewDirOrFile)
-			if fsutil.IsLinuxWSL() {
-				CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrPermDenied, err)
-			} else {
-				CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrOpNotPermitted, err)
+
+			wantErr := avfs.ErrOpNotPermitted
+			if fs.OSType() == avfs.OsLinuxWSL {
+				wantErr = avfs.ErrPermDenied
 			}
+
+			CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, wantErr, err)
 
 			err = fs.Mkdir(pathNewDirOrFile, avfs.DefaultDirPerm)
 			CheckPathError(t, "Mkdir", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)
