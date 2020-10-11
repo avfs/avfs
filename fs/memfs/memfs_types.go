@@ -41,9 +41,9 @@ type MemFs struct {
 type fsAttrs struct {
 	idm     avfs.IdentityMgr
 	feature avfs.Feature
-	osType  avfs.OSType
 	name    string
 	umask   int32
+	osType  avfs.OSType
 }
 
 // MemFile represents an open file descriptor.
