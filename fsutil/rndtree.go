@@ -145,7 +145,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 
 	maxDepth := rt.MinDepth
 	if rt.MinDepth < rt.MaxDepth {
-		maxDepth += rand.Intn(rt.MaxDepth - rt.MinDepth) //nolint:gosec
+		maxDepth += rand.Intn(rt.MaxDepth - rt.MinDepth)
 	}
 
 	depth++
@@ -167,7 +167,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 func (rt *RndTree) randDirs(parent string) ([]string, error) {
 	nbDirs := rt.MinDirs
 	if rt.MinDirs < rt.MaxDirs {
-		nbDirs += rand.Intn(rt.MaxDirs - rt.MinDirs) //nolint:gosec
+		nbDirs += rand.Intn(rt.MaxDirs - rt.MinDirs)
 	}
 
 	dirs := make([]string, 0, nbDirs)
@@ -190,7 +190,7 @@ func (rt *RndTree) randDirs(parent string) ([]string, error) {
 func (rt *RndTree) randFiles(parent string) ([]string, error) {
 	nbFiles := rt.MinFiles
 	if rt.MinFiles < rt.MaxFiles {
-		nbFiles += rand.Intn(rt.MaxFiles - rt.MinFiles) //nolint:gosec
+		nbFiles += rand.Intn(rt.MaxFiles - rt.MinFiles)
 	}
 
 	files := make([]string, 0, nbFiles)
@@ -198,7 +198,7 @@ func (rt *RndTree) randFiles(parent string) ([]string, error) {
 	for i := 0; i < nbFiles; i++ {
 		size := rt.MinFileLen
 		if rt.MinFileLen < rt.MaxFileLen {
-			size += rand.Intn(rt.MaxFileLen - rt.MinFileLen) //nolint:gosec
+			size += rand.Intn(rt.MaxFileLen - rt.MinFileLen)
 		}
 
 		buf := make([]byte, size)
@@ -225,14 +225,14 @@ func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
 
 	nbSl := rt.MinSymlinks
 	if rt.MinSymlinks < rt.MaxSymlinks {
-		nbSl += rand.Intn(rt.MaxSymlinks - rt.MinSymlinks) //nolint:gosec
+		nbSl += rand.Intn(rt.MaxSymlinks - rt.MinSymlinks)
 	}
 
 	sl := make([]string, 0, nbSl)
 
 	for i := 0; i < nbSl; i++ {
 		newName := rt.fs.Join(parent, randName(rt.MinName, rt.MaxName))
-		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec
+		fileIdx := rand.Intn(len(rt.Files))
 		oldName := rt.Files[fileIdx]
 
 		err := rt.fs.Symlink(oldName, newName)
@@ -250,13 +250,13 @@ func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
 func randName(minName, maxName int) string {
 	nbR := minName
 	if minName < maxName {
-		nbR += rand.Intn(maxName - minName) //nolint:gosec
+		nbR += rand.Intn(maxName - minName)
 	}
 
 	var name strings.Builder
 
 	for i, s, e := 0, 0, 0; i < nbR; i++ {
-		switch rand.Intn(4) { //nolint:gosec
+		switch rand.Intn(4) {
 		case 0: // ASCII Uppercase
 			s = 65
 			e = 90
@@ -271,7 +271,7 @@ func randName(minName, maxName int) string {
 			e = 0x97f
 		}
 
-		r := rune(s + rand.Intn(e-s)) //nolint:gosec
+		r := rune(s + rand.Intn(e-s))
 
 		name.WriteRune(r)
 	}
