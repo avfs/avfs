@@ -365,7 +365,11 @@ func (sfs *SuiteFs) DirFuncOnFile() {
 		case avfs.OsWindows:
 			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
 		default:
-			CheckSyscallError(t, "ReadDir", "readdirent", "", avfs.ErrNotADirectory, err)
+			if fs.CurrentUser().IsRoot() {
+				CheckSyscallError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
+			} else {
+				CheckPathError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
+			}
 		}
 
 		_, err = fs.Stat(nonExistingFile)
@@ -406,7 +410,11 @@ func (sfs *SuiteFs) DirFuncOnFile() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdir", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
 		default:
-			CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			if fs.CurrentUser().IsRoot() {
+				CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			} else {
+				CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			}
 		}
 
 		_, err = f.Readdirnames(-1)
@@ -415,7 +423,11 @@ func (sfs *SuiteFs) DirFuncOnFile() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdirnames", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
 		default:
-			CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			if fs.CurrentUser().IsRoot() {
+				CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			} else {
+				CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			}
 		}
 
 		err = f.Chdir()
@@ -563,22 +575,32 @@ func (sfs *SuiteFs) FileFuncOnClosed() {
 		CheckPathError(t, "Seek", "seek", existingFile, os.ErrClosed, err)
 
 		_, err = f.Readdir(-1)
+
 		switch fs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdir", "Readdir", existingFile, avfs.ErrWinPathNotFound, err)
 		default:
-			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
-				t.Errorf("Readdir %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+			if fs.CurrentUser().IsRoot() {
+				if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
+					t.Errorf("Readdir %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+				}
+			} else {
+				CheckPathError(t, "Readdir", "readdirent", existingFile, avfs.ErrFileClosing, err)
 			}
 		}
 
 		_, err = f.Readdirnames(-1)
+
 		switch fs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdirnames", "Readdir", existingFile, avfs.ErrWinPathNotFound, err)
 		default:
-			if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
-				t.Errorf("Readdirnames %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+			if fs.CurrentUser().IsRoot() {
+				if err == nil || err.Error() != avfs.ErrFileClosing.Error() {
+					t.Errorf("Readdirnames %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
+				}
+			} else {
+				CheckPathError(t, "Readdirnames", "readdirent", existingFile, avfs.ErrFileClosing, err)
 			}
 		}
 
