@@ -40,7 +40,7 @@ func (idm *OsIdm) CurrentUser() avfs.UserReader {
 
 	uid := syscall.Geteuid()
 
-	user, err := idm.LookupUserId(uid)
+	user, err := lookupUserId(uid)
 	if err != nil {
 		return nil
 	}
@@ -50,6 +50,10 @@ func (idm *OsIdm) CurrentUser() avfs.UserReader {
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
+	if !idm.CurrentUser().IsRoot() {
+		return nil, avfs.ErrPermDenied
+	}
+
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -83,6 +87,10 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 
 // GroupDel deletes an existing group.
 func (idm *OsIdm) GroupDel(name string) error {
+	if !idm.CurrentUser().IsRoot() {
+		return avfs.ErrPermDenied
+	}
+
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -207,6 +215,10 @@ func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
 
 // UserAdd adds a new user.
 func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
+	if !idm.CurrentUser().IsRoot() {
+		return nil, avfs.ErrPermDenied
+	}
+
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -242,6 +254,10 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 
 // UserDel deletes an existing user.
 func (idm *OsIdm) UserDel(name string) error {
+	if !idm.CurrentUser().IsRoot() {
+		return avfs.ErrPermDenied
+	}
+
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
