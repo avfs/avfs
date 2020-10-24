@@ -40,9 +40,6 @@ var (
 // TestOsIdmAll run all tests.
 func TestOsIdmAll(t *testing.T) {
 	idm := osidm.New()
-	if !idm.CurrentUser().IsRoot() {
-		t.Skip("OsIdm only works on when connected as root on a linux platform, skipping")
-	}
 
 	sidm := test.NewSuiteIdm(t, idm)
 	sidm.All()
