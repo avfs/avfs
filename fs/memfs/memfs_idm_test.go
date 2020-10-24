@@ -58,6 +58,6 @@ func TestMemFsWithOsIdm(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, fs)
-	sidm.All()
+	sIdm := test.NewSuiteIdm(t, fs)
+	sIdm.All()
 }

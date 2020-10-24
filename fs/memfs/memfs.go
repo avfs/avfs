@@ -1216,12 +1216,20 @@ func (f *MemFile) Readdir(n int) (fi []os.FileInfo, err error) {
 	}
 
 	if f.nd == nil {
-		return nil, avfs.ErrFileClosing
+		if f.fs.user.IsRoot() {
+			return nil, avfs.ErrFileClosing
+		}
+
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
+		if f.fs.user.IsRoot() {
+			return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
+		}
+
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	if n <= 0 || f.dirInfos == nil {
@@ -1284,12 +1292,20 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 	}
 
 	if f.nd == nil {
-		return nil, avfs.ErrFileClosing
+		if f.fs.user.IsRoot() {
+			return nil, avfs.ErrFileClosing
+		}
+
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
+		if f.fs.user.IsRoot() {
+			return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
+		}
+
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	if n <= 0 || f.dirNames == nil {
