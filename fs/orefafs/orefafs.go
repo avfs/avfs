@@ -1142,14 +1142,14 @@ func (f *OrefaFile) Readdir(n int) (fi []os.FileInfo, err error) {
 	if f.nd == nil {
 		f.mu.RUnlock()
 
-		return nil, avfs.ErrFileClosing
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	nd := f.nd
 	if !nd.mode.IsDir() {
 		f.mu.RUnlock()
 
-		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	f.mu.RUnlock()
@@ -1220,14 +1220,14 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	if f.nd == nil {
 		f.mu.RUnlock()
 
-		return nil, avfs.ErrFileClosing
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	nd := f.nd
 	if !nd.mode.IsDir() {
 		f.mu.RUnlock()
 
-		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
+		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	f.mu.RUnlock()
