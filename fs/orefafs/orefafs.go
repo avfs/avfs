@@ -38,26 +38,26 @@ import (
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (fs *OrefaFs) Abs(path string) (string, error) {
-	return fsutil.Abs(fs, path)
+func (vfs *OrefaFs) Abs(path string) (string, error) {
+	return fsutil.Abs(vfs, path)
 }
 
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (fs *OrefaFs) Base(path string) string {
+func (vfs *OrefaFs) Base(path string) string {
 	return fsutil.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Chdir(dir string) error {
+func (vfs *OrefaFs) Chdir(dir string) error {
 	const op = "chdir"
 
-	absPath, _ := fs.Abs(dir)
+	absPath, _ := vfs.Abs(dir)
 
-	nd, ok := fs.nodes[absPath]
+	nd, ok := vfs.nodes[absPath]
 	if !ok {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrNoSuchFileOrDir}
 	}
@@ -66,7 +66,7 @@ func (fs *OrefaFs) Chdir(dir string) error {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrNotADirectory}
 	}
 
-	fs.curDir = absPath
+	vfs.curDir = absPath
 
 	return nil
 }
@@ -89,12 +89,12 @@ func (fs *OrefaFs) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (fs *OrefaFs) Chmod(name string, mode os.FileMode) error {
+func (vfs *OrefaFs) Chmod(name string, mode os.FileMode) error {
 	const op = "chmod"
 
-	absPath, _ := fs.Abs(name)
+	absPath, _ := vfs.Abs(name)
 
-	nd, ok := fs.nodes[absPath]
+	nd, ok := vfs.nodes[absPath]
 	if !ok {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
 	}
@@ -111,7 +111,7 @@ func (fs *OrefaFs) Chmod(name string, mode os.FileMode) error {
 //
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
-func (fs *OrefaFs) Chown(name string, uid, gid int) error {
+func (vfs *OrefaFs) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
@@ -119,7 +119,7 @@ func (fs *OrefaFs) Chown(name string, uid, gid int) error {
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Chroot(path string) error {
+func (vfs *OrefaFs) Chroot(path string) error {
 	const op = "chroot"
 
 	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
@@ -131,12 +131,12 @@ func (fs *OrefaFs) Chroot(path string) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *OrefaFs) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
-	absPath, _ := fs.Abs(name)
+	absPath, _ := vfs.Abs(name)
 
-	nd, ok := fs.nodes[absPath]
+	nd, ok := vfs.nodes[absPath]
 	if !ok {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
 	}
@@ -169,13 +169,13 @@ func (fs *OrefaFs) Chtimes(name string, atime, mtime time.Time) error {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (fs *OrefaFs) Clean(path string) string {
+func (vfs *OrefaFs) Clean(path string) string {
 	return fsutil.Clean(path)
 }
 
 // Clone returns the file system itself since if does not support this feature (FeatClonable).
-func (fs *OrefaFs) Clone() avfs.Fs {
-	return fs
+func (vfs *OrefaFs) Clone() avfs.Fs {
+	return vfs
 }
 
 // Create creates or truncates the named file. If the file already exists,
@@ -183,8 +183,8 @@ func (fs *OrefaFs) Clone() avfs.Fs {
 // (before umask). If successful, methods on the returned File can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Create(name string) (avfs.File, error) {
-	return fs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
+func (vfs *OrefaFs) Create(name string) (avfs.File, error) {
+	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -193,7 +193,7 @@ func (fs *OrefaFs) Create(name string) (avfs.File, error) {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (fs *OrefaFs) Dir(path string) string {
+func (vfs *OrefaFs) Dir(path string) string {
 	return fsutil.Dir(path)
 }
 
@@ -202,7 +202,7 @@ func (fs *OrefaFs) Dir(path string) string {
 // If path is relative the result will be relative to the current directory,
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
-func (fs *OrefaFs) EvalSymlinks(path string) (string, error) {
+func (vfs *OrefaFs) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
@@ -210,7 +210,7 @@ func (fs *OrefaFs) EvalSymlinks(path string) (string, error) {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (fs *OrefaFs) FromSlash(path string) string {
+func (vfs *OrefaFs) FromSlash(path string) string {
 	return path
 }
 
@@ -223,13 +223,13 @@ func (fs *OrefaFs) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (fs *OrefaFs) GetTempDir() string {
+func (vfs *OrefaFs) GetTempDir() string {
 	return avfs.TmpDir
 }
 
 // GetUMask returns the file mode creation mask.
-func (fs *OrefaFs) GetUMask() os.FileMode {
-	u := atomic.LoadInt32(&fs.umask)
+func (vfs *OrefaFs) GetUMask() os.FileMode {
+	u := atomic.LoadInt32(&vfs.umask)
 
 	return os.FileMode(u)
 }
@@ -238,8 +238,8 @@ func (fs *OrefaFs) GetUMask() os.FileMode {
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
 // Getwd may return any one of them.
-func (fs *OrefaFs) Getwd() (dir string, err error) {
-	dir = fs.curDir
+func (vfs *OrefaFs) Getwd() (dir string, err error) {
+	dir = vfs.curDir
 
 	return dir, nil
 }
@@ -252,38 +252,38 @@ func (fs *OrefaFs) Getwd() (dir string, err error) {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (fs *OrefaFs) Glob(pattern string) (matches []string, err error) {
-	return fsutil.Glob(fs, pattern)
+func (vfs *OrefaFs) Glob(pattern string) (matches []string, err error) {
+	return fsutil.Glob(vfs, pattern)
 }
 
 // IsAbs reports whether the path is absolute.
-func (fs *OrefaFs) IsAbs(path string) bool {
+func (vfs *OrefaFs) IsAbs(path string) bool {
 	return fsutil.IsAbs(path)
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
-func (fs *OrefaFs) IsExist(err error) bool {
+func (vfs *OrefaFs) IsExist(err error) bool {
 	return fsutil.IsExist(err)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
-func (fs *OrefaFs) IsNotExist(err error) bool {
+func (vfs *OrefaFs) IsNotExist(err error) bool {
 	return fsutil.IsNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (fs *OrefaFs) IsPathSeparator(c uint8) bool {
+func (vfs *OrefaFs) IsPathSeparator(c uint8) bool {
 	return fsutil.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (fs *OrefaFs) Join(elem ...string) string {
+func (vfs *OrefaFs) Join(elem ...string) string {
 	return fsutil.Join(elem...)
 }
 
@@ -293,7 +293,7 @@ func (fs *OrefaFs) Join(elem ...string) string {
 //
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
-func (fs *OrefaFs) Lchown(name string, uid, gid int) error {
+func (vfs *OrefaFs) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
 	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
@@ -301,19 +301,19 @@ func (fs *OrefaFs) Lchown(name string, uid, gid int) error {
 
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
-func (fs *OrefaFs) Link(oldname, newname string) error {
+func (vfs *OrefaFs) Link(oldname, newname string) error {
 	const op = "link"
 
-	oAbsPath, _ := fs.Abs(oldname)
-	nAbsPath, _ := fs.Abs(newname)
+	oAbsPath, _ := vfs.Abs(oldname)
+	nAbsPath, _ := vfs.Abs(newname)
 
 	nDirName, nFileName := split(nAbsPath)
 
-	fs.mu.RLock()
-	oChild, oChildOk := fs.nodes[oAbsPath]
-	_, nChildOk := fs.nodes[nAbsPath]
-	nParent, nParentOk := fs.nodes[nDirName]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	oChild, oChildOk := vfs.nodes[oAbsPath]
+	_, nChildOk := vfs.nodes[nAbsPath]
+	nParent, nParentOk := vfs.nodes[nDirName]
+	vfs.mu.RUnlock()
 
 	if !oChildOk || !nParentOk {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNoSuchFileOrDir}
@@ -333,9 +333,9 @@ func (fs *OrefaFs) Link(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
 	}
 
-	fs.mu.Lock()
-	fs.nodes[nAbsPath] = oChild
-	fs.mu.Unlock()
+	vfs.mu.Lock()
+	vfs.nodes[nAbsPath] = oChild
+	vfs.mu.Unlock()
 
 	nParent.addChild(nFileName, oChild)
 	oChild.nlink++
@@ -347,29 +347,29 @@ func (fs *OrefaFs) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Lstat(name string) (os.FileInfo, error) {
+func (vfs *OrefaFs) Lstat(name string) (os.FileInfo, error) {
 	const op = "lstat"
 
-	return fs.stat(name, op)
+	return vfs.stat(name, op)
 }
 
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
+func (vfs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
 		return &os.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
 	}
 
-	absPath, _ := fs.Abs(name)
+	absPath, _ := vfs.Abs(name)
 	dirName, fileName := split(absPath)
 
-	fs.mu.RLock()
-	_, childOk := fs.nodes[absPath]
-	parent, parentOk := fs.nodes[dirName]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	_, childOk := vfs.nodes[absPath]
+	parent, parentOk := vfs.nodes[dirName]
+	vfs.mu.RUnlock()
 
 	if childOk {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
@@ -379,9 +379,9 @@ func (fs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
 		for !parentOk {
 			dirName, _ = split(dirName)
 
-			fs.mu.RLock()
-			parent, parentOk = fs.nodes[dirName]
-			fs.mu.RUnlock()
+			vfs.mu.RLock()
+			parent, parentOk = vfs.nodes[dirName]
+			vfs.mu.RUnlock()
 		}
 
 		if parent.mode.IsDir() {
@@ -391,7 +391,7 @@ func (fs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
 	}
 
-	fs.createDir(parent, absPath, fileName, perm)
+	vfs.createDir(parent, absPath, fileName, perm)
 
 	return nil
 }
@@ -403,14 +403,14 @@ func (fs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
 // directories that MkdirAll creates.
 // If name is already a directory, MkdirAll does nothing
 // and returns nil.
-func (fs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
+func (vfs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
 	const op = "mkdir"
 
-	absPath, _ := fs.Abs(path)
+	absPath, _ := vfs.Abs(path)
 
-	fs.mu.RLock()
-	child, childOk := fs.nodes[absPath]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	child, childOk := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
 
 	if childOk {
 		if child.mode.IsDir() {
@@ -428,9 +428,9 @@ func (fs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
 	dirName := absPath
 
 	for {
-		fs.mu.RLock()
-		nd, ok := fs.nodes[dirName]
-		fs.mu.RUnlock()
+		vfs.mu.RLock()
+		nd, ok := vfs.nodes[dirName]
+		vfs.mu.RUnlock()
 
 		if ok {
 			parent = nd
@@ -449,7 +449,7 @@ func (fs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
 	for _, absPath := range ds {
 		_, fileName := split(absPath)
 
-		parent = fs.createDir(parent, absPath, fileName, perm)
+		parent = vfs.createDir(parent, absPath, fileName, perm)
 	}
 
 	return nil
@@ -459,8 +459,8 @@ func (fs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Open(path string) (avfs.File, error) {
-	return fs.OpenFile(path, os.O_RDONLY, 0)
+func (vfs *OrefaFs) Open(path string) (avfs.File, error) {
+	return vfs.OpenFile(path, os.O_RDONLY, 0)
 }
 
 // OpenFile is the generalized open call; most users will use Open
@@ -469,7 +469,7 @@ func (fs *OrefaFs) Open(path string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
+func (vfs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
 	const op = "open"
 
 	var (
@@ -486,13 +486,13 @@ func (fs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File,
 		wm |= avfs.WantWrite
 	}
 
-	absPath, _ := fs.Abs(name)
+	absPath, _ := vfs.Abs(name)
 	dirName, fileName := split(absPath)
 
-	fs.mu.RLock()
-	child, childOk := fs.nodes[absPath]
-	parent, parentOk := fs.nodes[dirName]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	child, childOk := vfs.nodes[absPath]
+	parent, parentOk := vfs.nodes[dirName]
+	vfs.mu.RUnlock()
 
 	if !childOk {
 		if !parentOk {
@@ -507,7 +507,7 @@ func (fs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File,
 			return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 
-		child = fs.createFile(parent, absPath, fileName, perm)
+		child = vfs.createFile(parent, absPath, fileName, perm)
 	} else {
 		if child.mode.IsDir() {
 			if wm&avfs.WantWrite != 0 {
@@ -531,7 +531,7 @@ func (fs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File,
 	}
 
 	f := &OrefaFile{
-		fs:       fs,
+		vFs:      vfs,
 		nd:       child,
 		wantMode: wm,
 		name:     name,
@@ -543,21 +543,21 @@ func (fs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File,
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (fs *OrefaFs) ReadDir(dirname string) ([]os.FileInfo, error) {
-	return fsutil.ReadDir(fs, dirname)
+func (vfs *OrefaFs) ReadDir(dirname string) ([]os.FileInfo, error) {
+	return fsutil.ReadDir(vfs, dirname)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func (fs *OrefaFs) ReadFile(filename string) ([]byte, error) {
-	return fsutil.ReadFile(fs, filename)
+func (vfs *OrefaFs) ReadFile(filename string) ([]byte, error) {
+	return fsutil.ReadFile(vfs, filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Readlink(name string) (string, error) {
+func (vfs *OrefaFs) Readlink(name string) (string, error) {
 	const op = "readlink"
 
 	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
@@ -571,22 +571,22 @@ func (fs *OrefaFs) Readlink(name string) (string, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (fs *OrefaFs) Rel(basepath, targpath string) (string, error) {
+func (vfs *OrefaFs) Rel(basepath, targpath string) (string, error) {
 	return fsutil.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Remove(name string) error {
+func (vfs *OrefaFs) Remove(name string) error {
 	const op = "remove"
 
-	absPath, _ := fs.Abs(name)
+	absPath, _ := vfs.Abs(name)
 	dirName, fileName := split(absPath)
 
-	fs.mu.RLock()
-	child, childOk := fs.nodes[absPath]
-	parent, parentOk := fs.nodes[dirName]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	child, childOk := vfs.nodes[absPath]
+	parent, parentOk := vfs.nodes[dirName]
+	vfs.mu.RUnlock()
 
 	if !childOk || !parentOk {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
@@ -606,9 +606,9 @@ func (fs *OrefaFs) Remove(name string) error {
 
 	child.remove()
 
-	fs.mu.Lock()
-	delete(fs.nodes, absPath)
-	fs.mu.Unlock()
+	vfs.mu.Lock()
+	delete(vfs.nodes, absPath)
+	vfs.mu.Unlock()
 
 	return nil
 }
@@ -618,31 +618,31 @@ func (fs *OrefaFs) Remove(name string) error {
 // it encounters. If the path does not exist, RemoveAll
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) RemoveAll(path string) error {
+func (vfs *OrefaFs) RemoveAll(path string) error {
 	if path == "" {
 		// fail silently to retain compatibility with previous behavior of RemoveAll.
 		return nil
 	}
 
-	absPath, _ := fs.Abs(path)
+	absPath, _ := vfs.Abs(path)
 	dirName, fileName := split(absPath)
 
-	fs.mu.RLock()
-	child, childOk := fs.nodes[absPath]
-	parent, parentOk := fs.nodes[dirName]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	child, childOk := vfs.nodes[absPath]
+	parent, parentOk := vfs.nodes[dirName]
+	vfs.mu.RUnlock()
 
 	if !childOk || !parentOk {
 		return nil
 	}
 
 	if child.mode.IsDir() {
-		fs.removeAll(absPath, child)
+		vfs.removeAll(absPath, child)
 	}
 
-	fs.mu.Lock()
-	delete(fs.nodes, absPath)
-	fs.mu.Unlock()
+	vfs.mu.Lock()
+	delete(vfs.nodes, absPath)
+	vfs.mu.Unlock()
 
 	child.remove()
 
@@ -653,18 +653,18 @@ func (fs *OrefaFs) RemoveAll(path string) error {
 	return nil
 }
 
-func (fs *OrefaFs) removeAll(absPath string, rootNode *node) {
+func (vfs *OrefaFs) removeAll(absPath string, rootNode *node) {
 	if rootNode.mode.IsDir() {
 		for fileName, nd := range rootNode.children {
 			path := absPath + string(avfs.PathSeparator) + fileName
 
-			fs.removeAll(path, nd)
+			vfs.removeAll(path, nd)
 		}
 	}
 
-	fs.mu.Lock()
-	delete(fs.nodes, absPath)
-	fs.mu.Unlock()
+	vfs.mu.Lock()
+	delete(vfs.nodes, absPath)
+	vfs.mu.Unlock()
 
 	rootNode.remove()
 }
@@ -673,11 +673,11 @@ func (fs *OrefaFs) removeAll(absPath string, rootNode *node) {
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (fs *OrefaFs) Rename(oldname, newname string) error {
+func (vfs *OrefaFs) Rename(oldname, newname string) error {
 	const op = "rename"
 
-	oAbsPath, _ := fs.Abs(oldname)
-	nAbsPath, _ := fs.Abs(newname)
+	oAbsPath, _ := vfs.Abs(oldname)
+	nAbsPath, _ := vfs.Abs(newname)
 
 	if oAbsPath == nAbsPath {
 		return nil
@@ -686,12 +686,12 @@ func (fs *OrefaFs) Rename(oldname, newname string) error {
 	oDirName, oFileName := split(oAbsPath)
 	nDirName, nFileName := split(nAbsPath)
 
-	fs.mu.RLock()
-	oChild, oChildOk := fs.nodes[oAbsPath]
-	oParent, oParentOk := fs.nodes[oDirName]
-	nChild, nChildOk := fs.nodes[nAbsPath]
-	nParent, nParentOk := fs.nodes[nDirName]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	oChild, oChildOk := vfs.nodes[oAbsPath]
+	oParent, oParentOk := vfs.nodes[oDirName]
+	nChild, nChildOk := vfs.nodes[nAbsPath]
+	nParent, nParentOk := vfs.nodes[nDirName]
+	vfs.mu.RUnlock()
 
 	if !oChildOk || !oParentOk || !nParentOk {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNoSuchFileOrDir}
@@ -715,25 +715,25 @@ func (fs *OrefaFs) Rename(oldname, newname string) error {
 
 	delete(oParent.children, oFileName)
 
-	fs.mu.Lock()
+	vfs.mu.Lock()
 
-	fs.nodes[nAbsPath] = oChild
-	delete(fs.nodes, oAbsPath)
+	vfs.nodes[nAbsPath] = oChild
+	delete(vfs.nodes, oAbsPath)
 
 	if oChild.mode.IsDir() {
 		oRoot := oAbsPath + string(avfs.PathSeparator)
 
-		for absPath, node := range fs.nodes {
+		for absPath, node := range vfs.nodes {
 			if strings.HasPrefix(absPath, oRoot) {
 				nPath := nAbsPath + absPath[len(oAbsPath):]
-				fs.nodes[nPath] = node
+				vfs.nodes[nPath] = node
 
-				delete(fs.nodes, absPath)
+				delete(vfs.nodes, absPath)
 			}
 		}
 	}
 
-	fs.mu.Unlock()
+	vfs.mu.Unlock()
 
 	if nParent != oParent {
 		oParent.mu.Unlock()
@@ -750,7 +750,7 @@ func (fs *OrefaFs) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (fs *OrefaFs) SameFile(fi1, fi2 os.FileInfo) bool {
+func (vfs *OrefaFs) SameFile(fi1, fi2 os.FileInfo) bool {
 	return reflect.DeepEqual(fi1, fi2)
 }
 
@@ -759,32 +759,32 @@ func (fs *OrefaFs) SameFile(fi1, fi2 os.FileInfo) bool {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (fs *OrefaFs) Split(path string) (dir, file string) {
-	return fsutil.Split(fs, path)
+func (vfs *OrefaFs) Split(path string) (dir, file string) {
+	return fsutil.Split(vfs, path)
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Stat(path string) (os.FileInfo, error) {
+func (vfs *OrefaFs) Stat(path string) (os.FileInfo, error) {
 	const op = "stat"
 
-	return fs.stat(path, op)
+	return vfs.stat(path, op)
 }
 
 // stat is the internal function used by Stat and Lstat.
-func (fs *OrefaFs) stat(path, op string) (os.FileInfo, error) {
-	absPath, _ := fs.Abs(path)
+func (vfs *OrefaFs) stat(path, op string) (os.FileInfo, error) {
+	absPath, _ := vfs.Abs(path)
 	dirName, fileName := split(absPath)
 
-	fs.mu.RLock()
-	child, childOk := fs.nodes[absPath]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	child, childOk := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
 
 	if !childOk {
 		for {
-			fs.mu.RLock()
-			parent, parentOk := fs.nodes[dirName]
-			fs.mu.RUnlock()
+			vfs.mu.RLock()
+			parent, parentOk := vfs.nodes[dirName]
+			vfs.mu.RUnlock()
 
 			if parentOk {
 				if parent.mode.IsDir() {
@@ -805,7 +805,7 @@ func (fs *OrefaFs) stat(path, op string) (os.FileInfo, error) {
 
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
-func (fs *OrefaFs) Symlink(oldname, newname string) error {
+func (vfs *OrefaFs) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
 	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
@@ -818,8 +818,8 @@ func (fs *OrefaFs) Symlink(oldname, newname string) error {
 // Multiple programs calling GetTempDir simultaneously
 // will not choose the same directory. It is the caller's responsibility
 // to removeNodes the directory when no longer needed.
-func (fs *OrefaFs) TempDir(dir, prefix string) (name string, err error) {
-	return fsutil.TempDir(fs, dir, prefix)
+func (vfs *OrefaFs) TempDir(dir, prefix string) (name string, err error) {
+	return fsutil.TempDir(vfs, dir, prefix)
 }
 
 // TempFile creates a new temporary file in the directory dir,
@@ -833,28 +833,28 @@ func (fs *OrefaFs) TempDir(dir, prefix string) (name string, err error) {
 // will not choose the same file. The caller can use f.Type()
 // to find the pathname of the file. It is the caller's responsibility
 // to removeNodes the file when no longer needed.
-func (fs *OrefaFs) TempFile(dir, pattern string) (f avfs.File, err error) {
-	return fsutil.TempFile(fs, dir, pattern)
+func (vfs *OrefaFs) TempFile(dir, pattern string) (f avfs.File, err error) {
+	return fsutil.TempFile(vfs, dir, pattern)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (fs *OrefaFs) ToSlash(path string) string {
+func (vfs *OrefaFs) ToSlash(path string) string {
 	return path
 }
 
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
-func (fs *OrefaFs) Truncate(name string, size int64) error {
+func (vfs *OrefaFs) Truncate(name string, size int64) error {
 	const op = "truncate"
 
-	absPath, _ := fs.Abs(name)
+	absPath, _ := vfs.Abs(name)
 
-	fs.mu.RLock()
-	child, childOk := fs.nodes[absPath]
-	fs.mu.RUnlock()
+	vfs.mu.RLock()
+	child, childOk := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
 
 	if !childOk {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
@@ -872,8 +872,8 @@ func (fs *OrefaFs) Truncate(name string, size int64) error {
 }
 
 // UMask sets the file mode creation mask.
-func (fs *OrefaFs) UMask(mask os.FileMode) {
-	atomic.StoreInt32(&fs.umask, int32(mask))
+func (vfs *OrefaFs) UMask(mask os.FileMode) {
+	atomic.StoreInt32(&vfs.umask, int32(mask))
 }
 
 // Walk walks the file tree rooted at root, calling walkFn for each file or
@@ -882,15 +882,15 @@ func (fs *OrefaFs) UMask(mask os.FileMode) {
 // order, which makes the output deterministic but means that for very
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
-func (fs *OrefaFs) Walk(root string, walkFn filepath.WalkFunc) error {
-	return fsutil.Walk(fs, root, walkFn)
+func (vfs *OrefaFs) Walk(root string, walkFn filepath.WalkFunc) error {
+	return fsutil.Walk(vfs, root, walkFn)
 }
 
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (fs *OrefaFs) WriteFile(filename string, data []byte, perm os.FileMode) error {
-	return fsutil.WriteFile(fs, filename, data, perm)
+func (vfs *OrefaFs) WriteFile(filename string, data []byte, perm os.FileMode) error {
+	return fsutil.WriteFile(vfs, filename, data, perm)
 }
 
 // File functions
@@ -920,7 +920,7 @@ func (f *OrefaFile) Chdir() error {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
-	f.fs.curDir = f.name
+	f.vFs.curDir = f.name
 
 	return nil
 }

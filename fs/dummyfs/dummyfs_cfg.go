@@ -26,26 +26,26 @@ func New() (*DummyFs, error) {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (fs *DummyFs) Features() avfs.Feature {
+func (vfs *DummyFs) Features() avfs.Feature {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (fs *DummyFs) HasFeature(feature avfs.Feature) bool {
+func (vfs *DummyFs) HasFeature(feature avfs.Feature) bool {
 	return false
 }
 
 // Name returns the name of the fileSystem.
-func (fs *DummyFs) Name() string {
+func (vfs *DummyFs) Name() string {
 	return avfs.NotImplemented
 }
 
 // OSType returns the operating system type of the file system.
-func (fs *DummyFs) OSType() avfs.OSType {
+func (vfs *DummyFs) OSType() avfs.OSType {
 	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (fs *DummyFs) Type() string {
+func (vfs *DummyFs) Type() string {
 	return "DummyFs"
 }

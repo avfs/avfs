@@ -21,55 +21,55 @@ import (
 )
 
 // CurrentUser returns the current user.
-func (fs *RoFs) CurrentUser() avfs.UserReader {
-	return fs.baseFs.CurrentUser()
+func (vfs *RoFs) CurrentUser() avfs.UserReader {
+	return vfs.baseFs.CurrentUser()
 }
 
 // GroupAdd adds a new group.
-func (fs *RoFs) GroupAdd(name string) (avfs.GroupReader, error) {
+func (vfs *RoFs) GroupAdd(name string) (avfs.GroupReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // GroupDel deletes an existing group.
-func (fs *RoFs) GroupDel(name string) error {
+func (vfs *RoFs) GroupDel(name string) error {
 	return avfs.ErrPermDenied
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
-func (fs *RoFs) LookupGroup(name string) (avfs.GroupReader, error) {
+func (vfs *RoFs) LookupGroup(name string) (avfs.GroupReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
-func (fs *RoFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
+func (vfs *RoFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
-func (fs *RoFs) LookupUser(name string) (avfs.UserReader, error) {
+func (vfs *RoFs) LookupUser(name string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
-func (fs *RoFs) LookupUserId(uid int) (avfs.UserReader, error) {
+func (vfs *RoFs) LookupUserId(uid int) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // User sets the current User.
-func (fs *RoFs) User(name string) (avfs.UserReader, error) {
+func (vfs *RoFs) User(name string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // UserAdd adds a new user.
-func (fs *RoFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
+func (vfs *RoFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // UserDel deletes an existing user.
-func (fs *RoFs) UserDel(name string) error {
+func (vfs *RoFs) UserDel(name string) error {
 	return avfs.ErrPermDenied
 }

@@ -28,6 +28,6 @@ type BasePathFs struct {
 
 // BasePathFile represents an open file descriptor.
 type BasePathFile struct {
-	fs       *BasePathFs
+	vFs      *BasePathFs
 	baseFile avfs.File
 }

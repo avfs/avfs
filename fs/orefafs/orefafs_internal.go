@@ -52,21 +52,21 @@ func (nd *node) addChild(name string, child *node) {
 }
 
 // createDir creates a new directory.
-func (fs *OrefaFs) createDir(parent *node, absPath, fileName string, perm os.FileMode) *node {
-	mode := os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(fs.umask))
+func (vfs *OrefaFs) createDir(parent *node, absPath, fileName string, perm os.FileMode) *node {
+	mode := os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.umask))
 
-	return fs.createNode(parent, absPath, fileName, mode)
+	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createFile creates a new file.
-func (fs *OrefaFs) createFile(parent *node, absPath, fileName string, perm os.FileMode) *node {
-	mode := perm & avfs.FileModeMask &^ os.FileMode(fs.umask)
+func (vfs *OrefaFs) createFile(parent *node, absPath, fileName string, perm os.FileMode) *node {
+	mode := perm & avfs.FileModeMask &^ os.FileMode(vfs.umask)
 
-	return fs.createNode(parent, absPath, fileName, mode)
+	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createNode creates a new node (directory or file).
-func (fs *OrefaFs) createNode(parent *node, absPath, fileName string, mode os.FileMode) *node {
+func (vfs *OrefaFs) createNode(parent *node, absPath, fileName string, mode os.FileMode) *node {
 	nd := &node{
 		mtime: time.Now().UnixNano(),
 		mode:  mode,
@@ -77,9 +77,9 @@ func (fs *OrefaFs) createNode(parent *node, absPath, fileName string, mode os.Fi
 	parent.addChild(fileName, nd)
 	parent.mu.Unlock()
 
-	fs.mu.Lock()
-	fs.nodes[absPath] = nd
-	fs.mu.Unlock()
+	vfs.mu.Lock()
+	vfs.nodes[absPath] = nd
+	vfs.mu.Unlock()
 
 	return nd
 }

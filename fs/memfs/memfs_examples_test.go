@@ -11,13 +11,13 @@ import (
 )
 
 func ExampleNew() {
-	fs, err := memfs.New()
+	vfs, err := memfs.New()
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	_, err = fs.Stat(avfs.TmpDir)
-	if fs.IsNotExist(err) {
+	_, err = vfs.Stat(avfs.TmpDir)
+	if vfs.IsNotExist(err) {
 		fmt.Printf("%s does not exist", avfs.TmpDir)
 	}
 
@@ -25,12 +25,12 @@ func ExampleNew() {
 }
 
 func ExampleWithMainDirs() {
-	fs, err := memfs.New(memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	info, err := fs.Stat(avfs.TmpDir)
+	info, err := vfs.Stat(avfs.TmpDir)
 	if err != nil {
 		log.Fatalf("stat : want error to be nil, got %v", err)
 	}
@@ -43,36 +43,36 @@ func ExampleWithMainDirs() {
 func ExampleWithIdm() {
 	idm := memidm.New()
 
-	fs, err := memfs.New(memfs.WithIdm(idm), memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithIdm(idm), memfs.WithMainDirs())
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(fs.CurrentUser().Name())
+	fmt.Println(vfs.CurrentUser().Name())
 
 	// Output: root
 }
 
 func ExampleMemFs_Clone() {
-	fsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	_, err = fsRoot.UserAdd(test.UsrTest, "root")
+	_, err = vfsRoot.UserAdd(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("UserAdd : want error to be nil, got %v", err)
 	}
 
-	fs := fsRoot.Clone()
+	vfs := vfsRoot.Clone()
 
-	_, err = fs.User(test.UsrTest)
+	_, err = vfs.User(test.UsrTest)
 	if err != nil {
 		log.Fatalf("User : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(fsRoot.CurrentUser().Name())
-	fmt.Println(fs.CurrentUser().Name())
+	fmt.Println(vfsRoot.CurrentUser().Name())
+	fmt.Println(vfs.CurrentUser().Name())
 
 	// Output:
 	// root
@@ -80,24 +80,24 @@ func ExampleMemFs_Clone() {
 }
 
 func ExampleMemFs_User() {
-	fs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	_, err = fs.UserAdd(test.UsrTest, "root")
+	_, err = vfs.UserAdd(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("UserAdd : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(fs.CurrentUser().Name())
+	fmt.Println(vfs.CurrentUser().Name())
 
-	_, err = fs.User(test.UsrTest)
+	_, err = vfs.User(test.UsrTest)
 	if err != nil {
 		log.Fatalf("User : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(fs.CurrentUser().Name())
+	fmt.Println(vfs.CurrentUser().Name())
 
 	// Output:
 	// root
@@ -105,12 +105,12 @@ func ExampleMemFs_User() {
 }
 
 func ExampleMemFs_UserAdd() {
-	fs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	u, err := fs.UserAdd(test.UsrTest, "root")
+	u, err := vfs.UserAdd(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("UserAdd : want error to be nil, got %v", err)
 	}

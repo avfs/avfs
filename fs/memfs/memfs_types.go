@@ -49,7 +49,7 @@ type fsAttrs struct {
 // MemFile represents an open file descriptor.
 type MemFile struct {
 	mu       sync.RWMutex
-	fs       *MemFs
+	vfs      *MemFs
 	nd       node
 	name     string
 	at       int64

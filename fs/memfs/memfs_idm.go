@@ -23,122 +23,122 @@ import (
 )
 
 // CurrentUser returns the current user of the file system.
-func (fs *MemFs) CurrentUser() avfs.UserReader {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+func (vfs *MemFs) CurrentUser() avfs.UserReader {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return dummyidm.NotImplementedUser
 	}
 
-	return fs.user
+	return vfs.user
 }
 
 // GroupAdd adds a new group.
-func (fs *MemFs) GroupAdd(name string) (avfs.GroupReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) || !fs.user.IsRoot() {
+func (vfs *MemFs) GroupAdd(name string) (avfs.GroupReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return fs.fsAttrs.idm.GroupAdd(name)
+	return vfs.fsAttrs.idm.GroupAdd(name)
 }
 
 // GroupDel deletes an existing group.
-func (fs *MemFs) GroupDel(name string) error {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) || !fs.user.IsRoot() {
+func (vfs *MemFs) GroupDel(name string) error {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
 		return avfs.ErrPermDenied
 	}
 
-	return fs.fsAttrs.idm.GroupDel(name)
+	return vfs.fsAttrs.idm.GroupDel(name)
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
-func (fs *MemFs) LookupGroup(name string) (avfs.GroupReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+func (vfs *MemFs) LookupGroup(name string) (avfs.GroupReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return fs.fsAttrs.idm.LookupGroup(name)
+	return vfs.fsAttrs.idm.LookupGroup(name)
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
-func (fs *MemFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+func (vfs *MemFs) LookupGroupId(gid int) (avfs.GroupReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return fs.fsAttrs.idm.LookupGroupId(gid)
+	return vfs.fsAttrs.idm.LookupGroupId(gid)
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
-func (fs *MemFs) LookupUser(name string) (avfs.UserReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+func (vfs *MemFs) LookupUser(name string) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return fs.fsAttrs.idm.LookupUser(name)
+	return vfs.fsAttrs.idm.LookupUser(name)
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
-func (fs *MemFs) LookupUserId(uid int) (avfs.UserReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+func (vfs *MemFs) LookupUserId(uid int) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return fs.fsAttrs.idm.LookupUserId(uid)
+	return vfs.fsAttrs.idm.LookupUserId(uid)
 }
 
 // User sets the current user of the file system.
 // If the current user has not root privileges avfs.errPermDenied is returned.
-func (fs *MemFs) User(name string) (avfs.UserReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+func (vfs *MemFs) User(name string) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	if fs.user.Name() == name {
-		return fs.user, nil
+	if vfs.user.Name() == name {
+		return vfs.user, nil
 	}
 
-	user, err := fs.fsAttrs.idm.LookupUser(name)
+	user, err := vfs.fsAttrs.idm.LookupUser(name)
 	if err != nil {
 		return nil, err
 	}
 
-	fs.user = user
-	fs.curDir = fsutil.Join(avfs.HomeDir, user.Name())
+	vfs.user = user
+	vfs.curDir = fsutil.Join(avfs.HomeDir, user.Name())
 
 	return user, nil
 }
 
 // UserAdd adds a new user.
-func (fs *MemFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) || !fs.user.IsRoot() {
+func (vfs *MemFs) UserAdd(name, groupName string) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
 		return nil, avfs.ErrPermDenied
 	}
 
-	u, err := fs.fsAttrs.idm.UserAdd(name, groupName)
+	u, err := vfs.fsAttrs.idm.UserAdd(name, groupName)
 	if err != nil {
 		return nil, err
 	}
 
-	return fsutil.CreateHomeDir(fs, u)
+	return fsutil.CreateHomeDir(vfs, u)
 }
 
 // UserDel deletes an existing group.
-func (fs *MemFs) UserDel(name string) error {
-	if !fs.HasFeature(avfs.FeatIdentityMgr) || !fs.user.IsRoot() {
+func (vfs *MemFs) UserDel(name string) error {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
 		return avfs.ErrPermDenied
 	}
 
-	err := fs.fsAttrs.idm.UserDel(name)
+	err := vfs.fsAttrs.idm.UserDel(name)
 	if err != nil {
 		return err
 	}
 
 	userDir := fsutil.Join(avfs.HomeDir, name)
 
-	err = fs.RemoveAll(userDir)
+	err = vfs.RemoveAll(userDir)
 	if err != nil {
 		return err
 	}

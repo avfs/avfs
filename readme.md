@@ -30,8 +30,8 @@ It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >= 1
 ## Getting started
 To make an existing code work with **AVFS** :
 - replace all references of `os`, `path/filepath` and `ioutil` 
-with the variable used to initialize the file system (`fs` in the following examples)
-- replace all references of `os.TempDir()` by `fs.GetTempDir()`.
+with the variable used to initialize the file system (`vfs` in the following examples)
+- replace all references of `os.TempDir()` by `vfs.GetTempDir()`.
 - import the packages of the file systems and, if necessary, the `avfs` package 
 and initialize the file system variable.
 - some file systems provide specific options available at initialization.
@@ -58,29 +58,29 @@ import (
 )
 
 func main() {
-    var fs avfs.Fs	
+    var vfs avfs.Fs	
 
     switch os.Getenv("ENV") {
     case "PROD": // The real file system for production.
-        fs, _ = osfs.New()
+        vfs, _ = osfs.New()
     default: // in memory for tests.
-        fs, _ = memfs.New(memfs.WithMainDirs())   
+        vfs, _ = memfs.New(memfs.WithMainDirs())   
     }
         
     // From this point all references of 'os', 'path/filepath' and 'ioutil'
-    // should be replaced by 'fs'
-    rootDir, _ := fs.TempDir("", avfs.Avfs)
-    defer fs.RemoveAll(rootDir)
+    // should be replaced by 'vfs'
+    rootDir, _ := vfs.TempDir("", avfs.Avfs)
+    defer vfs.RemoveAll(rootDir)
 
-    aFilePath := fs.Join(rootDir, "aFile.txt")
+    aFilePath := vfs.Join(rootDir, "aFile.txt")
 
     content := []byte("randomContent")
-    _ = fs.WriteFile(aFilePath, content, 0o644)
+    _ = vfs.WriteFile(aFilePath, content, 0o644)
     
-    aFilePathSl := fs.Join(rootDir, "aFileSymlink.txt")
-    _ = fs.Symlink(aFilePath, aFilePathSl)
+    aFilePathSl := vfs.Join(rootDir, "aFileSymlink.txt")
+    _ = vfs.Symlink(aFilePath, aFilePathSl)
     
-    gotContentSl, _ := fs.ReadFile(aFilePathSl)
+    gotContentSl, _ := vfs.ReadFile(aFilePathSl)
     if !bytes.Equal(content, gotContentSl) {
         log.Fatalf("Symlink %s : want content to be %v, got %v",
                     aFilePathSl, content, gotContentSl)
@@ -113,12 +113,12 @@ func main() {
 		groupName = "test_users"
 	)
 
-	fs, _ := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfs, _ := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
-	rootDir, _ := fs.TempDir("", avfs.Avfs)
-	fs.Chmod(rootDir, 0o777)
+	rootDir, _ := vfs.TempDir("", avfs.Avfs)
+	vfs.Chmod(rootDir, 0o777)
 
-	g, _ := fs.GroupAdd(groupName)
+	g, _ := vfs.GroupAdd(groupName)
 
 	var wg sync.WaitGroup
 	wg.Add(maxUsers)
@@ -128,9 +128,9 @@ func main() {
 			defer wg.Done()
 
 			userName := fmt.Sprintf("user_%08d", i)
-			fs.UserAdd(userName, g.Name())
+			vfs.UserAdd(userName, g.Name())
 
-			fsU := fs.Clone()
+			fsU := vfs.Clone()
 			fsU.User(userName)
 
 			path := fsU.Join(rootDir, userName)
@@ -140,12 +140,12 @@ func main() {
 
 	wg.Wait()
 
-	infos, _ := fs.ReadDir(rootDir)
+	infos, _ := vfs.ReadDir(rootDir)
 
 	fmt.Println("number of dirs :", len(infos))
 	for _, info := range infos {
 		statT := fsutil.AsStatT(info.Sys())
-		u, _ := fs.LookupUserId(int(statT.Uid))
+		u, _ := vfs.LookupUserId(int(statT.Uid))
 
 		fmt.Println("directory :", info.Name(), 
                     ", mode :", info.Mode(),

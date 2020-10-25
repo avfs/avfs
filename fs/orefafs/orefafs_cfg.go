@@ -26,60 +26,60 @@ import (
 
 // New returns a new memory file system (OrefaFs).
 func New(opts ...Option) (*OrefaFs, error) {
-	fs := &OrefaFs{
+	vfs := &OrefaFs{
 		nodes:   make(nodes),
 		curDir:  string(avfs.PathSeparator),
 		umask:   int32(fsutil.UMask.Get()),
 		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
 	}
 
-	fs.nodes[string(avfs.PathSeparator)] = &node{
+	vfs.nodes[string(avfs.PathSeparator)] = &node{
 		mtime: time.Now().UnixNano(),
 		mode:  os.ModeDir | 0o755,
 	}
 
 	for _, opt := range opts {
-		err := opt(fs)
+		err := opt(vfs)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if fs.feature&avfs.FeatMainDirs != 0 {
-		um := fs.umask
-		fs.umask = 0
+	if vfs.feature&avfs.FeatMainDirs != 0 {
+		um := vfs.umask
+		vfs.umask = 0
 
-		_ = fsutil.CreateBaseDirs(fs, "")
+		_ = fsutil.CreateBaseDirs(vfs, "")
 
-		fs.umask = um
-		fs.curDir = avfs.RootDir
+		vfs.umask = um
+		vfs.curDir = avfs.RootDir
 	}
 
-	return fs, nil
+	return vfs, nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (fs *OrefaFs) Features() avfs.Feature {
-	return fs.feature
+func (vfs *OrefaFs) Features() avfs.Feature {
+	return vfs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (fs *OrefaFs) HasFeature(feature avfs.Feature) bool {
-	return fs.feature&feature == feature
+func (vfs *OrefaFs) HasFeature(feature avfs.Feature) bool {
+	return vfs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
-func (fs *OrefaFs) Name() string {
-	return fs.name
+func (vfs *OrefaFs) Name() string {
+	return vfs.name
 }
 
 // OSType returns the operating system type of the file system.
-func (fs *OrefaFs) OSType() avfs.OSType {
+func (vfs *OrefaFs) OSType() avfs.OSType {
 	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (fs *OrefaFs) Type() string {
+func (vfs *OrefaFs) Type() string {
 	return "OrefaFs"
 }
 
@@ -87,8 +87,8 @@ func (fs *OrefaFs) Type() string {
 
 // WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
 func WithMainDirs() Option {
-	return func(fs *OrefaFs) error {
-		fs.feature |= avfs.FeatMainDirs
+	return func(vfs *OrefaFs) error {
+		vfs.feature |= avfs.FeatMainDirs
 
 		return nil
 	}

@@ -27,12 +27,12 @@ import (
 )
 
 func TestRaceOsFs(t *testing.T) {
-	fsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
+	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, vfs)
 
 	sfs.SuiteRace()
 }

@@ -40,36 +40,36 @@ var (
 )
 
 func TestSearchNode(t *testing.T) {
-	fs, err := New()
+	vfs, err := New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	rn := fs.rootNode
+	rn := vfs.rootNode
 
 	// Directories
-	da := fs.createDir(rn, "a", avfs.DefaultDirPerm)
-	db := fs.createDir(rn, "b", avfs.DefaultDirPerm)
-	dc := fs.createDir(rn, "c", avfs.DefaultDirPerm)
-	da1 := fs.createDir(da, "a1", avfs.DefaultDirPerm)
-	da2 := fs.createDir(da, "a2", avfs.DefaultDirPerm)
-	db1 := fs.createDir(db, "b1", avfs.DefaultDirPerm)
-	db1a := fs.createDir(db1, "b1A", avfs.DefaultDirPerm)
-	db1b := fs.createDir(db1, "b1B", avfs.DefaultDirPerm)
+	da := vfs.createDir(rn, "a", avfs.DefaultDirPerm)
+	db := vfs.createDir(rn, "b", avfs.DefaultDirPerm)
+	dc := vfs.createDir(rn, "c", avfs.DefaultDirPerm)
+	da1 := vfs.createDir(da, "a1", avfs.DefaultDirPerm)
+	da2 := vfs.createDir(da, "a2", avfs.DefaultDirPerm)
+	db1 := vfs.createDir(db, "b1", avfs.DefaultDirPerm)
+	db1a := vfs.createDir(db1, "b1A", avfs.DefaultDirPerm)
+	db1b := vfs.createDir(db1, "b1B", avfs.DefaultDirPerm)
 
 	// Files
-	f1 := fs.createFile(rn, "file1", avfs.DefaultFilePerm)
-	fa1 := fs.createFile(da, "afile1", avfs.DefaultFilePerm)
-	fa2 := fs.createFile(da, "afile2", avfs.DefaultFilePerm)
-	fa3 := fs.createFile(da, "afile3", avfs.DefaultFilePerm)
+	f1 := vfs.createFile(rn, "file1", avfs.DefaultFilePerm)
+	fa1 := vfs.createFile(da, "afile1", avfs.DefaultFilePerm)
+	fa2 := vfs.createFile(da, "afile2", avfs.DefaultFilePerm)
+	fa3 := vfs.createFile(da, "afile3", avfs.DefaultFilePerm)
 
 	// Symlinks
-	fs.createSymlink(rn, "lroot", "/")
-	fs.createSymlink(rn, "la", "/a")
-	fs.createSymlink(db1b, "lb1", "/b/b1")
-	fs.createSymlink(dc, "lafile3", "../a/afile3")
-	lloop1 := fs.createSymlink(rn, "loop1", "/loop2")
-	fs.createSymlink(rn, "loop2", "/loop1")
+	vfs.createSymlink(rn, "lroot", "/")
+	vfs.createSymlink(rn, "la", "/a")
+	vfs.createSymlink(db1b, "lb1", "/b/b1")
+	vfs.createSymlink(dc, "lafile3", "../a/afile3")
+	lloop1 := vfs.createSymlink(rn, "loop1", "/loop2")
+	vfs.createSymlink(rn, "loop2", "/loop1")
 
 	tests := []struct {
 		path        string
@@ -119,7 +119,7 @@ func TestSearchNode(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		parent, child, absPath, start, end, err := fs.searchNode(test.path, slmEval)
+		parent, child, absPath, start, end, err := vfs.searchNode(test.path, slmEval)
 
 		first := absPath[start:end]
 		rest := absPath[end:]

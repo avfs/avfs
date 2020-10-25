@@ -72,12 +72,12 @@ func (b *lazybuf) string() string {
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func Abs(fs avfs.Fs, path string) (string, error) {
+func Abs(vfs avfs.Fs, path string) (string, error) {
 	if IsAbs(path) {
 		return Clean(path), nil
 	}
 
-	wd, err := fs.Getwd()
+	wd, err := vfs.Getwd()
 	if err != nil {
 		return "", err
 	}
@@ -244,9 +244,9 @@ func FromSlash(path string) string {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func Glob(fs avfs.Fs, pattern string) (matches []string, err error) {
+func Glob(vfs avfs.Fs, pattern string) (matches []string, err error) {
 	if !hasMeta(pattern) {
-		_, err = fs.Lstat(pattern)
+		_, err = vfs.Lstat(pattern)
 		if err != nil {
 			return nil, nil
 		}
@@ -254,11 +254,11 @@ func Glob(fs avfs.Fs, pattern string) (matches []string, err error) {
 		return []string{pattern}, nil
 	}
 
-	dir, file := Split(fs, pattern)
+	dir, file := Split(vfs, pattern)
 	dir = cleanGlobPath(dir)
 
 	if !hasMeta(dir) {
-		return glob(fs, dir, file, nil)
+		return glob(vfs, dir, file, nil)
 	}
 
 	// Prevent infinite recursion. See issue 15879.
@@ -268,13 +268,13 @@ func Glob(fs avfs.Fs, pattern string) (matches []string, err error) {
 
 	var m []string
 
-	m, err = fs.Glob(dir)
+	m, err = vfs.Glob(dir)
 	if err != nil {
 		return
 	}
 
 	for _, d := range m {
-		matches, err = glob(fs, d, file, matches)
+		matches, err = glob(vfs, d, file, matches)
 		if err != nil {
 			return
 		}
@@ -287,10 +287,10 @@ func Glob(fs avfs.Fs, pattern string) (matches []string, err error) {
 // and appends them to matches. If the directory cannot be
 // opened, it returns the existing matches. New matches are
 // added in lexicographical order.
-func glob(fs avfs.Fs, dir, pattern string, matches []string) (m []string, e error) {
+func glob(vfs avfs.Fs, dir, pattern string, matches []string) (m []string, e error) {
 	m = matches
 
-	fi, err := fs.Stat(dir)
+	fi, err := vfs.Stat(dir)
 	if err != nil {
 		return
 	}
@@ -299,7 +299,7 @@ func glob(fs avfs.Fs, dir, pattern string, matches []string) (m []string, e erro
 		return
 	}
 
-	d, err := fs.Open(dir)
+	d, err := vfs.Open(dir)
 	if err != nil {
 		return
 	}
@@ -462,9 +462,9 @@ func Rel(basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func Split(fs avfs.Fs, path string) (dir, file string) {
+func Split(vfs avfs.Fs, path string) (dir, file string) {
 	i := len(path) - 1
-	for i >= 0 && !fs.IsPathSeparator(path[i]) {
+	for i >= 0 && !vfs.IsPathSeparator(path[i]) {
 		i--
 	}
 
@@ -484,12 +484,12 @@ func ToSlash(path string) string {
 // order, which makes the output deterministic but means that for very
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
-func Walk(fs avfs.Fs, root string, walkFn filepath.WalkFunc) error {
-	info, err := fs.Lstat(root)
+func Walk(vfs avfs.Fs, root string, walkFn filepath.WalkFunc) error {
+	info, err := vfs.Lstat(root)
 	if err != nil {
 		err = walkFn(root, nil, err)
 	} else {
-		err = walk(fs, root, info, walkFn)
+		err = walk(vfs, root, info, walkFn)
 	}
 
 	if err == filepath.SkipDir {
@@ -500,12 +500,12 @@ func Walk(fs avfs.Fs, root string, walkFn filepath.WalkFunc) error {
 }
 
 // walk recursively descends path, calling walkFn.
-func walk(fs avfs.Fs, path string, info os.FileInfo, walkFn filepath.WalkFunc) error {
+func walk(vfs avfs.Fs, path string, info os.FileInfo, walkFn filepath.WalkFunc) error {
 	if !info.IsDir() {
 		return walkFn(path, info, nil)
 	}
 
-	names, err := readDirNames(fs, path)
+	names, err := readDirNames(vfs, path)
 	err1 := walkFn(path, info, err)
 	// If err != nil, walk can't walk into this directory.
 	// err1 != nil means walkFn want walk to skip this directory or stop walking.
@@ -521,13 +521,13 @@ func walk(fs avfs.Fs, path string, info os.FileInfo, walkFn filepath.WalkFunc) e
 	for _, name := range names {
 		filename := Join(path, name)
 
-		fileInfo, err := fs.Lstat(filename)
+		fileInfo, err := vfs.Lstat(filename)
 		if err != nil {
 			if err = walkFn(filename, fileInfo, err); err != nil && err != filepath.SkipDir {
 				return err
 			}
 		} else {
-			err = walk(fs, filename, fileInfo, walkFn)
+			err = walk(vfs, filename, fileInfo, walkFn)
 			if err != nil {
 				if !fileInfo.IsDir() || err != filepath.SkipDir {
 					return err
@@ -541,8 +541,8 @@ func walk(fs avfs.Fs, path string, info os.FileInfo, walkFn filepath.WalkFunc) e
 
 // readDirNames reads the directory named by dirname and returns
 // a sorted list of directory entries.
-func readDirNames(fs avfs.Fs, dirname string) ([]string, error) {
-	f, err := fs.Open(dirname)
+func readDirNames(vfs avfs.Fs, dirname string) ([]string, error) {
+	f, err := vfs.Open(dirname)
 	if err != nil {
 		return nil, err
 	}

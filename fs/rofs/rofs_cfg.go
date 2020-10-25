@@ -24,26 +24,26 @@ func New(baseFs avfs.Fs) *RoFs {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (fs *RoFs) Features() avfs.Feature {
-	return (fs.baseFs.Features() &^ avfs.FeatIdentityMgr) | avfs.FeatReadOnly
+func (vfs *RoFs) Features() avfs.Feature {
+	return (vfs.baseFs.Features() &^ avfs.FeatIdentityMgr) | avfs.FeatReadOnly
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (fs *RoFs) HasFeature(feature avfs.Feature) bool {
-	return ((fs.baseFs.Features()|avfs.FeatReadOnly)&^avfs.FeatIdentityMgr)&feature == feature
+func (vfs *RoFs) HasFeature(feature avfs.Feature) bool {
+	return ((vfs.baseFs.Features()|avfs.FeatReadOnly)&^avfs.FeatIdentityMgr)&feature == feature
 }
 
 // Name returns the name of the fileSystem.
-func (fs *RoFs) Name() string {
-	return fs.baseFs.Name()
+func (vfs *RoFs) Name() string {
+	return vfs.baseFs.Name()
 }
 
 // OSType returns the operating system type of the file system.
-func (fs *RoFs) OSType() avfs.OSType {
-	return fs.baseFs.OSType()
+func (vfs *RoFs) OSType() avfs.OSType {
+	return vfs.baseFs.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (fs *RoFs) Type() string {
+func (vfs *RoFs) Type() string {
 	return "RoFs"
 }

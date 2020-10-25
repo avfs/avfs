@@ -36,7 +36,7 @@ type OrefaFs struct {
 // OrefaFile represents an open file descriptor.
 type OrefaFile struct {
 	mu       sync.RWMutex
-	fs       *OrefaFs
+	vFs      *OrefaFs
 	nd       *node
 	name     string
 	at       int64

@@ -27,12 +27,12 @@ import (
 )
 
 func TestRaceMemFs(t *testing.T) {
-	fsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, vfs)
 
 	sfs.SuiteRace()
 }

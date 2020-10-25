@@ -41,16 +41,16 @@ var (
 )
 
 // CreateBaseDirs creates base directories on a file system.
-func CreateBaseDirs(fs avfs.Fs, basePath string) error {
+func CreateBaseDirs(vfs avfs.Fs, basePath string) error {
 	for _, dir := range BaseDirs {
-		path := fs.Join(basePath, dir.Path)
+		path := vfs.Join(basePath, dir.Path)
 
-		err := fs.Mkdir(path, dir.Perm)
+		err := vfs.Mkdir(path, dir.Perm)
 		if err != nil {
 			return err
 		}
 
-		err = fs.Chmod(path, dir.Perm)
+		err = vfs.Chmod(path, dir.Perm)
 		if err != nil {
 			return err
 		}
@@ -83,15 +83,15 @@ func CheckPermission(info os.FileInfo, want avfs.WantMode, u avfs.UserReader) bo
 }
 
 // CreateHomeDir creates the home directory of a user.
-func CreateHomeDir(fs avfs.Fs, u avfs.UserReader) (avfs.UserReader, error) {
-	userDir := fs.Join(avfs.HomeDir, u.Name())
+func CreateHomeDir(vfs avfs.Fs, u avfs.UserReader) (avfs.UserReader, error) {
+	userDir := vfs.Join(avfs.HomeDir, u.Name())
 
-	err := fs.Mkdir(userDir, avfs.HomeDirPerm)
+	err := vfs.Mkdir(userDir, avfs.HomeDirPerm)
 	if err != nil {
 		return nil, err
 	}
 
-	err = fs.Chown(userDir, u.Uid(), u.Gid())
+	err = vfs.Chown(userDir, u.Uid(), u.Gid())
 	if err != nil {
 		return nil, err
 	}

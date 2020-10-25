@@ -37,37 +37,37 @@ var (
 
 //
 func TestDummyFs(t *testing.T) {
-	fs, err := dummyfs.New()
+	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	if fs.HasFeature(avfs.Feature(math.MaxUint64)) {
+	if vfs.HasFeature(avfs.Feature(math.MaxUint64)) {
 		t.Error("HasFeature : want HasFeature(whatever) to be false, got true")
 	}
 
-	sfs := test.NewSuiteFs(t, fs)
+	sfs := test.NewSuiteFs(t, vfs)
 	sfs.NotImplemented()
 }
 
 func TestDummyFsOSType(t *testing.T) {
-	fs, err := dummyfs.New()
+	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	if fs.OSType() != avfs.OsLinux {
-		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, fs.OSType())
+	if vfs.OSType() != avfs.OsLinux {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, vfs.OSType())
 	}
 }
 
 func TestDummyFsFeatures(t *testing.T) {
-	fs, err := dummyfs.New()
+	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("dummy.New : want error to be nil, got %v", err)
 	}
 
-	if fs.Features() != 0 {
-		t.Errorf("Features : want Features to be 0, got %d", fs.Features())
+	if vfs.Features() != 0 {
+		t.Errorf("Features : want Features to be 0, got %d", vfs.Features())
 	}
 }

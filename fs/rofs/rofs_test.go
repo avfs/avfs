@@ -37,15 +37,15 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFs {
-	fsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
-	fsW := sfs.GetFsWrite()
-	fsR := rofs.New(fsW)
-	sfs.FsRead(fsR)
+	sfs := test.NewSuiteFs(t, vfsRoot)
+	vfsW := sfs.GetFsWrite()
+	vfsR := rofs.New(vfsW)
+	sfs.FsRead(vfsR)
 
 	return sfs
 }
@@ -64,15 +64,15 @@ func TestRoFsPerm(t *testing.T) {
 }
 
 func TestRoFsOSType(t *testing.T) {
-	fsBase, err := memfs.New()
+	vfsBase, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	fs := rofs.New(fsBase)
+	vfs := rofs.New(vfsBase)
 
-	ost := fs.OSType()
-	if ost != fsBase.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", fsBase.OSType(), ost)
+	ost := vfs.OSType()
+	if ost != vfsBase.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", vfsBase.OSType(), ost)
 	}
 }

@@ -37,24 +37,24 @@ func (sfs *SuiteFs) SuiteRaceDir() {
 	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
-	path := fs.Join(rootDir, "mkdDirNew")
+	path := vfs.Join(rootDir, "mkdDirNew")
 
 	sfs.SuiteRaceFunc("Mkdir", RaceOneOk, func() error {
-		return fs.Mkdir(path, avfs.DefaultDirPerm)
+		return vfs.Mkdir(path, avfs.DefaultDirPerm)
 	})
 
 	sfs.SuiteRaceFunc("Remove", RaceOneOk, func() error {
-		return fs.Remove(path)
+		return vfs.Remove(path)
 	})
 
 	sfs.SuiteRaceFunc("MkdirAll", RaceAllOk, func() error {
-		return fs.MkdirAll(path, avfs.DefaultDirPerm)
+		return vfs.MkdirAll(path, avfs.DefaultDirPerm)
 	})
 
 	sfs.SuiteRaceFunc("RemoveAll", RaceAllOk, func() error {
-		return fs.RemoveAll(path)
+		return vfs.RemoveAll(path)
 	})
 }
 
@@ -63,11 +63,11 @@ func (sfs *SuiteFs) SuiteRaceFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
 	sfs.SuiteRaceFunc("Create", RaceAllOk, func() error {
-		newFile := fs.Join(rootDir, "newFile")
-		f, err := fs.Create(newFile)
+		newFile := vfs.Join(rootDir, "newFile")
+		f, err := vfs.Create(newFile)
 		if err == nil {
 			defer f.Close()
 		}
@@ -76,8 +76,8 @@ func (sfs *SuiteFs) SuiteRaceFile() {
 	})
 
 	sfs.SuiteRaceFunc("Open Excl", RaceOneOk, func() error {
-		newFile := fs.Join(rootDir, "newFileExcl")
-		f, err := fs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
+		newFile := vfs.Join(rootDir, "newFileExcl")
+		f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
 		if err == nil {
 			defer f.Close()
 		}
@@ -86,15 +86,15 @@ func (sfs *SuiteFs) SuiteRaceFile() {
 	})
 
 	func() {
-		roFile := fs.Join(rootDir, "roFile")
+		roFile := vfs.Join(rootDir, "roFile")
 
-		err := fs.WriteFile(roFile, nil, avfs.DefaultFilePerm)
+		err := vfs.WriteFile(roFile, nil, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want err to be nil, got %v", err)
 		}
 
 		sfs.SuiteRaceFunc("Open Read Only", RaceAllOk, func() error {
-			f, err := fs.Open(roFile)
+			f, err := vfs.Open(roFile)
 			if err == nil {
 				defer f.Close()
 			}
@@ -104,9 +104,9 @@ func (sfs *SuiteFs) SuiteRaceFile() {
 	}()
 
 	func() {
-		newFile := fs.Join(rootDir, "newFileClose")
+		newFile := vfs.Join(rootDir, "newFileClose")
 
-		f, err := fs.Create(newFile)
+		f, err := vfs.Create(newFile)
 		if err != nil {
 			t.Fatalf("Create : want err to be nil, got %v", err)
 		}
@@ -120,14 +120,14 @@ func (sfs *SuiteFs) SuiteRaceMkdirRemoveAll() {
 	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
-	path := fs.Join(rootDir, "new/path/to/test")
+	path := vfs.Join(rootDir, "new/path/to/test")
 
 	sfs.SuiteRaceFunc("Complex", RaceUndefined, func() error {
-		return fs.MkdirAll(path, avfs.DefaultDirPerm)
+		return vfs.MkdirAll(path, avfs.DefaultDirPerm)
 	}, func() error {
-		return fs.RemoveAll(path)
+		return vfs.RemoveAll(path)
 	})
 }
 

@@ -34,7 +34,7 @@ import (
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (fs *OsFs) Abs(path string) (string, error) {
+func (vfs *OsFs) Abs(path string) (string, error) {
 	return filepath.Abs(path)
 }
 
@@ -42,13 +42,13 @@ func (fs *OsFs) Abs(path string) (string, error) {
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (fs *OsFs) Base(path string) string {
+func (vfs *OsFs) Base(path string) string {
 	return filepath.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Chdir(dir string) error {
+func (vfs *OsFs) Chdir(dir string) error {
 	return os.Chdir(dir)
 }
 
@@ -70,7 +70,7 @@ func (fs *OsFs) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (fs *OsFs) Chmod(name string, mode os.FileMode) error {
+func (vfs *OsFs) Chmod(name string, mode os.FileMode) error {
 	return os.Chmod(name, mode)
 }
 
@@ -81,7 +81,7 @@ func (fs *OsFs) Chmod(name string, mode os.FileMode) error {
 //
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
-func (fs *OsFs) Chown(name string, uid, gid int) error {
+func (vfs *OsFs) Chown(name string, uid, gid int) error {
 	return os.Chown(name, uid, gid)
 }
 
@@ -91,7 +91,7 @@ func (fs *OsFs) Chown(name string, uid, gid int) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *OsFs) Chtimes(name string, atime, mtime time.Time) error {
 	return os.Chtimes(name, atime, mtime)
 }
 
@@ -118,13 +118,13 @@ func (fs *OsFs) Chtimes(name string, atime, mtime time.Time) error {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (fs *OsFs) Clean(path string) string {
+func (vfs *OsFs) Clean(path string) string {
 	return filepath.Clean(path)
 }
 
 // Clone returns the file system itself since it does not support this feature (FeatClonable).
-func (fs *OsFs) Clone() avfs.Fs {
-	return fs
+func (vfs *OsFs) Clone() avfs.Fs {
+	return vfs
 }
 
 // Create creates the named file with mode 0666 (before umask), truncating
@@ -132,7 +132,7 @@ func (fs *OsFs) Clone() avfs.Fs {
 // OsFile can be used for I/O; the associated file descriptor has mode
 // O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Create(name string) (avfs.File, error) {
+func (vfs *OsFs) Create(name string) (avfs.File, error) {
 	return os.Create(name)
 }
 
@@ -142,7 +142,7 @@ func (fs *OsFs) Create(name string) (avfs.File, error) {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (fs *OsFs) Dir(path string) string {
+func (vfs *OsFs) Dir(path string) string {
 	return filepath.Dir(path)
 }
 
@@ -151,14 +151,14 @@ func (fs *OsFs) Dir(path string) string {
 // If path is relative the result will be relative to the current directory,
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
-func (fs *OsFs) EvalSymlinks(path string) (string, error) {
+func (vfs *OsFs) EvalSymlinks(path string) (string, error) {
 	return filepath.EvalSymlinks(path)
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (fs *OsFs) FromSlash(path string) string {
+func (vfs *OsFs) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
@@ -171,12 +171,12 @@ func (fs *OsFs) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (fs *OsFs) GetTempDir() string {
+func (vfs *OsFs) GetTempDir() string {
 	return os.TempDir()
 }
 
 // GetUMask returns the file mode creation mask.
-func (fs *OsFs) GetUMask() os.FileMode {
+func (vfs *OsFs) GetUMask() os.FileMode {
 	return fsutil.UMask.Get()
 }
 
@@ -184,7 +184,7 @@ func (fs *OsFs) GetUMask() os.FileMode {
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
 // Getwd may return any one of them.
-func (fs *OsFs) Getwd() (dir string, err error) {
+func (vfs *OsFs) Getwd() (dir string, err error) {
 	return os.Getwd()
 }
 
@@ -196,38 +196,38 @@ func (fs *OsFs) Getwd() (dir string, err error) {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (fs *OsFs) Glob(pattern string) (matches []string, err error) {
+func (vfs *OsFs) Glob(pattern string) (matches []string, err error) {
 	return filepath.Glob(pattern)
 }
 
 // IsAbs reports whether the path is absolute.
-func (fs *OsFs) IsAbs(path string) bool {
+func (vfs *OsFs) IsAbs(path string) bool {
 	return filepath.IsAbs(path)
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
-func (fs *OsFs) IsExist(err error) bool {
+func (vfs *OsFs) IsExist(err error) bool {
 	return os.IsExist(err)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
-func (fs *OsFs) IsNotExist(err error) bool {
+func (vfs *OsFs) IsNotExist(err error) bool {
 	return os.IsNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (fs *OsFs) IsPathSeparator(c uint8) bool {
+func (vfs *OsFs) IsPathSeparator(c uint8) bool {
 	return fsutil.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (fs *OsFs) Join(elem ...string) string {
+func (vfs *OsFs) Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
 
@@ -237,13 +237,13 @@ func (fs *OsFs) Join(elem ...string) string {
 //
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
-func (fs *OsFs) Lchown(name string, uid, gid int) error {
+func (vfs *OsFs) Lchown(name string, uid, gid int) error {
 	return os.Lchown(name, uid, gid)
 }
 
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
-func (fs *OsFs) Link(oldname, newname string) error {
+func (vfs *OsFs) Link(oldname, newname string) error {
 	return os.Link(oldname, newname)
 }
 
@@ -251,14 +251,14 @@ func (fs *OsFs) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Lstat(name string) (os.FileInfo, error) {
+func (vfs *OsFs) Lstat(name string) (os.FileInfo, error) {
 	return os.Lstat(name)
 }
 
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Mkdir(name string, perm os.FileMode) error {
+func (vfs *OsFs) Mkdir(name string, perm os.FileMode) error {
 	return os.Mkdir(name, perm)
 }
 
@@ -269,7 +269,7 @@ func (fs *OsFs) Mkdir(name string, perm os.FileMode) error {
 // directories that MkdirAll creates.
 // If path is already a directory, MkdirAll does nothing
 // and returns nil.
-func (fs *OsFs) MkdirAll(path string, perm os.FileMode) error {
+func (vfs *OsFs) MkdirAll(path string, perm os.FileMode) error {
 	return os.MkdirAll(path, perm)
 }
 
@@ -277,7 +277,7 @@ func (fs *OsFs) MkdirAll(path string, perm os.FileMode) error {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Open(name string) (avfs.File, error) {
+func (vfs *OsFs) Open(name string) (avfs.File, error) {
 	return os.Open(name)
 }
 
@@ -287,13 +287,13 @@ func (fs *OsFs) Open(name string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned OsFile can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
+func (vfs *OsFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
 	return os.OpenFile(name, flag, perm)
 }
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (fs *OsFs) ReadDir(dirname string) ([]os.FileInfo, error) {
+func (vfs *OsFs) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return ioutil.ReadDir(dirname)
 }
 
@@ -301,13 +301,13 @@ func (fs *OsFs) ReadDir(dirname string) ([]os.FileInfo, error) {
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func (fs *OsFs) ReadFile(filename string) ([]byte, error) {
+func (vfs *OsFs) ReadFile(filename string) ([]byte, error) {
 	return ioutil.ReadFile(filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Readlink(name string) (string, error) {
+func (vfs *OsFs) Readlink(name string) (string, error) {
 	return os.Readlink(name)
 }
 
@@ -319,13 +319,13 @@ func (fs *OsFs) Readlink(name string) (string, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (fs *OsFs) Rel(basepath, targpath string) (string, error) {
+func (vfs *OsFs) Rel(basepath, targpath string) (string, error) {
 	return filepath.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Remove(name string) error {
+func (vfs *OsFs) Remove(name string) error {
 	return os.Remove(name)
 }
 
@@ -334,7 +334,7 @@ func (fs *OsFs) Remove(name string) error {
 // it encounters. If the path does not exist, RemoveAll
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) RemoveAll(path string) error {
+func (vfs *OsFs) RemoveAll(path string) error {
 	return os.RemoveAll(path)
 }
 
@@ -342,7 +342,7 @@ func (fs *OsFs) RemoveAll(path string) error {
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (fs *OsFs) Rename(oldname, newname string) error {
+func (vfs *OsFs) Rename(oldname, newname string) error {
 	return os.Rename(oldname, newname)
 }
 
@@ -352,13 +352,13 @@ func (fs *OsFs) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (fs *OsFs) SameFile(fi1, fi2 os.FileInfo) bool {
+func (vfs *OsFs) SameFile(fi1, fi2 os.FileInfo) bool {
 	return os.SameFile(fi1, fi2)
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Stat(name string) (os.FileInfo, error) {
+func (vfs *OsFs) Stat(name string) (os.FileInfo, error) {
 	return os.Stat(name)
 }
 
@@ -367,13 +367,13 @@ func (fs *OsFs) Stat(name string) (os.FileInfo, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (fs *OsFs) Split(path string) (dir, file string) {
+func (vfs *OsFs) Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
-func (fs *OsFs) Symlink(oldname, newname string) error {
+func (vfs *OsFs) Symlink(oldname, newname string) error {
 	return os.Symlink(oldname, newname)
 }
 
@@ -384,7 +384,7 @@ func (fs *OsFs) Symlink(oldname, newname string) error {
 // Multiple programs calling GetTempDir simultaneously
 // will not choose the same directory. It is the caller's responsibility
 // to remove the directory when no longer needed.
-func (fs *OsFs) TempDir(dir, prefix string) (name string, err error) {
+func (vfs *OsFs) TempDir(dir, prefix string) (name string, err error) {
 	return ioutil.TempDir(dir, prefix)
 }
 
@@ -399,26 +399,26 @@ func (fs *OsFs) TempDir(dir, prefix string) (name string, err error) {
 // will not choose the same file. The caller can use f.Type()
 // to find the pathname of the file. It is the caller's responsibility
 // to remove the file when no longer needed.
-func (fs *OsFs) TempFile(dir, pattern string) (f avfs.File, err error) {
+func (vfs *OsFs) TempFile(dir, pattern string) (f avfs.File, err error) {
 	return ioutil.TempFile(dir, pattern)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (fs *OsFs) ToSlash(path string) string {
+func (vfs *OsFs) ToSlash(path string) string {
 	return filepath.ToSlash(path)
 }
 
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Truncate(name string, size int64) error {
+func (vfs *OsFs) Truncate(name string, size int64) error {
 	return os.Truncate(name, size)
 }
 
 // UMask sets the file mode creation mask.
-func (fs *OsFs) UMask(mask os.FileMode) {
+func (vfs *OsFs) UMask(mask os.FileMode) {
 	fsutil.UMask.Set(mask)
 }
 
@@ -428,7 +428,7 @@ func (fs *OsFs) UMask(mask os.FileMode) {
 // order, which makes the output deterministic but means that for very
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
-func (fs *OsFs) Walk(root string, walkFn filepath.WalkFunc) error {
+func (vfs *OsFs) Walk(root string, walkFn filepath.WalkFunc) error {
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		return walkFn(path, info, err)
 	})
@@ -437,6 +437,6 @@ func (fs *OsFs) Walk(root string, walkFn filepath.WalkFunc) error {
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (fs *OsFs) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (vfs *OsFs) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return ioutil.WriteFile(filename, data, perm)
 }

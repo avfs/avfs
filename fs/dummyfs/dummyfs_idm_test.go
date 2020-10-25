@@ -26,11 +26,11 @@ import (
 )
 
 func TestDummyFsIdm(t *testing.T) {
-	fs, err := dummyfs.New()
+	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, fs)
+	sidm := test.NewSuiteIdm(t, vfs)
 	sidm.PermDenied()
 }

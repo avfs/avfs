@@ -25,8 +25,8 @@ import (
 )
 
 // BenchmarkCreate is a simple benchmark to create a random tree.
-func BenchmarkCreate(b *testing.B, fs avfs.Fs) {
-	rtr, err := fsutil.NewRndTree(fs, fsutil.RndTreeParams{
+func BenchmarkCreate(b *testing.B, vfs avfs.Fs) {
+	rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinDepth: 4, MaxDepth: 4,
 		MinDirs: 2, MaxDirs: 2,
@@ -43,7 +43,7 @@ func BenchmarkCreate(b *testing.B, fs avfs.Fs) {
 	for n := 0; n < b.N; n++ {
 		rand.Seed(42)
 
-		rootDir, err := fs.TempDir("", avfs.Avfs)
+		rootDir, err := vfs.TempDir("", avfs.Avfs)
 		if err != nil {
 			b.Fatalf("TempDir : want error to be nil, got %v", err)
 		}
@@ -53,7 +53,7 @@ func BenchmarkCreate(b *testing.B, fs avfs.Fs) {
 			b.Fatalf("CreateTree : want error to be nil, got %v", err)
 		}
 
-		err = fs.RemoveAll(rootDir)
+		err = vfs.RemoveAll(rootDir)
 		if err != nil {
 			b.Fatalf("RemoveAll : want error to be nil, got %v", err)
 		}

@@ -536,19 +536,19 @@ func (sIdm *SuiteIdm) PermDenied() {
 
 // checkHomeDir tests that the user home directory exists and has the correct permissions.
 func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
-	fs, ok := idm.(avfs.Fs)
-	if !ok || fs.OSType() == avfs.OsWindows {
+	vfs, ok := idm.(avfs.Fs)
+	if !ok || vfs.OSType() == avfs.OsWindows {
 		return
 	}
 
-	homeDir := fs.Join(avfs.HomeDir, u.Name())
+	homeDir := vfs.Join(avfs.HomeDir, u.Name())
 
-	info, err := fs.Stat(homeDir)
+	info, err := vfs.Stat(homeDir)
 	if err != nil {
 		t.Errorf("Stat %s : want error to be nil, got %v", homeDir, err)
 	}
 
-	wantMode := os.ModeDir | avfs.HomeDirPerm&^fs.GetUMask()
+	wantMode := os.ModeDir | avfs.HomeDirPerm&^vfs.GetUMask()
 	if info.Mode() != wantMode {
 		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, info.Mode())
 	}

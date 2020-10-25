@@ -26,12 +26,12 @@ import (
 )
 
 func TestRacOrefaFs(t *testing.T) {
-	fsRoot, err := orefafs.New(orefafs.WithMainDirs())
+	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, vfs)
 
 	sfs.SuiteRace()
 }

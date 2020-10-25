@@ -33,56 +33,56 @@ import (
 )
 
 func InitTest(t *testing.T) avfs.Fs {
-	fsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
-	fs := sfs.GetFsRead()
+	sfs := test.NewSuiteFs(t, vfsRoot)
+	vfs := sfs.GetFsRead()
 
-	return fs
+	return vfs
 }
 
 func TestIOUtil(t *testing.T) {
-	fsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, vfsRoot)
 	sfs.ReadDir()
 	sfs.ReadFile()
 	sfs.WriteFile()
 }
 
 func TestReadOnlyWriteFile(t *testing.T) {
-	fs := InitTest(t)
+	vfs := InitTest(t)
 
 	// We don't want to use TempFile directly, since that opens a file for us as 0600.
-	tempDir, err := fs.TempDir("", t.Name())
+	tempDir, err := vfs.TempDir("", t.Name())
 	if err != nil {
 		t.Fatalf("TempDir %s: %v", t.Name(), err)
 	}
 
-	defer fs.RemoveAll(tempDir) //nolint:errcheck
+	defer vfs.RemoveAll(tempDir) //nolint:errcheck
 
 	filename := fsutil.Join(tempDir, "blurp.txt")
 
 	shmorp := []byte("shmorp")
 	florp := []byte("florp")
 
-	err = fs.WriteFile(filename, shmorp, 0o444)
+	err = vfs.WriteFile(filename, shmorp, 0o444)
 	if err != nil {
 		t.Fatalf("WriteFile %s: %v", filename, err)
 	}
 
-	err = fs.WriteFile(filename, florp, 0o444)
+	err = vfs.WriteFile(filename, florp, 0o444)
 	if err == nil {
 		t.Fatalf("Expected an error when writing to read-only file %s", filename)
 	}
 
-	got, err := fs.ReadFile(filename)
+	got, err := vfs.ReadFile(filename)
 	if err != nil {
 		t.Fatalf("ReadFile %s: %v", filename, err)
 	}
@@ -93,18 +93,18 @@ func TestReadOnlyWriteFile(t *testing.T) {
 }
 
 func TestTempFile(t *testing.T) {
-	fs := InitTest(t)
+	vfs := InitTest(t)
 
-	dir, err := fs.TempDir("", "TestTempFile_BadDir")
+	dir, err := vfs.TempDir("", "TestTempFile_BadDir")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	defer fs.RemoveAll(dir) //nolint:errcheck
+	defer vfs.RemoveAll(dir) //nolint:errcheck
 
 	nonexistentDir := fsutil.Join(dir, "_not_exists_")
 
-	f, err := fs.TempFile(nonexistentDir, "foo")
+	f, err := vfs.TempFile(nonexistentDir, "foo")
 	if f != nil || err == nil {
 		t.Errorf("TempFile(%q, `foo`) = %v, %v", nonexistentDir, f, err)
 	}
@@ -117,16 +117,16 @@ func TestTempFile_pattern(t *testing.T) {
 		{"ioutil_test*xyz", "ioutil_test", "xyz"},
 	}
 
-	fs := InitTest(t)
+	vfs := InitTest(t)
 
 	for _, tt := range tests {
-		f, err := fs.TempFile("", tt.pattern)
+		f, err := vfs.TempFile("", tt.pattern)
 		if err != nil {
 			t.Errorf("TempFile(..., %q) error: %v", tt.pattern, err)
 			continue
 		}
 
-		defer fs.Remove(f.Name()) //nolint:errcheck
+		defer vfs.Remove(f.Name()) //nolint:errcheck
 
 		base := fsutil.Base(f.Name())
 		_ = f.Close()
@@ -139,9 +139,9 @@ func TestTempFile_pattern(t *testing.T) {
 }
 
 func TestTempDir(t *testing.T) {
-	fs := InitTest(t)
+	vfs := InitTest(t)
 
-	name, err := fs.TempDir("/_not_exists_", "foo")
+	name, err := vfs.TempDir("/_not_exists_", "foo")
 	if name != "" || err == nil {
 		t.Errorf("TempDir(`/_not_exists_`, `foo`) = %v, %v", name, err)
 	}
@@ -155,15 +155,15 @@ func TestTempDir(t *testing.T) {
 		{"ioutil_test*xyz", "ioutil_test", "xyz"},
 	}
 
-	dir := fs.GetTempDir()
+	dir := vfs.GetTempDir()
 
 	runTestTempDir := func(t *testing.T, pattern, wantRePat string) {
-		name, err := fs.TempDir(dir, pattern)
+		name, err := vfs.TempDir(dir, pattern)
 		if name == "" || err != nil {
 			t.Fatalf("TempDir(dir, `ioutil_test`) = %v, %v", name, err)
 		}
 
-		defer fs.Remove(name) //nolint:errcheck
+		defer vfs.Remove(name) //nolint:errcheck
 
 		re := regexp.MustCompile(wantRePat)
 		if !re.MatchString(name) {
@@ -196,19 +196,19 @@ func TestTempDir(t *testing.T) {
 // TestTempDir_BadDir tests that we return a nice error message if the dir argument to TempDir doesn't
 // exist (or that it's empty and os.TempDir doesn't exist).
 func TestTempDir_BadDir(t *testing.T) {
-	fs := InitTest(t)
+	vfs := InitTest(t)
 
-	dir, err := fs.TempDir("", "TestTempDir_BadDir")
+	dir, err := vfs.TempDir("", "TestTempDir_BadDir")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	defer fs.RemoveAll(dir) //nolint:errcheck
+	defer vfs.RemoveAll(dir) //nolint:errcheck
 
 	badDir := fsutil.Join(dir, "not-exist")
 
-	_, err = fs.TempDir(badDir, "foo")
-	if pe, ok := err.(*os.PathError); !ok || !fs.IsNotExist(err) || pe.Path != badDir {
+	_, err = vfs.TempDir(badDir, "foo")
+	if pe, ok := err.(*os.PathError); !ok || !vfs.IsNotExist(err) || pe.Path != badDir {
 		t.Errorf("TempDir error = %#v; want PathError for path %q satisifying os.IsNotExist", err, badDir)
 	}
 }

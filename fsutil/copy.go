@@ -102,8 +102,8 @@ func CopyFile(dstFs, srcFs avfs.Fs, dstPath, srcPath string, hasher hash.Hash) (
 }
 
 // HashFile hashes a file and returns the hash sum.
-func HashFile(fs avfs.Fs, name string, hasher hash.Hash) (sum []byte, err error) {
-	f, err := fs.Open(name)
+func HashFile(vfs avfs.Fs, name string, hasher hash.Hash) (sum []byte, err error) {
+	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
 	}

@@ -39,14 +39,14 @@ import (
 //  ErrPermDenied when the current user doesn't have permissions on one of the nodes on the path
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
-func (fs *MemFs) searchNode(path string, slMode slMode) (
+func (vfs *MemFs) searchNode(path string, slMode slMode) (
 	parent *dirNode, child node, absPath string, start, end int, err error) {
 	absPath = path
-	if !fs.HasFeature(avfs.FeatAbsPath) {
-		absPath, _ = fsutil.Abs(fs, path)
+	if !vfs.HasFeature(avfs.FeatAbsPath) {
+		absPath, _ = fsutil.Abs(vfs, path)
 	}
 
-	rootNode := fs.rootNode
+	rootNode := vfs.rootNode
 	parent = rootNode
 	slCount := 0
 	slResolved := false
@@ -74,7 +74,7 @@ func (fs *MemFs) searchNode(path string, slMode slMode) (
 				return
 			}
 
-			if !c.checkPermissionLck(avfs.WantLookup, fs.user) {
+			if !c.checkPermissionLck(avfs.WantLookup, vfs.user) {
 				err = avfs.ErrPermDenied
 
 				return
@@ -138,13 +138,13 @@ func (fs *MemFs) searchNode(path string, slMode slMode) (
 }
 
 // createDir creates a new directory.
-func (fs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dirNode {
+func (vfs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dirNode {
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(fs.fsAttrs.umask)),
-			uid:   fs.user.Uid(),
-			gid:   fs.user.Gid(),
+			mode:  os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.fsAttrs.umask)),
+			uid:   vfs.user.Uid(),
+			gid:   vfs.user.Gid(),
 		},
 		children: nil,
 	}
@@ -155,13 +155,13 @@ func (fs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dirN
 }
 
 // createFile creates a new file.
-func (fs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fileNode {
+func (vfs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fileNode {
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  perm & avfs.FileModeMask &^ os.FileMode(fs.fsAttrs.umask),
-			uid:   fs.user.Uid(),
-			gid:   fs.user.Gid(),
+			mode:  perm & avfs.FileModeMask &^ os.FileMode(vfs.fsAttrs.umask),
+			uid:   vfs.user.Uid(),
+			gid:   vfs.user.Gid(),
 		},
 		nlink: 1,
 	}
@@ -172,13 +172,13 @@ func (fs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fil
 }
 
 // createSymlink creates a new symlink.
-func (fs *MemFs) createSymlink(parent *dirNode, name, link string) *symlinkNode {
+func (vfs *MemFs) createSymlink(parent *dirNode, name, link string) *symlinkNode {
 	child := &symlinkNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
 			mode:  os.ModeSymlink | os.ModePerm,
-			uid:   fs.user.Uid(),
-			gid:   fs.user.Gid(),
+			uid:   vfs.user.Uid(),
+			gid:   vfs.user.Gid(),
 		},
 		link: link,
 	}

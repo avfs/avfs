@@ -38,12 +38,12 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFs {
-	fsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
+	vfsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, vfsRoot)
 
 	return sfs
 }
@@ -65,22 +65,22 @@ func TestNilPtrReceiver(t *testing.T) {
 }
 
 func TestOsFsOSType(t *testing.T) {
-	fs, err := osfs.New()
+	vfs, err := osfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	ost := fs.OSType()
+	ost := vfs.OSType()
 	if ost != fsutil.RunTimeOS() {
 		t.Errorf("OSType : want os type to be %v, got %v", fsutil.RunTimeOS(), ost)
 	}
 }
 
 func BenchmarkOsFsCreate(b *testing.B) {
-	fs, err := osfs.New()
+	vfs, err := osfs.New()
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	test.BenchmarkCreate(b, fs)
+	test.BenchmarkCreate(b, vfs)
 }

@@ -73,14 +73,14 @@ type RndTreeParams struct {
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
 	RndTreeParams
-	fs       avfs.Fs
+	vfs      avfs.Fs
 	Dirs     []string
 	Files    []string
 	SymLinks []string
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(fs avfs.Fs, p RndTreeParams) (*RndTree, error) { //nolint:gocritic
+func NewRndTree(vfs avfs.Fs, p RndTreeParams) (*RndTree, error) { //nolint:gocritic
 	if p.MinDepth < 1 || p.MinDepth > p.MaxDepth {
 		return nil, ErrOutOfRange("depth")
 	}
@@ -107,7 +107,7 @@ func NewRndTree(fs avfs.Fs, p RndTreeParams) (*RndTree, error) { //nolint:gocrit
 
 	rt := &RndTree{
 		RndTreeParams: p,
-		fs:            fs,
+		vfs:           vfs,
 	}
 
 	return rt, nil
@@ -134,7 +134,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 
 	rt.Files = append(rt.Files, files...)
 
-	if rt.fs.HasFeature(avfs.FeatSymlink) {
+	if rt.vfs.HasFeature(avfs.FeatSymlink) {
 		symLinks, err := rt.randSymlinks(parent) //nolint:govet
 		if err != nil {
 			return err
@@ -173,9 +173,9 @@ func (rt *RndTree) randDirs(parent string) ([]string, error) {
 	dirs := make([]string, 0, nbDirs)
 
 	for i := 0; i < nbDirs; i++ {
-		path := rt.fs.Join(parent, randName(rt.MinName, rt.MaxName))
+		path := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
 
-		err := rt.fs.Mkdir(path, avfs.DefaultDirPerm)
+		err := rt.vfs.Mkdir(path, avfs.DefaultDirPerm)
 		if err != nil {
 			return nil, err
 		}
@@ -204,9 +204,9 @@ func (rt *RndTree) randFiles(parent string) ([]string, error) {
 		buf := make([]byte, size)
 		rand.Read(buf) //nolint:gosec
 
-		path := rt.fs.Join(parent, randName(rt.MinName, rt.MaxName))
+		path := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
 
-		err := rt.fs.WriteFile(path, buf, avfs.DefaultFilePerm)
+		err := rt.vfs.WriteFile(path, buf, avfs.DefaultFilePerm)
 		if err != nil {
 			return nil, err
 		}
@@ -231,11 +231,11 @@ func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
 	sl := make([]string, 0, nbSl)
 
 	for i := 0; i < nbSl; i++ {
-		newName := rt.fs.Join(parent, randName(rt.MinName, rt.MaxName))
+		newName := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
 		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec
 		oldName := rt.Files[fileIdx]
 
-		err := rt.fs.Symlink(oldName, newName)
+		err := rt.vfs.Symlink(oldName, newName)
 		if err != nil {
 			return nil, err
 		}

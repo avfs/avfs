@@ -33,21 +33,21 @@ func (sfs *SuiteFs) Chdir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
-	dirs := CreateDirs(t, fs, rootDir)
+	vfs := sfs.GetFsWrite()
+	dirs := CreateDirs(t, vfs, rootDir)
 
-	fs = sfs.GetFsRead()
+	vfs = sfs.GetFsRead()
 
 	t.Run("ChdirFs", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path)
+			path := vfs.Join(rootDir, dir.Path)
 
-			err := fs.Chdir(path)
+			err := vfs.Chdir(path)
 			if err != nil {
 				t.Errorf("Chdir %s : want error to be nil, got %v", path, err)
 			}
 
-			curDir, err := fs.Getwd()
+			curDir, err := vfs.Getwd()
 			if err != nil {
 				t.Errorf("Getwd %s : want error to be nil, got %v", path, err)
 			}
@@ -60,24 +60,24 @@ func (sfs *SuiteFs) Chdir() {
 
 	t.Run("ChdirRelative", func(t *testing.T) {
 		for _, dir := range dirs {
-			err := fs.Chdir(rootDir)
+			err := vfs.Chdir(rootDir)
 			if err != nil {
 				t.Fatalf("Chdir %s : want error to be nil, got %v", rootDir, err)
 			}
 
 			relPath := dir.Path[1:]
 
-			err = fs.Chdir(relPath)
+			err = vfs.Chdir(relPath)
 			if err != nil {
 				t.Errorf("Chdir %s : want error to be nil, got %v", relPath, err)
 			}
 
-			curDir, err := fs.Getwd()
+			curDir, err := vfs.Getwd()
 			if err != nil {
 				t.Errorf("Getwd : want error to be nil, got %v", err)
 			}
 
-			path := fs.Join(rootDir, relPath)
+			path := vfs.Join(rootDir, relPath)
 			if curDir != path {
 				t.Errorf("Getwd : want current directory to be %s, got %s", path, curDir)
 			}
@@ -86,17 +86,17 @@ func (sfs *SuiteFs) Chdir() {
 
 	t.Run("ChdirNonExisting", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path, "NonExistingDir")
+			path := vfs.Join(rootDir, dir.Path, "NonExistingDir")
 
-			oldPath, err := fs.Getwd()
+			oldPath, err := vfs.Getwd()
 			if err != nil {
 				t.Errorf("Chdir : want error to be nil, got %v", err)
 			}
 
-			err = fs.Chdir(path)
+			err = vfs.Chdir(path)
 			CheckPathError(t, "Chdir", "chdir", path, avfs.ErrNoSuchFileOrDir, err)
 
-			newPath, err := fs.Getwd()
+			newPath, err := vfs.Getwd()
 			if err != nil {
 				t.Errorf("Getwd : want error to be nil, got %v", err)
 			}
@@ -108,15 +108,15 @@ func (sfs *SuiteFs) Chdir() {
 	})
 
 	t.Run("ChdirFile", func(t *testing.T) {
-		if fs.OSType() == avfs.OsWindows {
+		if vfs.OSType() == avfs.OsWindows {
 			t.Logf("File.Chdir() is not supported by windows, skipping")
 			return
 		}
 
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path)
+			path := vfs.Join(rootDir, dir.Path)
 
-			f, err := fs.Open(path)
+			f, err := vfs.Open(path)
 			if err != nil {
 				t.Errorf("Open %s : want error to be nil, got %v", path, err)
 			}
@@ -128,7 +128,7 @@ func (sfs *SuiteFs) Chdir() {
 
 			f.Close()
 
-			curDir, err := fs.Getwd()
+			curDir, err := vfs.Getwd()
 			if err != nil {
 				t.Errorf("Getwd %s : want error to be nil, got %v", path, err)
 			}
@@ -142,11 +142,11 @@ func (sfs *SuiteFs) Chdir() {
 
 // GetTempDir tests GetTempDir function.
 func (sfs *SuiteFs) GetTempDir() {
-	t, fs := sfs.t, sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	var wantTmp string
 
-	switch fs.OSType() {
+	switch vfs.OSType() {
 	case avfs.OsDarwin:
 		wantTmp, _ = filepath.EvalSymlinks(os.TempDir())
 	case avfs.OsWindows:
@@ -155,7 +155,7 @@ func (sfs *SuiteFs) GetTempDir() {
 		wantTmp = avfs.TmpDir
 	}
 
-	gotTmp := fs.GetTempDir()
+	gotTmp := vfs.GetTempDir()
 	if gotTmp != wantTmp {
 		t.Fatalf("GetTempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
 	}
@@ -166,19 +166,19 @@ func (sfs *SuiteFs) Mkdir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 	dirs := GetDirs()
 
 	t.Run("MkdirNew", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path)
+			path := vfs.Join(rootDir, dir.Path)
 
-			err := fs.Mkdir(path, dir.Mode)
+			err := vfs.Mkdir(path, dir.Mode)
 			if err != nil {
 				t.Errorf("mkdir : want no error, got %v", err)
 			}
 
-			fi, err := fs.Stat(path)
+			fi, err := vfs.Stat(path)
 			if err != nil {
 				t.Errorf("stat '%s' : want no error, got %v", path, err)
 				continue
@@ -197,7 +197,7 @@ func (sfs *SuiteFs) Mkdir() {
 				t.Errorf("stat '%s' : want time to be %s, got %s", path, time.Now(), fi.ModTime())
 			}
 
-			name := fs.Base(dir.Path)
+			name := vfs.Base(dir.Path)
 			if fi.Name() != name {
 				t.Errorf("stat '%s' : want path to be %s, got %s", path, name, fi.Name())
 			}
@@ -208,14 +208,14 @@ func (sfs *SuiteFs) Mkdir() {
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
-				curPath = fs.Join(curPath, part)
-				info, err := fs.Stat(curPath)
+				curPath = vfs.Join(curPath, part)
+				info, err := vfs.Stat(curPath)
 				if err != nil {
 					t.Fatalf("stat %s : want error to be nil, got %v", curPath, err)
 				}
 
-				wantMode &^= fs.GetUMask()
-				if fs.OSType() == avfs.OsWindows {
+				wantMode &^= vfs.GetUMask()
+				if vfs.OSType() == avfs.OsWindows {
 					wantMode = os.ModePerm
 				}
 
@@ -229,10 +229,10 @@ func (sfs *SuiteFs) Mkdir() {
 
 	t.Run("MkdirExisting", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path)
+			path := vfs.Join(rootDir, dir.Path)
 
-			err := fs.Mkdir(path, dir.Mode)
-			if !fs.IsExist(err) {
+			err := vfs.Mkdir(path, dir.Mode)
+			if !vfs.IsExist(err) {
 				t.Errorf("mkdir %s : want IsExist(err) to be true, got error %v", path, err)
 			}
 		}
@@ -240,11 +240,11 @@ func (sfs *SuiteFs) Mkdir() {
 
 	t.Run("MkdirImpossible", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path, "can't", "create", "this")
+			path := vfs.Join(rootDir, dir.Path, "can't", "create", "this")
 
-			err := fs.Mkdir(path, avfs.DefaultDirPerm)
+			err := vfs.Mkdir(path, avfs.DefaultDirPerm)
 
-			switch fs.OSType() {
+			switch vfs.OSType() {
 			case avfs.OsWindows:
 				CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrWinPathNotFound, err)
 			default:
@@ -252,9 +252,9 @@ func (sfs *SuiteFs) Mkdir() {
 			}
 		}
 
-		err := fs.Mkdir("", avfs.DefaultFilePerm)
+		err := vfs.Mkdir("", avfs.DefaultFilePerm)
 
-		switch fs.OSType() {
+		switch vfs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrWinPathNotFound, err)
 		default:
@@ -268,19 +268,19 @@ func (sfs *SuiteFs) MkdirAll() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 	dirs := GetDirsAll()
 
 	t.Run("MkdirAll", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path)
+			path := vfs.Join(rootDir, dir.Path)
 
-			err := fs.MkdirAll(path, dir.Mode)
+			err := vfs.MkdirAll(path, dir.Mode)
 			if err != nil {
 				t.Errorf("MkdirAll : want error to be nil, got %v", err)
 			}
 
-			fi, err := fs.Stat(path)
+			fi, err := vfs.Stat(path)
 			if err != nil {
 				t.Fatalf("stat '%s' : want error to be nil, got %v", path, err)
 			}
@@ -298,7 +298,7 @@ func (sfs *SuiteFs) MkdirAll() {
 				t.Errorf("stat '%s' : want time to be %s, got %s", path, time.Now(), fi.ModTime())
 			}
 
-			name := fs.Base(dir.Path)
+			name := vfs.Base(dir.Path)
 			if fi.Name() != name {
 				t.Errorf("stat '%s' : want path to be %s, got %s", path, name, fi.Name())
 			}
@@ -315,14 +315,14 @@ func (sfs *SuiteFs) MkdirAll() {
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
-				curPath = fs.Join(curPath, part)
-				info, err := fs.Stat(curPath)
+				curPath = vfs.Join(curPath, part)
+				info, err := vfs.Stat(curPath)
 				if err != nil {
 					t.Fatalf("stat %s : want error to be nil, got %v", curPath, err)
 				}
 
-				wantMode &^= fs.GetUMask()
-				if fs.OSType() == avfs.OsWindows {
+				wantMode &^= vfs.GetUMask()
+				if vfs.OSType() == avfs.OsWindows {
 					wantMode = os.ModePerm
 				}
 
@@ -336,9 +336,9 @@ func (sfs *SuiteFs) MkdirAll() {
 
 	t.Run("MkdirAllExisting", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := fs.Join(rootDir, dir.Path)
+			path := vfs.Join(rootDir, dir.Path)
 
-			err := fs.MkdirAll(path, dir.Mode)
+			err := vfs.MkdirAll(path, dir.Mode)
 			if err != nil {
 				t.Errorf("MkdirAll %s : want error to be nil, got error %v", path, err)
 			}
@@ -353,9 +353,9 @@ func (sfs *SuiteFs) ReadDir() {
 
 	const maxRead = 7
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
-	rndTree, err := fsutil.NewRndTree(fs, fsutil.RndParamsOneDir)
+	rndTree, err := fsutil.NewRndTree(vfs, fsutil.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -369,10 +369,10 @@ func (sfs *SuiteFs) ReadDir() {
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
 
-	fs = sfs.GetFsRead()
+	vfs = sfs.GetFsRead()
 
 	t.Run("ReadDirAll", func(t *testing.T) {
-		rdInfos, err := fs.ReadDir(rootDir)
+		rdInfos, err := vfs.ReadDir(rootDir)
 		if err != nil {
 			t.Fatalf("ReadDir : want error to be nil, got %v", err)
 		}
@@ -404,7 +404,7 @@ func (sfs *SuiteFs) ReadDir() {
 	})
 
 	t.Run("ReadDirN", func(t *testing.T) {
-		f, err := fs.Open(rootDir)
+		f, err := vfs.Open(rootDir)
 		if err != nil {
 			t.Fatalf("ReadDir : want error to be nil, got %v", err)
 		}
@@ -452,7 +452,7 @@ func (sfs *SuiteFs) ReadDir() {
 
 	t.Run("ReadDirEmptySubDirs", func(t *testing.T) {
 		for _, dir := range rndTree.Dirs {
-			dirInfos, err := fs.ReadDir(dir)
+			dirInfos, err := vfs.ReadDir(dir)
 			if err != nil {
 				t.Errorf("ReadDir %s : want error to be nil, got %v", dir, err)
 			}
@@ -470,9 +470,9 @@ func (sfs *SuiteFs) ReadDirNames() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
-	rndTree, err := fsutil.NewRndTree(fs, fsutil.RndParamsOneDir)
+	rndTree, err := fsutil.NewRndTree(vfs, fsutil.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -484,10 +484,10 @@ func (sfs *SuiteFs) ReadDirNames() {
 
 	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
 
-	fs = sfs.GetFsRead()
+	vfs = sfs.GetFsRead()
 
 	t.Run("ReadDirNamesAll", func(t *testing.T) {
-		f, err := fs.Open(rootDir)
+		f, err := vfs.Open(rootDir)
 		if err != nil {
 			t.Fatalf("ReadDirNames : want error to be nil, got %v", err)
 		}
@@ -503,7 +503,7 @@ func (sfs *SuiteFs) ReadDirNames() {
 	})
 
 	t.Run("ReadDirNamesN", func(t *testing.T) {
-		f, err := fs.Open(rootDir)
+		f, err := vfs.Open(rootDir)
 		if err != nil {
 			t.Fatalf("ReadDirNames : want error to be nil, got %v", err)
 		}

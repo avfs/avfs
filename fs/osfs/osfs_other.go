@@ -26,7 +26,7 @@ import (
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
-func (fs *OsFs) Chroot(path string) error {
+func (vfs *OsFs) Chroot(path string) error {
 	const op = "chroot"
 
 	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}

@@ -25,8 +25,8 @@ import (
 )
 
 func TestOrefaFsIdm(t *testing.T) {
-	fs := initTest(t)
+	vfs := initTest(t)
 
-	sidm := test.NewSuiteIdm(t, fs)
+	sidm := test.NewSuiteIdm(t, vfs)
 	sidm.PermDenied()
 }

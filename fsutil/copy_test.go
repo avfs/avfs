@@ -30,12 +30,12 @@ import (
 )
 
 func TestHashFile(t *testing.T) {
-	fs, err := memfs.New(memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	rtr, err := fsutil.NewRndTree(fs, fsutil.RndTreeParams{
+	rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
 		MinDepth: 1, MaxDepth: 1,
 		MinName: 32, MaxName: 32,
 		MinFiles: 100, MaxFiles: 100,
@@ -45,7 +45,7 @@ func TestHashFile(t *testing.T) {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
 
-	rootDir, err := fs.TempDir("", avfs.Avfs)
+	rootDir, err := vfs.TempDir("", avfs.Avfs)
 	if err != nil {
 		t.Fatalf("TempDir : want error to be nil, got %v", err)
 	}
@@ -55,12 +55,12 @@ func TestHashFile(t *testing.T) {
 		t.Fatalf("CreateTree : want error to be nil, got %v", err)
 	}
 
-	defer fs.RemoveAll(rootDir) //nolint:errcheck
+	defer vfs.RemoveAll(rootDir) //nolint:errcheck
 
 	h := sha512.New()
 
 	for _, fileName := range rtr.Files {
-		content, err := fs.ReadFile(fileName)
+		content, err := vfs.ReadFile(fileName)
 		if err != nil {
 			t.Fatalf("ReadFile %s : want error to be nil, got %v", fileName, err)
 		}
@@ -74,7 +74,7 @@ func TestHashFile(t *testing.T) {
 
 		wantSum := h.Sum(nil)
 
-		gotSum, err := fsutil.HashFile(fs, fileName, h)
+		gotSum, err := fsutil.HashFile(vfs, fileName, h)
 		if err != nil {
 			t.Errorf("HashFile %s : want error to be nil, got %v", fileName, err)
 		}

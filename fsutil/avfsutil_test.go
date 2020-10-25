@@ -35,49 +35,49 @@ import (
 
 func TestAsStatT(t *testing.T) {
 	t.Run("StatT MemFs", func(t *testing.T) {
-		fs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+		vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 		if err != nil {
 			t.Errorf("memfs.New : want error to be nil, got %v", err)
 		}
 
-		sfs := test.NewSuiteFs(t, fs)
+		sfs := test.NewSuiteFs(t, vfs)
 		sfs.StatT()
 	})
 
 	t.Run("StatT OsFs", func(t *testing.T) {
-		fs, err := osfs.New(osfs.WithIdm(osidm.New()))
+		vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 		if err != nil {
 			t.Errorf("osfs.New : want error to be nil, got %v", err)
 		}
 
-		sfs := test.NewSuiteFs(t, fs)
+		sfs := test.NewSuiteFs(t, vfs)
 		sfs.StatT()
 	})
 
 	t.Run("StatT OrefaFs", func(t *testing.T) {
-		fs, err := orefafs.New(orefafs.WithMainDirs())
+		vfs, err := orefafs.New(orefafs.WithMainDirs())
 		if err != nil {
 			t.Errorf("orefafs.New : want error to be nil, got %v", err)
 		}
 
-		sfs := test.NewSuiteFs(t, fs)
+		sfs := test.NewSuiteFs(t, vfs)
 		sfs.StatT()
 	})
 }
 
 func TestCreateBaseDirs(t *testing.T) {
-	fs, err := memfs.New()
+	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	err = fsutil.CreateBaseDirs(fs, "")
+	err = fsutil.CreateBaseDirs(vfs, "")
 	if err != nil {
 		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 	}
 
 	for _, dir := range fsutil.BaseDirs {
-		info, err := fs.Stat(dir.Path)
+		info, err := vfs.Stat(dir.Path)
 		if err != nil {
 			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 		}

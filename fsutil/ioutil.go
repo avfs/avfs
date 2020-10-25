@@ -59,8 +59,8 @@ func nextRandom() string {
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func ReadDir(fs avfs.Fs, dirname string) ([]os.FileInfo, error) {
-	f, err := fs.Open(dirname)
+func ReadDir(vfs avfs.Fs, dirname string) ([]os.FileInfo, error) {
+	f, err := vfs.Open(dirname)
 	if err != nil {
 		return nil, err
 	}
@@ -81,8 +81,8 @@ func ReadDir(fs avfs.Fs, dirname string) ([]os.FileInfo, error) {
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func ReadFile(fs avfs.Fs, filename string) ([]byte, error) {
-	f, err := fs.Open(filename)
+func ReadFile(vfs avfs.Fs, filename string) ([]byte, error) {
+	f, err := vfs.Open(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -113,9 +113,9 @@ func prefixAndSuffix(pattern string) (prefix, suffix string) {
 // Multiple programs calling TempDir simultaneously
 // will not choose the same directory. It is the caller's responsibility
 // to remove the directory when no longer needed.
-func TempDir(fs avfs.Fs, dir, pattern string) (name string, err error) {
+func TempDir(vfs avfs.Fs, dir, pattern string) (name string, err error) {
 	if dir == "" {
-		dir = fs.GetTempDir()
+		dir = vfs.GetTempDir()
 	}
 
 	prefix, suffix := prefixAndSuffix(pattern)
@@ -123,9 +123,9 @@ func TempDir(fs avfs.Fs, dir, pattern string) (name string, err error) {
 
 	for i := 0; i < 10000; i++ {
 		try := Join(dir, prefix+nextRandom()+suffix)
-		err = fs.Mkdir(try, 0o700)
+		err = vfs.Mkdir(try, 0o700)
 
-		if fs.IsExist(err) {
+		if vfs.IsExist(err) {
 			nconflict++
 			if nconflict > 10 {
 				randmu.Lock()
@@ -136,8 +136,8 @@ func TempDir(fs avfs.Fs, dir, pattern string) (name string, err error) {
 			continue
 		}
 
-		if fs.IsNotExist(err) {
-			if _, err1 := fs.Stat(dir); fs.IsNotExist(err) {
+		if vfs.IsNotExist(err) {
+			if _, err1 := vfs.Stat(dir); vfs.IsNotExist(err) {
 				return "", err1
 			}
 		}
@@ -163,9 +163,9 @@ func TempDir(fs avfs.Fs, dir, pattern string) (name string, err error) {
 // will not choose the same file. The caller can use f.Name()
 // to find the pathname of the file. It is the caller's responsibility
 // to remove the file when no longer needed.
-func TempFile(fs avfs.Fs, dir, pattern string) (f avfs.File, err error) {
+func TempFile(vfs avfs.Fs, dir, pattern string) (f avfs.File, err error) {
 	if dir == "" {
-		dir = fs.GetTempDir()
+		dir = vfs.GetTempDir()
 	}
 
 	prefix, suffix := prefixAndSuffix(pattern)
@@ -174,9 +174,9 @@ func TempFile(fs avfs.Fs, dir, pattern string) (f avfs.File, err error) {
 
 	for i := 0; i < 10000; i++ {
 		name := Join(dir, prefix+nextRandom()+suffix)
-		f, err = fs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
+		f, err = vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
 
-		if fs.IsExist(err) {
+		if vfs.IsExist(err) {
 			nconflict++
 			if nconflict > 10 {
 				randmu.Lock()
@@ -196,8 +196,8 @@ func TempFile(fs avfs.Fs, dir, pattern string) (f avfs.File, err error) {
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func WriteFile(fs avfs.Fs, filename string, data []byte, perm os.FileMode) error {
-	f, err := fs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
+func WriteFile(vfs avfs.Fs, filename string, data []byte, perm os.FileMode) error {
+	f, err := vfs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}

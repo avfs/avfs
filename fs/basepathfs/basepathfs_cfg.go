@@ -39,42 +39,42 @@ func New(baseFs avfs.Fs, basePath string) (*BasePathFs, error) {
 		return nil, &os.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
 	}
 
-	fs := &BasePathFs{
+	vfs := &BasePathFs{
 		baseFs:   baseFs,
 		basePath: absPath,
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
-		err = fsutil.CreateBaseDirs(fs.baseFs, fs.basePath)
+		err = fsutil.CreateBaseDirs(vfs.baseFs, vfs.basePath)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return fs, nil
+	return vfs, nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (fs *BasePathFs) Features() avfs.Feature {
-	return fs.baseFs.Features() &^ avfs.FeatSymlink
+func (vfs *BasePathFs) Features() avfs.Feature {
+	return vfs.baseFs.Features() &^ avfs.FeatSymlink
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (fs *BasePathFs) HasFeature(feature avfs.Feature) bool {
-	return (feature&avfs.FeatSymlink == 0) && fs.baseFs.HasFeature(feature)
+func (vfs *BasePathFs) HasFeature(feature avfs.Feature) bool {
+	return (feature&avfs.FeatSymlink == 0) && vfs.baseFs.HasFeature(feature)
 }
 
 // Name returns the name of the fileSystem.
-func (fs *BasePathFs) Name() string {
-	return fs.baseFs.Name()
+func (vfs *BasePathFs) Name() string {
+	return vfs.baseFs.Name()
 }
 
 // OSType returns the operating system type of the file system.
-func (fs *BasePathFs) OSType() avfs.OSType {
-	return fs.baseFs.OSType()
+func (vfs *BasePathFs) OSType() avfs.OSType {
+	return vfs.baseFs.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (fs *BasePathFs) Type() string {
+func (vfs *BasePathFs) Type() string {
 	return "BasePathFs"
 }

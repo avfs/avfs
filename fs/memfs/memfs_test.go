@@ -37,12 +37,12 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFs {
-	fsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fsRoot)
+	sfs := test.NewSuiteFs(t, vfsRoot)
 
 	return sfs
 }
@@ -68,23 +68,23 @@ func TestMemFsOptionError(t *testing.T) {
 func TestMemFsOptionName(t *testing.T) {
 	const wantName = "whatever"
 
-	fs, err := memfs.New()
+	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	if fs.Name() != "" {
-		t.Errorf("New : want name to be '', got %s", fs.Name())
+	if vfs.Name() != "" {
+		t.Errorf("New : want name to be '', got %s", vfs.Name())
 	}
 
-	fs, err = memfs.New(memfs.WithName(wantName))
+	vfs, err = memfs.New(memfs.WithName(wantName))
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	name := fs.Name()
+	name := vfs.Name()
 	if name != wantName {
-		t.Errorf("New : want name to be %s, got %s", wantName, fs.Name())
+		t.Errorf("New : want name to be %s, got %s", wantName, vfs.Name())
 	}
 }
 
@@ -95,42 +95,42 @@ func TestNilPtrReceiver(t *testing.T) {
 }
 
 func TestMemFsFeatures(t *testing.T) {
-	fs, err := memfs.New()
+	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	if fs.Features()&avfs.FeatIdentityMgr != 0 {
+	if vfs.Features()&avfs.FeatIdentityMgr != 0 {
 		t.Errorf("Features : want FeatIdentityMgr missing, got present")
 	}
 
-	fs, err = memfs.New(memfs.WithIdm(memidm.New()))
+	vfs, err = memfs.New(memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	if fs.Features()&avfs.FeatIdentityMgr == 0 {
+	if vfs.Features()&avfs.FeatIdentityMgr == 0 {
 		t.Errorf("Features : want FeatIdentityMgr present, got missing")
 	}
 }
 
 func TestMemFsOSType(t *testing.T) {
-	fs, err := memfs.New()
+	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	ost := fs.OSType()
+	ost := vfs.OSType()
 	if ost != avfs.OsLinux {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
 	}
 }
 
 func BenchmarkMemFsCreate(b *testing.B) {
-	fs, err := memfs.New(memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	test.BenchmarkCreate(b, fs)
+	test.BenchmarkCreate(b, vfs)
 }

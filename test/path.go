@@ -50,7 +50,7 @@ func (sfs *SuiteFs) Abs() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
 	t.Run("Abs", func(t *testing.T) {
 		// Test directories relative to temporary directory.
@@ -79,57 +79,57 @@ func (sfs *SuiteFs) Abs() {
 			"$/a/b/c/../../.././a/",
 		}
 
-		wd, err := fs.Getwd()
+		wd, err := vfs.Getwd()
 		if err != nil {
 			t.Fatal("getwd failed: ", err)
 		}
 
-		err = fs.Chdir(rootDir)
+		err = vfs.Chdir(rootDir)
 		if err != nil {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		defer fs.Chdir(wd) //nolint:errcheck
+		defer vfs.Chdir(wd) //nolint:errcheck
 
 		for _, dir := range absTestDirs {
-			err = fs.Mkdir(dir, 0o777)
+			err = vfs.Mkdir(dir, 0o777)
 			if err != nil {
 				t.Fatal("Mkdir failed: ", err)
 			}
 		}
 
-		err = fs.Chdir(absTestDirs[0])
+		err = vfs.Chdir(absTestDirs[0])
 		if err != nil {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		fs = sfs.GetFsRead()
+		vfs = sfs.GetFsRead()
 
 		for _, path := range absTests {
 			path = strings.ReplaceAll(path, "$", rootDir)
 
-			info, err := fs.Stat(path)
+			info, err := vfs.Stat(path)
 			if err != nil {
 				t.Errorf("%s: %s", path, err)
 				continue
 			}
 
-			abspath, err := fs.Abs(path)
+			abspath, err := vfs.Abs(path)
 			if err != nil {
 				t.Errorf("Abs(%q) error: %v", path, err)
 				continue
 			}
 
-			absinfo, err := fs.Stat(abspath)
-			if err != nil || !fs.SameFile(absinfo, info) {
+			absinfo, err := vfs.Stat(abspath)
+			if err != nil || !vfs.SameFile(absinfo, info) {
 				t.Errorf("Abs(%q)=%q, not the same file", path, abspath)
 			}
 
-			if !fs.IsAbs(abspath) {
+			if !vfs.IsAbs(abspath) {
 				t.Errorf("Abs(%q)=%q, not an absolute path", path, abspath)
 			}
 
-			if fs.IsAbs(abspath) && abspath != fs.Clean(abspath) {
+			if vfs.IsAbs(abspath) && abspath != vfs.Clean(abspath) {
 				t.Errorf("Abs(%q)=%q, isn't clean", path, abspath)
 			}
 		}
@@ -140,38 +140,38 @@ func (sfs *SuiteFs) Abs() {
 	// We test it separately from all other absTests because the empty string is not
 	// a valid path, so it can't be used with os.Stat.
 	t.Run("AbsEmptyString", func(t *testing.T) {
-		wd, err := fs.Getwd()
+		wd, err := vfs.Getwd()
 		if err != nil {
 			t.Fatal("getwd failed: ", err)
 		}
 
-		err = fs.Chdir(rootDir)
+		err = vfs.Chdir(rootDir)
 		if err != nil {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		defer fs.Chdir(wd) //nolint:errcheck
+		defer vfs.Chdir(wd) //nolint:errcheck
 
-		info, err := fs.Stat(rootDir)
+		info, err := vfs.Stat(rootDir)
 		if err != nil {
 			t.Fatalf("%s: %s", rootDir, err)
 		}
 
-		abspath, err := fs.Abs("")
+		abspath, err := vfs.Abs("")
 		if err != nil {
 			t.Fatalf(`Abs("") error: %v`, err)
 		}
 
-		absinfo, err := fs.Stat(abspath)
-		if err != nil || !fs.SameFile(absinfo, info) {
+		absinfo, err := vfs.Stat(abspath)
+		if err != nil || !vfs.SameFile(absinfo, info) {
 			t.Errorf(`Abs("")=%q, not the same file`, abspath)
 		}
 
-		if !fs.IsAbs(abspath) {
+		if !vfs.IsAbs(abspath) {
 			t.Errorf(`Abs("")=%q, not an absolute path`, abspath)
 		}
 
-		if fs.IsAbs(abspath) && abspath != fs.Clean(abspath) {
+		if vfs.IsAbs(abspath) && abspath != vfs.Clean(abspath) {
 			t.Errorf(`Abs("")=%q, isn't clean`, abspath)
 		}
 	})
@@ -196,10 +196,10 @@ func (sfs *SuiteFs) Base() {
 		{"a/b/c.x", "c.x"},
 	}
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	for _, test := range basetests {
-		s := fs.Base(test.path)
+		s := vfs.Base(test.path)
 		if s != test.result {
 			t.Errorf("Base(%q) = %q, want %q", test.path, s, test.result)
 		}
@@ -264,15 +264,15 @@ func (sfs *SuiteFs) Clean() {
 		{"abc/../../././../def", "../../def"},
 	}
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	for _, test := range cleantests {
-		s := fs.Clean(test.path)
+		s := vfs.Clean(test.path)
 		if s != test.result {
 			t.Errorf("Clean(%q) = %q, want %q", test.path, s, test.result)
 		}
 
-		s = fs.Clean(test.result)
+		s = vfs.Clean(test.result)
 		if s != test.result {
 			t.Errorf("Clean(%q) = %q, want %q", test.result, s, test.result)
 		}
@@ -299,10 +299,10 @@ func (sfs *SuiteFs) Dir() {
 		{"a/b/c.x", "a/b"},
 	}
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	for _, test := range dirtests {
-		s := fs.Dir(test.path)
+		s := vfs.Dir(test.path)
 		if s != test.result {
 			t.Errorf("Dir(%q) = %q, want %q", test.path, s, test.result)
 		}
@@ -320,8 +320,8 @@ func (sfs *SuiteFs) FromToSlash() {
 		{"C:\\A\\b/c", "", ""},
 	}
 
-	fs := sfs.GetFsRead()
-	ost := fs.OSType()
+	vfs := sfs.GetFsRead()
+	ost := vfs.OSType()
 
 	for _, pt := range pathtests {
 		var want string
@@ -332,7 +332,7 @@ func (sfs *SuiteFs) FromToSlash() {
 			want = pt.path
 		}
 
-		got := fs.FromSlash(pt.path)
+		got := vfs.FromSlash(pt.path)
 		if got != want {
 			t.Errorf("FromSlash %s, want %s, got %s", pt.path, want, got)
 		}
@@ -343,7 +343,7 @@ func (sfs *SuiteFs) FromToSlash() {
 			want = pt.path
 		}
 
-		got = fs.ToSlash(pt.path)
+		got = vfs.ToSlash(pt.path)
 		if got != want {
 			t.Errorf("FromSlash %s, want %s, got %s", pt.path, want, got)
 		}
@@ -355,7 +355,7 @@ func (sfs *SuiteFs) IsAbs() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	t.Run("IsAbs", func(t *testing.T) {
 		isabstests := []struct {
@@ -373,7 +373,7 @@ func (sfs *SuiteFs) IsAbs() {
 		}
 
 		for _, test := range isabstests {
-			r := fs.IsAbs(test.path)
+			r := vfs.IsAbs(test.path)
 			if r != test.isAbs {
 				t.Errorf("IsAbs(%q) = %v, want %v", test.path, r, test.isAbs)
 			}
@@ -392,7 +392,7 @@ func (sfs *SuiteFs) IsAbs() {
 		}
 
 		for _, test := range isPathSepTests {
-			r := fs.IsPathSeparator(test.sep)
+			r := vfs.IsPathSeparator(test.sep)
 			if r != test.isAbs {
 				t.Errorf("IsPathSeparator(%q) = %v, want %v", test.sep, r, test.isAbs)
 			}
@@ -427,10 +427,10 @@ func (sfs *SuiteFs) Join() {
 		{[]string{"", ""}, ""},
 	}
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	for _, test := range jointests {
-		p := fs.Join(test.elem...)
+		p := vfs.Join(test.elem...)
 		if p != test.path {
 			t.Errorf("Join(%q) = %q, want %q", test.elem, p, test.path)
 		}
@@ -488,10 +488,10 @@ func (sfs *SuiteFs) Rel() {
 		{"/a", "a", "err"},
 	}
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	for _, test := range reltests {
-		got, err := fs.Rel(test.root, test.path)
+		got, err := vfs.Rel(test.root, test.path)
 		if test.want == "err" {
 			if err == nil {
 				t.Errorf("Rel(%q, %q)=%q, want error", test.root, test.path, got)
@@ -525,10 +525,10 @@ func (sfs *SuiteFs) Split() {
 		{"/", "/", ""},
 	}
 
-	fs := sfs.GetFsRead()
+	vfs := sfs.GetFsRead()
 
 	for _, test := range unixsplittests {
-		d, f := fs.Split(test.path)
+		d, f := vfs.Split(test.path)
 		if d != test.dir || f != test.file {
 			t.Errorf("Split(%q) = %q, %q, want %q, %q", test.path, d, f, test.dir, test.file)
 		}
@@ -540,17 +540,17 @@ func (sfs *SuiteFs) Glob() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
-	_ = CreateDirs(t, fs, rootDir)
-	_ = CreateFiles(t, fs, rootDir)
-	sl := len(CreateSymlinks(t, fs, rootDir))
+	_ = CreateDirs(t, vfs, rootDir)
+	_ = CreateFiles(t, vfs, rootDir)
+	sl := len(CreateSymlinks(t, vfs, rootDir))
 
-	fs = sfs.GetFsRead()
+	vfs = sfs.GetFsRead()
 
 	t.Run("GlobNormal", func(t *testing.T) {
 		pattern := rootDir + "/*/*/[A-Z0-9]"
-		dirNames, err := fs.Glob(pattern)
+		dirNames, err := vfs.Glob(pattern)
 		if err != nil {
 			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
 		} else {
@@ -570,7 +570,7 @@ func (sfs *SuiteFs) Glob() {
 
 	t.Run("GlobWithoutMeta", func(t *testing.T) {
 		pattern := rootDir
-		dirNames, err := fs.Glob(pattern)
+		dirNames, err := vfs.Glob(pattern)
 		if err != nil {
 			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
 			return
@@ -586,7 +586,7 @@ func (sfs *SuiteFs) Glob() {
 
 	t.Run("GlobWithoutMetaNonExisting", func(t *testing.T) {
 		pattern := rootDir + "/NonExisiting"
-		dirNames, err := fs.Glob(pattern)
+		dirNames, err := vfs.Glob(pattern)
 		if dirNames != nil || err != nil {
 			t.Errorf("Glob %s : want error and result to be nil, got %s, %v", pattern, dirNames, err)
 		}
@@ -599,7 +599,7 @@ func (sfs *SuiteFs) Glob() {
 		}
 
 		for _, pattern := range patterns {
-			_, err := fs.Glob(pattern)
+			_, err := vfs.Glob(pattern)
 			if err != filepath.ErrBadPattern {
 				t.Errorf("Glob %s : want error to be %v, got %v", pattern, filepath.ErrBadPattern, err)
 			}
@@ -612,27 +612,27 @@ func (sfs *SuiteFs) Walk() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	fs := sfs.GetFsWrite()
-	dirs := CreateDirs(t, fs, rootDir)
-	files := CreateFiles(t, fs, rootDir)
-	symlinks := CreateSymlinks(t, fs, rootDir)
+	vfs := sfs.GetFsWrite()
+	dirs := CreateDirs(t, vfs, rootDir)
+	files := CreateFiles(t, vfs, rootDir)
+	symlinks := CreateSymlinks(t, vfs, rootDir)
 
-	fs = sfs.GetFsRead()
+	vfs = sfs.GetFsRead()
 	lnames := len(dirs) + len(files) + len(symlinks)
 	wantNames := make([]string, 0, lnames)
 
 	wantNames = append(wantNames, rootDir)
 	for _, dir := range dirs {
-		wantNames = append(wantNames, fs.Join(rootDir, dir.Path))
+		wantNames = append(wantNames, vfs.Join(rootDir, dir.Path))
 	}
 
 	for _, file := range files {
-		wantNames = append(wantNames, fs.Join(rootDir, file.Path))
+		wantNames = append(wantNames, vfs.Join(rootDir, file.Path))
 	}
 
-	if fs.HasFeature(avfs.FeatSymlink) {
+	if vfs.HasFeature(avfs.FeatSymlink) {
 		for _, sl := range symlinks {
-			wantNames = append(wantNames, fs.Join(rootDir, sl.NewName))
+			wantNames = append(wantNames, vfs.Join(rootDir, sl.NewName))
 		}
 	}
 
@@ -640,7 +640,7 @@ func (sfs *SuiteFs) Walk() {
 
 	t.Run("Walk", func(t *testing.T) {
 		gotNames := make(map[string]int)
-		err := fs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		err := vfs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
 			gotNames[path]++
 
 			return nil

@@ -26,11 +26,11 @@ import (
 )
 
 func TestPath(t *testing.T) {
-	fs, err := memfs.New(memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, fs)
+	sfs := test.NewSuiteFs(t, vfs)
 	sfs.Path()
 }

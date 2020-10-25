@@ -35,18 +35,18 @@ var (
 )
 
 func initTest(t *testing.T) avfs.Fs {
-	fs, err := orefafs.New(orefafs.WithMainDirs())
+	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	return fs
+	return vfs
 }
 
 func TestOrefaFs(t *testing.T) {
-	fs := initTest(t)
+	vfs := initTest(t)
 
-	sfs := test.NewSuiteFs(t, fs)
+	sfs := test.NewSuiteFs(t, vfs)
 	sfs.All()
 }
 
@@ -57,33 +57,33 @@ func TestNilPtrReceiver(t *testing.T) {
 }
 
 func TestOrefaFsFeatures(t *testing.T) {
-	fs, err := orefafs.New()
+	vfs, err := orefafs.New()
 	if err != nil {
 		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
 	}
 
-	if fs.Features() != avfs.FeatBasicFs|avfs.FeatHardlink {
-		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatBasicFs, fs.Features())
+	if vfs.Features() != avfs.FeatBasicFs|avfs.FeatHardlink {
+		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatBasicFs, vfs.Features())
 	}
 }
 
 func TestOrefaFsOSType(t *testing.T) {
-	fs, err := orefafs.New()
+	vfs, err := orefafs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	ost := fs.OSType()
+	ost := vfs.OSType()
 	if ost != avfs.OsLinux {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
 	}
 }
 
 func BenchmarkOrefaFsCreate(b *testing.B) {
-	fs, err := orefafs.New(orefafs.WithMainDirs())
+	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	test.BenchmarkCreate(b, fs)
+	test.BenchmarkCreate(b, vfs)
 }

@@ -47,17 +47,17 @@ func TestErrOutOfRange(t *testing.T) {
 }
 
 func TestRndTree(t *testing.T) {
-	fs, err := memfs.New(memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Errorf("New : want error to be nil, got %v", err)
 	}
 
-	tmpDir, err := fs.TempDir("", avfs.Avfs)
+	tmpDir, err := vfs.TempDir("", avfs.Avfs)
 	if err != nil {
 		t.Fatalf("TempDir : want error to be nil, got %v", err)
 	}
 
-	defer fs.RemoveAll(tmpDir) //nolint:errcheck
+	defer vfs.RemoveAll(tmpDir) //nolint:errcheck
 
 	t.Run("RndTreeMain", func(t *testing.T) {
 		rtrTests := []struct {
@@ -113,7 +113,7 @@ func TestRndTree(t *testing.T) {
 		}
 
 		for i, rtrTest := range rtrTests {
-			rtr, err := fsutil.NewRndTree(fs, rtrTest.params)
+			rtr, err := fsutil.NewRndTree(vfs, rtrTest.params)
 
 			if rtrTest.wantErr == nil {
 				if err != nil {
@@ -131,9 +131,9 @@ func TestRndTree(t *testing.T) {
 				continue
 			}
 
-			path := fs.Join(tmpDir, "Main", strconv.Itoa(i))
+			path := vfs.Join(tmpDir, "Main", strconv.Itoa(i))
 
-			err = fs.MkdirAll(path, avfs.DefaultDirPerm)
+			err = vfs.MkdirAll(path, avfs.DefaultDirPerm)
 			if err != nil {
 				t.Fatalf("MkdirAll %s : want error to be nil, got %v", path, err)
 			}
@@ -166,7 +166,7 @@ func TestRndTree(t *testing.T) {
 	})
 
 	t.Run("RndTreeDepth", func(t *testing.T) {
-		rtr, err := fsutil.NewRndTree(fs, fsutil.RndTreeParams{
+		rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
 			MinDepth: 3, MaxDepth: 3,
 			MinName: 10, MaxName: 10,
 			MinDirs: 2, MaxDirs: 2,
@@ -176,9 +176,9 @@ func TestRndTree(t *testing.T) {
 			t.Errorf("NewRndTree : want error to be nil, got %v", err)
 		}
 
-		path := fs.Join(tmpDir, "Depth")
+		path := vfs.Join(tmpDir, "Depth")
 
-		err = fs.MkdirAll(path, avfs.DefaultDirPerm)
+		err = vfs.MkdirAll(path, avfs.DefaultDirPerm)
 		if err != nil {
 			t.Fatalf("MkdirAll %s : want error to be nil, got %v", path, err)
 		}

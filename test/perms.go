@@ -68,29 +68,29 @@ func (sfs *SuiteFs) Chown() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := sfs.GetFsRoot()
-	dirs := CreateDirs(t, fs, rootDir)
-	files := CreateFiles(t, fs, rootDir)
+	vfs := sfs.GetFsRoot()
+	dirs := CreateDirs(t, vfs, rootDir)
+	files := CreateFiles(t, vfs, rootDir)
 	users := GetUsers()
 
 	t.Run("ChownDir", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
 
-			u, err := fs.LookupUser(wantName)
+			u, err := vfs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
 			}
 
 			for _, dir := range dirs {
-				path := fs.Join(rootDir, dir.Path)
+				path := vfs.Join(rootDir, dir.Path)
 
-				err := fs.Chown(path, u.Uid(), u.Gid())
+				err := vfs.Chown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Chown %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Stat(path)
+				fst, err := vfs.Stat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 					continue
@@ -112,20 +112,20 @@ func (sfs *SuiteFs) Chown() {
 		for _, user := range users {
 			wantName := user.Name
 
-			u, err := fs.LookupUser(wantName)
+			u, err := vfs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
 			}
 
 			for _, file := range files {
-				path := fs.Join(rootDir, file.Path)
+				path := vfs.Join(rootDir, file.Path)
 
-				err := fs.Chown(path, u.Uid(), u.Gid())
+				err := vfs.Chown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Chown %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Stat(path)
+				fst, err := vfs.Stat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 					continue
@@ -149,31 +149,31 @@ func (sfs *SuiteFs) Lchown() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := sfs.GetFsRoot()
+	vfs := sfs.GetFsRoot()
 
-	dirs := CreateDirs(t, fs, rootDir)
-	files := CreateFiles(t, fs, rootDir)
-	symlinks := CreateSymlinks(t, fs, rootDir)
+	dirs := CreateDirs(t, vfs, rootDir)
+	files := CreateFiles(t, vfs, rootDir)
+	symlinks := CreateSymlinks(t, vfs, rootDir)
 	users := GetUsers()
 
 	t.Run("LchownDir", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
 
-			u, err := fs.LookupUser(wantName)
+			u, err := vfs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
 			}
 
 			for _, dir := range dirs {
-				path := fs.Join(rootDir, dir.Path)
+				path := vfs.Join(rootDir, dir.Path)
 
-				err := fs.Lchown(path, u.Uid(), u.Gid())
+				err := vfs.Lchown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Lstat(path)
+				fst, err := vfs.Lstat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 					continue
@@ -195,20 +195,20 @@ func (sfs *SuiteFs) Lchown() {
 		for _, user := range users {
 			wantName := user.Name
 
-			u, err := fs.LookupUser(wantName)
+			u, err := vfs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
 			}
 
 			for _, file := range files {
-				path := fs.Join(rootDir, file.Path)
+				path := vfs.Join(rootDir, file.Path)
 
-				err := fs.Lchown(path, u.Uid(), u.Gid())
+				err := vfs.Lchown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Lstat(path)
+				fst, err := vfs.Lstat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 					continue
@@ -230,20 +230,20 @@ func (sfs *SuiteFs) Lchown() {
 		for _, user := range users {
 			wantName := user.Name
 
-			u, err := fs.LookupUser(wantName)
+			u, err := vfs.LookupUser(wantName)
 			if err != nil {
 				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
 			}
 
 			for _, symlink := range symlinks {
-				path := fs.Join(rootDir, symlink.NewName)
+				path := vfs.Join(rootDir, symlink.NewName)
 
-				err := fs.Lchown(path, u.Uid(), u.Gid())
+				err := vfs.Lchown(path, u.Uid(), u.Gid())
 				if err != nil {
 					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Lstat(path)
+				fst, err := vfs.Lstat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 					continue
@@ -267,23 +267,23 @@ func (sfs *SuiteFs) Chmod() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := sfs.GetFsRoot()
+	vfs := sfs.GetFsRoot()
 
 	t.Run("ChmodDir", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
 			for mode := os.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
-				path, err := fs.TempDir(rootDir, "")
+				path, err := vfs.TempDir(rootDir, "")
 				if err != nil {
 					t.Fatalf("TempDir %s : want error to be nil, got %v", rootDir, err)
 				}
 
-				err = fs.Chmod(path, wantMode)
+				err = vfs.Chmod(path, wantMode)
 				if err != nil {
 					t.Errorf("Chmod %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Stat(path)
+				fst, err := vfs.Stat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 				}
@@ -297,9 +297,9 @@ func (sfs *SuiteFs) Chmod() {
 	})
 
 	t.Run("ChmodFile", func(t *testing.T) {
-		path := fs.Join(rootDir, "existingFile")
+		path := vfs.Join(rootDir, "existingFile")
 
-		err := fs.WriteFile(path, nil, avfs.DefaultFilePerm)
+		err := vfs.WriteFile(path, nil, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
@@ -308,12 +308,12 @@ func (sfs *SuiteFs) Chmod() {
 			for mode := os.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
 
-				err := fs.Chmod(path, wantMode)
+				err := vfs.Chmod(path, wantMode)
 				if err != nil {
 					t.Errorf("Chmod %s : want error to be nil, got %v", path, err)
 				}
 
-				fst, err := fs.Stat(path)
+				fst, err := vfs.Stat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 				}
@@ -327,8 +327,8 @@ func (sfs *SuiteFs) Chmod() {
 	})
 
 	// Cleanup permissions for RemoveAll()
-	_ = fs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = fs.Chmod(path, 0o777)
+	_ = vfs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		_ = vfs.Chmod(path, 0o777)
 
 		return nil
 	})
@@ -339,22 +339,22 @@ func (sfs *SuiteFs) Chroot() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fs := sfs.GetFsRoot()
+	vfs := sfs.GetFsRoot()
 
 	t.Run("ChrootInvalid", func(t *testing.T) {
-		existingFile := fs.Join(rootDir, "existingFile")
+		existingFile := vfs.Join(rootDir, "existingFile")
 
-		err := fs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
+		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
-		nonExistingFile := fs.Join(existingFile, "invalid", "path")
+		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
 
-		err = fs.Chroot(existingFile)
+		err = vfs.Chroot(existingFile)
 		CheckPathError(t, "Chroot", "chroot", existingFile, avfs.ErrNotADirectory, err)
 
-		err = fs.Chroot(nonExistingFile)
+		err = vfs.Chroot(nonExistingFile)
 		CheckPathError(t, "Chroot", "chroot", nonExistingFile, avfs.ErrNotADirectory, err)
 	})
 
@@ -362,45 +362,45 @@ func (sfs *SuiteFs) Chroot() {
 		// Some file systems (MemFs) don't permit exit from a chroot.
 		// A shallow clone of the file system is then used to perform the chroot
 		// without loosing access to the original root of the file system.
-		fsSave := fs.Clone()
+		fsSave := vfs.Clone()
 
-		chrootDir := fs.Join(rootDir, "chroot")
+		chrootDir := vfs.Join(rootDir, "chroot")
 
-		err := fs.Mkdir(chrootDir, avfs.DefaultDirPerm)
+		err := vfs.Mkdir(chrootDir, avfs.DefaultDirPerm)
 		if err != nil {
 			t.Fatalf("mkdir %s : want error to be nil, got %v", chrootDir, err)
 		}
 
 		const chrootFile = "/file-within-the-chroot.txt"
-		chrootFilePath := fs.Join(chrootDir, chrootFile)
+		chrootFilePath := vfs.Join(chrootDir, chrootFile)
 
-		err = fs.WriteFile(chrootFilePath, nil, avfs.DefaultFilePerm)
+		err = vfs.WriteFile(chrootFilePath, nil, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile %s : want error to be nil, got %v", chrootFilePath, err)
 		}
 
 		// A file descriptor is used to save the real root of the file system.
 		// See https://devsidestory.com/exit-from-a-chroot-with-golang/
-		fSave, err := fs.Open("/")
+		fSave, err := vfs.Open("/")
 		if err != nil {
 			t.Fatalf("Open / : want error to be nil, got %v", err)
 		}
 
 		defer fSave.Close()
 
-		err = fs.Chroot(chrootDir)
+		err = vfs.Chroot(chrootDir)
 		if err != nil {
 			t.Errorf("Chroot : want error to be nil, got %v", err)
 		}
 
-		_, err = fs.Stat(chrootFile)
+		_, err = vfs.Stat(chrootFile)
 		if err != nil {
 			t.Errorf("Stat : want error to be nil, got %v", err)
 		}
 
 		// if the file system can be cloned it can be restored from the saved one.
-		if fs.HasFeature(avfs.FeatClonable) {
-			fs = fsSave
+		if vfs.HasFeature(avfs.FeatClonable) {
+			vfs = fsSave
 
 			return
 		}
@@ -411,12 +411,12 @@ func (sfs *SuiteFs) Chroot() {
 			t.Errorf("Chdir : want error to be nil, got %v", err)
 		}
 
-		err = fs.Chroot(".")
+		err = vfs.Chroot(".")
 		if err != nil {
 			t.Errorf("Chroot : want error to be nil, got %v", err)
 		}
 
-		_, err = fs.Stat(chrootFilePath)
+		_, err = vfs.Stat(chrootFilePath)
 		if err != nil {
 			t.Errorf("Stat : want error to be nil, got %v", err)
 		}
@@ -430,10 +430,10 @@ func (sfs *SuiteFs) AccessDir() {
 
 	const baseDir = "baseDir"
 
-	fsRoot := sfs.GetFsRoot()
+	vfsRoot := sfs.GetFsRoot()
 	users := GetUsers()
 
-	ut, err := fsRoot.LookupUser(UsrTest)
+	ut, err := vfsRoot.LookupUser(UsrTest)
 	if err != nil {
 		t.Fatalf("LookupUser %s : want error to be nil, got %v", UsrTest, err)
 	}
@@ -442,24 +442,24 @@ func (sfs *SuiteFs) AccessDir() {
 		for mode := os.FileMode(1); mode <= 6; mode++ {
 			wantMode := mode << shift
 			fileName := fmt.Sprintf("%s-%03o", ut.Name(), wantMode)
-			path := fsRoot.Join(rootDir, fileName)
+			path := vfsRoot.Join(rootDir, fileName)
 
-			err = fsRoot.Mkdir(path, avfs.DefaultDirPerm)
+			err = vfsRoot.Mkdir(path, avfs.DefaultDirPerm)
 			if err != nil {
 				t.Fatalf("Mkdir %s : want error to be nil, got %v", path, err)
 			}
 
-			_, err = fsRoot.Stat(path)
+			_, err = vfsRoot.Stat(path)
 			if err != nil {
 				t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
 			}
 
-			err := fsRoot.Chmod(path, wantMode)
+			err := vfsRoot.Chmod(path, wantMode)
 			if err != nil {
 				t.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
 			}
 
-			err = fsRoot.Chown(path, ut.Uid(), ut.Gid())
+			err = vfsRoot.Chown(path, ut.Uid(), ut.Gid())
 			if err != nil {
 				t.Fatalf("Chown %s : want error to be nil, got %v", path, err)
 			}
@@ -469,24 +469,24 @@ func (sfs *SuiteFs) AccessDir() {
 	t.Run("AccessDir", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
-			fs, _ := sfs.GetFsAsUser(wantName)
+			vfs, _ := sfs.GetFsAsUser(wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := os.FileMode(1); mode <= 6; mode++ {
 					wantMode := mode << shift
 					fileName := fmt.Sprintf("%s-%03o", ut.Name(), wantMode)
 
-					path := fs.Join(rootDir, fileName)
-					info, err := fs.Stat(path)
+					path := vfs.Join(rootDir, fileName)
+					info, err := vfs.Stat(path)
 					if err != nil {
 						t.Fatalf("Stat %s : want error to be nil, got %v ", path, err)
 					}
 
-					canWrite := fsutil.CheckPermission(info, avfs.WantWrite|avfs.WantLookup, fs.CurrentUser())
-					canRead := fsutil.CheckPermission(info, avfs.WantLookup, fs.CurrentUser())
+					canWrite := fsutil.CheckPermission(info, avfs.WantWrite|avfs.WantLookup, vfs.CurrentUser())
+					canRead := fsutil.CheckPermission(info, avfs.WantLookup, vfs.CurrentUser())
 
-					path = fs.Join(rootDir, fileName, baseDir)
-					err = fs.Mkdir(path, avfs.DefaultDirPerm)
+					path = vfs.Join(rootDir, fileName, baseDir)
+					err = vfs.Mkdir(path, avfs.DefaultDirPerm)
 					if canWrite {
 						if err != nil {
 							t.Errorf("Mkdir %s : want error to be nil, got %v", path, err)
@@ -495,7 +495,7 @@ func (sfs *SuiteFs) AccessDir() {
 						CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrPermDenied, err)
 					}
 
-					_, err = fs.Stat(path)
+					_, err = vfs.Stat(path)
 					switch {
 					case canRead && canWrite:
 						if err != nil {
@@ -512,8 +512,8 @@ func (sfs *SuiteFs) AccessDir() {
 	})
 
 	// Cleanup permissions for RemoveAll()
-	_ = fsRoot.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = fsRoot.Chmod(path, 0o777)
+	_ = vfsRoot.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		_ = vfsRoot.Chmod(path, 0o777)
 
 		return nil
 	})
@@ -524,10 +524,10 @@ func (sfs *SuiteFs) AccessFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fsRoot := sfs.GetFsRoot()
+	vfsRoot := sfs.GetFsRoot()
 	users := GetUsers()
 
-	usrTest, err := fsRoot.LookupUser(UsrTest)
+	usrTest, err := vfsRoot.LookupUser(UsrTest)
 	if err != nil {
 		t.Fatalf("LookupUser %s : want error to be nil, got %v", UsrTest, err)
 	}
@@ -536,19 +536,19 @@ func (sfs *SuiteFs) AccessFile() {
 		for mode := os.FileMode(1); mode <= 6; mode++ {
 			wantMode := mode << shift
 			name := fmt.Sprintf("%s-%03o", usrTest.Name(), wantMode)
-			path := fsRoot.Join(rootDir, name)
+			path := vfsRoot.Join(rootDir, name)
 
-			err = fsRoot.WriteFile(path, nil, avfs.DefaultFilePerm)
+			err = vfsRoot.WriteFile(path, nil, avfs.DefaultFilePerm)
 			if err != nil {
 				t.Fatalf("WriteFile %s : want error to be nil, got %v", path, err)
 			}
 
-			err = fsRoot.Chmod(path, wantMode)
+			err = vfsRoot.Chmod(path, wantMode)
 			if err != nil {
 				t.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
 			}
 
-			err = fsRoot.Chown(path, usrTest.Uid(), usrTest.Gid())
+			err = vfsRoot.Chown(path, usrTest.Uid(), usrTest.Gid())
 			if err != nil {
 				t.Fatalf("Chown %s : want error to be nil, got %v", path, err)
 			}
@@ -558,23 +558,23 @@ func (sfs *SuiteFs) AccessFile() {
 	t.Run("AccessFile", func(t *testing.T) {
 		for _, user := range users {
 			wantName := user.Name
-			fs, _ := sfs.GetFsAsUser(wantName)
+			vfs, _ := sfs.GetFsAsUser(wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := 1; mode <= 6; mode++ {
 					wantMode := mode << shift
 					name := fmt.Sprintf("%s-%03o", usrTest.Name(), wantMode)
-					path := fs.Join(rootDir, name)
+					path := vfs.Join(rootDir, name)
 
-					info, err := fs.Stat(path)
+					info, err := vfs.Stat(path)
 					if err != nil {
 						t.Fatalf("Stat %s : want error to be nil, got %v ", path, err)
 					}
 
-					canWrite := fsutil.CheckPermission(info, avfs.WantWrite, fs.CurrentUser())
-					canRead := fsutil.CheckPermission(info, avfs.WantRead, fs.CurrentUser())
+					canWrite := fsutil.CheckPermission(info, avfs.WantWrite, vfs.CurrentUser())
+					canRead := fsutil.CheckPermission(info, avfs.WantRead, vfs.CurrentUser())
 
-					err = fs.WriteFile(path, []byte("WriteFile"), os.ModePerm)
+					err = vfs.WriteFile(path, []byte("WriteFile"), os.ModePerm)
 					if canWrite {
 						if err != nil {
 							t.Errorf("WriteFile %s : want error to be nil, got %v", path, err)
@@ -583,7 +583,7 @@ func (sfs *SuiteFs) AccessFile() {
 						CheckPathError(t, "WriteFile", "open", path, avfs.ErrPermDenied, err)
 					}
 
-					_, err = fs.ReadFile(path)
+					_, err = vfs.ReadFile(path)
 					if canRead {
 						if err != nil {
 							t.Errorf("ReadFile %s : want error to be nil, got %v", path, err)
@@ -597,8 +597,8 @@ func (sfs *SuiteFs) AccessFile() {
 	})
 
 	// Cleanup permissions for RemoveAll()
-	_ = fsRoot.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = fsRoot.Chmod(path, 0o777)
+	_ = vfsRoot.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		_ = vfsRoot.Chmod(path, 0o777)
 
 		return nil
 	})
@@ -607,15 +607,15 @@ func (sfs *SuiteFs) AccessFile() {
 // StatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
 func (sfs *SuiteFs) StatT() {
 	t := sfs.t
-	fs := sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
-	info, err := fs.Stat(fs.GetTempDir())
+	info, err := vfs.Stat(vfs.GetTempDir())
 	if err != nil {
 		t.Errorf("Stat : want error be nil, got %v", err)
 	}
 
 	wantUid, wantGid := uint32(0), uint32(0)
-	if !fs.HasFeature(avfs.FeatIdentityMgr) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		wantUid, wantGid = math.MaxUint32, math.MaxUint32
 	}
 
@@ -631,75 +631,75 @@ func (sfs *SuiteFs) SuiteWriteDenied() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
-	fsRoot := sfs.GetFsRoot()
-	pathDir := fsRoot.Join(rootDir, "testDir")
-	pathNewDirOrFile := fsRoot.Join(pathDir, "NewDirOrFile")
-	pathDirChild := fsRoot.Join(pathDir, "DirChild")
-	pathFile := fsRoot.Join(rootDir, "File.txt")
+	vfsRoot := sfs.GetFsRoot()
+	pathDir := vfsRoot.Join(rootDir, "testDir")
+	pathNewDirOrFile := vfsRoot.Join(pathDir, "NewDirOrFile")
+	pathDirChild := vfsRoot.Join(pathDir, "DirChild")
+	pathFile := vfsRoot.Join(rootDir, "File.txt")
 
-	err := fsRoot.MkdirAll(pathDirChild, avfs.DefaultDirPerm)
+	err := vfsRoot.MkdirAll(pathDirChild, avfs.DefaultDirPerm)
 	if err != nil {
 		t.Fatalf("Mkdir %s : want error to be nil, got %v", pathDir, err)
 	}
 
-	err = fsRoot.Chmod(pathDir, 0o555)
+	err = vfsRoot.Chmod(pathDir, 0o555)
 	if err != nil {
 		t.Fatalf("Chmod %s : want error to be nil, got %v", pathDir, err)
 	}
 
-	err = fsRoot.WriteFile(pathFile, nil, 0o555)
+	err = vfsRoot.WriteFile(pathFile, nil, 0o555)
 	if err != nil {
 		t.Fatalf("WriteFile %s : want error to be nil, got %v", pathDir, err)
 	}
 
 	t.Run("WriteDenied", func(t *testing.T) {
 		for _, u := range GetUsers() {
-			fs, u := sfs.GetFsAsUser(u.Name)
+			vfs, u := sfs.GetFsAsUser(u.Name)
 
-			err := fs.Chmod(pathDir, avfs.DefaultDirPerm)
+			err := vfs.Chmod(pathDir, avfs.DefaultDirPerm)
 			CheckPathError(t, "Chmod", "chmod", pathDir, avfs.ErrOpNotPermitted, err)
 
-			err = fs.Chown(pathDir, u.Uid(), u.Gid())
+			err = vfs.Chown(pathDir, u.Uid(), u.Gid())
 			CheckPathError(t, "Chown", "chown", pathDir, avfs.ErrOpNotPermitted, err)
 
-			err = fs.Chtimes(pathDir, time.Now(), time.Now())
+			err = vfs.Chtimes(pathDir, time.Now(), time.Now())
 			CheckPathError(t, "Chtimes", "chtimes", pathDir, avfs.ErrOpNotPermitted, err)
 
-			_, err = fs.Create(pathNewDirOrFile)
+			_, err = vfs.Create(pathNewDirOrFile)
 			CheckPathError(t, "Create", "open", pathNewDirOrFile, avfs.ErrPermDenied, err)
 
-			err = fs.Chroot(pathDir)
+			err = vfs.Chroot(pathDir)
 			CheckPathError(t, "Chroot", "chroot", pathDir, avfs.ErrOpNotPermitted, err)
 
-			err = fs.Lchown(pathDir, u.Uid(), u.Gid())
+			err = vfs.Lchown(pathDir, u.Uid(), u.Gid())
 			CheckPathError(t, "Lchown", "lchown", pathDir, avfs.ErrOpNotPermitted, err)
 
-			err = fs.Link(pathFile, pathNewDirOrFile)
+			err = vfs.Link(pathFile, pathNewDirOrFile)
 
 			wantErr := avfs.ErrOpNotPermitted
-			if fs.OSType() == avfs.OsLinuxWSL {
+			if vfs.OSType() == avfs.OsLinuxWSL {
 				wantErr = avfs.ErrPermDenied
 			}
 
 			CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, wantErr, err)
 
-			err = fs.Mkdir(pathNewDirOrFile, avfs.DefaultDirPerm)
+			err = vfs.Mkdir(pathNewDirOrFile, avfs.DefaultDirPerm)
 			CheckPathError(t, "Mkdir", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)
 
-			err = fs.MkdirAll(pathNewDirOrFile, avfs.DefaultDirPerm)
+			err = vfs.MkdirAll(pathNewDirOrFile, avfs.DefaultDirPerm)
 			CheckPathError(t, "MkdirAll", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)
 
-			err = fs.Remove(pathDirChild)
+			err = vfs.Remove(pathDirChild)
 			CheckPathError(t, "Remove", "remove", pathDirChild, avfs.ErrPermDenied, err)
 
-			err = fs.RemoveAll(pathDirChild)
+			err = vfs.RemoveAll(pathDirChild)
 			CheckPathError(t, "RemoveAll", "unlinkat", pathDirChild, avfs.ErrPermDenied, err)
 
-			err = fs.Rename(pathFile, pathNewDirOrFile)
+			err = vfs.Rename(pathFile, pathNewDirOrFile)
 			CheckLinkError(t, "Rename", "rename", pathFile, pathNewDirOrFile, avfs.ErrPermDenied, err)
 
-			if fs.HasFeature(avfs.FeatSymlink) {
-				err = fs.Symlink(pathDir, pathNewDirOrFile)
+			if vfs.HasFeature(avfs.FeatSymlink) {
+				err = vfs.Symlink(pathDir, pathNewDirOrFile)
 				CheckLinkError(t, "Symlink", "symlink", pathDir, pathNewDirOrFile, avfs.ErrPermDenied, err)
 			}
 		}

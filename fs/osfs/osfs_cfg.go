@@ -24,47 +24,47 @@ import (
 
 // New returns a new OsFs file system.
 func New(opts ...Option) (*OsFs, error) {
-	fs := &OsFs{
+	vfs := &OsFs{
 		idm:     dummyidm.NotImplementedIdm,
 		feature: avfs.FeatBasicFs | avfs.FeatMainDirs,
 	}
 
 	if fsutil.RunTimeOS() != avfs.OsWindows {
-		fs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
 	}
 
 	for _, opt := range opts {
-		err := opt(fs)
+		err := opt(vfs)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return fs, nil
+	return vfs, nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (fs *OsFs) Features() avfs.Feature {
-	return fs.feature
+func (vfs *OsFs) Features() avfs.Feature {
+	return vfs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (fs *OsFs) HasFeature(feature avfs.Feature) bool {
-	return fs.feature&feature == feature
+func (vfs *OsFs) HasFeature(feature avfs.Feature) bool {
+	return vfs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
-func (fs *OsFs) Name() string {
+func (vfs *OsFs) Name() string {
 	return ""
 }
 
 // OSType returns the operating system type of the file system.
-func (fs *OsFs) OSType() avfs.OSType {
+func (vfs *OsFs) OSType() avfs.OSType {
 	return fsutil.RunTimeOS()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (fs *OsFs) Type() string {
+func (vfs *OsFs) Type() string {
 	return "OsFs"
 }
 
@@ -72,9 +72,9 @@ func (fs *OsFs) Type() string {
 
 // WithIdm returns a function setting the identity manager for the file system.
 func WithIdm(idm avfs.IdentityMgr) Option {
-	return func(fs *OsFs) error {
-		fs.idm = idm
-		fs.feature |= idm.Features()
+	return func(vfs *OsFs) error {
+		vfs.idm = idm
+		vfs.feature |= idm.Features()
 
 		return nil
 	}
