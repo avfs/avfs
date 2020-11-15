@@ -999,11 +999,12 @@ func (sfs *SuiteFs) FileTruncate() {
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestFileTruncate.txt")
 
-	if err := vfs.WriteFile(path, data, avfs.DefaultFilePerm); err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
 	t.Run("FileTruncate", func(t *testing.T) {
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Errorf("OpenFile : want error to be nil, got %v", err)
@@ -1029,14 +1030,14 @@ func (sfs *SuiteFs) FileTruncate() {
 		}
 	})
 
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
 	t.Run("FsTruncate", func(t *testing.T) {
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
 		for i := len(data); i >= 0; i-- {
-			err := vfs.Truncate(path, int64(i))
+			err = vfs.Truncate(path, int64(i))
 			if err != nil {
 				t.Errorf("Truncate : want error to be nil, got %v", err)
 			}
@@ -1053,7 +1054,12 @@ func (sfs *SuiteFs) FileTruncate() {
 	})
 
 	t.Run("FsTruncateOnDir", func(t *testing.T) {
-		err := vfs.Truncate(rootDir, 0)
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Truncate(rootDir, 0)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
@@ -1079,16 +1085,18 @@ func (sfs *SuiteFs) FileTruncate() {
 	})
 
 	t.Run("FsTruncateSizeNegative", func(t *testing.T) {
-		if err := vfs.WriteFile(path, data, avfs.DefaultFilePerm); err != nil {
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
-		err := vfs.Truncate(path, -1)
+		err = vfs.Truncate(path, -1)
 		CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
 	})
 
 	t.Run("FsTruncateSizeBiggerFileSize", func(t *testing.T) {
-		if err := vfs.WriteFile(path, data, avfs.DefaultFilePerm); err != nil {
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
