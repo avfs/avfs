@@ -17,6 +17,7 @@
 package orefafs
 
 import (
+	"bytes"
 	"os"
 	"sort"
 	"time"
@@ -181,12 +182,16 @@ func (nd *node) Size() int64 {
 
 // truncate truncates the file.
 func (nd *node) truncate(size int64) {
-	if nd.data == nil {
+	if size == 0 {
+		nd.data = nil
+
 		return
 	}
 
-	if size == 0 {
-		nd.data = nil
+	diff := int(size) - len(nd.data)
+	if diff > 0 {
+		nd.data = append(nd.data, bytes.Repeat([]byte{0}, diff)...)
+
 		return
 	}
 

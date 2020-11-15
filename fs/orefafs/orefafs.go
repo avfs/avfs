@@ -864,6 +864,10 @@ func (vfs *OrefaFs) Truncate(name string, size int64) error {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
 	}
 
+	if size < 0 {
+		return &os.PathError{Op: op, Path: name, Err: os.ErrInvalid}
+	}
+
 	child.mu.Lock()
 	child.truncate(size)
 	child.mu.Unlock()
@@ -1399,6 +1403,10 @@ func (f *OrefaFile) Truncate(size int64) error {
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.wantMode&avfs.WantWrite == 0 {
+		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+	}
+
+	if size < 0 {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
 	}
 
