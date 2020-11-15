@@ -1051,8 +1051,10 @@ func (sfs *SuiteFs) FileTruncate() {
 			}
 		}
 	})
-	t.Run("FsTruncateErrors", func(t *testing.T) {
+
+	t.Run("FsTruncateOnDir", func(t *testing.T) {
 		err := vfs.Truncate(rootDir, 0)
+
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Truncate", "open", rootDir, avfs.ErrIsADirectory, err)
@@ -1073,6 +1075,48 @@ func (sfs *SuiteFs) FileTruncate() {
 			CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrWinInvalidHandle, err)
 		default:
 			CheckPathError(t, "Truncate", "truncate", rootDir, os.ErrInvalid, err)
+		}
+	})
+
+	t.Run("FsTruncateSizeNegative", func(t *testing.T) {
+		if err := vfs.WriteFile(path, data, avfs.DefaultFilePerm); err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		err := vfs.Truncate(path, -1)
+		CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+	})
+
+	t.Run("FsTruncateSizeBiggerFileSize", func(t *testing.T) {
+		if err := vfs.WriteFile(path, data, avfs.DefaultFilePerm); err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		newSize := len(data) * 2
+
+		err = vfs.Truncate(path, int64(newSize))
+		if err != nil {
+			t.Errorf("Truncate : want error to be nil, got %v", err)
+		}
+
+		info, err := vfs.Stat(path)
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+
+		if newSize != int(info.Size()) {
+			t.Errorf("Stat : want size to be %d, got %d", newSize, info.Size())
+		}
+
+		gotContent, err := vfs.ReadFile(path)
+		if err != nil {
+			t.Fatalf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		wantAdded := bytes.Repeat([]byte{0}, len(data))
+		gotAdded := gotContent[len(data):]
+		if !bytes.Equal(wantAdded, gotAdded) {
+			t.Errorf("Bytes Added : want %v, got %v", wantAdded, gotAdded)
 		}
 	})
 }
