@@ -429,9 +429,7 @@ func (vfs *OsFs) UMask(mask os.FileMode) {
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
 func (vfs *OsFs) Walk(root string, walkFn filepath.WalkFunc) error {
-	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		return walkFn(path, info, err)
-	})
+	return filepath.Walk(root, walkFn)
 }
 
 // WriteFile writes data to a file named by filename.
