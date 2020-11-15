@@ -1053,7 +1053,7 @@ func (sfs *SuiteFs) FileTruncate() {
 		}
 	})
 
-	t.Run("FsTruncateOnDir", func(t *testing.T) {
+	t.Run("TruncateOnDir", func(t *testing.T) {
 		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
@@ -1084,13 +1084,23 @@ func (sfs *SuiteFs) FileTruncate() {
 		}
 	})
 
-	t.Run("FsTruncateSizeNegative", func(t *testing.T) {
+	t.Run("TruncateSizeNegative", func(t *testing.T) {
 		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
 		err = vfs.Truncate(path, -1)
+		CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+
+		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Errorf("OpenFile : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		err = f.Truncate(-1)
 		CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
 	})
 
