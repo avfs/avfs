@@ -914,6 +914,10 @@ func (vfs *MemFs) Truncate(name string, size int64) error {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
 	}
 
+	if size < 0 {
+		return &os.PathError{Op: op, Path: name, Err: os.ErrInvalid}
+	}
+
 	c.mu.Lock()
 	c.truncate(size)
 	c.mu.Unlock()
@@ -1464,6 +1468,10 @@ func (f *MemFile) Truncate(size int64) error {
 
 	if f.name == "" {
 		return os.ErrInvalid
+	}
+
+	if size < 0 {
+		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
 	}
 
 	if f.nd == nil {

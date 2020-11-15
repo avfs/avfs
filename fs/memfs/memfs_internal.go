@@ -17,6 +17,7 @@
 package memfs
 
 import (
+	"bytes"
 	"os"
 	"sort"
 	"time"
@@ -388,12 +389,16 @@ func (fn *fileNode) Size() int64 {
 
 // truncate truncates the file.
 func (fn *fileNode) truncate(size int64) {
-	if fn.data == nil {
+	if size == 0 {
+		fn.data = nil
+
 		return
 	}
 
-	if size == 0 {
-		fn.data = nil
+	diff := int(size) - len(fn.data)
+	if diff > 0 {
+		fn.data = append(fn.data, bytes.Repeat([]byte{0}, diff)...)
+
 		return
 	}
 
