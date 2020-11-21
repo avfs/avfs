@@ -25,13 +25,24 @@ import (
 
 // SuiteIdm is a test suite for an identity manager.
 type SuiteIdm struct {
-	t   *testing.T
+	// t is passed to Test functions to manage test state and support formatted test logs.
+	t *testing.T
+
+	// idm is the identity manager to be tested.
 	idm avfs.IdentityMgr
+
+	// Groups contains the test groups created with the identity manager.
+	Groups []avfs.GroupReader
+
+	// Users contains the test users created with the identity manager.
+	Users []avfs.UserReader
 
 	// hasIdm is true when the identity manager has the feature avfs.FeatIdentityMgr.
 	hasIdm bool
+
 	// hasUser is true when the identity manager implements avfs.UserConnecter.
 	hasUser bool
+
 	// hasRoot is true when the current user is root.
 	hasRoot bool
 }
@@ -39,11 +50,8 @@ type SuiteIdm struct {
 // NewSuiteIdm returns a new test suite for an identity manager.
 func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 	sIdm := &SuiteIdm{
-		t:       t,
-		idm:     idm,
-		hasIdm:  false,
-		hasUser: false,
-		hasRoot: false,
+		t:   t,
+		idm: idm,
 	}
 
 	defer func() {
@@ -73,8 +81,8 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 		sIdm.hasRoot = true
 	}
 
-	CreateGroups(t, idm, "")
-	CreateUsers(t, idm, "")
+	sIdm.Groups = CreateGroups(t, idm, "")
+	sIdm.Users = CreateUsers(t, idm, "")
 
 	return sIdm
 }
