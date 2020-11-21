@@ -161,13 +161,12 @@ func UserInfos() []*UserInfo {
 
 // CreateUsers creates test users with a suffix appended to each user.
 // Errors are ignored if the user already exists or the function UserAdd is not implemented.
-func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*UserInfo {
-	uis := UserInfos()
-	for _, ui := range uis {
+func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) (users []avfs.UserReader) {
+	for _, ui := range UserInfos() {
 		userName := ui.Name + suffix
 		groupName := ui.GroupName + suffix
 
-		_, err := idm.UserAdd(userName, groupName)
+		u, err := idm.UserAdd(userName, groupName)
 		if err != nil {
 			e, ok := err.(*os.PathError)
 			if ok && e.Op == "mkdir" && e.Err == avfs.ErrFileExists {
@@ -178,7 +177,9 @@ func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*UserInfo 
 				t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
 			}
 		}
+
+		users = append(users, u)
 	}
 
-	return uis
+	return
 }
