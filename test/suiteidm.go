@@ -17,6 +17,7 @@
 package test
 
 import (
+	"os"
 	"os/exec"
 	"testing"
 
@@ -167,11 +168,15 @@ func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*UserInfo 
 		groupName := ui.GroupName + suffix
 
 		_, err := idm.UserAdd(userName, groupName)
-		if err != nil &&
-			err != exec.ErrNotFound &&
-			err != avfs.ErrPermDenied &&
-			err != avfs.AlreadyExistsUserError(userName) {
-			t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+		if err != nil {
+			e, ok := err.(*os.PathError)
+			if ok && e.Op == "mkdir" && e.Err == avfs.ErrFileExists {
+				continue
+			}
+
+			if err != avfs.AlreadyExistsUserError(userName) {
+				t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+			}
 		}
 	}
 
