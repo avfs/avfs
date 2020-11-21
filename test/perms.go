@@ -71,11 +71,11 @@ func (sfs *SuiteFs) Chown() {
 	vfs := sfs.GetFsRoot()
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
-	users := GetUsers()
+	uis := UserInfos()
 
 	t.Run("ChownDir", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 
 			u, err := vfs.LookupUser(wantName)
 			if err != nil {
@@ -109,8 +109,8 @@ func (sfs *SuiteFs) Chown() {
 	})
 
 	t.Run("ChownFile", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 
 			u, err := vfs.LookupUser(wantName)
 			if err != nil {
@@ -154,11 +154,11 @@ func (sfs *SuiteFs) Lchown() {
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	symlinks := CreateSymlinks(t, vfs, rootDir)
-	users := GetUsers()
+	uis := UserInfos()
 
 	t.Run("LchownDir", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 
 			u, err := vfs.LookupUser(wantName)
 			if err != nil {
@@ -192,8 +192,8 @@ func (sfs *SuiteFs) Lchown() {
 	})
 
 	t.Run("LchownFile", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 
 			u, err := vfs.LookupUser(wantName)
 			if err != nil {
@@ -227,8 +227,8 @@ func (sfs *SuiteFs) Lchown() {
 	})
 
 	t.Run("LchownSymlink", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 
 			u, err := vfs.LookupUser(wantName)
 			if err != nil {
@@ -431,7 +431,7 @@ func (sfs *SuiteFs) AccessDir() {
 	const baseDir = "baseDir"
 
 	vfsRoot := sfs.GetFsRoot()
-	users := GetUsers()
+	uis := UserInfos()
 
 	ut, err := vfsRoot.LookupUser(UsrTest)
 	if err != nil {
@@ -467,8 +467,8 @@ func (sfs *SuiteFs) AccessDir() {
 	}
 
 	t.Run("AccessDir", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 			vfs, _ := sfs.GetFsAsUser(wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
@@ -525,7 +525,7 @@ func (sfs *SuiteFs) AccessFile() {
 	defer removeDir()
 
 	vfsRoot := sfs.GetFsRoot()
-	users := GetUsers()
+	uis := UserInfos()
 
 	usrTest, err := vfsRoot.LookupUser(UsrTest)
 	if err != nil {
@@ -556,8 +556,8 @@ func (sfs *SuiteFs) AccessFile() {
 	}
 
 	t.Run("AccessFile", func(t *testing.T) {
-		for _, user := range users {
-			wantName := user.Name
+		for _, ui := range uis {
+			wantName := ui.Name
 			vfs, _ := sfs.GetFsAsUser(wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
@@ -653,8 +653,8 @@ func (sfs *SuiteFs) SuiteWriteDenied() {
 	}
 
 	t.Run("WriteDenied", func(t *testing.T) {
-		for _, u := range GetUsers() {
-			vfs, u := sfs.GetFsAsUser(u.Name)
+		for _, ui := range UserInfos() {
+			vfs, u := sfs.GetFsAsUser(ui.Name)
 
 			err := vfs.Chmod(pathDir, avfs.DefaultDirPerm)
 			CheckPathError(t, "Chmod", "chmod", pathDir, avfs.ErrOpNotPermitted, err)

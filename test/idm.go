@@ -141,20 +141,20 @@ func (sIdm *SuiteIdm) UserAddDel() {
 	}
 
 	_ = CreateGroups(t, idm, suffix)
-	users := GetUsers()
+	uis := UserInfos()
 
 	prevUid := 0
 
 	t.Run("UserAdd", func(t *testing.T) {
-		for _, user := range users {
-			groupName := user.GroupName + suffix
+		for _, ui := range uis {
+			groupName := ui.GroupName + suffix
 
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
 				t.Fatalf("LookupGroup %s : want error to be nil, got %v", groupName, err)
 			}
 
-			userName := user.Name + suffix
+			userName := ui.Name + suffix
 			wantUserErr := avfs.UnknownUserError(userName)
 
 			_, err = idm.LookupUser(userName)
@@ -205,9 +205,9 @@ func (sIdm *SuiteIdm) UserAddDel() {
 	})
 
 	t.Run("UserAddDelErrors", func(t *testing.T) {
-		for _, user := range users {
-			groupName := user.GroupName + suffix
-			userName := user.Name + suffix
+		for _, ui := range uis {
+			groupName := ui.GroupName + suffix
+			userName := ui.Name + suffix
 
 			_, err := idm.UserAdd(userName, groupName)
 			if err != avfs.AlreadyExistsUserError(userName) {
@@ -215,7 +215,7 @@ func (sIdm *SuiteIdm) UserAddDel() {
 					avfs.AlreadyExistsUserError(userName), err)
 			}
 
-			groupNameNotFound := user.GroupName + "NotFound"
+			groupNameNotFound := ui.GroupName + "NotFound"
 
 			_, err = idm.UserAdd(userName, groupNameNotFound)
 			if err != avfs.UnknownGroupError(groupNameNotFound) {
@@ -223,7 +223,7 @@ func (sIdm *SuiteIdm) UserAddDel() {
 					avfs.UnknownGroupError(groupNameNotFound), err)
 			}
 
-			userNameNotFound := user.Name + "NotFound"
+			userNameNotFound := ui.Name + "NotFound"
 
 			err = idm.UserDel(userNameNotFound)
 			if err != avfs.UnknownUserError(userNameNotFound) {
@@ -234,8 +234,8 @@ func (sIdm *SuiteIdm) UserAddDel() {
 	})
 
 	t.Run("UserDel", func(t *testing.T) {
-		for _, user := range users {
-			userName := user.Name + suffix
+		for _, ui := range uis {
+			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
 			if err != nil {
@@ -296,8 +296,8 @@ func (sIdm *SuiteIdm) Lookup() {
 	})
 
 	t.Run("LookupUser", func(t *testing.T) {
-		for _, user := range GetUsers() {
-			userName := user.Name + suffix
+		for _, ui := range UserInfos() {
+			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
 			if err != nil {
@@ -356,8 +356,8 @@ func (sIdm *SuiteIdm) User() {
 	})
 
 	t.Run("UserExists", func(t *testing.T) {
-		for _, user := range GetUsers() {
-			userName := user.Name + suffix
+		for _, ui := range UserInfos() {
+			userName := ui.Name + suffix
 
 			lu, err := idm.LookupUser(userName)
 			if err != nil {
@@ -420,20 +420,20 @@ func (sIdm *SuiteIdm) UserDenied() {
 		t.Fatalf("User: want error to be nil, got %v", err)
 	}
 
-	for _, u := range GetUsers() {
+	for _, ui := range UserInfos() {
 		// skip UsrTest : can't try to delete a user in an active process.
-		if u.Name == UsrTest {
+		if ui.Name == UsrTest {
 			continue
 		}
 
-		name := u.Name + suffix
+		name := ui.Name + suffix
 
-		_, err = idm.UserAdd(name, u.GroupName)
+		_, err = idm.UserAdd(name, ui.GroupName)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("UserAdd %s : want error to be %v, got %v", name, avfs.ErrPermDenied, err)
 		}
 
-		err = idm.UserDel(u.Name)
+		err = idm.UserDel(ui.Name)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("UserDel %s : want error to be %v, got %v", name, avfs.ErrPermDenied, err)
 		}

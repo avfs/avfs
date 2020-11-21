@@ -84,7 +84,7 @@ func (sIdm *SuiteIdm) Type() string {
 	return sIdm.idm.Type()
 }
 
-// GroupInfo contains then information to create a test group.
+// GroupInfo contains information to create a test group.
 type GroupInfo struct {
 	Name string
 }
@@ -130,8 +130,8 @@ func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) []*GroupInf
 	return groups
 }
 
-// User contains the data to test users.
-type User struct {
+// UserInfo contains information to create a test user.
+type UserInfo struct {
 	Name      string
 	GroupName string
 }
@@ -147,24 +147,24 @@ const (
 	UsrOth = "UsrOth"
 )
 
-// GetUsers returns the test users.
-func GetUsers() []*User {
-	users := []*User{
+// UserInfos returns a UserInfo slice describing the test users.
+func UserInfos() []*UserInfo {
+	uis := []*UserInfo{
 		{Name: UsrTest, GroupName: grpTest},
 		{Name: UsrGrp, GroupName: grpTest},
 		{Name: UsrOth, GroupName: grpOther},
 	}
 
-	return users
+	return uis
 }
 
 // CreateUsers creates test users with a suffix appended to each user.
 // Errors are ignored if the user already exists or the function UserAdd is not implemented.
-func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*User {
-	users := GetUsers()
-	for _, user := range users {
-		userName := user.Name + suffix
-		groupName := user.GroupName + suffix
+func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*UserInfo {
+	uis := UserInfos()
+	for _, ui := range uis {
+		userName := ui.Name + suffix
+		groupName := ui.GroupName + suffix
 
 		_, err := idm.UserAdd(userName, groupName)
 		if err != nil &&
@@ -175,5 +175,5 @@ func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) []*User {
 		}
 	}
 
-	return users
+	return uis
 }
