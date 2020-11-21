@@ -111,8 +111,8 @@ func GroupInfos() []*GroupInfo {
 	return gis
 }
 
-// CreateGroups creates test groups with a suffix appended to each group.
-// Errors are ignored if the group already exists or the function GroupAdd is not implemented.
+// CreateGroups creates and returns test groups with a suffix appended to each group.
+// Errors are ignored if the group already exists.
 func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) (groups []avfs.GroupReader) {
 	for _, group := range GroupInfos() {
 		groupName := group.Name + suffix
@@ -156,8 +156,8 @@ func UserInfos() []*UserInfo {
 	return uis
 }
 
-// CreateUsers creates test users with a suffix appended to each user.
-// Errors are ignored if the user already exists or the function UserAdd is not implemented.
+// CreateUsers creates and returns test users with a suffix appended to each user.
+// Errors are ignored if the user or his home directory already exists.
 func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) (users []avfs.UserReader) {
 	for _, ui := range UserInfos() {
 		userName := ui.Name + suffix
