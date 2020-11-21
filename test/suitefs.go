@@ -49,6 +49,12 @@ type SuiteFs struct {
 
 	// osType is the operating system of the filesystem te test.
 	osType avfs.OSType
+
+	// Groups contains the test groups created with the identity manager.
+	Groups []avfs.GroupReader
+
+	// Users contains the test users created with the identity manager.
+	Users []avfs.UserReader
 }
 
 // Option defines the option function used for initializing SuiteFs.
@@ -62,34 +68,33 @@ func NewSuiteFs(t *testing.T, vfsRoot avfs.Fs, opts ...Option) *SuiteFs {
 
 	currentUser := vfsRoot.CurrentUser()
 	canTestPerm := vfsRoot.HasFeature(avfs.FeatIdentityMgr) && currentUser.IsRoot()
-	vfs := vfsRoot
 
-	info := "Info vfs : type = " + vfs.Type()
-	if vfs.Name() != "" {
-		info += ", name = " + vfs.Name()
+	info := "Info vfs : type = " + vfsRoot.Type()
+	if vfsRoot.Name() != "" {
+		info += ", name = " + vfsRoot.Name()
 	}
 
 	t.Log(info)
 
-	if canTestPerm {
-		CreateGroups(t, vfs, "")
-		CreateUsers(t, vfs, "")
-
-		_, err := vfs.User(UsrTest)
-		if err != nil {
-			t.Fatalf("User %s : want error to be nil, got %s", UsrTest, err)
-		}
-	}
-
 	sfs := &SuiteFs{
 		t:           t,
 		vfsRoot:     vfsRoot,
-		vfsW:        vfs,
-		vfsR:        vfs,
+		vfsW:        vfsRoot,
+		vfsR:        vfsRoot,
 		rootDir:     "",
 		maxRace:     1000,
 		canTestPerm: canTestPerm,
 		osType:      fsutil.RunTimeOS(),
+	}
+
+	if canTestPerm {
+		sfs.Groups = CreateGroups(t, vfsRoot, "")
+		sfs.Users = CreateUsers(t, vfsRoot, "")
+
+		_, err := vfsRoot.User(UsrTest)
+		if err != nil {
+			t.Fatalf("User %s : want error to be nil, got %s", UsrTest, err)
+		}
 	}
 
 	for _, opt := range opts {
