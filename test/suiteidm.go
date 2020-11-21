@@ -18,7 +18,6 @@ package test
 
 import (
 	"os"
-	"os/exec"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -114,21 +113,19 @@ func GroupInfos() []*GroupInfo {
 
 // CreateGroups creates test groups with a suffix appended to each group.
 // Errors are ignored if the group already exists or the function GroupAdd is not implemented.
-func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) []*GroupInfo {
-	groups := GroupInfos()
-	for _, group := range groups {
+func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) (groups []avfs.GroupReader) {
+	for _, group := range GroupInfos() {
 		groupName := group.Name + suffix
 
-		_, err := idm.GroupAdd(groupName)
-		if err != nil &&
-			err != exec.ErrNotFound &&
-			err != avfs.ErrPermDenied &&
-			err != avfs.AlreadyExistsGroupError(groupName) {
+		g, err := idm.GroupAdd(groupName)
+		if err != nil && err != avfs.AlreadyExistsGroupError(groupName) {
 			t.Fatalf("GroupAdd %s : want error to be nil, got %v", groupName, err)
 		}
+
+		groups = append(groups, g)
 	}
 
-	return groups
+	return
 }
 
 // UserInfo contains information to create a test user.
