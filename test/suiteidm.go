@@ -173,13 +173,22 @@ func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) (users []avf
 
 		u, err := idm.UserAdd(userName, groupName)
 		if err != nil {
-			e, ok := err.(*os.PathError)
-			if ok && e.Op == "mkdir" && e.Err == avfs.ErrFileExists {
-				continue
+			switch e := err.(type) {
+			case *os.PathError:
+				if e.Op != "mkdir" || e.Err != avfs.ErrFileExists {
+					t.Fatalf("UserAdd %s : want Mkdir error, got %v", userName, err)
+				}
+			default:
+				if err != avfs.AlreadyExistsUserError(userName) {
+					t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+				}
 			}
 
-			if err != avfs.AlreadyExistsUserError(userName) {
-				t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+			if u == nil {
+				u, err = idm.LookupUser(userName)
+				if err != nil {
+					t.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
+				}
 			}
 		}
 
