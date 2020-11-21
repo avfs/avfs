@@ -84,8 +84,8 @@ func (sIdm *SuiteIdm) Type() string {
 	return sIdm.idm.Type()
 }
 
-// Group contains the data to test groups.
-type Group struct {
+// GroupInfo contains then information to create a test group.
+type GroupInfo struct {
 	Name string
 }
 
@@ -100,21 +100,21 @@ const (
 	grpEmpty = "grpEmpty"
 )
 
-// GetGroups returns the test groups.
-func GetGroups() []*Group {
-	groups := []*Group{
+// GroupInfos returns a GroupInfo slice describing the test groups.
+func GroupInfos() []*GroupInfo {
+	gis := []*GroupInfo{
 		{Name: grpTest},
 		{Name: grpOther},
 		{Name: grpEmpty},
 	}
 
-	return groups
+	return gis
 }
 
 // CreateGroups creates test groups with a suffix appended to each group.
 // Errors are ignored if the group already exists or the function GroupAdd is not implemented.
-func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) []*Group {
-	groups := GetGroups()
+func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) []*GroupInfo {
+	groups := GroupInfos()
 	for _, group := range groups {
 		groupName := group.Name + suffix
 

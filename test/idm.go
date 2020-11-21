@@ -44,12 +44,12 @@ func (sIdm *SuiteIdm) GroupAddDel() {
 		return
 	}
 
-	groups := GetGroups()
+	gis := GroupInfos()
 	prevGid := 0
 
 	t.Run("GroupAdd", func(t *testing.T) {
-		for _, group := range groups {
-			groupName := group.Name + suffix
+		for _, gi := range gis {
+			groupName := gi.Name + suffix
 			wantGroupErr := avfs.UnknownGroupError(groupName)
 
 			_, err := idm.LookupGroup(groupName)
@@ -86,8 +86,8 @@ func (sIdm *SuiteIdm) GroupAddDel() {
 	})
 
 	t.Run("GroupAddExists", func(t *testing.T) {
-		for _, group := range groups {
-			groupName := group.Name + suffix
+		for _, gi := range gis {
+			groupName := gi.Name + suffix
 
 			_, err := idm.GroupAdd(groupName)
 			if err != avfs.AlreadyExistsGroupError(groupName) {
@@ -98,8 +98,8 @@ func (sIdm *SuiteIdm) GroupAddDel() {
 	})
 
 	t.Run("GroupDel", func(t *testing.T) {
-		for _, group := range groups {
-			groupName := group.Name + suffix
+		for _, gi := range gis {
+			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
@@ -275,8 +275,8 @@ func (sIdm *SuiteIdm) Lookup() {
 	CreateUsers(t, idm, suffix)
 
 	t.Run("LookupGroup", func(t *testing.T) {
-		for _, group := range GetGroups() {
-			groupName := group.Name + suffix
+		for _, gi := range GroupInfos() {
+			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
 			if err != nil {
@@ -439,8 +439,8 @@ func (sIdm *SuiteIdm) UserDenied() {
 		}
 	}
 
-	for _, g := range GetGroups() {
-		name := g.Name + suffix
+	for _, gi := range GroupInfos() {
+		name := gi.Name + suffix
 
 		_, err = idm.GroupAdd(name)
 		if err != avfs.ErrPermDenied {
