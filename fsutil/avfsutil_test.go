@@ -19,11 +19,11 @@
 package fsutil_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/avfs/avfs"
-
 	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/fs/orefafs"
 	"github.com/avfs/avfs/fs/osfs"
@@ -63,6 +63,69 @@ func TestAsStatT(t *testing.T) {
 		sfs := test.NewSuiteFs(t, vfs)
 		sfs.StatT()
 	})
+}
+
+func TestCheckPermission(t *testing.T) {
+	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
+	if err != nil {
+		t.Fatalf("osfs.New : want error to be nil, got %v", err)
+	}
+
+	sfs := test.NewSuiteFs(t, vfs)
+
+	_, rootDir, removeDir := sfs.CreateRootDir(test.UsrTest)
+	defer removeDir()
+
+	for perm := os.FileMode(0); perm <= 0o777; perm++ {
+		path := fmt.Sprintf("%s/file%03o", rootDir, perm)
+
+		err = vfs.WriteFile(path, []byte(path), perm)
+		if err != nil {
+			t.Fatalf("WriteFile %s : want error to be nil, got %v", path, err)
+		}
+	}
+
+	for _, u := range sfs.Users {
+		_, err = vfs.User(u.Name())
+		if err != nil {
+			t.Fatalf("User %s : want error to be nil, got %v", u.Name(), err)
+		}
+
+		for perm := os.FileMode(0); perm <= 0o777; perm++ {
+			path := fmt.Sprintf("%s/file%03o", rootDir, perm)
+
+			info, err := vfs.Stat(path)
+			if err != nil {
+				t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
+			}
+
+			u := vfs.CurrentUser()
+
+			wantCheckRead := fsutil.CheckPermission(info, avfs.WantRead, u)
+			gotCheckRead := true
+
+			_, err = vfs.ReadFile(path)
+			if err != nil {
+				gotCheckRead = false
+			}
+
+			if wantCheckRead != gotCheckRead {
+				t.Errorf("CheckPermission %s : want read to be %t, got %t", path, wantCheckRead, gotCheckRead)
+			}
+
+			wantCheckWrite := fsutil.CheckPermission(info, avfs.WantWrite, u)
+			gotCheckWrite := true
+
+			err = vfs.WriteFile(path, []byte(path), perm)
+			if err != nil {
+				gotCheckWrite = false
+			}
+
+			if wantCheckWrite != gotCheckWrite {
+				t.Errorf("CheckPermission %s : want write to be %t, got %t", path, wantCheckWrite, gotCheckWrite)
+			}
+		}
+	}
 }
 
 func TestCreateBaseDirs(t *testing.T) {
