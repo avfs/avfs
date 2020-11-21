@@ -271,11 +271,11 @@ func (sIdm *SuiteIdm) Lookup() {
 		return
 	}
 
-	groups := CreateGroups(t, idm, suffix)
-	users := CreateUsers(t, idm, suffix)
+	CreateGroups(t, idm, suffix)
+	CreateUsers(t, idm, suffix)
 
 	t.Run("LookupGroup", func(t *testing.T) {
-		for _, group := range groups {
+		for _, group := range GetGroups() {
 			groupName := group.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
@@ -296,7 +296,7 @@ func (sIdm *SuiteIdm) Lookup() {
 	})
 
 	t.Run("LookupUser", func(t *testing.T) {
-		for _, user := range users {
+		for _, user := range GetUsers() {
 			userName := user.Name + suffix
 
 			u, err := idm.LookupUser(userName)
@@ -336,8 +336,8 @@ func (sIdm *SuiteIdm) User() {
 
 	uc, _ := idm.(avfs.UserConnecter)
 
-	_ = CreateGroups(t, idm, suffix)
-	users := CreateUsers(t, idm, suffix)
+	CreateGroups(t, idm, suffix)
+	CreateUsers(t, idm, suffix)
 
 	t.Run("UserNotExists", func(t *testing.T) {
 		const userName = "notExistingUser"
@@ -356,7 +356,7 @@ func (sIdm *SuiteIdm) User() {
 	})
 
 	t.Run("UserExists", func(t *testing.T) {
-		for _, user := range users {
+		for _, user := range GetUsers() {
 			userName := user.Name + suffix
 
 			lu, err := idm.LookupUser(userName)
