@@ -204,6 +204,7 @@ func (vfs *OrefaFs) Dir(path string) string {
 // EvalSymlinks calls Clean on the result.
 func (vfs *OrefaFs) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
+
 	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
@@ -1170,6 +1171,7 @@ func (f *OrefaFile) Readdir(n int) (fi []os.FileInfo, err error) {
 
 		if n <= 0 {
 			f.dirInfos = nil
+
 			return infos, nil
 		}
 
@@ -1248,6 +1250,7 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 
 		if n <= 0 {
 			f.dirNames = nil
+
 			return names, nil
 		}
 

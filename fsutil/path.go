@@ -48,6 +48,7 @@ func (b *lazybuf) append(c byte) {
 	if b.buf == nil {
 		if b.w < len(b.path) && b.path[b.w] == c {
 			b.w++
+
 			return
 		}
 
@@ -327,6 +328,7 @@ func glob(vfs avfs.Fs, dir, pattern string, matches []string) (m []string, e err
 // recognized by Match.
 func hasMeta(path string) bool {
 	magicChars := `*?[\`
+
 	return strings.ContainsAny(path, magicChars)
 }
 

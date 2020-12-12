@@ -203,6 +203,7 @@ func TestSegmentPath(t *testing.T) {
 
 			if i > len(c.want) {
 				t.Errorf("%s : want %d parts, got only %d", c.path, i, len(c.want))
+
 				break
 			}
 

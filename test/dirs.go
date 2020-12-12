@@ -110,6 +110,7 @@ func (sfs *SuiteFs) Chdir() {
 	t.Run("ChdirFile", func(t *testing.T) {
 		if vfs.OSType() == avfs.OsWindows {
 			t.Logf("File.Chdir() is not supported by windows, skipping")
+
 			return
 		}
 
@@ -181,6 +182,7 @@ func (sfs *SuiteFs) Mkdir() {
 			fi, err := vfs.Stat(path)
 			if err != nil {
 				t.Errorf("stat '%s' : want no error, got %v", path, err)
+
 				continue
 			}
 

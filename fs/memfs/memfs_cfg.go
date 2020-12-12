@@ -102,6 +102,7 @@ func (vfs *MemFs) Type() string {
 func WithMainDirs() Option {
 	return func(vfs *MemFs) error {
 		vfs.fsAttrs.feature |= avfs.FeatMainDirs
+
 		return nil
 	}
 }

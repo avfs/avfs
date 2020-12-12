@@ -60,6 +60,7 @@ func (sIdm *SuiteIdm) GroupAddDel() {
 			g, err := idm.GroupAdd(groupName)
 			if err != nil {
 				t.Errorf("GroupAdd %s : want error to be nil, got %v", groupName, err)
+
 				continue
 			}
 
@@ -169,6 +170,7 @@ func (sIdm *SuiteIdm) UserAddDel() {
 
 			if u == nil {
 				t.Errorf("UserAdd %s : want user to be not nil, got nil", userName)
+
 				continue
 			}
 
@@ -372,6 +374,7 @@ func (sIdm *SuiteIdm) User() {
 				u, err := uc.User(userName)
 				if err != nil {
 					t.Errorf("User %s : want error to be nil, got %v", userName, err)
+
 					continue
 				}
 

@@ -39,6 +39,7 @@ func (sfs *SuiteFs) PermWrite() {
 
 	if !sfs.canTestPerm {
 		t.Log("Info - Fs Perm Write : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
+
 		return
 	}
 
@@ -55,6 +56,7 @@ func (sfs *SuiteFs) PermRead() {
 
 	if !sfs.canTestPerm {
 		t.Log("Info - Fs Perm Read : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
+
 		return
 	}
 
@@ -93,6 +95,7 @@ func (sfs *SuiteFs) Chown() {
 				fst, err := vfs.Stat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 					continue
 				}
 
@@ -128,6 +131,7 @@ func (sfs *SuiteFs) Chown() {
 				fst, err := vfs.Stat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 					continue
 				}
 
@@ -176,6 +180,7 @@ func (sfs *SuiteFs) Lchown() {
 				fst, err := vfs.Lstat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 					continue
 				}
 
@@ -211,6 +216,7 @@ func (sfs *SuiteFs) Lchown() {
 				fst, err := vfs.Lstat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 					continue
 				}
 
@@ -246,6 +252,7 @@ func (sfs *SuiteFs) Lchown() {
 				fst, err := vfs.Lstat(path)
 				if err != nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 					continue
 				}
 

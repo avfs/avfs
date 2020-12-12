@@ -120,6 +120,7 @@ func (sfs *SuiteFs) Lstat() {
 			info, err := vfs.Lstat(path)
 			if err != nil {
 				t.Errorf("Lstat %s : want error to be nil, got %v", path, err)
+
 				continue
 			}
 
@@ -145,6 +146,7 @@ func (sfs *SuiteFs) Lstat() {
 			info, err := vfs.Lstat(path)
 			if err != nil {
 				t.Errorf("Lstat %s : want error to be nil, got %v", path, err)
+
 				continue
 			}
 
@@ -518,6 +520,7 @@ func (sfs *SuiteFs) Stat() {
 			info, err := vfs.Stat(path)
 			if err != nil {
 				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 				continue
 			}
 
@@ -543,6 +546,7 @@ func (sfs *SuiteFs) Stat() {
 			info, err := vfs.Stat(path)
 			if err != nil {
 				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
 				continue
 			}
 
@@ -577,6 +581,7 @@ func (sfs *SuiteFs) Stat() {
 					t.Errorf("Stat %s : want error to be nil, got %v", newPath, err)
 				}
 				CheckPathError(t, "Lstat", "stat", newPath, sl.WantErr, err)
+
 				continue
 			}
 

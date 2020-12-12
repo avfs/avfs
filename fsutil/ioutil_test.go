@@ -123,6 +123,7 @@ func TestTempFile_pattern(t *testing.T) {
 		f, err := vfs.TempFile("", tt.pattern)
 		if err != nil {
 			t.Errorf("TempFile(..., %q) error: %v", tt.pattern, err)
+
 			continue
 		}
 

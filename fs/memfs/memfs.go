@@ -210,6 +210,7 @@ func (vfs *MemFs) Clean(path string) string {
 // Clone returns a shallow copy of the current file system.
 func (vfs *MemFs) Clone() avfs.Fs {
 	newFs := *vfs
+
 	return &newFs
 }
 
@@ -1245,6 +1246,7 @@ func (f *MemFile) Readdir(n int) (fi []os.FileInfo, err error) {
 
 		if n <= 0 {
 			f.dirInfos = nil
+
 			return infos, nil
 		}
 
@@ -1321,6 +1323,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 
 		if n <= 0 {
 			f.dirNames = nil
+
 			return names, nil
 		}
 

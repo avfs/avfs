@@ -92,6 +92,7 @@ func (vfs *RoFs) Chown(name string, uid, gid int) error {
 // If there is an error, it will be of type *PathError.
 func (vfs *RoFs) Chroot(path string) error {
 	const op = "chroot"
+
 	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
@@ -147,6 +148,7 @@ func (vfs *RoFs) Clone() avfs.Fs {
 // If there is an error, it will be of type *PathError.
 func (vfs *RoFs) Create(name string) (avfs.File, error) {
 	const op = "open"
+
 	return &RoFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
@@ -362,6 +364,7 @@ func (vfs *RoFs) Rel(basepath, targpath string) (string, error) {
 // If there is an error, it will be of type *PathError.
 func (vfs *RoFs) Remove(name string) error {
 	const op = "remove"
+
 	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
@@ -372,6 +375,7 @@ func (vfs *RoFs) Remove(name string) error {
 // If there is an error, it will be of type *PathError.
 func (vfs *RoFs) RemoveAll(path string) error {
 	const op = "removeall"
+
 	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
@@ -381,6 +385,7 @@ func (vfs *RoFs) RemoveAll(path string) error {
 // If there is an error, it will be of type *LinkError.
 func (vfs *RoFs) Rename(oldname, newname string) error {
 	const op = "rename"
+
 	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 
@@ -413,6 +418,7 @@ func (vfs *RoFs) Stat(name string) (os.FileInfo, error) {
 // If there is an error, it will be of type *LinkError.
 func (vfs *RoFs) Symlink(oldname, newname string) error {
 	const op = "symlink"
+
 	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
 

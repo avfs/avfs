@@ -111,12 +111,14 @@ func (sfs *SuiteFs) Abs() {
 			info, err := vfs.Stat(path)
 			if err != nil {
 				t.Errorf("%s: %s", path, err)
+
 				continue
 			}
 
 			abspath, err := vfs.Abs(path)
 			if err != nil {
 				t.Errorf("Abs(%q) error: %v", path, err)
+
 				continue
 			}
 
@@ -573,6 +575,7 @@ func (sfs *SuiteFs) Glob() {
 		dirNames, err := vfs.Glob(pattern)
 		if err != nil {
 			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
+
 			return
 		}
 
