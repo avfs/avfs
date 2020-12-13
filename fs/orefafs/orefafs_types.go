@@ -23,8 +23,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// OrefaFs implements a memory file system using the avfs.VFS interface.
-type OrefaFs struct {
+// OrefaFS implements a memory file system using the avfs.VFS interface.
+type OrefaFS struct {
 	mu      sync.RWMutex
 	nodes   nodes
 	curDir  string
@@ -36,7 +36,7 @@ type OrefaFs struct {
 // OrefaFile represents an open file descriptor.
 type OrefaFile struct {
 	mu       sync.RWMutex
-	vFs      *OrefaFs
+	orFS     *OrefaFS
 	nd       *node
 	name     string
 	at       int64
@@ -46,8 +46,8 @@ type OrefaFile struct {
 	dirIndex int
 }
 
-// Option defines the option function used for initializing OrefaFs.
-type Option func(*OrefaFs) error
+// Option defines the option function used for initializing OrefaFS.
+type Option func(*OrefaFS) error
 
 // nodes is the map of nodes (files or directory) where the key is the absolute path.
 type nodes map[string]*node

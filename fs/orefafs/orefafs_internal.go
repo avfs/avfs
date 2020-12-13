@@ -53,21 +53,21 @@ func (nd *node) addChild(name string, child *node) {
 }
 
 // createDir creates a new directory.
-func (vfs *OrefaFs) createDir(parent *node, absPath, fileName string, perm os.FileMode) *node {
+func (vfs *OrefaFS) createDir(parent *node, absPath, fileName string, perm os.FileMode) *node {
 	mode := os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.umask))
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createFile creates a new file.
-func (vfs *OrefaFs) createFile(parent *node, absPath, fileName string, perm os.FileMode) *node {
+func (vfs *OrefaFS) createFile(parent *node, absPath, fileName string, perm os.FileMode) *node {
 	mode := perm & avfs.FileModeMask &^ os.FileMode(vfs.umask)
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createNode creates a new node (directory or file).
-func (vfs *OrefaFs) createNode(parent *node, absPath, fileName string, mode os.FileMode) *node {
+func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode os.FileMode) *node {
 	nd := &node{
 		mtime: time.Now().UnixNano(),
 		mode:  mode,

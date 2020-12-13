@@ -24,9 +24,9 @@ import (
 	"github.com/avfs/avfs/fsutil"
 )
 
-// New returns a new memory file system (OrefaFs).
-func New(opts ...Option) (*OrefaFs, error) {
-	vfs := &OrefaFs{
+// New returns a new memory file system (OrefaFS).
+func New(opts ...Option) (*OrefaFS, error) {
+	vfs := &OrefaFS{
 		nodes:   make(nodes),
 		curDir:  string(avfs.PathSeparator),
 		umask:   int32(fsutil.UMask.Get()),
@@ -59,35 +59,35 @@ func New(opts ...Option) (*OrefaFs, error) {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *OrefaFs) Features() avfs.Feature {
+func (vfs *OrefaFS) Features() avfs.Feature {
 	return vfs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *OrefaFs) HasFeature(feature avfs.Feature) bool {
+func (vfs *OrefaFS) HasFeature(feature avfs.Feature) bool {
 	return vfs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
-func (vfs *OrefaFs) Name() string {
+func (vfs *OrefaFS) Name() string {
 	return vfs.name
 }
 
 // OSType returns the operating system type of the file system.
-func (vfs *OrefaFs) OSType() avfs.OSType {
+func (vfs *OrefaFS) OSType() avfs.OSType {
 	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *OrefaFs) Type() string {
-	return "OrefaFs"
+func (vfs *OrefaFS) Type() string {
+	return "OrefaFS"
 }
 
 // Options
 
 // WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
 func WithMainDirs() Option {
-	return func(vfs *OrefaFs) error {
+	return func(vfs *OrefaFS) error {
 		vfs.feature |= avfs.FeatMainDirs
 
 		return nil

@@ -38,7 +38,7 @@ import (
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (vfs *OrefaFs) Abs(path string) (string, error) {
+func (vfs *OrefaFS) Abs(path string) (string, error) {
 	return fsutil.Abs(vfs, path)
 }
 
@@ -46,13 +46,13 @@ func (vfs *OrefaFs) Abs(path string) (string, error) {
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (vfs *OrefaFs) Base(path string) string {
+func (vfs *OrefaFS) Base(path string) string {
 	return fsutil.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Chdir(dir string) error {
+func (vfs *OrefaFS) Chdir(dir string) error {
 	const op = "chdir"
 
 	absPath, _ := vfs.Abs(dir)
@@ -89,7 +89,7 @@ func (vfs *OrefaFs) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (vfs *OrefaFs) Chmod(name string, mode os.FileMode) error {
+func (vfs *OrefaFS) Chmod(name string, mode os.FileMode) error {
 	const op = "chmod"
 
 	absPath, _ := vfs.Abs(name)
@@ -111,7 +111,7 @@ func (vfs *OrefaFs) Chmod(name string, mode os.FileMode) error {
 //
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
-func (vfs *OrefaFs) Chown(name string, uid, gid int) error {
+func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
@@ -119,7 +119,7 @@ func (vfs *OrefaFs) Chown(name string, uid, gid int) error {
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Chroot(path string) error {
+func (vfs *OrefaFS) Chroot(path string) error {
 	const op = "chroot"
 
 	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
@@ -131,7 +131,7 @@ func (vfs *OrefaFs) Chroot(path string) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *OrefaFS) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
 	absPath, _ := vfs.Abs(name)
@@ -169,12 +169,12 @@ func (vfs *OrefaFs) Chtimes(name string, atime, mtime time.Time) error {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (vfs *OrefaFs) Clean(path string) string {
+func (vfs *OrefaFS) Clean(path string) string {
 	return fsutil.Clean(path)
 }
 
 // Clone returns the file system itself since if does not support this feature (FeatClonable).
-func (vfs *OrefaFs) Clone() avfs.VFS {
+func (vfs *OrefaFS) Clone() avfs.VFS {
 	return vfs
 }
 
@@ -183,7 +183,7 @@ func (vfs *OrefaFs) Clone() avfs.VFS {
 // (before umask). If successful, methods on the returned File can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Create(name string) (avfs.File, error) {
+func (vfs *OrefaFS) Create(name string) (avfs.File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
@@ -193,7 +193,7 @@ func (vfs *OrefaFs) Create(name string) (avfs.File, error) {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (vfs *OrefaFs) Dir(path string) string {
+func (vfs *OrefaFS) Dir(path string) string {
 	return fsutil.Dir(path)
 }
 
@@ -202,7 +202,7 @@ func (vfs *OrefaFs) Dir(path string) string {
 // If path is relative the result will be relative to the current directory,
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
-func (vfs *OrefaFs) EvalSymlinks(path string) (string, error) {
+func (vfs *OrefaFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
 	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
@@ -211,7 +211,7 @@ func (vfs *OrefaFs) EvalSymlinks(path string) (string, error) {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (vfs *OrefaFs) FromSlash(path string) string {
+func (vfs *OrefaFS) FromSlash(path string) string {
 	return path
 }
 
@@ -224,12 +224,12 @@ func (vfs *OrefaFs) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfs *OrefaFs) GetTempDir() string {
+func (vfs *OrefaFS) GetTempDir() string {
 	return avfs.TmpDir
 }
 
 // GetUMask returns the file mode creation mask.
-func (vfs *OrefaFs) GetUMask() os.FileMode {
+func (vfs *OrefaFS) GetUMask() os.FileMode {
 	u := atomic.LoadInt32(&vfs.umask)
 
 	return os.FileMode(u)
@@ -239,7 +239,7 @@ func (vfs *OrefaFs) GetUMask() os.FileMode {
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
 // Getwd may return any one of them.
-func (vfs *OrefaFs) Getwd() (dir string, err error) {
+func (vfs *OrefaFS) Getwd() (dir string, err error) {
 	dir = vfs.curDir
 
 	return dir, nil
@@ -253,38 +253,38 @@ func (vfs *OrefaFs) Getwd() (dir string, err error) {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (vfs *OrefaFs) Glob(pattern string) (matches []string, err error) {
+func (vfs *OrefaFS) Glob(pattern string) (matches []string, err error) {
 	return fsutil.Glob(vfs, pattern)
 }
 
 // IsAbs reports whether the path is absolute.
-func (vfs *OrefaFs) IsAbs(path string) bool {
+func (vfs *OrefaFS) IsAbs(path string) bool {
 	return fsutil.IsAbs(path)
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
-func (vfs *OrefaFs) IsExist(err error) bool {
+func (vfs *OrefaFS) IsExist(err error) bool {
 	return fsutil.IsExist(err)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
-func (vfs *OrefaFs) IsNotExist(err error) bool {
+func (vfs *OrefaFS) IsNotExist(err error) bool {
 	return fsutil.IsNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (vfs *OrefaFs) IsPathSeparator(c uint8) bool {
+func (vfs *OrefaFS) IsPathSeparator(c uint8) bool {
 	return fsutil.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (vfs *OrefaFs) Join(elem ...string) string {
+func (vfs *OrefaFS) Join(elem ...string) string {
 	return fsutil.Join(elem...)
 }
 
@@ -294,7 +294,7 @@ func (vfs *OrefaFs) Join(elem ...string) string {
 //
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
-func (vfs *OrefaFs) Lchown(name string, uid, gid int) error {
+func (vfs *OrefaFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
 	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
@@ -302,7 +302,7 @@ func (vfs *OrefaFs) Lchown(name string, uid, gid int) error {
 
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
-func (vfs *OrefaFs) Link(oldname, newname string) error {
+func (vfs *OrefaFS) Link(oldname, newname string) error {
 	const op = "link"
 
 	oAbsPath, _ := vfs.Abs(oldname)
@@ -348,7 +348,7 @@ func (vfs *OrefaFs) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Lstat(name string) (os.FileInfo, error) {
+func (vfs *OrefaFS) Lstat(name string) (os.FileInfo, error) {
 	const op = "lstat"
 
 	return vfs.stat(name, op)
@@ -357,7 +357,7 @@ func (vfs *OrefaFs) Lstat(name string) (os.FileInfo, error) {
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
+func (vfs *OrefaFS) Mkdir(name string, perm os.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
@@ -404,7 +404,7 @@ func (vfs *OrefaFs) Mkdir(name string, perm os.FileMode) error {
 // directories that MkdirAll creates.
 // If name is already a directory, MkdirAll does nothing
 // and returns nil.
-func (vfs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
+func (vfs *OrefaFS) MkdirAll(path string, perm os.FileMode) error {
 	const op = "mkdir"
 
 	absPath, _ := vfs.Abs(path)
@@ -460,7 +460,7 @@ func (vfs *OrefaFs) MkdirAll(path string, perm os.FileMode) error {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Open(path string) (avfs.File, error) {
+func (vfs *OrefaFS) Open(path string) (avfs.File, error) {
 	return vfs.OpenFile(path, os.O_RDONLY, 0)
 }
 
@@ -470,7 +470,7 @@ func (vfs *OrefaFs) Open(path string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
+func (vfs *OrefaFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
 	const op = "open"
 
 	var (
@@ -532,7 +532,7 @@ func (vfs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 	}
 
 	f := &OrefaFile{
-		vFs:      vfs,
+		orFS:     vfs,
 		nd:       child,
 		wantMode: wm,
 		name:     name,
@@ -544,7 +544,7 @@ func (vfs *OrefaFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (vfs *OrefaFs) ReadDir(dirname string) ([]os.FileInfo, error) {
+func (vfs *OrefaFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return fsutil.ReadDir(vfs, dirname)
 }
 
@@ -552,13 +552,13 @@ func (vfs *OrefaFs) ReadDir(dirname string) ([]os.FileInfo, error) {
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func (vfs *OrefaFs) ReadFile(filename string) ([]byte, error) {
+func (vfs *OrefaFS) ReadFile(filename string) ([]byte, error) {
 	return fsutil.ReadFile(vfs, filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Readlink(name string) (string, error) {
+func (vfs *OrefaFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
 	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
@@ -572,13 +572,13 @@ func (vfs *OrefaFs) Readlink(name string) (string, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (vfs *OrefaFs) Rel(basepath, targpath string) (string, error) {
+func (vfs *OrefaFS) Rel(basepath, targpath string) (string, error) {
 	return fsutil.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Remove(name string) error {
+func (vfs *OrefaFS) Remove(name string) error {
 	const op = "remove"
 
 	absPath, _ := vfs.Abs(name)
@@ -619,7 +619,7 @@ func (vfs *OrefaFs) Remove(name string) error {
 // it encounters. If the path does not exist, RemoveAll
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) RemoveAll(path string) error {
+func (vfs *OrefaFS) RemoveAll(path string) error {
 	if path == "" {
 		// fail silently to retain compatibility with previous behavior of RemoveAll.
 		return nil
@@ -654,7 +654,7 @@ func (vfs *OrefaFs) RemoveAll(path string) error {
 	return nil
 }
 
-func (vfs *OrefaFs) removeAll(absPath string, rootNode *node) {
+func (vfs *OrefaFS) removeAll(absPath string, rootNode *node) {
 	if rootNode.mode.IsDir() {
 		for fileName, nd := range rootNode.children {
 			path := absPath + string(avfs.PathSeparator) + fileName
@@ -674,7 +674,7 @@ func (vfs *OrefaFs) removeAll(absPath string, rootNode *node) {
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (vfs *OrefaFs) Rename(oldname, newname string) error {
+func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	const op = "rename"
 
 	oAbsPath, _ := vfs.Abs(oldname)
@@ -751,7 +751,7 @@ func (vfs *OrefaFs) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (vfs *OrefaFs) SameFile(fi1, fi2 os.FileInfo) bool {
+func (vfs *OrefaFS) SameFile(fi1, fi2 os.FileInfo) bool {
 	return reflect.DeepEqual(fi1, fi2)
 }
 
@@ -760,20 +760,20 @@ func (vfs *OrefaFs) SameFile(fi1, fi2 os.FileInfo) bool {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (vfs *OrefaFs) Split(path string) (dir, file string) {
+func (vfs *OrefaFS) Split(path string) (dir, file string) {
 	return fsutil.Split(vfs, path)
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Stat(path string) (os.FileInfo, error) {
+func (vfs *OrefaFS) Stat(path string) (os.FileInfo, error) {
 	const op = "stat"
 
 	return vfs.stat(path, op)
 }
 
 // stat is the internal function used by Stat and Lstat.
-func (vfs *OrefaFs) stat(path, op string) (os.FileInfo, error) {
+func (vfs *OrefaFS) stat(path, op string) (os.FileInfo, error) {
 	absPath, _ := vfs.Abs(path)
 	dirName, fileName := split(absPath)
 
@@ -806,7 +806,7 @@ func (vfs *OrefaFs) stat(path, op string) (os.FileInfo, error) {
 
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
-func (vfs *OrefaFs) Symlink(oldname, newname string) error {
+func (vfs *OrefaFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
 	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
@@ -819,7 +819,7 @@ func (vfs *OrefaFs) Symlink(oldname, newname string) error {
 // Multiple programs calling GetTempDir simultaneously
 // will not choose the same directory. It is the caller's responsibility
 // to removeNodes the directory when no longer needed.
-func (vfs *OrefaFs) TempDir(dir, prefix string) (name string, err error) {
+func (vfs *OrefaFS) TempDir(dir, prefix string) (name string, err error) {
 	return fsutil.TempDir(vfs, dir, prefix)
 }
 
@@ -834,21 +834,21 @@ func (vfs *OrefaFs) TempDir(dir, prefix string) (name string, err error) {
 // will not choose the same file. The caller can use f.Type()
 // to find the pathname of the file. It is the caller's responsibility
 // to removeNodes the file when no longer needed.
-func (vfs *OrefaFs) TempFile(dir, pattern string) (f avfs.File, err error) {
+func (vfs *OrefaFS) TempFile(dir, pattern string) (f avfs.File, err error) {
 	return fsutil.TempFile(vfs, dir, pattern)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (vfs *OrefaFs) ToSlash(path string) string {
+func (vfs *OrefaFS) ToSlash(path string) string {
 	return path
 }
 
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFs) Truncate(name string, size int64) error {
+func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	const op = "truncate"
 
 	absPath, _ := vfs.Abs(name)
@@ -877,7 +877,7 @@ func (vfs *OrefaFs) Truncate(name string, size int64) error {
 }
 
 // UMask sets the file mode creation mask.
-func (vfs *OrefaFs) UMask(mask os.FileMode) {
+func (vfs *OrefaFS) UMask(mask os.FileMode) {
 	atomic.StoreInt32(&vfs.umask, int32(mask))
 }
 
@@ -887,14 +887,14 @@ func (vfs *OrefaFs) UMask(mask os.FileMode) {
 // order, which makes the output deterministic but means that for very
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
-func (vfs *OrefaFs) Walk(root string, walkFn filepath.WalkFunc) error {
+func (vfs *OrefaFS) Walk(root string, walkFn filepath.WalkFunc) error {
 	return fsutil.Walk(vfs, root, walkFn)
 }
 
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (vfs *OrefaFs) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (vfs *OrefaFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return fsutil.WriteFile(vfs, filename, data, perm)
 }
 
@@ -925,7 +925,7 @@ func (f *OrefaFile) Chdir() error {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
-	f.vFs.curDir = f.name
+	f.orFS.curDir = f.name
 
 	return nil
 }

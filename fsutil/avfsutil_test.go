@@ -54,7 +54,7 @@ func TestAsStatT(t *testing.T) {
 		sfs.StatT()
 	})
 
-	t.Run("StatT OrefaFs", func(t *testing.T) {
+	t.Run("StatT OrefaFS", func(t *testing.T) {
 		vfs, err := orefafs.New(orefafs.WithMainDirs())
 		if err != nil {
 			t.Errorf("orefafs.New : want error to be nil, got %v", err)

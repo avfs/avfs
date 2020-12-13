@@ -27,8 +27,8 @@ import (
 )
 
 var (
-	// orefafs.OrefaFs struct implements avfs.OrefaFs interface.
-	_ avfs.VFS = &orefafs.OrefaFs{}
+	// orefafs.OrefaFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &orefafs.OrefaFS{}
 
 	// orefafs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
@@ -43,7 +43,7 @@ func initTest(t *testing.T) avfs.VFS {
 	return vfs
 }
 
-func TestOrefaFs(t *testing.T) {
+func TestOrefaFS(t *testing.T) {
 	vfs := initTest(t)
 
 	sfs := test.NewSuiteFs(t, vfs)
@@ -56,7 +56,7 @@ func TestNilPtrReceiver(t *testing.T) {
 	test.SuiteNilPtrFile(t, f)
 }
 
-func TestOrefaFsFeatures(t *testing.T) {
+func TestOrefaFSFeatures(t *testing.T) {
 	vfs, err := orefafs.New()
 	if err != nil {
 		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
@@ -67,7 +67,7 @@ func TestOrefaFsFeatures(t *testing.T) {
 	}
 }
 
-func TestOrefaFsOSType(t *testing.T) {
+func TestOrefaFSOSType(t *testing.T) {
 	vfs, err := orefafs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
@@ -79,7 +79,7 @@ func TestOrefaFsOSType(t *testing.T) {
 	}
 }
 
-func BenchmarkOrefaFsCreate(b *testing.B) {
+func BenchmarkOrefaFSCreate(b *testing.B) {
 	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
