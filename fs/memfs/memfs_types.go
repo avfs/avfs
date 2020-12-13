@@ -29,15 +29,15 @@ const (
 	slCountMax = 64
 )
 
-// MemFs implements a memory file system using the avfs.VFS interface.
-type MemFs struct {
+// MemFS implements a memory file system using the avfs.VFS interface.
+type MemFS struct {
 	rootNode *dirNode
 	fsAttrs  *fsAttrs
 	user     avfs.UserReader
 	curDir   string
 }
 
-// fsAttrs represents the file system attributes for MemFs.
+// fsAttrs represents the file system attributes for MemFS.
 type fsAttrs struct {
 	idm     avfs.IdentityMgr
 	feature avfs.Feature
@@ -49,7 +49,7 @@ type fsAttrs struct {
 // MemFile represents an open file descriptor.
 type MemFile struct {
 	mu       sync.RWMutex
-	vfs      *MemFs
+	memFS    *MemFS
 	nd       node
 	name     string
 	at       int64
@@ -59,8 +59,8 @@ type MemFile struct {
 	dirIndex int
 }
 
-// Option defines the option function used for initializing MemFs.
-type Option func(*MemFs) error
+// Option defines the option function used for initializing MemFS.
+type Option func(*MemFS) error
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {

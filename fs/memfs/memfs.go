@@ -39,7 +39,7 @@ import (
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (vfs *MemFs) Abs(path string) (string, error) {
+func (vfs *MemFS) Abs(path string) (string, error) {
 	return fsutil.Abs(vfs, path)
 }
 
@@ -47,13 +47,13 @@ func (vfs *MemFs) Abs(path string) (string, error) {
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (vfs *MemFs) Base(path string) string {
+func (vfs *MemFS) Base(path string) string {
 	return fsutil.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Chdir(dir string) error {
+func (vfs *MemFS) Chdir(dir string) error {
 	const op = "chdir"
 
 	_, child, absPath, _, _, err := vfs.searchNode(dir, slmLstat)
@@ -93,7 +93,7 @@ func (vfs *MemFs) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (vfs *MemFs) Chmod(name string, mode os.FileMode) error {
+func (vfs *MemFS) Chmod(name string, mode os.FileMode) error {
 	const op = "chmod"
 
 	_, child, _, _, _, err := vfs.searchNode(name, slmEval)
@@ -116,7 +116,7 @@ func (vfs *MemFs) Chmod(name string, mode os.FileMode) error {
 //
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
-func (vfs *MemFs) Chown(name string, uid, gid int) error {
+func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	_, child, _, _, _, err := vfs.searchNode(name, slmEval)
@@ -135,7 +135,7 @@ func (vfs *MemFs) Chown(name string, uid, gid int) error {
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Chroot(path string) error {
+func (vfs *MemFS) Chroot(path string) error {
 	const op = "chroot"
 
 	if !vfs.user.IsRoot() {
@@ -163,7 +163,7 @@ func (vfs *MemFs) Chroot(path string) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
 	_, child, _, _, _, err := vfs.searchNode(name, slmLstat)
@@ -203,12 +203,12 @@ func (vfs *MemFs) Chtimes(name string, atime, mtime time.Time) error {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (vfs *MemFs) Clean(path string) string {
+func (vfs *MemFS) Clean(path string) string {
 	return fsutil.Clean(path)
 }
 
 // Clone returns a shallow copy of the current file system.
-func (vfs *MemFs) Clone() avfs.VFS {
+func (vfs *MemFS) Clone() avfs.VFS {
 	newFs := *vfs
 
 	return &newFs
@@ -219,7 +219,7 @@ func (vfs *MemFs) Clone() avfs.VFS {
 // (before umask). If successful, methods on the returned File can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Create(name string) (avfs.File, error) {
+func (vfs *MemFS) Create(name string) (avfs.File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
@@ -229,7 +229,7 @@ func (vfs *MemFs) Create(name string) (avfs.File, error) {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (vfs *MemFs) Dir(path string) string {
+func (vfs *MemFS) Dir(path string) string {
 	return fsutil.Dir(path)
 }
 
@@ -238,7 +238,7 @@ func (vfs *MemFs) Dir(path string) string {
 // If path is relative the result will be relative to the current directory,
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
-func (vfs *MemFs) EvalSymlinks(path string) (string, error) {
+func (vfs *MemFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
 	_, _, absPath, _, end, err := vfs.searchNode(path, slmEval)
@@ -252,7 +252,7 @@ func (vfs *MemFs) EvalSymlinks(path string) (string, error) {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (vfs *MemFs) FromSlash(path string) string {
+func (vfs *MemFS) FromSlash(path string) string {
 	return path
 }
 
@@ -265,12 +265,12 @@ func (vfs *MemFs) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfs *MemFs) GetTempDir() string {
+func (vfs *MemFS) GetTempDir() string {
 	return avfs.TmpDir
 }
 
 // GetUMask returns the file mode creation mask.
-func (vfs *MemFs) GetUMask() os.FileMode {
+func (vfs *MemFS) GetUMask() os.FileMode {
 	u := atomic.LoadInt32(&vfs.fsAttrs.umask)
 
 	return os.FileMode(u)
@@ -280,7 +280,7 @@ func (vfs *MemFs) GetUMask() os.FileMode {
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
 // Getwd may return any one of them.
-func (vfs *MemFs) Getwd() (dir string, err error) {
+func (vfs *MemFS) Getwd() (dir string, err error) {
 	dir = vfs.curDir
 
 	return dir, nil
@@ -294,38 +294,38 @@ func (vfs *MemFs) Getwd() (dir string, err error) {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (vfs *MemFs) Glob(pattern string) (matches []string, err error) {
+func (vfs *MemFS) Glob(pattern string) (matches []string, err error) {
 	return fsutil.Glob(vfs, pattern)
 }
 
 // IsAbs reports whether the path is absolute.
-func (vfs *MemFs) IsAbs(path string) bool {
+func (vfs *MemFS) IsAbs(path string) bool {
 	return fsutil.IsAbs(path)
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
-func (vfs *MemFs) IsExist(err error) bool {
+func (vfs *MemFS) IsExist(err error) bool {
 	return fsutil.IsExist(err)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
-func (vfs *MemFs) IsNotExist(err error) bool {
+func (vfs *MemFS) IsNotExist(err error) bool {
 	return fsutil.IsNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (vfs *MemFs) IsPathSeparator(c uint8) bool {
+func (vfs *MemFS) IsPathSeparator(c uint8) bool {
 	return fsutil.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (vfs *MemFs) Join(elem ...string) string {
+func (vfs *MemFS) Join(elem ...string) string {
 	return fsutil.Join(elem...)
 }
 
@@ -335,7 +335,7 @@ func (vfs *MemFs) Join(elem ...string) string {
 //
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
-func (vfs *MemFs) Lchown(name string, uid, gid int) error {
+func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
 	_, child, _, _, _, err := vfs.searchNode(name, slmLstat)
@@ -354,7 +354,7 @@ func (vfs *MemFs) Lchown(name string, uid, gid int) error {
 
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
-func (vfs *MemFs) Link(oldname, newname string) error {
+func (vfs *MemFS) Link(oldname, newname string) error {
 	const op = "link"
 
 	_, oChild, _, _, _, oerr := vfs.searchNode(oldname, slmLstat)
@@ -397,7 +397,7 @@ func (vfs *MemFs) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Lstat(path string) (os.FileInfo, error) {
+func (vfs *MemFS) Lstat(path string) (os.FileInfo, error) {
 	const op = "lstat"
 
 	_, child, absPath, start, end, err := vfs.searchNode(path, slmLstat)
@@ -414,7 +414,7 @@ func (vfs *MemFs) Lstat(path string) (os.FileInfo, error) {
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Mkdir(name string, perm os.FileMode) error {
+func (vfs *MemFS) Mkdir(name string, perm os.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
@@ -450,7 +450,7 @@ func (vfs *MemFs) Mkdir(name string, perm os.FileMode) error {
 // directories that MkdirAll creates.
 // If name is already a directory, MkdirAll does nothing
 // and returns nil.
-func (vfs *MemFs) MkdirAll(path string, perm os.FileMode) error {
+func (vfs *MemFS) MkdirAll(path string, perm os.FileMode) error {
 	const op = "mkdir"
 
 	parent, child, absPath, start, end, err := vfs.searchNode(path, slmEval)
@@ -491,7 +491,7 @@ func (vfs *MemFs) MkdirAll(path string, perm os.FileMode) error {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Open(path string) (avfs.File, error) {
+func (vfs *MemFS) Open(path string) (avfs.File, error) {
 	return vfs.OpenFile(path, os.O_RDONLY, 0)
 }
 
@@ -501,12 +501,12 @@ func (vfs *MemFs) Open(path string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
+func (vfs *MemFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
 	const op = "open"
 
 	f := &MemFile{
-		vfs:  vfs,
-		name: name,
+		memFS: vfs,
+		name:  name,
 	}
 
 	if flag == os.O_RDONLY || flag&os.O_RDWR != 0 {
@@ -593,7 +593,7 @@ func (vfs *MemFs) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, 
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (vfs *MemFs) ReadDir(dirname string) ([]os.FileInfo, error) {
+func (vfs *MemFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return fsutil.ReadDir(vfs, dirname)
 }
 
@@ -601,13 +601,13 @@ func (vfs *MemFs) ReadDir(dirname string) ([]os.FileInfo, error) {
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func (vfs *MemFs) ReadFile(filename string) ([]byte, error) {
+func (vfs *MemFS) ReadFile(filename string) ([]byte, error) {
 	return fsutil.ReadFile(vfs, filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Readlink(name string) (string, error) {
+func (vfs *MemFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
 	_, child, _, _, _, err := vfs.searchNode(name, slmLstat)
@@ -631,13 +631,13 @@ func (vfs *MemFs) Readlink(name string) (string, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (vfs *MemFs) Rel(basepath, targpath string) (string, error) {
+func (vfs *MemFS) Rel(basepath, targpath string) (string, error) {
 	return fsutil.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Remove(name string) error {
+func (vfs *MemFS) Remove(name string) error {
 	const op = "remove"
 
 	parent, child, absPath, start, end, err := vfs.searchNode(name, slmLstat)
@@ -679,7 +679,7 @@ func (vfs *MemFs) Remove(name string) error {
 // it encounters. If the path does not exist, RemoveAll
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) RemoveAll(path string) error {
+func (vfs *MemFS) RemoveAll(path string) error {
 	const op = "unlinkat"
 
 	if path == "" {
@@ -742,7 +742,7 @@ func (vfs *MemFs) RemoveAll(path string) error {
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (vfs *MemFs) Rename(oldname, newname string) error {
+func (vfs *MemFS) Rename(oldname, newname string) error {
 	const op = "rename"
 
 	oparent, ochild, oabsPath, ostart, oend, oerr := vfs.searchNode(oldname, slmLstat)
@@ -813,7 +813,7 @@ func (vfs *MemFs) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (vfs *MemFs) SameFile(fi1, fi2 os.FileInfo) bool {
+func (vfs *MemFS) SameFile(fi1, fi2 os.FileInfo) bool {
 	return reflect.DeepEqual(fi1, fi2)
 }
 
@@ -822,13 +822,13 @@ func (vfs *MemFs) SameFile(fi1, fi2 os.FileInfo) bool {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (vfs *MemFs) Split(path string) (dir, file string) {
+func (vfs *MemFS) Split(path string) (dir, file string) {
 	return fsutil.Split(vfs, path)
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Stat(path string) (os.FileInfo, error) {
+func (vfs *MemFS) Stat(path string) (os.FileInfo, error) {
 	const op = "stat"
 
 	_, child, absPath, start, end, err := vfs.searchNode(path, slmStat)
@@ -844,7 +844,7 @@ func (vfs *MemFs) Stat(path string) (os.FileInfo, error) {
 
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
-func (vfs *MemFs) Symlink(oldname, newname string) error {
+func (vfs *MemFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
 	parent, _, absPath, start, end, nerr := vfs.searchNode(newname, slmLstat)
@@ -873,7 +873,7 @@ func (vfs *MemFs) Symlink(oldname, newname string) error {
 // Multiple programs calling GetTempDir simultaneously
 // will not choose the same directory. It is the caller's responsibility
 // to removeNodes the directory when no longer needed.
-func (vfs *MemFs) TempDir(dir, prefix string) (name string, err error) {
+func (vfs *MemFS) TempDir(dir, prefix string) (name string, err error) {
 	return fsutil.TempDir(vfs, dir, prefix)
 }
 
@@ -888,21 +888,21 @@ func (vfs *MemFs) TempDir(dir, prefix string) (name string, err error) {
 // will not choose the same file. The caller can use f.Type()
 // to find the pathname of the file. It is the caller's responsibility
 // to removeNodes the file when no longer needed.
-func (vfs *MemFs) TempFile(dir, pattern string) (f avfs.File, err error) {
+func (vfs *MemFS) TempFile(dir, pattern string) (f avfs.File, err error) {
 	return fsutil.TempFile(vfs, dir, pattern)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (vfs *MemFs) ToSlash(path string) string {
+func (vfs *MemFS) ToSlash(path string) string {
 	return path
 }
 
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFs) Truncate(name string, size int64) error {
+func (vfs *MemFS) Truncate(name string, size int64) error {
 	const op = "truncate"
 
 	parent, child, _, _, _, err := vfs.searchNode(name, slmEval)
@@ -927,7 +927,7 @@ func (vfs *MemFs) Truncate(name string, size int64) error {
 }
 
 // UMask sets the file mode creation mask.
-func (vfs *MemFs) UMask(mask os.FileMode) {
+func (vfs *MemFS) UMask(mask os.FileMode) {
 	atomic.StoreInt32(&vfs.fsAttrs.umask, int32(mask))
 }
 
@@ -937,14 +937,14 @@ func (vfs *MemFs) UMask(mask os.FileMode) {
 // order, which makes the output deterministic but means that for very
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
-func (vfs *MemFs) Walk(root string, walkFn filepath.WalkFunc) error {
+func (vfs *MemFS) Walk(root string, walkFn filepath.WalkFunc) error {
 	return fsutil.Walk(vfs, root, walkFn)
 }
 
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (vfs *MemFs) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (vfs *MemFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return fsutil.WriteFile(vfs, filename, data, perm)
 }
 
@@ -976,7 +976,7 @@ func (f *MemFile) Chdir() error {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
-	f.vfs.curDir = f.name
+	f.memFS.curDir = f.name
 
 	return nil
 }
@@ -1001,7 +1001,7 @@ func (f *MemFile) Chmod(mode os.FileMode) error {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
-	err := f.nd.setMode(mode, f.vfs.user)
+	err := f.nd.setMode(mode, f.memFS.user)
 	if err != nil {
 		return &os.PathError{Op: op, Path: f.name, Err: err}
 	}
@@ -1032,7 +1032,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
-	if !f.nd.checkPermissionLck(avfs.WantWrite, f.vfs.user) {
+	if !f.nd.checkPermissionLck(avfs.WantWrite, f.memFS.user) {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -1221,7 +1221,7 @@ func (f *MemFile) Readdir(n int) (fi []os.FileInfo, err error) {
 	}
 
 	if f.nd == nil {
-		if f.vfs.user.IsRoot() {
+		if f.memFS.user.IsRoot() {
 			return nil, avfs.ErrFileClosing
 		}
 
@@ -1230,7 +1230,7 @@ func (f *MemFile) Readdir(n int) (fi []os.FileInfo, err error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		if f.vfs.user.IsRoot() {
+		if f.memFS.user.IsRoot() {
 			return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
 		}
 
@@ -1298,7 +1298,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 	}
 
 	if f.nd == nil {
-		if f.vfs.user.IsRoot() {
+		if f.memFS.user.IsRoot() {
 			return nil, avfs.ErrFileClosing
 		}
 
@@ -1307,7 +1307,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		if f.vfs.user.IsRoot() {
+		if f.memFS.user.IsRoot() {
 			return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
 		}
 

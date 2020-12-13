@@ -85,7 +85,7 @@ func TestHashFile(t *testing.T) {
 	}
 }
 
-// TestCopyFile copies random files from an OsFs file system to a MemFs file system.
+// TestCopyFile copies random files from an OsFs file system to a MemFS file system.
 func TestCopyFile(t *testing.T) {
 	srcFs, err := osfs.New()
 	if err != nil {

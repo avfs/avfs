@@ -29,8 +29,8 @@ import (
 )
 
 var (
-	// memfs.MemFs struct implements avfs.MemFs interface.
-	_ avfs.VFS = &memfs.MemFs{}
+	// memfs.MemFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &memfs.MemFS{}
 
 	// memfs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}
@@ -47,25 +47,25 @@ func initTest(t *testing.T) *test.SuiteFs {
 	return sfs
 }
 
-func TestMemFs(t *testing.T) {
+func TestMemFS(t *testing.T) {
 	sfs := initTest(t)
 	sfs.All()
 }
 
-func TestMemFsPerm(t *testing.T) {
+func TestMemFSPerm(t *testing.T) {
 	sfs := initTest(t)
 	sfs.Perm()
 }
 
-func TestMemFsOptionError(t *testing.T) {
+func TestMemFSOptionError(t *testing.T) {
 	_, err := memfs.New(memfs.WithIdm(dummyidm.New()))
 	if err != avfs.ErrPermDenied {
 		t.Errorf("New : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 }
 
-// TestMemFsOptionName tests MemFs initialization with or without option name (WithName()).
-func TestMemFsOptionName(t *testing.T) {
+// TestMemFsOptionName tests MemFS initialization with or without option name (WithName()).
+func TestMemFSOptionName(t *testing.T) {
 	const wantName = "whatever"
 
 	vfs, err := memfs.New()
@@ -94,7 +94,7 @@ func TestNilPtrReceiver(t *testing.T) {
 	test.SuiteNilPtrFile(t, f)
 }
 
-func TestMemFsFeatures(t *testing.T) {
+func TestMemFSFeatures(t *testing.T) {
 	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
@@ -114,7 +114,7 @@ func TestMemFsFeatures(t *testing.T) {
 	}
 }
 
-func TestMemFsOSType(t *testing.T) {
+func TestMemFSOSType(t *testing.T) {
 	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
@@ -126,7 +126,7 @@ func TestMemFsOSType(t *testing.T) {
 	}
 }
 
-func BenchmarkMemFsCreate(b *testing.B) {
+func BenchmarkMemFSCreate(b *testing.B) {
 	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)

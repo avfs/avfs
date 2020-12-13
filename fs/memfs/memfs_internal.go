@@ -40,7 +40,7 @@ import (
 //  ErrPermDenied when the current user doesn't have permissions on one of the nodes on the path
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
-func (vfs *MemFs) searchNode(path string, slMode slMode) (
+func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	parent *dirNode, child node, absPath string, start, end int, err error) {
 	absPath = path
 	if !vfs.HasFeature(avfs.FeatAbsPath) {
@@ -139,7 +139,7 @@ func (vfs *MemFs) searchNode(path string, slMode slMode) (
 }
 
 // createDir creates a new directory.
-func (vfs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dirNode {
+func (vfs *MemFS) createDir(parent *dirNode, name string, perm os.FileMode) *dirNode {
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
@@ -156,7 +156,7 @@ func (vfs *MemFs) createDir(parent *dirNode, name string, perm os.FileMode) *dir
 }
 
 // createFile creates a new file.
-func (vfs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fileNode {
+func (vfs *MemFS) createFile(parent *dirNode, name string, perm os.FileMode) *fileNode {
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
@@ -173,7 +173,7 @@ func (vfs *MemFs) createFile(parent *dirNode, name string, perm os.FileMode) *fi
 }
 
 // createSymlink creates a new symlink.
-func (vfs *MemFs) createSymlink(parent *dirNode, name, link string) *symlinkNode {
+func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode {
 	child := &symlinkNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),

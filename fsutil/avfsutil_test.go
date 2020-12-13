@@ -34,7 +34,7 @@ import (
 )
 
 func TestAsStatT(t *testing.T) {
-	t.Run("StatT MemFs", func(t *testing.T) {
+	t.Run("StatT MemFS", func(t *testing.T) {
 		vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 		if err != nil {
 			t.Errorf("memfs.New : want error to be nil, got %v", err)
