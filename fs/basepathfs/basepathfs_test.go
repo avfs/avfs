@@ -29,14 +29,14 @@ import (
 )
 
 var (
-	// basepathfs.BasePathFs struct implements avfs.MemFs interface.
-	_ avfs.VFS = &basepathfs.BasePathFs{}
+	// basepathfs.BasePathFS struct implements avfs.MemFs interface.
+	_ avfs.VFS = &basepathfs.BasePathFS{}
 
 	// basepathfs.BasePathFile struct implements avfs.File interface.
 	_ avfs.File = &basepathfs.BasePathFile{}
 )
 
-func initTest(t *testing.T) *basepathfs.BasePathFs {
+func initTest(t *testing.T) *basepathfs.BasePathFS {
 	const basePath = "/base/path"
 
 	baseFs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
@@ -71,7 +71,7 @@ func TestBasePathFsPerm(t *testing.T) {
 	sfs.Perm()
 }
 
-// TestBasePathFsOptions tests BasePathFs configuration options.
+// TestBasePathFsOptions tests BasePathFS configuration options.
 func TestBasePathFsOptions(t *testing.T) {
 	const (
 		nonExistingDir = "/non/existing/dir"

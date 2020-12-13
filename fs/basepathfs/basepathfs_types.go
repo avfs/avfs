@@ -20,14 +20,14 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// BasePathFs implements a base path file system.
-type BasePathFs struct {
-	baseFs   avfs.VFS
+// BasePathFS implements a base path file system.
+type BasePathFS struct {
+	baseFS   avfs.VFS
 	basePath string
 }
 
 // BasePathFile represents an open file descriptor.
 type BasePathFile struct {
-	vFs      *BasePathFs
+	bpFS     *BasePathFS
 	baseFile avfs.File
 }

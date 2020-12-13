@@ -24,8 +24,8 @@ import (
 	"github.com/avfs/avfs/fsutil"
 )
 
-// New returns a new base path file system (BasePathFs).
-func New(baseFs avfs.VFS, basePath string) (*BasePathFs, error) {
+// New returns a new base path file system (BasePathFS).
+func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
 	const op = "basepath"
 
 	absPath, _ := baseFs.Abs(basePath)
@@ -39,13 +39,13 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFs, error) {
 		return nil, &os.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
 	}
 
-	vfs := &BasePathFs{
-		baseFs:   baseFs,
+	vfs := &BasePathFS{
+		baseFS:   baseFs,
 		basePath: absPath,
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
-		err = fsutil.CreateBaseDirs(vfs.baseFs, vfs.basePath)
+		err = fsutil.CreateBaseDirs(vfs.baseFS, vfs.basePath)
 		if err != nil {
 			return nil, err
 		}
@@ -55,26 +55,26 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFs, error) {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *BasePathFs) Features() avfs.Feature {
-	return vfs.baseFs.Features() &^ avfs.FeatSymlink
+func (vfs *BasePathFS) Features() avfs.Feature {
+	return vfs.baseFS.Features() &^ avfs.FeatSymlink
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *BasePathFs) HasFeature(feature avfs.Feature) bool {
-	return (feature&avfs.FeatSymlink == 0) && vfs.baseFs.HasFeature(feature)
+func (vfs *BasePathFS) HasFeature(feature avfs.Feature) bool {
+	return (feature&avfs.FeatSymlink == 0) && vfs.baseFS.HasFeature(feature)
 }
 
 // Name returns the name of the fileSystem.
-func (vfs *BasePathFs) Name() string {
-	return vfs.baseFs.Name()
+func (vfs *BasePathFS) Name() string {
+	return vfs.baseFS.Name()
 }
 
 // OSType returns the operating system type of the file system.
-func (vfs *BasePathFs) OSType() avfs.OSType {
-	return vfs.baseFs.OSType()
+func (vfs *BasePathFS) OSType() avfs.OSType {
+	return vfs.baseFS.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *BasePathFs) Type() string {
-	return "BasePathFs"
+func (vfs *BasePathFS) Type() string {
+	return "BasePathFS"
 }
