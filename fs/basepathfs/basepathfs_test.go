@@ -29,7 +29,7 @@ import (
 )
 
 var (
-	// basepathfs.BasePathFS struct implements avfs.MemFs interface.
+	// basepathfs.BasePathFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &basepathfs.BasePathFS{}
 
 	// basepathfs.BasePathFile struct implements avfs.File interface.
@@ -57,14 +57,14 @@ func initTest(t *testing.T) *basepathfs.BasePathFS {
 	return vfs
 }
 
-func TestBasePathFs(t *testing.T) {
+func TestBasePathFS(t *testing.T) {
 	vfs := initTest(t)
 	sfs := test.NewSuiteFs(t, vfs)
 
 	sfs.All()
 }
 
-func TestBasePathFsPerm(t *testing.T) {
+func TestBasePathFSPerm(t *testing.T) {
 	vfs := initTest(t)
 	sfs := test.NewSuiteFs(t, vfs)
 
@@ -72,7 +72,7 @@ func TestBasePathFsPerm(t *testing.T) {
 }
 
 // TestBasePathFsOptions tests BasePathFS configuration options.
-func TestBasePathFsOptions(t *testing.T) {
+func TestBasePathFSOptions(t *testing.T) {
 	const (
 		nonExistingDir = "/non/existing/dir"
 		existingFile   = "/tmp/existingFile"
@@ -95,7 +95,7 @@ func TestBasePathFsOptions(t *testing.T) {
 	test.CheckPathError(t, "BasePath", "basepath", existingFile, avfs.ErrNotADirectory, err)
 }
 
-func TestBasePathFsFeatures(t *testing.T) {
+func TestBasePathFSFeatures(t *testing.T) {
 	mfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
@@ -133,7 +133,7 @@ func TestBasePathFsFeatures(t *testing.T) {
 	}
 }
 
-func TestBasepathFsOSType(t *testing.T) {
+func TestBasepathFSOSType(t *testing.T) {
 	vfsBase, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
