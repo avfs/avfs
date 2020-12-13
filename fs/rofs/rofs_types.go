@@ -18,9 +18,9 @@ package rofs
 
 import "github.com/avfs/avfs"
 
-// RoFs Represents the file system.
-type RoFs struct {
-	baseFs avfs.VFS
+// RoFS Represents the file system.
+type RoFS struct {
+	baseFS avfs.VFS
 }
 
 // RoFile represents an open file descriptor.

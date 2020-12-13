@@ -29,8 +29,8 @@ import (
 )
 
 var (
-	// rofs.RoFs struct implements avfs.VFS interface.
-	_ avfs.VFS = &rofs.RoFs{}
+	// rofs.RoFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &rofs.RoFS{}
 
 	// rofs.RoFile struct implements avfs.File interface.
 	_ avfs.File = &rofs.RoFile{}
@@ -50,7 +50,7 @@ func initTest(t *testing.T) *test.SuiteFs {
 	return sfs
 }
 
-func TestRoFs(t *testing.T) {
+func TestRoFS(t *testing.T) {
 	sfs := initTest(t)
 	sfs.Read()
 	sfs.WriteOnReadOnly()
@@ -58,12 +58,12 @@ func TestRoFs(t *testing.T) {
 	sfs.Path()
 }
 
-func TestRoFsPerm(t *testing.T) {
+func TestRoFSPerm(t *testing.T) {
 	sfs := initTest(t)
 	sfs.PermRead()
 }
 
-func TestRoFsOSType(t *testing.T) {
+func TestRoFSOSType(t *testing.T) {
 	vfsBase, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)

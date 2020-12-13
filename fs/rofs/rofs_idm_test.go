@@ -24,7 +24,7 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-func TestRoFsIdm(t *testing.T) {
+func TestRoFSIdm(t *testing.T) {
 	sfs := initTest(t)
 	sidm := test.NewSuiteIdm(t, sfs.GetFsRead())
 	sidm.PermDenied()
