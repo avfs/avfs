@@ -25,7 +25,7 @@ import (
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
-func (vfs *OsFs) Chroot(path string) error {
+func (vfs *OsFS) Chroot(path string) error {
 	const op = "chroot"
 
 	err := syscall.Chroot(path)

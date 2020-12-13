@@ -22,9 +22,9 @@ import (
 	"github.com/avfs/avfs/idm/dummyidm"
 )
 
-// New returns a new OsFs file system.
-func New(opts ...Option) (*OsFs, error) {
-	vfs := &OsFs{
+// New returns a new OsFS file system.
+func New(opts ...Option) (*OsFS, error) {
+	vfs := &OsFS{
 		idm:     dummyidm.NotImplementedIdm,
 		feature: avfs.FeatBasicFs | avfs.FeatMainDirs,
 	}
@@ -44,35 +44,35 @@ func New(opts ...Option) (*OsFs, error) {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *OsFs) Features() avfs.Feature {
+func (vfs *OsFS) Features() avfs.Feature {
 	return vfs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *OsFs) HasFeature(feature avfs.Feature) bool {
+func (vfs *OsFS) HasFeature(feature avfs.Feature) bool {
 	return vfs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
-func (vfs *OsFs) Name() string {
+func (vfs *OsFS) Name() string {
 	return ""
 }
 
 // OSType returns the operating system type of the file system.
-func (vfs *OsFs) OSType() avfs.OSType {
+func (vfs *OsFS) OSType() avfs.OSType {
 	return fsutil.RunTimeOS()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *OsFs) Type() string {
-	return "OsFs"
+func (vfs *OsFS) Type() string {
+	return "OsFS"
 }
 
 // Options
 
 // WithIdm returns a function setting the identity manager for the file system.
 func WithIdm(idm avfs.IdentityMgr) Option {
-	return func(vfs *OsFs) error {
+	return func(vfs *OsFS) error {
 		vfs.idm = idm
 		vfs.feature |= idm.Features()
 

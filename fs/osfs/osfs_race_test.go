@@ -26,7 +26,7 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-func TestRaceOsFs(t *testing.T) {
+func TestRaceOsFS(t *testing.T) {
 	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)

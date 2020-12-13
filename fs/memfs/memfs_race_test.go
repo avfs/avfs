@@ -26,7 +26,7 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-func TestRaceMemFs(t *testing.T) {
+func TestRaceMemFS(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)

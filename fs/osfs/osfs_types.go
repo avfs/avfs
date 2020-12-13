@@ -20,11 +20,11 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// OsFs represents the file system.
-type OsFs struct {
+// OsFS represents the file system.
+type OsFS struct {
 	idm     avfs.IdentityMgr
 	feature avfs.Feature
 }
 
-// Option defines the option function used for initializing OsFs.
-type Option func(*OsFs) error
+// Option defines the option function used for initializing OsFS.
+type Option func(*OsFS) error

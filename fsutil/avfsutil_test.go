@@ -44,7 +44,7 @@ func TestAsStatT(t *testing.T) {
 		sfs.StatT()
 	})
 
-	t.Run("StatT OsFs", func(t *testing.T) {
+	t.Run("StatT OsFS", func(t *testing.T) {
 		vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 		if err != nil {
 			t.Errorf("osfs.New : want error to be nil, got %v", err)

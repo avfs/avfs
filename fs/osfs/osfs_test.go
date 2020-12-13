@@ -30,8 +30,8 @@ import (
 )
 
 var (
-	// osfs.OsFs struct implements avfs.VFS interface.
-	_ avfs.VFS = &osfs.OsFs{}
+	// osfs.OsFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &osfs.OsFS{}
 
 	// os.File struct implements avfs.File interface.
 	_ avfs.File = &os.File{}
@@ -48,12 +48,12 @@ func initTest(t *testing.T) *test.SuiteFs {
 	return sfs
 }
 
-func TestOsFs(t *testing.T) {
+func TestOsFS(t *testing.T) {
 	sfs := initTest(t)
 	sfs.All()
 }
 
-func TestOsFsPerm(t *testing.T) {
+func TestOsFSPerm(t *testing.T) {
 	sfs := initTest(t)
 	sfs.Perm()
 }
@@ -64,7 +64,7 @@ func TestNilPtrReceiver(t *testing.T) {
 	test.SuiteNilPtrFile(t, f)
 }
 
-func TestOsFsOSType(t *testing.T) {
+func TestOsFSOSType(t *testing.T) {
 	vfs, err := osfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
@@ -76,7 +76,7 @@ func TestOsFsOSType(t *testing.T) {
 	}
 }
 
-func BenchmarkOsFsCreate(b *testing.B) {
+func BenchmarkOsFSCreate(b *testing.B) {
 	vfs, err := osfs.New()
 	if err != nil {
 		b.Fatalf("New : want error to be nil, got %v", err)
