@@ -59,14 +59,14 @@ func initTest(t *testing.T) *basepathfs.BasePathFS {
 
 func TestBasePathFS(t *testing.T) {
 	vfs := initTest(t)
-	sfs := test.NewSuiteFs(t, vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 
 	sfs.All()
 }
 
 func TestBasePathFSPerm(t *testing.T) {
 	vfs := initTest(t)
-	sfs := test.NewSuiteFs(t, vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 
 	sfs.Perm()
 }

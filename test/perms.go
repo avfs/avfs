@@ -28,13 +28,13 @@ import (
 )
 
 // Perm runs all file systems permission tests.
-func (sfs *SuiteFs) Perm() {
+func (sfs *SuiteFS) Perm() {
 	sfs.PermRead()
 	sfs.PermWrite()
 }
 
 // PermWrite runs all file systems permission tests with write access.
-func (sfs *SuiteFs) PermWrite() {
+func (sfs *SuiteFS) PermWrite() {
 	t := sfs.t
 
 	if !sfs.canTestPerm {
@@ -51,7 +51,7 @@ func (sfs *SuiteFs) PermWrite() {
 }
 
 // PermRead runs all file systems permission tests with read access.
-func (sfs *SuiteFs) PermRead() {
+func (sfs *SuiteFS) PermRead() {
 	t := sfs.t
 
 	if !sfs.canTestPerm {
@@ -66,7 +66,7 @@ func (sfs *SuiteFs) PermRead() {
 }
 
 // Chown tests Chown function.
-func (sfs *SuiteFs) Chown() {
+func (sfs *SuiteFS) Chown() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -149,7 +149,7 @@ func (sfs *SuiteFs) Chown() {
 }
 
 // Lchown tests Lchown function.
-func (sfs *SuiteFs) Lchown() {
+func (sfs *SuiteFS) Lchown() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -270,7 +270,7 @@ func (sfs *SuiteFs) Lchown() {
 }
 
 // Chmod tests Chmod function.
-func (sfs *SuiteFs) Chmod() {
+func (sfs *SuiteFS) Chmod() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -342,7 +342,7 @@ func (sfs *SuiteFs) Chmod() {
 }
 
 // Chroot tests Chroot function.
-func (sfs *SuiteFs) Chroot() {
+func (sfs *SuiteFS) Chroot() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -431,7 +431,7 @@ func (sfs *SuiteFs) Chroot() {
 }
 
 // AccessDir tests functions on directories where read is denied.
-func (sfs *SuiteFs) AccessDir() {
+func (sfs *SuiteFS) AccessDir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -527,7 +527,7 @@ func (sfs *SuiteFs) AccessDir() {
 }
 
 // AccessFile tests functions on files where read is denied.
-func (sfs *SuiteFs) AccessFile() {
+func (sfs *SuiteFS) AccessFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 
@@ -612,7 +612,7 @@ func (sfs *SuiteFs) AccessFile() {
 }
 
 // StatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
-func (sfs *SuiteFs) StatT() {
+func (sfs *SuiteFS) StatT() {
 	t := sfs.t
 	vfs := sfs.GetFsWrite()
 
@@ -634,7 +634,7 @@ func (sfs *SuiteFs) StatT() {
 }
 
 // SuiteWriteDenied tests functions on directories and files where write is denied.
-func (sfs *SuiteFs) SuiteWriteDenied() {
+func (sfs *SuiteFS) SuiteWriteDenied() {
 	t, rootDir, removeDir := sfs.CreateRootDir(avfs.UsrRoot)
 	defer removeDir()
 

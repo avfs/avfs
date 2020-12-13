@@ -46,7 +46,7 @@ func initTest(t *testing.T) avfs.VFS {
 func TestOrefaFS(t *testing.T) {
 	vfs := initTest(t)
 
-	sfs := test.NewSuiteFs(t, vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 	sfs.All()
 }
 

@@ -24,8 +24,8 @@ import (
 	"github.com/avfs/avfs/fsutil"
 )
 
-// SuiteFs is a test suite for file systems.
-type SuiteFs struct {
+// SuiteFS is a test suite for virtual file systems.
+type SuiteFS struct {
 	// t is passed to Test functions to manage test state and support formatted test logs.
 	t *testing.T
 
@@ -57,11 +57,11 @@ type SuiteFs struct {
 	Users []avfs.UserReader
 }
 
-// Option defines the option function used for initializing SuiteFs.
-type Option func(*SuiteFs)
+// Option defines the option function used for initializing SuiteFS.
+type Option func(*SuiteFS)
 
-// NewSuiteFs creates a new test suite for a file system.
-func NewSuiteFs(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFs {
+// NewSuiteFS creates a new test suite for a file system.
+func NewSuiteFS(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 	if vfsRoot == nil {
 		t.Fatal("New : want FsRoot to be set, got nil")
 	}
@@ -76,7 +76,7 @@ func NewSuiteFs(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFs {
 
 	t.Log(info)
 
-	sfs := &SuiteFs{
+	sfs := &SuiteFS{
 		t:           t,
 		vfsRoot:     vfsRoot,
 		vfsW:        vfsRoot,
@@ -108,25 +108,25 @@ func NewSuiteFs(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFs {
 
 // WithRootDir returns an option function which sets the root directory for the tests.
 func WithRootDir(rootDir string) Option {
-	return func(sfs *SuiteFs) {
+	return func(sfs *SuiteFS) {
 		sfs.rootDir = rootDir
 	}
 }
 
 // WithOs returns an option function which sets the operating system for the tests.
 func WithOs(osType avfs.OSType) Option {
-	return func(sfs *SuiteFs) {
+	return func(sfs *SuiteFS) {
 		sfs.osType = osType
 	}
 }
 
 // OS returns the operating system, real or simulated.
-func (sfs *SuiteFs) OS() avfs.OSType {
+func (sfs *SuiteFS) OS() avfs.OSType {
 	return sfs.osType
 }
 
 // GetFsAsUser sets the test user to userName.
-func (sfs *SuiteFs) GetFsAsUser(name string) (avfs.VFS, avfs.UserReader) {
+func (sfs *SuiteFS) GetFsAsUser(name string) (avfs.VFS, avfs.UserReader) {
 	vfs := sfs.vfsRoot
 
 	u := vfs.CurrentUser()
@@ -143,33 +143,33 @@ func (sfs *SuiteFs) GetFsAsUser(name string) (avfs.VFS, avfs.UserReader) {
 }
 
 // GetFsRead returns the file system for read only functions.
-func (sfs *SuiteFs) GetFsRead() avfs.VFS {
+func (sfs *SuiteFS) GetFsRead() avfs.VFS {
 	return sfs.vfsR
 }
 
 // GetFsRoot return the root file system.
-func (sfs *SuiteFs) GetFsRoot() avfs.VFS {
+func (sfs *SuiteFS) GetFsRoot() avfs.VFS {
 	return sfs.vfsRoot
 }
 
 // GetFsWrite returns the file system for read and write functions.
-func (sfs *SuiteFs) GetFsWrite() avfs.VFS {
+func (sfs *SuiteFS) GetFsWrite() avfs.VFS {
 	return sfs.vfsW
 }
 
 // FsRead sets the file system for read functions.
-func (sfs *SuiteFs) FsRead(fsR avfs.VFS) {
+func (sfs *SuiteFS) FsRead(fsR avfs.VFS) {
 	if fsR == nil {
-		sfs.t.Fatal("SuiteFs : want FsR to be set, got nil")
+		sfs.t.Fatal("SuiteFS : want FsR to be set, got nil")
 	}
 
 	sfs.vfsR = fsR
 }
 
 // FsWrite sets the file system for write functions.
-func (sfs *SuiteFs) FsWrite(fsW avfs.VFS) {
+func (sfs *SuiteFS) FsWrite(fsW avfs.VFS) {
 	if fsW == nil {
-		sfs.t.Fatal("SuiteFs : want FsW to be set, got nil")
+		sfs.t.Fatal("SuiteFS : want FsW to be set, got nil")
 	}
 
 	sfs.vfsW = fsW
@@ -178,7 +178,7 @@ func (sfs *SuiteFs) FsWrite(fsW avfs.VFS) {
 // CreateRootDir creates the root directory for the tests.
 // Each test have its own directory in /tmp/avfs.../
 // this directory and its descendants are removed by removeDir() function.
-func (sfs *SuiteFs) CreateRootDir(userName string) (t *testing.T, rootDir string, removeDir func()) {
+func (sfs *SuiteFS) CreateRootDir(userName string) (t *testing.T, rootDir string, removeDir func()) {
 	t = sfs.t
 
 	vfs, _ := sfs.GetFsAsUser(userName)
@@ -236,14 +236,14 @@ func (sfs *SuiteFs) CreateRootDir(userName string) (t *testing.T, rootDir string
 }
 
 // All runs all file systems tests.
-func (sfs *SuiteFs) All() {
+func (sfs *SuiteFS) All() {
 	sfs.Read()
 	sfs.Write()
 	sfs.Path()
 }
 
 // Write runs all file systems tests with write access.
-func (sfs *SuiteFs) Write() {
+func (sfs *SuiteFS) Write() {
 	sfs.Chtimes()
 	sfs.DirFuncOnFile()
 	sfs.FileReadEdgeCases()
@@ -268,7 +268,7 @@ func (sfs *SuiteFs) Write() {
 }
 
 // Read runs all file systems tests with read access.
-func (sfs *SuiteFs) Read() {
+func (sfs *SuiteFS) Read() {
 	sfs.Chdir()
 	sfs.EvalSymlink()
 	sfs.FileFuncOnClosed()

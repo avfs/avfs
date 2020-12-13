@@ -38,7 +38,7 @@ func InitTest(t *testing.T) avfs.VFS {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsRoot)
 	vfs := sfs.GetFsRead()
 
 	return vfs
@@ -50,7 +50,7 @@ func TestIOUtil(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsRoot)
 	sfs.ReadDir()
 	sfs.ReadFile()
 	sfs.WriteFile()

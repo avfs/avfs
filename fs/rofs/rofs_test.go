@@ -36,13 +36,13 @@ var (
 	_ avfs.File = &rofs.RoFile{}
 )
 
-func initTest(t *testing.T) *test.SuiteFs {
+func initTest(t *testing.T) *test.SuiteFS {
 	vfsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsRoot)
 	vfsW := sfs.GetFsWrite()
 	vfsR := rofs.New(vfsW)
 	sfs.FsRead(vfsR)

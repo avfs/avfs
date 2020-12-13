@@ -30,7 +30,7 @@ import (
 )
 
 // OpenFileRead tests OpenFile function for read.
-func (sfs *SuiteFs) OpenFileRead() {
+func (sfs *SuiteFS) OpenFileRead() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -90,7 +90,7 @@ func (sfs *SuiteFs) OpenFileRead() {
 }
 
 // OpenFileWrite tests OpenFile function for write.
-func (sfs *SuiteFs) OpenFileWrite() {
+func (sfs *SuiteFS) OpenFileWrite() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -344,7 +344,7 @@ func (sfs *SuiteFs) OpenFileWrite() {
 }
 
 // WriteFile tests WriteFile function.
-func (sfs *SuiteFs) WriteFile() {
+func (sfs *SuiteFS) WriteFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -371,7 +371,7 @@ func (sfs *SuiteFs) WriteFile() {
 }
 
 // WriteFile tests WriteString function.
-func (sfs *SuiteFs) WriteString() {
+func (sfs *SuiteFS) WriteString() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -408,7 +408,7 @@ func (sfs *SuiteFs) WriteString() {
 }
 
 // ReadFile tests ReadFile function.
-func (sfs *SuiteFs) ReadFile() {
+func (sfs *SuiteFS) ReadFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -448,7 +448,7 @@ func (sfs *SuiteFs) ReadFile() {
 }
 
 // FileWrite tests Write and WriteAt functions.
-func (sfs *SuiteFs) FileWrite() {
+func (sfs *SuiteFS) FileWrite() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -525,7 +525,7 @@ func (sfs *SuiteFs) FileWrite() {
 }
 
 // FileWriteEdgeCases tests Write and WriteAt functions edge cases.
-func (sfs *SuiteFs) FileWriteEdgeCases() {
+func (sfs *SuiteFS) FileWriteEdgeCases() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -580,7 +580,7 @@ func (sfs *SuiteFs) FileWriteEdgeCases() {
 }
 
 // FileRead tests Read and ReadAt functions.
-func (sfs *SuiteFs) FileRead() {
+func (sfs *SuiteFS) FileRead() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -650,7 +650,7 @@ func (sfs *SuiteFs) FileRead() {
 }
 
 // FileReadEdgeCases tests Read and ReadAt functions edge cases.
-func (sfs *SuiteFs) FileReadEdgeCases() {
+func (sfs *SuiteFS) FileReadEdgeCases() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -749,7 +749,7 @@ func (sfs *SuiteFs) FileReadEdgeCases() {
 }
 
 // FileSeek tests Seek function.
-func (sfs *SuiteFs) FileSeek() {
+func (sfs *SuiteFS) FileSeek() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -892,7 +892,7 @@ func (sfs *SuiteFs) FileSeek() {
 }
 
 // FileCloseRead tests file Close function for read only files.
-func (sfs *SuiteFs) FileCloseRead() {
+func (sfs *SuiteFS) FileCloseRead() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -938,7 +938,7 @@ func (sfs *SuiteFs) FileCloseRead() {
 }
 
 // FileCloseWrite tests file Close function for read/write files.
-func (sfs *SuiteFs) FileCloseWrite() {
+func (sfs *SuiteFS) FileCloseWrite() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -991,7 +991,7 @@ func (sfs *SuiteFs) FileCloseWrite() {
 }
 
 // FileTruncate tests Truncate function.
-func (sfs *SuiteFs) FileTruncate() {
+func (sfs *SuiteFS) FileTruncate() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -1140,7 +1140,7 @@ func (sfs *SuiteFs) FileTruncate() {
 }
 
 // Link tests Link function.
-func (sfs *SuiteFs) Link() {
+func (sfs *SuiteFS) Link() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -1233,7 +1233,7 @@ func (sfs *SuiteFs) Link() {
 }
 
 // SameFile tests SameFile function.
-func (sfs *SuiteFs) SameFile() {
+func (sfs *SuiteFS) SameFile() {
 	t, rootDir1, removeDir1 := sfs.CreateRootDir(UsrTest)
 	defer removeDir1()
 
@@ -1326,7 +1326,7 @@ func (sfs *SuiteFs) SameFile() {
 }
 
 // FileWriteTime checks that modification time is updated on write operations.
-func (sfs *SuiteFs) FileWriteTime() {
+func (sfs *SuiteFS) FileWriteTime() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 

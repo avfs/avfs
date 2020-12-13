@@ -36,13 +36,13 @@ var (
 	_ avfs.File = &memfs.MemFile{}
 )
 
-func initTest(t *testing.T) *test.SuiteFs {
+func initTest(t *testing.T) *test.SuiteFS {
 	vfsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsRoot)
 
 	return sfs
 }

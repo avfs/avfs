@@ -37,13 +37,13 @@ var (
 	_ avfs.File = &os.File{}
 )
 
-func initTest(t *testing.T) *test.SuiteFs {
+func initTest(t *testing.T) *test.SuiteFS {
 	vfsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsRoot)
 
 	return sfs
 }

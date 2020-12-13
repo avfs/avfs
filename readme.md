@@ -16,8 +16,8 @@ It provides an abstraction layer to emulate the behavior of a **Linux file syste
 - a **test suite** for all file systems (emulated or real)
 - a very basic **identity manager** allows testing of user related functions (Chown, Lchown) and file system permissions
 - all file systems support user file creation mode mask (**Umask**) 
-- **symbolic links**, **hard links** and **chroot** are fully supported for some file systems (MemFs, OsFs) 
-- some file systems support **multiple users concurrently**  (MemFs)
+- **symbolic links**, **hard links** and **chroot** are fully supported for some file systems (MemFS, OsFS) 
+- some file systems support **multiple users concurrently**  (MemFS)
 - each file system has its **own package**
 
 ## Installation
@@ -35,7 +35,7 @@ with the variable used to initialize the file system (`vfs` in the following exa
 - import the packages of the file systems and, if necessary, the `avfs` package 
 and initialize the file system variable.
 - some file systems provide specific options available at initialization.
-For instance `MemFs` needs `OptMainDirs` option to create `/home`, `/root` and `/tmp` directories.
+For instance `MemFS` needs `WithMainDirs` option to create `/home`, `/root` and `/tmp` directories.
 
 ## Examples
 
@@ -58,7 +58,7 @@ import (
 )
 
 func main() {
-    var vfs avfs.Fs	
+    var vfs avfs.FS	
 
     switch os.Getenv("ENV") {
     case "PROD": // The real file system for production.
@@ -92,7 +92,7 @@ func main() {
 
 ### Multiple users creating simultaneously directories
 The example below demonstrates the concurrent creation of subdirectories under a root directory 
-by several users in different goroutines (works only with MemFs) :
+by several users in different goroutines (works only with MemFS) :
 
 ```go
 package main
@@ -165,7 +165,7 @@ The interface diagram below represents the main interfaces, methods and relation
 <img src="avfs_diagram.svg" style="max-width:100%;">
 
 ## File systems
-All file systems implement at least `avfs.Fs` and `avfs.File` interfaces.
+All file systems implement at least `avfs.FS` and `avfs.File` interfaces.
 By default, each file system supported methods are the most commonly used
 from packages `os`, `path/filepath` and `ioutil`.
 All methods (except `TempDir` which is found in packages `os` and `ioutil`)
@@ -174,15 +174,15 @@ The following file systems are currently available :
 
 File system |Comments
 ------------|--------
-[BasePathFs](fs/basepathfs)|file system that restricts all operations to a given path within a file system
-[DummyFs](fs/dummyfs)|Non implemented file system to be used as model
-[MemFs](fs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
-[OrefaFs](fs/orefafs)|Afero like in memory file system
-[OsFs](fs/osfs)|Operating system native file system
-[RoFs](fs/rofs)|Read only file system
+[BasePathFS](fs/basepathfs)|file system that restricts all operations to a given path within a file system
+[DummyFS](fs/dummyfs)|Non implemented file system to be used as model
+[MemFS](fs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
+[OrefaFS](fs/orefafs)|Afero like in memory file system
+[OsFS](fs/osfs)|Operating system native file system
+[RoFS](fs/rofs)|Read only file system
 
 ## Supported methods
-File system methods <br> `avfs.Fs`|Comments
+File system methods <br> `avfs.FS`|Comments
 ----------------------------------|--------
 `Abs`|equivalent to `filepath.Abs`
 `Base`|equivalent to `filepath.Base`
@@ -192,7 +192,7 @@ File system methods <br> `avfs.Fs`|Comments
 `Chroot`|equivalent to `syscall.Chroot`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
-`Clone`| returns a shallow copy of the current file system (see MemFs) or the file system itself
+`Clone`| returns a shallow copy of the current file system (see MemFS) or the file system itself
 `Create`|equivalent to `os.Create`
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
@@ -265,7 +265,7 @@ Identity Manager |Comments
 [OsIdm](idm/osidm)|Identity manager using os functions
 [SQLiteIdm](https://github.com/avfs/sqliteidm)|Identity manager backed by a SQLite database
 
-Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
+Identity Manager methods <br>`avfs.FS` <br> `avfs.IdentityMgr`|Comments
 --------------------------------------------------------------|--------
 `GroupAdd`| adds a new group
 `GroupDel`| deletes an existing group
@@ -276,9 +276,9 @@ Identity Manager methods <br>`avfs.Fs` <br> `avfs.IdentityMgr`|Comments
 `UserAdd`| adds a new user
 `UserDel`| deletes an existing user
 
-All the file systems and some Identity managers (see OsFs) provide an additional interface `UserConnecter`
+All the file systems and some Identity managers (see OsFS) provide an additional interface `UserConnecter`
 
-UserConnecter methods <br>`avfs.Fs`|Comments
+UserConnecter methods <br>`avfs.FS`|Comments
 ------------------------------------|--------
 `CurrentUser`| returns the current user
 `User`| sets and returns the current user

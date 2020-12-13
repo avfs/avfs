@@ -46,7 +46,7 @@ func TestDummyFS(t *testing.T) {
 		t.Error("HasFeature : want HasFeature(whatever) to be false, got true")
 	}
 
-	sfs := test.NewSuiteFs(t, vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 	sfs.NotImplemented()
 }
 

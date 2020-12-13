@@ -27,7 +27,7 @@ import (
 )
 
 // Path tests all path related functions.
-func (sfs *SuiteFs) Path() {
+func (sfs *SuiteFS) Path() {
 	sfs.Abs()
 	sfs.Base()
 	sfs.Clean()
@@ -46,7 +46,7 @@ type pathTest struct {
 }
 
 // Abs test Abs function.
-func (sfs *SuiteFs) Abs() {
+func (sfs *SuiteFS) Abs() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -180,7 +180,7 @@ func (sfs *SuiteFs) Abs() {
 }
 
 // Base tests Base function.
-func (sfs *SuiteFs) Base() {
+func (sfs *SuiteFS) Base() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -209,7 +209,7 @@ func (sfs *SuiteFs) Base() {
 }
 
 // Clean tests Clean function.
-func (sfs *SuiteFs) Clean() {
+func (sfs *SuiteFS) Clean() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -282,7 +282,7 @@ func (sfs *SuiteFs) Clean() {
 }
 
 // Dir tests Dir function.
-func (sfs *SuiteFs) Dir() {
+func (sfs *SuiteFS) Dir() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -311,7 +311,7 @@ func (sfs *SuiteFs) Dir() {
 	}
 }
 
-func (sfs *SuiteFs) FromToSlash() {
+func (sfs *SuiteFS) FromToSlash() {
 	t := sfs.t
 
 	// TODO : Add test cases for windows.
@@ -353,7 +353,7 @@ func (sfs *SuiteFs) FromToSlash() {
 }
 
 // IsAbs tests IsAbs function.
-func (sfs *SuiteFs) IsAbs() {
+func (sfs *SuiteFS) IsAbs() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -403,7 +403,7 @@ func (sfs *SuiteFs) IsAbs() {
 }
 
 // Join tests Join function.
-func (sfs *SuiteFs) Join() {
+func (sfs *SuiteFS) Join() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -440,7 +440,7 @@ func (sfs *SuiteFs) Join() {
 }
 
 // Rel tests Rel function.
-func (sfs *SuiteFs) Rel() {
+func (sfs *SuiteFS) Rel() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -513,7 +513,7 @@ func (sfs *SuiteFs) Rel() {
 }
 
 // Split tests Split function.
-func (sfs *SuiteFs) Split() {
+func (sfs *SuiteFS) Split() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -538,7 +538,7 @@ func (sfs *SuiteFs) Split() {
 }
 
 // Glob tests Glob function.
-func (sfs *SuiteFs) Glob() {
+func (sfs *SuiteFS) Glob() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -611,7 +611,7 @@ func (sfs *SuiteFs) Glob() {
 }
 
 // Walk tests Walk function.
-func (sfs *SuiteFs) Walk() {
+func (sfs *SuiteFS) Walk() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 

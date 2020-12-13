@@ -40,7 +40,7 @@ func TestAsStatT(t *testing.T) {
 			t.Errorf("memfs.New : want error to be nil, got %v", err)
 		}
 
-		sfs := test.NewSuiteFs(t, vfs)
+		sfs := test.NewSuiteFS(t, vfs)
 		sfs.StatT()
 	})
 
@@ -50,7 +50,7 @@ func TestAsStatT(t *testing.T) {
 			t.Errorf("osfs.New : want error to be nil, got %v", err)
 		}
 
-		sfs := test.NewSuiteFs(t, vfs)
+		sfs := test.NewSuiteFS(t, vfs)
 		sfs.StatT()
 	})
 
@@ -60,7 +60,7 @@ func TestAsStatT(t *testing.T) {
 			t.Errorf("orefafs.New : want error to be nil, got %v", err)
 		}
 
-		sfs := test.NewSuiteFs(t, vfs)
+		sfs := test.NewSuiteFS(t, vfs)
 		sfs.StatT()
 	})
 }
@@ -71,7 +71,7 @@ func TestCheckPermission(t *testing.T) {
 		t.Fatalf("osfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 
 	_, rootDir, removeDir := sfs.CreateRootDir(test.UsrTest)
 	defer removeDir()

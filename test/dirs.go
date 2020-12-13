@@ -29,7 +29,7 @@ import (
 )
 
 // Chdir tests Chdir function.
-func (sfs *SuiteFs) Chdir() {
+func (sfs *SuiteFS) Chdir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -142,7 +142,7 @@ func (sfs *SuiteFs) Chdir() {
 }
 
 // GetTempDir tests GetTempDir function.
-func (sfs *SuiteFs) GetTempDir() {
+func (sfs *SuiteFS) GetTempDir() {
 	t, vfs := sfs.t, sfs.GetFsRead()
 
 	var wantTmp string
@@ -163,7 +163,7 @@ func (sfs *SuiteFs) GetTempDir() {
 }
 
 // Mkdir tests Mkdir function.
-func (sfs *SuiteFs) Mkdir() {
+func (sfs *SuiteFS) Mkdir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -266,7 +266,7 @@ func (sfs *SuiteFs) Mkdir() {
 }
 
 // MkdirAll tests MkdirAll function.
-func (sfs *SuiteFs) MkdirAll() {
+func (sfs *SuiteFS) MkdirAll() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -349,7 +349,7 @@ func (sfs *SuiteFs) MkdirAll() {
 }
 
 // ReadDir tests ReadDir function.
-func (sfs *SuiteFs) ReadDir() {
+func (sfs *SuiteFS) ReadDir() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -468,7 +468,7 @@ func (sfs *SuiteFs) ReadDir() {
 }
 
 // ReadDirNames tests Readdirnames function.
-func (sfs *SuiteFs) ReadDirNames() {
+func (sfs *SuiteFS) ReadDirNames() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 

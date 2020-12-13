@@ -32,7 +32,7 @@ func TestRaceOsFS(t *testing.T) {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sfs := test.NewSuiteFs(t, vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 
 	sfs.SuiteRace()
 }

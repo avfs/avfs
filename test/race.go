@@ -26,14 +26,14 @@ import (
 )
 
 // SuiteRace tests data race conditions.
-func (sfs *SuiteFs) SuiteRace() {
+func (sfs *SuiteFS) SuiteRace() {
 	sfs.SuiteRaceDir()
 	sfs.SuiteRaceFile()
 	sfs.SuiteRaceMkdirRemoveAll()
 }
 
 // SuiteRaceDir tests data race conditions for some directory functions.
-func (sfs *SuiteFs) SuiteRaceDir() {
+func (sfs *SuiteFS) SuiteRaceDir() {
 	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -59,7 +59,7 @@ func (sfs *SuiteFs) SuiteRaceDir() {
 }
 
 // SuiteRaceFile tests data race conditions for some file functions.
-func (sfs *SuiteFs) SuiteRaceFile() {
+func (sfs *SuiteFS) SuiteRaceFile() {
 	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -116,7 +116,7 @@ func (sfs *SuiteFs) SuiteRaceFile() {
 }
 
 // SuiteRaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
-func (sfs *SuiteFs) SuiteRaceMkdirRemoveAll() {
+func (sfs *SuiteFS) SuiteRaceMkdirRemoveAll() {
 	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
@@ -150,7 +150,7 @@ const (
 
 // SuiteRaceFunc tests data race conditions by running simultaneously all testFuncs in cf.maxRace goroutines
 // and expecting a result rr.
-func (sfs *SuiteFs) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func() error) {
+func (sfs *SuiteFS) SuiteRaceFunc(name string, rr RaceResult, testFuncs ...func() error) {
 	var (
 		t       = sfs.t
 		wg      sync.WaitGroup
