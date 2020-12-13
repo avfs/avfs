@@ -20,32 +20,32 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// New creates a new DummyFs file system.
-func New() (*DummyFs, error) {
-	return &DummyFs{}, nil
+// New creates a new DummyFS file system.
+func New() (*DummyFS, error) {
+	return &DummyFS{}, nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *DummyFs) Features() avfs.Feature {
+func (vfs *DummyFS) Features() avfs.Feature {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *DummyFs) HasFeature(feature avfs.Feature) bool {
+func (vfs *DummyFS) HasFeature(feature avfs.Feature) bool {
 	return false
 }
 
 // Name returns the name of the fileSystem.
-func (vfs *DummyFs) Name() string {
+func (vfs *DummyFS) Name() string {
 	return avfs.NotImplemented
 }
 
 // OSType returns the operating system type of the file system.
-func (vfs *DummyFs) OSType() avfs.OSType {
+func (vfs *DummyFS) OSType() avfs.OSType {
 	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *DummyFs) Type() string {
-	return "DummyFs"
+func (vfs *DummyFS) Type() string {
+	return "DummyFS"
 }

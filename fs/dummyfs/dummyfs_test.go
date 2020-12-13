@@ -28,15 +28,15 @@ import (
 )
 
 var (
-	// dummyFs.DummyFs struct implements avfs.DummyFs interface.
-	_ avfs.VFS = &dummyfs.DummyFs{}
+	// dummyFs.DummyFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &dummyfs.DummyFS{}
 
-	// dummyfs.DummyFile struct implements avfs.DummyFile interface.
+	// dummyfs.DummyFile struct implements avfs.File interface.
 	_ avfs.File = &dummyfs.DummyFile{}
 )
 
 //
-func TestDummyFs(t *testing.T) {
+func TestDummyFS(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
@@ -50,7 +50,7 @@ func TestDummyFs(t *testing.T) {
 	sfs.NotImplemented()
 }
 
-func TestDummyFsOSType(t *testing.T) {
+func TestDummyFSOSType(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
@@ -61,7 +61,7 @@ func TestDummyFsOSType(t *testing.T) {
 	}
 }
 
-func TestDummyFsFeatures(t *testing.T) {
+func TestDummyFSFeatures(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("dummy.New : want error to be nil, got %v", err)

@@ -25,12 +25,12 @@ import (
 	"github.com/avfs/avfs/test"
 )
 
-func TestDummyFsIdm(t *testing.T) {
+func TestDummyFSIdm(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.PermDenied()
+	sIdm := test.NewSuiteIdm(t, vfs)
+	sIdm.PermDenied()
 }
