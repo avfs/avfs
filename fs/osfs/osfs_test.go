@@ -30,8 +30,8 @@ import (
 )
 
 var (
-	// osfs.OsFs struct implements avfs.Fs interface.
-	_ avfs.Fs = &osfs.OsFs{}
+	// osfs.OsFs struct implements avfs.VFS interface.
+	_ avfs.VFS = &osfs.OsFs{}
 
 	// os.File struct implements avfs.File interface.
 	_ avfs.File = &os.File{}

@@ -30,13 +30,13 @@ type SuiteFs struct {
 	t *testing.T
 
 	// vfsRoot is the file system as a root user.
-	vfsRoot avfs.Fs
+	vfsRoot avfs.VFS
 
 	// vfsW is the file system as test user with read and write permissions.
-	vfsW avfs.Fs
+	vfsW avfs.VFS
 
 	// vfsR is the file system as test user with read only permissions.
-	vfsR avfs.Fs
+	vfsR avfs.VFS
 
 	// rootDir is the root directory for tests, it can be generated automatically or specified with WithRootDir().
 	rootDir string
@@ -61,7 +61,7 @@ type SuiteFs struct {
 type Option func(*SuiteFs)
 
 // NewSuiteFs creates a new test suite for a file system.
-func NewSuiteFs(t *testing.T, vfsRoot avfs.Fs, opts ...Option) *SuiteFs {
+func NewSuiteFs(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFs {
 	if vfsRoot == nil {
 		t.Fatal("New : want FsRoot to be set, got nil")
 	}
@@ -126,7 +126,7 @@ func (sfs *SuiteFs) OS() avfs.OSType {
 }
 
 // GetFsAsUser sets the test user to userName.
-func (sfs *SuiteFs) GetFsAsUser(name string) (avfs.Fs, avfs.UserReader) {
+func (sfs *SuiteFs) GetFsAsUser(name string) (avfs.VFS, avfs.UserReader) {
 	vfs := sfs.vfsRoot
 
 	u := vfs.CurrentUser()
@@ -143,22 +143,22 @@ func (sfs *SuiteFs) GetFsAsUser(name string) (avfs.Fs, avfs.UserReader) {
 }
 
 // GetFsRead returns the file system for read only functions.
-func (sfs *SuiteFs) GetFsRead() avfs.Fs {
+func (sfs *SuiteFs) GetFsRead() avfs.VFS {
 	return sfs.vfsR
 }
 
 // GetFsRoot return the root file system.
-func (sfs *SuiteFs) GetFsRoot() avfs.Fs {
+func (sfs *SuiteFs) GetFsRoot() avfs.VFS {
 	return sfs.vfsRoot
 }
 
 // GetFsWrite returns the file system for read and write functions.
-func (sfs *SuiteFs) GetFsWrite() avfs.Fs {
+func (sfs *SuiteFs) GetFsWrite() avfs.VFS {
 	return sfs.vfsW
 }
 
 // FsRead sets the file system for read functions.
-func (sfs *SuiteFs) FsRead(fsR avfs.Fs) {
+func (sfs *SuiteFs) FsRead(fsR avfs.VFS) {
 	if fsR == nil {
 		sfs.t.Fatal("SuiteFs : want FsR to be set, got nil")
 	}
@@ -167,7 +167,7 @@ func (sfs *SuiteFs) FsRead(fsR avfs.Fs) {
 }
 
 // FsWrite sets the file system for write functions.
-func (sfs *SuiteFs) FsWrite(fsW avfs.Fs) {
+func (sfs *SuiteFs) FsWrite(fsW avfs.VFS) {
 	if fsW == nil {
 		sfs.t.Fatal("SuiteFs : want FsW to be set, got nil")
 	}
@@ -328,7 +328,7 @@ func GetDirsAll() []*Dir {
 }
 
 // CreateDirs create test directories.
-func CreateDirs(t *testing.T, vfs avfs.Fs, rootDir string) []*Dir {
+func CreateDirs(t *testing.T, vfs avfs.VFS, rootDir string) []*Dir {
 	dirs := GetDirs()
 	for _, dir := range dirs {
 		path := vfs.Join(rootDir, dir.Path)
@@ -368,7 +368,7 @@ func GetFiles() []*File {
 }
 
 // CreateFiles create test files.
-func CreateFiles(t *testing.T, vfs avfs.Fs, rootDir string) []*File {
+func CreateFiles(t *testing.T, vfs avfs.VFS, rootDir string) []*File {
 	files := GetFiles()
 	for _, file := range files {
 		path := vfs.Join(rootDir, file.Path)
@@ -441,7 +441,7 @@ func GetSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 }
 
 // CreateSymlinks creates test symbolic links.
-func CreateSymlinks(t *testing.T, vfs avfs.Fs, rootDir string) []*Symlink {
+func CreateSymlinks(t *testing.T, vfs avfs.VFS, rootDir string) []*Symlink {
 	symlinks := GetSymlinks(vfs)
 	for _, sl := range symlinks {
 		oldPath := vfs.Join(rootDir, sl.OldName)

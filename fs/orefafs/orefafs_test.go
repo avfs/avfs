@@ -28,13 +28,13 @@ import (
 
 var (
 	// orefafs.OrefaFs struct implements avfs.OrefaFs interface.
-	_ avfs.Fs = &orefafs.OrefaFs{}
+	_ avfs.VFS = &orefafs.OrefaFs{}
 
 	// orefafs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
 )
 
-func initTest(t *testing.T) avfs.Fs {
+func initTest(t *testing.T) avfs.VFS {
 	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)

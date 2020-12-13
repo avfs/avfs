@@ -123,7 +123,7 @@ func (vfs *OsFs) Clean(path string) string {
 }
 
 // Clone returns the file system itself since it does not support this feature (FeatClonable).
-func (vfs *OsFs) Clone() avfs.Fs {
+func (vfs *OsFs) Clone() avfs.VFS {
 	return vfs
 }
 

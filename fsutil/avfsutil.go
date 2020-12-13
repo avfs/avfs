@@ -41,7 +41,7 @@ var (
 )
 
 // CreateBaseDirs creates base directories on a file system.
-func CreateBaseDirs(vfs avfs.Fs, basePath string) error {
+func CreateBaseDirs(vfs avfs.VFS, basePath string) error {
 	for _, dir := range BaseDirs {
 		path := vfs.Join(basePath, dir.Path)
 
@@ -83,7 +83,7 @@ func CheckPermission(info os.FileInfo, want avfs.WantMode, u avfs.UserReader) bo
 }
 
 // CreateHomeDir creates the home directory of a user.
-func CreateHomeDir(vfs avfs.Fs, u avfs.UserReader) (avfs.UserReader, error) {
+func CreateHomeDir(vfs avfs.VFS, u avfs.UserReader) (avfs.UserReader, error) {
 	userDir := vfs.Join(avfs.HomeDir, u.Name())
 
 	err := vfs.Mkdir(userDir, avfs.HomeDirPerm)

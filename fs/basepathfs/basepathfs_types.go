@@ -22,7 +22,7 @@ import (
 
 // BasePathFs implements a base path file system.
 type BasePathFs struct {
-	baseFs   avfs.Fs
+	baseFs   avfs.VFS
 	basePath string
 }
 

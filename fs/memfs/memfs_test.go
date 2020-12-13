@@ -30,7 +30,7 @@ import (
 
 var (
 	// memfs.MemFs struct implements avfs.MemFs interface.
-	_ avfs.Fs = &memfs.MemFs{}
+	_ avfs.VFS = &memfs.MemFs{}
 
 	// memfs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}

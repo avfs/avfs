@@ -23,7 +23,7 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// OrefaFs implements a memory file system using the avfs.Fs interface.
+// OrefaFs implements a memory file system using the avfs.VFS interface.
 type OrefaFs struct {
 	mu      sync.RWMutex
 	nodes   nodes

@@ -19,7 +19,7 @@ package rofs
 import "github.com/avfs/avfs"
 
 // New creates a new readonly file system (RoFs) from a base file system.
-func New(baseFs avfs.Fs) *RoFs {
+func New(baseFs avfs.VFS) *RoFs {
 	return &RoFs{baseFs: baseFs}
 }
 

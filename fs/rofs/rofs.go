@@ -137,7 +137,7 @@ func (vfs *RoFs) Clean(path string) string {
 
 // Clone returns a shallow copy of the current file system (see MemFs)
 // or the file system itself if does not support this feature (FeatClonable).
-func (vfs *RoFs) Clone() avfs.Fs {
+func (vfs *RoFs) Clone() avfs.VFS {
 	return vfs.baseFs.Clone()
 }
 

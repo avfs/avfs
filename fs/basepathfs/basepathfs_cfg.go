@@ -25,7 +25,7 @@ import (
 )
 
 // New returns a new base path file system (BasePathFs).
-func New(baseFs avfs.Fs, basePath string) (*BasePathFs, error) {
+func New(baseFs avfs.VFS, basePath string) (*BasePathFs, error) {
 	const op = "basepath"
 
 	absPath, _ := baseFs.Abs(basePath)

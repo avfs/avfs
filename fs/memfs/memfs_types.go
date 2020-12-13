@@ -29,7 +29,7 @@ const (
 	slCountMax = 64
 )
 
-// MemFs implements a memory file system using the avfs.Fs interface.
+// MemFs implements a memory file system using the avfs.VFS interface.
 type MemFs struct {
 	rootNode *dirNode
 	fsAttrs  *fsAttrs

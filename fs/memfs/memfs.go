@@ -208,7 +208,7 @@ func (vfs *MemFs) Clean(path string) string {
 }
 
 // Clone returns a shallow copy of the current file system.
-func (vfs *MemFs) Clone() avfs.Fs {
+func (vfs *MemFs) Clone() avfs.VFS {
 	newFs := *vfs
 
 	return &newFs

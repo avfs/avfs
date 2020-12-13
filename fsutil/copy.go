@@ -45,7 +45,7 @@ func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //no
 }
 
 // CopyFile copies a file between file systems and returns the hash sum of the source file.
-func CopyFile(dstFs, srcFs avfs.Fs, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
+func CopyFile(dstFs, srcFs avfs.VFS, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
 	src, err := srcFs.Open(srcPath)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func CopyFile(dstFs, srcFs avfs.Fs, dstPath, srcPath string, hasher hash.Hash) (
 }
 
 // HashFile hashes a file and returns the hash sum.
-func HashFile(vfs avfs.Fs, name string, hasher hash.Hash) (sum []byte, err error) {
+func HashFile(vfs avfs.VFS, name string, hasher hash.Hash) (sum []byte, err error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err

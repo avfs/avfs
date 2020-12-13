@@ -38,7 +38,7 @@ func (sfs *SuiteFs) PermWrite() {
 	t := sfs.t
 
 	if !sfs.canTestPerm {
-		t.Log("Info - Fs Perm Write : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
+		t.Log("Info - VFS Perm Write : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
 
 		return
 	}
@@ -55,7 +55,7 @@ func (sfs *SuiteFs) PermRead() {
 	t := sfs.t
 
 	if !sfs.canTestPerm {
-		t.Log("Info - Fs Perm Read : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
+		t.Log("Info - VFS Perm Read : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
 
 		return
 	}

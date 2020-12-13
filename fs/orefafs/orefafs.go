@@ -174,7 +174,7 @@ func (vfs *OrefaFs) Clean(path string) string {
 }
 
 // Clone returns the file system itself since if does not support this feature (FeatClonable).
-func (vfs *OrefaFs) Clone() avfs.Fs {
+func (vfs *OrefaFs) Clone() avfs.VFS {
 	return vfs
 }
 

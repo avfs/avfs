@@ -25,7 +25,7 @@ import (
 )
 
 // BenchmarkCreate is a simple benchmark to create a random tree.
-func BenchmarkCreate(b *testing.B, vfs avfs.Fs) {
+func BenchmarkCreate(b *testing.B, vfs avfs.VFS) {
 	rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinDepth: 4, MaxDepth: 4,

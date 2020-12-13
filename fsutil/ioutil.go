@@ -59,7 +59,7 @@ func nextRandom() string {
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func ReadDir(vfs avfs.Fs, dirname string) ([]os.FileInfo, error) {
+func ReadDir(vfs avfs.VFS, dirname string) ([]os.FileInfo, error) {
 	f, err := vfs.Open(dirname)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func ReadDir(vfs avfs.Fs, dirname string) ([]os.FileInfo, error) {
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func ReadFile(vfs avfs.Fs, filename string) ([]byte, error) {
+func ReadFile(vfs avfs.VFS, filename string) ([]byte, error) {
 	f, err := vfs.Open(filename)
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func prefixAndSuffix(pattern string) (prefix, suffix string) {
 // Multiple programs calling TempDir simultaneously
 // will not choose the same directory. It is the caller's responsibility
 // to remove the directory when no longer needed.
-func TempDir(vfs avfs.Fs, dir, pattern string) (name string, err error) {
+func TempDir(vfs avfs.VFS, dir, pattern string) (name string, err error) {
 	if dir == "" {
 		dir = vfs.GetTempDir()
 	}
@@ -163,7 +163,7 @@ func TempDir(vfs avfs.Fs, dir, pattern string) (name string, err error) {
 // will not choose the same file. The caller can use f.Name()
 // to find the pathname of the file. It is the caller's responsibility
 // to remove the file when no longer needed.
-func TempFile(vfs avfs.Fs, dir, pattern string) (f avfs.File, err error) {
+func TempFile(vfs avfs.VFS, dir, pattern string) (f avfs.File, err error) {
 	if dir == "" {
 		dir = vfs.GetTempDir()
 	}
@@ -196,7 +196,7 @@ func TempFile(vfs avfs.Fs, dir, pattern string) (f avfs.File, err error) {
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func WriteFile(vfs avfs.Fs, filename string, data []byte, perm os.FileMode) error {
+func WriteFile(vfs avfs.VFS, filename string, data []byte, perm os.FileMode) error {
 	f, err := vfs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err

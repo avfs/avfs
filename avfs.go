@@ -247,9 +247,9 @@ const (
 	WantRWX WantMode = 0o007
 )
 
-// Fs is the file system interface.
+// VFS is the virtual file system interface.
 // Any simulated or real file system should implement this interface.
-type Fs interface {
+type VFS interface {
 	BasicFs
 	ChDirer
 	ChModer
@@ -475,7 +475,7 @@ type ChTimer interface {
 type Cloner interface {
 	// Clone returns a shallow copy of the current file system (see MemFs)
 	// or the file system itself if does not support this feature (FeatClonable).
-	Clone() Fs
+	Clone() VFS
 }
 
 // Featurer is the interface that wraps the Feature method.

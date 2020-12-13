@@ -29,7 +29,7 @@ import (
 
 var (
 	// dummyFs.DummyFs struct implements avfs.DummyFs interface.
-	_ avfs.Fs = &dummyfs.DummyFs{}
+	_ avfs.VFS = &dummyfs.DummyFs{}
 
 	// dummyfs.DummyFile struct implements avfs.DummyFile interface.
 	_ avfs.File = &dummyfs.DummyFile{}
