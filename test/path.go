@@ -360,21 +360,44 @@ func (sfs *SuiteFS) IsAbs() {
 	vfs := sfs.GetFsRead()
 
 	t.Run("IsAbs", func(t *testing.T) {
-		isabstests := []struct {
+		type IsAbsTest struct {
 			path  string
 			isAbs bool
-		}{
-			{"", false},
-			{"/", true},
-			{"/usr/bin/gcc", true},
-			{"..", false},
-			{"/a/../bb", true},
-			{".", false},
-			{"./", false},
-			{"lala", false},
 		}
 
-		for _, test := range isabstests {
+		var isAbsTests []IsAbsTest
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			isAbsTests = []IsAbsTest{
+				{`C:\`, true},
+				{`c\`, false},
+				{`c::`, false},
+				{`c:`, false},
+				{`/`, false},
+				{`\`, false},
+				{`\Windows`, false},
+				{`c:a\b`, false},
+				{`c:\a\b`, true},
+				{`c:/a/b`, true},
+				{`\\host\share\foo`, true},
+				{`//host/share/foo/bar`, true},
+			}
+
+		default:
+			isAbsTests = []IsAbsTest{
+				{"", false},
+				{"/", true},
+				{"/usr/bin/gcc", true},
+				{"..", false},
+				{"/a/../bb", true},
+				{".", false},
+				{"./", false},
+				{"lala", false},
+			}
+		}
+
+		for _, test := range isAbsTests {
 			r := vfs.IsAbs(test.path)
 			if r != test.isAbs {
 				t.Errorf("IsAbs(%q) = %v, want %v", test.path, r, test.isAbs)
