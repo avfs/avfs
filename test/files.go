@@ -1113,7 +1113,12 @@ func (sfs *SuiteFS) FileTruncate() {
 		}
 
 		err = vfs.Truncate(path, -1)
-		CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", path, avfs.ErrWinNegativeSeek, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+		}
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		if err != nil {
@@ -1123,7 +1128,12 @@ func (sfs *SuiteFS) FileTruncate() {
 		defer f.Close()
 
 		err = f.Truncate(-1)
-		CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", path, avfs.ErrWinNegativeSeek, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+		}
 	})
 
 	t.Run("FsTruncateSizeBiggerFileSize", func(t *testing.T) {
