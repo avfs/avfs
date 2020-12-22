@@ -820,7 +820,12 @@ func (sfs *SuiteFS) FileSeek() {
 		// Invalid SeekStart
 
 		pos, err = f.Seek(-1, io.SeekStart)
-		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrWinNegativeSeek, err)
+		default:
+			CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		}
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -850,7 +855,12 @@ func (sfs *SuiteFS) FileSeek() {
 		}
 
 		pos, err = f.Seek(-lenData*2, io.SeekEnd)
-		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrWinNegativeSeek, err)
+		default:
+			CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		}
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -865,7 +875,12 @@ func (sfs *SuiteFS) FileSeek() {
 		}
 
 		pos, err = f.Seek(-lenData, io.SeekCurrent)
-		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrWinNegativeSeek, err)
+		default:
+			CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		}
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -883,7 +898,14 @@ func (sfs *SuiteFS) FileSeek() {
 		// Invalid Whence
 
 		pos, err = f.Seek(0, 10)
-		CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			if err != nil {
+				t.Errorf("Seek : want error to be nil, got %v", err)
+			}
+		default:
+			CheckPathError(t, "Seek", "seek", f.Name(), os.ErrInvalid, err)
+		}
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)

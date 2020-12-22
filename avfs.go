@@ -117,6 +117,9 @@ const (
 
 	// ErrWinFileExists is the error The file exists (syscall.ERROR_FILE_EXISTS).
 	ErrWinFileExists = syscall.Errno(80)
+
+	// ErrWinNegativeSeek is the error An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinNegativeSeek = syscall.Errno(0x83)
 )
 
 var (
