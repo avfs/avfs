@@ -368,19 +368,22 @@ func (sfs *SuiteFS) RemoveAll() {
 
 		for _, dir := range dirs {
 			path := vfs.Join(baseDir, dir.Path)
-			_, err := vfs.Stat(path)
+
+			_, err = vfs.Stat(path)
 			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
 		}
 
 		for _, file := range files {
 			path := vfs.Join(baseDir, file.Path)
-			_, err := vfs.Stat(path)
+
+			_, err = vfs.Stat(path)
 			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
 		}
 
 		for _, sl := range symlinks {
 			path := vfs.Join(baseDir, sl.NewName)
-			_, err := vfs.Stat(path)
+
+			_, err = vfs.Stat(path)
 			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
 		}
 
