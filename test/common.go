@@ -355,42 +355,46 @@ func (sfs *SuiteFS) RemoveAll() {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	symlinks := CreateSymlinks(t, vfs, rootDir)
+	baseDir := vfs.Join(rootDir, "RemoveAll")
+	dirs := CreateDirs(t, vfs, baseDir)
+	files := CreateFiles(t, vfs, baseDir)
+	symlinks := CreateSymlinks(t, vfs, baseDir)
 
 	t.Run("RemoveAll", func(t *testing.T) {
-		err := vfs.RemoveAll(rootDir)
+		err := vfs.RemoveAll(baseDir)
 		if err != nil {
-			t.Fatalf("RemoveAll %s : want error to be nil, got %v", rootDir, err)
+			t.Fatalf("RemoveAll %s : want error to be nil, got %v", baseDir, err)
 		}
 
 		for _, dir := range dirs {
-			path := vfs.Join(rootDir, dir.Path)
+			path := vfs.Join(baseDir, dir.Path)
 			_, err := vfs.Stat(path)
 			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
 		}
 
 		for _, file := range files {
-			path := vfs.Join(rootDir, file.Path)
+			path := vfs.Join(baseDir, file.Path)
 			_, err := vfs.Stat(path)
 			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
 		}
 
 		for _, sl := range symlinks {
-			path := vfs.Join(rootDir, sl.NewName)
+			path := vfs.Join(baseDir, sl.NewName)
 			_, err := vfs.Stat(path)
 			CheckPathError(t, "Stat", "stat", path, avfs.ErrNoSuchFileOrDir, err)
 		}
+
+		_, err = vfs.Stat(baseDir)
+		CheckPathError(t, "Stat", "stat", baseDir, avfs.ErrNoSuchFileOrDir, err)
 	})
 
 	t.Run("RemoveAllErrors", func(t *testing.T) {
-		err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
+		err := vfs.MkdirAll(baseDir, avfs.DefaultDirPerm)
 		if err != nil {
 			t.Fatalf("Mkdir %s : want error to be nil, got %v", rootDir, err)
 		}
 
-		existingFile := vfs.Join(rootDir, "existingFile.txt")
+		existingFile := vfs.Join(baseDir, "existingFile.txt")
 		err = vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile %s : want error to be nil, got %v", existingFile, err)
