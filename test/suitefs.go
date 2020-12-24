@@ -327,16 +327,16 @@ func GetDirsAll() []*Dir {
 	return dirs
 }
 
-// CreateDirs create test directories.
-func CreateDirs(t *testing.T, vfs avfs.VFS, rootDir string) []*Dir {
-	err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
+// CreateDirs create test directories and baseDir directory if necessary.
+func CreateDirs(t *testing.T, vfs avfs.VFS, baseDir string) []*Dir {
+	err := vfs.MkdirAll(baseDir, avfs.DefaultDirPerm)
 	if err != nil {
-		t.Fatalf("MkdirAll %s : want error to be nil, got %v", rootDir, err)
+		t.Fatalf("MkdirAll %s : want error to be nil, got %v", baseDir, err)
 	}
 
 	dirs := GetDirs()
 	for _, dir := range dirs {
-		path := vfs.Join(rootDir, dir.Path)
+		path := vfs.Join(baseDir, dir.Path)
 
 		err = vfs.Mkdir(path, dir.Mode)
 		if err != nil {
@@ -373,10 +373,10 @@ func GetFiles() []*File {
 }
 
 // CreateFiles create test files.
-func CreateFiles(t *testing.T, vfs avfs.VFS, rootDir string) []*File {
+func CreateFiles(t *testing.T, vfs avfs.VFS, baseDir string) []*File {
 	files := GetFiles()
 	for _, file := range files {
-		path := vfs.Join(rootDir, file.Path)
+		path := vfs.Join(baseDir, file.Path)
 
 		err := vfs.WriteFile(path, file.Content, file.Mode)
 		if err != nil {
@@ -446,11 +446,11 @@ func GetSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 }
 
 // CreateSymlinks creates test symbolic links.
-func CreateSymlinks(t *testing.T, vfs avfs.VFS, rootDir string) []*Symlink {
+func CreateSymlinks(t *testing.T, vfs avfs.VFS, baseDir string) []*Symlink {
 	symlinks := GetSymlinks(vfs)
 	for _, sl := range symlinks {
-		oldPath := vfs.Join(rootDir, sl.OldName)
-		newPath := vfs.Join(rootDir, sl.NewName)
+		oldPath := vfs.Join(baseDir, sl.OldName)
+		newPath := vfs.Join(baseDir, sl.NewName)
 
 		err := vfs.Symlink(oldPath, newPath)
 		if err != nil {
