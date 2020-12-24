@@ -329,11 +329,16 @@ func GetDirsAll() []*Dir {
 
 // CreateDirs create test directories.
 func CreateDirs(t *testing.T, vfs avfs.VFS, rootDir string) []*Dir {
+	err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
+	if err != nil {
+		t.Fatalf("MkdirAll %s : want error to be nil, got %v", rootDir, err)
+	}
+
 	dirs := GetDirs()
 	for _, dir := range dirs {
 		path := vfs.Join(rootDir, dir.Path)
 
-		err := vfs.Mkdir(path, dir.Mode)
+		err = vfs.Mkdir(path, dir.Mode)
 		if err != nil {
 			t.Fatalf("Mkdir %s : want error to be nil, got %v", path, err)
 		}
