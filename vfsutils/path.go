@@ -281,7 +281,7 @@ func Glob(vfs avfs.VFS, pattern string) (matches []string, err error) {
 		}
 	}
 
-	return //nolint:nakedret
+	return //nolint:nakedret // Copied from standard library.
 }
 
 // glob searches for files matching pattern in the directory dir
@@ -321,7 +321,7 @@ func glob(vfs avfs.VFS, dir, pattern string, matches []string) (m []string, e er
 		}
 	}
 
-	return //nolint:nakedret
+	return //nolint:nakedret // Copied from standard library.
 }
 
 // hasMeta reports whether path contains any of the magic characters

@@ -80,7 +80,7 @@ type RndTree struct {
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(vfs avfs.VFS, p RndTreeParams) (*RndTree, error) { //nolint:gocritic
+func NewRndTree(vfs avfs.VFS, p RndTreeParams) (*RndTree, error) { //nolint:gocritic // p is heavy, pass it by pointer.
 	if p.MinDepth < 1 || p.MinDepth > p.MaxDepth {
 		return nil, ErrOutOfRange("depth")
 	}
@@ -135,7 +135,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 	rt.Files = append(rt.Files, files...)
 
 	if rt.vfs.HasFeature(avfs.FeatSymlink) {
-		symLinks, err := rt.randSymlinks(parent) //nolint:govet
+		symLinks, err := rt.randSymlinks(parent) //nolint:govet // Shadows previous declaration of err.
 		if err != nil {
 			return err
 		}
@@ -145,7 +145,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 
 	maxDepth := rt.MinDepth
 	if rt.MinDepth < rt.MaxDepth {
-		maxDepth += rand.Intn(rt.MaxDepth - rt.MinDepth) //nolint:gosec
+		maxDepth += rand.Intn(rt.MaxDepth - rt.MinDepth) //nolint:gosec // No security-sensitive function.
 	}
 
 	depth++
@@ -167,7 +167,7 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 func (rt *RndTree) randDirs(parent string) ([]string, error) {
 	nbDirs := rt.MinDirs
 	if rt.MinDirs < rt.MaxDirs {
-		nbDirs += rand.Intn(rt.MaxDirs - rt.MinDirs) //nolint:gosec
+		nbDirs += rand.Intn(rt.MaxDirs - rt.MinDirs) //nolint:gosec // No security-sensitive function.
 	}
 
 	dirs := make([]string, 0, nbDirs)
@@ -190,7 +190,7 @@ func (rt *RndTree) randDirs(parent string) ([]string, error) {
 func (rt *RndTree) randFiles(parent string) ([]string, error) {
 	nbFiles := rt.MinFiles
 	if rt.MinFiles < rt.MaxFiles {
-		nbFiles += rand.Intn(rt.MaxFiles - rt.MinFiles) //nolint:gosec
+		nbFiles += rand.Intn(rt.MaxFiles - rt.MinFiles) //nolint:gosec // No security-sensitive function.
 	}
 
 	files := make([]string, 0, nbFiles)
@@ -198,11 +198,11 @@ func (rt *RndTree) randFiles(parent string) ([]string, error) {
 	for i := 0; i < nbFiles; i++ {
 		size := rt.MinFileLen
 		if rt.MinFileLen < rt.MaxFileLen {
-			size += rand.Intn(rt.MaxFileLen - rt.MinFileLen) //nolint:gosec
+			size += rand.Intn(rt.MaxFileLen - rt.MinFileLen) //nolint:gosec // No security-sensitive function.
 		}
 
 		buf := make([]byte, size)
-		rand.Read(buf) //nolint:gosec
+		rand.Read(buf) //nolint:gosec // No security-sensitive function.
 
 		path := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
 
@@ -225,14 +225,14 @@ func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
 
 	nbSl := rt.MinSymlinks
 	if rt.MinSymlinks < rt.MaxSymlinks {
-		nbSl += rand.Intn(rt.MaxSymlinks - rt.MinSymlinks) //nolint:gosec
+		nbSl += rand.Intn(rt.MaxSymlinks - rt.MinSymlinks) //nolint:gosec // No security-sensitive function.
 	}
 
 	sl := make([]string, 0, nbSl)
 
 	for i := 0; i < nbSl; i++ {
 		newName := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
-		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec
+		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec // No security-sensitive function.
 		oldName := rt.Files[fileIdx]
 
 		err := rt.vfs.Symlink(oldName, newName)
@@ -250,13 +250,13 @@ func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
 func randName(minName, maxName int) string {
 	nbR := minName
 	if minName < maxName {
-		nbR += rand.Intn(maxName - minName) //nolint:gosec
+		nbR += rand.Intn(maxName - minName) //nolint:gosec // No security-sensitive function.
 	}
 
 	var name strings.Builder
 
 	for i, s, e := 0, 0, 0; i < nbR; i++ {
-		switch rand.Intn(4) { //nolint:gosec
+		switch rand.Intn(4) { //nolint:gosec // No security-sensitive function.
 		case 0: // ASCII Uppercase
 			s = 65
 			e = 90
@@ -271,7 +271,7 @@ func randName(minName, maxName int) string {
 			e = 0x97f
 		}
 
-		r := rune(s + rand.Intn(e-s)) //nolint:gosec
+		r := rune(s + rand.Intn(e-s)) //nolint:gosec // No security-sensitive function.
 
 		name.WriteRune(r)
 	}
@@ -280,8 +280,8 @@ func randName(minName, maxName int) string {
 }
 
 // RndParamsOneDir are the parameters to generate one directory
-// with random subdirectories, files and symbolic links.
-var RndParamsOneDir = RndTreeParams{ //nolint:gochecknoglobals
+// with random empty subdirectories, files and symbolic links.
+var RndParamsOneDir = RndTreeParams{ //nolint:gochecknoglobals // See above.
 	MinDepth:    1,
 	MaxDepth:    1,
 	MinName:     4,

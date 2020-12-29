@@ -89,7 +89,7 @@ func (sfs *SuiteFS) Abs() {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		defer vfs.Chdir(wd) //nolint:errcheck
+		defer vfs.Chdir(wd) //nolint:errcheck // Ignore errors.
 
 		for _, dir := range absTestDirs {
 			err = vfs.Mkdir(dir, 0o777)
@@ -152,7 +152,7 @@ func (sfs *SuiteFS) Abs() {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		defer vfs.Chdir(wd) //nolint:errcheck
+		defer vfs.Chdir(wd) //nolint:errcheck // Ignore errors.
 
 		info, err := vfs.Stat(rootDir)
 		if err != nil {

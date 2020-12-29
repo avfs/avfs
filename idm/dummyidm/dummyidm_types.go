@@ -20,13 +20,13 @@ import "github.com/avfs/avfs"
 
 var (
 	// NotImplementedIdm is the default identity manager for all file systems.
-	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals
+	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 	// RootUser represents a root user.
-	RootUser = &User{name: avfs.UsrRoot, uid: 0, gid: 0} //nolint:gochecknoglobals
+	RootUser = &User{name: avfs.UsrRoot, uid: 0, gid: 0} //nolint:gochecknoglobals // Used as user for other file systems.
 
 	// NotImplementedUser represents a not implemented invalid user.
-	NotImplementedUser = &User{name: avfs.NotImplemented, uid: -1, gid: -1} //nolint:gochecknoglobals
+	NotImplementedUser = &User{name: avfs.NotImplemented, uid: -1, gid: -1} //nolint:gochecknoglobals // Used as user for other file systems.
 )
 
 // DummyIdm represent a non implementedy identity manager using the avfs.IdentityMgr interface.

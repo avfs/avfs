@@ -28,15 +28,15 @@ import (
 const bufSize = 32 * 1024
 
 // bufPool is the buffer pool used to copy files.
-var bufPool = &sync.Pool{New: func() interface{} { //nolint:gochecknoglobals
+var bufPool = &sync.Pool{New: func() interface{} { //nolint:gochecknoglobals // BufPool must be global.
 	buf := make([]byte, bufSize)
 
 	return &buf
 }}
 
 // copyBufPool copies a source reader to a writer using a buffer from the buffer pool.
-func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //nolint:unparam
-	buf := bufPool.Get().(*[]byte) //nolint:errcheck
+func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //nolint:unparam // written is never used.
+	buf := bufPool.Get().(*[]byte) //nolint:errcheck // Get() always returns a pointer to a byte slice.
 	defer bufPool.Put(buf)
 
 	written, err = io.CopyBuffer(dst, src, *buf)

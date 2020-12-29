@@ -34,8 +34,8 @@ var (
 	// We generate random temporary file names so that there's a good
 	// chance the file doesn't exist yet - keeps the number of tries in
 	// TempFile to a minimum.
-	randno uint32     //nolint:gochecknoglobals
-	randmu sync.Mutex //nolint:gochecknoglobals
+	randno uint32     //nolint:gochecknoglobals // Used by TempDir and TempFile.
+	randmu sync.Mutex //nolint:gochecknoglobals // Used by TempDir and TempFile.
 )
 
 func reseed() uint32 {
@@ -149,7 +149,7 @@ func TempDir(vfs avfs.VFS, dir, pattern string) (name string, err error) {
 		break
 	}
 
-	return //nolint:nakedret
+	return //nolint:nakedret // Copied from standard library.
 }
 
 // TempFile creates a new temporary file in the directory dir,

@@ -57,7 +57,7 @@ func TestRndTree(t *testing.T) {
 		t.Fatalf("TempDir : want error to be nil, got %v", err)
 	}
 
-	defer vfs.RemoveAll(tmpDir) //nolint:errcheck
+	defer vfs.RemoveAll(tmpDir) //nolint:errcheck // Ignore errors.
 
 	t.Run("RndTreeMain", func(t *testing.T) {
 		rtrTests := []struct {

@@ -65,7 +65,7 @@ func TestReadOnlyWriteFile(t *testing.T) {
 		t.Fatalf("TempDir %s: %v", t.Name(), err)
 	}
 
-	defer vfs.RemoveAll(tempDir) //nolint:errcheck
+	defer vfs.RemoveAll(tempDir) //nolint:errcheck // Ignore errors.
 
 	filename := vfsutils.Join(tempDir, "blurp.txt")
 
@@ -100,7 +100,7 @@ func TestTempFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer vfs.RemoveAll(dir) //nolint:errcheck
+	defer vfs.RemoveAll(dir) //nolint:errcheck // Ignore errors.
 
 	nonexistentDir := vfsutils.Join(dir, "_not_exists_")
 
@@ -127,7 +127,7 @@ func TestTempFile_pattern(t *testing.T) {
 			continue
 		}
 
-		defer vfs.Remove(f.Name()) //nolint:errcheck
+		defer vfs.Remove(f.Name()) //nolint:errcheck // Ignore errors.
 
 		base := vfsutils.Base(f.Name())
 		_ = f.Close()
@@ -164,7 +164,7 @@ func TestTempDir(t *testing.T) {
 			t.Fatalf("TempDir(dir, `ioutil_test`) = %v, %v", name, err)
 		}
 
-		defer vfs.Remove(name) //nolint:errcheck
+		defer vfs.Remove(name) //nolint:errcheck // Ignore errors.
 
 		re := regexp.MustCompile(wantRePat)
 		if !re.MatchString(name) {
@@ -174,10 +174,11 @@ func TestTempDir(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		prefix, suffix, pattern := tt.wantPrefix, tt.wantSuffix, tt.pattern
+
 		t.Run(tt.pattern, func(t *testing.T) {
-			wantRePat := "^" + regexp.QuoteMeta(vfsutils.Join(dir, tt.wantPrefix)) + //nolint:scopelint
-				"[0-9]+" + regexp.QuoteMeta(tt.wantSuffix) + "$" //nolint:scopelint
-			runTestTempDir(t, tt.pattern, wantRePat) //nolint:scopelint
+			wantRePat := "^" + regexp.QuoteMeta(vfsutils.Join(dir, prefix)) + "[0-9]+" + regexp.QuoteMeta(suffix) + "$"
+			runTestTempDir(t, pattern, wantRePat)
 		})
 	}
 
@@ -204,7 +205,7 @@ func TestTempDir_BadDir(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer vfs.RemoveAll(dir) //nolint:errcheck
+	defer vfs.RemoveAll(dir) //nolint:errcheck // Ignore errors.
 
 	badDir := vfsutils.Join(dir, "not-exist")
 

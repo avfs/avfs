@@ -55,7 +55,7 @@ func TestHashFile(t *testing.T) {
 		t.Fatalf("CreateTree : want error to be nil, got %v", err)
 	}
 
-	defer vfs.RemoveAll(rootDir) //nolint:errcheck
+	defer vfs.RemoveAll(rootDir) //nolint:errcheck // Ignore errors.
 
 	h := sha512.New()
 
@@ -107,7 +107,7 @@ func TestCopyFile(t *testing.T) {
 		t.Fatalf("TempDir : want error to be nil, got %v", err)
 	}
 
-	defer srcFs.RemoveAll(srcDir) //nolint:errcheck
+	defer srcFs.RemoveAll(srcDir) //nolint:errcheck // Ignore errors.
 
 	err = rtr.CreateTree(srcDir)
 	if err != nil {
@@ -127,7 +127,7 @@ func TestCopyFile(t *testing.T) {
 			t.Fatalf("TempDir : want error to be nil, got %v", err)
 		}
 
-		defer dstFs.RemoveAll(dstDir) //nolint:errcheck
+		defer dstFs.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
 
 		for _, srcPath := range rtr.Files {
 			fileName := srcFs.Base(srcPath)

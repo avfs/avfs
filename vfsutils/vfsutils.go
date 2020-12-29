@@ -27,10 +27,10 @@ import (
 
 var (
 	// UMask is the global variable containing the file mode creation mask.
-	UMask UMaskType //nolint:gochecknoglobals
+	UMask UMaskType //nolint:gochecknoglobals // Used by UMaskType Get and Set.
 
 	// BaseDirs are the base directories present in a file system.
-	BaseDirs = []struct { //nolint:gochecknoglobals
+	BaseDirs = []struct { //nolint:gochecknoglobals // Used by CreateBaseDirs and TestCreateBaseDirs.
 		Path string
 		Perm os.FileMode
 	}{

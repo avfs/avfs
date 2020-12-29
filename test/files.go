@@ -1378,7 +1378,7 @@ func (sfs *SuiteFS) FileWriteTime() {
 	CompareTime := func(mustChange bool) {
 		time.Sleep(10 * time.Millisecond)
 
-		info, err := f.Stat() //nolint:govet
+		info, err := f.Stat() //nolint:govet // Shadows previous declaration of err.
 		if err != nil {
 			if errors.Unwrap(err).Error() != avfs.ErrFileClosing.Error() {
 				t.Fatalf("Stat : want error to be nil, got %v", err)

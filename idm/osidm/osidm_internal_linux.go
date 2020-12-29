@@ -34,7 +34,7 @@ const (
 	userFile  = "/etc/passwd"
 )
 
-var colon = []byte{':'} //nolint:gochecknoglobals
+var colon = []byte{':'} //nolint:gochecknoglobals // Used in matchGroupIndexValue and matchUserIndexValue.
 
 // lineFunc returns a value, an error, or (nil, nil) to skip the row.
 type lineFunc func(line []byte) (v interface{}, err error)
