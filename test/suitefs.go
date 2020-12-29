@@ -21,7 +21,7 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // SuiteFS is a test suite for virtual file systems.
@@ -84,7 +84,7 @@ func NewSuiteFS(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 		rootDir:     "",
 		maxRace:     1000,
 		canTestPerm: canTestPerm,
-		osType:      fsutil.RunTimeOS(),
+		osType:      vfsutils.RunTimeOS(),
 	}
 
 	if canTestPerm {
@@ -202,7 +202,7 @@ func (sfs *SuiteFS) CreateRootDir(userName string) (t *testing.T, rootDir string
 		}
 	}
 
-	if fsutil.RunTimeOS() == avfs.OsDarwin {
+	if vfsutils.RunTimeOS() == avfs.OsDarwin {
 		rootDir, _ = vfs.EvalSymlinks(rootDir)
 	}
 

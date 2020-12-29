@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package fsutil_test
+package vfsutils_test
 
 import (
 	"bytes"
@@ -27,9 +27,9 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/memfs"
-	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 func InitTest(t *testing.T) avfs.VFS {
@@ -67,7 +67,7 @@ func TestReadOnlyWriteFile(t *testing.T) {
 
 	defer vfs.RemoveAll(tempDir) //nolint:errcheck
 
-	filename := fsutil.Join(tempDir, "blurp.txt")
+	filename := vfsutils.Join(tempDir, "blurp.txt")
 
 	shmorp := []byte("shmorp")
 	florp := []byte("florp")
@@ -102,7 +102,7 @@ func TestTempFile(t *testing.T) {
 
 	defer vfs.RemoveAll(dir) //nolint:errcheck
 
-	nonexistentDir := fsutil.Join(dir, "_not_exists_")
+	nonexistentDir := vfsutils.Join(dir, "_not_exists_")
 
 	f, err := vfs.TempFile(nonexistentDir, "foo")
 	if f != nil || err == nil {
@@ -129,7 +129,7 @@ func TestTempFile_pattern(t *testing.T) {
 
 		defer vfs.Remove(f.Name()) //nolint:errcheck
 
-		base := fsutil.Base(f.Name())
+		base := vfsutils.Base(f.Name())
 		_ = f.Close()
 
 		if !(strings.HasPrefix(base, tt.prefix) && strings.HasSuffix(base, tt.suffix)) {
@@ -175,7 +175,7 @@ func TestTempDir(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.pattern, func(t *testing.T) {
-			wantRePat := "^" + regexp.QuoteMeta(fsutil.Join(dir, tt.wantPrefix)) + //nolint:scopelint
+			wantRePat := "^" + regexp.QuoteMeta(vfsutils.Join(dir, tt.wantPrefix)) + //nolint:scopelint
 				"[0-9]+" + regexp.QuoteMeta(tt.wantSuffix) + "$" //nolint:scopelint
 			runTestTempDir(t, tt.pattern, wantRePat) //nolint:scopelint
 		})
@@ -188,7 +188,7 @@ func TestTempDir(t *testing.T) {
 	// yet we just want to match
 	//     "^<DIR>/[0-9]+xyz"
 	t.Run("*xyz", func(t *testing.T) {
-		wantRePat := "^" + regexp.QuoteMeta(fsutil.Join(dir)) +
+		wantRePat := "^" + regexp.QuoteMeta(vfsutils.Join(dir)) +
 			regexp.QuoteMeta(string(avfs.PathSeparator)) + "[0-9]+xyz$"
 		runTestTempDir(t, "*xyz", wantRePat)
 	})
@@ -206,7 +206,7 @@ func TestTempDir_BadDir(t *testing.T) {
 
 	defer vfs.RemoveAll(dir) //nolint:errcheck
 
-	badDir := fsutil.Join(dir, "not-exist")
+	badDir := vfsutils.Join(dir, "not-exist")
 
 	_, err = vfs.TempDir(badDir, "foo")
 	if pe, ok := err.(*os.PathError); !ok || !vfs.IsNotExist(err) || pe.Path != badDir {

@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package fsutil_test
+package vfsutils_test
 
 import (
 	"bytes"
@@ -26,7 +26,7 @@ import (
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/fs/osfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 func TestHashFile(t *testing.T) {
@@ -35,7 +35,7 @@ func TestHashFile(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
+	rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
 		MinDepth: 1, MaxDepth: 1,
 		MinName: 32, MaxName: 32,
 		MinFiles: 100, MaxFiles: 100,
@@ -74,7 +74,7 @@ func TestHashFile(t *testing.T) {
 
 		wantSum := h.Sum(nil)
 
-		gotSum, err := fsutil.HashFile(vfs, fileName, h)
+		gotSum, err := vfsutils.HashFile(vfs, fileName, h)
 		if err != nil {
 			t.Errorf("HashFile %s : want error to be nil, got %v", fileName, err)
 		}
@@ -92,7 +92,7 @@ func TestCopyFile(t *testing.T) {
 		t.Fatalf("osfs.New : want error to be nil, got %v", err)
 	}
 
-	rtr, err := fsutil.NewRndTree(srcFs, fsutil.RndTreeParams{
+	rtr, err := vfsutils.NewRndTree(srcFs, vfsutils.RndTreeParams{
 		MinDepth: 1, MaxDepth: 1,
 		MinName: 32, MaxName: 32,
 		MinFiles: 512, MaxFiles: 512,
@@ -131,15 +131,15 @@ func TestCopyFile(t *testing.T) {
 
 		for _, srcPath := range rtr.Files {
 			fileName := srcFs.Base(srcPath)
-			dstPath := fsutil.Join(dstDir, fileName)
+			dstPath := vfsutils.Join(dstDir, fileName)
 
-			wantSum, err := fsutil.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
+			wantSum, err := vfsutils.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
 			if err != nil {
 				t.Errorf("CopyFile (%s)%s, (%s)%s : want error to be nil, got %v",
 					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
 			}
 
-			gotSum, err := fsutil.HashFile(dstFs, dstPath, h)
+			gotSum, err := vfsutils.HashFile(dstFs, dstPath, h)
 			if err != nil {
 				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", dstFs.Type(), dstPath, err)
 			}
@@ -158,9 +158,9 @@ func TestCopyFile(t *testing.T) {
 
 		for _, srcPath := range rtr.Files {
 			fileName := srcFs.Base(srcPath)
-			dstPath := fsutil.Join(dstDir, fileName)
+			dstPath := vfsutils.Join(dstDir, fileName)
 
-			wantSum, err := fsutil.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
+			wantSum, err := vfsutils.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
 			if err != nil {
 				t.Errorf("CopyFile (%s)%s, (%s)%s : want error to be nil, got %v",
 					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
@@ -171,12 +171,12 @@ func TestCopyFile(t *testing.T) {
 					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
 			}
 
-			wantSum, err = fsutil.HashFile(srcFs, srcPath, h)
+			wantSum, err = vfsutils.HashFile(srcFs, srcPath, h)
 			if err != nil {
 				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", srcFs.Type(), srcPath, err)
 			}
 
-			gotSum, err := fsutil.HashFile(dstFs, dstPath, h)
+			gotSum, err := vfsutils.HashFile(dstFs, dstPath, h)
 			if err != nil {
 				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", dstFs.Type(), dstPath, err)
 			}

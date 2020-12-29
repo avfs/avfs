@@ -14,13 +14,16 @@
 //  limitations under the License.
 //
 
-// +build !linux
+// +build linux
 
-package fsutil
+package vfsutils
 
 import (
+	"bytes"
 	"math"
 	"os"
+	"sync"
+	"syscall"
 
 	"github.com/avfs/avfs"
 )
@@ -28,17 +31,40 @@ import (
 // UMaskType is the file mode creation mask.
 // it must be set to be read, so it must be protected with a mutex.
 type UMaskType struct {
+	once sync.Once
+	mu   sync.RWMutex
+	mask os.FileMode
 }
 
-// GetUMask returns the file mode creation mask.
+// Get returns the file mode creation mask.
 func (um *UMaskType) Get() os.FileMode {
-	return 0o022
+	um.once.Do(func() {
+		um.Set(0)
+	})
+
+	um.mu.RLock()
+	u := um.mask
+	um.mu.RUnlock()
+
+	return u
 }
 
-// UMask sets the file mode creation mask.
+// Set sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask os.FileMode) {
+	um.mu.Lock()
+
+	u := syscall.Umask(int(mask))
+
+	if mask == 0 {
+		syscall.Umask(u)
+		um.mask = os.FileMode(u)
+	} else {
+		um.mask = mask
+	}
+
+	um.mu.Unlock()
 }
 
 // AsStatT converts a value as an avfs.StatT.
@@ -46,6 +72,8 @@ func AsStatT(value interface{}) *avfs.StatT {
 	switch s := value.(type) {
 	case *avfs.StatT:
 		return s
+	case *syscall.Stat_t:
+		return &avfs.StatT{Uid: s.Uid, Gid: s.Gid}
 	default:
 		return &avfs.StatT{Uid: math.MaxUint32, Gid: math.MaxUint32}
 	}
@@ -53,5 +81,20 @@ func AsStatT(value interface{}) *avfs.StatT {
 
 // IsLinuxWSL indicates if the current operating system is Windows Subsystem for Linux.
 func IsLinuxWSL() bool {
-	return false
+	var uname syscall.Utsname
+	if err := syscall.Uname(&uname); err != nil {
+		return false
+	}
+
+	buf := make([]byte, 0, len(uname.Release))
+
+	for _, c := range uname.Release {
+		if c == 0 {
+			break
+		}
+
+		buf = append(buf, byte(c))
+	}
+
+	return bytes.Contains(buf, []byte("microsoft"))
 }

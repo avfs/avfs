@@ -21,8 +21,8 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/dummyidm"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // New returns a new memory file system (MemFS).
@@ -34,7 +34,7 @@ func New(opts ...Option) (*MemFS, error) {
 			avfs.FeatClonable |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
-		umask: int32(fsutil.UMask.Get()),
+		umask: int32(vfsutils.UMask.Get()),
 	}
 
 	vfs := &MemFS{
@@ -62,7 +62,7 @@ func New(opts ...Option) (*MemFS, error) {
 		um := fsa.umask
 		fsa.umask = 0
 
-		_ = fsutil.CreateBaseDirs(vfs, "")
+		_ = vfsutils.CreateBaseDirs(vfs, "")
 
 		fsa.umask = um
 		vfs.curDir = avfs.RootDir

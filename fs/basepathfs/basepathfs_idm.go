@@ -18,7 +18,7 @@ package basepathfs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // CurrentUser returns the current user of the file system.
@@ -73,7 +73,7 @@ func (vfs *BasePathFS) UserAdd(name, groupName string) (avfs.UserReader, error) 
 		return nil, err
 	}
 
-	return fsutil.CreateHomeDir(vfs, u)
+	return vfsutils.CreateHomeDir(vfs, u)
 }
 
 // UserDel deletes an existing group.

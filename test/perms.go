@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // Perm runs all file systems permission tests.
@@ -100,7 +100,7 @@ func (sfs *SuiteFS) Chown() {
 				}
 
 				sys := fst.Sys()
-				statT := fsutil.AsStatT(sys)
+				statT := vfsutils.AsStatT(sys)
 
 				uid, gid := int(statT.Uid), int(statT.Gid)
 				if uid != u.Uid() || gid != u.Gid() {
@@ -136,7 +136,7 @@ func (sfs *SuiteFS) Chown() {
 				}
 
 				sys := fst.Sys()
-				statT := fsutil.AsStatT(sys)
+				statT := vfsutils.AsStatT(sys)
 
 				uid, gid := int(statT.Uid), int(statT.Gid)
 				if uid != u.Uid() || gid != u.Gid() {
@@ -185,7 +185,7 @@ func (sfs *SuiteFS) Lchown() {
 				}
 
 				sys := fst.Sys()
-				statT := fsutil.AsStatT(sys)
+				statT := vfsutils.AsStatT(sys)
 
 				uid, gid := int(statT.Uid), int(statT.Gid)
 				if uid != u.Uid() || gid != u.Gid() {
@@ -221,7 +221,7 @@ func (sfs *SuiteFS) Lchown() {
 				}
 
 				sys := fst.Sys()
-				statT := fsutil.AsStatT(sys)
+				statT := vfsutils.AsStatT(sys)
 
 				uid, gid := int(statT.Uid), int(statT.Gid)
 				if uid != u.Uid() || gid != u.Gid() {
@@ -257,7 +257,7 @@ func (sfs *SuiteFS) Lchown() {
 				}
 
 				sys := fst.Sys()
-				statT := fsutil.AsStatT(sys)
+				statT := vfsutils.AsStatT(sys)
 
 				uid, gid := int(statT.Uid), int(statT.Gid)
 				if uid != u.Uid() || gid != u.Gid() {
@@ -489,8 +489,8 @@ func (sfs *SuiteFS) AccessDir() {
 						t.Fatalf("Stat %s : want error to be nil, got %v ", path, err)
 					}
 
-					canWrite := fsutil.CheckPermission(info, avfs.WantWrite|avfs.WantLookup, vfs.CurrentUser())
-					canRead := fsutil.CheckPermission(info, avfs.WantLookup, vfs.CurrentUser())
+					canWrite := vfsutils.CheckPermission(info, avfs.WantWrite|avfs.WantLookup, vfs.CurrentUser())
+					canRead := vfsutils.CheckPermission(info, avfs.WantLookup, vfs.CurrentUser())
 
 					path = vfs.Join(rootDir, fileName, baseDir)
 					err = vfs.Mkdir(path, avfs.DefaultDirPerm)
@@ -578,8 +578,8 @@ func (sfs *SuiteFS) AccessFile() {
 						t.Fatalf("Stat %s : want error to be nil, got %v ", path, err)
 					}
 
-					canWrite := fsutil.CheckPermission(info, avfs.WantWrite, vfs.CurrentUser())
-					canRead := fsutil.CheckPermission(info, avfs.WantRead, vfs.CurrentUser())
+					canWrite := vfsutils.CheckPermission(info, avfs.WantWrite, vfs.CurrentUser())
+					canRead := vfsutils.CheckPermission(info, avfs.WantRead, vfs.CurrentUser())
 
 					err = vfs.WriteFile(path, []byte("WriteFile"), os.ModePerm)
 					if canWrite {
@@ -626,7 +626,7 @@ func (sfs *SuiteFS) StatT() {
 		wantUid, wantGid = math.MaxUint32, math.MaxUint32
 	}
 
-	statT := fsutil.AsStatT(info.Sys())
+	statT := vfsutils.AsStatT(info.Sys())
 	if statT.Uid != wantUid || statT.Gid != wantGid {
 		t.Errorf("AsStatT : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
 			wantUid, wantGid, statT.Uid, statT.Gid)

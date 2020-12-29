@@ -24,9 +24,9 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/osfs"
-	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 var (
@@ -71,8 +71,8 @@ func TestOsFSOSType(t *testing.T) {
 	}
 
 	ost := vfs.OSType()
-	if ost != fsutil.RunTimeOS() {
-		t.Errorf("OSType : want os type to be %v, got %v", fsutil.RunTimeOS(), ost)
+	if ost != vfsutils.RunTimeOS() {
+		t.Errorf("OSType : want os type to be %v, got %v", vfsutils.RunTimeOS(), ost)
 	}
 }
 

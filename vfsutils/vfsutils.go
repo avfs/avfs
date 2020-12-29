@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-package fsutil
+package vfsutils
 
 import (
 	"errors"
@@ -139,7 +139,7 @@ func RunTimeOS() avfs.OSType {
 // "c", ""
 //
 // 	for start, end, isLast := 1, 0, len(path) <= 1; !isLast; start = end + 1 {
-//		end, isLast = fsutil.SegmentPath(path, start)
+//		end, isLast = vfsutils.SegmentPath(path, start)
 //		fmt.Println(path[start:end], path[end:])
 //	}
 //

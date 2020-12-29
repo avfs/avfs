@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package fsutil_test
+package vfsutils_test
 
 import (
 	"fmt"
@@ -27,10 +27,10 @@ import (
 	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/fs/orefafs"
 	"github.com/avfs/avfs/fs/osfs"
-	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 func TestAsStatT(t *testing.T) {
@@ -101,7 +101,7 @@ func TestCheckPermission(t *testing.T) {
 
 			u := vfs.CurrentUser()
 
-			wantCheckRead := fsutil.CheckPermission(info, avfs.WantRead, u)
+			wantCheckRead := vfsutils.CheckPermission(info, avfs.WantRead, u)
 			gotCheckRead := true
 
 			_, err = vfs.ReadFile(path)
@@ -113,7 +113,7 @@ func TestCheckPermission(t *testing.T) {
 				t.Errorf("CheckPermission %s : want read to be %t, got %t", path, wantCheckRead, gotCheckRead)
 			}
 
-			wantCheckWrite := fsutil.CheckPermission(info, avfs.WantWrite, u)
+			wantCheckWrite := vfsutils.CheckPermission(info, avfs.WantWrite, u)
 			gotCheckWrite := true
 
 			err = vfs.WriteFile(path, []byte(path), perm)
@@ -134,12 +134,12 @@ func TestCreateBaseDirs(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	err = fsutil.CreateBaseDirs(vfs, "")
+	err = vfsutils.CreateBaseDirs(vfs, "")
 	if err != nil {
 		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 	}
 
-	for _, dir := range fsutil.BaseDirs {
+	for _, dir := range vfsutils.BaseDirs {
 		info, err := vfs.Stat(dir.Path)
 		if err != nil {
 			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
@@ -158,25 +158,25 @@ func TestUMask(t *testing.T) {
 	umaskSet := os.FileMode(0o77)
 	umaskTest := umaskSet
 
-	if fsutil.RunTimeOS() == avfs.OsWindows {
+	if vfsutils.RunTimeOS() == avfs.OsWindows {
 		umaskTest = umaskOs
 	}
 
-	umask := fsutil.UMask.Get()
+	umask := vfsutils.UMask.Get()
 	if umask != umaskOs {
 		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
 	}
 
-	fsutil.UMask.Set(umaskSet)
+	vfsutils.UMask.Set(umaskSet)
 
-	umask = fsutil.UMask.Get()
+	umask = vfsutils.UMask.Get()
 	if umask != umaskTest {
 		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
-	fsutil.UMask.Set(umaskOs)
+	vfsutils.UMask.Set(umaskOs)
 
-	umask = fsutil.UMask.Get()
+	umask = vfsutils.UMask.Get()
 	if umask != umaskOs {
 		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
 	}
@@ -198,7 +198,7 @@ func TestSegmentPath(t *testing.T) {
 
 	for _, c := range cases {
 		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
-			end, isLast = fsutil.SegmentPath(c.path, start)
+			end, isLast = vfsutils.SegmentPath(c.path, start)
 			got := c.path[start:end]
 
 			if i > len(c.want) {

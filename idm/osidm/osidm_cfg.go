@@ -18,13 +18,13 @@ package osidm
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
 	feature := avfs.FeatIdentityMgr
-	if fsutil.RunTimeOS() == avfs.OsWindows {
+	if vfsutils.RunTimeOS() == avfs.OsWindows {
 		feature = 0
 	}
 

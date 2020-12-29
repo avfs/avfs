@@ -21,7 +21,7 @@ import (
 	"os"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // New returns a new base path file system (BasePathFS).
@@ -45,7 +45,7 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
-		err = fsutil.CreateBaseDirs(vfs.baseFS, vfs.basePath)
+		err = vfsutils.CreateBaseDirs(vfs.baseFS, vfs.basePath)
 		if err != nil {
 			return nil, err
 		}

@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package fsutil_test
+package vfsutils_test
 
 import (
 	"testing"

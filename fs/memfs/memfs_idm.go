@@ -18,8 +18,8 @@ package memfs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/dummyidm"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // CurrentUser returns the current user of the file system.
@@ -106,7 +106,7 @@ func (vfs *MemFS) User(name string) (avfs.UserReader, error) {
 	}
 
 	vfs.user = user
-	vfs.curDir = fsutil.Join(avfs.HomeDir, user.Name())
+	vfs.curDir = vfsutils.Join(avfs.HomeDir, user.Name())
 
 	return user, nil
 }
@@ -122,7 +122,7 @@ func (vfs *MemFS) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		return nil, err
 	}
 
-	return fsutil.CreateHomeDir(vfs, u)
+	return vfsutils.CreateHomeDir(vfs, u)
 }
 
 // UserDel deletes an existing group.
@@ -136,7 +136,7 @@ func (vfs *MemFS) UserDel(name string) error {
 		return err
 	}
 
-	userDir := fsutil.Join(avfs.HomeDir, name)
+	userDir := vfsutils.Join(avfs.HomeDir, name)
 
 	err = vfs.RemoveAll(userDir)
 	if err != nil {

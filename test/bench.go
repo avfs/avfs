@@ -21,12 +21,12 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // BenchmarkCreate is a simple benchmark to create a random tree.
 func BenchmarkCreate(b *testing.B, vfs avfs.VFS) {
-	rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
+	rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinDepth: 4, MaxDepth: 4,
 		MinDirs: 2, MaxDirs: 2,

@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // Chdir tests Chdir function.
@@ -206,7 +206,7 @@ func (sfs *SuiteFS) Mkdir() {
 
 			curPath := rootDir
 			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = fsutil.SegmentPath(dir.Path, start)
+				end, isLast = vfsutils.SegmentPath(dir.Path, start)
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
@@ -313,7 +313,7 @@ func (sfs *SuiteFS) MkdirAll() {
 
 			curPath := rootDir
 			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = fsutil.SegmentPath(dir.Path, start)
+				end, isLast = vfsutils.SegmentPath(dir.Path, start)
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
@@ -357,7 +357,7 @@ func (sfs *SuiteFS) ReadDir() {
 
 	vfs := sfs.GetFsWrite()
 
-	rndTree, err := fsutil.NewRndTree(vfs, fsutil.RndParamsOneDir)
+	rndTree, err := vfsutils.NewRndTree(vfs, vfsutils.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -474,7 +474,7 @@ func (sfs *SuiteFS) ReadDirNames() {
 
 	vfs := sfs.GetFsWrite()
 
-	rndTree, err := fsutil.NewRndTree(vfs, fsutil.RndParamsOneDir)
+	rndTree, err := vfsutils.NewRndTree(vfs, vfsutils.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}

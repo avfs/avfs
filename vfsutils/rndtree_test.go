@@ -16,7 +16,7 @@
 
 // +build !datarace
 
-package fsutil_test
+package vfsutils_test
 
 import (
 	"strconv"
@@ -24,23 +24,23 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/fs/memfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 var (
-	ErrDepthOutOfRange    = fsutil.ErrOutOfRange("depth")
-	ErrNameOutOfRange     = fsutil.ErrOutOfRange("name")
-	ErrDirsOutOfRange     = fsutil.ErrOutOfRange("dirs")
-	ErrFilesOutOfRange    = fsutil.ErrOutOfRange("files")
-	ErrFileLenOutOfRange  = fsutil.ErrOutOfRange("file length")
-	ErrSymlinksOutOfRange = fsutil.ErrOutOfRange("symbolic links")
+	ErrDepthOutOfRange    = vfsutils.ErrOutOfRange("depth")
+	ErrNameOutOfRange     = vfsutils.ErrOutOfRange("name")
+	ErrDirsOutOfRange     = vfsutils.ErrOutOfRange("dirs")
+	ErrFilesOutOfRange    = vfsutils.ErrOutOfRange("files")
+	ErrFileLenOutOfRange  = vfsutils.ErrOutOfRange("file length")
+	ErrSymlinksOutOfRange = vfsutils.ErrOutOfRange("symbolic links")
 )
 
 func TestErrOutOfRange(t *testing.T) {
 	parameter := "Some"
 	wantErrStr := parameter + " parameter out of range"
 
-	err := fsutil.ErrOutOfRange(parameter)
+	err := vfsutils.ErrOutOfRange(parameter)
 	if err.Error() != wantErrStr {
 		t.Errorf("ErrOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
 	}
@@ -61,51 +61,51 @@ func TestRndTree(t *testing.T) {
 
 	t.Run("RndTreeMain", func(t *testing.T) {
 		rtrTests := []struct {
-			params  fsutil.RndTreeParams
+			params  vfsutils.RndTreeParams
 			wantErr error
 		}{
-			{params: fsutil.RndTreeParams{MinDepth: 0, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 0, MaxName: 0}, wantErr: ErrNameOutOfRange},
-			{params: fsutil.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 0}, wantErr: ErrNameOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{MinDepth: 0, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
+			{params: vfsutils.RndTreeParams{MinDepth: 1, MaxDepth: 0}, wantErr: ErrDepthOutOfRange},
+			{params: vfsutils.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 0, MaxName: 0}, wantErr: ErrNameOutOfRange},
+			{params: vfsutils.RndTreeParams{MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 0}, wantErr: ErrNameOutOfRange},
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinDirs: -1, MaxDirs: 0,
 			}, wantErr: ErrDirsOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinDirs: 1, MaxDirs: 0,
 			}, wantErr: ErrDirsOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinFiles: -1, MaxFiles: 0,
 			}, wantErr: ErrFilesOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinFiles: 1, MaxFiles: 0,
 			}, wantErr: ErrFilesOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinFileLen: -1, MaxFileLen: 0,
 			}, wantErr: ErrFileLenOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinFileLen: 1, MaxFileLen: 0,
 			}, wantErr: ErrFileLenOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinSymlinks: -1, MaxSymlinks: 0,
 			}, wantErr: ErrSymlinksOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 1, MaxName: 1,
 				MinSymlinks: 1, MaxSymlinks: 0,
 			}, wantErr: ErrSymlinksOutOfRange},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 1, MinName: 10, MaxName: 20,
 				MinDirs: 5, MaxDirs: 10, MinFiles: 5, MaxFiles: 10, MinFileLen: 5, MaxFileLen: 10,
 				MinSymlinks: 5, MaxSymlinks: 10,
 			}, wantErr: nil},
-			{params: fsutil.RndTreeParams{
+			{params: vfsutils.RndTreeParams{
 				MinDepth: 1, MaxDepth: 3, MinName: 10, MaxName: 10,
 				MinDirs: 3, MaxDirs: 3, MinFiles: 3, MaxFiles: 3, MinFileLen: 3, MaxFileLen: 3,
 				MinSymlinks: 3, MaxSymlinks: 3,
@@ -113,7 +113,7 @@ func TestRndTree(t *testing.T) {
 		}
 
 		for i, rtrTest := range rtrTests {
-			rtr, err := fsutil.NewRndTree(vfs, rtrTest.params)
+			rtr, err := vfsutils.NewRndTree(vfs, rtrTest.params)
 
 			if rtrTest.wantErr == nil {
 				if err != nil {
@@ -166,7 +166,7 @@ func TestRndTree(t *testing.T) {
 	})
 
 	t.Run("RndTreeDepth", func(t *testing.T) {
-		rtr, err := fsutil.NewRndTree(vfs, fsutil.RndTreeParams{
+		rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
 			MinDepth: 3, MaxDepth: 3,
 			MinName: 10, MaxName: 10,
 			MinDirs: 2, MaxDirs: 2,

@@ -22,7 +22,7 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // All run all identity manager tests.
@@ -557,7 +557,7 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 	}
 
 	sys := info.Sys()
-	statT := fsutil.AsStatT(sys)
+	statT := vfsutils.AsStatT(sys)
 
 	uid, gid := int(statT.Uid), int(statT.Gid)
 	if uid != u.Uid() || gid != u.Gid() {

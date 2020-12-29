@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // searchNode search a node from the root of the file system
@@ -44,7 +44,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	parent *dirNode, child node, absPath string, start, end int, err error) {
 	absPath = path
 	if !vfs.HasFeature(avfs.FeatAbsPath) {
-		absPath, _ = fsutil.Abs(vfs, path)
+		absPath, _ = vfsutils.Abs(vfs, path)
 	}
 
 	rootNode := vfs.rootNode
@@ -54,7 +54,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 
 	isLast := len(absPath) <= 1
 	for start, end = 1, 0; !isLast; start = end + 1 {
-		end, isLast = fsutil.SegmentPath(absPath, start)
+		end, isLast = vfsutils.SegmentPath(absPath, start)
 		name := absPath[start:end]
 
 		parent.mu.RLock()
@@ -123,10 +123,10 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			}
 
 			link := c.link
-			if fsutil.IsAbs(link) {
-				absPath = fsutil.Join(link, absPath[end:])
+			if vfsutils.IsAbs(link) {
+				absPath = vfsutils.Join(link, absPath[end:])
 			} else {
-				absPath = fsutil.Join(absPath[:start], link, absPath[end:])
+				absPath = vfsutils.Join(absPath[:start], link, absPath[end:])
 			}
 
 			parent = rootNode

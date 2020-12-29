@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fsutil"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // file system functions.
@@ -177,7 +177,7 @@ func (vfs *OsFS) GetTempDir() string {
 
 // GetUMask returns the file mode creation mask.
 func (vfs *OsFS) GetUMask() os.FileMode {
-	return fsutil.UMask.Get()
+	return vfsutils.UMask.Get()
 }
 
 // Getwd returns a rooted path name corresponding to the
@@ -221,7 +221,7 @@ func (vfs *OsFS) IsNotExist(err error) bool {
 
 // IsPathSeparator reports whether c is a directory separator character.
 func (vfs *OsFS) IsPathSeparator(c uint8) bool {
-	return fsutil.IsPathSeparator(c)
+	return vfsutils.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
@@ -419,7 +419,7 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 
 // UMask sets the file mode creation mask.
 func (vfs *OsFS) UMask(mask os.FileMode) {
-	fsutil.UMask.Set(mask)
+	vfsutils.UMask.Set(mask)
 }
 
 // Walk walks the file tree rooted at root, calling walkFn for each file or

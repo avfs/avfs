@@ -17,4 +17,4 @@
 // Package fsutil implements some file system utility functions.
 //
 // It is not intended to be used by end users.
-package fsutil
+package vfsutils
