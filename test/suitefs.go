@@ -258,7 +258,6 @@ func (sfs *SuiteFS) Write() {
 	sfs.OpenFileWrite()
 	sfs.Remove()
 	sfs.RemoveAll()
-	sfs.RemoveAllEdgeCases()
 	sfs.Rename()
 	sfs.SameFile()
 	sfs.Symlink()

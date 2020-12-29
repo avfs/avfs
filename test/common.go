@@ -391,10 +391,10 @@ func (sfs *SuiteFS) RemoveAll() {
 		CheckPathError(t, "Stat", "stat", baseDir, avfs.ErrNoSuchFileOrDir, err)
 	})
 
-	t.Run("RemoveAllErrors", func(t *testing.T) {
+	t.Run("RemoveAllOneFile", func(t *testing.T) {
 		err := vfs.MkdirAll(baseDir, avfs.DefaultDirPerm)
 		if err != nil {
-			t.Fatalf("Mkdir %s : want error to be nil, got %v", rootDir, err)
+			t.Fatalf("Mkdir %s : want error to be nil, got %v", baseDir, err)
 		}
 
 		existingFile := vfs.Join(baseDir, "existingFile.txt")
@@ -408,24 +408,23 @@ func (sfs *SuiteFS) RemoveAll() {
 			t.Errorf("RemoveAll %s : want error to be nil, got %v", existingFile, err)
 		}
 	})
-}
-
-// RemoveAllEdgeCases tests edge cases of RemoveAll function.
-func (sfs *SuiteFS) RemoveAllEdgeCases() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsWrite()
-	dirs := CreateDirs(t, vfs, rootDir)
 
 	t.Run("RemoveAllPathEmpty", func(t *testing.T) {
-		err := vfs.RemoveAll("")
+		CreateDirs(t, vfs, baseDir)
+
+		err := vfs.Chdir(baseDir)
+		if err != nil {
+			t.Fatalf("Chdir %s : want error to be nil, got %v", baseDir, err)
+		}
+
+		err = vfs.RemoveAll("")
 		if err != nil {
 			t.Errorf("RemoveAll '' : want error to be nil, got %v", err)
 		}
 
+		// Verify that nothing was removed.
 		for _, dir := range dirs {
-			path := vfs.Join(rootDir, dir.Path)
+			path := vfs.Join(baseDir, dir.Path)
 
 			_, err = vfs.Stat(path)
 			if err != nil {
