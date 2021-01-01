@@ -52,40 +52,6 @@ func (sfs *SuiteFS) FuncNonExistingFile() {
 			CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
 
-		_, err = vfs.Lstat(nonExistingFile)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Lstat", "CreateFile", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		default:
-			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		if vfs.HasFeature(avfs.FeatSymlink) {
-			_, err = vfs.Readlink(nonExistingFile)
-			CheckPathError(t, "Readlink", "readlink", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		err = vfs.Remove(nonExistingFile)
-		CheckPathError(t, "Remove", "remove", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-
-		err = vfs.RemoveAll(nonExistingFile)
-		if err != nil {
-			t.Errorf("RemoveAll %s : want error to be nil, got %v", nonExistingFile, err)
-		}
-
-		err = vfs.Rename(nonExistingFile, existingFile)
-		CheckLinkError(t, "Rename", "rename", nonExistingFile, existingFile, avfs.ErrNoSuchFileOrDir, err)
-
-		_, err = vfs.Stat(nonExistingFile)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Stat", "CreateFile", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		default:
-			CheckPathError(t, "Stat", "stat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
 		// err = FsR.Symlink(nonExistingFile, existingFile)
 		// CheckLinkError(t, "Symlink", "symlink", nonExistingFile, existingFile, , err)
 

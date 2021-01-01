@@ -217,6 +217,18 @@ func (sfs *SuiteFS) Lstat() {
 			}
 		}
 	})
+
+	t.Run("LStatNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		_, err := vfs.Lstat(nonExistingFile)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Lstat", "CreateFile", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		default:
+			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		}
+	})
 }
 
 // Readlink tests Readlink function.
@@ -267,6 +279,13 @@ func (sfs *SuiteFS) Readlink() {
 			_, err := vfs.Readlink(path)
 			CheckPathError(t, "ReadLink", "readlink", path, os.ErrInvalid, err)
 		}
+	})
+
+	t.Run("ReadLinkNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		_, err := vfs.Readlink(nonExistingFile)
+		CheckPathError(t, "Readlink", "readlink", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 }
 
@@ -356,6 +375,13 @@ func (sfs *SuiteFS) Remove() {
 			CheckPathError(t, "Stat", "stat", newPath, avfs.ErrNoSuchFileOrDir, err)
 		}
 	})
+
+	t.Run("RemoveNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.Remove(nonExistingFile)
+		CheckPathError(t, "Remove", "remove", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
 }
 
 // RemoveAll tests RemoveAll function.
@@ -441,6 +467,15 @@ func (sfs *SuiteFS) RemoveAll() {
 			}
 		}
 	})
+
+	t.Run("RemoveAllNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.RemoveAll(nonExistingFile)
+		if err != nil {
+			t.Errorf("RemoveAll %s : want error to be nil, got %v", nonExistingFile, err)
+		}
+	})
 }
 
 // Rename tests Rename function.
@@ -513,6 +548,19 @@ func (sfs *SuiteFS) Rename() {
 				t.Errorf("Stat %s : want error to be nil, got %v", newPath, err)
 			}
 		}
+	})
+
+	t.Run("RenameNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		existingFile := vfs.Join(rootDir, "existingFile")
+
+		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Rename(nonExistingFile, existingFile)
+		CheckLinkError(t, "Rename", "rename", nonExistingFile, existingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 }
 
@@ -619,6 +667,19 @@ func (sfs *SuiteFS) Stat() {
 			if wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", newPath, wantMode, info.Mode())
 			}
+		}
+	})
+
+	t.Run("StatNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		_, err := vfs.Stat(nonExistingFile)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Stat", "CreateFile", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		default:
+			CheckPathError(t, "Stat", "stat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
 	})
 }
