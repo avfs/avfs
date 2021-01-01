@@ -248,7 +248,6 @@ func (sfs *SuiteFS) Write() {
 	sfs.DirFuncOnFile()
 	sfs.FileReadEdgeCases()
 	sfs.FileWrite()
-	sfs.FileWriteEdgeCases()
 	sfs.FileWriteTime()
 	sfs.FileCloseWrite()
 	sfs.FuncNonExistingFile()

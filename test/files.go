@@ -455,8 +455,8 @@ func (sfs *SuiteFS) FileWrite() {
 	vfs := sfs.GetFsWrite()
 	data := []byte("AAABBBCCCDDD")
 
-	t.Run("FileWriteSeq", func(t *testing.T) {
-		path := vfs.Join(rootDir, "TestFileWriteSeq.txt")
+	t.Run("FileWrite", func(t *testing.T) {
+		path := vfs.Join(rootDir, "TestFileWrite.txt")
 
 		f, err := vfs.Create(path)
 		if err != nil {
@@ -522,23 +522,14 @@ func (sfs *SuiteFS) FileWrite() {
 			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
 		}
 	})
-}
 
-// FileWriteEdgeCases tests Write and WriteAt functions edge cases.
-func (sfs *SuiteFS) FileWriteEdgeCases() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
+	t.Run("FileWriteNegativeOffset", func(t *testing.T) {
+		path := vfs.Join(rootDir, "TestFileWriteNO.txt")
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
 
-	vfs := sfs.GetFsWrite()
-	path := vfs.Join(rootDir, "TestFileWriteEdgeCases.txt")
-	data := []byte("AAABBBCCCDDD")
-
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
-	t.Run("FileWriteEdgeCases", func(t *testing.T) {
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
 		if err != nil {
 			t.Fatalf("Open : want error to be nil, got %v", err)
@@ -552,10 +543,24 @@ func (sfs *SuiteFS) FileWriteEdgeCases() {
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)
 		}
+	})
+
+	t.Run("FileWriteAtAfterEndOfFile", func(t *testing.T) {
+		path := vfs.Join(rootDir, "TestFileWriteAfterEOF.txt")
+
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
 
 		off := int64(len(data) * 3)
 
-		n, err = f.WriteAt(data, off)
+		n, err := f.WriteAt(data, off)
 		if err != nil {
 			t.Errorf("WriteAt : want error to be nil, got %v", err)
 		}
