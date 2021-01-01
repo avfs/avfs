@@ -14,22 +14,21 @@
 //  limitations under the License.
 //
 
-// +build datarace
+//+build datarace
 
-package osfs_test
+package orefafs_test
 
 import (
 	"testing"
 
-	"github.com/avfs/avfs/fs/osfs"
-	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/orefafs"
 )
 
-func TestRaceOsFS(t *testing.T) {
-	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
+func TestRacOrefaFs(t *testing.T) {
+	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
+		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)

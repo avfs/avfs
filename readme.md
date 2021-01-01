@@ -53,12 +53,12 @@ import (
     "os"
 
     "github.com/avfs/avfs"
-    "github.com/avfs/avfs/fs/memfs"
-    "github.com/avfs/avfs/fs/osfs"
+    "github.com/avfs/avfs/vfs/memfs"
+    "github.com/avfs/avfs/vfs/osfs"
 )
 
 func main() {
-    var vfs avfs.FS	
+    var vfs avfs.VFS	
 
     switch os.Getenv("ENV") {
     case "PROD": // The real file system for production.
@@ -102,9 +102,9 @@ import (
 	"sync"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/memfs"
-	"github.com/avfs/avfs/fsutil"
 	"github.com/avfs/avfs/idm/memidm"
+	"github.com/avfs/avfs/vfs/memfs"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 func main() {
@@ -174,12 +174,12 @@ The following file systems are currently available :
 
 File system |Comments
 ------------|--------
-[BasePathFS](fs/basepathfs)|file system that restricts all operations to a given path within a file system
-[DummyFS](fs/dummyfs)|Non implemented file system to be used as model
-[MemFS](fs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
-[OrefaFS](fs/orefafs)|Afero like in memory file system
-[OsFS](fs/osfs)|Operating system native file system
-[RoFS](fs/rofs)|Read only file system
+[BasePathFS](vfs/basepathfs)|file system that restricts all operations to a given path within a file system
+[DummyFS](vfs/dummyfs)|Non implemented file system to be used as model
+[MemFS](vfs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
+[OrefaFS](vfs/orefafs)|Afero like in memory file system
+[OsFS](vfs/osfs)|Operating system native file system
+[RoFS](vfs/rofs)|Read only file system
 
 ## Supported methods
 File system methods <br> `avfs.FS`|Comments

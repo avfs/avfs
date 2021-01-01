@@ -22,10 +22,10 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/memfs"
-	"github.com/avfs/avfs/fs/rofs"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/memfs"
+	"github.com/avfs/avfs/vfs/rofs"
 )
 
 var (

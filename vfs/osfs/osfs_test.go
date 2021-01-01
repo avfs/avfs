@@ -23,9 +23,9 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/osfs"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/osfs"
 	"github.com/avfs/avfs/vfsutils"
 )
 

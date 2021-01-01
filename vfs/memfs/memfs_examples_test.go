@@ -21,9 +21,9 @@ import (
 	"log"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/memfs"
 )
 
 func ExampleNew() {

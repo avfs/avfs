@@ -14,24 +14,36 @@
 //  limitations under the License.
 //
 
-//+build datarace
+// +build !datarace
 
-package orefafs_test
+package osfs_test
 
 import (
 	"testing"
 
-	"github.com/avfs/avfs/fs/orefafs"
+	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/osfs"
 )
 
-func TestRacOrefaFs(t *testing.T) {
-	vfs, err := orefafs.New(orefafs.WithMainDirs())
+// TestOsFsWithOsIdm tests OsFS identity manager functions with OsIdn identity manager.
+func TestOsFSWithOsIdm(t *testing.T) {
+	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
+	if err != nil {
+		t.Fatalf("New : want err to be nil, got %s", err)
+	}
+
+	sidm := test.NewSuiteIdm(t, vfs)
+	sidm.All()
+}
+
+// TestOsFSWithoutIdm test OsFS without and identity manager.
+func TestOsFSWithNoIdm(t *testing.T) {
+	vfs, err := osfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(t, vfs)
-
-	sfs.SuiteRace()
+	sidm := test.NewSuiteIdm(t, vfs)
+	sidm.All()
 }

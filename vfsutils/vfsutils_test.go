@@ -24,12 +24,12 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/memfs"
-	"github.com/avfs/avfs/fs/orefafs"
-	"github.com/avfs/avfs/fs/osfs"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/memfs"
+	"github.com/avfs/avfs/vfs/orefafs"
+	"github.com/avfs/avfs/vfs/osfs"
 	"github.com/avfs/avfs/vfsutils"
 )
 

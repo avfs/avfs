@@ -14,50 +14,25 @@
 //  limitations under the License.
 //
 
-// +build !datarace
+//+build datarace
 
 package memfs_test
 
 import (
 	"testing"
 
-	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/idm/memidm"
-	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/memfs"
 )
 
-func TestMemFsWithNoIdm(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
-
-	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.All()
-}
-
-func TestMemFsWithMemIdm(t *testing.T) {
+func TestRaceMemFS(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
+		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.All()
-}
+	sfs := test.NewSuiteFS(t, vfs)
 
-func TestMemFsWithOsIdm(t *testing.T) {
-	idm := osidm.New()
-	if !idm.CurrentUser().IsRoot() {
-		t.Skip("OsIdm only works on when connected as root on a linux platform, skipping")
-	}
-
-	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm))
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
-
-	sIdm := test.NewSuiteIdm(t, vfs)
-	sIdm.All()
+	sfs.SuiteRace()
 }

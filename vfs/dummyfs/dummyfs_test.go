@@ -23,8 +23,8 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/dummyfs"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/dummyfs"
 )
 
 var (

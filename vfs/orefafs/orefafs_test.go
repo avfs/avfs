@@ -22,8 +22,8 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/fs/orefafs"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/orefafs"
 )
 
 var (

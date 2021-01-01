@@ -21,8 +21,8 @@ package vfsutils_test
 import (
 	"testing"
 
-	"github.com/avfs/avfs/fs/memfs"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/memfs"
 )
 
 func TestPath(t *testing.T) {
