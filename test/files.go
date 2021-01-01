@@ -582,6 +582,66 @@ func (sfs *SuiteFS) FileWrite() {
 			t.Errorf("want : %s\ngot  : %s", want, got)
 		}
 	})
+
+	t.Run("FileReadOnly", func(t *testing.T) {
+		path := vfs.Join(rootDir, "TestFileReadOnly.txt")
+
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		f, err := vfs.Open(path)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
+		defer f.Close()
+
+		b := make([]byte, len(data)*2)
+		n, err := f.Write(b)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", path, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Write", "write", path, avfs.ErrBadFileDesc, err)
+		}
+
+		if n != 0 {
+			t.Errorf("Write : want bytes written to be 0, got %d", n)
+		}
+
+		n, err = f.Read(b)
+		if err != nil {
+			t.Errorf("Read : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(data, b[:n]) {
+			t.Errorf("Read : want data to be %s, got %s", data, b[:n])
+		}
+
+		n, err = f.WriteAt(b, 0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", path, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "WriteAt", "write", path, avfs.ErrBadFileDesc, err)
+		}
+
+		if n != 0 {
+			t.Errorf("WriteAt : want bytes read to be 0, got %d", n)
+		}
+
+		n, err = f.ReadAt(b, 0)
+		if err != io.EOF {
+			t.Errorf("ReadAt : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(data, b[:n]) {
+			t.Errorf("ReadAt : want data to be %s, got %s", data, b[:n])
+		}
+	})
 }
 
 // FileRead tests Read and ReadAt functions.
@@ -592,7 +652,7 @@ func (sfs *SuiteFS) FileRead() {
 	vfs := sfs.GetFsWrite()
 
 	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(rootDir, "TestFileReadSeq.txt")
+	path := vfs.Join(rootDir, "TestFileRead.txt")
 
 	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
 	if err != nil {
@@ -652,25 +712,8 @@ func (sfs *SuiteFS) FileRead() {
 			}
 		}
 	})
-}
 
-// FileReadEdgeCases tests Read and ReadAt functions edge cases.
-func (sfs *SuiteFS) FileReadEdgeCases() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsWrite()
-	path := vfs.Join(rootDir, "TestFileReadEdgeCases.txt")
-	data := []byte("AAABBBCCCDDD")
-
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
-	vfs = sfs.GetFsRead()
-
-	t.Run("FileReadEdgeCases", func(t *testing.T) {
+	t.Run("FileReadAfterEndOfFile", func(t *testing.T) {
 		f, err := vfs.Open(path)
 		if err != nil {
 			t.Fatalf("Open : want error to be nil, got %v", err)
@@ -696,59 +739,6 @@ func (sfs *SuiteFS) FileReadEdgeCases() {
 
 		if n != 0 {
 			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
-		}
-	})
-
-	t.Run("FileReadOnly", func(t *testing.T) {
-		f, err := vfs.Open(path)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
-		}
-		defer f.Close()
-
-		b := make([]byte, len(data)*2)
-		n, err := f.Write(b)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Write", "write", path, avfs.ErrWinAccessDenied, err)
-		default:
-			CheckPathError(t, "Write", "write", path, avfs.ErrBadFileDesc, err)
-		}
-
-		if n != 0 {
-			t.Errorf("Write : want bytes written to be 0, got %d", n)
-		}
-
-		n, err = f.Read(b)
-		if err != nil {
-			t.Errorf("Read : want error to be nil, got %v", err)
-		}
-
-		if !bytes.Equal(data, b[:n]) {
-			t.Errorf("Read : want data to be %s, got %s", data, b[:n])
-		}
-
-		n, err = f.WriteAt(b, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "WriteAt", "write", path, avfs.ErrWinAccessDenied, err)
-		default:
-			CheckPathError(t, "WriteAt", "write", path, avfs.ErrBadFileDesc, err)
-		}
-
-		if n != 0 {
-			t.Errorf("WriteAt : want bytes read to be 0, got %d", n)
-		}
-
-		n, err = f.ReadAt(b, 0)
-		if err != io.EOF {
-			t.Errorf("ReadAt : want error to be nil, got %v", err)
-		}
-
-		if !bytes.Equal(data, b[:n]) {
-			t.Errorf("ReadAt : want data to be %s, got %s", data, b[:n])
 		}
 	})
 }

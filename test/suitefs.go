@@ -246,7 +246,6 @@ func (sfs *SuiteFS) All() {
 func (sfs *SuiteFS) Write() {
 	sfs.Chtimes()
 	sfs.DirFuncOnFile()
-	sfs.FileReadEdgeCases()
 	sfs.FileWrite()
 	sfs.FileWriteTime()
 	sfs.FileCloseWrite()
