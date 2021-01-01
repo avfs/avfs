@@ -319,13 +319,10 @@ func (vfs *RoFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, e
 	}
 
 	fBase, err := vfs.baseFS.OpenFile(name, os.O_RDONLY, 0)
-	if err != nil {
-		return &RoFile{}, err
-	}
 
 	f := &RoFile{baseFile: fBase}
 
-	return f, nil
+	return f, err
 }
 
 // ReadDir reads the directory named by dirname and returns
@@ -466,7 +463,6 @@ func (vfs *RoFS) Truncate(name string, size int64) error {
 
 // UMask is disabled in read only mode.
 func (vfs *RoFS) UMask(mask os.FileMode) {
-	_ = mask
 }
 
 // Walk walks the file tree rooted at root, calling walkFn for each file or
@@ -499,6 +495,10 @@ func (f *RoFile) Chdir() error {
 // If there is an error, it will be of type *PathError.
 func (f *RoFile) Chmod(mode os.FileMode) error {
 	const op = "chmod"
+
+	if f.baseFile.Name() == "" {
+		return os.ErrInvalid
+	}
 
 	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
@@ -611,6 +611,10 @@ func (f *RoFile) Sync() error {
 func (f *RoFile) Truncate(size int64) error {
 	const op = "truncate"
 
+	if f.baseFile.Name() == "" {
+		return os.ErrInvalid
+	}
+
 	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
@@ -620,6 +624,10 @@ func (f *RoFile) Truncate(size int64) error {
 func (f *RoFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
+	if f.baseFile.Name() == "" {
+		return 0, os.ErrInvalid
+	}
+
 	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
@@ -628,6 +636,10 @@ func (f *RoFile) Write(b []byte) (n int, err error) {
 // WriteAt returns a non-nil error when n != len(b).
 func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
+
+	if f.baseFile.Name() == "" {
+		return 0, os.ErrInvalid
+	}
 
 	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
