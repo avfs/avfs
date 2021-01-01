@@ -32,27 +32,36 @@ func (sfs *SuiteFS) Chtimes() {
 
 	vfs := sfs.GetFsWrite()
 
-	_ = CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	tomorrow := time.Now().AddDate(0, 0, 1)
+	t.Run("Chtimes", func(t *testing.T) {
+		_ = CreateDirs(t, vfs, rootDir)
+		files := CreateFiles(t, vfs, rootDir)
+		tomorrow := time.Now().AddDate(0, 0, 1)
 
-	for _, file := range files {
-		path := vfs.Join(rootDir, file.Path)
+		for _, file := range files {
+			path := vfs.Join(rootDir, file.Path)
 
-		err := vfs.Chtimes(path, tomorrow, tomorrow)
-		if err != nil {
-			t.Errorf("Chtimes %s : want error to be nil, got %v", path, err)
+			err := vfs.Chtimes(path, tomorrow, tomorrow)
+			if err != nil {
+				t.Errorf("Chtimes %s : want error to be nil, got %v", path, err)
+			}
+
+			infos, err := vfs.Stat(path)
+			if err != nil {
+				t.Errorf("Chtimes %s : want error to be nil, got %v", path, err)
+			}
+
+			if infos.ModTime() != tomorrow {
+				t.Errorf("Chtimes %s : want modtime to bo %s, got %s", path, tomorrow, infos.ModTime())
+			}
 		}
+	})
 
-		infos, err := vfs.Stat(path)
-		if err != nil {
-			t.Errorf("Chtimes %s : want error to be nil, got %v", path, err)
-		}
+	t.Run("ChtimesNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
 
-		if infos.ModTime() != tomorrow {
-			t.Errorf("Chtimes %s : want modtime to bo %s, got %s", path, tomorrow, infos.ModTime())
-		}
-	}
+		err := vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
+		CheckPathError(t, "Chtimes", "chtimes", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
 }
 
 // EvalSymlink tests EvalSymlink function.

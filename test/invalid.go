@@ -47,25 +47,9 @@ func (sfs *SuiteFS) FuncNonExistingFile() {
 	vfs = sfs.GetFsRead()
 
 	t.Run("FsNonExistingFile", func(t *testing.T) {
-		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-
-		if vfs.HasFeature(avfs.FeatIdentityMgr) {
-			err = vfs.Chown(nonExistingFile, 0, 0)
-			CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		err = vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
-		CheckPathError(t, "Chtimes", "chtimes", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-
 		if vfs.HasFeature(avfs.FeatHardlink) {
 			err = vfs.Link(nonExistingFile, existingFile)
 			CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		if vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.HasFeature(avfs.FeatSymlink) {
-			err = vfs.Lchown(nonExistingFile, 0, 0)
-			CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
 
 		_, err = vfs.Lstat(nonExistingFile)

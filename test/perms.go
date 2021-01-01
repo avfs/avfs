@@ -146,6 +146,13 @@ func (sfs *SuiteFS) Chown() {
 			}
 		}
 	})
+
+	t.Run("ChownNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.Chown(nonExistingFile, 0, 0)
+		CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
 }
 
 // Lchown tests Lchown function.
@@ -267,6 +274,13 @@ func (sfs *SuiteFS) Lchown() {
 			}
 		}
 	})
+
+	t.Run("LChownNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.Lchown(nonExistingFile, 0, 0)
+		CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
 }
 
 // Chmod tests Chmod function.
@@ -331,6 +345,13 @@ func (sfs *SuiteFS) Chmod() {
 				}
 			}
 		}
+	})
+
+	t.Run("ChmodNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 
 	// Cleanup permissions for RemoveAll()
