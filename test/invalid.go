@@ -46,35 +46,6 @@ func (sfs *SuiteFS) FuncNonExistingFile() {
 
 	vfs = sfs.GetFsRead()
 
-	t.Run("FsNonExistingFile", func(t *testing.T) {
-		if vfs.HasFeature(avfs.FeatHardlink) {
-			err = vfs.Link(nonExistingFile, existingFile)
-			CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		// err = FsR.Symlink(nonExistingFile, existingFile)
-		// CheckLinkError(t, "Symlink", "symlink", nonExistingFile, existingFile, , err)
-
-		err = vfs.Truncate(nonExistingFile, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			if err != nil {
-				t.Errorf("Truncate : want error to be nil, got %v", err)
-			}
-		default:
-			CheckPathError(t, "Truncate", "truncate", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		err = vfs.Walk(nonExistingFile, func(path string, info os.FileInfo, err error) error {
-			return nil
-		})
-
-		if err != nil {
-			t.Errorf("Walk %s : want error to be nil, got %v", nonExistingFile, err)
-		}
-	})
-
 	t.Run("FileNonExistingFile", func(t *testing.T) {
 		f, err := vfs.Open(nonExistingFile)
 

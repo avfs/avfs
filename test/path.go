@@ -686,4 +686,15 @@ func (sfs *SuiteFS) Walk() {
 			}
 		}
 	})
+
+	t.Run("WalkNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.Walk(nonExistingFile, func(path string, info os.FileInfo, err error) error {
+			return nil
+		})
+		if err != nil {
+			t.Errorf("Walk %s : want error to be nil, got %v", nonExistingFile, err)
+		}
+	})
 }

@@ -1164,6 +1164,20 @@ func (sfs *SuiteFS) FileTruncate() {
 			t.Errorf("Bytes Added : want %v, got %v", wantAdded, gotAdded)
 		}
 	})
+
+	t.Run("FsTruncateNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+
+		err := vfs.Truncate(nonExistingFile, 0)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			if err != nil {
+				t.Errorf("Truncate : want error to be nil, got %v", err)
+			}
+		default:
+			CheckPathError(t, "Truncate", "truncate", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		}
+	})
 }
 
 // Link tests Link function.
@@ -1256,6 +1270,19 @@ func (sfs *SuiteFS) Link() {
 			err := vfs.Link(InvalidPath, NewInvalidPath)
 			CheckLinkError(t, "Link", "link", InvalidPath, NewInvalidPath, avfs.ErrNoSuchFileOrDir, err)
 		}
+	})
+
+	t.Run("LinkNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		existingFile := vfs.Join(rootDir, "existingFile")
+
+		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Link(nonExistingFile, existingFile)
+		CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 }
 
