@@ -253,7 +253,7 @@ const (
 // VFS is the virtual file system interface.
 // Any simulated or real file system should implement this interface.
 type VFS interface {
-	BasicFs
+	BasicVFS
 	ChDirer
 	ChModer
 	ChOwner
@@ -270,9 +270,9 @@ type VFS interface {
 	UserConnecter
 }
 
-// BasicFs is the basic file system interface (no hard links, symbolic links, users, permissions and chroot).
+// BasicVFS is the basic virtual file system interface (no hard links, symbolic links, users, permissions or chroot).
 // Any simulated or real file system should implement this interface.
-type BasicFs interface {
+type BasicVFS interface {
 	// Create creates the named file with mode 0666 (before umask), truncating
 	// it if it already exists. If successful, methods on the returned
 	// File can be used for I/O; the associated file descriptor has mode
