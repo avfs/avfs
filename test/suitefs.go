@@ -249,7 +249,6 @@ func (sfs *SuiteFS) Write() {
 	sfs.FileWrite()
 	sfs.FileWriteTime()
 	sfs.FileCloseWrite()
-	sfs.FuncNonExistingFile()
 	sfs.Link()
 	sfs.Mkdir()
 	sfs.MkdirAll()
