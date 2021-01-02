@@ -43,3 +43,11 @@ func TestMemIdmAll(t *testing.T) {
 	sidm := test.NewSuiteIdm(t, idm)
 	sidm.All()
 }
+
+func TestMemIdmFeatures(t *testing.T) {
+	idm := memidm.New()
+
+	if idm.Features() != avfs.FeatIdentityMgr {
+		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatIdentityMgr, idm.Features())
+	}
+}
