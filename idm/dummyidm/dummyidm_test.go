@@ -82,3 +82,11 @@ func TestDummyIdm(t *testing.T) {
 		t.Errorf("Name : want name to be empty, got %s", name)
 	}
 }
+
+func TestDummyIdmFeatures(t *testing.T) {
+	idm := dummyidm.New()
+
+	if idm.Features() != 0 {
+		t.Errorf("Features : want Features to be 0, got %d", idm.Features())
+	}
+}
