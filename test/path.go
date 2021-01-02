@@ -470,31 +470,67 @@ func (sfs *SuiteFS) Join() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	jointests := []*struct {
-		elem []string
-		path string
-	}{
-		// zero parameters
-		{[]string{}, ""},
-
-		// one parameter
-		{[]string{""}, ""},
-		{[]string{"a"}, "a"},
-
-		// two parameters
-		{[]string{"a", "b"}, "a/b"},
-		{[]string{"a", ""}, "a"},
-		{[]string{"", "b"}, "b"},
-		{[]string{"/", "a"}, "/a"},
-		{[]string{"/", ""}, "/"},
-		{[]string{"a/", "b"}, "a/b"},
-		{[]string{"a/", ""}, "a"},
-		{[]string{"", ""}, ""},
-	}
-
 	vfs := sfs.GetFsRead()
 
-	for _, test := range jointests {
+	type joinTest struct {
+		elem []string
+		path string
+	}
+
+	var joinTests []*joinTest
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		joinTests = []*joinTest{
+			{[]string{`directory`, `file`}, `directory\file`},
+			{[]string{`C:\Windows\`, `System32`}, `C:\Windows\System32`},
+			{[]string{`C:\Windows\`, ``}, `C:\Windows`},
+			{[]string{`C:\`, `Windows`}, `C:\Windows`},
+			{[]string{`C:`, `a`}, `C:a`},
+			{[]string{`C:`, `a\b`}, `C:a\b`},
+			{[]string{`C:`, `a`, `b`}, `C:a\b`},
+			{[]string{`C:`, ``, `b`}, `C:b`},
+			{[]string{`C:`, ``, ``, `b`}, `C:b`},
+			{[]string{`C:`, ``}, `C:.`},
+			{[]string{`C:`, ``, ``}, `C:.`},
+			{[]string{`C:.`, `a`}, `C:a`},
+			{[]string{`C:a`, `b`}, `C:a\b`},
+			{[]string{`C:a`, `b`, `d`}, `C:a\b\d`},
+			{[]string{`\\host\share`, `foo`}, `\\host\share\foo`},
+			{[]string{`\\host\share\foo`}, `\\host\share\foo`},
+			{[]string{`//host/share`, `foo/bar`}, `\\host\share\foo\bar`},
+			{[]string{`\`}, `\`},
+			{[]string{`\`, ``}, `\`},
+			{[]string{`\`, `a`}, `\a`},
+			{[]string{`\\`, `a`}, `\a`},
+			{[]string{`\`, `a`, `b`}, `\a\b`},
+			{[]string{`\\`, `a`, `b`}, `\a\b`},
+			{[]string{`\`, `\\a\b`, `c`}, `\a\b\c`},
+			{[]string{`\\a`, `b`, `c`}, `\a\b\c`},
+			{[]string{`\\a\`, `b`, `c`}, `\a\b\c`},
+		}
+	default:
+		joinTests = []*joinTest{
+			// zero parameters
+			{[]string{}, ""},
+
+			// one parameter
+			{[]string{""}, ""},
+			{[]string{"a"}, "a"},
+
+			// two parameters
+			{[]string{"a", "b"}, "a/b"},
+			{[]string{"a", ""}, "a"},
+			{[]string{"", "b"}, "b"},
+			{[]string{"/", "a"}, "/a"},
+			{[]string{"/", ""}, "/"},
+			{[]string{"a/", "b"}, "a/b"},
+			{[]string{"a/", ""}, "a"},
+			{[]string{"", ""}, ""},
+		}
+	}
+
+	for _, test := range joinTests {
 		p := vfs.Join(test.elem...)
 		if p != test.path {
 			t.Errorf("Join(%q) = %q, want %q", test.elem, p, test.path)
