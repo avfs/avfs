@@ -184,23 +184,39 @@ func (sfs *SuiteFS) Base() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	basetests := []*pathTest{
-		{"", "."},
-		{".", "."},
-		{"/.", "."},
-		{"/", "/"},
-		{"////", "/"},
-		{"x/", "x"},
-		{"abc", "abc"},
-		{"abc/def", "def"},
-		{"a/b/.x", ".x"},
-		{"a/b/c.", "c."},
-		{"a/b/c.x", "c.x"},
-	}
-
 	vfs := sfs.GetFsRead()
 
-	for _, test := range basetests {
+	var baseTests []*pathTest
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		baseTests = []*pathTest{
+			{`c:\`, `\`},
+			{`c:.`, `.`},
+			{`c:\a\b`, `b`},
+			{`c:a\b`, `b`},
+			{`c:a\b\c`, `c`},
+			{`\\host\share\`, `\`},
+			{`\\host\share\a`, `a`},
+			{`\\host\share\a\b`, `b`},
+		}
+	default:
+		baseTests = []*pathTest{
+			{"", "."},
+			{".", "."},
+			{"/.", "."},
+			{"/", "/"},
+			{"////", "/"},
+			{"x/", "x"},
+			{"abc", "abc"},
+			{"abc/def", "def"},
+			{"a/b/.x", ".x"},
+			{"a/b/c.", "c."},
+			{"a/b/c.x", "c.x"},
+		}
+	}
+
+	for _, test := range baseTests {
 		s := vfs.Base(test.path)
 		if s != test.result {
 			t.Errorf("Base(%q) = %q, want %q", test.path, s, test.result)
