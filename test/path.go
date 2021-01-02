@@ -379,7 +379,7 @@ func (sfs *SuiteFS) FromToSlash() {
 		sep = '\\'
 	}
 
-	var slashTests = []*pathTest{
+	slashTests := []*pathTest{
 		{"", ""},
 		{"/", string(sep)},
 		{"/a/b", string([]byte{sep, 'a', sep, 'b'})},
@@ -390,6 +390,7 @@ func (sfs *SuiteFS) FromToSlash() {
 		if s := filepath.FromSlash(test.path); s != test.result {
 			t.Errorf("FromSlash(%q) = %q, want %q", test.path, s, test.result)
 		}
+
 		if s := filepath.ToSlash(test.result); s != test.path {
 			t.Errorf("ToSlash(%q) = %q, want %q", test.result, s, test.path)
 		}
