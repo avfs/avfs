@@ -543,55 +543,71 @@ func (sfs *SuiteFS) Rel() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	reltests := []*struct {
-		root, path, want string
-	}{
-		{"a/b", "a/b", "."},
-		{"a/b/.", "a/b", "."},
-		{"a/b", "a/b/.", "."},
-		{"./a/b", "a/b", "."},
-		{"a/b", "./a/b", "."},
-		{"ab/cd", "ab/cde", "../cde"},
-		{"ab/cd", "ab/c", "../c"},
-		{"a/b", "a/b/c/d", "c/d"},
-		{"a/b", "a/b/../c", "../c"},
-		{"a/b/../c", "a/b", "../b"},
-		{"a/b/c", "a/c/d", "../../c/d"},
-		{"a/b", "c/d", "../../c/d"},
-		{"a/b/c/d", "a/b", "../.."},
-		{"a/b/c/d", "a/b/", "../.."},
-		{"a/b/c/d/", "a/b", "../.."},
-		{"a/b/c/d/", "a/b/", "../.."},
-		{"../../a/b", "../../a/b/c/d", "c/d"},
-		{"/a/b", "/a/b", "."},
-		{"/a/b/.", "/a/b", "."},
-		{"/a/b", "/a/b/.", "."},
-		{"/ab/cd", "/ab/cde", "../cde"},
-		{"/ab/cd", "/ab/c", "../c"},
-		{"/a/b", "/a/b/c/d", "c/d"},
-		{"/a/b", "/a/b/../c", "../c"},
-		{"/a/b/../c", "/a/b", "../b"},
-		{"/a/b/c", "/a/c/d", "../../c/d"},
-		{"/a/b", "/c/d", "../../c/d"},
-		{"/a/b/c/d", "/a/b", "../.."},
-		{"/a/b/c/d", "/a/b/", "../.."},
-		{"/a/b/c/d/", "/a/b", "../.."},
-		{"/a/b/c/d/", "/a/b/", "../.."},
-		{"/../../a/b", "/../../a/b/c/d", "c/d"},
-		{".", "a/b", "a/b"},
-		{".", "..", ".."},
-
-		// can't do purely lexically
-		{"..", ".", "err"},
-		{"..", "a", "err"},
-		{"../..", "..", "err"},
-		{"a", "/a", "err"},
-		{"/a", "a", "err"},
-	}
-
 	vfs := sfs.GetFsRead()
 
-	for _, test := range reltests {
+	type relTest struct {
+		root, path, want string
+	}
+
+	var relTests []*relTest
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		relTests = []*relTest{
+			{`C:a\b\c`, `C:a/b/d`, `..\d`},
+			{`C:\`, `D:\`, `err`},
+			{`C:`, `D:`, `err`},
+			{`C:\Projects`, `c:\projects\src`, `src`},
+			{`C:\Projects`, `c:\projects`, `.`},
+			{`C:\Projects\a\..`, `c:\projects`, `.`},
+		}
+	default:
+		relTests = []*relTest{
+			{"a/b", "a/b", "."},
+			{"a/b/.", "a/b", "."},
+			{"a/b", "a/b/.", "."},
+			{"./a/b", "a/b", "."},
+			{"a/b", "./a/b", "."},
+			{"ab/cd", "ab/cde", "../cde"},
+			{"ab/cd", "ab/c", "../c"},
+			{"a/b", "a/b/c/d", "c/d"},
+			{"a/b", "a/b/../c", "../c"},
+			{"a/b/../c", "a/b", "../b"},
+			{"a/b/c", "a/c/d", "../../c/d"},
+			{"a/b", "c/d", "../../c/d"},
+			{"a/b/c/d", "a/b", "../.."},
+			{"a/b/c/d", "a/b/", "../.."},
+			{"a/b/c/d/", "a/b", "../.."},
+			{"a/b/c/d/", "a/b/", "../.."},
+			{"../../a/b", "../../a/b/c/d", "c/d"},
+			{"/a/b", "/a/b", "."},
+			{"/a/b/.", "/a/b", "."},
+			{"/a/b", "/a/b/.", "."},
+			{"/ab/cd", "/ab/cde", "../cde"},
+			{"/ab/cd", "/ab/c", "../c"},
+			{"/a/b", "/a/b/c/d", "c/d"},
+			{"/a/b", "/a/b/../c", "../c"},
+			{"/a/b/../c", "/a/b", "../b"},
+			{"/a/b/c", "/a/c/d", "../../c/d"},
+			{"/a/b", "/c/d", "../../c/d"},
+			{"/a/b/c/d", "/a/b", "../.."},
+			{"/a/b/c/d", "/a/b/", "../.."},
+			{"/a/b/c/d/", "/a/b", "../.."},
+			{"/a/b/c/d/", "/a/b/", "../.."},
+			{"/../../a/b", "/../../a/b/c/d", "c/d"},
+			{".", "a/b", "a/b"},
+			{".", "..", ".."},
+
+			// can't do purely lexically
+			{"..", ".", "err"},
+			{"..", "a", "err"},
+			{"../..", "..", "err"},
+			{"a", "/a", "err"},
+			{"/a", "a", "err"},
+		}
+	}
+
+	for _, test := range relTests {
 		got, err := vfs.Rel(test.root, test.path)
 		if test.want == "err" {
 			if err == nil {
