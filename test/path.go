@@ -181,10 +181,7 @@ func (sfs *SuiteFS) Abs() {
 
 // Base tests Base function.
 func (sfs *SuiteFS) Base() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	var baseTests []*pathTest
 
@@ -323,10 +320,7 @@ func (sfs *SuiteFS) Clean() {
 
 // Dir tests Dir function.
 func (sfs *SuiteFS) Dir() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	var dirTests []*pathTest
 
@@ -369,10 +363,7 @@ func (sfs *SuiteFS) Dir() {
 }
 
 func (sfs *SuiteFS) FromToSlash() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	sep := byte('/')
 	if vfs.OSType() == avfs.OsWindows {
@@ -387,11 +378,11 @@ func (sfs *SuiteFS) FromToSlash() {
 	}
 
 	for _, test := range slashTests {
-		if s := filepath.FromSlash(test.path); s != test.result {
+		if s := vfs.FromSlash(test.path); s != test.result {
 			t.Errorf("FromSlash(%q) = %q, want %q", test.path, s, test.result)
 		}
 
-		if s := filepath.ToSlash(test.result); s != test.path {
+		if s := vfs.ToSlash(test.result); s != test.path {
 			t.Errorf("ToSlash(%q) = %q, want %q", test.result, s, test.path)
 		}
 	}
@@ -399,10 +390,7 @@ func (sfs *SuiteFS) FromToSlash() {
 
 // IsAbs tests IsAbs function.
 func (sfs *SuiteFS) IsAbs() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	t.Run("IsAbs", func(t *testing.T) {
 		type IsAbsTest struct {
@@ -472,10 +460,7 @@ func (sfs *SuiteFS) IsAbs() {
 
 // Join tests Join function.
 func (sfs *SuiteFS) Join() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	type joinTest struct {
 		elem []string
@@ -545,10 +530,7 @@ func (sfs *SuiteFS) Join() {
 
 // Rel tests Rel function.
 func (sfs *SuiteFS) Rel() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsRead()
+	t, vfs := sfs.t, sfs.GetFsRead()
 
 	type relTest struct {
 		root, path, want string
