@@ -369,42 +369,29 @@ func (sfs *SuiteFS) Dir() {
 }
 
 func (sfs *SuiteFS) FromToSlash() {
-	t := sfs.t
-
-	// TODO : Add test cases for windows.
-	pathtests := []*struct {
-		path, from, to string
-	}{
-		{"/a/b/c", "", ""},
-		{"C:\\A\\b/c", "", ""},
-	}
+	t, _, removeDir := sfs.CreateRootDir(UsrTest)
+	defer removeDir()
 
 	vfs := sfs.GetFsRead()
-	ost := vfs.OSType()
 
-	for _, pt := range pathtests {
-		var want string
+	sep := byte('/')
+	if vfs.OSType() == avfs.OsWindows {
+		sep = '\\'
+	}
 
-		if ost == avfs.OsWindows {
-			want = pt.from
-		} else {
-			want = pt.path
+	var slashTests = []*pathTest{
+		{"", ""},
+		{"/", string(sep)},
+		{"/a/b", string([]byte{sep, 'a', sep, 'b'})},
+		{"a//b", string([]byte{'a', sep, sep, 'b'})},
+	}
+
+	for _, test := range slashTests {
+		if s := filepath.FromSlash(test.path); s != test.result {
+			t.Errorf("FromSlash(%q) = %q, want %q", test.path, s, test.result)
 		}
-
-		got := vfs.FromSlash(pt.path)
-		if got != want {
-			t.Errorf("FromSlash %s, want %s, got %s", pt.path, want, got)
-		}
-
-		if ost == avfs.OsWindows {
-			want = pt.to
-		} else {
-			want = pt.path
-		}
-
-		got = vfs.ToSlash(pt.path)
-		if got != want {
-			t.Errorf("FromSlash %s, want %s, got %s", pt.path, want, got)
+		if s := filepath.ToSlash(test.result); s != test.path {
+			t.Errorf("ToSlash(%q) = %q, want %q", test.result, s, test.path)
 		}
 	}
 }
