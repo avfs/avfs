@@ -649,19 +649,39 @@ func (sfs *SuiteFS) Split() {
 	t, _, removeDir := sfs.CreateRootDir(UsrTest)
 	defer removeDir()
 
-	unixsplittests := []*struct {
-		path, dir, file string
-	}{
-		{"a/b", "a/", "b"},
-		{"a/b/", "a/b/", ""},
-		{"a/", "a/", ""},
-		{"a", "", "a"},
-		{"/", "/", ""},
-	}
-
 	vfs := sfs.GetFsRead()
 
-	for _, test := range unixsplittests {
+	type splitTest struct {
+		path, dir, file string
+	}
+
+	var splitTests []*splitTest
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		splitTests = []*splitTest{
+			{`c:`, `c:`, ``},
+			{`c:/`, `c:/`, ``},
+			{`c:/foo`, `c:/`, `foo`},
+			{`c:/foo/bar`, `c:/foo/`, `bar`},
+			{`//host/share`, `//host/share`, ``},
+			{`//host/share/`, `//host/share/`, ``},
+			{`//host/share/foo`, `//host/share/`, `foo`},
+			{`\\host\share`, `\\host\share`, ``},
+			{`\\host\share\`, `\\host\share\`, ``},
+			{`\\host\share\foo`, `\\host\share\`, `foo`},
+		}
+	default:
+		splitTests = []*splitTest{
+			{"a/b", "a/", "b"},
+			{"a/b/", "a/b/", ""},
+			{"a/", "a/", ""},
+			{"a", "", "a"},
+			{"/", "/", ""},
+		}
+	}
+
+	for _, test := range splitTests {
 		d, f := vfs.Split(test.path)
 		if d != test.dir || f != test.file {
 			t.Errorf("Split(%q) = %q, %q, want %q, %q", test.path, d, f, test.dir, test.file)
