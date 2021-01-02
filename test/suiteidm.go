@@ -37,14 +37,11 @@ type SuiteIdm struct {
 	// Users contains the test users created with the identity manager.
 	Users []avfs.UserReader
 
-	// hasIdm is true when the identity manager has the feature avfs.FeatIdentityMgr.
-	hasIdm bool
+	// uc is the implementation of avfs.UserConnecter.
+	uc avfs.UserConnecter
 
-	// hasUser is true when the identity manager implements avfs.UserConnecter.
-	hasUser bool
-
-	// hasRoot is true when the current user is root.
-	hasRoot bool
+	// canTest is true when the identity manager can be tested..
+	canTest bool
 }
 
 // NewSuiteIdm returns a new test suite for an identity manager.
@@ -55,31 +52,28 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 	}
 
 	defer func() {
-		t.Logf("Info Idm = %s, Idm = %t, User = %t, Root = %t",
-			sIdm.Type(), sIdm.hasIdm, sIdm.hasUser, sIdm.hasRoot)
+		t.Logf("Info Idm = %s, Can test = %t", sIdm.Type(), sIdm.canTest)
 	}()
-
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		return sIdm
-	}
-
-	sIdm.hasIdm = true
 
 	uc, ok := idm.(avfs.UserConnecter)
 	if ok {
+		sIdm.uc = uc
+
 		u := uc.CurrentUser()
 		if u == nil {
 			return sIdm
 		}
 
-		sIdm.hasUser = true
-
 		if !u.IsRoot() {
 			return sIdm
 		}
-
-		sIdm.hasRoot = true
 	}
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		return sIdm
+	}
+
+	sIdm.canTest = true
 
 	sIdm.Groups = CreateGroups(t, idm, "")
 	sIdm.Users = CreateUsers(t, idm, "")

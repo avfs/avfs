@@ -40,7 +40,7 @@ func (sIdm *SuiteIdm) GroupAddDel() {
 	suffix := "GroupAddDel" + sIdm.Type()
 	t, idm := sIdm.t, sIdm.idm
 
-	if !sIdm.hasIdm || (sIdm.hasUser && !sIdm.hasRoot) {
+	if !sIdm.canTest {
 		return
 	}
 
@@ -137,7 +137,7 @@ func (sIdm *SuiteIdm) UserAddDel() {
 	suffix := "UserAddDel" + sIdm.Type()
 	t, idm := sIdm.t, sIdm.idm
 
-	if !sIdm.hasIdm || (sIdm.hasUser && !sIdm.hasRoot) {
+	if !sIdm.canTest {
 		return
 	}
 
@@ -269,7 +269,7 @@ func (sIdm *SuiteIdm) Lookup() {
 	suffix := "Lookup" + sIdm.Type()
 	t, idm := sIdm.t, sIdm.idm
 
-	if !sIdm.hasIdm || (sIdm.hasUser && !sIdm.hasRoot) {
+	if !sIdm.canTest {
 		return
 	}
 
@@ -332,11 +332,9 @@ func (sIdm *SuiteIdm) User() {
 	suffix := "User" + sIdm.Type()
 	t, idm := sIdm.t, sIdm.idm
 
-	if !sIdm.hasRoot {
+	if !sIdm.canTest || sIdm.uc == nil {
 		return
 	}
-
-	uc, _ := idm.(avfs.UserConnecter)
 
 	CreateGroups(t, idm, suffix)
 	CreateUsers(t, idm, suffix)
@@ -351,7 +349,7 @@ func (sIdm *SuiteIdm) User() {
 			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
 		}
 
-		_, err = uc.User(userName)
+		_, err = sIdm.uc.User(userName)
 		if err != wantErr {
 			t.Errorf("User %s : want error to be %v, got %v", userName, wantErr, err)
 		}
@@ -371,7 +369,7 @@ func (sIdm *SuiteIdm) User() {
 
 			// loop to test change with the same user
 			for i := 0; i < 2; i++ {
-				u, err := uc.User(userName)
+				u, err := sIdm.uc.User(userName)
 				if err != nil {
 					t.Errorf("User %s : want error to be nil, got %v", userName, err)
 
@@ -390,7 +388,7 @@ func (sIdm *SuiteIdm) User() {
 					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, u.Gid())
 				}
 
-				cu := uc.CurrentUser()
+				cu := sIdm.uc.CurrentUser()
 				if cu.Name() != userName {
 					t.Errorf("User %s : want name to be %s, got %s", userName, userName, cu.Name())
 				}
@@ -412,13 +410,11 @@ func (sIdm *SuiteIdm) UserDenied() {
 	suffix := "Denied" + sIdm.Type()
 	t, idm := sIdm.t, sIdm.idm
 
-	if !sIdm.hasRoot {
+	if !sIdm.canTest || sIdm.uc == nil {
 		return
 	}
 
-	uc, _ := idm.(avfs.UserConnecter)
-
-	_, err := uc.User(UsrTest)
+	_, err := sIdm.uc.User(UsrTest)
 	if err != nil {
 		t.Fatalf("User: want error to be nil, got %v", err)
 	}
@@ -457,11 +453,12 @@ func (sIdm *SuiteIdm) UserDenied() {
 	}
 }
 
-// PermDenied tests if all functions of the identity manager return avfs.ErrPermDenied.
+// PermDenied tests if all functions of the identity manager return avfs.ErrPermDenied
+// when the identity manager can't be tested.
 func (sIdm *SuiteIdm) PermDenied() {
 	t, idm := sIdm.t, sIdm.idm
 
-	if sIdm.hasIdm && (!sIdm.hasUser || sIdm.hasRoot) {
+	if sIdm.canTest {
 		return
 	}
 
@@ -534,6 +531,15 @@ func (sIdm *SuiteIdm) PermDenied() {
 	err = idm.UserDel(usrName)
 	if err != avfs.ErrPermDenied {
 		t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
+	}
+
+	if sIdm.uc == nil {
+		return
+	}
+
+	_, err = sIdm.uc.User(usrName)
+	if err != avfs.ErrPermDenied {
+		t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
 }
 
