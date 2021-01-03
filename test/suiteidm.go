@@ -25,9 +25,6 @@ import (
 
 // SuiteIdm is a test suite for an identity manager.
 type SuiteIdm struct {
-	// t is passed to Test functions to manage test state and support formatted test logs.
-	t *testing.T
-
 	// idm is the identity manager to be tested.
 	idm avfs.IdentityMgr
 
@@ -46,10 +43,7 @@ type SuiteIdm struct {
 
 // NewSuiteIdm returns a new test suite for an identity manager.
 func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
-	sIdm := &SuiteIdm{
-		t:   t,
-		idm: idm,
-	}
+	sIdm := &SuiteIdm{idm: idm}
 
 	defer func() {
 		t.Logf("Info Idm = %s, Can test = %t", sIdm.Type(), sIdm.canTest)

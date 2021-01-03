@@ -26,19 +26,19 @@ import (
 )
 
 // All run all identity manager tests.
-func (sIdm *SuiteIdm) All() {
-	sIdm.GroupAddDel()
-	sIdm.UserAddDel()
-	sIdm.Lookup()
-	sIdm.User()
-	sIdm.UserDenied()
-	sIdm.PermDenied()
+func (sIdm *SuiteIdm) All(t *testing.T) {
+	sIdm.GroupAddDel(t)
+	sIdm.UserAddDel(t)
+	sIdm.Lookup(t)
+	sIdm.User(t)
+	sIdm.UserDenied(t)
+	sIdm.PermDenied(t)
 }
 
 // GroupAddDel tests GroupAdd and GroupDel functions.
-func (sIdm *SuiteIdm) GroupAddDel() {
+func (sIdm *SuiteIdm) GroupAddDel(t *testing.T) {
+	idm := sIdm.idm
 	suffix := "GroupAddDel" + sIdm.Type()
-	t, idm := sIdm.t, sIdm.idm
 
 	if !sIdm.canTest {
 		return
@@ -133,9 +133,9 @@ func (sIdm *SuiteIdm) GroupAddDel() {
 }
 
 // UserAddDel tests UserAdd and UserDel functions.
-func (sIdm *SuiteIdm) UserAddDel() {
+func (sIdm *SuiteIdm) UserAddDel(t *testing.T) {
+	idm := sIdm.idm
 	suffix := "UserAddDel" + sIdm.Type()
-	t, idm := sIdm.t, sIdm.idm
 
 	if !sIdm.canTest {
 		return
@@ -265,9 +265,9 @@ func (sIdm *SuiteIdm) UserAddDel() {
 }
 
 // Lookup tests Lookup* functions.
-func (sIdm *SuiteIdm) Lookup() {
+func (sIdm *SuiteIdm) Lookup(t *testing.T) {
+	idm := sIdm.idm
 	suffix := "Lookup" + sIdm.Type()
-	t, idm := sIdm.t, sIdm.idm
 
 	if !sIdm.canTest {
 		return
@@ -328,9 +328,9 @@ func (sIdm *SuiteIdm) Lookup() {
 }
 
 // User tests User and CurrentUser functions.
-func (sIdm *SuiteIdm) User() {
+func (sIdm *SuiteIdm) User(t *testing.T) {
+	idm := sIdm.idm
 	suffix := "User" + sIdm.Type()
-	t, idm := sIdm.t, sIdm.idm
 
 	if !sIdm.canTest || sIdm.uc == nil {
 		return
@@ -406,9 +406,9 @@ func (sIdm *SuiteIdm) User() {
 }
 
 // UserDenied tests if non root users are denied write access.
-func (sIdm *SuiteIdm) UserDenied() {
+func (sIdm *SuiteIdm) UserDenied(t *testing.T) {
 	suffix := "Denied" + sIdm.Type()
-	t, idm := sIdm.t, sIdm.idm
+	idm := sIdm.idm
 
 	if !sIdm.canTest || sIdm.uc == nil {
 		return
@@ -455,8 +455,8 @@ func (sIdm *SuiteIdm) UserDenied() {
 
 // PermDenied tests if all functions of the identity manager return avfs.ErrPermDenied
 // when the identity manager can't be tested.
-func (sIdm *SuiteIdm) PermDenied() {
-	t, idm := sIdm.t, sIdm.idm
+func (sIdm *SuiteIdm) PermDenied(t *testing.T) {
+	idm := sIdm.idm
 
 	if sIdm.canTest {
 		return
