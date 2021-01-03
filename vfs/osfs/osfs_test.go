@@ -50,12 +50,12 @@ func initTest(t *testing.T) *test.SuiteFS {
 
 func TestOsFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.All()
+	sfs.All(t)
 }
 
 func TestOsFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Perm()
+	sfs.Perm(t)
 }
 
 func TestNilPtrReceiver(t *testing.T) {

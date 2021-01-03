@@ -26,46 +26,46 @@ import (
 )
 
 // Race tests data race conditions.
-func (sfs *SuiteFS) Race() {
-	sfs.RaceDir()
-	sfs.RaceFile()
-	sfs.RaceMkdirRemoveAll()
+func (sfs *SuiteFS) Race(t *testing.T) {
+	sfs.RaceDir(t)
+	sfs.RaceFile(t)
+	sfs.RaceMkdirRemoveAll(t)
 }
 
 // RaceDir tests data race conditions for some directory functions.
-func (sfs *SuiteFS) RaceDir() {
-	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) RaceDir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
 
 	path := vfs.Join(rootDir, "mkdDirNew")
 
-	sfs.RaceFunc("Mkdir", RaceOneOk, func() error {
+	sfs.RaceFunc(t, "Mkdir", RaceOneOk, func() error {
 		return vfs.Mkdir(path, avfs.DefaultDirPerm)
 	})
 
-	sfs.RaceFunc("Remove", RaceOneOk, func() error {
+	sfs.RaceFunc(t, "Remove", RaceOneOk, func() error {
 		return vfs.Remove(path)
 	})
 
-	sfs.RaceFunc("MkdirAll", RaceAllOk, func() error {
+	sfs.RaceFunc(t, "MkdirAll", RaceAllOk, func() error {
 		return vfs.MkdirAll(path, avfs.DefaultDirPerm)
 	})
 
-	sfs.RaceFunc("RemoveAll", RaceAllOk, func() error {
+	sfs.RaceFunc(t, "RemoveAll", RaceAllOk, func() error {
 		return vfs.RemoveAll(path)
 	})
 }
 
 // RaceFile tests data race conditions for some file functions.
-func (sfs *SuiteFS) RaceFile() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) RaceFile(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
 
-	sfs.RaceFunc("Create", RaceAllOk, func() error {
+	sfs.RaceFunc(t, "Create", RaceAllOk, func() error {
 		newFile := vfs.Join(rootDir, "newFile")
 		f, err := vfs.Create(newFile)
 		if err == nil {
@@ -75,7 +75,7 @@ func (sfs *SuiteFS) RaceFile() {
 		return err
 	})
 
-	sfs.RaceFunc("Open Excl", RaceOneOk, func() error {
+	sfs.RaceFunc(t, "Open Excl", RaceOneOk, func() error {
 		newFile := vfs.Join(rootDir, "newFileExcl")
 		f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
 		if err == nil {
@@ -93,7 +93,7 @@ func (sfs *SuiteFS) RaceFile() {
 			t.Fatalf("WriteFile : want err to be nil, got %v", err)
 		}
 
-		sfs.RaceFunc("Open Read Only", RaceAllOk, func() error {
+		sfs.RaceFunc(t, "Open Read Only", RaceAllOk, func() error {
 			f, err := vfs.Open(roFile)
 			if err == nil {
 				defer f.Close()
@@ -111,20 +111,20 @@ func (sfs *SuiteFS) RaceFile() {
 			t.Fatalf("Create : want err to be nil, got %v", err)
 		}
 
-		sfs.RaceFunc("Close", RaceOneOk, f.Close)
+		sfs.RaceFunc(t, "Close", RaceOneOk, f.Close)
 	}()
 }
 
 // RaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
-func (sfs *SuiteFS) RaceMkdirRemoveAll() {
-	_, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) RaceMkdirRemoveAll(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
 
 	path := vfs.Join(rootDir, "new/path/to/test")
 
-	sfs.RaceFunc("Complex", RaceUndefined, func() error {
+	sfs.RaceFunc(t, "Complex", RaceUndefined, func() error {
 		return vfs.MkdirAll(path, avfs.DefaultDirPerm)
 	}, func() error {
 		return vfs.RemoveAll(path)
@@ -150,9 +150,8 @@ const (
 
 // RaceFunc tests data race conditions by running simultaneously all testFuncs in cf.maxRace goroutines
 // and expecting a result rr.
-func (sfs *SuiteFS) RaceFunc(name string, rr RaceResult, testFuncs ...func() error) {
+func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs ...func() error) {
 	var (
-		t       = sfs.t
 		wg      sync.WaitGroup
 		starter sync.RWMutex
 		wantOk  uint32

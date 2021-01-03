@@ -28,8 +28,8 @@ import (
 )
 
 // DirFuncOnFile tests directory functions on files.
-func (sfs *SuiteFS) DirFuncOnFile() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -152,8 +152,8 @@ func (sfs *SuiteFS) DirFuncOnFile() {
 }
 
 // FileFuncOnDir test file functions on directories.
-func (sfs *SuiteFS) FileFuncOnDir() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) FileFuncOnDir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -234,8 +234,8 @@ func (sfs *SuiteFS) FileFuncOnDir() {
 }
 
 // FileFuncOnClosed tests functions on closed files.
-func (sfs *SuiteFS) FileFuncOnClosed() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) FileFuncOnClosed(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -355,8 +355,8 @@ func (sfs *SuiteFS) FileFuncOnClosed() {
 }
 
 // NotImplemented tests non implemented functions.
-func (sfs *SuiteFS) NotImplemented() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) NotImplemented(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsRead()

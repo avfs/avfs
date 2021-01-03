@@ -41,7 +41,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.StatT()
+		sfs.StatT(t)
 	})
 
 	t.Run("StatT OsFS", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.StatT()
+		sfs.StatT(t)
 	})
 
 	t.Run("StatT OrefaFS", func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.StatT()
+		sfs.StatT(t)
 	})
 }
 
@@ -73,7 +73,7 @@ func TestCheckPermission(t *testing.T) {
 
 	sfs := test.NewSuiteFS(t, vfs)
 
-	_, rootDir, removeDir := sfs.CreateRootDir(test.UsrTest)
+	rootDir, removeDir := sfs.CreateRootDir(t, test.UsrTest)
 	defer removeDir()
 
 	for perm := os.FileMode(0); perm <= 0o777; perm++ {

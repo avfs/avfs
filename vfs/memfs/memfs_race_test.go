@@ -33,6 +33,5 @@ func TestRaceMemFS(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-
-	sfs.SuiteRace()
+	sfs.Race(t)
 }

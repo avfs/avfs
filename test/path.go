@@ -27,18 +27,18 @@ import (
 )
 
 // Path tests all path related functions.
-func (sfs *SuiteFS) Path() {
-	sfs.Abs()
-	sfs.Base()
-	sfs.Clean()
-	sfs.Dir()
-	sfs.FromToSlash()
-	sfs.Glob()
-	sfs.IsAbs()
-	sfs.Join()
-	sfs.Rel()
-	sfs.Split()
-	sfs.Walk()
+func (sfs *SuiteFS) Path(t *testing.T) {
+	sfs.Abs(t)
+	sfs.Base(t)
+	sfs.Clean(t)
+	sfs.Dir(t)
+	sfs.FromToSlash(t)
+	sfs.Glob(t)
+	sfs.IsAbs(t)
+	sfs.Join(t)
+	sfs.Rel(t)
+	sfs.Split(t)
+	sfs.Walk(t)
 }
 
 type pathTest struct {
@@ -46,8 +46,8 @@ type pathTest struct {
 }
 
 // Abs test Abs function.
-func (sfs *SuiteFS) Abs() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Abs(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -180,8 +180,8 @@ func (sfs *SuiteFS) Abs() {
 }
 
 // Base tests Base function.
-func (sfs *SuiteFS) Base() {
-	t, vfs := sfs.t, sfs.GetFsRead()
+func (sfs *SuiteFS) Base(t *testing.T) {
+	vfs := sfs.GetFsRead()
 
 	var baseTests []*pathTest
 
@@ -222,8 +222,8 @@ func (sfs *SuiteFS) Base() {
 }
 
 // Clean tests Clean function.
-func (sfs *SuiteFS) Clean() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Clean(t *testing.T) {
+	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsRead()
@@ -319,8 +319,8 @@ func (sfs *SuiteFS) Clean() {
 }
 
 // Dir tests Dir function.
-func (sfs *SuiteFS) Dir() {
-	t, vfs := sfs.t, sfs.GetFsRead()
+func (sfs *SuiteFS) Dir(t *testing.T) {
+	vfs := sfs.GetFsRead()
 
 	var dirTests []*pathTest
 
@@ -362,8 +362,8 @@ func (sfs *SuiteFS) Dir() {
 	}
 }
 
-func (sfs *SuiteFS) FromToSlash() {
-	t, vfs := sfs.t, sfs.GetFsRead()
+func (sfs *SuiteFS) FromToSlash(t *testing.T) {
+	vfs := sfs.GetFsRead()
 
 	sep := byte('/')
 	if vfs.OSType() == avfs.OsWindows {
@@ -389,8 +389,8 @@ func (sfs *SuiteFS) FromToSlash() {
 }
 
 // IsAbs tests IsAbs function.
-func (sfs *SuiteFS) IsAbs() {
-	t, vfs := sfs.t, sfs.GetFsRead()
+func (sfs *SuiteFS) IsAbs(t *testing.T) {
+	vfs := sfs.GetFsRead()
 
 	t.Run("IsAbs", func(t *testing.T) {
 		type IsAbsTest struct {
@@ -459,8 +459,8 @@ func (sfs *SuiteFS) IsAbs() {
 }
 
 // Join tests Join function.
-func (sfs *SuiteFS) Join() {
-	t, vfs := sfs.t, sfs.GetFsRead()
+func (sfs *SuiteFS) Join(t *testing.T) {
+	vfs := sfs.GetFsRead()
 
 	type joinTest struct {
 		elem []string
@@ -529,8 +529,8 @@ func (sfs *SuiteFS) Join() {
 }
 
 // Rel tests Rel function.
-func (sfs *SuiteFS) Rel() {
-	t, vfs := sfs.t, sfs.GetFsRead()
+func (sfs *SuiteFS) Rel(t *testing.T) {
+	vfs := sfs.GetFsRead()
 
 	type relTest struct {
 		root, path, want string
@@ -615,8 +615,8 @@ func (sfs *SuiteFS) Rel() {
 }
 
 // Split tests Split function.
-func (sfs *SuiteFS) Split() {
-	t, _, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Split(t *testing.T) {
+	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsRead()
@@ -660,8 +660,8 @@ func (sfs *SuiteFS) Split() {
 }
 
 // Glob tests Glob function.
-func (sfs *SuiteFS) Glob() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Glob(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -733,8 +733,8 @@ func (sfs *SuiteFS) Glob() {
 }
 
 // Walk tests Walk function.
-func (sfs *SuiteFS) Walk() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Walk(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()

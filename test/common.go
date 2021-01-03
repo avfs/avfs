@@ -26,8 +26,8 @@ import (
 )
 
 // Chtimes tests Chtimes function.
-func (sfs *SuiteFS) Chtimes() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Chtimes(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -65,8 +65,8 @@ func (sfs *SuiteFS) Chtimes() {
 }
 
 // EvalSymlink tests EvalSymlink function.
-func (sfs *SuiteFS) EvalSymlink() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -111,8 +111,8 @@ func (sfs *SuiteFS) EvalSymlink() {
 }
 
 // Lstat tests Lstat function.
-func (sfs *SuiteFS) Lstat() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Lstat(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -232,12 +232,12 @@ func (sfs *SuiteFS) Lstat() {
 }
 
 // Readlink tests Readlink function.
-func (sfs *SuiteFS) Readlink() {
+func (sfs *SuiteFS) Readlink(t *testing.T) {
 	if !sfs.vfsW.HasFeature(avfs.FeatSymlink) {
 		return
 	}
 
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -290,8 +290,8 @@ func (sfs *SuiteFS) Readlink() {
 }
 
 // Remove tests Remove function.
-func (sfs *SuiteFS) Remove() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Remove(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -385,8 +385,8 @@ func (sfs *SuiteFS) Remove() {
 }
 
 // RemoveAll tests RemoveAll function.
-func (sfs *SuiteFS) RemoveAll() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) RemoveAll(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -479,8 +479,8 @@ func (sfs *SuiteFS) RemoveAll() {
 }
 
 // Rename tests Rename function.
-func (sfs *SuiteFS) Rename() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Rename(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -565,8 +565,8 @@ func (sfs *SuiteFS) Rename() {
 }
 
 // Stat tests Stat function.
-func (sfs *SuiteFS) Stat() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Stat(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -685,8 +685,8 @@ func (sfs *SuiteFS) Stat() {
 }
 
 // Symlink tests Symlink function.
-func (sfs *SuiteFS) Symlink() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) Symlink(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -721,8 +721,8 @@ func (sfs *SuiteFS) Symlink() {
 }
 
 // WriteOnReadOnly tests all write functions of a read only file system.
-func (sfs *SuiteFS) WriteOnReadOnly() {
-	t, rootDir, removeDir := sfs.CreateRootDir(UsrTest)
+func (sfs *SuiteFS) WriteOnReadOnly(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
@@ -828,10 +828,10 @@ func (sfs *SuiteFS) WriteOnReadOnly() {
 }
 
 // Umask tests UMask and GetUMask functions.
-func (sfs *SuiteFS) Umask() {
+func (sfs *SuiteFS) Umask(t *testing.T) {
 	const umaskTest = 0o077
 
-	t, vfs := sfs.t, sfs.GetFsWrite()
+	vfs := sfs.GetFsWrite()
 
 	umaskStart := vfs.GetUMask()
 	vfs.UMask(umaskTest)

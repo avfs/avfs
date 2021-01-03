@@ -45,22 +45,22 @@ func initTest(t *testing.T) *test.SuiteFS {
 	sfs := test.NewSuiteFS(t, vfsRoot)
 	vfsW := sfs.GetFsWrite()
 	vfsR := rofs.New(vfsW)
-	sfs.FsRead(vfsR)
+	sfs.FsRead(t, vfsR)
 
 	return sfs
 }
 
 func TestRoFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Read()
-	sfs.WriteOnReadOnly()
-	sfs.EvalSymlink()
-	sfs.Path()
+	sfs.Read(t)
+	sfs.WriteOnReadOnly(t)
+	sfs.EvalSymlink(t)
+	sfs.Path(t)
 }
 
 func TestRoFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.PermRead()
+	sfs.PermRead(t)
 }
 
 func TestRoFSOSType(t *testing.T) {

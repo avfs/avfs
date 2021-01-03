@@ -32,5 +32,5 @@ func TestPath(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-	sfs.Path()
+	sfs.Path(t)
 }

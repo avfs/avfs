@@ -26,9 +26,6 @@ import (
 
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
-	// t is passed to Test functions to manage test state and support formatted test logs.
-	t *testing.T
-
 	// vfsRoot is the file system as a root user.
 	vfsRoot avfs.VFS
 
@@ -77,7 +74,6 @@ func NewSuiteFS(t *testing.T, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 	t.Log(info)
 
 	sfs := &SuiteFS{
-		t:           t,
 		vfsRoot:     vfsRoot,
 		vfsW:        vfsRoot,
 		vfsR:        vfsRoot,
@@ -126,7 +122,7 @@ func (sfs *SuiteFS) OS() avfs.OSType {
 }
 
 // GetFsAsUser sets the test user to userName.
-func (sfs *SuiteFS) GetFsAsUser(name string) (avfs.VFS, avfs.UserReader) {
+func (sfs *SuiteFS) GetFsAsUser(t *testing.T, name string) (avfs.VFS, avfs.UserReader) {
 	vfs := sfs.vfsRoot
 
 	u := vfs.CurrentUser()
@@ -136,7 +132,7 @@ func (sfs *SuiteFS) GetFsAsUser(name string) (avfs.VFS, avfs.UserReader) {
 
 	u, err := vfs.User(name)
 	if err != nil {
-		sfs.t.Fatalf("User %s : want error to be nil, got %s", name, err)
+		t.Fatalf("User %s : want error to be nil, got %s", name, err)
 	}
 
 	return vfs, u
@@ -158,18 +154,18 @@ func (sfs *SuiteFS) GetFsWrite() avfs.VFS {
 }
 
 // FsRead sets the file system for read functions.
-func (sfs *SuiteFS) FsRead(fsR avfs.VFS) {
+func (sfs *SuiteFS) FsRead(t *testing.T, fsR avfs.VFS) {
 	if fsR == nil {
-		sfs.t.Fatal("SuiteFS : want FsR to be set, got nil")
+		t.Fatal("SuiteFS : want FsR to be set, got nil")
 	}
 
 	sfs.vfsR = fsR
 }
 
 // FsWrite sets the file system for write functions.
-func (sfs *SuiteFS) FsWrite(fsW avfs.VFS) {
+func (sfs *SuiteFS) FsWrite(t *testing.T, fsW avfs.VFS) {
 	if fsW == nil {
-		sfs.t.Fatal("SuiteFS : want FsW to be set, got nil")
+		t.Fatal("SuiteFS : want FsW to be set, got nil")
 	}
 
 	sfs.vfsW = fsW
@@ -178,13 +174,11 @@ func (sfs *SuiteFS) FsWrite(fsW avfs.VFS) {
 // CreateRootDir creates the root directory for the tests.
 // Each test have its own directory in /tmp/avfs.../
 // this directory and its descendants are removed by removeDir() function.
-func (sfs *SuiteFS) CreateRootDir(userName string) (t *testing.T, rootDir string, removeDir func()) {
-	t = sfs.t
-
-	vfs, _ := sfs.GetFsAsUser(userName)
+func (sfs *SuiteFS) CreateRootDir(t *testing.T, userName string) (rootDir string, removeDir func()) {
+	vfs, _ := sfs.GetFsAsUser(t, userName)
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return t, avfs.TmpDir, func() {}
+		return avfs.TmpDir, func() {}
 	}
 
 	var err error
@@ -224,7 +218,7 @@ func (sfs *SuiteFS) CreateRootDir(userName string) (t *testing.T, rootDir string
 	}
 
 	removeDir = func() {
-		vfs, _ := sfs.GetFsAsUser(avfs.UsrRoot)
+		vfs, _ := sfs.GetFsAsUser(t, avfs.UsrRoot)
 
 		err = vfs.RemoveAll(rootDir)
 		if err != nil && sfs.osType != avfs.OsWindows {
@@ -232,57 +226,57 @@ func (sfs *SuiteFS) CreateRootDir(userName string) (t *testing.T, rootDir string
 		}
 	}
 
-	return t, rootDir, removeDir
+	return rootDir, removeDir
 }
 
 // All runs all file systems tests.
-func (sfs *SuiteFS) All() {
-	sfs.Read()
-	sfs.Write()
-	sfs.Path()
+func (sfs *SuiteFS) All(t *testing.T) {
+	sfs.Read(t)
+	sfs.Write(t)
+	sfs.Path(t)
 }
 
 // Write runs all file systems tests with write access.
-func (sfs *SuiteFS) Write() {
-	sfs.Chtimes()
-	sfs.DirFuncOnFile()
-	sfs.FileWrite()
-	sfs.FileWriteTime()
-	sfs.FileCloseWrite()
-	sfs.Link()
-	sfs.Mkdir()
-	sfs.MkdirAll()
-	sfs.OpenFileWrite()
-	sfs.Remove()
-	sfs.RemoveAll()
-	sfs.Rename()
-	sfs.SameFile()
-	sfs.Symlink()
-	sfs.WriteFile()
-	sfs.WriteString()
-	sfs.Umask()
+func (sfs *SuiteFS) Write(t *testing.T) {
+	sfs.Chtimes(t)
+	sfs.DirFuncOnFile(t)
+	sfs.FileWrite(t)
+	sfs.FileWriteTime(t)
+	sfs.FileCloseWrite(t)
+	sfs.Link(t)
+	sfs.Mkdir(t)
+	sfs.MkdirAll(t)
+	sfs.OpenFileWrite(t)
+	sfs.Remove(t)
+	sfs.RemoveAll(t)
+	sfs.Rename(t)
+	sfs.SameFile(t)
+	sfs.Symlink(t)
+	sfs.WriteFile(t)
+	sfs.WriteString(t)
+	sfs.Umask(t)
 }
 
 // Read runs all file systems tests with read access.
-func (sfs *SuiteFS) Read() {
-	sfs.Chdir()
-	sfs.EvalSymlink()
-	sfs.FileFuncOnClosed()
-	sfs.FileFuncOnDir()
-	sfs.FileRead()
-	sfs.FileSeek()
-	sfs.FileCloseRead()
-	sfs.FileTruncate()
-	sfs.GetTempDir()
-	sfs.Glob()
-	sfs.Lstat()
-	sfs.NotImplemented()
-	sfs.OpenFileRead()
-	sfs.ReadDir()
-	sfs.ReadDirNames()
-	sfs.ReadFile()
-	sfs.Readlink()
-	sfs.Stat()
+func (sfs *SuiteFS) Read(t *testing.T) {
+	sfs.Chdir(t)
+	sfs.EvalSymlink(t)
+	sfs.FileFuncOnClosed(t)
+	sfs.FileFuncOnDir(t)
+	sfs.FileRead(t)
+	sfs.FileSeek(t)
+	sfs.FileCloseRead(t)
+	sfs.FileTruncate(t)
+	sfs.GetTempDir(t)
+	sfs.Glob(t)
+	sfs.Lstat(t)
+	sfs.NotImplemented(t)
+	sfs.OpenFileRead(t)
+	sfs.ReadDir(t)
+	sfs.ReadDirNames(t)
+	sfs.ReadFile(t)
+	sfs.Readlink(t)
+	sfs.Stat(t)
 }
 
 // Dir contains the data to test directories.

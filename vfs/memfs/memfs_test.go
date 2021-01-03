@@ -49,12 +49,12 @@ func initTest(t *testing.T) *test.SuiteFS {
 
 func TestMemFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.All()
+	sfs.All(t)
 }
 
 func TestMemFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Perm()
+	sfs.Perm(t)
 }
 
 func TestMemFSOptionError(t *testing.T) {
