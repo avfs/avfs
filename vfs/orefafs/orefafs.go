@@ -703,7 +703,7 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	}
 
 	if !oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir() {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrIsADirectory}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
 	}
 
 	nParent.mu.Lock()

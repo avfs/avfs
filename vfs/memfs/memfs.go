@@ -783,7 +783,7 @@ func (vfs *MemFS) Rename(oldname, newname string) error {
 			nc.deleteData()
 			nc.mu.Unlock()
 		default:
-			return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrIsADirectory}
+			return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
 		}
 	default:
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}

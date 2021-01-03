@@ -551,16 +551,16 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	})
 
 	t.Run("RenameNonExistingFile", func(t *testing.T) {
-		srcNonExistingFile := vfs.Join(rootDir, "srcNonExistingFile")
-		dstNonExistingFile := vfs.Join(rootDir, "dstNonExistingFile")
+		srcNonExistingFile := vfs.Join(rootDir, "srcNonExistingFile1")
+		dstNonExistingFile := vfs.Join(rootDir, "dstNonExistingFile1")
 
 		err := vfs.Rename(srcNonExistingFile, dstNonExistingFile)
 		CheckLinkError(t, "Rename", "rename", srcNonExistingFile, dstNonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 
 	t.Run("RenameDirToExistingDir", func(t *testing.T) {
-		srcExistingDir := vfs.Join(rootDir, "srcExistingDir")
-		dstExistingDir := vfs.Join(rootDir, "dstExistingDir")
+		srcExistingDir := vfs.Join(rootDir, "srcExistingDir2")
+		dstExistingDir := vfs.Join(rootDir, "dstExistingDir2")
 
 		err := vfs.Mkdir(srcExistingDir, avfs.DefaultDirPerm)
 		if err != nil {
@@ -577,18 +577,18 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	})
 
 	t.Run("RenameFileToExistingFile", func(t *testing.T) {
-		srcExistingFile := vfs.Join(rootDir, "srcExistingFile")
-		dstExistingFile := vfs.Join(rootDir, "dstExistingFile")
+		srcExistingFile := vfs.Join(rootDir, "srcExistingFile3")
+		dstExistingFile := vfs.Join(rootDir, "dstExistingFile3")
 		data := []byte("data")
 
 		err := vfs.WriteFile(srcExistingFile, data, avfs.DefaultFilePerm)
 		if err != nil {
-			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
 		err = vfs.WriteFile(dstExistingFile, nil, avfs.DefaultFilePerm)
 		if err != nil {
-			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
 		err = vfs.Rename(srcExistingFile, dstExistingFile)
@@ -607,6 +607,24 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 		if int(info.Size()) != len(data) {
 			t.Errorf("Stat : want size to be %d, got %d", len(data), info.Size())
 		}
+	})
+
+	t.Run("RenameFileToExistingDir", func(t *testing.T) {
+		srcExistingFile := vfs.Join(rootDir, "srcExistingFile4")
+		dstExistingDir := vfs.Join(rootDir, "dstExistingDir4")
+
+		err := vfs.WriteFile(srcExistingFile, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Mkdir(dstExistingDir, avfs.DefaultDirPerm)
+		if err != nil {
+			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Rename(srcExistingFile, dstExistingDir)
+		CheckLinkError(t, "Rename", "rename", srcExistingFile, dstExistingDir, avfs.ErrFileExists, err)
 	})
 }
 
