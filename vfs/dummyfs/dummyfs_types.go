@@ -17,9 +17,7 @@
 package dummyfs
 
 // DummyFS Represents the file system.
-type DummyFS struct {
-}
+type DummyFS struct{}
 
 // DummyFile represents an open file descriptor.
-type DummyFile struct {
-}
+type DummyFile struct{}

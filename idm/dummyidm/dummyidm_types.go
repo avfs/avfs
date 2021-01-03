@@ -30,8 +30,7 @@ var (
 )
 
 // DummyIdm represent a non implementedy identity manager using the avfs.IdentityMgr interface.
-type DummyIdm struct {
-}
+type DummyIdm struct{}
 
 // User is the implementation of avfs.UserReader.
 type User struct {

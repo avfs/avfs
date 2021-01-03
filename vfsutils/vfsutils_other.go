@@ -27,8 +27,7 @@ import (
 
 // UMaskType is the file mode creation mask.
 // it must be set to be read, so it must be protected with a mutex.
-type UMaskType struct {
-}
+type UMaskType struct{}
 
 // GetUMask returns the file mode creation mask.
 func (um *UMaskType) Get() os.FileMode {
