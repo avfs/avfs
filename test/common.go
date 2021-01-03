@@ -551,16 +551,62 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	})
 
 	t.Run("RenameNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
-		existingFile := vfs.Join(rootDir, "existingFile")
+		srcNonExistingFile := vfs.Join(rootDir, "srcNonExistingFile")
+		dstNonExistingFile := vfs.Join(rootDir, "dstNonExistingFile")
 
-		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
+		err := vfs.Rename(srcNonExistingFile, dstNonExistingFile)
+		CheckLinkError(t, "Rename", "rename", srcNonExistingFile, dstNonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
+
+	t.Run("RenameDirToExistingDir", func(t *testing.T) {
+		srcExistingDir := vfs.Join(rootDir, "srcExistingDir")
+		dstExistingDir := vfs.Join(rootDir, "dstExistingDir")
+
+		err := vfs.Mkdir(srcExistingDir, avfs.DefaultDirPerm)
 		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+			t.Fatalf("Mkdir : want error to be nil, got %v", err)
 		}
 
-		err = vfs.Rename(nonExistingFile, existingFile)
-		CheckLinkError(t, "Rename", "rename", nonExistingFile, existingFile, avfs.ErrNoSuchFileOrDir, err)
+		err = vfs.Mkdir(dstExistingDir, avfs.DefaultDirPerm)
+		if err != nil {
+			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Rename(srcExistingDir, dstExistingDir)
+		CheckLinkError(t, "Rename", "rename", srcExistingDir, dstExistingDir, avfs.ErrFileExists, err)
+	})
+
+	t.Run("RenameFileToExistingFile", func(t *testing.T) {
+		srcExistingFile := vfs.Join(rootDir, "srcExistingFile")
+		dstExistingFile := vfs.Join(rootDir, "dstExistingFile")
+		data := []byte("data")
+
+		err := vfs.WriteFile(srcExistingFile, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+		}
+
+		err = vfs.WriteFile(dstExistingFile, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Rename(srcExistingFile, dstExistingFile)
+		if err != nil {
+			t.Errorf("Rename : want error to be nil, got %v", err)
+		}
+
+		_, err = vfs.Stat(srcExistingFile)
+		CheckPathError(t, "Stat", "stat", srcExistingFile, avfs.ErrNoSuchFileOrDir, err)
+
+		info, err := vfs.Stat(dstExistingFile)
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+
+		if int(info.Size()) != len(data) {
+			t.Errorf("Stat : want size to be %d, got %d", len(data), info.Size())
+		}
 	})
 }
 
