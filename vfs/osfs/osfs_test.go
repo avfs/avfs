@@ -37,13 +37,13 @@ var (
 	_ avfs.File = &os.File{}
 )
 
-func initTest(t *testing.T) *test.SuiteFS {
+func initTest(tb testing.TB) *test.SuiteFS {
 	vfsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
+		tb.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sfs := test.NewSuiteFS(t, vfsRoot)
+	sfs := test.NewSuiteFS(tb, vfsRoot)
 
 	return sfs
 }
@@ -76,11 +76,7 @@ func TestOsFSOSType(t *testing.T) {
 	}
 }
 
-func BenchmarkOsFSCreate(b *testing.B) {
-	vfs, err := osfs.New()
-	if err != nil {
-		b.Fatalf("New : want error to be nil, got %v", err)
-	}
-
-	test.BenchmarkCreate(b, vfs)
+func BenchmarkOsFSAll(b *testing.B) {
+	sfs := initTest(b)
+	sfs.BenchAll(b)
 }

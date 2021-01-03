@@ -34,19 +34,19 @@ var (
 	_ avfs.File = &orefafs.OrefaFile{}
 )
 
-func initTest(t *testing.T) avfs.VFS {
+func initTest(tb testing.TB) *test.SuiteFS {
 	vfs, err := orefafs.New(orefafs.WithMainDirs())
 	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
+		tb.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	return vfs
+	sfs := test.NewSuiteFS(tb, vfs)
+
+	return sfs
 }
 
 func TestOrefaFS(t *testing.T) {
-	vfs := initTest(t)
-
-	sfs := test.NewSuiteFS(t, vfs)
+	sfs := initTest(t)
 	sfs.All(t)
 }
 
@@ -79,11 +79,7 @@ func TestOrefaFSOSType(t *testing.T) {
 	}
 }
 
-func BenchmarkOrefaFSCreate(b *testing.B) {
-	vfs, err := orefafs.New(orefafs.WithMainDirs())
-	if err != nil {
-		b.Fatalf("New : want error to be nil, got %v", err)
-	}
-
-	test.BenchmarkCreate(b, vfs)
+func BenchmarkOrefaFSAll(b *testing.B) {
+	sfs := initTest(b)
+	sfs.BenchAll(b)
 }

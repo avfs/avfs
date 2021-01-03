@@ -22,10 +22,14 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/orefafs"
 )
 
 func TestOrefaFsIdm(t *testing.T) {
-	vfs := initTest(t)
+	vfs, err := orefafs.New(orefafs.WithMainDirs())
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
 
 	sidm := test.NewSuiteIdm(t, vfs)
 	sidm.PermDenied(t)

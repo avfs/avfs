@@ -18,11 +18,41 @@ package test
 
 import (
 	"math/rand"
+	"strconv"
 	"testing"
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfsutils"
 )
+
+func (sfs *SuiteFS) BenchAll(b *testing.B) {
+	sfs.BenchDir(b)
+}
+
+func (sfs *SuiteFS) BenchDir(b *testing.B) {
+	rootDir, removeDir := sfs.CreateRootDir(b, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+	dirs := []string{rootDir}
+
+	rand.Seed(42)
+
+	b.Run("Mkdir", func(b *testing.B) {
+		b.ReportAllocs()
+		b.ResetTimer()
+
+		for n := 0; n < b.N; n++ {
+			nbDirs := int32(len(dirs))
+			parent := dirs[rand.Int31n(nbDirs)]                             //nolint:gosec // No security-sensitive function.
+			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10)) //nolint:gosec // No security-sensitive function.
+
+			_ = vfs.Mkdir(path, avfs.DefaultDirPerm)
+
+			dirs = append(dirs, path)
+		}
+	})
+}
 
 // BenchmarkCreate is a simple benchmark to create a random tree.
 func BenchmarkCreate(b *testing.B, vfs avfs.VFS) {

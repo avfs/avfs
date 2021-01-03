@@ -36,38 +36,41 @@ var (
 	_ avfs.File = &basepathfs.BasePathFile{}
 )
 
-func initTest(t *testing.T) *basepathfs.BasePathFS {
+func initFS(tb testing.TB) *basepathfs.BasePathFS {
 	const basePath = "/base/path"
 
 	baseFs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
-		t.Fatalf("memfs.New : want error to be nil, got %v", err)
+		tb.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
 	err = baseFs.MkdirAll(basePath, avfs.DefaultDirPerm)
 	if err != nil {
-		t.Fatalf("MkdirAll %s : want error to be nil, got %v", basePath, err)
+		tb.Fatalf("MkdirAll %s : want error to be nil, got %v", basePath, err)
 	}
 
 	vfs, err := basepathfs.New(baseFs, basePath)
 	if err != nil {
-		t.Fatalf("basepathfs.New : want error to be nil, got %v", err)
+		tb.Fatalf("basepathfs.New : want error to be nil, got %v", err)
 	}
 
 	return vfs
 }
 
-func TestBasePathFS(t *testing.T) {
-	vfs := initTest(t)
+func initTest(t *testing.T) *test.SuiteFS {
+	vfs := initFS(t)
 	sfs := test.NewSuiteFS(t, vfs)
 
+	return sfs
+}
+
+func TestBasePathFS(t *testing.T) {
+	sfs := initTest(t)
 	sfs.All(t)
 }
 
 func TestBasePathFSPerm(t *testing.T) {
-	vfs := initTest(t)
-	sfs := test.NewSuiteFS(t, vfs)
-
+	sfs := initTest(t)
 	sfs.Perm(t)
 }
 
