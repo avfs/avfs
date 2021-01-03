@@ -109,13 +109,13 @@ func GroupInfos() []*GroupInfo {
 
 // CreateGroups creates and returns test groups with a suffix appended to each group.
 // Errors are ignored if the group already exists.
-func CreateGroups(t *testing.T, idm avfs.IdentityMgr, suffix string) (groups []avfs.GroupReader) {
+func CreateGroups(tb testing.TB, idm avfs.IdentityMgr, suffix string) (groups []avfs.GroupReader) {
 	for _, group := range GroupInfos() {
 		groupName := group.Name + suffix
 
 		g, err := idm.GroupAdd(groupName)
 		if err != nil && err != avfs.AlreadyExistsGroupError(groupName) {
-			t.Fatalf("GroupAdd %s : want error to be nil, got %v", groupName, err)
+			tb.Fatalf("GroupAdd %s : want error to be nil, got %v", groupName, err)
 		}
 
 		groups = append(groups, g)
@@ -154,7 +154,7 @@ func UserInfos() []*UserInfo {
 
 // CreateUsers creates and returns test users with a suffix appended to each user.
 // Errors are ignored if the user or his home directory already exists.
-func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) (users []avfs.UserReader) {
+func CreateUsers(tb testing.TB, idm avfs.IdentityMgr, suffix string) (users []avfs.UserReader) {
 	for _, ui := range UserInfos() {
 		userName := ui.Name + suffix
 		groupName := ui.GroupName + suffix
@@ -164,18 +164,18 @@ func CreateUsers(t *testing.T, idm avfs.IdentityMgr, suffix string) (users []avf
 			switch e := err.(type) {
 			case *os.PathError:
 				if e.Op != "mkdir" || e.Err != avfs.ErrFileExists {
-					t.Fatalf("UserAdd %s : want Mkdir error, got %v", userName, err)
+					tb.Fatalf("UserAdd %s : want Mkdir error, got %v", userName, err)
 				}
 			default:
 				if err != avfs.AlreadyExistsUserError(userName) {
-					t.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+					tb.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
 				}
 			}
 
 			if u == nil {
 				u, err = idm.LookupUser(userName)
 				if err != nil {
-					t.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
+					tb.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
 				}
 			}
 		}
