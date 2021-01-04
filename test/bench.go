@@ -34,22 +34,25 @@ func (sfs *SuiteFS) BenchDir(b *testing.B) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
-	dirs := []string{rootDir}
 
 	rand.Seed(42)
 
 	b.Run("Mkdir", func(b *testing.B) {
-		b.ReportAllocs()
-		b.ResetTimer()
+		dirs := make([]string, 0, b.N)
+		dirs = append(dirs, rootDir)
 
 		for n := 0; n < b.N; n++ {
 			nbDirs := int32(len(dirs))
 			parent := dirs[rand.Int31n(nbDirs)]                             //nolint:gosec // No security-sensitive function.
 			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10)) //nolint:gosec // No security-sensitive function.
-
-			_ = vfs.Mkdir(path, avfs.DefaultDirPerm)
-
 			dirs = append(dirs, path)
+		}
+
+		b.ReportAllocs()
+		b.ResetTimer()
+
+		for n := 0; n < b.N; n++ {
+			_ = vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
 		}
 	})
 }
