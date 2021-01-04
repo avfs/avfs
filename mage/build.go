@@ -21,88 +21,70 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 )
 
 func main() {
-	err := buildMage()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "BuildMage : %v\n", err)
-		os.Exit(1)
-	}
-
-	err = buildAvfs()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "BuildAvfs : %v\n", err)
-		os.Exit(2)
-	}
-
-	err = run("avfs")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "RunAvfs : %v\n", err)
-		os.Exit(3)
-	}
+	buildMage()
+	buildAvfs()
+	run("avfs")
 }
 
 // buildMage builds mage binary and saves it in $GOPATH/bin.
-func buildMage() error {
+func buildMage() {
 	const mageGitUrl = "https://github.com/magefile/mage"
 
 	if isExecutable("mage") {
-		return nil
+		log.Fatalf("mage binary already exists")
 	}
 
 	appDir, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("Getwd : want error to be nil, got %v", err)
+		log.Fatalf("Getwd : want error to be nil, got %v", err)
 	}
 
 	rootDir, err := ioutil.TempDir("", "mage")
 	if err != nil {
-		return fmt.Errorf("TempDir : want error to be nil, got %v", err)
+		log.Fatalf("TempDir : want error to be nil, got %v", err)
 	}
 
 	defer os.RemoveAll(rootDir)
 
 	err = os.Chdir(rootDir)
 	if err != nil {
-		return fmt.Errorf("Chdir : want error to be nil, got %v", err)
+		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
 
 	err = run("git", "clone", mageGitUrl)
 	if err != nil {
-		return fmt.Errorf("Git : want error to be nil, got %v", err)
+		log.Fatalf("Git : want error to be nil, got %v", err)
 	}
 
 	err = os.Chdir("mage")
 	if err != nil {
-		return fmt.Errorf("Chdir : want error to be nil, got %v", err)
+		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
 
 	err = run("go", "run", "bootstrap.go")
 	if err != nil {
-		return fmt.Errorf("Bootstap : want error to be nil, got %v", err)
+		log.Fatalf("Bootstap : want error to be nil, got %v", err)
 	}
 
 	err = os.Chdir(appDir)
 	if err != nil {
-		return fmt.Errorf("Chdir : want error to be nil, got %v", err)
+		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
-
-	return nil
 }
 
 // buildAvfs builds avfs binary as saves it in $GOPATH/bin.
-func buildAvfs() error {
+func buildAvfs() {
 	err := run("mage", "-d", "mage", "-w", ".", "BinLocal")
 	if err != nil {
-		return fmt.Errorf("mage : want error to be nil, got %v", err)
+		log.Fatalf("mage : want error to be nil, got %v", err)
 	}
-
-	return nil
 }
 
 // run runs a command cmd with arguments args.
