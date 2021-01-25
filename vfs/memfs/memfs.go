@@ -1230,11 +1230,7 @@ func (f *MemFile) Readdir(n int) (fi []os.FileInfo, err error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		if f.memFS.user.IsRoot() {
-			return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
-		}
-
-		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
 	}
 
 	if n <= 0 || f.dirInfos == nil {

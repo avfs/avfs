@@ -46,19 +46,6 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 	vfs = sfs.GetFsRead()
 
 	t.Run("DirFuncOnFileFs", func(t *testing.T) {
-		_, err = vfs.ReadDir(existingFile)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
-		default:
-			if vfs.CurrentUser().IsRoot() {
-				CheckSyscallError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
-			} else {
-				CheckPathError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
-			}
-		}
-
 		_, err = vfs.Stat(nonExistingFile)
 
 		switch vfs.OSType() {
@@ -91,19 +78,6 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 	defer f.Close()
 
 	t.Run("DirFuncOnFileF", func(t *testing.T) {
-		_, err = f.Readdir(-1)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Readdir", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
-		default:
-			if vfs.CurrentUser().IsRoot() {
-				CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
-			} else {
-				CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
-			}
-		}
-
 		_, err = f.Readdirnames(-1)
 
 		switch vfs.OSType() {

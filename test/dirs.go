@@ -397,19 +397,21 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 
-	rndTree, err := vfsutils.NewRndTree(vfs, vfsutils.RndParamsOneDir)
-	if err != nil {
-		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
+	rndTree, err1 := vfsutils.NewRndTree(vfs, vfsutils.RndParamsOneDir)
+	if err1 != nil {
+		t.Fatalf("NewRndTree : want error to be nil, got %v", err1)
 	}
 
-	err = rndTree.CreateTree(rootDir)
-	if err != nil {
-		t.Fatalf("rndTree.Create : want error to be nil, got %v", err)
+	err1 = rndTree.CreateTree(rootDir)
+	if err1 != nil {
+		t.Fatalf("rndTree.Create : want error to be nil, got %v", err1)
 	}
 
 	wDirs := len(rndTree.Dirs)
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
+
+	existingFile := rndTree.Files[0]
 
 	vfs = sfs.GetFsRead()
 
@@ -445,7 +447,7 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 		}
 	})
 
-	t.Run("ReadDirN", func(t *testing.T) {
+	t.Run("FileReadDirN", func(t *testing.T) {
 		f, err := vfs.Open(rootDir)
 		if err != nil {
 			t.Fatalf("ReadDir : want error to be nil, got %v", err)
@@ -503,6 +505,35 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 			if l != 0 {
 				t.Errorf("ReadDir %s : want count to be O, got %d", dir, l)
 			}
+		}
+	})
+
+	t.Run("ReadDirExistingFile", func(t *testing.T) {
+		_, err := vfs.ReadDir(existingFile)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
+		}
+	})
+
+	t.Run("FileReadDirExistingFile", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Fatalf("Create : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		_, err = f.Readdir(-1)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdir", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
 		}
 	})
 }
