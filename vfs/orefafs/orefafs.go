@@ -392,6 +392,10 @@ func (vfs *OrefaFS) Mkdir(name string, perm os.FileMode) error {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
 	}
 
+	if !parent.mode.IsDir() {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
+	}
+
 	vfs.createDir(parent, absPath, fileName, perm)
 
 	return nil
