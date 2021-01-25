@@ -21,10 +21,12 @@
 package main
 
 import (
+	"go/build"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 func main() {
@@ -38,7 +40,7 @@ func buildMage() {
 	const mageGitUrl = "https://github.com/magefile/mage"
 
 	if isExecutable("mage") {
-		log.Fatalf("mage binary already exists")
+		log.Printf("mage binary already exists")
 	}
 
 	appDir, err := os.Getwd()
@@ -81,7 +83,9 @@ func buildMage() {
 
 // buildAvfs builds avfs binary as saves it in $GOPATH/bin.
 func buildAvfs() {
-	err := run("mage", "-d", "mage", "-w", ".", "BinLocal")
+	mage := filepath.Join(build.Default.GOPATH, "bin", "mage")
+
+	err := run(mage, "-d", "mage", "-w", ".", "BuildAvfs")
 	if err != nil {
 		log.Fatalf("mage : want error to be nil, got %v", err)
 	}

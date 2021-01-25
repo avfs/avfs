@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"go/build"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -52,15 +53,25 @@ const (
 	benchCount   = 5
 )
 
-// BinLocal builds a static binary of this script to be used on the current operating system.
-func BinLocal() error {
-	appNamePath := filepath.Join(build.Default.GOPATH, "bin", appName)
+// BuildAvfs builds a static binary of this script to be used on the current operating system.
+func BuildAvfs() error {
+	dir := filepath.Join(build.Default.GOPATH, "bin")
 
-	if runtime.GOOS == "windows" {
-		appNamePath += ".exe"
+	err := os.MkdirAll(dir, 0o755)
+	if err != nil {
+		log.Fatalf("MkdirAll : want error to be nil, got %v", err)
 	}
 
-	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appNamePath)
+	bin := appName
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
+
+	path := filepath.Join(dir, bin)
+
+	log.Printf("bin : %s", path)
+
+	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", path)
 }
 
 // BinDocker builds a static binary of this script to be used in docker.
