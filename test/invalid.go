@@ -41,20 +41,9 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	nonExistingFile := vfs.Join(existingFile, "invalid", "path")
-
 	vfs = sfs.GetFsRead()
 
 	t.Run("DirFuncOnFileFs", func(t *testing.T) {
-		_, err = vfs.Stat(nonExistingFile)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Stat", "CreateFile", nonExistingFile, avfs.ErrNotADirectory, err)
-		default:
-			CheckPathError(t, "Stat", "stat", nonExistingFile, avfs.ErrNotADirectory, err)
-		}
-
 		_, err = vfs.TempDir(existingFile, "")
 
 		e, ok := err.(*os.PathError)

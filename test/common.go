@@ -439,11 +439,7 @@ func (sfs *SuiteFS) RemoveAll(t *testing.T) {
 			t.Fatalf("Mkdir %s : want error to be nil, got %v", baseDir, err)
 		}
 
-		existingFile := vfs.Join(baseDir, "existingFile.txt")
-		err = vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile %s : want error to be nil, got %v", existingFile, err)
-		}
+		existingFile := CreateEmptyFile(t, vfs, rootDir)
 
 		err = vfs.RemoveAll(existingFile)
 		if err != nil {
@@ -751,6 +747,19 @@ func (sfs *SuiteFS) Stat(t *testing.T) {
 			CheckPathError(t, "Stat", "CreateFile", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		default:
 			CheckPathError(t, "Stat", "stat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		}
+	})
+
+	t.Run("StatsubDirOnFile", func(t *testing.T) {
+		subDirOnFile := vfs.Join(rootDir, files[0].Path, "subDirOnFile")
+
+		_, err := vfs.Stat(subDirOnFile)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Stat", "CreateFile", subDirOnFile, avfs.ErrNotADirectory, err)
+		default:
+			CheckPathError(t, "Stat", "stat", subDirOnFile, avfs.ErrNotADirectory, err)
 		}
 	})
 }
