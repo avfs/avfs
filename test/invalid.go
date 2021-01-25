@@ -51,12 +51,6 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNotADirectory, err)
 		}
 
-		err = vfs.MkdirAll(existingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
-
-		err = vfs.MkdirAll(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
-
 		_, err = vfs.ReadDir(existingFile)
 
 		switch vfs.OSType() {

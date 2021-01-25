@@ -283,10 +283,10 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 	})
 
 	t.Run("MkdirOnFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(existingFile, "subDir")
+		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
 
-		err := vfs.Mkdir(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "Mkdir", "mkdir", nonExistingFile, avfs.ErrNotADirectory, err)
+		err := vfs.Mkdir(subDirOnFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "Mkdir", "mkdir", subDirOnFile, avfs.ErrNotADirectory, err)
 	})
 }
 
@@ -296,6 +296,9 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	vfs = sfs.GetFsWrite()
 	dirs := GetDirsAll()
 
 	t.Run("MkdirAll", func(t *testing.T) {
@@ -361,7 +364,7 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 		}
 	})
 
-	t.Run("MkdirAllExisting", func(t *testing.T) {
+	t.Run("MkdirAllExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := vfs.Join(rootDir, dir.Path)
 
@@ -370,6 +373,18 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 				t.Errorf("MkdirAll %s : want error to be nil, got error %v", path, err)
 			}
 		}
+	})
+
+	t.Run("MkdirAllOnFile", func(t *testing.T) {
+		err := vfs.MkdirAll(existingFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
+	})
+
+	t.Run("MkdirAllSubDirOnFile", func(t *testing.T) {
+		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
+
+		err := vfs.MkdirAll(subDirOnFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
 	})
 }
 
