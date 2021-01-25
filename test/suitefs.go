@@ -252,6 +252,8 @@ func (sfs *SuiteFS) Write(t *testing.T) {
 	sfs.Rename(t)
 	sfs.SameFile(t)
 	sfs.Symlink(t)
+	sfs.TempDir(t)
+	sfs.TempFile(t)
 	sfs.WriteFile(t)
 	sfs.WriteString(t)
 	sfs.Umask(t)

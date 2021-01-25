@@ -20,6 +20,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -598,6 +599,56 @@ func (sfs *SuiteFS) ReadDirNames(t *testing.T) {
 
 		if wAll != len(names) {
 			t.Errorf("ReadDirNamesN : want number of elements to be %d, got %d", wAll, len(names))
+		}
+	})
+}
+
+// TempDir tests TempDir function.
+func (sfs *SuiteFS) TempDir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	t.Run("TempDirOnFile", func(t *testing.T) {
+		_, err := vfs.TempDir(existingFile, "")
+
+		e, ok := err.(*os.PathError)
+		if !ok {
+			t.Fatalf("TempDir : want error type *os.PathError, got %v", reflect.TypeOf(err))
+		}
+
+		const op = "mkdir"
+		wantErr := avfs.ErrNotADirectory
+		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
+			wantPathErr := &os.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
+			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
+		}
+	})
+}
+
+// TempFile tests TempFile function.
+func (sfs *SuiteFS) TempFile(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	t.Run("TempFileOnFile", func(t *testing.T) {
+		_, err := vfs.TempFile(existingFile, "")
+
+		e, ok := err.(*os.PathError)
+		if !ok {
+			t.Fatalf("TempFile : want error type *os.PathError, got %v", reflect.TypeOf(err))
+		}
+
+		const op = "open"
+		wantErr := avfs.ErrNotADirectory
+		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
+			wantPathErr := &os.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
+			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
 		}
 	})
 }

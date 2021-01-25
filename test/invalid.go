@@ -43,22 +43,6 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 
 	vfs = sfs.GetFsRead()
 
-	t.Run("DirFuncOnFileFs", func(t *testing.T) {
-		_, err = vfs.TempDir(existingFile, "")
-
-		e, ok := err.(*os.PathError)
-		if ok {
-			CheckPathError(t, "TempDir", "mkdir", e.Path, avfs.ErrNotADirectory, err)
-		}
-
-		_, err = vfs.TempFile(existingFile, "")
-
-		e, ok = err.(*os.PathError)
-		if ok {
-			CheckPathError(t, "TempFile", "open", e.Path, avfs.ErrNotADirectory, err)
-		}
-	})
-
 	f, err := vfs.Open(existingFile)
 	if err != nil {
 		t.Fatalf("Create : want error to be nil, got %v", err)
