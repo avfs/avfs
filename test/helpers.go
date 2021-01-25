@@ -20,6 +20,8 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/avfs/avfs"
 )
 
 // CheckPathError checks errors of type os.PathError.
@@ -97,4 +99,16 @@ func CheckPanic(t *testing.T, funcName string, f func()) {
 	}()
 
 	f()
+}
+
+// CreateEmptyFile creates an empty file and returns the file name.
+func CreateEmptyFile(t *testing.T, vfs avfs.VFS, rootDir string) string {
+	f, err := vfs.TempFile(rootDir, avfs.Avfs)
+	if err != nil {
+		t.Fatalf("TempFile : want error to be nil, got %v", err)
+	}
+
+	defer f.Close()
+
+	return f.Name()
 }

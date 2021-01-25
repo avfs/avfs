@@ -46,22 +46,10 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 	vfs = sfs.GetFsRead()
 
 	t.Run("DirFuncOnFileFs", func(t *testing.T) {
-		err = vfs.Chdir(existingFile)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrWinDirNameInvalid, err)
-		default:
-			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrNotADirectory, err)
-		}
-
 		if vfs.HasFeature(avfs.FeatSymlink) {
 			_, err = vfs.Lstat(nonExistingFile)
 			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNotADirectory, err)
 		}
-
-		err = vfs.Mkdir(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "Mkdir", "mkdir", nonExistingFile, avfs.ErrNotADirectory, err)
 
 		err = vfs.MkdirAll(existingFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)

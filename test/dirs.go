@@ -36,6 +36,8 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 	dirs := CreateDirs(t, vfs, rootDir)
 
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
 	vfs = sfs.GetFsRead()
 
 	t.Run("ChdirFs", func(t *testing.T) {
@@ -107,6 +109,17 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 		}
 	})
 
+	t.Run("ChdirOnFile", func(t *testing.T) {
+		err := vfs.Chdir(existingFile)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrWinDirNameInvalid, err)
+		default:
+			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrNotADirectory, err)
+		}
+	})
+
 	t.Run("ChdirFile", func(t *testing.T) {
 		if vfs.OSType() == avfs.OsWindows {
 			t.Logf("File.Chdir() is not supported by windows, skipping")
@@ -167,7 +180,10 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsRead()
+	vfs := sfs.GetFsWrite()
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	vfs = sfs.GetFsRead()
 	dirs := GetDirs()
 
 	t.Run("MkdirNew", func(t *testing.T) {
@@ -240,7 +256,7 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 		}
 	})
 
-	t.Run("MkdirImpossible", func(t *testing.T) {
+	t.Run("MkdirOnNonExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := vfs.Join(rootDir, dir.Path, "can't", "create", "this")
 
@@ -253,7 +269,9 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 				CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrNoSuchFileOrDir, err)
 			}
 		}
+	})
 
+	t.Run("MkdirEmptyName", func(t *testing.T) {
 		err := vfs.Mkdir("", avfs.DefaultFilePerm)
 
 		switch vfs.OSType() {
@@ -262,6 +280,13 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 		default:
 			CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrNoSuchFileOrDir, err)
 		}
+	})
+
+	t.Run("MkdirOnFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(existingFile, "subDir")
+
+		err := vfs.Mkdir(nonExistingFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "Mkdir", "mkdir", nonExistingFile, avfs.ErrNotADirectory, err)
 	})
 }
 
