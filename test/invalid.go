@@ -46,11 +46,6 @@ func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
 	vfs = sfs.GetFsRead()
 
 	t.Run("DirFuncOnFileFs", func(t *testing.T) {
-		if vfs.HasFeature(avfs.FeatSymlink) {
-			_, err = vfs.Lstat(nonExistingFile)
-			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNotADirectory, err)
-		}
-
 		_, err = vfs.ReadDir(existingFile)
 
 		switch vfs.OSType() {

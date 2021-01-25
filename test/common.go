@@ -229,6 +229,13 @@ func (sfs *SuiteFS) Lstat(t *testing.T) {
 			CheckPathError(t, "Lstat", "lstat", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 		}
 	})
+
+	t.Run("LStatSubDirOnFile", func(t *testing.T) {
+		subDirOnFile := vfs.Join(rootDir, files[0].Path, "subDirOnFile")
+
+		_, err := vfs.Lstat(subDirOnFile)
+		CheckPathError(t, "Lstat", "lstat", subDirOnFile, avfs.ErrNotADirectory, err)
+	})
 }
 
 // Readlink tests Readlink function.
