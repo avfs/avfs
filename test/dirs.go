@@ -637,11 +637,7 @@ func (sfs *SuiteFS) ReadDirNames(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdirnames", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
 		default:
-			if vfs.CurrentUser().IsRoot() {
-				CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
-			} else {
-				CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
-			}
+			CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
 		}
 	})
 }
