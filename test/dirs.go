@@ -121,6 +121,24 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 		}
 	})
 
+	t.Run("FileChdirOnFile", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Fatalf("Create : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		err = f.Chdir()
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotADirectory, err)
+		}
+	})
+
 	t.Run("ChdirFile", func(t *testing.T) {
 		if vfs.OSType() == avfs.OsWindows {
 			t.Logf("File.Chdir() is not supported by windows, skipping")
@@ -453,6 +471,8 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 		if err != nil {
 			t.Fatalf("ReadDir : want error to be nil, got %v", err)
 		}
+
+		defer f.Close()
 
 		var rdInfos []os.FileInfo
 

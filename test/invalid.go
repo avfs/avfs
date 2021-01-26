@@ -27,41 +27,6 @@ import (
 	"github.com/avfs/avfs/idm/dummyidm"
 )
 
-// DirFuncOnFile tests directory functions on files.
-func (sfs *SuiteFS) DirFuncOnFile(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsWrite()
-
-	existingFile := vfs.Join(rootDir, "existingFile")
-
-	err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
-	vfs = sfs.GetFsRead()
-
-	f, err := vfs.Open(existingFile)
-	if err != nil {
-		t.Fatalf("Create : want error to be nil, got %v", err)
-	}
-
-	defer f.Close()
-
-	t.Run("DirFuncOnFileF", func(t *testing.T) {
-		err = f.Chdir()
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrWinNotSupported, err)
-		default:
-			CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotADirectory, err)
-		}
-	})
-}
-
 // FileFuncOnDir test file functions on directories.
 func (sfs *SuiteFS) FileFuncOnDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
