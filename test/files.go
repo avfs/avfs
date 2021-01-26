@@ -674,6 +674,8 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 			t.Fatalf("OpenFile : want error to be nil, got %v", err)
 		}
 
+		defer f.Close()
+
 		for i := len(data); i > 0; i -= 3 {
 			var n int
 			n, err = f.WriteAt(data[i-3:i], int64(i-3))
@@ -731,10 +733,12 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
-		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
+		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("Open : want error to be nil, got %v", err)
 		}
+
+		defer f.Close()
 
 		off := int64(len(data) * 3)
 
@@ -773,6 +777,7 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Open : want error to be nil, got %v", err)
 		}
+
 		defer f.Close()
 
 		b := make([]byte, len(data)*2)
@@ -818,6 +823,35 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 
 		if !bytes.Equal(data, b[:n]) {
 			t.Errorf("ReadAt : want data to be %s, got %s", data, b[:n])
+		}
+	})
+
+	t.Run("FileWriteOnDir", func(t *testing.T) {
+		f, err := vfs.Open(rootDir)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		b := make([]byte, 1)
+
+		_, err = f.Write(b)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", rootDir, avfs.ErrWinInvalidHandle, err)
+		default:
+			CheckPathError(t, "Write", "write", rootDir, avfs.ErrBadFileDesc, err)
+		}
+
+		_, err = f.WriteAt(b, 0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", rootDir, avfs.ErrWinInvalidHandle, err)
+		default:
+			CheckPathError(t, "WriteAt", "write", rootDir, avfs.ErrBadFileDesc, err)
 		}
 	})
 }
@@ -1273,7 +1307,7 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 		}
 	})
 
-	t.Run("FsTruncate", func(t *testing.T) {
+	t.Run("Truncate", func(t *testing.T) {
 		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)

@@ -27,54 +27,6 @@ import (
 	"github.com/avfs/avfs/idm/dummyidm"
 )
 
-// FileFuncOnDir test file functions on directories.
-func (sfs *SuiteFS) FileFuncOnDir(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
-	vfs := sfs.GetFsWrite()
-
-	pathDir := vfs.Join(rootDir, "existingDir")
-
-	err := vfs.Mkdir(pathDir, avfs.DefaultDirPerm)
-	if err != nil {
-		t.Fatalf("Mkdir : want error to be nil, got %v", err)
-	}
-
-	vfs = sfs.GetFsRead()
-
-	t.Run("FileFuncOnDir", func(t *testing.T) {
-		f, err := vfs.Open(pathDir)
-		if err != nil {
-			t.Fatalf("Create : want error to be nil, got %v", err)
-		}
-
-		defer f.Close()
-
-		b := make([]byte, 1)
-
-		if vfs.HasFeature(avfs.FeatReadOnly) {
-			return
-		}
-
-		_, err = f.Write(b)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Write", "write", pathDir, avfs.ErrWinInvalidHandle, err)
-		default:
-			CheckPathError(t, "Write", "write", pathDir, avfs.ErrBadFileDesc, err)
-		}
-
-		_, err = f.WriteAt(b, 0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrWinInvalidHandle, err)
-		default:
-			CheckPathError(t, "WriteAt", "write", pathDir, avfs.ErrBadFileDesc, err)
-		}
-	})
-}
-
 // FileFuncOnClosed tests functions on closed files.
 func (sfs *SuiteFS) FileFuncOnClosed(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
