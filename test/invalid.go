@@ -53,22 +53,6 @@ func (sfs *SuiteFS) FileFuncOnDir(t *testing.T) {
 
 		b := make([]byte, 1)
 
-		_, err = f.Read(b)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Read", "read", pathDir, avfs.ErrWinInvalidHandle, err)
-		default:
-			CheckPathError(t, "Read", "read", pathDir, avfs.ErrIsADirectory, err)
-		}
-
-		_, err = f.ReadAt(b, 0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrWinInvalidHandle, err)
-		default:
-			CheckPathError(t, "ReadAt", "read", pathDir, avfs.ErrIsADirectory, err)
-		}
-
 		_, err = f.Seek(0, io.SeekStart)
 		switch vfs.OSType() {
 		case avfs.OsWindows:

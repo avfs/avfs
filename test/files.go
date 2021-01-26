@@ -919,6 +919,33 @@ func (sfs *SuiteFS) FileRead(t *testing.T) {
 			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
 		}
 	})
+
+	t.Run("FileReadOnDir", func(t *testing.T) {
+		f, err := vfs.Open(rootDir)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		b := make([]byte, 1)
+
+		_, err = f.Read(b)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Read", "read", rootDir, avfs.ErrWinInvalidHandle, err)
+		default:
+			CheckPathError(t, "Read", "read", rootDir, avfs.ErrIsADirectory, err)
+		}
+
+		_, err = f.ReadAt(b, 0)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadAt", "read", rootDir, avfs.ErrWinInvalidHandle, err)
+		default:
+			CheckPathError(t, "ReadAt", "read", rootDir, avfs.ErrIsADirectory, err)
+		}
+	})
 }
 
 // FileSeek tests Seek function.
