@@ -512,7 +512,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 			return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
 		}
 
-		if wm&avfs.WantWrite == 0 || parent == nil {
+		if wm&avfs.WantWrite == 0 {
 			return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 
