@@ -23,11 +23,6 @@ import (
 	"github.com/avfs/avfs/idm/dummyidm"
 )
 
-// CurrentUser returns the current user.
-func (idm *OsIdm) CurrentUser() avfs.UserReader {
-	return dummyidm.NotImplementedUser
-}
-
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	return nil, avfs.ErrPermDenied
@@ -76,4 +71,8 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 // UserDel deletes an existing user.
 func (idm *OsIdm) UserDel(name string) error {
 	return avfs.ErrPermDenied
+}
+
+func currentUser() avfs.UserReader {
+	return dummyidm.NotImplementedUser
 }

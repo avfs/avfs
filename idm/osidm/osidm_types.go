@@ -21,7 +21,7 @@ import "github.com/avfs/avfs"
 // OsIdm implements a rudimentary identity manager using the avfs.IdentityMgr interface.
 type OsIdm struct {
 	feature  avfs.Feature
-	initUser *User
+	initUser avfs.UserReader
 }
 
 // Group is the implementation of avfs.GroupReader.

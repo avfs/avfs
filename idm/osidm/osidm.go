@@ -19,6 +19,13 @@
 // Copied from standard library os/user/*_unix.go with few modifications.
 package osidm
 
+import "github.com/avfs/avfs"
+
+// CurrentUser returns the current user.
+func (idm *OsIdm) CurrentUser() avfs.UserReader {
+	return currentUser()
+}
+
 // group
 
 // Gid returns the group ID.
