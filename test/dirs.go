@@ -557,6 +557,7 @@ func (sfs *SuiteFS) ReadDirNames(t *testing.T) {
 	}
 
 	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
+	existingFile := rndTree.Files[0]
 
 	vfs = sfs.GetFsRead()
 
@@ -599,6 +600,28 @@ func (sfs *SuiteFS) ReadDirNames(t *testing.T) {
 
 		if wAll != len(names) {
 			t.Errorf("ReadDirNamesN : want number of elements to be %d, got %d", wAll, len(names))
+		}
+	})
+
+	t.Run("FileReaddirnamesExistingFile", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Fatalf("Create : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		_, err = f.Readdirnames(-1)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdirnames", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
+		default:
+			if vfs.CurrentUser().IsRoot() {
+				CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			} else {
+				CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			}
 		}
 	})
 }
