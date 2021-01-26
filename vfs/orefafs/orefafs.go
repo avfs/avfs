@@ -1241,7 +1241,7 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	if !nd.mode.IsDir() {
 		f.mu.RUnlock()
 
-		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &os.SyscallError{Syscall: op, Err: avfs.ErrNotADirectory}
 	}
 
 	f.mu.RUnlock()
