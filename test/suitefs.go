@@ -262,7 +262,7 @@ func (sfs *SuiteFS) Write(t *testing.T) {
 func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.Chdir(t)
 	sfs.EvalSymlink(t)
-	sfs.FileFuncOnClosed(t)
+	sfs.FileFuncOnClosedFile(t)
 	sfs.FileRead(t)
 	sfs.FileSeek(t)
 	sfs.FileCloseRead(t)

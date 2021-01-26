@@ -103,6 +103,8 @@ func CheckPanic(t *testing.T, funcName string, f func()) {
 
 // CreateEmptyFile creates an empty file and returns the file name.
 func CreateEmptyFile(t *testing.T, vfs avfs.VFS, rootDir string) string {
+	t.Helper()
+
 	f, err := vfs.TempFile(rootDir, avfs.Avfs)
 	if err != nil {
 		t.Fatalf("TempFile : want error to be nil, got %v", err)
