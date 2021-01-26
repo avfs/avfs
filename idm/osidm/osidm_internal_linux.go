@@ -23,8 +23,10 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/avfs/avfs"
 )
@@ -229,4 +231,18 @@ func lookupUserId(uid int) (*User, error) {
 	defer f.Close()
 
 	return findUserId(uid, f)
+}
+
+func currentUser() *User {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	uid := syscall.Geteuid()
+
+	user, err := lookupUserId(uid)
+	if err != nil {
+		return nil
+	}
+
+	return user
 }

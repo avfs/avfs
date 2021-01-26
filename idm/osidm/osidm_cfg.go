@@ -29,7 +29,8 @@ func New() *OsIdm {
 	}
 
 	return &OsIdm{
-		feature: feature,
+		feature:  feature,
+		initUser: currentUser(),
 	}
 }
 
