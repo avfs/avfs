@@ -974,6 +974,8 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 
 	var pos int64
 
+	lenData := int64(len(data))
+
 	t.Run("FileSeek", func(t *testing.T) {
 		for i := 0; i < len(data); i++ {
 			pos, err = f.Seek(int64(i), io.SeekStart)
@@ -1014,12 +1016,9 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 		}
 	})
 
-	t.Run("FileSeekInvalid", func(t *testing.T) {
-		lenData := int64(len(data))
-
-		// Invalid SeekStart
-
+	t.Run("FileSeekInvalidStart", func(t *testing.T) {
 		pos, err = f.Seek(-1, io.SeekStart)
+
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrWinNegativeSeek, err)
@@ -1041,15 +1040,15 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 		if pos != wantPos {
 			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
 		}
+	})
 
-		// Invalid SeekEnd
-
+	t.Run("FileSeekInvalidEnd", func(t *testing.T) {
 		pos, err = f.Seek(1, io.SeekEnd)
 		if err != nil {
 			t.Errorf("Seek : want error to be nil, got %v", err)
 		}
 
-		wantPos = lenData + 1
+		wantPos := lenData + 1
 		if pos != wantPos {
 			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
 		}
@@ -1065,10 +1064,11 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
 		}
+	})
 
-		// Invalid SeekCur
+	t.Run("FileSeekInvalidCur", func(t *testing.T) {
+		wantPos := lenData / 2
 
-		wantPos = lenData / 2
 		pos, err = f.Seek(wantPos, io.SeekStart)
 		if err != nil || pos != wantPos {
 			t.Fatalf("Seek : want  pos to be 0 and error to be nil, got %d, %v", pos, err)
@@ -1094,10 +1094,11 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 		if pos != lenData/2+lenData {
 			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
 		}
+	})
 
-		// Invalid Whence
-
+	t.Run("FileSeekInvalidWhence", func(t *testing.T) {
 		pos, err = f.Seek(0, 10)
+
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			if err != nil {
@@ -1109,6 +1110,26 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
+		}
+	})
+
+	t.Run("FileSeekOnDir", func(t *testing.T) {
+		f, err = vfs.Open(rootDir)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		_, err = f.Seek(0, io.SeekStart)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Seek", "seek", rootDir, avfs.ErrWinInvalidHandle, err)
+		default:
+			if err != nil {
+				t.Errorf("Seek : want error to be nil, got %v", err)
+			}
 		}
 	})
 }

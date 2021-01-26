@@ -53,16 +53,6 @@ func (sfs *SuiteFS) FileFuncOnDir(t *testing.T) {
 
 		b := make([]byte, 1)
 
-		_, err = f.Seek(0, io.SeekStart)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Seek", "seek", pathDir, avfs.ErrWinInvalidHandle, err)
-		default:
-			if err != nil {
-				t.Errorf("Seek : want error to be nil, got %v", err)
-			}
-		}
-
 		if vfs.HasFeature(avfs.FeatReadOnly) {
 			return
 		}
