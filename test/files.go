@@ -1161,6 +1161,61 @@ func (sfs *SuiteFS) Link(t *testing.T) {
 	})
 }
 
+// NilPtrFile test calls to File methods when f is a nil File.
+func NilPtrFile(t *testing.T, f avfs.File) {
+	err := f.Chdir()
+	CheckInvalid(t, "Chdir", err)
+
+	err = f.Chmod(0)
+	CheckInvalid(t, "Chmod", err)
+
+	err = f.Chown(0, 0)
+	CheckInvalid(t, "Chown", err)
+
+	err = f.Close()
+	CheckInvalid(t, "Close", err)
+
+	CheckPanic(t, "f.Name()", func() { _ = f.Name() })
+
+	fd := f.Fd()
+	if fd != math.MaxUint64 {
+		t.Errorf("Fd : want fd to be %d, got %d", 0, fd)
+	}
+
+	_, err = f.Read([]byte{})
+	CheckInvalid(t, "Read", err)
+
+	_, err = f.ReadAt([]byte{}, 0)
+	CheckInvalid(t, "ReadAt", err)
+
+	_, err = f.Readdir(0)
+	CheckInvalid(t, "Readdir", err)
+
+	_, err = f.Readdirnames(0)
+	CheckInvalid(t, "Readdirnames", err)
+
+	_, err = f.Seek(0, io.SeekStart)
+	CheckInvalid(t, "Seek", err)
+
+	_, err = f.Stat()
+	CheckInvalid(t, "Stat", err)
+
+	err = f.Sync()
+	CheckInvalid(t, "Sync", err)
+
+	err = f.Truncate(0)
+	CheckInvalid(t, "Truncate", err)
+
+	_, err = f.Write([]byte{})
+	CheckInvalid(t, "Write", err)
+
+	_, err = f.WriteAt([]byte{}, 0)
+	CheckInvalid(t, "WriteAt", err)
+
+	_, err = f.WriteString("")
+	CheckInvalid(t, "WriteString", err)
+}
+
 // OpenFileRead tests OpenFile function for read.
 func (sfs *SuiteFS) OpenFileRead(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)

@@ -58,10 +58,10 @@ func TestOsFSPerm(t *testing.T) {
 	sfs.Perm(t)
 }
 
-func TestNilPtrReceiver(t *testing.T) {
+func TestOsFSNilPtrFile(t *testing.T) {
 	f := (*os.File)(nil)
 
-	test.SuiteNilPtrFile(t, f)
+	test.NilPtrFile(t, f)
 }
 
 func TestOsFSOSType(t *testing.T) {

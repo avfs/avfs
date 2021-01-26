@@ -50,10 +50,10 @@ func TestOrefaFS(t *testing.T) {
 	sfs.All(t)
 }
 
-func TestNilPtrReceiver(t *testing.T) {
+func TestOrefaFSNilPtrFile(t *testing.T) {
 	f := (*orefafs.OrefaFile)(nil)
 
-	test.SuiteNilPtrFile(t, f)
+	test.NilPtrFile(t, f)
 }
 
 func TestOrefaFSFeatures(t *testing.T) {
