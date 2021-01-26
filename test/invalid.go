@@ -57,14 +57,6 @@ func (sfs *SuiteFS) FileFuncOnDir(t *testing.T) {
 			return
 		}
 
-		err = f.Truncate(0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Truncate", "truncate", pathDir, avfs.ErrWinInvalidHandle, err)
-		default:
-			CheckPathError(t, "Truncate", "truncate", pathDir, os.ErrInvalid, err)
-		}
-
 		_, err = f.Write(b)
 		switch vfs.OSType() {
 		case avfs.OsWindows:

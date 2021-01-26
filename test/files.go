@@ -1310,7 +1310,9 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 		default:
 			CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrIsADirectory, err)
 		}
+	})
 
+	t.Run("FileTruncateOnDir", func(t *testing.T) {
 		f, err := vfs.Open(rootDir)
 		if err != nil {
 			t.Errorf("Truncate : want error to be nil, got %v", err)
@@ -1319,6 +1321,7 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 		defer f.Close()
 
 		err = f.Truncate(0)
+
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrWinInvalidHandle, err)
@@ -1357,7 +1360,7 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 		}
 	})
 
-	t.Run("FsTruncateSizeBiggerFileSize", func(t *testing.T) {
+	t.Run("TruncateSizeBiggerFileSize", func(t *testing.T) {
 		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
@@ -1391,7 +1394,7 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 		}
 	})
 
-	t.Run("FsTruncateNonExistingFile", func(t *testing.T) {
+	t.Run("TruncateNonExistingFile", func(t *testing.T) {
 		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
 
 		err := vfs.Truncate(nonExistingFile, 0)
