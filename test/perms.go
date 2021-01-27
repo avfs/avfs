@@ -699,12 +699,7 @@ func (sfs *SuiteFS) SuiteWriteDenied(t *testing.T) {
 
 			err = vfs.Link(pathFile, pathNewDirOrFile)
 
-			wantErr := avfs.ErrOpNotPermitted
-			if vfs.OSType() == avfs.OsLinuxWSL {
-				wantErr = avfs.ErrPermDenied
-			}
-
-			CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, wantErr, err)
+			CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrOpNotPermitted, err)
 
 			err = vfs.Mkdir(pathNewDirOrFile, avfs.DefaultDirPerm)
 			CheckPathError(t, "Mkdir", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)

@@ -117,10 +117,6 @@ func IsNotExist(err error) bool {
 func RunTimeOS() avfs.OSType {
 	switch runtime.GOOS {
 	case "linux":
-		if IsLinuxWSL() {
-			return avfs.OsLinuxWSL
-		}
-
 		return avfs.OsLinux
 	case "darwin":
 		return avfs.OsDarwin
