@@ -35,8 +35,28 @@ var (
 	_ avfs.File = &dummyfs.DummyFile{}
 )
 
-//
+func initTest(tb testing.TB) *test.SuiteFS {
+	vfs, err := dummyfs.New()
+	if err != nil {
+		tb.Fatalf("New : want err to be nil, got %s", err)
+	}
+
+	sfs := test.NewSuiteFS(tb, vfs)
+
+	return sfs
+}
+
 func TestDummyFS(t *testing.T) {
+	sfs := initTest(t)
+	sfs.All(t)
+}
+
+func TestDummyFSPerm(t *testing.T) {
+	sfs := initTest(t)
+	sfs.Perm(t)
+}
+
+func TestDummyFsFeatures(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
@@ -46,28 +66,11 @@ func TestDummyFS(t *testing.T) {
 		t.Error("HasFeature : want HasFeature(whatever) to be false, got true")
 	}
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.All(t)
-}
-
-func TestDummyFSOSType(t *testing.T) {
-	vfs, err := dummyfs.New()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
+	if vfs.Features() != 0 {
+		t.Errorf("Features : want Features to be 0, got %d", vfs.Features())
 	}
 
 	if vfs.OSType() != avfs.OsLinux {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, vfs.OSType())
-	}
-}
-
-func TestDummyFSFeatures(t *testing.T) {
-	vfs, err := dummyfs.New()
-	if err != nil {
-		t.Fatalf("dummy.New : want error to be nil, got %v", err)
-	}
-
-	if vfs.Features() != 0 {
-		t.Errorf("Features : want Features to be 0, got %d", vfs.Features())
 	}
 }
