@@ -35,6 +35,14 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Chdir(rootDir)
+		CheckPathError(t, "Chdir", "chdir", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
@@ -177,6 +185,15 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 func (sfs *SuiteFS) GetTempDir(t *testing.T) {
 	vfs := sfs.GetFsRead()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		tmp := vfs.GetTempDir()
+		if tmp != avfs.TmpDir {
+			t.Errorf("GetTempDir : want error to be %v, got %v", avfs.NotImplemented, tmp)
+		}
+
+		return
+	}
+
 	var wantTmp string
 
 	switch vfs.OSType() {
@@ -200,6 +217,14 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
+		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
 	vfs = sfs.GetFsRead()
@@ -315,6 +340,14 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
 	vfs = sfs.GetFsWrite()
@@ -412,9 +445,16 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	const maxRead = 7
-
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.ReadDir(rootDir)
+		CheckPathError(t, "ReadDir", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	const maxRead = 7
 
 	rndTree, err1 := vfsutils.NewRndTree(vfs, vfsutils.RndParamsOneDir)
 	if err1 != nil {
@@ -566,6 +606,10 @@ func (sfs *SuiteFS) ReadDirNames(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	rndTree, err := vfsutils.NewRndTree(vfs, vfsutils.RndParamsOneDir)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
@@ -648,6 +692,16 @@ func (sfs *SuiteFS) TempDir(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.TempDir(rootDir, "")
+		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
 	t.Run("TempDirOnFile", func(t *testing.T) {
@@ -673,6 +727,16 @@ func (sfs *SuiteFS) TempFile(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.TempFile(rootDir, "")
+		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
 	t.Run("TempFileOnFile", func(t *testing.T) {

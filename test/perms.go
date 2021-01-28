@@ -67,6 +67,20 @@ func (sfs *SuiteFS) Chown(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsRoot()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Chown(rootDir, 0, 0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	uis := UserInfos()
@@ -157,6 +171,19 @@ func (sfs *SuiteFS) Lchown(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsRoot()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Lchown(rootDir, 0, 0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
 
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
@@ -286,6 +313,13 @@ func (sfs *SuiteFS) Chmod(t *testing.T) {
 
 	vfs := sfs.GetFsRoot()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Chmod(rootDir, avfs.DefaultDirPerm)
+		CheckPathError(t, "Chmod", "chmod", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	t.Run("ChmodDir", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
 			for mode := os.FileMode(1); mode <= 6; mode++ {
@@ -364,6 +398,13 @@ func (sfs *SuiteFS) Chroot(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsRoot()
+
+	if !vfs.HasFeature(avfs.FeatChroot) {
+		err := vfs.Chroot(rootDir)
+		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
 
 	t.Run("ChrootInvalid", func(t *testing.T) {
 		existingFile := vfs.Join(rootDir, "existingFile")

@@ -20,7 +20,6 @@ import (
 	"io"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/dummyidm"
@@ -33,25 +32,7 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 
 	vfs := sfs.GetFsRead()
 
-	var (
-		oldName = ""
-		newName = ""
-		newPath = ""
-	)
-
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		err := vfs.Chdir(rootDir)
-		CheckPathError(t, "Chdir", "chdir", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Chmod(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "Chmod", "chmod", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Chtimes(rootDir, time.Now(), time.Now())
-		CheckPathError(t, "Chtimes", "chtimes", rootDir, avfs.ErrPermDenied, err)
-
 		fsC, ok := vfs.(avfs.Cloner)
 		if ok {
 			fsClone := fsC.Clone()
@@ -60,7 +41,7 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			}
 		}
 
-		_, err = vfs.Create(rootDir)
+		_, err := vfs.Create(rootDir)
 		CheckPathError(t, "Create", "open", rootDir, avfs.ErrPermDenied, err)
 
 		u := vfs.CurrentUser()
@@ -80,15 +61,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			t.Errorf("Glob : want error to be nil, got %v", err)
 		}
 
-		_, err = vfs.Lstat(rootDir)
-		CheckPathError(t, "Lstat", "lstat", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrPermDenied, err)
-
 		name := vfs.Name()
 		if name != avfs.NotImplemented {
 			t.Errorf("Name : want name to be %s, got %s", avfs.NotImplemented, name)
@@ -99,43 +71,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 
 		_, err = vfs.OpenFile(rootDir, os.O_RDONLY, avfs.DefaultFilePerm)
 		CheckPathError(t, "OpenFile", "open", rootDir, avfs.ErrPermDenied, err)
-
-		_, err = vfs.ReadDir(rootDir)
-		CheckPathError(t, "ReadDir", "open", rootDir, avfs.ErrPermDenied, err)
-
-		_, err = vfs.ReadFile(rootDir)
-		CheckPathError(t, "ReadFile", "open", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Remove(rootDir)
-		CheckPathError(t, "Remove", "remove", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.RemoveAll(rootDir)
-		CheckPathError(t, "RemoveAll", "removeall", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Rename(rootDir, newPath)
-		CheckLinkError(t, "Rename", "rename", rootDir, newPath, avfs.ErrPermDenied, err)
-
-		if vfs.SameFile(nil, nil) {
-			t.Errorf("SameFile : want SameFile to be false, got true")
-		}
-
-		_, err = vfs.Stat(rootDir)
-		CheckPathError(t, "Stat", "stat", rootDir, avfs.ErrPermDenied, err)
-
-		tmp := vfs.GetTempDir()
-		if tmp != avfs.TmpDir {
-			t.Errorf("GetTempDir : want error to be %v, got %v", avfs.NotImplemented, tmp)
-		}
-
-		_, err = vfs.TempDir(rootDir, "")
-		if err.(*os.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-
-		_, err = vfs.TempFile(rootDir, "")
-		if err.(*os.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
 
 		err = vfs.Truncate(rootDir, 0)
 		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrPermDenied, err)
@@ -153,9 +88,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		if err != nil {
 			t.Errorf("User : want error to be nil, got %v", err)
 		}
-
-		err = vfs.WriteFile(rootDir, []byte{0}, avfs.DefaultFilePerm)
-		CheckPathError(t, "WriteFile", "open", rootDir, avfs.ErrPermDenied, err)
 
 		_, err = vfs.Abs(rootDir)
 		if err != nil {
@@ -203,36 +135,7 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		}
 	}
 
-	if !vfs.HasFeature(avfs.FeatHardlink) {
-		err := vfs.Link(oldName, newName)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrWinPathNotFound, err)
-		default:
-			CheckLinkError(t, "Link", "link", oldName, newName, avfs.ErrPermDenied, err)
-		}
-	}
-
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		err := vfs.Chown(rootDir, 0, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrWinNotSupported, err)
-		default:
-			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
-		}
-
-		err = vfs.Lchown(rootDir, 0, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrWinNotSupported, err)
-		default:
-			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
-		}
-
 		f, err := vfs.Open(rootDir)
 		if err == nil {
 			// We just need a file handle, be it valid or not, however if the handle is valid, it must be closed.
@@ -247,22 +150,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		default:
 			CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
 		}
-	}
-
-	if !vfs.HasFeature(avfs.FeatSymlink) && vfs.OSType() != avfs.OsWindows {
-		_, err := vfs.EvalSymlinks(rootDir)
-		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
-
-		_, err = vfs.Readlink(rootDir)
-		CheckPathError(t, "Readlink", "readlink", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Symlink(rootDir, newPath)
-		CheckLinkError(t, "Symlink", "symlink", rootDir, newPath, avfs.ErrPermDenied, err)
-	}
-
-	if !vfs.HasFeature(avfs.FeatChroot) {
-		err := vfs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 	}
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {

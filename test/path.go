@@ -52,6 +52,10 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	t.Run("Abs", func(t *testing.T) {
 		// Test directories relative to temporary directory.
 		// The tests are run in absTestDirs[0].
@@ -666,6 +670,10 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	_ = CreateDirs(t, vfs, rootDir)
 	_ = CreateFiles(t, vfs, rootDir)
 	sl := len(CreateSymlinks(t, vfs, rootDir))
@@ -738,6 +746,11 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	symlinks := CreateSymlinks(t, vfs, rootDir)

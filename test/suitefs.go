@@ -270,7 +270,6 @@ func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.GetTempDir(t)
 	sfs.Glob(t)
 	sfs.Lstat(t)
-	sfs.NotImplemented(t)
 	sfs.OpenFileRead(t)
 	sfs.ReadDir(t)
 	sfs.ReadDirNames(t)

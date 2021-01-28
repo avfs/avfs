@@ -36,6 +36,11 @@ func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestFileCloseRead.txt")
 
@@ -82,6 +87,11 @@ func (sfs *SuiteFS) FileCloseWrite(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestFileCloseWrite.txt")
 
@@ -135,6 +145,10 @@ func (sfs *SuiteFS) FileFuncOnClosedFile(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	existingFile := vfs.Join(rootDir, "existingFile")
 
@@ -248,6 +262,10 @@ func (sfs *SuiteFS) FileRead(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestFileRead.txt")
@@ -377,6 +395,10 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestFileSeek.txt")
@@ -563,6 +585,11 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestFileTruncate.txt")
 
@@ -739,6 +766,11 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 
 	t.Run("FileWrite", func(t *testing.T) {
@@ -973,6 +1005,10 @@ func (sfs *SuiteFS) FileWriteTime(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
 
@@ -1061,7 +1097,17 @@ func (sfs *SuiteFS) Link(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
 	if !vfs.HasFeature(avfs.FeatHardlink) {
+		err := vfs.Link(rootDir, rootDir)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckLinkError(t, "Link", "link", rootDir, rootDir, avfs.ErrWinPathNotFound, err)
+		default:
+			CheckLinkError(t, "Link", "link", rootDir, rootDir, avfs.ErrPermDenied, err)
+		}
+
 		return
 	}
 
@@ -1222,6 +1268,11 @@ func (sfs *SuiteFS) OpenFileRead(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
 
@@ -1460,6 +1511,11 @@ func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	whateverData := []byte("whatever")
 	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
@@ -1715,6 +1771,13 @@ func (sfs *SuiteFS) ReadFile(t *testing.T) {
 
 	vfs := sfs.GetFsRead()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.ReadFile(rootDir)
+		CheckPathError(t, "ReadFile", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestReadFile.txt")
 
@@ -1754,6 +1817,15 @@ func (sfs *SuiteFS) SameFile(t *testing.T) {
 	defer removeDir1()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		if vfs.SameFile(nil, nil) {
+			t.Errorf("SameFile : want SameFile to be false, got true")
+		}
+
+		return
+	}
+
 	CreateDirs(t, vfs, rootDir1)
 	files := CreateFiles(t, vfs, rootDir1)
 
@@ -1847,6 +1919,14 @@ func (sfs *SuiteFS) WriteFile(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.WriteFile(rootDir, []byte{0}, avfs.DefaultFilePerm)
+		CheckPathError(t, "WriteFile", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 
 	t.Run("WriteFile", func(t *testing.T) {
@@ -1874,6 +1954,11 @@ func (sfs *SuiteFS) WriteString(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	data := []byte("AAABBBCCCDDD")
 	path := vfs.Join(rootDir, "TestWriteString.txt")
 

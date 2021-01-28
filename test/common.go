@@ -32,6 +32,13 @@ func (sfs *SuiteFS) Chtimes(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Chtimes(rootDir, time.Now(), time.Now())
+		CheckPathError(t, "Chtimes", "chtimes", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	t.Run("Chtimes", func(t *testing.T) {
 		_ = CreateDirs(t, vfs, rootDir)
 		files := CreateFiles(t, vfs, rootDir)
@@ -71,6 +78,9 @@ func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
 
 	vfs := sfs.GetFsWrite()
 	if !vfs.HasFeature(avfs.FeatSymlink) {
+		_, err := vfs.EvalSymlinks(rootDir)
+		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -116,6 +126,14 @@ func (sfs *SuiteFS) Lstat(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.Lstat(rootDir)
+		CheckPathError(t, "Lstat", "lstat", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	CreateSymlinks(t, vfs, rootDir)
@@ -240,14 +258,18 @@ func (sfs *SuiteFS) Lstat(t *testing.T) {
 
 // Readlink tests Readlink function.
 func (sfs *SuiteFS) Readlink(t *testing.T) {
-	if !sfs.vfsW.HasFeature(avfs.FeatSymlink) {
-		return
-	}
-
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !sfs.vfsW.HasFeature(avfs.FeatSymlink) {
+		_, err := vfs.Readlink(rootDir)
+		CheckPathError(t, "Readlink", "readlink", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	symlinks := CreateSymlinks(t, vfs, rootDir)
@@ -302,6 +324,14 @@ func (sfs *SuiteFS) Remove(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Remove(rootDir)
+		CheckPathError(t, "Remove", "remove", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	symlinks := CreateSymlinks(t, vfs, rootDir)
@@ -397,6 +427,14 @@ func (sfs *SuiteFS) RemoveAll(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.RemoveAll(rootDir)
+		CheckPathError(t, "RemoveAll", "removeall", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	baseDir := vfs.Join(rootDir, "RemoveAll")
 	dirs := CreateDirs(t, vfs, baseDir)
 	files := CreateFiles(t, vfs, baseDir)
@@ -487,6 +525,13 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Rename(rootDir, rootDir)
+		CheckLinkError(t, "Rename", "rename", rootDir, rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
 
 	t.Run("RenameDir", func(t *testing.T) {
 		dirs := CreateDirs(t, vfs, rootDir)
@@ -637,6 +682,14 @@ func (sfs *SuiteFS) Stat(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.Stat(rootDir)
+		CheckPathError(t, "Stat", "stat", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	_ = CreateSymlinks(t, vfs, rootDir)
@@ -770,7 +823,11 @@ func (sfs *SuiteFS) Symlink(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
+
 	if !vfs.HasFeature(avfs.FeatSymlink) {
+		err := vfs.Symlink(rootDir, rootDir)
+		CheckLinkError(t, "Symlink", "symlink", rootDir, rootDir, avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -912,6 +969,10 @@ func (sfs *SuiteFS) Umask(t *testing.T) {
 	const umaskTest = 0o077
 
 	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	umaskStart := vfs.GetUMask()
 	vfs.UMask(umaskTest)
