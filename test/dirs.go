@@ -19,7 +19,6 @@ package test
 import (
 	"io"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -28,36 +27,6 @@ import (
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfsutils"
 )
-
-// GetTempDir tests GetTempDir function.
-func (sfs *SuiteFS) GetTempDir(t *testing.T) {
-	vfs := sfs.GetFsRead()
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		tmp := vfs.GetTempDir()
-		if tmp != avfs.TmpDir {
-			t.Errorf("GetTempDir : want error to be %v, got %v", avfs.NotImplemented, tmp)
-		}
-
-		return
-	}
-
-	var wantTmp string
-
-	switch vfs.OSType() {
-	case avfs.OsDarwin:
-		wantTmp, _ = filepath.EvalSymlinks(os.TempDir())
-	case avfs.OsWindows:
-		wantTmp = os.Getenv("TMP")
-	default:
-		wantTmp = avfs.TmpDir
-	}
-
-	gotTmp := vfs.GetTempDir()
-	if gotTmp != wantTmp {
-		t.Fatalf("GetTempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
-	}
-}
 
 // Mkdir tests Mkdir function.
 func (sfs *SuiteFS) Mkdir(t *testing.T) {
