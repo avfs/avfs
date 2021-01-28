@@ -47,8 +47,7 @@ func TestDummyFS(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-	sfs.NotImplemented(t)
-	sfs.FromToSlash(t)
+	sfs.All(t)
 }
 
 func TestDummyFSOSType(t *testing.T) {
