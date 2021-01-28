@@ -35,27 +35,15 @@ func (sfs *SuiteFS) Perm(t *testing.T) {
 
 // PermWrite runs all file systems permission tests with write access.
 func (sfs *SuiteFS) PermWrite(t *testing.T) {
-	if !sfs.canTestPerm {
-		t.Log("Info - VFS Perm Write : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
-
-		return
-	}
-
 	sfs.Chown(t)
 	sfs.Lchown(t)
 	sfs.Chmod(t)
-	sfs.SuiteWriteDenied(t)
+	sfs.WriteDenied(t)
 	sfs.Chroot(t)
 }
 
 // PermRead runs all file systems permission tests with read access.
 func (sfs *SuiteFS) PermRead(t *testing.T) {
-	if !sfs.canTestPerm {
-		t.Log("Info - VFS Perm Read : skipping tests.\nuse 'avfs dockertest' to run tests a root.")
-
-		return
-	}
-
 	sfs.AccessDir(t)
 	sfs.AccessFile(t)
 	sfs.StatT(t)
@@ -496,6 +484,11 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 	const baseDir = "baseDir"
 
 	vfsRoot := sfs.GetFsRoot()
+
+	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
+
 	uis := UserInfos()
 
 	ut, err := vfsRoot.LookupUser(UsrTest)
@@ -590,6 +583,11 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 	defer removeDir()
 
 	vfsRoot := sfs.GetFsRoot()
+
+	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
+
 	uis := UserInfos()
 
 	usrTest, err := vfsRoot.LookupUser(UsrTest)
@@ -673,6 +671,10 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 func (sfs *SuiteFS) StatT(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	info, err := vfs.Stat(vfs.GetTempDir())
 	if err != nil {
 		t.Errorf("Stat : want error be nil, got %v", err)
@@ -690,12 +692,17 @@ func (sfs *SuiteFS) StatT(t *testing.T) {
 	}
 }
 
-// SuiteWriteDenied tests functions on directories and files where write is denied.
-func (sfs *SuiteFS) SuiteWriteDenied(t *testing.T) {
+// WriteDenied tests functions on directories and files where write is denied.
+func (sfs *SuiteFS) WriteDenied(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
 	vfsRoot := sfs.GetFsRoot()
+
+	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
+
 	pathDir := vfsRoot.Join(rootDir, "testDir")
 	pathNewDirOrFile := vfsRoot.Join(pathDir, "NewDirOrFile")
 	pathDirChild := vfsRoot.Join(pathDir, "DirChild")
