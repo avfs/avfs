@@ -116,8 +116,8 @@ func WithOs(osType avfs.OSType) Option {
 	}
 }
 
-// OS returns the operating system, real or simulated.
-func (sfs *SuiteFS) OS() avfs.OSType {
+// OSType returns the operating system, real or simulated.
+func (sfs *SuiteFS) OSType() avfs.OSType {
 	return sfs.osType
 }
 
@@ -261,6 +261,7 @@ func (sfs *SuiteFS) Write(t *testing.T) {
 // Read runs all file systems tests with read access.
 func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.Chdir(t)
+	sfs.FileChdir(t)
 	sfs.EvalSymlink(t)
 	sfs.FileFuncOnClosedFile(t)
 	sfs.FileRead(t)

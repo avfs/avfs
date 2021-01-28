@@ -53,9 +53,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			t.Errorf("GetUMask : want umask to be 0, got %d", um)
 		}
 
-		_, err = vfs.Getwd()
-		CheckPathError(t, "Getwd", "getwd", "", avfs.ErrPermDenied, err)
-
 		name := vfs.Name()
 		if name != avfs.NotImplemented {
 			t.Errorf("Name : want name to be %s, got %s", avfs.NotImplemented, name)
