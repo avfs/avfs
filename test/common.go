@@ -971,6 +971,8 @@ func (sfs *SuiteFS) Umask(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		vfs.UMask(0)
+
 		return
 	}
 

@@ -56,11 +56,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		_, err = vfs.Getwd()
 		CheckPathError(t, "Getwd", "getwd", "", avfs.ErrPermDenied, err)
 
-		_, err = vfs.Glob("")
-		if err != nil {
-			t.Errorf("Glob : want error to be nil, got %v", err)
-		}
-
 		name := vfs.Name()
 		if name != avfs.NotImplemented {
 			t.Errorf("Name : want name to be %s, got %s", avfs.NotImplemented, name)
@@ -75,28 +70,9 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		err = vfs.Truncate(rootDir, 0)
 		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrPermDenied, err)
 
-		vfs.UMask(0)
-
 		_, err = vfs.User(UsrTest)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-
-		walkFunc := func(rootDir string, info os.FileInfo, err error) error { return nil }
-
-		err = vfs.Walk(rootDir, walkFunc)
-		if err != nil {
-			t.Errorf("User : want error to be nil, got %v", err)
-		}
-
-		_, err = vfs.Abs(rootDir)
-		if err != nil {
-			t.Errorf("Name : want error to be nil, got %v", err)
-		}
-
-		base := vfs.Base(rootDir)
-		if base != rootDir[1:] {
-			t.Errorf("Base : want Base to be %s, got %s", rootDir[1:], base)
 		}
 
 		clean := vfs.Clean(rootDir)

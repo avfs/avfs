@@ -53,6 +53,11 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.Abs(rootDir)
+		if err != nil {
+			t.Errorf("Name : want error to be nil, got %v", err)
+		}
+
 		return
 	}
 
@@ -185,7 +190,19 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 
 // Base tests Base function.
 func (sfs *SuiteFS) Base(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
 	vfs := sfs.GetFsRead()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		base := vfs.Base(rootDir)
+		if base != rootDir[1:] {
+			t.Errorf("Base : want Base to be %s, got %s", rootDir[1:], base)
+		}
+
+		return
+	}
 
 	var baseTests []*pathTest
 
@@ -671,6 +688,11 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.Glob("")
+		if err != nil {
+			t.Errorf("Glob : want error to be nil, got %v", err)
+		}
+
 		return
 	}
 
@@ -748,6 +770,13 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		walkFunc := func(rootDir string, info os.FileInfo, err error) error { return nil }
+
+		err := vfs.Walk(rootDir, walkFunc)
+		if err != nil {
+			t.Errorf("User : want error to be nil, got %v", err)
+		}
+
 		return
 	}
 
