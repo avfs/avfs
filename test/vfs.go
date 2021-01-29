@@ -19,10 +19,13 @@ package test
 import (
 	"os"
 	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // Chdir tests Chdir and Getwd functions.
@@ -386,5 +389,385 @@ func (sfs *SuiteFS) Lstat(t *testing.T) {
 
 		_, err := vfs.Lstat(subDirOnFile)
 		CheckPathError(t, "Lstat", "lstat", subDirOnFile, avfs.ErrNotADirectory, err)
+	})
+}
+
+// Mkdir tests Mkdir function.
+func (sfs *SuiteFS) Mkdir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
+		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	vfs = sfs.GetFsRead()
+	dirs := GetDirs()
+
+	t.Run("MkdirNew", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(rootDir, dir.Path)
+
+			err := vfs.Mkdir(path, dir.Mode)
+			if err != nil {
+				t.Errorf("mkdir : want no error, got %v", err)
+			}
+
+			fi, err := vfs.Stat(path)
+			if err != nil {
+				t.Errorf("stat '%s' : want no error, got %v", path, err)
+
+				continue
+			}
+
+			if !fi.IsDir() {
+				t.Errorf("stat '%s' : want path to be a directory, got mode %s", path, fi.Mode())
+			}
+
+			if fi.Size() < 0 {
+				t.Errorf("stat '%s': want directory size to be >= 0, got %d", path, fi.Size())
+			}
+
+			now := time.Now()
+			if now.Sub(fi.ModTime()) > 2*time.Second {
+				t.Errorf("stat '%s' : want time to be %s, got %s", path, time.Now(), fi.ModTime())
+			}
+
+			name := vfs.Base(dir.Path)
+			if fi.Name() != name {
+				t.Errorf("stat '%s' : want path to be %s, got %s", path, name, fi.Name())
+			}
+
+			curPath := rootDir
+			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
+				end, isLast = vfsutils.SegmentPath(dir.Path, start)
+				part := dir.Path[start:end]
+				wantMode := dir.WantModes[i]
+
+				curPath = vfs.Join(curPath, part)
+				info, err := vfs.Stat(curPath)
+				if err != nil {
+					t.Fatalf("stat %s : want error to be nil, got %v", curPath, err)
+				}
+
+				wantMode &^= vfs.GetUMask()
+				if vfs.OSType() == avfs.OsWindows {
+					wantMode = os.ModePerm
+				}
+
+				mode := info.Mode() & os.ModePerm
+				if wantMode != mode {
+					t.Errorf("stat %s %s : want mode to be %s, got %s", path, curPath, wantMode, mode)
+				}
+			}
+		}
+	})
+
+	t.Run("MkdirExisting", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(rootDir, dir.Path)
+
+			err := vfs.Mkdir(path, dir.Mode)
+			if !vfs.IsExist(err) {
+				t.Errorf("mkdir %s : want IsExist(err) to be true, got error %v", path, err)
+			}
+		}
+	})
+
+	t.Run("MkdirOnNonExistingDir", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(rootDir, dir.Path, "can't", "create", "this")
+
+			err := vfs.Mkdir(path, avfs.DefaultDirPerm)
+
+			switch vfs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrWinPathNotFound, err)
+			default:
+				CheckPathError(t, "Mkdir", "mkdir", path, avfs.ErrNoSuchFileOrDir, err)
+			}
+		}
+	})
+
+	t.Run("MkdirEmptyName", func(t *testing.T) {
+		err := vfs.Mkdir("", avfs.DefaultFilePerm)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrWinPathNotFound, err)
+		default:
+			CheckPathError(t, "Mkdir", "mkdir", "", avfs.ErrNoSuchFileOrDir, err)
+		}
+	})
+
+	t.Run("MkdirOnFile", func(t *testing.T) {
+		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
+
+		err := vfs.Mkdir(subDirOnFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "Mkdir", "mkdir", subDirOnFile, avfs.ErrNotADirectory, err)
+	})
+}
+
+// MkdirAll tests MkdirAll function.
+func (sfs *SuiteFS) MkdirAll(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	vfs = sfs.GetFsWrite()
+	dirs := GetDirsAll()
+
+	t.Run("MkdirAll", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(rootDir, dir.Path)
+
+			err := vfs.MkdirAll(path, dir.Mode)
+			if err != nil {
+				t.Errorf("MkdirAll : want error to be nil, got %v", err)
+			}
+
+			fi, err := vfs.Stat(path)
+			if err != nil {
+				t.Fatalf("stat '%s' : want error to be nil, got %v", path, err)
+			}
+
+			if !fi.IsDir() {
+				t.Errorf("stat '%s' : want path to be a directory, got mode %s", path, fi.Mode())
+			}
+
+			if fi.Size() < 0 {
+				t.Errorf("stat '%s': want directory size to be >= 0, got %d", path, fi.Size())
+			}
+
+			now := time.Now()
+			if now.Sub(fi.ModTime()) > 2*time.Second {
+				t.Errorf("stat '%s' : want time to be %s, got %s", path, time.Now(), fi.ModTime())
+			}
+
+			name := vfs.Base(dir.Path)
+			if fi.Name() != name {
+				t.Errorf("stat '%s' : want path to be %s, got %s", path, name, fi.Name())
+			}
+
+			want := strings.Count(dir.Path, string(avfs.PathSeparator))
+			got := len(dir.WantModes)
+			if want != got {
+				t.Fatalf("stat %s : want %d directories modes, got %d", path, want, got)
+			}
+
+			curPath := rootDir
+			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
+				end, isLast = vfsutils.SegmentPath(dir.Path, start)
+				part := dir.Path[start:end]
+				wantMode := dir.WantModes[i]
+
+				curPath = vfs.Join(curPath, part)
+				info, err := vfs.Stat(curPath)
+				if err != nil {
+					t.Fatalf("stat %s : want error to be nil, got %v", curPath, err)
+				}
+
+				wantMode &^= vfs.GetUMask()
+				if vfs.OSType() == avfs.OsWindows {
+					wantMode = os.ModePerm
+				}
+
+				mode := info.Mode() & os.ModePerm
+				if wantMode != mode {
+					t.Errorf("stat %s %s : want mode to be %s, got %s", path, curPath, wantMode, mode)
+				}
+			}
+		}
+	})
+
+	t.Run("MkdirAllExistingDir", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(rootDir, dir.Path)
+
+			err := vfs.MkdirAll(path, dir.Mode)
+			if err != nil {
+				t.Errorf("MkdirAll %s : want error to be nil, got error %v", path, err)
+			}
+		}
+	})
+
+	t.Run("MkdirAllOnFile", func(t *testing.T) {
+		err := vfs.MkdirAll(existingFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
+	})
+
+	t.Run("MkdirAllSubDirOnFile", func(t *testing.T) {
+		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
+
+		err := vfs.MkdirAll(subDirOnFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
+	})
+}
+
+// ReadDir tests ReadDir function.
+func (sfs *SuiteFS) ReadDir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.ReadDir(rootDir)
+		CheckPathError(t, "ReadDir", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	rndTree := CreateRndDir(t, vfs, rootDir)
+	wDirs := len(rndTree.Dirs)
+	wFiles := len(rndTree.Files)
+	wSymlinks := len(rndTree.SymLinks)
+
+	existingFile := rndTree.Files[0]
+
+	vfs = sfs.GetFsRead()
+
+	t.Run("ReadDirAll", func(t *testing.T) {
+		rdInfos, err := vfs.ReadDir(rootDir)
+		if err != nil {
+			t.Fatalf("ReadDir : want error to be nil, got %v", err)
+		}
+
+		var gDirs, gFiles, gSymlinks int
+		for _, rdInfo := range rdInfos {
+			mode := rdInfo.Mode()
+			switch {
+			case mode.IsDir():
+				gDirs++
+			case mode&os.ModeSymlink != 0:
+				gSymlinks++
+			default:
+				gFiles++
+			}
+		}
+
+		if wDirs != gDirs {
+			t.Errorf("ReadDir : want number of dirs to be %d, got %d", wDirs, gDirs)
+		}
+
+		if wFiles != gFiles {
+			t.Errorf("ReadDir : want number of files to be %d, got %d", wFiles, gFiles)
+		}
+
+		if wSymlinks != gSymlinks {
+			t.Errorf("ReadDir : want number of symbolic links to be %d, got %d", wSymlinks, gSymlinks)
+		}
+	})
+
+	t.Run("ReadDirEmptySubDirs", func(t *testing.T) {
+		for _, dir := range rndTree.Dirs {
+			dirInfos, err := vfs.ReadDir(dir)
+			if err != nil {
+				t.Errorf("ReadDir %s : want error to be nil, got %v", dir, err)
+			}
+
+			l := len(dirInfos)
+			if l != 0 {
+				t.Errorf("ReadDir %s : want count to be O, got %d", dir, l)
+			}
+		}
+	})
+
+	t.Run("ReadDirExistingFile", func(t *testing.T) {
+		_, err := vfs.ReadDir(existingFile)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
+		}
+	})
+}
+
+// TempDir tests TempDir function.
+func (sfs *SuiteFS) TempDir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.TempDir(rootDir, "")
+		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	t.Run("TempDirOnFile", func(t *testing.T) {
+		_, err := vfs.TempDir(existingFile, "")
+
+		e, ok := err.(*os.PathError)
+		if !ok {
+			t.Fatalf("TempDir : want error type *os.PathError, got %v", reflect.TypeOf(err))
+		}
+
+		const op = "mkdir"
+		wantErr := avfs.ErrNotADirectory
+		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
+			wantPathErr := &os.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
+			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
+		}
+	})
+}
+
+// TempFile tests TempFile function.
+func (sfs *SuiteFS) TempFile(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.TempFile(rootDir, "")
+		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	existingFile := CreateEmptyFile(t, vfs, rootDir)
+
+	t.Run("TempFileOnFile", func(t *testing.T) {
+		_, err := vfs.TempFile(existingFile, "")
+
+		e, ok := err.(*os.PathError)
+		if !ok {
+			t.Fatalf("TempFile : want error type *os.PathError, got %v", reflect.TypeOf(err))
+		}
+
+		const op = "open"
+		wantErr := avfs.ErrNotADirectory
+		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
+			wantPathErr := &os.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
+			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
+		}
 	})
 }

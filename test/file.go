@@ -17,6 +17,8 @@
 package test
 
 import (
+	"io"
+	"os"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -86,5 +88,172 @@ func (sfs *SuiteFS) FileChdir(t *testing.T) {
 
 		err = f.Chdir()
 		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotADirectory, err)
+	})
+}
+
+// ReadDir tests FileReadDir function.
+func (sfs *SuiteFS) FileReadDir(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	rndTree := CreateRndDir(t, vfs, rootDir)
+	wDirs := len(rndTree.Dirs)
+	wFiles := len(rndTree.Files)
+	wSymlinks := len(rndTree.SymLinks)
+	existingFile := rndTree.Files[0]
+
+	vfs = sfs.GetFsRead()
+
+	const maxRead = 7
+
+	t.Run("FileReadDirN", func(t *testing.T) {
+		f, err := vfs.Open(rootDir)
+		if err != nil {
+			t.Fatalf("ReadDir : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		var rdInfos []os.FileInfo
+
+		for {
+			rdInfoN, err := f.Readdir(maxRead)
+			if err == io.EOF {
+				break
+			}
+
+			if err != nil {
+				t.Fatalf("ReadDir : want error to be nil, got %v", err)
+			}
+
+			rdInfos = append(rdInfos, rdInfoN...)
+		}
+
+		var gDirs, gFiles, gSymlinks int
+		for _, rdInfo := range rdInfos {
+			mode := rdInfo.Mode()
+			switch {
+			case mode.IsDir():
+				gDirs++
+			case mode&os.ModeSymlink != 0:
+				gSymlinks++
+			default:
+				gFiles++
+			}
+		}
+
+		if wDirs != gDirs {
+			t.Errorf("ReadDirN : want number of dirs to be %d, got %d", wDirs, gDirs)
+		}
+
+		if wFiles != gFiles {
+			t.Errorf("ReadDirN : want number of files to be %d, got %d", wFiles, gFiles)
+		}
+
+		if wSymlinks != gSymlinks {
+			t.Errorf("ReadDirN : want number of symbolic links to be %d, got %d", wSymlinks, gSymlinks)
+		}
+	})
+
+	t.Run("FileReadDirExistingFile", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Fatalf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		_, err = f.Readdir(-1)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdir", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+		}
+	})
+}
+
+// FileReaddirnames tests Readdirnames function.
+func (sfs *SuiteFS) FileReaddirnames(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	rndTree := CreateRndDir(t, vfs, rootDir)
+	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
+	existingFile := rndTree.Files[0]
+
+	vfs = sfs.GetFsRead()
+
+	t.Run("FileReaddirnamesAll", func(t *testing.T) {
+		f, err := vfs.Open(rootDir)
+		if err != nil {
+			t.Fatalf("FileReaddirnames : want error to be nil, got %v", err)
+		}
+
+		names, err := f.Readdirnames(-1)
+		if err != nil {
+			t.Errorf("FileReaddirnames : want error to be nil, got %v", err)
+		}
+
+		if wAll != len(names) {
+			t.Errorf("FileReaddirnames : want number of elements to be %d, got %d", wAll, len(names))
+		}
+	})
+
+	t.Run("FileReaddirnamesN", func(t *testing.T) {
+		f, err := vfs.Open(rootDir)
+		if err != nil {
+			t.Fatalf("FileReaddirnames : want error to be nil, got %v", err)
+		}
+
+		var names []string
+
+		for {
+			namesN, err := f.Readdirnames(11)
+			if err == io.EOF {
+				break
+			}
+
+			if err != nil {
+				t.Fatalf("ReadDirNamesN : want error to be nil, got %v", err)
+			}
+
+			names = append(names, namesN...)
+		}
+
+		if wAll != len(names) {
+			t.Errorf("ReadDirNamesN : want number of elements to be %d, got %d", wAll, len(names))
+		}
+	})
+
+	t.Run("FileReaddirnamesExistingFile", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Fatalf("Create : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		_, err = f.Readdirnames(-1)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdirnames", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
+		default:
+			CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+		}
 	})
 }

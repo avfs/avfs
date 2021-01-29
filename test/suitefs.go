@@ -273,7 +273,7 @@ func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.Lstat(t)
 	sfs.OpenFileRead(t)
 	sfs.ReadDir(t)
-	sfs.ReadDirNames(t)
+	sfs.FileReaddirnames(t)
 	sfs.ReadFile(t)
 	sfs.Readlink(t)
 	sfs.Stat(t)
