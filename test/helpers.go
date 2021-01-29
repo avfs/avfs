@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // CheckPathError checks errors of type os.PathError.
@@ -113,4 +114,36 @@ func CreateEmptyFile(t *testing.T, vfs avfs.VFS, rootDir string) string {
 	defer f.Close()
 
 	return f.Name()
+}
+
+// CreateRndDir creates one directory with random empty subdirectories, files and symbolic links.
+func CreateRndDir(t *testing.T, vfs avfs.VFS, rootDir string) *vfsutils.RndTree {
+	t.Helper()
+
+	RndParamsOneDir := vfsutils.RndTreeParams{
+		MinDepth:    1,
+		MaxDepth:    1,
+		MinName:     4,
+		MaxName:     32,
+		MinDirs:     10,
+		MaxDirs:     20,
+		MinFiles:    50,
+		MaxFiles:    100,
+		MinFileLen:  0,
+		MaxFileLen:  0,
+		MinSymlinks: 5,
+		MaxSymlinks: 10,
+	}
+
+	rndTree, err := vfsutils.NewRndTree(vfs, RndParamsOneDir)
+	if err != nil {
+		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
+	}
+
+	err = rndTree.CreateTree(rootDir)
+	if err != nil {
+		t.Fatalf("rndTree.Create : want error to be nil, got %v", err)
+	}
+
+	return rndTree
 }

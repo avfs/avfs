@@ -278,20 +278,3 @@ func randName(minName, maxName int) string {
 
 	return name.String()
 }
-
-// RndParamsOneDir are the parameters to generate one directory
-// with random empty subdirectories, files and symbolic links.
-var RndParamsOneDir = RndTreeParams{ //nolint:gochecknoglobals // See above.
-	MinDepth:    1,
-	MaxDepth:    1,
-	MinName:     4,
-	MaxName:     32,
-	MinDirs:     10,
-	MaxDirs:     20,
-	MinFiles:    50,
-	MaxFiles:    100,
-	MinFileLen:  0,
-	MaxFileLen:  0,
-	MinSymlinks: 5,
-	MaxSymlinks: 10,
-}
