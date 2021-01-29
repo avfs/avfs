@@ -17,7 +17,10 @@
 package test
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -255,6 +258,122 @@ func (sfs *SuiteFS) GetTempDir(t *testing.T) {
 	if gotTmp != wantTmp {
 		t.Fatalf("GetTempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
 	}
+}
+
+// Link tests Link function.
+func (sfs *SuiteFS) Link(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatHardlink) {
+		err := vfs.Link(rootDir, rootDir)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckLinkError(t, "Link", "link", rootDir, rootDir, avfs.ErrWinPathNotFound, err)
+		default:
+			CheckLinkError(t, "Link", "link", rootDir, rootDir, avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	dirs := CreateDirs(t, vfs, rootDir)
+	files := CreateFiles(t, vfs, rootDir)
+
+	pathLinks := vfs.Join(rootDir, "links")
+
+	err := vfs.Mkdir(pathLinks, avfs.DefaultDirPerm)
+	if err != nil {
+		t.Fatalf("mkdir %s : want error to be nil, got %v", pathLinks, err)
+	}
+
+	t.Run("LinkCreate", func(t *testing.T) {
+		for _, file := range files {
+			oldPath := vfs.Join(rootDir, file.Path)
+			newPath := vfs.Join(pathLinks, vfs.Base(file.Path))
+
+			err := vfs.Link(oldPath, newPath)
+			if err != nil {
+				t.Errorf("Link %s %s : want error to be nil, got %v", oldPath, newPath, err)
+			}
+
+			newContent, err := vfs.ReadFile(newPath)
+			if err != nil {
+				t.Errorf("Readfile %s : want error to be nil, got %v", newPath, err)
+			}
+
+			if !bytes.Equal(file.Content, newContent) {
+				t.Errorf("ReadFile %s : want content to be %s, got %s", newPath, file.Content, newContent)
+			}
+		}
+	})
+
+	t.Run("LinkExisting", func(t *testing.T) {
+		for _, file := range files {
+			oldPath := vfs.Join(rootDir, file.Path)
+			newPath := vfs.Join(pathLinks, vfs.Base(file.Path))
+
+			err := vfs.Link(oldPath, newPath)
+			CheckLinkError(t, "Link", "link", oldPath, newPath, avfs.ErrFileExists, err)
+		}
+	})
+
+	t.Run("LinkRemove", func(t *testing.T) {
+		for _, file := range files {
+			oldPath := vfs.Join(rootDir, file.Path)
+			newPath := vfs.Join(pathLinks, vfs.Base(file.Path))
+
+			err := vfs.Remove(oldPath)
+			if err != nil {
+				t.Errorf("Remove %s : want error to be nil, got %v", oldPath, err)
+			}
+
+			newContent, err := vfs.ReadFile(newPath)
+			if err != nil {
+				t.Errorf("Readfile %s : want error to be nil, got %v", newPath, err)
+			}
+
+			if !bytes.Equal(file.Content, newContent) {
+				t.Errorf("ReadFile %s : want content to be %s, got %s", newPath, file.Content, newContent)
+			}
+		}
+	})
+
+	t.Run("LinkErrorDir", func(t *testing.T) {
+		for _, dir := range dirs {
+			oldPath := vfs.Join(rootDir, dir.Path)
+			newPath := vfs.Join(rootDir, "WhateverDir")
+
+			err := vfs.Link(oldPath, newPath)
+			CheckLinkError(t, "Link", "link", oldPath, newPath, avfs.ErrOpNotPermitted, err)
+		}
+	})
+
+	t.Run("LinkErrorFile", func(t *testing.T) {
+		for _, file := range files {
+			InvalidPath := vfs.Join(rootDir, file.Path, "OldInvalidPath")
+			NewInvalidPath := vfs.Join(pathLinks, "WhateverFile")
+
+			err := vfs.Link(InvalidPath, NewInvalidPath)
+			CheckLinkError(t, "Link", "link", InvalidPath, NewInvalidPath, avfs.ErrNoSuchFileOrDir, err)
+		}
+	})
+
+	t.Run("LinkNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		existingFile := vfs.Join(rootDir, "existingFile")
+
+		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		err = vfs.Link(nonExistingFile, existingFile)
+		CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
 }
 
 // Lstat tests Lstat function.
@@ -622,6 +741,508 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 	})
 }
 
+// OpenFileRead tests OpenFile function for read.
+func (sfs *SuiteFS) OpenFileRead(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
+	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
+
+	err := vfs.WriteFile(existingFile, data, avfs.DefaultFilePerm)
+	if err != nil {
+		t.Fatalf("WriteFile : want error to be nil, got %v", err)
+	}
+
+	existingDir := vfs.Join(rootDir, "existingDir")
+
+	err = vfs.Mkdir(existingDir, avfs.DefaultDirPerm)
+	if err != nil {
+		t.Fatalf("Mkdir : want error to be nil, got %v", err)
+	}
+
+	vfs = sfs.GetFsRead()
+
+	t.Run("OpenFileReadOnly", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Errorf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		gotData, err := ioutil.ReadAll(f)
+		if err != nil {
+			t.Errorf("ReadAll : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(gotData, data) {
+			t.Errorf("ReadAll : want error data to be %v, got %v", data, gotData)
+		}
+	})
+
+	t.Run("OpenFileDirReadOnly", func(t *testing.T) {
+		f, err := vfs.OpenFile(existingDir, os.O_RDONLY, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Errorf("OpenFile : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		dirs, err := f.Readdir(-1)
+		if err != nil {
+			t.Errorf("Readdir : want error to be nil, got %v", err)
+		}
+
+		if len(dirs) != 0 {
+			t.Errorf("Readdir : want number of directories to be 0, got %d", len(dirs))
+		}
+	})
+
+	t.Run("OpenNonExistingFile", func(t *testing.T) {
+		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		buf := make([]byte, 1)
+
+		f, err := vfs.Open(nonExistingFile)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			if err != nil {
+				t.Errorf("Truncate : want error to be nil, got %v", err)
+			}
+		default:
+			CheckPathError(t, "Open", "open", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		}
+
+		if f == nil {
+			t.Fatal("Open : want f to be != nil, got nil")
+		}
+
+		err = f.Chdir()
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chdir", "chdir", nonExistingFile, avfs.ErrWinNotSupported, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Chdir : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		err = f.Chmod(0)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrWinNotSupported, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Chmod : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		if vfs.HasFeature(avfs.FeatIdentityMgr) {
+			err = f.Chown(0, 0)
+			if err != os.ErrInvalid {
+				t.Errorf("Chown : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		err = f.Close()
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			if err != nil {
+				t.Errorf("Truncate : want error to be nil, got %v", err)
+			}
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.Read(buf)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Read", "read", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Read : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.ReadAt(buf, 0)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadAt", "read", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("ReadAt : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.Readdir(-1)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdir", "Readdir", nonExistingFile, avfs.ErrWinPathNotFound, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Readdir : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.Readdirnames(-1)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Readdirnames", "Readdir", nonExistingFile, avfs.ErrWinPathNotFound, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Readdirnames : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.Seek(0, io.SeekStart)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Seek", "seek", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Seek : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.Stat()
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Stat", "GetFileType", nonExistingFile, avfs.ErrFileClosing, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		err = f.Sync()
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Sync", "sync", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Sync : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		err = f.Truncate(0)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Truncate : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.Write(buf)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Write : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.WriteAt(buf, 0)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("WriteAt : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		_, err = f.WriteString("")
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteString", "write", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("WriteString : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+
+		err = f.Close()
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Close", "close", nonExistingFile, os.ErrClosed, err)
+		default:
+			if err != os.ErrInvalid {
+				t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
+			}
+		}
+	})
+}
+
+// OpenFileWrite tests OpenFile function for write.
+func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
+	whateverData := []byte("whatever")
+	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
+	buf3 := make([]byte, 3)
+
+	err := vfs.WriteFile(existingFile, data, avfs.DefaultFilePerm)
+	if err != nil {
+		t.Fatalf("WriteFile : want error to be nil, got %v", err)
+	}
+
+	t.Run("OpenFileWriteOnly", func(t *testing.T) {
+		f, err := vfs.OpenFile(existingFile, os.O_WRONLY, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Errorf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		n, err := f.Write(whateverData)
+		if err != nil {
+			t.Errorf("Write : want error to be nil, got %v", err)
+		}
+
+		if n != len(whateverData) {
+			t.Errorf("Write : want bytes written to be %d, got %d", len(whateverData), n)
+		}
+
+		n, err = f.Read(buf3)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Read", "read", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Read", "read", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
+		if n != 0 {
+			t.Errorf("Read : want bytes written to be 0, got %d", n)
+		}
+
+		n, err = f.ReadAt(buf3, 3)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "ReadAt", "read", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "ReadAt", "read", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
+		if n != 0 {
+			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
+		}
+
+		err = f.Chmod(0o777)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrWinNotSupported, err)
+		default:
+			if err != nil {
+				t.Errorf("Chmod : want error to be nil, got %v", err)
+			}
+		}
+
+		if vfs.HasFeature(avfs.FeatIdentityMgr) {
+			u := vfs.CurrentUser()
+			err = f.Chown(u.Uid(), u.Gid())
+			if err != nil {
+				t.Errorf("Chown : want error to be nil, got %v", err)
+			}
+		}
+
+		fst, err := f.Stat()
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+
+		wantName := vfs.Base(f.Name())
+		if wantName != fst.Name() {
+			t.Errorf("Stat : want name to be %s, got %s", wantName, fst.Name())
+		}
+
+		err = f.Truncate(0)
+		if err != nil {
+			t.Errorf("Chmod : want error to be nil, got %v", err)
+		}
+
+		err = f.Sync()
+		if err != nil {
+			t.Errorf("Sync : want error to be nil, got %v", err)
+		}
+	})
+
+	t.Run("OpenFileAppend", func(t *testing.T) {
+		err := vfs.WriteFile(existingFile, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("Chmod : want error to be nil, got %v", err)
+		}
+
+		f, err := vfs.OpenFile(existingFile, os.O_WRONLY|os.O_APPEND, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Errorf("OpenFile : want error to be nil, got %v", err)
+		}
+
+		n, err := f.Write(whateverData)
+		if err != nil {
+			t.Errorf("Write : want error to be nil, got %v", err)
+		}
+
+		if n != len(whateverData) {
+			t.Errorf("Write : want error to be %d, got %d", len(whateverData), n)
+		}
+
+		_ = f.Close()
+
+		gotContent, err := vfs.ReadFile(existingFile)
+		if err != nil {
+			t.Errorf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		wantContent := append(data, whateverData...)
+		if !bytes.Equal(wantContent, gotContent) {
+			t.Errorf("ReadAll : want content to be %s, got %s", wantContent, gotContent)
+		}
+	})
+
+	t.Run("OpenFileReadOnly", func(t *testing.T) {
+		f, err := vfs.Open(existingFile)
+		if err != nil {
+			t.Errorf("Open : want error to be nil, got %v", err)
+		}
+
+		defer f.Close()
+
+		n, err := f.Write(whateverData)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Write", "write", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Write", "write", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
+		if n != 0 {
+			t.Errorf("Write : want bytes written to be 0, got %d", n)
+		}
+
+		n, err = f.WriteAt(whateverData, 3)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "WriteAt", "write", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "WriteAt", "write", existingFile, avfs.ErrBadFileDesc, err)
+		}
+
+		if n != 0 {
+			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)
+		}
+
+		err = f.Chmod(0o777)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrWinNotSupported, err)
+		default:
+			if err != nil {
+				t.Errorf("Chmod : want error to be nil, got %v", err)
+			}
+		}
+
+		if vfs.HasFeature(avfs.FeatIdentityMgr) {
+			u := vfs.CurrentUser()
+			err = f.Chown(u.Uid(), u.Gid())
+			if err != nil {
+				t.Errorf("Chown : want error to be nil, got %v", err)
+			}
+		}
+
+		fst, err := f.Stat()
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+
+		wantName := vfs.Base(f.Name())
+		if wantName != fst.Name() {
+			t.Errorf("Stat : want name to be %s, got %s", wantName, fst.Name())
+		}
+
+		err = f.Truncate(0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", existingFile, avfs.ErrWinAccessDenied, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", existingFile, os.ErrInvalid, err)
+		}
+	})
+
+	t.Run("OpenFileDir", func(t *testing.T) {
+		existingDir := vfs.Join(rootDir, "existingDir")
+
+		err := vfs.Mkdir(existingDir, avfs.DefaultDirPerm)
+		if err != nil {
+			t.Fatalf("Mkdir : want error to be nil, got %v", err)
+		}
+
+		f, err := vfs.OpenFile(existingDir, os.O_WRONLY, avfs.DefaultFilePerm)
+		CheckPathError(t, "OpenFile", "open", existingDir, avfs.ErrIsADirectory, err)
+
+		if !reflect.ValueOf(f).IsNil() {
+			t.Errorf("OpenFile : want file to be nil, got %v", f)
+		}
+	})
+
+	t.Run("OpenFileExcl", func(t *testing.T) {
+		fileExcl := vfs.Join(rootDir, "fileExcl")
+
+		f, err := vfs.OpenFile(fileExcl, os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Errorf("OpenFile : want error to be nil, got %v", err)
+		}
+
+		f.Close()
+
+		_, err = vfs.OpenFile(fileExcl, os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "OpenFile", "open", fileExcl, avfs.ErrWinFileExists, err)
+		default:
+			CheckPathError(t, "OpenFile", "open", fileExcl, avfs.ErrFileExists, err)
+		}
+	})
+
+	t.Run("OpenFileNonExistingPath", func(t *testing.T) {
+		nonExistingPath := vfs.Join(rootDir, "non/existing/path")
+		_, err := vfs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrWinPathNotFound, err)
+		default:
+			CheckPathError(t, "OpenFile", "open", nonExistingPath, avfs.ErrNoSuchFileOrDir, err)
+		}
+	})
+}
+
 // ReadDir tests ReadDir function.
 func (sfs *SuiteFS) ReadDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
@@ -699,6 +1320,53 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
 		default:
 			CheckSyscallError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
+		}
+	})
+}
+
+// ReadFile tests ReadFile function.
+func (sfs *SuiteFS) ReadFile(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsRead()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.ReadFile(rootDir)
+		CheckPathError(t, "ReadFile", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
+	path := vfs.Join(rootDir, "TestReadFile.txt")
+
+	t.Run("ReadFile", func(t *testing.T) {
+		rb, err := vfs.ReadFile(path)
+		if err == nil {
+			t.Errorf("ReadFile : want error to be %v, got nil", avfs.ErrNoSuchFileOrDir)
+		}
+
+		if len(rb) != 0 {
+			t.Errorf("ReadFile : want read bytes to be 0, got %d", len(rb))
+		}
+
+		vfs = sfs.GetFsWrite()
+
+		err = vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		vfs = sfs.GetFsRead()
+
+		rb, err = vfs.ReadFile(path)
+		if err != nil {
+			t.Errorf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(rb, data) {
+			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
 		}
 	})
 }
@@ -1123,6 +1791,108 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	})
 }
 
+// SameFile tests SameFile function.
+func (sfs *SuiteFS) SameFile(t *testing.T) {
+	rootDir1, removeDir1 := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir1()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		if vfs.SameFile(nil, nil) {
+			t.Errorf("SameFile : want SameFile to be false, got true")
+		}
+
+		return
+	}
+
+	CreateDirs(t, vfs, rootDir1)
+	files := CreateFiles(t, vfs, rootDir1)
+
+	rootDir2, removeDir2 := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir2()
+	CreateDirs(t, vfs, rootDir2)
+
+	t.Run("SameFileLink", func(t *testing.T) {
+		if !vfs.HasFeature(avfs.FeatHardlink) {
+			return
+		}
+
+		for _, file := range files {
+			path1 := vfs.Join(rootDir1, file.Path)
+			path2 := vfs.Join(rootDir2, file.Path)
+
+			info1, err := vfs.Stat(path1)
+			if err != nil {
+				t.Fatalf("Stat %s : want error to be nil, got %v", path1, err)
+			}
+
+			err = vfs.Link(path1, path2)
+			if err != nil {
+				t.Fatalf("Link %s : want error to be nil, got %v", path1, err)
+			}
+
+			info2, err := vfs.Stat(path2)
+			if err != nil {
+				t.Fatalf("Stat %s : want error to be nil, got %v", path1, err)
+			}
+
+			if !vfs.SameFile(info1, info2) {
+				t.Fatalf("SameFile %s, %s : not same files\n%v\n%v", path1, path2, info1, info2)
+			}
+
+			err = vfs.Remove(path2)
+			if err != nil {
+				t.Fatalf("Remove %s : want error to be nil, got %v", path2, err)
+			}
+		}
+	})
+
+	t.Run("SameFileSymlink", func(t *testing.T) {
+		if !vfs.HasFeature(avfs.FeatSymlink) {
+			return
+		}
+
+		for _, file := range files {
+			path1 := vfs.Join(rootDir1, file.Path)
+			path2 := vfs.Join(rootDir2, file.Path)
+
+			info1, err := vfs.Stat(path1)
+			if err != nil {
+				t.Fatalf("Stat %s : want error to be nil, got %v", path1, err)
+			}
+
+			err = vfs.Symlink(path1, path2)
+			if err != nil {
+				t.Fatalf("Symlink %s : want error to be nil, got %v", path1, err)
+			}
+
+			info2, err := vfs.Stat(path2)
+			if err != nil {
+				t.Fatalf("Stat %s : want error to be nil, got %v", path1, err)
+			}
+
+			if !vfs.SameFile(info1, info2) {
+				t.Fatalf("SameFile %s, %s : not same files\n%v\n%v", path1, path2, info1, info2)
+			}
+
+			info3, err := vfs.Lstat(path2)
+			if err != nil {
+				t.Fatalf("Stat %s : want error to be nil, got %v", path1, err)
+			}
+
+			if vfs.SameFile(info1, info3) {
+				t.Fatalf("SameFile %s, %s : not the same file\n%v\n%v", path1, path2, info1, info3)
+			}
+
+			err = vfs.Remove(path2)
+			if err != nil {
+				t.Fatalf("Remove %s : want error to be nil, got %v", path2, err)
+			}
+		}
+	})
+}
+
 // Stat tests Stat function.
 func (sfs *SuiteFS) Stat(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
@@ -1402,6 +2172,41 @@ func (sfs *SuiteFS) Umask(t *testing.T) {
 	}
 }
 
+// WriteFile tests WriteFile function.
+func (sfs *SuiteFS) WriteFile(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.WriteFile(rootDir, []byte{0}, avfs.DefaultFilePerm)
+		CheckPathError(t, "WriteFile", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
+
+	t.Run("WriteFile", func(t *testing.T) {
+		path := vfs.Join(rootDir, "WriteFile.txt")
+
+		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Errorf("WriteFile : want error to be nil, got %v", err)
+		}
+
+		rb, err := vfs.ReadFile(path)
+		if err != nil {
+			t.Errorf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(rb, data) {
+			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
+		}
+	})
+}
+
 // WriteOnReadOnly tests all write functions of a read only file system.
 func (sfs *SuiteFS) WriteOnReadOnly(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
@@ -1506,5 +2311,47 @@ func (sfs *SuiteFS) WriteOnReadOnly(t *testing.T) {
 
 		_, err = f.WriteString("")
 		CheckPathError(t, "WriteString", "write", f.Name(), avfs.ErrPermDenied, err)
+	})
+}
+
+// WriteString tests WriteString function.
+func (sfs *SuiteFS) WriteString(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
+	path := vfs.Join(rootDir, "TestWriteString.txt")
+
+	t.Run("WriteString", func(t *testing.T) {
+		f, err := vfs.Create(path)
+		if err != nil {
+			t.Errorf("Create %s : want error to be nil, got %v", path, err)
+		}
+
+		n, err := f.WriteString(string(data))
+		if err != nil {
+			t.Errorf("WriteString : want error to be nil, got %v", err)
+		}
+
+		if len(data) != n {
+			t.Errorf("WriteString : want written bytes to be %d, got %d", len(data), n)
+		}
+
+		f.Close()
+
+		rb, err := vfs.ReadFile(path)
+		if err != nil {
+			t.Errorf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		if !bytes.Equal(rb, data) {
+			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
+		}
 	})
 }

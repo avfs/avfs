@@ -61,7 +61,7 @@ func TestOsFSPerm(t *testing.T) {
 func TestOsFSNilPtrFile(t *testing.T) {
 	f := (*os.File)(nil)
 
-	test.NilPtrFile(t, f)
+	test.FileNilPtr(t, f)
 }
 
 func TestOsFSOSType(t *testing.T) {
