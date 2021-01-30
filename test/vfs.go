@@ -181,6 +181,21 @@ func (sfs *SuiteFS) Chtimes(t *testing.T) {
 	})
 }
 
+// Clone tests Clone function.
+func (sfs *SuiteFS) Clone(t *testing.T) {
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		if vfsClonable, ok := vfs.(avfs.Cloner); ok {
+			vfsCloned := vfsClonable.Clone()
+
+			if _, ok := vfsCloned.(avfs.Cloner); !ok {
+				t.Errorf("Clone : want cloned vfs to be of type VFS, got type %v", reflect.TypeOf(vfsCloned))
+			}
+		}
+	}
+}
+
 // EvalSymlink tests EvalSymlink function.
 func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)

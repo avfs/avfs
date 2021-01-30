@@ -134,9 +134,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		err = f.Chmod(0)
 		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
 
-		err = f.Close()
-		CheckPathError(t, "Close", "close", f.Name(), avfs.ErrPermDenied, err)
-
 		fd := f.Fd()
 		if fd != 0 {
 			t.Errorf("Fd : want Fd to be 0, got %v", fd)

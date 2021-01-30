@@ -261,6 +261,7 @@ func (sfs *SuiteFS) Write(t *testing.T) {
 // Read runs all file systems tests with read access.
 func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.Chdir(t)
+	sfs.Clone(t)
 	sfs.FileChdir(t)
 	sfs.EvalSymlink(t)
 	sfs.FileFuncOnClosedFile(t)

@@ -29,7 +29,7 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// Chdir tests File.Chdir function.
+// FileChdir tests File.Chdir function.
 func (sfs *SuiteFS) FileChdir(t *testing.T) {
 	if sfs.OSType() == avfs.OsWindows {
 		t.Logf("File.Chdir() is not supported by windows, skipping")
@@ -65,12 +65,12 @@ func (sfs *SuiteFS) FileChdir(t *testing.T) {
 				t.Errorf("Open %s : want error to be nil, got %v", path, err)
 			}
 
+			defer f.Close()
+
 			err = f.Chdir()
 			if err != nil {
 				t.Errorf("Chdir %s : want error to be nil, got %v", path, err)
 			}
-
-			f.Close()
 
 			curDir, err := vfs.Getwd()
 			if err != nil {
@@ -104,6 +104,11 @@ func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, _ := vfs.Open(rootDir)
+
+		err := f.Close()
+		CheckPathError(t, "Close", "close", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 
