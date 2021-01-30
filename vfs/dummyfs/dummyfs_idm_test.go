@@ -32,5 +32,5 @@ func TestDummyFSIdm(t *testing.T) {
 	}
 
 	sIdm := test.NewSuiteIdm(t, vfs)
-	sIdm.PermDenied(t)
+	sIdm.All(t)
 }

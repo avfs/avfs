@@ -21,7 +21,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // NotImplemented tests non implemented functions.
@@ -32,19 +31,9 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 	vfs := sfs.GetFsRead()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		u := vfs.CurrentUser()
-		if u != dummyidm.NotImplementedUser {
-			t.Errorf("CurrentUser : want User to be nil, got %v", u)
-		}
-
 		name := vfs.Name()
 		if name != avfs.NotImplemented {
 			t.Errorf("Name : want name to be %s, got %s", avfs.NotImplemented, name)
-		}
-
-		_, err := vfs.User(UsrTest)
-		if err != avfs.ErrPermDenied {
-			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		clean := vfs.Clean(rootDir)
@@ -72,7 +61,7 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			t.Errorf("Join : want join to be %s, got %s", rootDir+rootDir, join)
 		}
 
-		_, err = vfs.Rel(rootDir, rootDir)
+		_, err := vfs.Rel(rootDir, rootDir)
 		if err != nil {
 			t.Errorf("Rel : want error to be nil, got %v", err)
 		}

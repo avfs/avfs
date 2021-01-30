@@ -21,12 +21,15 @@ import (
 	"os"
 	"testing"
 
+	"github.com/avfs/avfs/idm/dummyidm"
+
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfsutils"
 )
 
 // All run all identity manager tests.
 func (sIdm *SuiteIdm) All(t *testing.T) {
+	sIdm.CurrentUser(t)
 	sIdm.GroupAddDel(t)
 	sIdm.UserAddDel(t)
 	sIdm.Lookup(t)
@@ -35,10 +38,39 @@ func (sIdm *SuiteIdm) All(t *testing.T) {
 	sIdm.PermDenied(t)
 }
 
+func (sIdm *SuiteIdm) CurrentUser(t *testing.T) {
+	idm := sIdm.idm
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		if uc, ok := idm.(avfs.UserConnecter); ok {
+			u := uc.CurrentUser()
+			if u != dummyidm.NotImplementedUser {
+				t.Errorf("CurrentUser : want User to be %v, got %v", dummyidm.NotImplementedUser, u)
+			}
+		}
+
+		return
+	}
+}
+
 // GroupAddDel tests GroupAdd and GroupDel functions.
 func (sIdm *SuiteIdm) GroupAddDel(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "GroupAddDel" + sIdm.Type()
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		_, err := idm.GroupAdd("")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("GroupAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		err = idm.GroupDel("")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
 
 	if !sIdm.canTest {
 		return
@@ -136,6 +168,20 @@ func (sIdm *SuiteIdm) GroupAddDel(t *testing.T) {
 func (sIdm *SuiteIdm) UserAddDel(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "UserAddDel" + sIdm.Type()
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		_, err := idm.UserAdd("", "")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("UserAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		err = idm.UserDel("")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
 
 	if !sIdm.canTest {
 		return
@@ -269,6 +315,30 @@ func (sIdm *SuiteIdm) Lookup(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "Lookup" + sIdm.Type()
 
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		_, err := idm.LookupGroup("")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("LookupGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		_, err = idm.LookupGroupId(0)
+		if err != avfs.ErrPermDenied {
+			t.Errorf("LookupGroupId : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		_, err = idm.LookupUser("")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("LookupUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		_, err = idm.LookupUserId(0)
+		if err != avfs.ErrPermDenied {
+			t.Errorf("LookupUserId : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
 	if !sIdm.canTest {
 		return
 	}
@@ -331,6 +401,17 @@ func (sIdm *SuiteIdm) Lookup(t *testing.T) {
 func (sIdm *SuiteIdm) User(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "User" + sIdm.Type()
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		if uc, ok := idm.(avfs.UserConnecter); ok {
+			_, err := uc.User("")
+			if err != avfs.ErrPermDenied {
+				t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			}
+		}
+
+		return
+	}
 
 	if !sIdm.canTest || sIdm.uc == nil {
 		return
@@ -410,6 +491,10 @@ func (sIdm *SuiteIdm) UserDenied(t *testing.T) {
 	suffix := "Denied" + sIdm.Type()
 	idm := sIdm.idm
 
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
+
 	if !sIdm.canTest || sIdm.uc == nil {
 		return
 	}
@@ -457,6 +542,10 @@ func (sIdm *SuiteIdm) UserDenied(t *testing.T) {
 // when the identity manager can't be tested.
 func (sIdm *SuiteIdm) PermDenied(t *testing.T) {
 	idm := sIdm.idm
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
 
 	if sIdm.canTest {
 		return
