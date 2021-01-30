@@ -71,38 +71,15 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		}
 	}
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		f, err := vfs.Open(rootDir)
-		if err == nil {
-			// We just need a file handle, be it valid or not, however if the handle is valid, it must be closed.
-			defer f.Close()
-		}
-
-		err = f.Chown(0, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrWinNotSupported, err)
-		default:
-			CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
-		}
-	}
-
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f, _ := vfs.Open(rootDir)
-
-		err := f.Chdir()
-		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrPermDenied, err)
-
-		err = f.Chmod(0)
-		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
 
 		n := f.Name()
 		if n != avfs.NotImplemented {
 			t.Errorf("Name : want error to be %v, got %v", avfs.NotImplemented, n)
 		}
 
-		_, err = f.Stat()
+		_, err := f.Stat()
 		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrPermDenied, err)
 
 		err = f.Sync()

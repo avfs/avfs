@@ -32,8 +32,6 @@ import (
 // FileChdir tests File.Chdir function.
 func (sfs *SuiteFS) FileChdir(t *testing.T) {
 	if sfs.OSType() == avfs.OsWindows {
-		t.Logf("File.Chdir() is not supported by windows, skipping")
-
 		return
 	}
 
@@ -97,6 +95,54 @@ func (sfs *SuiteFS) FileChdir(t *testing.T) {
 		err = f.Chdir()
 		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrNotADirectory, err)
 	})
+}
+
+// FileChmod tests File.Chmod function.
+func (sfs *SuiteFS) FileChmod(t *testing.T) {
+	if sfs.OSType() == avfs.OsWindows {
+		return
+	}
+
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		err = f.Chmod(0)
+		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
+
+		return
+	}
+}
+
+// FileChown tests File.Chown function.
+func (sfs *SuiteFS) FileChown(t *testing.T) {
+	if sfs.OSType() == avfs.OsWindows {
+		return
+	}
+
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		err = f.Chown(0, 0)
+		CheckPathError(t, "Chown", "chown", f.Name(), avfs.ErrPermDenied, err)
+
+		return
+	}
 }
 
 // FileCloseRead tests File.Close function for read only files.
