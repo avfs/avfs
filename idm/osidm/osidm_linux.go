@@ -55,12 +55,8 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case err == exec.ErrNotFound:
-			return nil, err
 		case errStr == "groupadd: group '"+name+"' already exists":
 			return nil, avfs.AlreadyExistsGroupError(name)
-		case strings.HasPrefix(errStr, "groupadd: Permission denied."):
-			return nil, avfs.ErrPermDenied
 		default:
 			return nil, avfs.UnknownError(err.Error() + errStr)
 		}
@@ -92,12 +88,8 @@ func (idm *OsIdm) GroupDel(name string) error {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case err == exec.ErrNotFound:
-			return err
 		case errStr == "groupdel: group '"+name+"' does not exist":
 			return avfs.UnknownGroupError(name)
-		case strings.HasPrefix(errStr, "groupdel: Permission denied."):
-			return avfs.ErrPermDenied
 		default:
 			return avfs.UnknownError(err.Error() + errStr)
 		}
@@ -224,14 +216,10 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case err == exec.ErrNotFound:
-			return nil, err
 		case errStr == "useradd: user '"+name+"' already exists":
 			return nil, avfs.AlreadyExistsUserError(name)
 		case errStr == "useradd: group '"+groupName+"' does not exist":
 			return nil, avfs.UnknownGroupError(groupName)
-		case strings.HasPrefix(errStr, "useradd: Permission denied."):
-			return nil, avfs.ErrPermDenied
 		default:
 			return nil, avfs.UnknownError(err.Error() + errStr)
 		}
@@ -263,12 +251,8 @@ func (idm *OsIdm) UserDel(name string) error {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case err == exec.ErrNotFound:
-			return err
 		case errStr == "userdel: user '"+name+"' does not exist":
 			return avfs.UnknownUserError(name)
-		case strings.HasPrefix(errStr, "userdel: Permission denied."):
-			return avfs.ErrPermDenied
 		default:
 			return avfs.UnknownError(err.Error() + errStr)
 		}
