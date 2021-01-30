@@ -78,14 +78,5 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		if n != avfs.NotImplemented {
 			t.Errorf("Name : want error to be %v, got %v", avfs.NotImplemented, n)
 		}
-
-		_, err := f.Stat()
-		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrPermDenied, err)
-
-		err = f.Sync()
-		CheckPathError(t, "Sync", "sync", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.WriteString("")
-		CheckPathError(t, "WriteString", "write", f.Name(), avfs.ErrPermDenied, err)
 	}
 }

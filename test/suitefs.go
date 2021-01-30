@@ -257,8 +257,10 @@ func (sfs *SuiteFS) Write(t *testing.T) {
 	sfs.Umask(t)
 	sfs.FileChmod(t)
 	sfs.FileChown(t)
+	sfs.FileSync(t)
 	sfs.FileTruncate(t)
 	sfs.FileWrite(t)
+	sfs.FileWriteString(t)
 	sfs.FileWriteTime(t)
 	sfs.FileCloseWrite(t)
 }
@@ -277,13 +279,14 @@ func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.Readlink(t)
 	sfs.Stat(t)
 	sfs.FileChdir(t)
+	sfs.FileCloseRead(t)
 	sfs.FileFd(t)
 	sfs.FileFuncOnClosedFile(t)
 	sfs.FileRead(t)
 	sfs.FileReadDir(t)
 	sfs.FileReaddirnames(t)
 	sfs.FileSeek(t)
-	sfs.FileCloseRead(t)
+	sfs.FileStat(t)
 }
 
 // Dir contains the data to test directories.

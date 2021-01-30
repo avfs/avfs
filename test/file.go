@@ -974,6 +974,42 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 	})
 }
 
+// FileStat tests File.Stat function.
+func (sfs *SuiteFS) FileStat(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.Stat()
+		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrPermDenied, err)
+	}
+}
+
+// FileSync tests File.Sync function.
+func (sfs *SuiteFS) FileSync(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		err = f.Sync()
+		CheckPathError(t, "Sync", "sync", f.Name(), avfs.ErrPermDenied, err)
+	}
+}
+
 // FileTruncate tests File.Truncate function.
 func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
@@ -1410,6 +1446,24 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 			CheckPathError(t, "WriteAt", "write", rootDir, avfs.ErrBadFileDesc, err)
 		}
 	})
+}
+
+// FileWriteString tests File.WriteString function.
+func (sfs *SuiteFS) FileWriteString(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.WriteString("")
+		CheckPathError(t, "WriteString", "write", f.Name(), avfs.ErrPermDenied, err)
+	}
 }
 
 // FileWriteTime checks that modification time is updated on write operations.
