@@ -43,9 +43,12 @@ func (sfs *SuiteFS) FileChdir(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		f, _ := vfs.Open(rootDir)
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
 
-		err := f.Chdir()
+		err = f.Chdir()
 		CheckPathError(t, "Chdir", "chdir", f.Name(), avfs.ErrPermDenied, err)
 
 		return
@@ -208,6 +211,24 @@ func (sfs *SuiteFS) FileCloseWrite(t *testing.T) {
 		err = f.Close()
 		CheckPathError(t, "Close", "close", path, os.ErrClosed, err)
 	})
+}
+
+func (sfs *SuiteFS) FileFd(t *testing.T) {
+	vfs := sfs.GetFsRead()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open("")
+		if err == nil {
+			defer f.Close()
+		}
+
+		fd := f.Fd()
+		if fd != 0 {
+			t.Errorf("Fd : want Fd to be 0, got %v", fd)
+		}
+
+		return
+	}
 }
 
 // FileFuncOnClosedFile tests functions on closed files.
@@ -390,6 +411,17 @@ func (sfs *SuiteFS) FileRead(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.Read([]byte{})
+		CheckPathError(t, "Read", "read", f.Name(), avfs.ErrPermDenied, err)
+
+		_, err = f.ReadAt([]byte{}, 0)
+		CheckPathError(t, "ReadAt", "read", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -523,6 +555,14 @@ func (sfs *SuiteFS) FileReadDir(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.Readdir(0)
+		CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -612,6 +652,14 @@ func (sfs *SuiteFS) FileReaddirnames(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.Readdirnames(0)
+		CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -690,6 +738,14 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.Seek(0, io.SeekStart)
+		CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -880,6 +936,14 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		err = f.Truncate(0)
+		CheckPathError(t, "Truncate", "truncate", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -1061,6 +1125,17 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, err := vfs.Open(rootDir)
+		if err == nil {
+			defer f.Close()
+		}
+
+		_, err = f.Write([]byte{})
+		CheckPathError(t, "Write", "write", f.Name(), avfs.ErrPermDenied, err)
+
+		_, err = f.WriteAt([]byte{}, 0)
+		CheckPathError(t, "WriteAt", "write", f.Name(), avfs.ErrPermDenied, err)
+
 		return
 	}
 

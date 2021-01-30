@@ -21,9 +21,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/avfs/avfs/idm/dummyidm"
-
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfsutils"
 )
 

@@ -17,7 +17,6 @@
 package test
 
 import (
-	"io"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -98,45 +97,16 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 		err = f.Chmod(0)
 		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
 
-		fd := f.Fd()
-		if fd != 0 {
-			t.Errorf("Fd : want Fd to be 0, got %v", fd)
-		}
-
 		n := f.Name()
 		if n != avfs.NotImplemented {
 			t.Errorf("Name : want error to be %v, got %v", avfs.NotImplemented, n)
 		}
-
-		_, err = f.Read([]byte{})
-		CheckPathError(t, "Read", "read", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.ReadAt([]byte{}, 0)
-		CheckPathError(t, "ReadAt", "read", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.Readdir(0)
-		CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.Readdirnames(0)
-		CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.Seek(0, io.SeekStart)
-		CheckPathError(t, "Seek", "seek", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.Stat()
 		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrPermDenied, err)
 
 		err = f.Sync()
 		CheckPathError(t, "Sync", "sync", f.Name(), avfs.ErrPermDenied, err)
-
-		err = f.Truncate(0)
-		CheckPathError(t, "Truncate", "truncate", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.Write([]byte{})
-		CheckPathError(t, "Write", "write", f.Name(), avfs.ErrPermDenied, err)
-
-		_, err = f.WriteAt([]byte{}, 0)
-		CheckPathError(t, "WriteAt", "write", f.Name(), avfs.ErrPermDenied, err)
 
 		_, err = f.WriteString("")
 		CheckPathError(t, "WriteString", "write", f.Name(), avfs.ErrPermDenied, err)
