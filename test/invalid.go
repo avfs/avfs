@@ -18,7 +18,6 @@ package test
 
 import (
 	"io"
-	"os"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -33,21 +32,9 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 	vfs := sfs.GetFsRead()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		fsC, ok := vfs.(avfs.Cloner)
-		if ok {
-			fsClone := fsC.Clone()
-			if fsClone != vfs {
-				t.Errorf("Clone : want cloned vfs to be equal to vfs, got different")
-			}
-		}
-
 		u := vfs.CurrentUser()
 		if u != dummyidm.NotImplementedUser {
 			t.Errorf("CurrentUser : want User to be nil, got %v", u)
-		}
-
-		if um := vfs.GetUMask(); um != 0 {
-			t.Errorf("GetUMask : want umask to be 0, got %d", um)
 		}
 
 		name := vfs.Name()
@@ -55,13 +42,7 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			t.Errorf("Name : want name to be %s, got %s", avfs.NotImplemented, name)
 		}
 
-		_, err := vfs.OpenFile(rootDir, os.O_RDONLY, avfs.DefaultFilePerm)
-		CheckPathError(t, "OpenFile", "open", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Truncate(rootDir, 0)
-		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrPermDenied, err)
-
-		_, err = vfs.User(UsrTest)
+		_, err := vfs.User(UsrTest)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}

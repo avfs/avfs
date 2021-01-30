@@ -2176,6 +2176,21 @@ func (sfs *SuiteFS) TempFile(t *testing.T) {
 	})
 }
 
+// Truncate tests Truncate function.
+func (sfs *SuiteFS) Truncate(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		err := vfs.Truncate(rootDir, 0)
+		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+}
+
 // Umask tests UMask and GetUMask functions.
 func (sfs *SuiteFS) Umask(t *testing.T) {
 	const umaskTest = 0o077
@@ -2184,6 +2199,10 @@ func (sfs *SuiteFS) Umask(t *testing.T) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		vfs.UMask(0)
+
+		if um := vfs.GetUMask(); um != 0 {
+			t.Errorf("GetUMask : want umask to be 0, got %d", um)
+		}
 
 		return
 	}

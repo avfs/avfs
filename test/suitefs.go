@@ -240,9 +240,6 @@ func (sfs *SuiteFS) All(t *testing.T) {
 func (sfs *SuiteFS) Write(t *testing.T) {
 	sfs.Create(t)
 	sfs.Chtimes(t)
-	sfs.FileWrite(t)
-	sfs.FileWriteTime(t)
-	sfs.FileCloseWrite(t)
 	sfs.Link(t)
 	sfs.Mkdir(t)
 	sfs.MkdirAll(t)
@@ -254,31 +251,35 @@ func (sfs *SuiteFS) Write(t *testing.T) {
 	sfs.Symlink(t)
 	sfs.TempDir(t)
 	sfs.TempFile(t)
+	sfs.Truncate(t)
 	sfs.WriteFile(t)
 	sfs.WriteString(t)
 	sfs.Umask(t)
+	sfs.FileWrite(t)
+	sfs.FileWriteTime(t)
+	sfs.FileCloseWrite(t)
 }
 
 // Read runs all file systems tests with read access.
 func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.Chdir(t)
 	sfs.Clone(t)
-	sfs.FileChdir(t)
 	sfs.EvalSymlink(t)
-	sfs.FileFuncOnClosedFile(t)
-	sfs.FileRead(t)
-	sfs.FileSeek(t)
-	sfs.FileCloseRead(t)
-	sfs.FileTruncate(t)
 	sfs.GetTempDir(t)
 	sfs.Glob(t)
 	sfs.Lstat(t)
 	sfs.Open(t)
 	sfs.ReadDir(t)
-	sfs.FileReaddirnames(t)
 	sfs.ReadFile(t)
 	sfs.Readlink(t)
 	sfs.Stat(t)
+	sfs.FileChdir(t)
+	sfs.FileFuncOnClosedFile(t)
+	sfs.FileRead(t)
+	sfs.FileReaddirnames(t)
+	sfs.FileSeek(t)
+	sfs.FileCloseRead(t)
+	sfs.FileTruncate(t)
 }
 
 // Dir contains the data to test directories.
