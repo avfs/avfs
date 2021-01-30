@@ -66,8 +66,8 @@ type node interface {
 	// checkPermissionLck returns true if the current user has the wanted permissions (want) on the node.
 	checkPermissionLck(want avfs.WantMode, u avfs.UserReader) bool
 
-	// fillStatFrom returns a fStat (implementation of os.FileInfo) from a node named name.
-	fillStatFrom(name string) fStat
+	// fillStatFrom returns a *fStat (implementation of os.FileInfo) from a node named name.
+	fillStatFrom(name string) *fStat
 
 	// setMode sets the permissions of the node.
 	setMode(mode os.FileMode, u avfs.UserReader) error

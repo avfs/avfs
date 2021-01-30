@@ -1402,7 +1402,7 @@ func (f *MemFile) Stat() (os.FileInfo, error) {
 	}
 
 	if f.nd == nil {
-		return fStat{}, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		return &fStat{}, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	name := vfsutils.Base(f.name)

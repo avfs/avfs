@@ -258,10 +258,10 @@ func (dn *dirNode) child(name string) node {
 }
 
 // fillStatFrom returns a fStat (implementation of os.FileInfo) from a dirNode dn named name.
-func (dn *dirNode) fillStatFrom(name string) fStat {
+func (dn *dirNode) fillStatFrom(name string) *fStat {
 	dn.mu.RLock()
 
-	fst := fStat{
+	fst := &fStat{
 		name:  name,
 		size:  dn.size(),
 		mode:  dn.mode,
@@ -341,10 +341,10 @@ func (fn *fileNode) deleteData() {
 }
 
 // fillStatFrom returns a fStat (implementation of os.FileInfo) from a fileNode fn named name.
-func (fn *fileNode) fillStatFrom(name string) fStat {
+func (fn *fileNode) fillStatFrom(name string) *fStat {
 	fn.mu.RLock()
 
-	fst := fStat{
+	fst := &fStat{
 		name:  name,
 		size:  fn.size(),
 		mode:  fn.mode,
@@ -408,10 +408,10 @@ func (fn *fileNode) truncate(size int64) {
 // symlinkNode
 
 // fillStatFrom returns a fStat (implementation of os.FileInfo) from a symlinkNode dn named name.
-func (sn *symlinkNode) fillStatFrom(name string) fStat {
+func (sn *symlinkNode) fillStatFrom(name string) *fStat {
 	sn.mu.RLock()
 
-	fst := fStat{
+	fst := &fStat{
 		name:  name,
 		size:  sn.size(),
 		mode:  sn.mode,
@@ -455,32 +455,32 @@ func (rs *removeStack) len() int {
 // fStat is the implementation of FileInfo returned by Stat and Lstat.
 
 // IsDir is the abbreviation for Mode().IsDir().
-func (fst fStat) IsDir() bool {
+func (fst *fStat) IsDir() bool {
 	return fst.mode.IsDir()
 }
 
 // Mode returns the file mode bits.
-func (fst fStat) Mode() os.FileMode {
+func (fst *fStat) Mode() os.FileMode {
 	return fst.mode
 }
 
 // ModTime returns the modification time.
-func (fst fStat) ModTime() time.Time {
+func (fst *fStat) ModTime() time.Time {
 	return time.Unix(0, fst.mtime)
 }
 
 // Type returns the base name of the file.
-func (fst fStat) Name() string {
+func (fst *fStat) Name() string {
 	return fst.name
 }
 
 // Size returns the length in bytes for regular files; system-dependent for others.
-func (fst fStat) Size() int64 {
+func (fst *fStat) Size() int64 {
 	return fst.size
 }
 
 // Sys returns the underlying data source (can return nil).
-func (fst fStat) Sys() interface{} {
+func (fst *fStat) Sys() interface{} {
 	return &avfs.StatT{
 		Uid: uint32(fst.uid),
 		Gid: uint32(fst.gid),
