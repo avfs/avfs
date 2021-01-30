@@ -238,6 +238,7 @@ func (sfs *SuiteFS) All(t *testing.T) {
 
 // Write runs all file systems tests with write access.
 func (sfs *SuiteFS) Write(t *testing.T) {
+	sfs.Create(t)
 	sfs.Chtimes(t)
 	sfs.FileWrite(t)
 	sfs.FileWriteTime(t)
@@ -272,7 +273,7 @@ func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.GetTempDir(t)
 	sfs.Glob(t)
 	sfs.Lstat(t)
-	sfs.OpenFileRead(t)
+	sfs.Open(t)
 	sfs.ReadDir(t)
 	sfs.FileReaddirnames(t)
 	sfs.ReadFile(t)

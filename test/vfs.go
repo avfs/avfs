@@ -196,6 +196,20 @@ func (sfs *SuiteFS) Clone(t *testing.T) {
 	}
 }
 
+func (sfs *SuiteFS) Create(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	defer removeDir()
+
+	vfs := sfs.GetFsWrite()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.Create(rootDir)
+		CheckPathError(t, "Create", "open", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+}
+
 // EvalSymlink tests EvalSymlink function.
 func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
@@ -756,14 +770,17 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 	})
 }
 
-// OpenFileRead tests OpenFile function for read.
-func (sfs *SuiteFS) OpenFileRead(t *testing.T) {
+// Open tests Open function.
+func (sfs *SuiteFS) Open(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.GetFsWrite()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		_, err := vfs.Open(rootDir)
+		CheckPathError(t, "Open", "open", rootDir, avfs.ErrPermDenied, err)
+
 		return
 	}
 
@@ -803,7 +820,7 @@ func (sfs *SuiteFS) OpenFileRead(t *testing.T) {
 	})
 
 	t.Run("OpenFileDirReadOnly", func(t *testing.T) {
-		f, err := vfs.OpenFile(existingDir, os.O_RDONLY, avfs.DefaultFilePerm)
+		f, err := vfs.Open(existingDir)
 		if err != nil {
 			t.Errorf("OpenFile : want error to be nil, got %v", err)
 		}

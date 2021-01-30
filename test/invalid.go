@@ -41,9 +41,6 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			}
 		}
 
-		_, err := vfs.Create(rootDir)
-		CheckPathError(t, "Create", "open", rootDir, avfs.ErrPermDenied, err)
-
 		u := vfs.CurrentUser()
 		if u != dummyidm.NotImplementedUser {
 			t.Errorf("CurrentUser : want User to be nil, got %v", u)
@@ -58,10 +55,7 @@ func (sfs *SuiteFS) NotImplemented(t *testing.T) {
 			t.Errorf("Name : want name to be %s, got %s", avfs.NotImplemented, name)
 		}
 
-		_, err = vfs.Open(rootDir)
-		CheckPathError(t, "Open", "open", rootDir, avfs.ErrPermDenied, err)
-
-		_, err = vfs.OpenFile(rootDir, os.O_RDONLY, avfs.DefaultFilePerm)
+		_, err := vfs.OpenFile(rootDir, os.O_RDONLY, avfs.DefaultFilePerm)
 		CheckPathError(t, "OpenFile", "open", rootDir, avfs.ErrPermDenied, err)
 
 		err = vfs.Truncate(rootDir, 0)
