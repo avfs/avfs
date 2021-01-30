@@ -46,45 +46,7 @@ func TestDummyIdm(t *testing.T) {
 	t.Logf("Idm = %v", idm.Type())
 
 	sIdm := test.NewSuiteIdm(t, idm)
-	sIdm.PermDenied(t)
-}
-
-func TestDummyIdm_CurrentUser(t *testing.T) {
-	idm := dummyidm.New()
-
-	u := idm.CurrentUser()
-
-	gid := u.Gid()
-	if gid != -1 {
-		t.Errorf("Gid : want Gid to be -1, got %d", gid)
-	}
-
-	isRoot := u.IsRoot()
-	if isRoot {
-		t.Errorf("IsRoot : want isRoot to be false, got %t", isRoot)
-	}
-
-	name := u.Name()
-	if name != avfs.NotImplemented {
-		t.Errorf("Name : want name to be empty, got %s", name)
-	}
-
-	uid := u.Uid()
-	if uid != -1 {
-		t.Errorf("Uid : want Uid to be -1, got %d", uid)
-	}
-
-	g := dummyidm.Group{}
-
-	gid = g.Gid()
-	if gid != 0 {
-		t.Errorf("Gid : want Gid to be 0, got %d", gid)
-	}
-
-	name = g.Name()
-	if name != "" {
-		t.Errorf("Name : want name to be empty, got %s", name)
-	}
+	sIdm.All(t)
 }
 
 func TestDummyIdmFeatures(t *testing.T) {
