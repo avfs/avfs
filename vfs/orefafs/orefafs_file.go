@@ -25,8 +25,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// File functions
-
 // Chdir changes the current working directory to the file,
 // which must be a directory.
 // If there is an error, it will be of type *PathError.
