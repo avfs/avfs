@@ -773,13 +773,7 @@ func (sfs *SuiteFS) Open(t *testing.T) {
 
 	data := []byte("AAABBBCCCDDD")
 	existingFile := sfs.CreateFile(t, data)
-
-	existingDir := vfs.Join(rootDir, "existingDir")
-
-	err := vfs.Mkdir(existingDir, avfs.DefaultDirPerm)
-	if err != nil {
-		t.Fatalf("Mkdir : want error to be nil, got %v", err)
-	}
+	existingDir := sfs.CreateDir(t)
 
 	vfs = sfs.vfsRead
 
@@ -1203,13 +1197,8 @@ func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
 		}
 	})
 
-	t.Run("OpenFileDir", func(t *testing.T) {
-		existingDir := vfs.Join(rootDir, "existingDir")
-
-		err := vfs.Mkdir(existingDir, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("Mkdir : want error to be nil, got %v", err)
-		}
+	t.Run("OpenFileWriteOnDir", func(t *testing.T) {
+		existingDir := sfs.CreateDir(t)
 
 		f, err := vfs.OpenFile(existingDir, os.O_WRONLY, avfs.DefaultFilePerm)
 		CheckPathError(t, "OpenFile", "open", existingDir, avfs.ErrIsADirectory, err)
@@ -1362,10 +1351,7 @@ func (sfs *SuiteFS) ReadFile(t *testing.T) {
 
 		vfs = sfs.vfsWrite
 
-		err = vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path = sfs.CreateFile(t, data)
 
 		vfs = sfs.vfsRead
 
@@ -1595,14 +1581,9 @@ func (sfs *SuiteFS) RemoveAll(t *testing.T) {
 	})
 
 	t.Run("RemoveAllOneFile", func(t *testing.T) {
-		err := vfs.MkdirAll(baseDir, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("Mkdir %s : want error to be nil, got %v", baseDir, err)
-		}
-
 		existingFile := sfs.CreateEmptyFile(t)
 
-		err = vfs.RemoveAll(existingFile)
+		err := vfs.RemoveAll(existingFile)
 		if err != nil {
 			t.Errorf("RemoveAll %s : want error to be nil, got %v", existingFile, err)
 		}
