@@ -20,9 +20,6 @@ import (
 	"os"
 	"reflect"
 	"testing"
-
-	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // CheckPathError checks errors of type os.PathError.
@@ -100,64 +97,4 @@ func CheckPanic(t *testing.T, funcName string, f func()) {
 	}()
 
 	f()
-}
-
-// CreateEmptyFile creates an empty file and returns the file name.
-func CreateEmptyFile(t *testing.T, vfs avfs.VFS, rootDir string) string {
-	t.Helper()
-
-	f, err := vfs.TempFile(rootDir, avfs.Avfs)
-	if err != nil {
-		t.Fatalf("TempFile : want error to be nil, got %v", err)
-	}
-
-	defer f.Close()
-
-	return f.Name()
-}
-
-// CreateRndDir creates one directory with random empty subdirectories, files and symbolic links.
-func CreateRndDir(t *testing.T, vfs avfs.VFS, rootDir string) *vfsutils.RndTree {
-	t.Helper()
-
-	RndParamsOneDir := vfsutils.RndTreeParams{
-		MinDepth:    1,
-		MaxDepth:    1,
-		MinName:     4,
-		MaxName:     32,
-		MinDirs:     10,
-		MaxDirs:     20,
-		MinFiles:    50,
-		MaxFiles:    100,
-		MinFileLen:  0,
-		MaxFileLen:  0,
-		MinSymlinks: 5,
-		MaxSymlinks: 10,
-	}
-
-	rndTree, err := vfsutils.NewRndTree(vfs, RndParamsOneDir)
-	if err != nil {
-		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
-	}
-
-	err = rndTree.CreateTree(rootDir)
-	if err != nil {
-		t.Fatalf("rndTree.Create : want error to be nil, got %v", err)
-	}
-
-	return rndTree
-}
-
-func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
-	t.Helper()
-
-	vfs := sfs.vfsRead
-	name := vfs.Join(sfs.rootDir, "nonExistingFile")
-
-	f, err := vfs.Open(name)
-	if vfs.IsExist(err) {
-		t.Fatalf("Open %s : want non existing file, got file exists", name)
-	}
-
-	return f
 }

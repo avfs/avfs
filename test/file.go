@@ -50,7 +50,7 @@ func (sfs *SuiteFS) FileChdir(t *testing.T) {
 	}
 
 	dirs := CreateDirs(t, vfs, rootDir)
-	existingFile := CreateEmptyFile(t, vfs, rootDir)
+	existingFile := sfs.CreateEmptyFile(t)
 
 	vfs = sfs.vfsRead
 
@@ -142,7 +142,7 @@ func (sfs *SuiteFS) FileChown(t *testing.T) {
 
 // FileCloseRead tests File.Close function for read only files.
 func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.vfsWrite
@@ -157,12 +157,7 @@ func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(rootDir, "TestFileCloseRead.txt")
-
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	path := sfs.CreateFile(t, data)
 
 	openInfo, err := vfs.Stat(path)
 	if err != nil {
@@ -198,7 +193,7 @@ func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
 
 // FileCloseWrite tests File.Close function for read/write files.
 func (sfs *SuiteFS) FileCloseWrite(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.vfsWrite
@@ -208,12 +203,7 @@ func (sfs *SuiteFS) FileCloseWrite(t *testing.T) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(rootDir, "TestFileCloseWrite.txt")
-
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	path := sfs.CreateFile(t, data)
 
 	openInfo, err := vfs.Stat(path)
 	if err != nil {
@@ -477,12 +467,7 @@ func (sfs *SuiteFS) FileRead(t *testing.T) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(rootDir, "TestFileRead.txt")
-
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	path := sfs.CreateFile(t, data)
 
 	vfs = sfs.vfsRead
 
@@ -614,7 +599,7 @@ func (sfs *SuiteFS) FileReadDir(t *testing.T) {
 		return
 	}
 
-	rndTree := CreateRndDir(t, vfs, rootDir)
+	rndTree := sfs.CreateRndDir(t)
 	wDirs := len(rndTree.Dirs)
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
@@ -708,7 +693,7 @@ func (sfs *SuiteFS) FileReaddirnames(t *testing.T) {
 		return
 	}
 
-	rndTree := CreateRndDir(t, vfs, rootDir)
+	rndTree := sfs.CreateRndDir(t)
 	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
 	existingFile := rndTree.Files[0]
 
@@ -792,12 +777,7 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(rootDir, "TestFileSeek.txt")
-
-	err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	path := sfs.CreateFile(t, data)
 
 	vfs = sfs.vfsRead
 
@@ -1016,13 +996,9 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(rootDir, "TestFileTruncate.txt")
 
 	t.Run("FileTruncate", func(t *testing.T) {
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateFile(t, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		if err != nil {
@@ -1050,13 +1026,10 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	})
 
 	t.Run("Truncate", func(t *testing.T) {
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateFile(t, data)
 
 		for i := len(data); i >= 0; i-- {
-			err = vfs.Truncate(path, int64(i))
+			err := vfs.Truncate(path, int64(i))
 			if err != nil {
 				t.Errorf("Truncate : want error to be nil, got %v", err)
 			}
@@ -1073,12 +1046,7 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	})
 
 	t.Run("TruncateOnDir", func(t *testing.T) {
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Truncate(rootDir, 0)
+		err := vfs.Truncate(rootDir, 0)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
@@ -1107,12 +1075,9 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	})
 
 	t.Run("TruncateSizeNegative", func(t *testing.T) {
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateFile(t, data)
 
-		err = vfs.Truncate(path, -1)
+		err := vfs.Truncate(path, -1)
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, "Truncate", "truncate", path, avfs.ErrWinNegativeSeek, err)
@@ -1137,14 +1102,10 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	})
 
 	t.Run("TruncateSizeBiggerFileSize", func(t *testing.T) {
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
+		path := sfs.CreateFile(t, data)
 		newSize := len(data) * 2
 
-		err = vfs.Truncate(path, int64(newSize))
+		err := vfs.Truncate(path, int64(newSize))
 		if err != nil {
 			t.Errorf("Truncate : want error to be nil, got %v", err)
 		}
@@ -1341,12 +1302,7 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 	})
 
 	t.Run("FileReadOnly", func(t *testing.T) {
-		path := vfs.Join(rootDir, "TestFileReadOnly.txt")
-
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateFile(t, data)
 
 		f, err := vfs.Open(path)
 		if err != nil {

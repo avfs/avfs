@@ -50,7 +50,7 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 	}
 
 	dirs := CreateDirs(t, vfs, rootDir)
-	existingFile := CreateEmptyFile(t, vfs, rootDir)
+	existingFile := sfs.CreateEmptyFile(t)
 
 	vfs = sfs.vfsRead
 
@@ -555,7 +555,7 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 		return
 	}
 
-	existingFile := CreateEmptyFile(t, vfs, rootDir)
+	existingFile := sfs.CreateEmptyFile(t)
 
 	vfs = sfs.vfsRead
 	dirs := GetDirs()
@@ -678,9 +678,7 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 		return
 	}
 
-	existingFile := CreateEmptyFile(t, vfs, rootDir)
-
-	vfs = sfs.vfsWrite
+	existingFile := sfs.CreateEmptyFile(t)
 	dirs := GetDirsAll()
 
 	t.Run("MkdirAll", func(t *testing.T) {
@@ -1289,7 +1287,7 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 		return
 	}
 
-	rndTree := CreateRndDir(t, vfs, rootDir)
+	rndTree := sfs.CreateRndDir(t)
 	wDirs := len(rndTree.Dirs)
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
@@ -1623,7 +1621,7 @@ func (sfs *SuiteFS) RemoveAll(t *testing.T) {
 			t.Fatalf("Mkdir %s : want error to be nil, got %v", baseDir, err)
 		}
 
-		existingFile := CreateEmptyFile(t, vfs, rootDir)
+		existingFile := sfs.CreateEmptyFile(t)
 
 		err = vfs.RemoveAll(existingFile)
 		if err != nil {
@@ -2121,7 +2119,7 @@ func (sfs *SuiteFS) TempDir(t *testing.T) {
 		return
 	}
 
-	existingFile := CreateEmptyFile(t, vfs, rootDir)
+	existingFile := sfs.CreateEmptyFile(t)
 
 	t.Run("TempDirOnFile", func(t *testing.T) {
 		_, err := vfs.TempDir(existingFile, "")
@@ -2156,7 +2154,7 @@ func (sfs *SuiteFS) TempFile(t *testing.T) {
 		return
 	}
 
-	existingFile := CreateEmptyFile(t, vfs, rootDir)
+	existingFile := sfs.CreateEmptyFile(t)
 
 	t.Run("TempFileOnFile", func(t *testing.T) {
 		_, err := vfs.TempFile(existingFile, "")
