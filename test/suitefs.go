@@ -282,6 +282,7 @@ func (sfs *SuiteFS) Read(t *testing.T) {
 	sfs.FileCloseRead(t)
 	sfs.FileFd(t)
 	sfs.FileFuncOnClosedFile(t)
+	sfs.FileName(t)
 	sfs.FileRead(t)
 	sfs.FileReadDir(t)
 	sfs.FileReaddirnames(t)

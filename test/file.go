@@ -394,6 +394,22 @@ func (sfs *SuiteFS) FileFuncOnClosedFile(t *testing.T) {
 	})
 }
 
+// FileName tests File.Name function.
+func (sfs *SuiteFS) FileName(t *testing.T) {
+	vfs := sfs.GetFsRead()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f, _ := vfs.Open("")
+
+		name := f.Name()
+		if name != avfs.NotImplemented {
+			t.Errorf("Name : want error to be %v, got %v", avfs.NotImplemented, name)
+		}
+
+		return
+	}
+}
+
 // FileNilPtr test calls to File methods when f is a nil File.
 func FileNilPtr(t *testing.T, f avfs.File) {
 	err := f.Chdir()

@@ -56,7 +56,7 @@ func TestDummyFSPerm(t *testing.T) {
 	sfs.Perm(t)
 }
 
-func TestDummyFsFeatures(t *testing.T) {
+func TestDummyFSCfg(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
@@ -68,6 +68,11 @@ func TestDummyFsFeatures(t *testing.T) {
 
 	if vfs.Features() != 0 {
 		t.Errorf("Features : want Features to be 0, got %d", vfs.Features())
+	}
+
+	name := vfs.Name()
+	if name != avfs.NotImplemented {
+		t.Errorf("Name : want error to be %v, got %v", avfs.NotImplemented, name)
 	}
 
 	if vfs.OSType() != avfs.OsLinux {
