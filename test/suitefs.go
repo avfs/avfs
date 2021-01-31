@@ -103,16 +103,16 @@ func NewSuiteFS(tb testing.TB, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 // Options
 
 // WithVFSRead returns an option function which sets the VFS for read access.
-func WithVFSRead(VFSRead avfs.VFS) Option {
+func WithVFSRead(vfsRead avfs.VFS) Option {
 	return func(sfs *SuiteFS) {
-		sfs.vfsRead = VFSRead
+		sfs.vfsRead = vfsRead
 	}
 }
 
 // WithVFSWrite returns an option function which sets the VFS for write access.
-func WithVFSWrite(VFSWrite avfs.VFS) Option {
+func WithVFSWrite(vfsWrite avfs.VFS) Option {
 	return func(sfs *SuiteFS) {
-		sfs.vfsWrite = VFSWrite
+		sfs.vfsWrite = vfsWrite
 	}
 }
 
