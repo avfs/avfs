@@ -311,13 +311,7 @@ func (sfs *SuiteFS) Link(t *testing.T) {
 
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
-
-	pathLinks := vfs.Join(rootDir, "links")
-
-	err := vfs.Mkdir(pathLinks, avfs.DefaultDirPerm)
-	if err != nil {
-		t.Fatalf("mkdir %s : want error to be nil, got %v", pathLinks, err)
-	}
+	pathLinks := sfs.CreateDir(t)
 
 	t.Run("LinkCreate", func(t *testing.T) {
 		for _, file := range files {
@@ -393,14 +387,9 @@ func (sfs *SuiteFS) Link(t *testing.T) {
 
 	t.Run("LinkNonExistingFile", func(t *testing.T) {
 		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
-		existingFile := vfs.Join(rootDir, "existingFile")
+		existingFile := sfs.CreateEmptyFile(t)
 
-		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Link(nonExistingFile, existingFile)
+		err := vfs.Link(nonExistingFile, existingFile)
 		CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 }
@@ -783,16 +772,11 @@ func (sfs *SuiteFS) Open(t *testing.T) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
-
-	err := vfs.WriteFile(existingFile, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	existingFile := sfs.CreateFile(t, data)
 
 	existingDir := vfs.Join(rootDir, "existingDir")
 
-	err = vfs.Mkdir(existingDir, avfs.DefaultDirPerm)
+	err := vfs.Mkdir(existingDir, avfs.DefaultDirPerm)
 	if err != nil {
 		t.Fatalf("Mkdir : want error to be nil, got %v", err)
 	}
@@ -1027,15 +1011,11 @@ func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
 
 	data := []byte("AAABBBCCCDDD")
 	whateverData := []byte("whatever")
-	existingFile := vfs.Join(rootDir, "ExistingFile.txt")
 	buf3 := make([]byte, 3)
 
-	err := vfs.WriteFile(existingFile, data, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
-
 	t.Run("OpenFileWriteOnly", func(t *testing.T) {
+		existingFile := sfs.CreateFile(t, data)
+
 		f, err := vfs.OpenFile(existingFile, os.O_WRONLY, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Errorf("Open : want error to be nil, got %v", err)
@@ -1119,10 +1099,7 @@ func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
 	})
 
 	t.Run("OpenFileAppend", func(t *testing.T) {
-		err := vfs.WriteFile(existingFile, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("Chmod : want error to be nil, got %v", err)
-		}
+		existingFile := sfs.CreateFile(t, data)
 
 		f, err := vfs.OpenFile(existingFile, os.O_WRONLY|os.O_APPEND, avfs.DefaultFilePerm)
 		if err != nil {
@@ -1152,6 +1129,8 @@ func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
 	})
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
+		existingFile := sfs.CreateFile(t, data)
+
 		f, err := vfs.Open(existingFile)
 		if err != nil {
 			t.Errorf("Open : want error to be nil, got %v", err)
@@ -1668,6 +1647,8 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
+	data := []byte("data")
+
 	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -1744,46 +1725,25 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 
 	t.Run("RenameNonExistingFile", func(t *testing.T) {
 		srcNonExistingFile := vfs.Join(rootDir, "srcNonExistingFile1")
-		dstNonExistingFile := vfs.Join(rootDir, "dstNonExistingFile1")
+		dstNonExistingFile := vfs.Join(rootDir, "dstNonExistingFile2")
 
 		err := vfs.Rename(srcNonExistingFile, dstNonExistingFile)
 		CheckLinkError(t, "Rename", "rename", srcNonExistingFile, dstNonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
 
 	t.Run("RenameDirToExistingDir", func(t *testing.T) {
-		srcExistingDir := vfs.Join(rootDir, "srcExistingDir2")
-		dstExistingDir := vfs.Join(rootDir, "dstExistingDir2")
+		srcExistingDir := sfs.CreateDir(t)
+		dstExistingDir := sfs.CreateDir(t)
 
-		err := vfs.Mkdir(srcExistingDir, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("Mkdir : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Mkdir(dstExistingDir, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("Mkdir : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Rename(srcExistingDir, dstExistingDir)
+		err := vfs.Rename(srcExistingDir, dstExistingDir)
 		CheckLinkError(t, "Rename", "rename", srcExistingDir, dstExistingDir, avfs.ErrFileExists, err)
 	})
 
 	t.Run("RenameFileToExistingFile", func(t *testing.T) {
-		srcExistingFile := vfs.Join(rootDir, "srcExistingFile3")
-		dstExistingFile := vfs.Join(rootDir, "dstExistingFile3")
-		data := []byte("data")
+		srcExistingFile := sfs.CreateFile(t, data)
+		dstExistingFile := sfs.CreateEmptyFile(t)
 
-		err := vfs.WriteFile(srcExistingFile, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
-		err = vfs.WriteFile(dstExistingFile, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Rename(srcExistingFile, dstExistingFile)
+		err := vfs.Rename(srcExistingFile, dstExistingFile)
 		if err != nil {
 			t.Errorf("Rename : want error to be nil, got %v", err)
 		}
@@ -1802,20 +1762,10 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	})
 
 	t.Run("RenameFileToExistingDir", func(t *testing.T) {
-		srcExistingFile := vfs.Join(rootDir, "srcExistingFile4")
-		dstExistingDir := vfs.Join(rootDir, "dstExistingDir4")
+		srcExistingFile := sfs.CreateFile(t, data)
+		dstExistingDir := sfs.CreateDir(t)
 
-		err := vfs.WriteFile(srcExistingFile, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Mkdir(dstExistingDir, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("Mkdir : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Rename(srcExistingFile, dstExistingDir)
+		err := vfs.Rename(srcExistingFile, dstExistingDir)
 		CheckLinkError(t, "Rename", "rename", srcExistingFile, dstExistingDir, avfs.ErrFileExists, err)
 	})
 }
@@ -2262,12 +2212,7 @@ func (sfs *SuiteFS) WriteOnReadOnly(t *testing.T) {
 
 	vfs := sfs.vfsWrite
 
-	existingFile := vfs.Join(rootDir, "existingFile")
-
-	err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	existingFile := sfs.CreateEmptyFile(t)
 
 	newFile := vfs.Join(existingFile, "newFile")
 

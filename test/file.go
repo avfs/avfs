@@ -261,7 +261,7 @@ func (sfs *SuiteFS) FileFd(t *testing.T) {
 
 // FileFuncOnClosedFile tests functions on closed files.
 func (sfs *SuiteFS) FileFuncOnClosedFile(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
+	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
 	vfs := sfs.vfsWrite
@@ -270,12 +270,7 @@ func (sfs *SuiteFS) FileFuncOnClosedFile(t *testing.T) {
 		return
 	}
 
-	existingFile := vfs.Join(rootDir, "existingFile")
-
-	err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	existingFile := sfs.CreateEmptyFile(t)
 
 	vfs = sfs.vfsRead
 
@@ -1239,12 +1234,7 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 	})
 
 	t.Run("FileWriteNegativeOffset", func(t *testing.T) {
-		path := vfs.Join(rootDir, "TestFileWriteNO.txt")
-
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateFile(t, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
 		if err != nil {
@@ -1262,12 +1252,7 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 	})
 
 	t.Run("FileWriteAtAfterEndOfFile", func(t *testing.T) {
-		path := vfs.Join(rootDir, "TestFileWriteAfterEOF.txt")
-
-		err := vfs.WriteFile(path, data, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateFile(t, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		if err != nil {
