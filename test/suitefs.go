@@ -123,7 +123,7 @@ func WithOs(osType avfs.OSType) Option {
 	}
 }
 
-// CreateDir  creates a directory and returns the path to this directory.
+// CreateDir creates a directory and returns the path to this directory.
 func (sfs *SuiteFS) CreateDir(t *testing.T) string {
 	t.Helper()
 
@@ -135,6 +135,20 @@ func (sfs *SuiteFS) CreateDir(t *testing.T) string {
 	}
 
 	return path
+}
+
+// CreateAndOpenFile creates and open a file.
+func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T) avfs.File {
+	t.Helper()
+
+	vfs := sfs.vfsWrite
+
+	f, err := vfs.TempFile(sfs.rootDir, avfs.Avfs)
+	if err != nil {
+		t.Fatalf("TempFile : want error to be nil, got %v", err)
+	}
+
+	return f
 }
 
 // CreateEmptyFile creates an empty file and returns the file name.

@@ -65,33 +65,32 @@ func (sfs *SuiteFS) RaceFile(t *testing.T) {
 
 	vfs := sfs.vfsWrite
 
-	sfs.RaceFunc(t, "Create", RaceAllOk, func() error {
-		newFile := vfs.Join(rootDir, "newFile")
-		f, err := vfs.Create(newFile)
-		if err == nil {
-			defer f.Close()
-		}
+	t.Run("RaceCreate", func(t *testing.T) {
+		sfs.RaceFunc(t, "Create", RaceAllOk, func() error {
+			newFile := vfs.Join(rootDir, "newFile")
+			f, err := vfs.Create(newFile)
+			if err == nil {
+				defer f.Close()
+			}
 
-		return err
+			return err
+		})
 	})
 
-	sfs.RaceFunc(t, "Open Excl", RaceOneOk, func() error {
-		newFile := vfs.Join(rootDir, "newFileExcl")
-		f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
-		if err == nil {
-			defer f.Close()
-		}
+	t.Run("RaceOpenExcl", func(t *testing.T) {
+		sfs.RaceFunc(t, "Open Excl", RaceOneOk, func() error {
+			newFile := vfs.Join(rootDir, "newFileExcl")
+			f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
+			if err == nil {
+				defer f.Close()
+			}
 
-		return err
+			return err
+		})
 	})
 
-	func() {
-		roFile := vfs.Join(rootDir, "roFile")
-
-		err := vfs.WriteFile(roFile, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want err to be nil, got %v", err)
-		}
+	t.Run("RaceOpenReadOnly", func(t *testing.T) {
+		roFile := sfs.CreateEmptyFile(t)
 
 		sfs.RaceFunc(t, "Open Read Only", RaceAllOk, func() error {
 			f, err := vfs.Open(roFile)
@@ -101,18 +100,13 @@ func (sfs *SuiteFS) RaceFile(t *testing.T) {
 
 			return err
 		})
-	}()
+	})
 
-	func() {
-		newFile := vfs.Join(rootDir, "newFileClose")
-
-		f, err := vfs.Create(newFile)
-		if err != nil {
-			t.Fatalf("Create : want err to be nil, got %v", err)
-		}
+	t.Run("RaceFileClose", func(t *testing.T) {
+		f := sfs.CreateAndOpenFile(t)
 
 		sfs.RaceFunc(t, "Close", RaceOneOk, f.Close)
-	}()
+	})
 }
 
 // RaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
