@@ -451,38 +451,3 @@ func (rs *removeStack) pop() *dirNode {
 func (rs *removeStack) len() int {
 	return len(rs.stack)
 }
-
-// fStat is the implementation of FileInfo returned by Stat and Lstat.
-
-// IsDir is the abbreviation for Mode().IsDir().
-func (fst *fStat) IsDir() bool {
-	return fst.mode.IsDir()
-}
-
-// Mode returns the file mode bits.
-func (fst *fStat) Mode() os.FileMode {
-	return fst.mode
-}
-
-// ModTime returns the modification time.
-func (fst *fStat) ModTime() time.Time {
-	return time.Unix(0, fst.mtime)
-}
-
-// Type returns the base name of the file.
-func (fst *fStat) Name() string {
-	return fst.name
-}
-
-// Size returns the length in bytes for regular files; system-dependent for others.
-func (fst *fStat) Size() int64 {
-	return fst.size
-}
-
-// Sys returns the underlying data source (can return nil).
-func (fst *fStat) Sys() interface{} {
-	return &avfs.StatT{
-		Uid: uint32(fst.uid),
-		Gid: uint32(fst.gid),
-	}
-}
