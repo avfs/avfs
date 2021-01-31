@@ -336,12 +336,7 @@ func (sfs *SuiteFS) Chmod(t *testing.T) {
 	})
 
 	t.Run("ChmodFile", func(t *testing.T) {
-		path := vfs.Join(rootDir, "existingFile")
-
-		err := vfs.WriteFile(path, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
+		path := sfs.CreateEmptyFile(t)
 
 		for shift := 6; shift >= 0; shift -= 3 {
 			for mode := os.FileMode(1); mode <= 6; mode++ {
@@ -394,17 +389,11 @@ func (sfs *SuiteFS) Chroot(t *testing.T) {
 		return
 	}
 
-	t.Run("ChrootInvalid", func(t *testing.T) {
-		existingFile := vfs.Join(rootDir, "existingFile")
-
-		err := vfs.WriteFile(existingFile, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile : want error to be nil, got %v", err)
-		}
-
+	t.Run("ChrootOnFile", func(t *testing.T) {
+		existingFile := sfs.CreateEmptyFile(t)
 		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
 
-		err = vfs.Chroot(existingFile)
+		err := vfs.Chroot(existingFile)
 		CheckPathError(t, "Chroot", "chroot", existingFile, avfs.ErrNotADirectory, err)
 
 		err = vfs.Chroot(nonExistingFile)
