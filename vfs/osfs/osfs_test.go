@@ -38,12 +38,12 @@ var (
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {
-	vfsRoot, err := osfs.New(osfs.WithIdm(osidm.New()))
+	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		tb.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sfs := test.NewSuiteFS(tb, vfsRoot)
+	sfs := test.NewSuiteFS(tb, vfs)
 
 	return sfs
 }

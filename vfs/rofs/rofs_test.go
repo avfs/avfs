@@ -37,16 +37,14 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFS {
-	vfsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfsWrite, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	vfsRead := rofs.New(vfsRoot)
+	vfs := rofs.New(vfsWrite)
 
-	sfs := test.NewSuiteFS(t, vfsRoot,
-		test.WithVFSWrite(vfsRoot),
-		test.WithVFSRead(vfsRead))
+	sfs := test.NewSuiteFS(t, vfsWrite, test.WithVFSRead(vfs))
 
 	return sfs
 }
@@ -65,15 +63,15 @@ func TestRoFSPerm(t *testing.T) {
 }
 
 func TestRoFSOSType(t *testing.T) {
-	vfsBase, err := memfs.New()
+	vfsWrite, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	vfs := rofs.New(vfsBase)
+	vfs := rofs.New(vfsWrite)
 
 	ost := vfs.OSType()
-	if ost != vfsBase.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", vfsBase.OSType(), ost)
+	if ost != vfsWrite.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", vfsWrite.OSType(), ost)
 	}
 }

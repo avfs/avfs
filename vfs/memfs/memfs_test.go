@@ -37,12 +37,12 @@ var (
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {
-	vfsRoot, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		tb.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(tb, vfsRoot)
+	sfs := test.NewSuiteFS(tb, vfs)
 
 	return sfs
 }

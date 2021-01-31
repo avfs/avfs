@@ -26,9 +26,6 @@ import (
 
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
-	// vfsRoot is the file system as a root user.
-	vfsRoot avfs.VFS
-
 	// vfsWrite is the file system as test user with read and write permissions.
 	vfsWrite avfs.VFS
 
@@ -58,25 +55,24 @@ type SuiteFS struct {
 type Option func(*SuiteFS)
 
 // NewSuiteFS creates a new test suite for a file system.
-func NewSuiteFS(tb testing.TB, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
-	if vfsRoot == nil {
-		tb.Fatal("New : want FsRoot to be set, got nil")
+func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
+	if vfsWrite == nil {
+		tb.Fatal("New : want vfsWrite to be set, got nil")
 	}
 
-	currentUser := vfsRoot.CurrentUser()
-	canTestPerm := vfsRoot.HasFeature(avfs.FeatIdentityMgr) && currentUser.IsRoot()
+	currentUser := vfsWrite.CurrentUser()
+	canTestPerm := vfsWrite.HasFeature(avfs.FeatIdentityMgr) && currentUser.IsRoot()
 
-	info := "Info vfs : type = " + vfsRoot.Type()
-	if vfsRoot.Name() != "" {
-		info += ", name = " + vfsRoot.Name()
+	info := "Info vfs : type = " + vfsWrite.Type()
+	if vfsWrite.Name() != "" {
+		info += ", name = " + vfsWrite.Name()
 	}
 
 	tb.Log(info)
 
 	sfs := &SuiteFS{
-		vfsRoot:     vfsRoot,
-		vfsWrite:    vfsRoot,
-		vfsRead:     vfsRoot,
+		vfsWrite:    vfsWrite,
+		vfsRead:     vfsWrite,
 		rootDir:     "",
 		maxRace:     1000,
 		canTestPerm: canTestPerm,
@@ -84,10 +80,10 @@ func NewSuiteFS(tb testing.TB, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 	}
 
 	if canTestPerm {
-		sfs.Groups = CreateGroups(tb, vfsRoot, "")
-		sfs.Users = CreateUsers(tb, vfsRoot, "")
+		sfs.Groups = CreateGroups(tb, vfsWrite, "")
+		sfs.Users = CreateUsers(tb, vfsWrite, "")
 
-		_, err := vfsRoot.User(UsrTest)
+		_, err := vfsWrite.User(UsrTest)
 		if err != nil {
 			tb.Fatalf("User %s : want error to be nil, got %s", UsrTest, err)
 		}
@@ -106,13 +102,6 @@ func NewSuiteFS(tb testing.TB, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 func WithVFSRead(vfsRead avfs.VFS) Option {
 	return func(sfs *SuiteFS) {
 		sfs.vfsRead = vfsRead
-	}
-}
-
-// WithVFSWrite returns an option function which sets the VFS for write access.
-func WithVFSWrite(vfsWrite avfs.VFS) Option {
-	return func(sfs *SuiteFS) {
-		sfs.vfsWrite = vfsWrite
 	}
 }
 
@@ -291,7 +280,7 @@ func (sfs *SuiteFS) OSType() avfs.OSType {
 
 // VFSAsUser sets the test user to userName.
 func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserReader) {
-	vfs := sfs.vfsRoot
+	vfs := sfs.vfsWrite
 
 	u := vfs.CurrentUser()
 	if !sfs.canTestPerm || u.Name() == name {
@@ -304,11 +293,6 @@ func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserRe
 	}
 
 	return vfs, u
-}
-
-// VFSRoot return the root file system.
-func (sfs *SuiteFS) VFSRoot() avfs.VFS {
-	return sfs.vfsRoot
 }
 
 // VFSRead returns the file system for read only functions.

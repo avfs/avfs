@@ -54,7 +54,7 @@ func (sfs *SuiteFS) Chown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.vfsRoot
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chown(rootDir, 0, 0)
@@ -158,7 +158,7 @@ func (sfs *SuiteFS) Lchown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.vfsRoot
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Lchown(rootDir, 0, 0)
@@ -299,7 +299,7 @@ func (sfs *SuiteFS) Chmod(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.vfsRoot
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chmod(rootDir, avfs.DefaultDirPerm)
@@ -385,7 +385,7 @@ func (sfs *SuiteFS) Chroot(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.vfsRoot
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatChroot) {
 		err := vfs.Chroot(rootDir)
@@ -483,15 +483,15 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 
 	const baseDir = "baseDir"
 
-	vfsRoot := sfs.vfsRoot
+	vfsWrite := sfs.vfsWrite
 
-	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
+	if !vfsWrite.HasFeature(avfs.FeatIdentityMgr) {
 		return
 	}
 
 	uis := UserInfos()
 
-	ut, err := vfsRoot.LookupUser(UsrTest)
+	ut, err := vfsWrite.LookupUser(UsrTest)
 	if err != nil {
 		t.Fatalf("LookupUser %s : want error to be nil, got %v", UsrTest, err)
 	}
@@ -500,24 +500,24 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 		for mode := os.FileMode(1); mode <= 6; mode++ {
 			wantMode := mode << shift
 			fileName := fmt.Sprintf("%s-%03o", ut.Name(), wantMode)
-			path := vfsRoot.Join(rootDir, fileName)
+			path := vfsWrite.Join(rootDir, fileName)
 
-			err = vfsRoot.Mkdir(path, avfs.DefaultDirPerm)
+			err = vfsWrite.Mkdir(path, avfs.DefaultDirPerm)
 			if err != nil {
 				t.Fatalf("Mkdir %s : want error to be nil, got %v", path, err)
 			}
 
-			_, err = vfsRoot.Stat(path)
+			_, err = vfsWrite.Stat(path)
 			if err != nil {
 				t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
 			}
 
-			err := vfsRoot.Chmod(path, wantMode)
+			err := vfsWrite.Chmod(path, wantMode)
 			if err != nil {
 				t.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
 			}
 
-			err = vfsRoot.Chown(path, ut.Uid(), ut.Gid())
+			err = vfsWrite.Chown(path, ut.Uid(), ut.Gid())
 			if err != nil {
 				t.Fatalf("Chown %s : want error to be nil, got %v", path, err)
 			}
@@ -570,8 +570,8 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 	})
 
 	// Cleanup permissions for RemoveAll()
-	_ = vfsRoot.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = vfsRoot.Chmod(path, 0o777)
+	_ = vfsWrite.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		_ = vfsWrite.Chmod(path, 0o777)
 
 		return nil
 	})
@@ -582,15 +582,15 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfsRoot := sfs.vfsRoot
+	vfsWrite := sfs.vfsWrite
 
-	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
+	if !vfsWrite.HasFeature(avfs.FeatIdentityMgr) {
 		return
 	}
 
 	uis := UserInfos()
 
-	usrTest, err := vfsRoot.LookupUser(UsrTest)
+	usrTest, err := vfsWrite.LookupUser(UsrTest)
 	if err != nil {
 		t.Fatalf("LookupUser %s : want error to be nil, got %v", UsrTest, err)
 	}
@@ -599,19 +599,19 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 		for mode := os.FileMode(1); mode <= 6; mode++ {
 			wantMode := mode << shift
 			name := fmt.Sprintf("%s-%03o", usrTest.Name(), wantMode)
-			path := vfsRoot.Join(rootDir, name)
+			path := vfsWrite.Join(rootDir, name)
 
-			err = vfsRoot.WriteFile(path, nil, avfs.DefaultFilePerm)
+			err = vfsWrite.WriteFile(path, nil, avfs.DefaultFilePerm)
 			if err != nil {
 				t.Fatalf("WriteFile %s : want error to be nil, got %v", path, err)
 			}
 
-			err = vfsRoot.Chmod(path, wantMode)
+			err = vfsWrite.Chmod(path, wantMode)
 			if err != nil {
 				t.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
 			}
 
-			err = vfsRoot.Chown(path, usrTest.Uid(), usrTest.Gid())
+			err = vfsWrite.Chown(path, usrTest.Uid(), usrTest.Gid())
 			if err != nil {
 				t.Fatalf("Chown %s : want error to be nil, got %v", path, err)
 			}
@@ -660,8 +660,8 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 	})
 
 	// Cleanup permissions for RemoveAll()
-	_ = vfsRoot.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = vfsRoot.Chmod(path, 0o777)
+	_ = vfsWrite.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		_ = vfsWrite.Chmod(path, 0o777)
 
 		return nil
 	})
@@ -697,28 +697,28 @@ func (sfs *SuiteFS) WriteDenied(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfsRoot := sfs.vfsRoot
+	vfsWrite := sfs.vfsWrite
 
-	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
+	if !vfsWrite.HasFeature(avfs.FeatIdentityMgr) {
 		return
 	}
 
-	pathDir := vfsRoot.Join(rootDir, "testDir")
-	pathNewDirOrFile := vfsRoot.Join(pathDir, "NewDirOrFile")
-	pathDirChild := vfsRoot.Join(pathDir, "DirChild")
-	pathFile := vfsRoot.Join(rootDir, "File.txt")
+	pathDir := vfsWrite.Join(rootDir, "testDir")
+	pathNewDirOrFile := vfsWrite.Join(pathDir, "NewDirOrFile")
+	pathDirChild := vfsWrite.Join(pathDir, "DirChild")
+	pathFile := vfsWrite.Join(rootDir, "File.txt")
 
-	err := vfsRoot.MkdirAll(pathDirChild, avfs.DefaultDirPerm)
+	err := vfsWrite.MkdirAll(pathDirChild, avfs.DefaultDirPerm)
 	if err != nil {
 		t.Fatalf("Mkdir %s : want error to be nil, got %v", pathDir, err)
 	}
 
-	err = vfsRoot.Chmod(pathDir, 0o555)
+	err = vfsWrite.Chmod(pathDir, 0o555)
 	if err != nil {
 		t.Fatalf("Chmod %s : want error to be nil, got %v", pathDir, err)
 	}
 
-	err = vfsRoot.WriteFile(pathFile, nil, 0o555)
+	err = vfsWrite.WriteFile(pathFile, nil, 0o555)
 	if err != nil {
 		t.Fatalf("WriteFile %s : want error to be nil, got %v", pathDir, err)
 	}

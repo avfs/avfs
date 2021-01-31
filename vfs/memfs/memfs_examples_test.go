@@ -70,25 +70,25 @@ func ExampleWithIdm() {
 }
 
 func ExampleMemFS_Clone() {
-	vfsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfsSrc, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		log.Fatalf("new : want error to be nil, got %v", err)
 	}
 
-	_, err = vfsRoot.UserAdd(test.UsrTest, "root")
+	_, err = vfsSrc.UserAdd(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("UserAdd : want error to be nil, got %v", err)
 	}
 
-	vfs := vfsRoot.Clone()
+	vfsCloned := vfsSrc.Clone()
 
-	_, err = vfs.User(test.UsrTest)
+	_, err = vfsCloned.User(test.UsrTest)
 	if err != nil {
 		log.Fatalf("User : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(vfsRoot.CurrentUser().Name())
-	fmt.Println(vfs.CurrentUser().Name())
+	fmt.Println(vfsSrc.CurrentUser().Name())
+	fmt.Println(vfsCloned.CurrentUser().Name())
 
 	// Output:
 	// root

@@ -33,24 +33,24 @@ import (
 )
 
 func InitTest(t *testing.T) avfs.VFS {
-	vfsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfsWrite, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsWrite)
 	vfs := sfs.VFSRead()
 
 	return vfs
 }
 
 func TestIOUtil(t *testing.T) {
-	vfsRoot, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfsWrite, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(t, vfsRoot)
+	sfs := test.NewSuiteFS(t, vfsWrite)
 	sfs.ReadDir(t)
 	sfs.ReadFile(t)
 	sfs.WriteFile(t)
