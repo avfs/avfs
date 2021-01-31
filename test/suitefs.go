@@ -193,7 +193,10 @@ func (sfs *SuiteFS) CreateRootDir(tb testing.TB, userName string) (rootDir strin
 	}
 
 	if vfsutils.RunTimeOS() == avfs.OsDarwin {
-		rootDir, _ = vfs.EvalSymlinks(rootDir)
+		rootDir, err = vfs.EvalSymlinks(rootDir)
+		if err != nil {
+			tb.Fatalf("EvalSymlinks : want error to be nil, got %s", err)
+		}
 	}
 
 	_, err = vfs.Stat(rootDir)
