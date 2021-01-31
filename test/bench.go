@@ -33,7 +33,7 @@ func (sfs *SuiteFS) BenchDir(b *testing.B) {
 	rootDir, removeDir := sfs.CreateRootDir(b, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	rand.Seed(42)
 

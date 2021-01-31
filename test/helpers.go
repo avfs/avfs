@@ -151,7 +151,7 @@ func CreateRndDir(t *testing.T, vfs avfs.VFS, rootDir string) *vfsutils.RndTree 
 func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
 	t.Helper()
 
-	vfs := sfs.vfsR
+	vfs := sfs.vfsRead
 	name := vfs.Join(sfs.rootDir, "nonExistingFile")
 
 	f, err := vfs.Open(name)

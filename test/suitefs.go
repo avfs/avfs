@@ -29,11 +29,11 @@ type SuiteFS struct {
 	// vfsRoot is the file system as a root user.
 	vfsRoot avfs.VFS
 
-	// vfsW is the file system as test user with read and write permissions.
-	vfsW avfs.VFS
+	// vfsWrite is the file system as test user with read and write permissions.
+	vfsWrite avfs.VFS
 
-	// vfsR is the file system as test user with read only permissions.
-	vfsR avfs.VFS
+	// vfsRead is the file system as test user with read only permissions.
+	vfsRead avfs.VFS
 
 	// rootDir is the root directory for tests, it can be generated automatically or specified with WithRootDir().
 	rootDir string
@@ -75,8 +75,8 @@ func NewSuiteFS(tb testing.TB, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 
 	sfs := &SuiteFS{
 		vfsRoot:     vfsRoot,
-		vfsW:        vfsRoot,
-		vfsR:        vfsRoot,
+		vfsWrite:    vfsRoot,
+		vfsRead:     vfsRoot,
 		rootDir:     "",
 		maxRace:     1000,
 		canTestPerm: canTestPerm,
@@ -102,6 +102,20 @@ func NewSuiteFS(tb testing.TB, vfsRoot avfs.VFS, opts ...Option) *SuiteFS {
 
 // Options
 
+// WithVFSRead returns an option function which sets the VFS for read access.
+func WithVFSRead(VFSRead avfs.VFS) Option {
+	return func(sfs *SuiteFS) {
+		sfs.vfsRead = VFSRead
+	}
+}
+
+// WithVFSWrite returns an option function which sets the VFS for write access.
+func WithVFSWrite(VFSWrite avfs.VFS) Option {
+	return func(sfs *SuiteFS) {
+		sfs.vfsWrite = VFSWrite
+	}
+}
+
 // WithRootDir returns an option function which sets the root directory for the tests.
 func WithRootDir(rootDir string) Option {
 	return func(sfs *SuiteFS) {
@@ -121,8 +135,8 @@ func (sfs *SuiteFS) OSType() avfs.OSType {
 	return sfs.osType
 }
 
-// GetFsAsUser sets the test user to userName.
-func (sfs *SuiteFS) GetFsAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserReader) {
+// VFSAsUser sets the test user to userName.
+func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserReader) {
 	vfs := sfs.vfsRoot
 
 	u := vfs.CurrentUser()
@@ -138,44 +152,26 @@ func (sfs *SuiteFS) GetFsAsUser(tb testing.TB, name string) (avfs.VFS, avfs.User
 	return vfs, u
 }
 
-// GetFsRead returns the file system for read only functions.
-func (sfs *SuiteFS) GetFsRead() avfs.VFS {
-	return sfs.vfsR
+// VFSRead returns the file system for read only functions.
+func (sfs *SuiteFS) VFSRead() avfs.VFS {
+	return sfs.vfsRead
 }
 
-// GetFsRoot return the root file system.
-func (sfs *SuiteFS) GetFsRoot() avfs.VFS {
+// VFSRoot return the root file system.
+func (sfs *SuiteFS) VFSRoot() avfs.VFS {
 	return sfs.vfsRoot
 }
 
-// GetFsWrite returns the file system for read and write functions.
-func (sfs *SuiteFS) GetFsWrite() avfs.VFS {
-	return sfs.vfsW
-}
-
-// FsRead sets the file system for read functions.
-func (sfs *SuiteFS) FsRead(tb testing.TB, fsR avfs.VFS) {
-	if fsR == nil {
-		tb.Fatal("SuiteFS : want FsR to be set, got nil")
-	}
-
-	sfs.vfsR = fsR
-}
-
-// FsWrite sets the file system for write functions.
-func (sfs *SuiteFS) FsWrite(tb testing.TB, fsW avfs.VFS) {
-	if fsW == nil {
-		tb.Fatal("SuiteFS : want FsW to be set, got nil")
-	}
-
-	sfs.vfsW = fsW
+// VFSWrite returns the file system for read and write functions.
+func (sfs *SuiteFS) VFSWrite() avfs.VFS {
+	return sfs.vfsWrite
 }
 
 // CreateRootDir creates the root directory for the tests.
 // Each test have its own directory in /tmp/avfs.../
 // this directory and its descendants are removed by removeDir() function.
 func (sfs *SuiteFS) CreateRootDir(tb testing.TB, userName string) (rootDir string, removeDir func()) {
-	vfs, _ := sfs.GetFsAsUser(tb, userName)
+	vfs, _ := sfs.VFSAsUser(tb, userName)
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return avfs.TmpDir, func() {}
@@ -218,7 +214,7 @@ func (sfs *SuiteFS) CreateRootDir(tb testing.TB, userName string) (rootDir strin
 	}
 
 	removeDir = func() {
-		vfs, _ := sfs.GetFsAsUser(tb, avfs.UsrRoot)
+		vfs, _ := sfs.VFSAsUser(tb, avfs.UsrRoot)
 
 		err = vfs.RemoveAll(rootDir)
 		if err != nil && sfs.osType != avfs.OsWindows {

@@ -50,7 +50,7 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Abs(rootDir)
@@ -112,7 +112,7 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		vfs = sfs.GetFsRead()
+		vfs = sfs.vfsRead
 
 		for _, path := range absTests {
 			path = strings.ReplaceAll(path, "$", rootDir)
@@ -193,7 +193,7 @@ func (sfs *SuiteFS) Base(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		base := vfs.Base(rootDir)
@@ -247,7 +247,7 @@ func (sfs *SuiteFS) Clean(t *testing.T) {
 	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	var cleanTests []*pathTest
 
@@ -341,7 +341,7 @@ func (sfs *SuiteFS) Clean(t *testing.T) {
 
 // Dir tests Dir function.
 func (sfs *SuiteFS) Dir(t *testing.T) {
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	var dirTests []*pathTest
 
@@ -384,7 +384,7 @@ func (sfs *SuiteFS) Dir(t *testing.T) {
 }
 
 func (sfs *SuiteFS) FromToSlash(t *testing.T) {
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	sep := byte('/')
 	if vfs.OSType() == avfs.OsWindows {
@@ -411,7 +411,7 @@ func (sfs *SuiteFS) FromToSlash(t *testing.T) {
 
 // IsAbs tests IsAbs function.
 func (sfs *SuiteFS) IsAbs(t *testing.T) {
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	t.Run("IsAbs", func(t *testing.T) {
 		type IsAbsTest struct {
@@ -481,7 +481,7 @@ func (sfs *SuiteFS) IsAbs(t *testing.T) {
 
 // Join tests Join function.
 func (sfs *SuiteFS) Join(t *testing.T) {
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	type joinTest struct {
 		elem []string
@@ -551,7 +551,7 @@ func (sfs *SuiteFS) Join(t *testing.T) {
 
 // Rel tests Rel function.
 func (sfs *SuiteFS) Rel(t *testing.T) {
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	type relTest struct {
 		root, path, want string
@@ -640,7 +640,7 @@ func (sfs *SuiteFS) Split(t *testing.T) {
 	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	type splitTest struct {
 		path, dir, file string
@@ -685,7 +685,7 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Glob("")
@@ -700,7 +700,7 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 	_ = CreateFiles(t, vfs, rootDir)
 	sl := len(CreateSymlinks(t, vfs, rootDir))
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("GlobNormal", func(t *testing.T) {
 		pattern := rootDir + "/*/*/[A-Z0-9]"
@@ -767,7 +767,7 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		walkFunc := func(rootDir string, info os.FileInfo, err error) error { return nil }
@@ -784,7 +784,7 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 	files := CreateFiles(t, vfs, rootDir)
 	symlinks := CreateSymlinks(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 	lnames := len(dirs) + len(files) + len(symlinks)
 	wantNames := make([]string, 0, lnames)
 

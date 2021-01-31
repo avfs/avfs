@@ -42,10 +42,11 @@ func initTest(t *testing.T) *test.SuiteFS {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(t, vfsRoot)
-	vfsW := sfs.GetFsWrite()
-	vfsR := rofs.New(vfsW)
-	sfs.FsRead(t, vfsR)
+	vfsRead := rofs.New(vfsRoot)
+
+	sfs := test.NewSuiteFS(t, vfsRoot,
+		test.WithVFSWrite(vfsRoot),
+		test.WithVFSRead(vfsRead))
 
 	return sfs
 }

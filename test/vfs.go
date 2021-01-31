@@ -37,7 +37,7 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chdir(rootDir)
@@ -52,7 +52,7 @@ func (sfs *SuiteFS) Chdir(t *testing.T) {
 	dirs := CreateDirs(t, vfs, rootDir)
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("ChdirAbsolute", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -140,7 +140,7 @@ func (sfs *SuiteFS) Chtimes(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chtimes(rootDir, time.Now(), time.Now())
@@ -183,7 +183,7 @@ func (sfs *SuiteFS) Chtimes(t *testing.T) {
 
 // Clone tests Clone function.
 func (sfs *SuiteFS) Clone(t *testing.T) {
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		if vfsClonable, ok := vfs.(avfs.Cloner); ok {
@@ -200,7 +200,7 @@ func (sfs *SuiteFS) Create(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Create(rootDir)
@@ -215,7 +215,7 @@ func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(rootDir)
 		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
@@ -227,7 +227,7 @@ func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
 	_ = CreateFiles(t, vfs, rootDir)
 	_ = CreateSymlinks(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("EvalSymlink", func(t *testing.T) {
 		symlinks := GetSymlinksEval(vfs)
@@ -261,7 +261,7 @@ func (sfs *SuiteFS) EvalSymlink(t *testing.T) {
 
 // GetTempDir tests GetTempDir function.
 func (sfs *SuiteFS) GetTempDir(t *testing.T) {
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		tmp := vfs.GetTempDir()
@@ -294,7 +294,7 @@ func (sfs *SuiteFS) Link(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatHardlink) {
 		err := vfs.Link(rootDir, rootDir)
@@ -410,7 +410,7 @@ func (sfs *SuiteFS) Lstat(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Lstat(rootDir)
@@ -423,7 +423,7 @@ func (sfs *SuiteFS) Lstat(t *testing.T) {
 	files := CreateFiles(t, vfs, rootDir)
 	CreateSymlinks(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -546,7 +546,7 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
@@ -557,7 +557,7 @@ func (sfs *SuiteFS) Mkdir(t *testing.T) {
 
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 	dirs := GetDirs()
 
 	t.Run("MkdirNew", func(t *testing.T) {
@@ -669,7 +669,7 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
@@ -680,7 +680,7 @@ func (sfs *SuiteFS) MkdirAll(t *testing.T) {
 
 	existingFile := CreateEmptyFile(t, vfs, rootDir)
 
-	vfs = sfs.GetFsWrite()
+	vfs = sfs.vfsWrite
 	dirs := GetDirsAll()
 
 	t.Run("MkdirAll", func(t *testing.T) {
@@ -775,7 +775,7 @@ func (sfs *SuiteFS) Open(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Open(rootDir)
@@ -799,7 +799,7 @@ func (sfs *SuiteFS) Open(t *testing.T) {
 		t.Fatalf("Mkdir : want error to be nil, got %v", err)
 	}
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
 		f, err := vfs.Open(existingFile)
@@ -1021,7 +1021,7 @@ func (sfs *SuiteFS) OpenFileWrite(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -1280,7 +1280,7 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.ReadDir(rootDir)
@@ -1296,7 +1296,7 @@ func (sfs *SuiteFS) ReadDir(t *testing.T) {
 
 	existingFile := rndTree.Files[0]
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("ReadDirAll", func(t *testing.T) {
 		rdInfos, err := vfs.ReadDir(rootDir)
@@ -1361,7 +1361,7 @@ func (sfs *SuiteFS) ReadFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsRead()
+	vfs := sfs.vfsRead
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.ReadFile(rootDir)
@@ -1383,14 +1383,14 @@ func (sfs *SuiteFS) ReadFile(t *testing.T) {
 			t.Errorf("ReadFile : want read bytes to be 0, got %d", len(rb))
 		}
 
-		vfs = sfs.GetFsWrite()
+		vfs = sfs.vfsWrite
 
 		err = vfs.WriteFile(path, data, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Fatalf("WriteFile : want error to be nil, got %v", err)
 		}
 
-		vfs = sfs.GetFsRead()
+		vfs = sfs.vfsRead
 
 		rb, err = vfs.ReadFile(path)
 		if err != nil {
@@ -1408,9 +1408,8 @@ func (sfs *SuiteFS) Readlink(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
-
-	if !sfs.vfsW.HasFeature(avfs.FeatSymlink) {
+	vfs := sfs.vfsWrite
+	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.Readlink(rootDir)
 		CheckPathError(t, "Readlink", "readlink", rootDir, avfs.ErrPermDenied, err)
 
@@ -1421,7 +1420,7 @@ func (sfs *SuiteFS) Readlink(t *testing.T) {
 	files := CreateFiles(t, vfs, rootDir)
 	symlinks := CreateSymlinks(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("ReadlinkLink", func(t *testing.T) {
 		for _, sl := range symlinks {
@@ -1470,7 +1469,7 @@ func (sfs *SuiteFS) Remove(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Remove(rootDir)
@@ -1573,7 +1572,7 @@ func (sfs *SuiteFS) RemoveAll(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.RemoveAll(rootDir)
@@ -1671,7 +1670,7 @@ func (sfs *SuiteFS) Rename(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Rename(rootDir, rootDir)
@@ -1828,7 +1827,7 @@ func (sfs *SuiteFS) SameFile(t *testing.T) {
 	rootDir1, removeDir1 := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir1()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		if vfs.SameFile(nil, nil) {
@@ -1930,7 +1929,7 @@ func (sfs *SuiteFS) Stat(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Stat(rootDir)
@@ -1943,7 +1942,7 @@ func (sfs *SuiteFS) Stat(t *testing.T) {
 	files := CreateFiles(t, vfs, rootDir)
 	_ = CreateSymlinks(t, vfs, rootDir)
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 
 	t.Run("StatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -2071,7 +2070,7 @@ func (sfs *SuiteFS) Symlink(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		err := vfs.Symlink(rootDir, rootDir)
@@ -2111,7 +2110,7 @@ func (sfs *SuiteFS) TempDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.TempDir(rootDir, "")
@@ -2146,7 +2145,7 @@ func (sfs *SuiteFS) TempFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.TempFile(rootDir, "")
@@ -2181,7 +2180,7 @@ func (sfs *SuiteFS) Truncate(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Truncate(rootDir, 0)
@@ -2195,7 +2194,7 @@ func (sfs *SuiteFS) Truncate(t *testing.T) {
 func (sfs *SuiteFS) Umask(t *testing.T) {
 	const umaskTest = 0o077
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		vfs.UMask(0)
@@ -2228,7 +2227,7 @@ func (sfs *SuiteFS) WriteFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.WriteFile(rootDir, []byte{0}, avfs.DefaultFilePerm)
@@ -2263,7 +2262,7 @@ func (sfs *SuiteFS) WriteOnReadOnly(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	existingFile := vfs.Join(rootDir, "existingFile")
 
@@ -2274,7 +2273,7 @@ func (sfs *SuiteFS) WriteOnReadOnly(t *testing.T) {
 
 	newFile := vfs.Join(existingFile, "newFile")
 
-	vfs = sfs.GetFsRead()
+	vfs = sfs.vfsRead
 	if !vfs.HasFeature(avfs.FeatReadOnly) {
 		t.Errorf("HasFeature : want read only file system")
 	}
@@ -2370,7 +2369,7 @@ func (sfs *SuiteFS) WriteString(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return

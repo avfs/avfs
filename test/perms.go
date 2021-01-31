@@ -54,7 +54,7 @@ func (sfs *SuiteFS) Chown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.GetFsRoot()
+	vfs := sfs.vfsRoot
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chown(rootDir, 0, 0)
@@ -158,7 +158,7 @@ func (sfs *SuiteFS) Lchown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.GetFsRoot()
+	vfs := sfs.vfsRoot
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Lchown(rootDir, 0, 0)
@@ -299,7 +299,7 @@ func (sfs *SuiteFS) Chmod(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.GetFsRoot()
+	vfs := sfs.vfsRoot
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chmod(rootDir, avfs.DefaultDirPerm)
@@ -385,7 +385,7 @@ func (sfs *SuiteFS) Chroot(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.GetFsRoot()
+	vfs := sfs.vfsRoot
 
 	if !vfs.HasFeature(avfs.FeatChroot) {
 		err := vfs.Chroot(rootDir)
@@ -483,7 +483,7 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 
 	const baseDir = "baseDir"
 
-	vfsRoot := sfs.GetFsRoot()
+	vfsRoot := sfs.vfsRoot
 
 	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
 		return
@@ -527,7 +527,7 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 	t.Run("AccessDir", func(t *testing.T) {
 		for _, ui := range uis {
 			wantName := ui.Name
-			vfs, _ := sfs.GetFsAsUser(t, wantName)
+			vfs, _ := sfs.VFSAsUser(t, wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := os.FileMode(1); mode <= 6; mode++ {
@@ -582,7 +582,7 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfsRoot := sfs.GetFsRoot()
+	vfsRoot := sfs.vfsRoot
 
 	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
 		return
@@ -621,7 +621,7 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 	t.Run("AccessFile", func(t *testing.T) {
 		for _, ui := range uis {
 			wantName := ui.Name
-			vfs, _ := sfs.GetFsAsUser(t, wantName)
+			vfs, _ := sfs.VFSAsUser(t, wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := 1; mode <= 6; mode++ {
@@ -669,7 +669,7 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 
 // StatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
 func (sfs *SuiteFS) StatT(t *testing.T) {
-	vfs := sfs.GetFsWrite()
+	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -697,7 +697,7 @@ func (sfs *SuiteFS) WriteDenied(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfsRoot := sfs.GetFsRoot()
+	vfsRoot := sfs.vfsRoot
 
 	if !vfsRoot.HasFeature(avfs.FeatIdentityMgr) {
 		return
@@ -725,7 +725,7 @@ func (sfs *SuiteFS) WriteDenied(t *testing.T) {
 
 	t.Run("WriteDenied", func(t *testing.T) {
 		for _, ui := range UserInfos() {
-			vfs, u := sfs.GetFsAsUser(t, ui.Name)
+			vfs, u := sfs.VFSAsUser(t, ui.Name)
 
 			err := vfs.Chmod(pathDir, avfs.DefaultDirPerm)
 			CheckPathError(t, "Chmod", "chmod", pathDir, avfs.ErrOpNotPermitted, err)

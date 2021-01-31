@@ -39,7 +39,7 @@ func InitTest(t *testing.T) avfs.VFS {
 	}
 
 	sfs := test.NewSuiteFS(t, vfsRoot)
-	vfs := sfs.GetFsRead()
+	vfs := sfs.VFSRead()
 
 	return vfs
 }
