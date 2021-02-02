@@ -17,6 +17,8 @@
 package test
 
 import (
+	"fmt"
+	"math/rand"
 	"os"
 	"testing"
 
@@ -38,9 +40,6 @@ type SuiteFS struct {
 	// maxRace is the maximum number of concurrent goroutines used in race tests.
 	maxRace int
 
-	// canTestPerm indicates if permissions can be tested.
-	canTestPerm bool
-
 	// osType is the operating system of the filesystem te test.
 	osType avfs.OSType
 
@@ -49,6 +48,12 @@ type SuiteFS struct {
 
 	// Users contains the test users created with the identity manager.
 	Users []avfs.UserReader
+
+	// currentUser
+	currentUser avfs.UserReader
+
+	// canTestPerm indicates if permissions can be tested.
+	canTestPerm bool
 }
 
 // Option defines the option function used for initializing SuiteFS.
@@ -63,20 +68,14 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 	currentUser := vfsWrite.CurrentUser()
 	canTestPerm := vfsWrite.HasFeature(avfs.FeatIdentityMgr) && currentUser.IsRoot()
 
-	info := "Info vfs : type = " + vfsWrite.Type()
-	if vfsWrite.Name() != "" {
-		info += ", name = " + vfsWrite.Name()
-	}
-
-	tb.Log(info)
-
 	sfs := &SuiteFS{
 		vfsWrite:    vfsWrite,
 		vfsRead:     vfsWrite,
 		rootDir:     "",
 		maxRace:     1000,
-		canTestPerm: canTestPerm,
 		osType:      vfsutils.RunTimeOS(),
+		currentUser: currentUser,
+		canTestPerm: canTestPerm,
 	}
 
 	if canTestPerm {
@@ -92,6 +91,13 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 	for _, opt := range opts {
 		opt(sfs)
 	}
+
+	info := "Info vfs : type = " + sfs.vfsRead.Type()
+	if sfs.vfsRead.Name() != "" {
+		info += ", name = " + sfs.vfsRead.Name()
+	}
+
+	tb.Log(info)
 
 	return sfs
 }
@@ -256,6 +262,20 @@ func (sfs *SuiteFS) CreateRndDir(t *testing.T) *vfsutils.RndTree {
 	}
 
 	return rndTree
+}
+
+// NonExistingFile returns the name of a non existing file.
+func (sfs *SuiteFS) NonExistingFile(t *testing.T) string {
+	name := fmt.Sprintf("%s-%x", avfs.Avfs, rand.Int63())
+	path := sfs.vfsRead.Join(sfs.rootDir, name)
+	vfs := sfs.vfsRead
+
+	_, err := vfs.Stat(path)
+	if !vfs.IsNotExist(err) {
+		t.Fatalf("Stat : want error to be %v, got %v", avfs.ErrNoSuchFileOrDir, err)
+	}
+
+	return path
 }
 
 // OpenNonExistingFile open a non existing file and returns an avfs.File.
