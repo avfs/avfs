@@ -474,7 +474,7 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 
 	vfsWrite := sfs.vfsWrite
 
-	if !vfsWrite.HasFeature(avfs.FeatIdentityMgr) {
+	if !sfs.canTestPerm {
 		return
 	}
 
@@ -573,7 +573,7 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 
 	vfsWrite := sfs.vfsWrite
 
-	if !vfsWrite.HasFeature(avfs.FeatIdentityMgr) {
+	if !sfs.canTestPerm {
 		return
 	}
 
