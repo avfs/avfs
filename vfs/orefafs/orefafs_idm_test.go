@@ -31,6 +31,6 @@ func TestOrefaFsIdm(t *testing.T) {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.PermDenied(t)
+	sIdm := test.NewSuiteIdm(t, vfs)
+	sIdm.All(t)
 }
