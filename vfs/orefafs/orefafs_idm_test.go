@@ -32,5 +32,5 @@ func TestOrefaFsIdm(t *testing.T) {
 	}
 
 	sIdm := test.NewSuiteIdm(t, vfs)
-	sIdm.All(t)
+	sIdm.TestAll(t)
 }

@@ -27,14 +27,14 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-// Perm runs all file systems permission tests.
-func (sfs *SuiteFS) Perm(t *testing.T) {
-	sfs.PermRead(t)
-	sfs.PermWrite(t)
+// TestPerm runs all file systems permission tests.
+func (sfs *SuiteFS) TestPerm(t *testing.T) {
+	sfs.TestPermRead(t)
+	sfs.TestPermWrite(t)
 }
 
-// PermWrite runs all file systems permission tests with write access.
-func (sfs *SuiteFS) PermWrite(t *testing.T) {
+// TestPermWrite runs all file systems permission tests with write access.
+func (sfs *SuiteFS) TestPermWrite(t *testing.T) {
 	sfs.Chown(t)
 	sfs.Lchown(t)
 	sfs.Chmod(t)
@@ -42,8 +42,8 @@ func (sfs *SuiteFS) PermWrite(t *testing.T) {
 	sfs.Chroot(t)
 }
 
-// PermRead runs all file systems permission tests with read access.
-func (sfs *SuiteFS) PermRead(t *testing.T) {
+// TestPermRead runs all file systems permission tests with read access.
+func (sfs *SuiteFS) TestPermRead(t *testing.T) {
 	sfs.AccessDir(t)
 	sfs.AccessFile(t)
 	sfs.StatT(t)
@@ -755,7 +755,7 @@ func (sfs *SuiteFS) WriteDenied(t *testing.T) {
 
 			if vfs.HasFeature(avfs.FeatSymlink) {
 				err = vfs.Symlink(pathDir, pathNewDirOrFile)
-				CheckLinkError(t, "Symlink", "symlink", pathDir, pathNewDirOrFile, avfs.ErrPermDenied, err)
+				CheckLinkError(t, "TestSymlink", "symlink", pathDir, pathNewDirOrFile, avfs.ErrPermDenied, err)
 			}
 		}
 	})

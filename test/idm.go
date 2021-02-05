@@ -26,18 +26,8 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-// All run all identity manager tests.
-func (sIdm *SuiteIdm) All(t *testing.T) {
-	sIdm.CurrentUser(t)
-	sIdm.GroupAddDel(t)
-	sIdm.UserAddDel(t)
-	sIdm.Lookup(t)
-	sIdm.User(t)
-	sIdm.UserDenied(t)
-	sIdm.PermDenied(t)
-}
-
-func (sIdm *SuiteIdm) CurrentUser(t *testing.T) {
+//  TestCurrentUser tests CurrentUser function.
+func (sIdm *SuiteIdm) TestCurrentUser(t *testing.T) {
 	idm := sIdm.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
@@ -84,8 +74,8 @@ func (sIdm *SuiteIdm) CurrentUser(t *testing.T) {
 	}
 }
 
-// GroupAddDel tests GroupAdd and GroupDel functions.
-func (sIdm *SuiteIdm) GroupAddDel(t *testing.T) {
+// TestGroupAddDel tests GroupAdd and GroupDel functions.
+func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "GroupAddDel" + sIdm.Type()
 
@@ -195,8 +185,8 @@ func (sIdm *SuiteIdm) GroupAddDel(t *testing.T) {
 	})
 }
 
-// UserAddDel tests UserAdd and UserDel functions.
-func (sIdm *SuiteIdm) UserAddDel(t *testing.T) {
+// TestUserAddDel tests UserAdd and UserDel functions.
+func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "UserAddDel" + sIdm.Type()
 
@@ -341,8 +331,8 @@ func (sIdm *SuiteIdm) UserAddDel(t *testing.T) {
 	})
 }
 
-// Lookup tests Lookup* functions.
-func (sIdm *SuiteIdm) Lookup(t *testing.T) {
+// TestLookup tests Lookup* functions.
+func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "Lookup" + sIdm.Type()
 
@@ -428,8 +418,8 @@ func (sIdm *SuiteIdm) Lookup(t *testing.T) {
 	})
 }
 
-// User tests User and CurrentUser functions.
-func (sIdm *SuiteIdm) User(t *testing.T) {
+// TestUser tests User and CurrentUser functions.
+func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "User" + sIdm.Type()
 
@@ -517,8 +507,8 @@ func (sIdm *SuiteIdm) User(t *testing.T) {
 	})
 }
 
-// UserDenied tests if non root users are denied write access.
-func (sIdm *SuiteIdm) UserDenied(t *testing.T) {
+// TestUserDenied tests if non root users are denied write access.
+func (sIdm *SuiteIdm) TestUserDenied(t *testing.T) {
 	suffix := "Denied" + sIdm.Type()
 	idm := sIdm.idm
 
@@ -569,9 +559,9 @@ func (sIdm *SuiteIdm) UserDenied(t *testing.T) {
 	}
 }
 
-// PermDenied tests if all functions of the identity manager return avfs.ErrPermDenied
+// TestPermDenied tests if all functions of the identity manager return avfs.ErrPermDenied
 // when the identity manager can't be tested.
-func (sIdm *SuiteIdm) PermDenied(t *testing.T) {
+func (sIdm *SuiteIdm) TestPermDenied(t *testing.T) {
 	idm := sIdm.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {

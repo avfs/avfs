@@ -27,5 +27,5 @@ import (
 func TestBasePathFsFsWithMemIdm(t *testing.T) {
 	vfs := initFS(t)
 	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.All(t)
+	sidm.TestAll(t)
 }

@@ -325,65 +325,64 @@ func (sfs *SuiteFS) VFSWrite() avfs.VFS {
 	return sfs.vfsWrite
 }
 
-// All runs all file systems tests.
-func (sfs *SuiteFS) All(t *testing.T) {
-	sfs.Read(t)
-	sfs.Write(t)
-	sfs.Path(t)
+// TestAll runs all file systems tests.
+func (sfs *SuiteFS) TestAll(t *testing.T) {
+	sfs.TestRead(t)
+	sfs.TestWrite(t)
+	sfs.TestPath(t)
 }
 
-// Write runs all file systems tests with write access.
-func (sfs *SuiteFS) Write(t *testing.T) {
-	sfs.Create(t)
-	sfs.Chtimes(t)
-	sfs.Link(t)
-	sfs.Mkdir(t)
-	sfs.MkdirAll(t)
-	sfs.OpenFileWrite(t)
-	sfs.Remove(t)
-	sfs.RemoveAll(t)
-	sfs.Rename(t)
-	sfs.SameFile(t)
-	sfs.Symlink(t)
-	sfs.TempDir(t)
-	sfs.TempFile(t)
-	sfs.Truncate(t)
-	sfs.WriteFile(t)
-	sfs.WriteString(t)
-	sfs.Umask(t)
-	sfs.FileChmod(t)
-	sfs.FileChown(t)
-	sfs.FileSync(t)
-	sfs.FileTruncate(t)
-	sfs.FileWrite(t)
-	sfs.FileWriteString(t)
-	sfs.FileWriteTime(t)
-	sfs.FileCloseWrite(t)
+// TestWrite runs all file systems tests with write access.
+func (sfs *SuiteFS) TestWrite(t *testing.T) {
+	sfs.TestCreate(t)
+	sfs.TestChtimes(t)
+	sfs.TestLink(t)
+	sfs.TestMkdir(t)
+	sfs.TestMkdirAll(t)
+	sfs.TestOpenFileWrite(t)
+	sfs.TestRemove(t)
+	sfs.TestRemoveAll(t)
+	sfs.TestRename(t)
+	sfs.TestSameFile(t)
+	sfs.TestSymlink(t)
+	sfs.TestTempDir(t)
+	sfs.TestTempFile(t)
+	sfs.TestTruncate(t)
+	sfs.TestWriteFile(t)
+	sfs.TestWriteString(t)
+	sfs.TestUmask(t)
+	sfs.TestFileChmod(t)
+	sfs.TestFileChown(t)
+	sfs.TestFileSync(t)
+	sfs.TestFileTruncate(t)
+	sfs.TestFileWrite(t)
+	sfs.TestFileWriteString(t)
+	sfs.TestFileWriteTime(t)
+	sfs.TestFileCloseWrite(t)
 }
 
-// Read runs all file systems tests with read access.
-func (sfs *SuiteFS) Read(t *testing.T) {
-	sfs.Chdir(t)
-	sfs.Clone(t)
-	sfs.EvalSymlink(t)
-	sfs.GetTempDir(t)
-	sfs.Glob(t)
-	sfs.Lstat(t)
-	sfs.Open(t)
-	sfs.ReadDir(t)
-	sfs.ReadFile(t)
-	sfs.Readlink(t)
-	sfs.Stat(t)
-	sfs.FileChdir(t)
-	sfs.FileCloseRead(t)
-	sfs.FileFd(t)
-	sfs.FileFuncOnClosedFile(t)
-	sfs.FileName(t)
-	sfs.FileRead(t)
-	sfs.FileReadDir(t)
-	sfs.FileReaddirnames(t)
-	sfs.FileSeek(t)
-	sfs.FileStat(t)
+// TestRead runs all file systems tests with read access.
+func (sfs *SuiteFS) TestRead(t *testing.T) {
+	sfs.TestChdir(t)
+	sfs.TestClone(t)
+	sfs.TestEvalSymlink(t)
+	sfs.TestGetTempDir(t)
+	sfs.TestLstat(t)
+	sfs.TestOpen(t)
+	sfs.TestReadDir(t)
+	sfs.TestReadFile(t)
+	sfs.TestReadlink(t)
+	sfs.TestStat(t)
+	sfs.TestFileChdir(t)
+	sfs.TestFileCloseRead(t)
+	sfs.TestFileFd(t)
+	sfs.TestFileFuncOnClosedFile(t)
+	sfs.TestFileName(t)
+	sfs.TestFileRead(t)
+	sfs.TestFileReadDir(t)
+	sfs.TestFileReaddirnames(t)
+	sfs.TestFileSeek(t)
+	sfs.TestFileStat(t)
 }
 
 // Dir contains the data to test directories.
@@ -551,7 +550,7 @@ func CreateSymlinks(t *testing.T, vfs avfs.VFS, baseDir string) []*Symlink {
 
 		err := vfs.Symlink(oldPath, newPath)
 		if err != nil {
-			t.Fatalf("Symlink %s %s : want error to be nil, got %v", oldPath, newPath, err)
+			t.Fatalf("TestSymlink %s %s : want error to be nil, got %v", oldPath, newPath, err)
 		}
 	}
 

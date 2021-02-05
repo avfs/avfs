@@ -51,9 +51,9 @@ func TestIOUtil(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfsWrite)
-	sfs.ReadDir(t)
-	sfs.ReadFile(t)
-	sfs.WriteFile(t)
+	sfs.TestReadDir(t)
+	sfs.TestReadFile(t)
+	sfs.TestWriteFile(t)
 }
 
 func TestReadOnlyWriteFile(t *testing.T) {

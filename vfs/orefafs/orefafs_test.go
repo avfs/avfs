@@ -47,13 +47,13 @@ func initTest(tb testing.TB) *test.SuiteFS {
 
 func TestOrefaFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.All(t)
+	sfs.TestAll(t)
 }
 
 func TestOrefaFSNilPtrFile(t *testing.T) {
 	f := (*orefafs.OrefaFile)(nil)
 
-	test.FileNilPtr(t, f)
+	test.TestFileNilPtr(t, f)
 }
 
 func TestOrefaFSFeatures(t *testing.T) {

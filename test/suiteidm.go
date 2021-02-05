@@ -80,6 +80,17 @@ func (sIdm *SuiteIdm) Type() string {
 	return sIdm.idm.Type()
 }
 
+// TestAll run all identity manager tests.
+func (sIdm *SuiteIdm) TestAll(t *testing.T) {
+	sIdm.TestCurrentUser(t)
+	sIdm.TestGroupAddDel(t)
+	sIdm.TestUserAddDel(t)
+	sIdm.TestLookup(t)
+	sIdm.TestUser(t)
+	sIdm.TestUserDenied(t)
+	sIdm.TestPermDenied(t)
+}
+
 // GroupInfo contains information to create a test group.
 type GroupInfo struct {
 	Name string

@@ -46,7 +46,7 @@ func TestDummyIdm(t *testing.T) {
 	t.Logf("Idm = %v", idm.Type())
 
 	sIdm := test.NewSuiteIdm(t, idm)
-	sIdm.All(t)
+	sIdm.TestAll(t)
 }
 
 func TestDummyIdmFeatures(t *testing.T) {

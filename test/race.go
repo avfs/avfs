@@ -25,15 +25,15 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// Race tests data race conditions.
-func (sfs *SuiteFS) Race(t *testing.T) {
-	sfs.RaceDir(t)
-	sfs.RaceFile(t)
+// TestRace tests data race conditions.
+func (sfs *SuiteFS) TestRace(t *testing.T) {
+	sfs.TestRaceDir(t)
+	sfs.TestRaceFile(t)
 	sfs.RaceMkdirRemoveAll(t)
 }
 
-// RaceDir tests data race conditions for some directory functions.
-func (sfs *SuiteFS) RaceDir(t *testing.T) {
+// TestRaceDir tests data race conditions for some directory functions.
+func (sfs *SuiteFS) TestRaceDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -58,8 +58,8 @@ func (sfs *SuiteFS) RaceDir(t *testing.T) {
 	})
 }
 
-// RaceFile tests data race conditions for some file functions.
-func (sfs *SuiteFS) RaceFile(t *testing.T) {
+// TestRaceFile tests data race conditions for some file functions.
+func (sfs *SuiteFS) TestRaceFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 

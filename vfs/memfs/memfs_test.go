@@ -49,12 +49,12 @@ func initTest(tb testing.TB) *test.SuiteFS {
 
 func TestMemFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.All(t)
+	sfs.TestAll(t)
 }
 
 func TestMemFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Perm(t)
+	sfs.TestPerm(t)
 }
 
 func TestMemFSOptionError(t *testing.T) {
@@ -91,7 +91,7 @@ func TestMemFSOptionName(t *testing.T) {
 func TestMemFSNilPtrFile(t *testing.T) {
 	f := (*memfs.MemFile)(nil)
 
-	test.FileNilPtr(t, f)
+	test.TestFileNilPtr(t, f)
 }
 
 func TestMemFSFeatures(t *testing.T) {

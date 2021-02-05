@@ -41,7 +41,7 @@ var (
 func TestMemIdmAll(t *testing.T) {
 	idm := memidm.New()
 	sidm := test.NewSuiteIdm(t, idm)
-	sidm.All(t)
+	sidm.TestAll(t)
 }
 
 func TestMemIdmFeatures(t *testing.T) {

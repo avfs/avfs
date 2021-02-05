@@ -27,5 +27,5 @@ import (
 func TestRoFSIdm(t *testing.T) {
 	sfs := initTest(t)
 	sIdm := test.NewSuiteIdm(t, sfs.VFSRead())
-	sIdm.All(t)
+	sIdm.TestAll(t)
 }

@@ -26,8 +26,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// Path tests all path related functions.
-func (sfs *SuiteFS) Path(t *testing.T) {
+// TestPath tests all path related functions.
+func (sfs *SuiteFS) TestPath(t *testing.T) {
 	sfs.Abs(t)
 	sfs.Base(t)
 	sfs.Clean(t)

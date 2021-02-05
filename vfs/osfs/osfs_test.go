@@ -50,18 +50,18 @@ func initTest(tb testing.TB) *test.SuiteFS {
 
 func TestOsFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.All(t)
+	sfs.TestAll(t)
 }
 
 func TestOsFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Perm(t)
+	sfs.TestPerm(t)
 }
 
 func TestOsFSNilPtrFile(t *testing.T) {
 	f := (*os.File)(nil)
 
-	test.FileNilPtr(t, f)
+	test.TestFileNilPtr(t, f)
 }
 
 func TestOsFSOSType(t *testing.T) {

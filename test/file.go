@@ -29,8 +29,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// FileChdir tests File.Chdir function.
-func (sfs *SuiteFS) FileChdir(t *testing.T) {
+// TestFileChdir tests File.Chdir function.
+func (sfs *SuiteFS) TestFileChdir(t *testing.T) {
 	if sfs.OSType() == avfs.OsWindows {
 		return
 	}
@@ -94,8 +94,8 @@ func (sfs *SuiteFS) FileChdir(t *testing.T) {
 	})
 }
 
-// FileChmod tests File.Chmod function.
-func (sfs *SuiteFS) FileChmod(t *testing.T) {
+// TestFileChmod tests File.Chmod function.
+func (sfs *SuiteFS) TestFileChmod(t *testing.T) {
 	if sfs.OSType() == avfs.OsWindows {
 		return
 	}
@@ -117,8 +117,8 @@ func (sfs *SuiteFS) FileChmod(t *testing.T) {
 	_ = rootDir
 }
 
-// FileChown tests File.Chown function.
-func (sfs *SuiteFS) FileChown(t *testing.T) {
+// TestFileChown tests File.Chown function.
+func (sfs *SuiteFS) TestFileChown(t *testing.T) {
 	if sfs.OSType() == avfs.OsWindows {
 		return
 	}
@@ -140,8 +140,8 @@ func (sfs *SuiteFS) FileChown(t *testing.T) {
 	_ = rootDir
 }
 
-// FileCloseRead tests File.Close function for read only files.
-func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
+// TestFileCloseRead tests File.Close function for read only files.
+func (sfs *SuiteFS) TestFileCloseRead(t *testing.T) {
 	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -191,8 +191,8 @@ func (sfs *SuiteFS) FileCloseRead(t *testing.T) {
 	})
 }
 
-// FileCloseWrite tests File.Close function for read/write files.
-func (sfs *SuiteFS) FileCloseWrite(t *testing.T) {
+// TestFileCloseWrite tests File.Close function for read/write files.
+func (sfs *SuiteFS) TestFileCloseWrite(t *testing.T) {
 	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -244,7 +244,8 @@ func (sfs *SuiteFS) FileCloseWrite(t *testing.T) {
 	})
 }
 
-func (sfs *SuiteFS) FileFd(t *testing.T) {
+// TestFileFd tests File.Fd function.
+func (sfs *SuiteFS) TestFileFd(t *testing.T) {
 	vfs := sfs.vfsRead
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -259,8 +260,8 @@ func (sfs *SuiteFS) FileFd(t *testing.T) {
 	}
 }
 
-// FileFuncOnClosedFile tests functions on closed files.
-func (sfs *SuiteFS) FileFuncOnClosedFile(t *testing.T) {
+// TestFileFuncOnClosedFile tests functions on closed files.
+func (sfs *SuiteFS) TestFileFuncOnClosedFile(t *testing.T) {
 	_, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -371,8 +372,8 @@ func (sfs *SuiteFS) FileFuncOnClosedFile(t *testing.T) {
 	})
 }
 
-// FileName tests File.Name function.
-func (sfs *SuiteFS) FileName(t *testing.T) {
+// TestFileName tests File.Name function.
+func (sfs *SuiteFS) TestFileName(t *testing.T) {
 	vfs := sfs.vfsRead
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -387,8 +388,8 @@ func (sfs *SuiteFS) FileName(t *testing.T) {
 	}
 }
 
-// FileNilPtr test calls to File methods when f is a nil File.
-func FileNilPtr(t *testing.T, f avfs.File) {
+// TestFileNilPtr test calls to File methods when f is a nil File.
+func TestFileNilPtr(t *testing.T, f avfs.File) {
 	err := f.Chdir()
 	CheckInvalid(t, "Chdir", err)
 
@@ -442,8 +443,8 @@ func FileNilPtr(t *testing.T, f avfs.File) {
 	CheckInvalid(t, "WriteString", err)
 }
 
-// FileRead tests File.Read and File.ReadAt functions.
-func (sfs *SuiteFS) FileRead(t *testing.T) {
+// TestFileRead tests File.Read and File.ReadAt functions.
+func (sfs *SuiteFS) TestFileRead(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -578,8 +579,8 @@ func (sfs *SuiteFS) FileRead(t *testing.T) {
 	})
 }
 
-// FileReadDir tests File.ReadDir function.
-func (sfs *SuiteFS) FileReadDir(t *testing.T) {
+// TestFileReadDir tests File.ReadDir function.
+func (sfs *SuiteFS) TestFileReadDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -672,8 +673,8 @@ func (sfs *SuiteFS) FileReadDir(t *testing.T) {
 	})
 }
 
-// FileReaddirnames tests File.Readdirnames function.
-func (sfs *SuiteFS) FileReaddirnames(t *testing.T) {
+// TestFileReaddirnames tests File.Readdirnames function.
+func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -697,23 +698,23 @@ func (sfs *SuiteFS) FileReaddirnames(t *testing.T) {
 	t.Run("FileReaddirnamesAll", func(t *testing.T) {
 		f, err := vfs.Open(rootDir)
 		if err != nil {
-			t.Fatalf("FileReaddirnames : want error to be nil, got %v", err)
+			t.Fatalf("TestFileReaddirnames : want error to be nil, got %v", err)
 		}
 
 		names, err := f.Readdirnames(-1)
 		if err != nil {
-			t.Errorf("FileReaddirnames : want error to be nil, got %v", err)
+			t.Errorf("TestFileReaddirnames : want error to be nil, got %v", err)
 		}
 
 		if wAll != len(names) {
-			t.Errorf("FileReaddirnames : want number of elements to be %d, got %d", wAll, len(names))
+			t.Errorf("TestFileReaddirnames : want number of elements to be %d, got %d", wAll, len(names))
 		}
 	})
 
 	t.Run("FileReaddirnamesN", func(t *testing.T) {
 		f, err := vfs.Open(rootDir)
 		if err != nil {
-			t.Fatalf("FileReaddirnames : want error to be nil, got %v", err)
+			t.Fatalf("TestFileReaddirnames : want error to be nil, got %v", err)
 		}
 
 		var names []string
@@ -755,8 +756,8 @@ func (sfs *SuiteFS) FileReaddirnames(t *testing.T) {
 	})
 }
 
-// FileSeek tests File.Seek function.
-func (sfs *SuiteFS) FileSeek(t *testing.T) {
+// TestFileSeek tests File.Seek function.
+func (sfs *SuiteFS) TestFileSeek(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -787,7 +788,7 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 
 	lenData := int64(len(data))
 
-	t.Run("FileSeek", func(t *testing.T) {
+	t.Run("TestFileSeek", func(t *testing.T) {
 		for i := 0; i < len(data); i++ {
 			pos, err = f.Seek(int64(i), io.SeekStart)
 			if err != nil {
@@ -945,8 +946,8 @@ func (sfs *SuiteFS) FileSeek(t *testing.T) {
 	})
 }
 
-// FileStat tests File.Stat function.
-func (sfs *SuiteFS) FileStat(t *testing.T) {
+// TestFileStat tests File.Stat function.
+func (sfs *SuiteFS) TestFileStat(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -962,8 +963,8 @@ func (sfs *SuiteFS) FileStat(t *testing.T) {
 	_ = rootDir
 }
 
-// FileSync tests File.Sync function.
-func (sfs *SuiteFS) FileSync(t *testing.T) {
+// TestFileSync tests File.Sync function.
+func (sfs *SuiteFS) TestFileSync(t *testing.T) {
 	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -974,8 +975,8 @@ func (sfs *SuiteFS) FileSync(t *testing.T) {
 	}
 }
 
-// FileTruncate tests File.Truncate function.
-func (sfs *SuiteFS) FileTruncate(t *testing.T) {
+// TestFileTruncate tests File.Truncate function.
+func (sfs *SuiteFS) TestFileTruncate(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -1141,8 +1142,8 @@ func (sfs *SuiteFS) FileTruncate(t *testing.T) {
 	})
 }
 
-// FileWrite tests File.Write and File.WriteAt functions.
-func (sfs *SuiteFS) FileWrite(t *testing.T) {
+// TestFileWrite tests File.Write and File.WriteAt functions.
+func (sfs *SuiteFS) TestFileWrite(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -1372,8 +1373,8 @@ func (sfs *SuiteFS) FileWrite(t *testing.T) {
 	})
 }
 
-// FileWriteString tests File.WriteString function.
-func (sfs *SuiteFS) FileWriteString(t *testing.T) {
+// TestFileWriteString tests File.WriteString function.
+func (sfs *SuiteFS) TestFileWriteString(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
@@ -1389,8 +1390,8 @@ func (sfs *SuiteFS) FileWriteString(t *testing.T) {
 	_ = rootDir
 }
 
-// FileWriteTime checks that modification time is updated on write operations.
-func (sfs *SuiteFS) FileWriteTime(t *testing.T) {
+// TestFileWriteTime checks that modification time is updated on write operations.
+func (sfs *SuiteFS) TestFileWriteTime(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 

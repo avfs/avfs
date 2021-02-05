@@ -51,15 +51,15 @@ func initTest(t *testing.T) *test.SuiteFS {
 
 func TestRoFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Read(t)
-	sfs.WriteOnReadOnly(t)
-	sfs.EvalSymlink(t)
-	sfs.Path(t)
+	sfs.TestRead(t)
+	sfs.TestWriteOnReadOnly(t)
+	sfs.TestEvalSymlink(t)
+	sfs.TestPath(t)
 }
 
 func TestRoFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.PermRead(t)
+	sfs.TestPermRead(t)
 }
 
 func TestRoFSOSType(t *testing.T) {

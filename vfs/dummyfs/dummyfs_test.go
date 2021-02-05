@@ -48,12 +48,12 @@ func initTest(tb testing.TB) *test.SuiteFS {
 
 func TestDummyFS(t *testing.T) {
 	sfs := initTest(t)
-	sfs.All(t)
+	sfs.TestAll(t)
 }
 
 func TestDummyFSPerm(t *testing.T) {
 	sfs := initTest(t)
-	sfs.Perm(t)
+	sfs.TestPerm(t)
 }
 
 func TestDummyFSCfg(t *testing.T) {

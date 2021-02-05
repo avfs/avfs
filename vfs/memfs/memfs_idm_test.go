@@ -34,7 +34,7 @@ func TestMemFsWithNoIdm(t *testing.T) {
 	}
 
 	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.All(t)
+	sidm.TestAll(t)
 }
 
 func TestMemFsWithMemIdm(t *testing.T) {
@@ -44,7 +44,7 @@ func TestMemFsWithMemIdm(t *testing.T) {
 	}
 
 	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.All(t)
+	sidm.TestAll(t)
 }
 
 func TestMemFsWithOsIdm(t *testing.T) {
@@ -59,5 +59,5 @@ func TestMemFsWithOsIdm(t *testing.T) {
 	}
 
 	sIdm := test.NewSuiteIdm(t, vfs)
-	sIdm.All(t)
+	sIdm.TestAll(t)
 }
