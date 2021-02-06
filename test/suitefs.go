@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -425,6 +426,8 @@ func GetDirsAll() []*Dir {
 
 // CreateDirs create test directories and baseDir directory if necessary.
 func CreateDirs(t *testing.T, vfs avfs.VFS, baseDir string) []*Dir {
+	t.Helper()
+
 	err := vfs.MkdirAll(baseDir, avfs.DefaultDirPerm)
 	if err != nil {
 		t.Fatalf("MkdirAll %s : want error to be nil, got %v", baseDir, err)
@@ -470,6 +473,8 @@ func GetFiles() []*File {
 
 // CreateFiles create test files.
 func CreateFiles(t *testing.T, vfs avfs.VFS, baseDir string) []*File {
+	t.Helper()
+
 	files := GetFiles()
 	for _, file := range files {
 		path := vfs.Join(baseDir, file.Path)
@@ -543,6 +548,8 @@ func GetSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 
 // CreateSymlinks creates test symbolic links.
 func CreateSymlinks(t *testing.T, vfs avfs.VFS, baseDir string) []*Symlink {
+	t.Helper()
+
 	symlinks := GetSymlinks(vfs)
 	for _, sl := range symlinks {
 		oldPath := vfs.Join(baseDir, sl.OldName)
@@ -555,4 +562,81 @@ func CreateSymlinks(t *testing.T, vfs avfs.VFS, baseDir string) []*Symlink {
 	}
 
 	return symlinks
+}
+
+// CheckPathError checks errors of type os.PathError.
+func CheckPathError(t *testing.T, testName, wantOp, wantPath string, wantErr, gotErr error) {
+	t.Helper()
+
+	if gotErr == nil {
+		t.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)
+	}
+
+	err, ok := gotErr.(*os.PathError)
+	if !ok {
+		t.Fatalf("%s %s : want error type *os.PathError, got %v", testName, wantPath, reflect.TypeOf(gotErr))
+	}
+
+	if wantOp != err.Op || wantPath != err.Path || (wantErr != err.Err && wantErr.Error() != err.Err.Error()) {
+		wantPathErr := &os.PathError{Op: wantOp, Path: wantPath, Err: wantErr}
+		t.Errorf("%s %s: want error to be %v, got %v", testName, wantPath, wantPathErr, gotErr)
+	}
+}
+
+// CheckSyscallError checks errors of type os.SyscallError.
+func CheckSyscallError(t *testing.T, testName, wantOp, wantPath string, wantErr, gotErr error) {
+	t.Helper()
+
+	if gotErr == nil {
+		t.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)
+	}
+
+	err, ok := gotErr.(*os.SyscallError)
+	if !ok {
+		t.Fatalf("%s %s : want error type *os.SyscallError, got %v", testName, wantPath, reflect.TypeOf(gotErr))
+	}
+
+	if err.Syscall != wantOp || err.Err != wantErr {
+		t.Errorf("%s %s : want error to be %v, got %v", testName, wantPath, wantErr, err)
+	}
+}
+
+// CheckLinkError checks errors of type os.LinkError.
+func CheckLinkError(t *testing.T, testName, wantOp, oldPath, newPath string, wantErr, gotErr error) {
+	t.Helper()
+
+	if gotErr == nil {
+		t.Fatalf("%s %s : want error to be %v, got nil", testName, newPath, wantErr)
+	}
+
+	err, ok := gotErr.(*os.LinkError)
+	if !ok {
+		t.Fatalf("%s %s : want error type *os.LinkError,\n got %v", testName, newPath, reflect.TypeOf(gotErr))
+	}
+
+	if err.Op != wantOp || err.Err != wantErr {
+		t.Errorf("%s %s %s : want error to be %v,\n got %v", testName, oldPath, newPath, wantErr, err)
+	}
+}
+
+// CheckInvalid checks if the error in os.ErrInvalid.
+func CheckInvalid(t *testing.T, funcName string, err error) {
+	t.Helper()
+
+	if err != os.ErrInvalid {
+		t.Errorf("%s : want error to be %v, got %v", funcName, os.ErrInvalid, err)
+	}
+}
+
+// CheckPanic checks that function f panics.
+func CheckPanic(t *testing.T, funcName string, f func()) {
+	t.Helper()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("%s : want function to panic, not panicing", funcName)
+		}
+	}()
+
+	f()
 }
