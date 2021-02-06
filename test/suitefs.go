@@ -134,7 +134,7 @@ func (sfs *SuiteFS) CreateDir(t *testing.T) string {
 }
 
 // CreateAndOpenFile creates and open a file.
-func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T) avfs.File {
+func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T, data []byte) avfs.File {
 	t.Helper()
 
 	vfs := sfs.vfsWrite
@@ -142,6 +142,11 @@ func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T) avfs.File {
 	f, err := vfs.TempFile(sfs.rootDir, avfs.Avfs)
 	if err != nil {
 		t.Fatalf("TempFile : want error to be nil, got %v", err)
+	}
+
+	_, err = f.Write(data)
+	if err != nil {
+		t.Fatalf("Write %s : want error to be nil, got %v", f.Name(), err)
 	}
 
 	return f
@@ -566,7 +571,7 @@ func CreateSymlinks(t *testing.T, vfs avfs.VFS, baseDir string) []*Symlink {
 
 // CheckPathError checks errors of type os.PathError.
 func CheckPathError(t *testing.T, testName, wantOp, wantPath string, wantErr, gotErr error) {
-	t.Helper()
+	//t.Helper()
 
 	if gotErr == nil {
 		t.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)

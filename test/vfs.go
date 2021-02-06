@@ -2112,12 +2112,87 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T) {
 
 	vfs := sfs.vfsWrite
 
+	data := []byte("AAABBBCCCDDD")
+
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Truncate(rootDir, 0)
 		CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrPermDenied, err)
 
 		return
 	}
+
+	t.Run("Truncate", func(t *testing.T) {
+		path := sfs.CreateFile(t, data)
+
+		for i := len(data); i >= 0; i-- {
+			err := vfs.Truncate(path, int64(i))
+			if err != nil {
+				t.Errorf("Truncate : want error to be nil, got %v", err)
+			}
+
+			d, err := vfs.ReadFile(path)
+			if err != nil {
+				t.Errorf("Truncate : want error to be nil, got %v", err)
+			}
+
+			if len(d) != i {
+				t.Errorf("Truncate : want length to be %d, got %d", i, len(d))
+			}
+		}
+	})
+
+	t.Run("TruncateOnDir", func(t *testing.T) {
+		err := vfs.Truncate(rootDir, 0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "open", rootDir, avfs.ErrIsADirectory, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", rootDir, avfs.ErrIsADirectory, err)
+		}
+	})
+
+	t.Run("TruncateSizeNegative", func(t *testing.T) {
+		path := sfs.CreateFile(t, data)
+
+		err := vfs.Truncate(path, -1)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Truncate", "truncate", path, avfs.ErrWinNegativeSeek, err)
+		default:
+			CheckPathError(t, "Truncate", "truncate", path, os.ErrInvalid, err)
+		}
+	})
+
+	t.Run("TruncateSizeBiggerFileSize", func(t *testing.T) {
+		path := sfs.CreateFile(t, data)
+		newSize := len(data) * 2
+
+		err := vfs.Truncate(path, int64(newSize))
+		if err != nil {
+			t.Errorf("Truncate : want error to be nil, got %v", err)
+		}
+
+		info, err := vfs.Stat(path)
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+
+		if newSize != int(info.Size()) {
+			t.Errorf("Stat : want size to be %d, got %d", newSize, info.Size())
+		}
+
+		gotContent, err := vfs.ReadFile(path)
+		if err != nil {
+			t.Fatalf("ReadFile : want error to be nil, got %v", err)
+		}
+
+		wantAdded := bytes.Repeat([]byte{0}, len(data))
+		gotAdded := gotContent[len(data):]
+		if !bytes.Equal(wantAdded, gotAdded) {
+			t.Errorf("Bytes Added : want %v, got %v", wantAdded, gotAdded)
+		}
+	})
 }
 
 // TestUmask tests UMask and GetUMask functions.

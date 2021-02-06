@@ -103,7 +103,7 @@ func (sfs *SuiteFS) TestRaceFile(t *testing.T) {
 	})
 
 	t.Run("RaceFileClose", func(t *testing.T) {
-		f := sfs.CreateAndOpenFile(t)
+		f := sfs.CreateAndOpenFile(t, nil)
 
 		sfs.RaceFunc(t, "Close", RaceOneOk, f.Close)
 	})
