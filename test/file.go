@@ -958,9 +958,146 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T) {
 
 		_, err := f.Stat()
 		CheckPathError(t, "Stat", "stat", f.Name(), avfs.ErrPermDenied, err)
+
+		return
 	}
 
-	_ = rootDir
+	dirs := CreateDirs(t, vfs, rootDir)
+	files := CreateFiles(t, vfs, rootDir)
+	_ = CreateSymlinks(t, vfs, rootDir)
+
+	vfs = sfs.vfsRead
+
+	t.Run("FileStatDir", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(rootDir, dir.Path)
+
+			f, err := vfs.Open(path)
+			if err != nil {
+				t.Errorf("Open %s : want error to be nil, got %v", path, err)
+			}
+
+			info, err := f.Stat()
+			if err != nil {
+				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
+				continue
+			}
+
+			if vfs.Base(path) != info.Name() {
+				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
+			}
+
+			wantMode := (dir.Mode | os.ModeDir) &^ vfs.GetUMask()
+			if vfs.OSType() == avfs.OsWindows {
+				wantMode = os.ModeDir | os.ModePerm
+			}
+
+			if wantMode != info.Mode() {
+				t.Errorf("Stat %s : want mode to be %s, got %s", path, wantMode, info.Mode())
+			}
+		}
+	})
+
+	t.Run("FileStatFile", func(t *testing.T) {
+		for _, file := range files {
+			path := vfs.Join(rootDir, file.Path)
+
+			f, err := vfs.Open(path)
+			if err != nil {
+				t.Errorf("Open %s : want error to be nil, got %v", path, err)
+			}
+
+			info, err := f.Stat()
+			if err != nil {
+				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
+				continue
+			}
+
+			if info.Name() != vfs.Base(path) {
+				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
+			}
+
+			wantMode := file.Mode &^ vfs.GetUMask()
+			if vfs.OSType() == avfs.OsWindows {
+				wantMode = 0o666
+			}
+
+			if wantMode != info.Mode() {
+				t.Errorf("Stat %s : want mode to be %s, got %s", path, wantMode, info.Mode())
+			}
+
+			wantSize := int64(len(file.Content))
+			if wantSize != info.Size() {
+				t.Errorf("Lstat %s : want size to be %d, got %d", path, wantSize, info.Size())
+			}
+		}
+	})
+
+	t.Run("FileStatSymlink", func(t *testing.T) {
+		for _, sl := range GetSymlinksEval(vfs) {
+			if sl.WantErr != nil {
+				continue
+			}
+
+			newPath := vfs.Join(rootDir, sl.NewName)
+			oldPath := vfs.Join(rootDir, sl.OldName)
+
+			f, err := vfs.Open(newPath)
+			if err != nil {
+				t.Errorf("Open %s : want error to be nil, got %v", newPath, err)
+			}
+
+			info, err := f.Stat()
+			if err != nil {
+				t.Errorf("Stat %s : want error to be nil, got %v", newPath, err)
+
+				continue
+			}
+
+			var (
+				wantName string
+				wantMode os.FileMode
+			)
+
+			if sl.IsSymlink {
+				wantName = vfs.Base(newPath)
+			} else {
+				wantName = vfs.Base(oldPath)
+			}
+
+			wantMode = sl.Mode
+			if wantName != info.Name() {
+				t.Errorf("Stat %s : want name to be %s, got %s", newPath, wantName, info.Name())
+			}
+
+			if wantMode != info.Mode() {
+				t.Errorf("Stat %s : want mode to be %s, got %s", newPath, wantMode, info.Mode())
+			}
+		}
+	})
+
+	t.Run("FileStatNonExistingFile", func(t *testing.T) {
+		f := sfs.OpenNonExistingFile(t)
+
+		_, err := f.Stat()
+		if err != os.ErrInvalid {
+			t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
+		}
+	})
+
+	t.Run("FileStatSubDirOnFile", func(t *testing.T) {
+		path := vfs.Join(rootDir, files[0].Path, "subDirOnFile")
+
+		f, err := vfs.Open(path)
+		CheckPathError(t, "Open", "open", path, avfs.ErrNotADirectory, err)
+
+		_, err = f.Stat()
+		if err != os.ErrInvalid {
+			t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
+		}
+	})
 }
 
 // TestFileSync tests File.Sync function.

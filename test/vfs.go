@@ -1941,6 +1941,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T) {
 				if sl.WantErr == nil {
 					t.Errorf("Stat %s : want error to be nil, got %v", newPath, err)
 				}
+
 				CheckPathError(t, "Lstat", "stat", newPath, sl.WantErr, err)
 
 				continue
@@ -1981,7 +1982,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T) {
 		}
 	})
 
-	t.Run("StatsubDirOnFile", func(t *testing.T) {
+	t.Run("StatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(rootDir, files[0].Path, "subDirOnFile")
 
 		_, err := vfs.Stat(subDirOnFile)
