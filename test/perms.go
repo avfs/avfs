@@ -35,28 +35,28 @@ func (sfs *SuiteFS) TestPerm(t *testing.T) {
 
 // TestPermWrite runs all file systems permission tests with write access.
 func (sfs *SuiteFS) TestPermWrite(t *testing.T) {
-	sfs.Chown(t)
-	sfs.Lchown(t)
-	sfs.Chmod(t)
-	sfs.WriteDenied(t)
-	sfs.Chroot(t)
+	sfs.TestChown(t)
+	sfs.TestLchown(t)
+	sfs.TestChmod(t)
+	sfs.TestWriteDenied(t)
+	sfs.TestChroot(t)
 }
 
 // TestPermRead runs all file systems permission tests with read access.
 func (sfs *SuiteFS) TestPermRead(t *testing.T) {
-	sfs.AccessDir(t)
-	sfs.AccessFile(t)
-	sfs.StatT(t)
+	sfs.TestAccessDir(t)
+	sfs.TestAccessFile(t)
+	sfs.TestStatT(t)
 }
 
-// Chown tests Chown function.
-func (sfs *SuiteFS) Chown(t *testing.T) {
+// TestChown tests Chown function.
+func (sfs *SuiteFS) TestChown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
 	vfs := sfs.vfsWrite
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !sfs.canTestPerm {
 		err := vfs.Chown(rootDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -154,13 +154,13 @@ func (sfs *SuiteFS) Chown(t *testing.T) {
 }
 
 // Lchown tests Lchown function.
-func (sfs *SuiteFS) Lchown(t *testing.T) {
+func (sfs *SuiteFS) TestLchown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
 	vfs := sfs.vfsWrite
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !sfs.canTestPerm {
 		err := vfs.Lchown(rootDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -294,8 +294,8 @@ func (sfs *SuiteFS) Lchown(t *testing.T) {
 	})
 }
 
-// Chmod tests Chmod function.
-func (sfs *SuiteFS) Chmod(t *testing.T) {
+// TestChmod tests Chmod function.
+func (sfs *SuiteFS) TestChmod(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
@@ -375,14 +375,14 @@ func (sfs *SuiteFS) Chmod(t *testing.T) {
 	})
 }
 
-// Chroot tests Chroot function.
-func (sfs *SuiteFS) Chroot(t *testing.T) {
+// TestChroot tests Chroot function.
+func (sfs *SuiteFS) TestChroot(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
 	vfs := sfs.vfsWrite
 
-	if !vfs.HasFeature(avfs.FeatChroot) {
+	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
 		err := vfs.Chroot(rootDir)
 		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 
@@ -465,18 +465,18 @@ func (sfs *SuiteFS) Chroot(t *testing.T) {
 	})
 }
 
-// AccessDir tests functions on directories where read is denied.
-func (sfs *SuiteFS) AccessDir(t *testing.T) {
+// TestAccessDir tests functions on directories where read is denied.
+func (sfs *SuiteFS) TestAccessDir(t *testing.T) {
+	if !sfs.canTestPerm {
+		return
+	}
+
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
 	const baseDir = "baseDir"
 
 	vfsWrite := sfs.vfsWrite
-
-	if !sfs.canTestPerm {
-		return
-	}
 
 	uis := UserInfos()
 
@@ -566,16 +566,16 @@ func (sfs *SuiteFS) AccessDir(t *testing.T) {
 	})
 }
 
-// AccessFile tests functions on files where read is denied.
-func (sfs *SuiteFS) AccessFile(t *testing.T) {
+// TestAccessFile tests functions on files where read is denied.
+func (sfs *SuiteFS) TestAccessFile(t *testing.T) {
+	if !sfs.canTestPerm {
+		return
+	}
+
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
 	vfsWrite := sfs.vfsWrite
-
-	if !sfs.canTestPerm {
-		return
-	}
 
 	uis := UserInfos()
 
@@ -656,8 +656,8 @@ func (sfs *SuiteFS) AccessFile(t *testing.T) {
 	})
 }
 
-// StatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
-func (sfs *SuiteFS) StatT(t *testing.T) {
+// TestStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
+func (sfs *SuiteFS) TestStatT(t *testing.T) {
 	vfs := sfs.vfsWrite
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -681,8 +681,8 @@ func (sfs *SuiteFS) StatT(t *testing.T) {
 	}
 }
 
-// WriteDenied tests functions on directories and files where write is denied.
-func (sfs *SuiteFS) WriteDenied(t *testing.T) {
+// TestWriteDenied tests functions on directories and files where write is denied.
+func (sfs *SuiteFS) TestWriteDenied(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 

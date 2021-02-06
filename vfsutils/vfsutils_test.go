@@ -41,7 +41,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.StatT(t)
+		sfs.TestStatT(t)
 	})
 
 	t.Run("StatT OsFS", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.StatT(t)
+		sfs.TestStatT(t)
 	})
 
 	t.Run("StatT OrefaFS", func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestAsStatT(t *testing.T) {
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.StatT(t)
+		sfs.TestStatT(t)
 	})
 }
 

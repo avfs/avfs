@@ -67,7 +67,9 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 	}
 
 	currentUser := vfsWrite.CurrentUser()
-	canTestPerm := vfsWrite.HasFeature(avfs.FeatIdentityMgr) && currentUser.IsRoot()
+	canTestPerm := vfsWrite.HasFeature(avfs.FeatBasicFs) &&
+		vfsWrite.HasFeature(avfs.FeatIdentityMgr) &&
+		currentUser.IsRoot()
 
 	sfs := &SuiteFS{
 		vfsWrite:    vfsWrite,
