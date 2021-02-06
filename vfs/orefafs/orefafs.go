@@ -503,6 +503,10 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 		}
 
 		if flag&os.O_CREATE == 0 {
+			if !parent.mode.IsDir() {
+				return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
+			}
+
 			return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
 		}
 
