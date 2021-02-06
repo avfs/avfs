@@ -103,7 +103,12 @@ func (sfs *SuiteFS) TestRaceFile(t *testing.T) {
 	})
 
 	t.Run("RaceFileClose", func(t *testing.T) {
-		f := sfs.CreateAndOpenFile(t, nil)
+		path := sfs.CreateEmptyFile(t)
+
+		f, err := vfs.Open(path)
+		if err != nil {
+			t.Fatalf("Open %s : want error to be nil, got %v", path, err)
+		}
 
 		sfs.RaceFunc(t, "Close", RaceOneOk, f.Close)
 	})

@@ -1059,11 +1059,16 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T) {
 	})
 
 	t.Run("FileTruncateSizeBiggerFileSize", func(t *testing.T) {
-		f := sfs.CreateAndOpenFile(t, data)
-		path := f.Name()
+		path := sfs.CreateFile(t, data)
+
+		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("OpenFile : want error to be nil, got %v", err)
+		}
+
 		newSize := len(data) * 2
 
-		err := f.Truncate(int64(newSize))
+		err = f.Truncate(int64(newSize))
 		if err != nil {
 			t.Errorf("Truncate : want error to be nil, got %v", err)
 		}
