@@ -64,7 +64,7 @@ func (f *BasePathFile) Fd() uintptr {
 
 // Name returns the link of the file as presented to Open.
 func (f *BasePathFile) Name() string {
-	return f.bpFS.pathBpFsToFs(f.baseFile.Name())
+	return f.bpFS.fromBasePath(f.baseFile.Name())
 }
 
 // Read reads up to len(b) bytes from the MemFile.

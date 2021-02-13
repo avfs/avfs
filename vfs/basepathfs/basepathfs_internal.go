@@ -21,8 +21,8 @@ import (
 	"strings"
 )
 
-// pathFsToBpFs transforms the absolute path of the base file system from the BasePathFS path.
-func (vfs *BasePathFS) pathFsToBpFs(path string) string {
+// toBasePath transforms a BasePathFS path to a BaseFS path.
+func (vfs *BasePathFS) toBasePath(path string) string {
 	if path == "" {
 		return ""
 	}
@@ -32,8 +32,8 @@ func (vfs *BasePathFS) pathFsToBpFs(path string) string {
 	return vfs.basePath + absPath
 }
 
-// pathBpFsToFs transforms the absolute path of the BasePathFS path to the base file system path.
-func (vfs *BasePathFS) pathBpFsToFs(path string) string {
+// fromBasePath returns a BasePathFS path from a BaseFs path.
+func (vfs *BasePathFS) fromBasePath(path string) string {
 	return strings.TrimPrefix(path, vfs.basePath)
 }
 
@@ -47,14 +47,14 @@ func (vfs *BasePathFS) restoreError(err error) error {
 	case *os.PathError:
 		return &os.PathError{
 			Op:   e.Op,
-			Path: vfs.pathBpFsToFs(e.Path),
+			Path: vfs.fromBasePath(e.Path),
 			Err:  e.Err,
 		}
 	case *os.LinkError:
 		return &os.LinkError{
 			Op:  e.Op,
-			Old: vfs.pathBpFsToFs(e.Old),
-			New: vfs.pathBpFsToFs(e.New),
+			Old: vfs.fromBasePath(e.Old),
+			New: vfs.fromBasePath(e.New),
 			Err: e.Err,
 		}
 	case *os.SyscallError:

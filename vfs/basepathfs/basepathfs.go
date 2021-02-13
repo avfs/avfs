@@ -36,7 +36,7 @@ import (
 func (vfs *BasePathFS) Abs(path string) (string, error) {
 	absPath, _ := vfs.baseFS.Abs(path)
 
-	return vfs.pathBpFsToFs(absPath), nil
+	return vfs.fromBasePath(absPath), nil
 }
 
 // Base returns the last element of path.
@@ -50,7 +50,7 @@ func (vfs *BasePathFS) Base(path string) string {
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Chdir(dir string) error {
-	err := vfs.baseFS.Chdir(vfs.pathFsToBpFs(dir))
+	err := vfs.baseFS.Chdir(vfs.toBasePath(dir))
 
 	return vfs.restoreError(err)
 }
@@ -74,7 +74,7 @@ func (vfs *BasePathFS) Chdir(dir string) error {
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
 func (vfs *BasePathFS) Chmod(name string, mode os.FileMode) error {
-	err := vfs.baseFS.Chmod(vfs.pathFsToBpFs(name), mode)
+	err := vfs.baseFS.Chmod(vfs.toBasePath(name), mode)
 
 	return vfs.restoreError(err)
 }
@@ -87,7 +87,7 @@ func (vfs *BasePathFS) Chmod(name string, mode os.FileMode) error {
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
 func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
-	err := vfs.baseFS.Chown(vfs.pathFsToBpFs(name), uid, gid)
+	err := vfs.baseFS.Chown(vfs.toBasePath(name), uid, gid)
 
 	return vfs.restoreError(err)
 }
@@ -95,7 +95,7 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Chroot(path string) error {
-	err := vfs.baseFS.Chroot(vfs.pathFsToBpFs(path))
+	err := vfs.baseFS.Chroot(vfs.toBasePath(path))
 	if err != nil {
 		return vfs.restoreError(err)
 	}
@@ -112,7 +112,7 @@ func (vfs *BasePathFS) Chroot(path string) error {
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Chtimes(name string, atime, mtime time.Time) error {
-	err := vfs.baseFS.Chtimes(vfs.pathFsToBpFs(name), atime, mtime)
+	err := vfs.baseFS.Chtimes(vfs.toBasePath(name), atime, mtime)
 
 	return vfs.restoreError(err)
 }
@@ -215,7 +215,7 @@ func (vfs *BasePathFS) Getwd() (dir string, err error) {
 		return "", err
 	}
 
-	return vfs.pathBpFsToFs(cwd), nil
+	return vfs.fromBasePath(cwd), nil
 }
 
 // Glob returns the names of all files matching pattern or nil
@@ -227,7 +227,7 @@ func (vfs *BasePathFS) Getwd() (dir string, err error) {
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
 func (vfs *BasePathFS) Glob(pattern string) (matches []string, err error) {
-	return vfs.baseFS.Glob(vfs.pathFsToBpFs(pattern))
+	return vfs.baseFS.Glob(vfs.toBasePath(pattern))
 }
 
 // IsAbs reports whether the path is absolute.
@@ -268,7 +268,7 @@ func (vfs *BasePathFS) Join(elem ...string) string {
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
 func (vfs *BasePathFS) Lchown(name string, uid, gid int) error {
-	err := vfs.baseFS.Lchown(vfs.pathFsToBpFs(name), uid, gid)
+	err := vfs.baseFS.Lchown(vfs.toBasePath(name), uid, gid)
 
 	return vfs.restoreError(err)
 }
@@ -276,7 +276,7 @@ func (vfs *BasePathFS) Lchown(name string, uid, gid int) error {
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
 func (vfs *BasePathFS) Link(oldname, newname string) error {
-	err := vfs.baseFS.Link(vfs.pathFsToBpFs(oldname), vfs.pathFsToBpFs(newname))
+	err := vfs.baseFS.Link(vfs.toBasePath(oldname), vfs.toBasePath(newname))
 
 	return vfs.restoreError(err)
 }
@@ -286,7 +286,7 @@ func (vfs *BasePathFS) Link(oldname, newname string) error {
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Lstat(path string) (os.FileInfo, error) {
-	info, err := vfs.baseFS.Lstat(vfs.pathFsToBpFs(path))
+	info, err := vfs.baseFS.Lstat(vfs.toBasePath(path))
 
 	return info, vfs.restoreError(err)
 }
@@ -295,7 +295,7 @@ func (vfs *BasePathFS) Lstat(path string) (os.FileInfo, error) {
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Mkdir(name string, perm os.FileMode) error {
-	err := vfs.baseFS.Mkdir(vfs.pathFsToBpFs(name), perm)
+	err := vfs.baseFS.Mkdir(vfs.toBasePath(name), perm)
 
 	return vfs.restoreError(err)
 }
@@ -308,7 +308,7 @@ func (vfs *BasePathFS) Mkdir(name string, perm os.FileMode) error {
 // If name is already a directory, MkdirAll does nothing
 // and returns nil.
 func (vfs *BasePathFS) MkdirAll(path string, perm os.FileMode) error {
-	err := vfs.baseFS.MkdirAll(vfs.pathFsToBpFs(path), perm)
+	err := vfs.baseFS.MkdirAll(vfs.toBasePath(path), perm)
 
 	return vfs.restoreError(err)
 }
@@ -328,7 +328,7 @@ func (vfs *BasePathFS) Open(path string) (avfs.File, error) {
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
-	f, err := vfs.baseFS.OpenFile(vfs.pathFsToBpFs(name), flag, perm)
+	f, err := vfs.baseFS.OpenFile(vfs.toBasePath(name), flag, perm)
 	if err != nil {
 		return f, vfs.restoreError(err)
 	}
@@ -378,7 +378,7 @@ func (vfs *BasePathFS) Rel(basepath, targpath string) (string, error) {
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Remove(name string) error {
-	err := vfs.baseFS.Remove(vfs.pathFsToBpFs(name))
+	err := vfs.baseFS.Remove(vfs.toBasePath(name))
 
 	return vfs.restoreError(err)
 }
@@ -389,7 +389,7 @@ func (vfs *BasePathFS) Remove(name string) error {
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) RemoveAll(path string) error {
-	err := vfs.baseFS.RemoveAll(vfs.pathFsToBpFs(path))
+	err := vfs.baseFS.RemoveAll(vfs.toBasePath(path))
 	if err != nil {
 		return vfs.restoreError(err)
 	}
@@ -402,7 +402,7 @@ func (vfs *BasePathFS) RemoveAll(path string) error {
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
 func (vfs *BasePathFS) Rename(oldname, newname string) error {
-	err := vfs.baseFS.Rename(vfs.pathFsToBpFs(oldname), vfs.pathFsToBpFs(newname))
+	err := vfs.baseFS.Rename(vfs.toBasePath(oldname), vfs.toBasePath(newname))
 
 	return vfs.restoreError(err)
 }
@@ -429,7 +429,7 @@ func (vfs *BasePathFS) Split(path string) (dir, file string) {
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Stat(path string) (os.FileInfo, error) {
-	info, err := vfs.baseFS.Stat(vfs.pathFsToBpFs(path))
+	info, err := vfs.baseFS.Stat(vfs.toBasePath(path))
 
 	return info, vfs.restoreError(err)
 }
@@ -479,7 +479,7 @@ func (vfs *BasePathFS) ToSlash(path string) string {
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Truncate(name string, size int64) error {
-	err := vfs.baseFS.Truncate(vfs.pathFsToBpFs(name), size)
+	err := vfs.baseFS.Truncate(vfs.toBasePath(name), size)
 
 	return vfs.restoreError(err)
 }
@@ -496,8 +496,8 @@ func (vfs *BasePathFS) UMask(mask os.FileMode) {
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
 func (vfs *BasePathFS) Walk(root string, walkFn filepath.WalkFunc) error {
-	err := vfs.baseFS.Walk(vfs.pathFsToBpFs(root), func(path string, info os.FileInfo, err error) error {
-		return walkFn(vfs.pathBpFsToFs(path), info, err)
+	err := vfs.baseFS.Walk(vfs.toBasePath(root), func(path string, info os.FileInfo, err error) error {
+		return walkFn(vfs.fromBasePath(path), info, err)
 	})
 
 	return vfs.restoreError(err)
