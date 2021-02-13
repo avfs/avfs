@@ -174,7 +174,7 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T) {
 	})
 
 	t.Run("ChtimesNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
 		CheckPathError(t, "Chtimes", "chtimes", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
@@ -387,7 +387,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T) {
 	})
 
 	t.Run("LinkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 		existingFile := sfs.CreateEmptyFile(t)
 
 		err := vfs.Link(nonExistingFile, existingFile)
@@ -512,7 +512,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T) {
 	})
 
 	t.Run("LStatNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		_, err := vfs.Lstat(nonExistingFile)
 		switch vfs.OSType() {
@@ -815,7 +815,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T) {
 	})
 
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 		buf := make([]byte, 1)
 
 		f, err := vfs.Open(nonExistingFile)
@@ -1421,7 +1421,7 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T) {
 	})
 
 	t.Run("ReadLinkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		_, err := vfs.Readlink(nonExistingFile)
 		CheckPathError(t, "Readlink", "readlink", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
@@ -1524,7 +1524,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T) {
 	})
 
 	t.Run("RemoveNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.Remove(nonExistingFile)
 		CheckPathError(t, "Remove", "remove", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
@@ -1615,7 +1615,7 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T) {
 	})
 
 	t.Run("RemoveAllNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.RemoveAll(nonExistingFile)
 		if err != nil {
@@ -1970,7 +1970,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T) {
 	})
 
 	t.Run("StatNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		_, err := vfs.Stat(nonExistingFile)
 

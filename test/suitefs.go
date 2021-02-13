@@ -255,9 +255,14 @@ func (sfs *SuiteFS) CreateRndDir(t *testing.T) *vfsutils.RndTree {
 
 // NonExistingFile returns the name of a non existing file.
 func (sfs *SuiteFS) NonExistingFile(t *testing.T) string {
+	vfs := sfs.vfsRead
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return "nonExistingFile"
+	}
+
 	name := fmt.Sprintf("%s-%x", avfs.Avfs, rand.Int63())
 	path := sfs.vfsRead.Join(sfs.rootDir, name)
-	vfs := sfs.vfsRead
 
 	_, err := vfs.Stat(path)
 	if !vfs.IsNotExist(err) {
@@ -272,7 +277,7 @@ func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
 	t.Helper()
 
 	vfs := sfs.vfsRead
-	name := vfs.Join(sfs.rootDir, "nonExistingFile")
+	name := sfs.NonExistingFile(t)
 
 	f, err := vfs.Open(name)
 	if vfs.IsExist(err) {

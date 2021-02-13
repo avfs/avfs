@@ -829,7 +829,7 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 	})
 
 	t.Run("WalkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.Walk(nonExistingFile, func(path string, info os.FileInfo, err error) error {
 			return nil

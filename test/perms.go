@@ -146,7 +146,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 	})
 
 	t.Run("ChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.Chown(nonExistingFile, 0, 0)
 		CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
@@ -287,7 +287,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T) {
 	})
 
 	t.Run("LChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.Lchown(nonExistingFile, 0, 0)
 		CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
@@ -361,7 +361,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 	})
 
 	t.Run("ChmodNonExistingFile", func(t *testing.T) {
-		nonExistingFile := vfs.Join(rootDir, "nonExistingFile")
+		nonExistingFile := sfs.NonExistingFile(t)
 
 		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
