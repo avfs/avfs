@@ -193,9 +193,6 @@ const (
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
 
-	// FeatClonable indicates if a file system can be cloned.
-	FeatClonable
-
 	// FeatMainDirs indicates that the main directories of the filesystem (/home, /root and /tmp) are present.
 	FeatMainDirs
 
@@ -256,7 +253,6 @@ type VFS interface {
 	ChOwner
 	ChRooter
 	ChTimer
-	Cloner
 	IdentityMgr
 	HardLinker
 	Namer
