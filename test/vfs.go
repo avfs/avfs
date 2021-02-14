@@ -142,7 +142,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chmod(rootDir, avfs.DefaultDirPerm)
 		CheckPathError(t, "Chmod", "chmod", rootDir, avfs.ErrPermDenied, err)
 
@@ -150,13 +150,6 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 	}
 
 	existingFile := sfs.CreateEmptyFile(t)
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		err := vfs.Chmod(existingFile, avfs.DefaultFilePerm)
-		CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrPermDenied, err)
-
-		return
-	}
 
 	t.Run("ChmodDir", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
@@ -230,7 +223,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !sfs.canTestPerm || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chown(rootDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -239,13 +232,6 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 		default:
 			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
 		}
-
-		return
-	}
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		err := vfs.Chown(rootDir, 0, 0)
-		CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
 
 		return
 	}
@@ -341,14 +327,7 @@ func (sfs *SuiteFS) TestChroot(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
-		err := vfs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
+	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chroot(rootDir)
 		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
 
@@ -438,18 +417,9 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chtimes(rootDir, time.Now(), time.Now())
 		CheckPathError(t, "Chtimes", "chtimes", rootDir, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	existingFile := sfs.CreateEmptyFile(t)
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		err := vfs.Chtimes(existingFile, time.Now(), time.Now())
-		CheckPathError(t, "Chtimes", "chtimes", existingFile, avfs.ErrPermDenied, err)
 
 		return
 	}
@@ -508,9 +478,9 @@ func (sfs *SuiteFS) TestCreate(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.Create(rootDir)
 		CheckPathError(t, "Create", "open", rootDir, avfs.ErrPermDenied, err)
 
@@ -524,6 +494,7 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T) {
 	defer removeDir()
 
 	vfs := sfs.vfsSetup
+
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(rootDir)
 		CheckPathError(t, "EvalSymlinks", "lstat", rootDir, avfs.ErrPermDenied, err)
@@ -602,9 +573,9 @@ func (sfs *SuiteFS) TestLchown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !sfs.canTestPerm || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Lchown(rootDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -745,8 +716,8 @@ func (sfs *SuiteFS) TestLink(t *testing.T) {
 
 	vfs := sfs.vfsSetup
 
-	if !vfs.HasFeature(avfs.FeatHardlink) {
-		err := vfs.Link(rootDir, rootDir)
+	if !sfs.vfsTest.HasFeature(avfs.FeatHardlink) || sfs.vfsTest.HasFeature(avfs.FeatReadOnly) {
+		err := sfs.vfsTest.Link(rootDir, rootDir)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
@@ -761,6 +732,8 @@ func (sfs *SuiteFS) TestLink(t *testing.T) {
 	dirs := CreateDirs(t, vfs, rootDir)
 	files := CreateFiles(t, vfs, rootDir)
 	pathLinks := sfs.CreateDir(t)
+
+	vfs = sfs.vfsTest
 
 	t.Run("LinkCreate", func(t *testing.T) {
 		for _, file := range files {
@@ -986,18 +959,9 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
 		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	nonExistingFile := sfs.NonExistingFile(t)
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		err := vfs.Mkdir(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "Mkdir", "mkdir", nonExistingFile, avfs.ErrPermDenied, err)
 
 		return
 	}
@@ -1116,18 +1080,9 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
 		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	nonExistingFile := sfs.NonExistingFile(t)
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		err := vfs.MkdirAll(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "MkdirAll", "mkdir", nonExistingFile, avfs.ErrPermDenied, err)
 
 		return
 	}
