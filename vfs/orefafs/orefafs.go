@@ -171,11 +171,6 @@ func (vfs *OrefaFS) Clean(path string) string {
 	return vfsutils.Clean(path)
 }
 
-// Clone returns the file system itself since if does not support this feature (FeatClonable).
-func (vfs *OrefaFS) Clone() avfs.VFS {
-	return vfs
-}
-
 // Create creates or truncates the named file. If the file already exists,
 // it is truncated. If the file does not exist, it is created with mode 0666
 // (before umask). If successful, methods on the returned File can

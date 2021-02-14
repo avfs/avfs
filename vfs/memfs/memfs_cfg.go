@@ -31,7 +31,6 @@ func New(opts ...Option) (*MemFS, error) {
 		idm: dummyidm.NotImplementedIdm,
 		feature: avfs.FeatBasicFs |
 			avfs.FeatChroot |
-			avfs.FeatClonable |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
 		umask: int32(vfsutils.UMask.Get()),

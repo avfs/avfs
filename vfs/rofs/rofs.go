@@ -135,12 +135,6 @@ func (vfs *RoFS) Clean(path string) string {
 	return vfsutils.Clean(path)
 }
 
-// Clone returns a shallow copy of the current file system (see MemFs)
-// or the file system itself if does not support this feature (FeatClonable).
-func (vfs *RoFS) Clone() avfs.VFS {
-	return vfs.baseFS.Clone()
-}
-
 // Create creates the named file with mode 0666 (before umask), truncating
 // it if it already exists. If successful, methods on the returned
 // File can be used for I/O; the associated file descriptor has mode
