@@ -37,7 +37,6 @@ func (sfs *SuiteFS) TestPerm(t *testing.T) {
 func (sfs *SuiteFS) TestPermWrite(t *testing.T) {
 	sfs.TestChown(t)
 	sfs.TestLchown(t)
-	sfs.TestChmod(t)
 	sfs.TestWriteDenied(t)
 	sfs.TestChroot(t)
 }
@@ -291,96 +290,6 @@ func (sfs *SuiteFS) TestLchown(t *testing.T) {
 
 		err := vfs.Lchown(nonExistingFile, 0, 0)
 		CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-	})
-}
-
-// TestChmod tests Chmod function.
-func (sfs *SuiteFS) TestChmod(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
-	defer removeDir()
-
-	vfs := sfs.vfsWrite
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		err := vfs.Chmod(rootDir, avfs.DefaultDirPerm)
-		CheckPathError(t, "Chmod", "chmod", rootDir, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	existingFile := sfs.CreateEmptyFile(t)
-
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		vfsR := sfs.vfsRead
-
-		err := vfsR.Chmod(existingFile, avfs.DefaultFilePerm)
-		CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	t.Run("ChmodDir", func(t *testing.T) {
-		for shift := 6; shift >= 0; shift -= 3 {
-			for mode := os.FileMode(1); mode <= 6; mode++ {
-				wantMode := mode << shift
-				path, err := vfs.TempDir(rootDir, "")
-				if err != nil {
-					t.Fatalf("TempDir %s : want error to be nil, got %v", rootDir, err)
-				}
-
-				err = vfs.Chmod(path, wantMode)
-				if err != nil {
-					t.Errorf("Chmod %s : want error to be nil, got %v", path, err)
-				}
-
-				fst, err := vfs.Stat(path)
-				if err != nil {
-					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-				}
-
-				gotMode := fst.Mode() & os.ModePerm
-				if gotMode != wantMode {
-					t.Errorf("Stat %s : want mode to be %03o, got %03o", path, wantMode, gotMode)
-				}
-			}
-		}
-	})
-
-	t.Run("ChmodFile", func(t *testing.T) {
-		for shift := 6; shift >= 0; shift -= 3 {
-			for mode := os.FileMode(1); mode <= 6; mode++ {
-				wantMode := mode << shift
-
-				err := vfs.Chmod(existingFile, wantMode)
-				if err != nil {
-					t.Errorf("Chmod %s : want error to be nil, got %v", existingFile, err)
-				}
-
-				fst, err := vfs.Stat(existingFile)
-				if err != nil {
-					t.Errorf("Stat %s : want error to be nil, got %v", existingFile, err)
-				}
-
-				gotMode := fst.Mode() & os.ModePerm
-				if gotMode != wantMode {
-					t.Errorf("Stat %s : want mode to be %03o, got %03o", existingFile, wantMode, gotMode)
-				}
-			}
-		}
-	})
-
-	t.Run("ChmodNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t)
-
-		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-	})
-
-	// Cleanup permissions for RemoveAll()
-	_ = vfs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = vfs.Chmod(path, 0o777)
-
-		return nil
 	})
 }
 
