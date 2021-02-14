@@ -368,7 +368,7 @@ func (sfs *SuiteFS) TestChroot(t *testing.T) {
 
 		defer fSave.Close()
 
-		// Some file systems (MemFs) don't permit exit from a chroot.
+		// Some file systems (MemFs) don't allow exit from a chroot.
 		// A shallow clone of the file system is then used to perform the chroot
 		// without loosing access to the original root of the file system.
 		vfsChroot := vfs
@@ -388,9 +388,8 @@ func (sfs *SuiteFS) TestChroot(t *testing.T) {
 			t.Errorf("Stat : want error to be nil, got %v", err)
 		}
 
-		// if the file system can be cloned it can be restored from the saved one.
+		// Restore the original file system root if possible.
 		if !cloned {
-			// Restore the original file system root if possible.
 			err = fSave.Chdir()
 			if err != nil {
 				t.Errorf("Chdir : want error to be nil, got %v", err)
