@@ -974,6 +974,9 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 
 	vfs := sfs.vfsWrite
 
+	nonExistingFile := sfs.NonExistingFile(t)
+	existingFile := sfs.CreateEmptyFile(t)
+
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
 		CheckPathError(t, "Mkdir", "mkdir", rootDir, avfs.ErrPermDenied, err)
@@ -981,9 +984,15 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 		return
 	}
 
-	existingFile := sfs.CreateEmptyFile(t)
-
 	vfs = sfs.vfsRead
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		err := vfs.Mkdir(nonExistingFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "Mkdir", "mkdir", nonExistingFile, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	dirs := GetDirs()
 
 	t.Run("MkdirNew", func(t *testing.T) {

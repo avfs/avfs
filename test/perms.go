@@ -308,8 +308,8 @@ func (sfs *SuiteFS) TestWriteDenied(t *testing.T) {
 			_, err = vfs.Create(pathNewDirOrFile)
 			CheckPathError(t, "Create", "open", pathNewDirOrFile, avfs.ErrPermDenied, err)
 
-			err = vfs.Chroot(pathDir)
-			CheckPathError(t, "Chroot", "chroot", pathDir, avfs.ErrOpNotPermitted, err)
+			//	err = vfs.Chroot(pathDir)
+			//	CheckPathError(t, "Chroot", "chroot", pathDir, avfs.ErrOpNotPermitted, err)
 
 			err = vfs.Lchown(pathDir, u.Uid(), u.Gid())
 			CheckPathError(t, "Lchown", "lchown", pathDir, avfs.ErrOpNotPermitted, err)
@@ -317,9 +317,6 @@ func (sfs *SuiteFS) TestWriteDenied(t *testing.T) {
 			err = vfs.Link(pathFile, pathNewDirOrFile)
 
 			CheckLinkError(t, "Link", "link", pathFile, pathNewDirOrFile, avfs.ErrOpNotPermitted, err)
-
-			err = vfs.Mkdir(pathNewDirOrFile, avfs.DefaultDirPerm)
-			CheckPathError(t, "Mkdir", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)
 
 			err = vfs.MkdirAll(pathNewDirOrFile, avfs.DefaultDirPerm)
 			CheckPathError(t, "MkdirAll", "mkdir", pathNewDirOrFile, avfs.ErrPermDenied, err)
