@@ -696,9 +696,9 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 		return
 	}
 
-	_ = CreateDirs(t, vfs, rootDir)
-	_ = CreateFiles(t, vfs, rootDir)
-	sl := len(CreateSymlinks(t, vfs, rootDir))
+	_ = sfs.CreateDirs(t, rootDir)
+	_ = sfs.CreateFiles(t, rootDir)
+	sl := len(sfs.CreateSymlinks(t, rootDir))
 
 	vfs = sfs.vfsTest
 
@@ -780,9 +780,9 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	symlinks := CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	symlinks := sfs.CreateSymlinks(t, rootDir)
 
 	vfs = sfs.vfsTest
 	lnames := len(dirs) + len(files) + len(symlinks)

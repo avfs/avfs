@@ -114,8 +114,8 @@ func WithVFSTest(vfsTest avfs.VFS) Option {
 	}
 }
 
-// WithOs returns an option function which sets the operating system for the tests.
-func WithOs(osType avfs.OSType) Option {
+// WithOS returns an option function which sets the operating system for the tests.
+func WithOS(osType avfs.OSType) Option {
 	return func(sfs *SuiteFS) {
 		sfs.osType = osType
 	}
@@ -422,8 +422,10 @@ func GetDirsAll() []*Dir {
 }
 
 // CreateDirs create test directories and baseDir directory if necessary.
-func CreateDirs(t *testing.T, vfs avfs.VFS, baseDir string) []*Dir {
+func (sfs *SuiteFS) CreateDirs(t *testing.T, baseDir string) []*Dir {
 	t.Helper()
+
+	vfs := sfs.vfsSetup
 
 	err := vfs.MkdirAll(baseDir, avfs.DefaultDirPerm)
 	if err != nil {
@@ -469,8 +471,10 @@ func GetFiles() []*File {
 }
 
 // CreateFiles create test files.
-func CreateFiles(t *testing.T, vfs avfs.VFS, baseDir string) []*File {
+func (sfs *SuiteFS) CreateFiles(t *testing.T, baseDir string) []*File {
 	t.Helper()
+
+	vfs := sfs.vfsSetup
 
 	files := GetFiles()
 	for _, file := range files {
@@ -544,8 +548,10 @@ func GetSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 }
 
 // CreateSymlinks creates test symbolic links.
-func CreateSymlinks(t *testing.T, vfs avfs.VFS, baseDir string) []*Symlink {
+func (sfs *SuiteFS) CreateSymlinks(t *testing.T, baseDir string) []*Symlink {
 	t.Helper()
+
+	vfs := sfs.vfsSetup
 
 	symlinks := GetSymlinks(vfs)
 	for _, sl := range symlinks {

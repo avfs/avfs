@@ -49,7 +49,7 @@ func (sfs *SuiteFS) TestChdir(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
 	existingFile := sfs.CreateEmptyFile(t)
 
 	vfs = sfs.vfsTest
@@ -236,8 +236,8 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
 	uis := UserInfos()
 
 	t.Run("ChownDir", func(t *testing.T) {
@@ -425,8 +425,8 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T) {
 	}
 
 	t.Run("Chtimes", func(t *testing.T) {
-		_ = CreateDirs(t, vfs, rootDir)
-		files := CreateFiles(t, vfs, rootDir)
+		_ = sfs.CreateDirs(t, rootDir)
+		files := sfs.CreateFiles(t, rootDir)
 		tomorrow := time.Now().AddDate(0, 0, 1)
 
 		for _, file := range files {
@@ -502,9 +502,9 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T) {
 		return
 	}
 
-	_ = CreateDirs(t, vfs, rootDir)
-	_ = CreateFiles(t, vfs, rootDir)
-	_ = CreateSymlinks(t, vfs, rootDir)
+	_ = sfs.CreateDirs(t, rootDir)
+	_ = sfs.CreateFiles(t, rootDir)
+	_ = sfs.CreateSymlinks(t, rootDir)
 
 	vfs = sfs.vfsTest
 
@@ -588,9 +588,9 @@ func (sfs *SuiteFS) TestLchown(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	symlinks := CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	symlinks := sfs.CreateSymlinks(t, rootDir)
 	uis := UserInfos()
 
 	t.Run("LchownDir", func(t *testing.T) {
@@ -729,8 +729,8 @@ func (sfs *SuiteFS) TestLink(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
 	pathLinks := sfs.CreateDir(t)
 
 	vfs = sfs.vfsTest
@@ -830,9 +830,9 @@ func (sfs *SuiteFS) TestLstat(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	sfs.CreateSymlinks(t, rootDir)
 
 	vfs = sfs.vfsTest
 
@@ -1799,9 +1799,9 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	symlinks := CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	symlinks := sfs.CreateSymlinks(t, rootDir)
 
 	vfs = sfs.vfsTest
 
@@ -1861,9 +1861,9 @@ func (sfs *SuiteFS) TestRemove(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	symlinks := CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	symlinks := sfs.CreateSymlinks(t, rootDir)
 
 	if s, ok := vfs.(fmt.Stringer); ok {
 		fmt.Println(s.String())
@@ -1965,9 +1965,9 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T) {
 	}
 
 	baseDir := vfs.Join(rootDir, "RemoveAll")
-	dirs := CreateDirs(t, vfs, baseDir)
-	files := CreateFiles(t, vfs, baseDir)
-	symlinks := CreateSymlinks(t, vfs, baseDir)
+	dirs := sfs.CreateDirs(t, baseDir)
+	files := sfs.CreateFiles(t, baseDir)
+	symlinks := sfs.CreateSymlinks(t, baseDir)
 
 	t.Run("RemoveAll", func(t *testing.T) {
 		err := vfs.RemoveAll(baseDir)
@@ -2010,7 +2010,7 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T) {
 	})
 
 	t.Run("RemoveAllPathEmpty", func(t *testing.T) {
-		CreateDirs(t, vfs, baseDir)
+		_ = sfs.CreateDirs(t, baseDir)
 
 		err := vfs.Chdir(baseDir)
 		if err != nil {
@@ -2060,7 +2060,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T) {
 	}
 
 	t.Run("RenameDir", func(t *testing.T) {
-		dirs := CreateDirs(t, vfs, rootDir)
+		dirs := sfs.CreateDirs(t, rootDir)
 
 		for i := len(dirs) - 1; i >= 0; i-- {
 			oldPath := vfs.Join(rootDir, dirs[i].Path)
@@ -2088,8 +2088,8 @@ func (sfs *SuiteFS) TestRename(t *testing.T) {
 	})
 
 	t.Run("RenameFile", func(t *testing.T) {
-		CreateDirs(t, vfs, rootDir)
-		files := CreateFiles(t, vfs, rootDir)
+		_ = sfs.CreateDirs(t, rootDir)
+		files := sfs.CreateFiles(t, rootDir)
 
 		for _, file := range files {
 			oldPath := vfs.Join(rootDir, file.Path)
@@ -2186,12 +2186,12 @@ func (sfs *SuiteFS) TestSameFile(t *testing.T) {
 		return
 	}
 
-	CreateDirs(t, vfs, rootDir1)
-	files := CreateFiles(t, vfs, rootDir1)
+	_ = sfs.CreateDirs(t, rootDir1)
+	files := sfs.CreateFiles(t, rootDir1)
 
 	rootDir2, removeDir2 := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir2()
-	CreateDirs(t, vfs, rootDir2)
+	_ = sfs.CreateDirs(t, rootDir2)
 
 	t.Run("SameFileLink", func(t *testing.T) {
 		if !vfs.HasFeature(avfs.FeatHardlink) {
@@ -2287,9 +2287,9 @@ func (sfs *SuiteFS) TestStat(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	_ = CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	_ = sfs.CreateSymlinks(t, rootDir)
 
 	vfs = sfs.vfsTest
 
@@ -2429,8 +2429,8 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T) {
 		return
 	}
 
-	_ = CreateDirs(t, vfs, rootDir)
-	_ = CreateFiles(t, vfs, rootDir)
+	_ = sfs.CreateDirs(t, rootDir)
+	_ = sfs.CreateFiles(t, rootDir)
 
 	t.Run("Symlink", func(t *testing.T) {
 		symlinks := GetSymlinks(vfs)

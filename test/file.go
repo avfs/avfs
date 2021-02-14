@@ -49,7 +49,7 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
 	existingFile := sfs.CreateEmptyFile(t)
 
 	vfs = sfs.vfsTest
@@ -962,9 +962,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T) {
 		return
 	}
 
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	_ = CreateSymlinks(t, vfs, rootDir)
+	dirs := sfs.CreateDirs(t, rootDir)
+	files := sfs.CreateFiles(t, rootDir)
+	_ = sfs.CreateSymlinks(t, rootDir)
 
 	vfs = sfs.vfsTest
 
