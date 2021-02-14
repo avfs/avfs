@@ -2280,10 +2280,7 @@ func (sfs *SuiteFS) TestWriteOnReadOnly(t *testing.T) {
 	}
 
 	t.Run("ReadOnlyFs", func(t *testing.T) {
-		err := vfs.Chmod(existingFile, avfs.DefaultFilePerm)
-		CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrPermDenied, err)
-
-		err = vfs.Chown(existingFile, 0, 0)
+		err := vfs.Chown(existingFile, 0, 0)
 		CheckPathError(t, "Chown", "chown", existingFile, avfs.ErrPermDenied, err)
 
 		err = vfs.Chroot(rootDir)

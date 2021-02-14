@@ -147,7 +147,7 @@ const (
 	RaceUndefined
 )
 
-// RaceFunc tests data race conditions by running simultaneously all testFuncs in cf.maxRace goroutines
+// RaceFunc tests data race conditions by running simultaneously all testFuncs in SuiteFS.maxRace goroutines
 // and expecting a result rr.
 func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs ...func() error) {
 	var (

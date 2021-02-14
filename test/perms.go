@@ -308,6 +308,17 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 		return
 	}
 
+	existingFile := sfs.CreateEmptyFile(t)
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		vfsR := sfs.vfsRead
+
+		err := vfsR.Chmod(existingFile, avfs.DefaultFilePerm)
+		CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	t.Run("ChmodDir", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
 			for mode := os.FileMode(1); mode <= 6; mode++ {
@@ -336,25 +347,23 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 	})
 
 	t.Run("ChmodFile", func(t *testing.T) {
-		path := sfs.CreateEmptyFile(t)
-
 		for shift := 6; shift >= 0; shift -= 3 {
 			for mode := os.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
 
-				err := vfs.Chmod(path, wantMode)
+				err := vfs.Chmod(existingFile, wantMode)
 				if err != nil {
-					t.Errorf("Chmod %s : want error to be nil, got %v", path, err)
+					t.Errorf("Chmod %s : want error to be nil, got %v", existingFile, err)
 				}
 
-				fst, err := vfs.Stat(path)
+				fst, err := vfs.Stat(existingFile)
 				if err != nil {
-					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+					t.Errorf("Stat %s : want error to be nil, got %v", existingFile, err)
 				}
 
 				gotMode := fst.Mode() & os.ModePerm
 				if gotMode != wantMode {
-					t.Errorf("Stat %s : want mode to be %03o, got %03o", path, wantMode, gotMode)
+					t.Errorf("Stat %s : want mode to be %03o, got %03o", existingFile, wantMode, gotMode)
 				}
 			}
 		}
