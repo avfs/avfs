@@ -95,14 +95,9 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Chroot(path string) error {
-	err := vfs.baseFS.Chroot(vfs.toBasePath(path))
-	if err != nil {
-		return vfs.restoreError(err)
-	}
+	const op = "chroot"
 
-	vfs.basePath = ""
-
-	return nil
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -142,12 +137,6 @@ func (vfs *BasePathFS) Chtimes(name string, atime, mtime time.Time) error {
 // https://9p.io/sys/doc/lexnames.html
 func (vfs *BasePathFS) Clean(path string) string {
 	return vfsutils.Clean(path)
-}
-
-// Clone returns a shallow copy of the current file system (see MemFs)
-// or the file system itself if does not support this feature (FeatClonable).
-func (vfs *BasePathFS) Clone() avfs.VFS {
-	return vfs.baseFS.Clone()
 }
 
 // Create creates or truncates the named file. If the file already exists,

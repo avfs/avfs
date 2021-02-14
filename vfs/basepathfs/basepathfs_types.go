@@ -24,6 +24,7 @@ import (
 type BasePathFS struct {
 	baseFS   avfs.VFS
 	basePath string
+	feature  avfs.Feature
 }
 
 // BasePathFile represents an open file descriptor.

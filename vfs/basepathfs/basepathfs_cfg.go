@@ -42,6 +42,7 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
 	vfs := &BasePathFS{
 		baseFS:   baseFs,
 		basePath: absPath,
+		feature:  baseFs.Features() &^ (avfs.FeatSymlink | avfs.FeatChroot),
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
@@ -56,12 +57,12 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
 
 // Features returns the set of features provided by the file system or identity manager.
 func (vfs *BasePathFS) Features() avfs.Feature {
-	return vfs.baseFS.Features() &^ avfs.FeatSymlink
+	return vfs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (vfs *BasePathFS) HasFeature(feature avfs.Feature) bool {
-	return (feature&avfs.FeatSymlink == 0) && vfs.baseFS.HasFeature(feature)
+	return (vfs.feature & feature) == feature
 }
 
 // Name returns the name of the fileSystem.
