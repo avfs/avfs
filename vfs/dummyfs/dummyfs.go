@@ -189,7 +189,7 @@ func (vfs *DummyFS) GetTempDir() string {
 
 // GetUMask returns the file mode creation mask.
 func (vfs *DummyFS) GetUMask() os.FileMode {
-	return 0
+	return 0o022
 }
 
 // Getwd returns a rooted path name corresponding to the
