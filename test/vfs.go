@@ -1102,11 +1102,20 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.MkdirAll(rootDir, avfs.DefaultDirPerm)
 		CheckPathError(t, "MkdirAll", "mkdir", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	nonExistingFile := sfs.NonExistingFile(t)
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		err := vfs.MkdirAll(nonExistingFile, avfs.DefaultDirPerm)
+		CheckPathError(t, "MkdirAll", "mkdir", nonExistingFile, avfs.ErrPermDenied, err)
 
 		return
 	}
@@ -2737,9 +2746,6 @@ func (sfs *SuiteFS) TestWriteOnReadOnly(t *testing.T) {
 
 		err = vfs.Link(existingFile, newFile)
 		CheckLinkError(t, "Link", "link", existingFile, newFile, avfs.ErrPermDenied, err)
-
-		err = vfs.MkdirAll(newFile, avfs.DefaultDirPerm)
-		CheckPathError(t, "MkdirAll", "mkdir", newFile, avfs.ErrPermDenied, err)
 
 		_, err = vfs.OpenFile(newFile, os.O_RDWR, avfs.DefaultFilePerm)
 		CheckPathError(t, "OpenFile", "open", newFile, avfs.ErrPermDenied, err)
