@@ -56,11 +56,11 @@ func (sfs *SuiteFS) TestAccessDir(t *testing.T) {
 
 	const baseDir = "baseDir"
 
-	vfsWrite := sfs.vfsSetup
+	vfsS := sfs.vfsSetup
 
 	uis := UserInfos()
 
-	ut, err := vfsWrite.LookupUser(UsrTest)
+	ut, err := vfsS.LookupUser(UsrTest)
 	if err != nil {
 		t.Fatalf("LookupUser %s : want error to be nil, got %v", UsrTest, err)
 	}
@@ -69,24 +69,24 @@ func (sfs *SuiteFS) TestAccessDir(t *testing.T) {
 		for mode := os.FileMode(1); mode <= 6; mode++ {
 			wantMode := mode << shift
 			fileName := fmt.Sprintf("%s-%03o", ut.Name(), wantMode)
-			path := vfsWrite.Join(rootDir, fileName)
+			path := vfsS.Join(rootDir, fileName)
 
-			err = vfsWrite.Mkdir(path, avfs.DefaultDirPerm)
+			err = vfsS.Mkdir(path, avfs.DefaultDirPerm)
 			if err != nil {
 				t.Fatalf("Mkdir %s : want error to be nil, got %v", path, err)
 			}
 
-			_, err = vfsWrite.Stat(path)
+			_, err = vfsS.Stat(path)
 			if err != nil {
 				t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
 			}
 
-			err := vfsWrite.Chmod(path, wantMode)
+			err := vfsS.Chmod(path, wantMode)
 			if err != nil {
 				t.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
 			}
 
-			err = vfsWrite.Chown(path, ut.Uid(), ut.Gid())
+			err = vfsS.Chown(path, ut.Uid(), ut.Gid())
 			if err != nil {
 				t.Fatalf("Chown %s : want error to be nil, got %v", path, err)
 			}
@@ -139,8 +139,8 @@ func (sfs *SuiteFS) TestAccessDir(t *testing.T) {
 	})
 
 	// Cleanup permissions for RemoveAll()
-	_ = vfsWrite.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = vfsWrite.Chmod(path, 0o777)
+	_ = vfsS.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		_ = vfsS.Chmod(path, 0o777)
 
 		return nil
 	})

@@ -41,7 +41,7 @@ func TestDirExists(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, test.UsrTest)
 	defer removeDir()
 
-	vfs := sfs.VFSRead()
+	vfs := sfs.VFSTest()
 	existingFile := sfs.CreateEmptyFile(t)
 
 	t.Run("DirExistsDir", func(t *testing.T) {

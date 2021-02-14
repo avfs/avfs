@@ -37,14 +37,14 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFS {
-	vfsWrite, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfsSetup, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
-	vfs := rofs.New(vfsWrite)
+	vfs := rofs.New(vfsSetup)
 
-	sfs := test.NewSuiteFS(t, vfsWrite, test.WithVFSRead(vfs))
+	sfs := test.NewSuiteFS(t, vfsSetup, test.WithVFSTest(vfs))
 
 	return sfs
 }

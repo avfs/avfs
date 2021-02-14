@@ -61,19 +61,19 @@ type SuiteFS struct {
 type Option func(*SuiteFS)
 
 // NewSuiteFS creates a new test suite for a file system.
-func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
-	if vfsWrite == nil {
+func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
+	if vfsSetup == nil {
 		tb.Fatal("New : want vfsSetup to be set, got nil")
 	}
 
-	currentUser := vfsWrite.CurrentUser()
-	canTestPerm := vfsWrite.HasFeature(avfs.FeatBasicFs) &&
-		vfsWrite.HasFeature(avfs.FeatIdentityMgr) &&
+	currentUser := vfsSetup.CurrentUser()
+	canTestPerm := vfsSetup.HasFeature(avfs.FeatBasicFs) &&
+		vfsSetup.HasFeature(avfs.FeatIdentityMgr) &&
 		currentUser.IsRoot()
 
 	sfs := &SuiteFS{
-		vfsSetup:    vfsWrite,
-		vfsTest:     vfsWrite,
+		vfsSetup:    vfsSetup,
+		vfsTest:     vfsSetup,
 		rootDir:     "",
 		maxRace:     1000,
 		osType:      vfsutils.RunTimeOS(),
@@ -82,10 +82,10 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 	}
 
 	if canTestPerm {
-		sfs.Groups = CreateGroups(tb, vfsWrite, "")
-		sfs.Users = CreateUsers(tb, vfsWrite, "")
+		sfs.Groups = CreateGroups(tb, vfsSetup, "")
+		sfs.Users = CreateUsers(tb, vfsSetup, "")
 
-		_, err := vfsWrite.User(UsrTest)
+		_, err := vfsSetup.User(UsrTest)
 		if err != nil {
 			tb.Fatalf("User %s : want error to be nil, got %s", UsrTest, err)
 		}
@@ -107,10 +107,10 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 
 // Options
 
-// WithVFSRead returns an option function which sets the VFS for read access.
-func WithVFSRead(vfsRead avfs.VFS) Option {
+// WithVFSTest returns an option function which sets the VFS used for running tests.
+func WithVFSTest(vfsTest avfs.VFS) Option {
 	return func(sfs *SuiteFS) {
-		sfs.vfsTest = vfsRead
+		sfs.vfsTest = vfsTest
 	}
 }
 
@@ -309,13 +309,13 @@ func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserRe
 	return vfs, u
 }
 
-// VFSRead returns the file system for read only functions.
-func (sfs *SuiteFS) VFSRead() avfs.VFS {
+// VFSTest returns the file system used to run the tests.
+func (sfs *SuiteFS) VFSTest() avfs.VFS {
 	return sfs.vfsTest
 }
 
-// VFSWrite returns the file system for read and write functions.
-func (sfs *SuiteFS) VFSWrite() avfs.VFS {
+// VFSSetup returns the file system used to setup the tests.
+func (sfs *SuiteFS) VFSSetup() avfs.VFS {
 	return sfs.vfsSetup
 }
 

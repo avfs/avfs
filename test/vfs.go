@@ -152,9 +152,9 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 	existingFile := sfs.CreateEmptyFile(t)
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		vfsR := sfs.vfsTest
+		vfsT := sfs.vfsTest
 
-		err := vfsR.Chmod(existingFile, avfs.DefaultFilePerm)
+		err := vfsT.Chmod(existingFile, avfs.DefaultFilePerm)
 		CheckPathError(t, "Chmod", "chmod", existingFile, avfs.ErrPermDenied, err)
 
 		return
@@ -436,9 +436,9 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T) {
 	existingFile := sfs.CreateEmptyFile(t)
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		vfsR := sfs.vfsTest
+		vfsT := sfs.vfsTest
 
-		err := vfsR.Chtimes(existingFile, time.Now(), time.Now())
+		err := vfsT.Chtimes(existingFile, time.Now(), time.Now())
 		CheckPathError(t, "Chtimes", "chtimes", existingFile, avfs.ErrPermDenied, err)
 
 		return
