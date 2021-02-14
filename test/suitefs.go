@@ -332,6 +332,7 @@ func (sfs *SuiteFS) TestWrite(t *testing.T) {
 	sfs.TestChown(t)
 	sfs.TestCreate(t)
 	sfs.TestChtimes(t)
+	sfs.TestLchown(t)
 	sfs.TestLink(t)
 	sfs.TestMkdir(t)
 	sfs.TestMkdirAll(t)

@@ -484,6 +484,147 @@ func (sfs *SuiteFS) TestGetTempDir(t *testing.T) {
 	}
 }
 
+// Lchown tests Lchown function.
+func (sfs *SuiteFS) TestLchown(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
+	defer removeDir()
+
+	vfs := sfs.vfsWrite
+
+	if !sfs.canTestPerm {
+		err := vfs.Lchown(rootDir, 0, 0)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrWinNotSupported, err)
+		default:
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	dirs := CreateDirs(t, vfs, rootDir)
+	files := CreateFiles(t, vfs, rootDir)
+	symlinks := CreateSymlinks(t, vfs, rootDir)
+	uis := UserInfos()
+
+	t.Run("LchownDir", func(t *testing.T) {
+		for _, ui := range uis {
+			wantName := ui.Name
+
+			u, err := vfs.LookupUser(wantName)
+			if err != nil {
+				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
+			}
+
+			for _, dir := range dirs {
+				path := vfs.Join(rootDir, dir.Path)
+
+				err := vfs.Lchown(path, u.Uid(), u.Gid())
+				if err != nil {
+					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
+				}
+
+				fst, err := vfs.Lstat(path)
+				if err != nil {
+					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
+					continue
+				}
+
+				sys := fst.Sys()
+				statT := vfsutils.AsStatT(sys)
+
+				uid, gid := int(statT.Uid), int(statT.Gid)
+				if uid != u.Uid() || gid != u.Gid() {
+					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
+						path, u.Uid(), u.Gid(), uid, gid)
+				}
+			}
+		}
+	})
+
+	t.Run("LchownFile", func(t *testing.T) {
+		for _, ui := range uis {
+			wantName := ui.Name
+
+			u, err := vfs.LookupUser(wantName)
+			if err != nil {
+				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
+			}
+
+			for _, file := range files {
+				path := vfs.Join(rootDir, file.Path)
+
+				err := vfs.Lchown(path, u.Uid(), u.Gid())
+				if err != nil {
+					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
+				}
+
+				fst, err := vfs.Lstat(path)
+				if err != nil {
+					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
+					continue
+				}
+
+				sys := fst.Sys()
+				statT := vfsutils.AsStatT(sys)
+
+				uid, gid := int(statT.Uid), int(statT.Gid)
+				if uid != u.Uid() || gid != u.Gid() {
+					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
+						path, u.Uid(), u.Gid(), uid, gid)
+				}
+			}
+		}
+	})
+
+	t.Run("LchownSymlink", func(t *testing.T) {
+		for _, ui := range uis {
+			wantName := ui.Name
+
+			u, err := vfs.LookupUser(wantName)
+			if err != nil {
+				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
+			}
+
+			for _, symlink := range symlinks {
+				path := vfs.Join(rootDir, symlink.NewName)
+
+				err := vfs.Lchown(path, u.Uid(), u.Gid())
+				if err != nil {
+					t.Errorf("Lchown %s : want error to be nil, got %v", path, err)
+				}
+
+				fst, err := vfs.Lstat(path)
+				if err != nil {
+					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
+
+					continue
+				}
+
+				sys := fst.Sys()
+				statT := vfsutils.AsStatT(sys)
+
+				uid, gid := int(statT.Uid), int(statT.Gid)
+				if uid != u.Uid() || gid != u.Gid() {
+					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
+						path, u.Uid(), u.Gid(), uid, gid)
+				}
+			}
+		}
+	})
+
+	t.Run("LChownNonExistingFile", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t)
+
+		err := vfs.Lchown(nonExistingFile, 0, 0)
+		CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
+}
+
 // TestLink tests Link function.
 func (sfs *SuiteFS) TestLink(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
