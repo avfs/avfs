@@ -433,6 +433,17 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T) {
 		return
 	}
 
+	existingFile := sfs.CreateEmptyFile(t)
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		vfsR := sfs.vfsRead
+
+		err := vfsR.Chtimes(existingFile, time.Now(), time.Now())
+		CheckPathError(t, "Chtimes", "chtimes", existingFile, avfs.ErrPermDenied, err)
+
+		return
+	}
+
 	t.Run("Chtimes", func(t *testing.T) {
 		_ = CreateDirs(t, vfs, rootDir)
 		files := CreateFiles(t, vfs, rootDir)
@@ -2710,9 +2721,6 @@ func (sfs *SuiteFS) TestWriteOnReadOnly(t *testing.T) {
 
 		err = vfs.Chroot(rootDir)
 		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
-
-		err = vfs.Chtimes(existingFile, time.Now(), time.Now())
-		CheckPathError(t, "Chtimes", "chtimes", existingFile, avfs.ErrPermDenied, err)
 
 		_, err = vfs.Create(newFile)
 		CheckPathError(t, "Create", "open", newFile, avfs.ErrPermDenied, err)
