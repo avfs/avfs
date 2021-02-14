@@ -329,6 +329,97 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 	})
 }
 
+// TestChroot tests Chroot function.
+func (sfs *SuiteFS) TestChroot(t *testing.T) {
+	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
+	defer removeDir()
+
+	vfs := sfs.vfsWrite
+
+	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
+		err := vfs.Chroot(rootDir)
+		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	t.Run("Chroot", func(t *testing.T) {
+		chrootDir := vfs.Join(rootDir, "chroot")
+
+		err := vfs.Mkdir(chrootDir, avfs.DefaultDirPerm)
+		if err != nil {
+			t.Fatalf("mkdir %s : want error to be nil, got %v", chrootDir, err)
+		}
+
+		const chrootFile = "/file-within-the-chroot.txt"
+		chrootFilePath := vfs.Join(chrootDir, chrootFile)
+
+		err = vfs.WriteFile(chrootFilePath, nil, avfs.DefaultFilePerm)
+		if err != nil {
+			t.Fatalf("WriteFile %s : want error to be nil, got %v", chrootFilePath, err)
+		}
+
+		// A file descriptor is used to save the real root of the file system.
+		// See https://devsidestory.com/exit-from-a-chroot-with-golang/
+		fSave, err := vfs.Open("/")
+		if err != nil {
+			t.Fatalf("Open / : want error to be nil, got %v", err)
+		}
+
+		defer fSave.Close()
+
+		// Some file systems (MemFs) don't permit exit from a chroot.
+		// A shallow clone of the file system is then used to perform the chroot
+		// without loosing access to the original root of the file system.
+		vfsChroot := vfs
+
+		vfsClone, cloned := vfs.(avfs.Cloner)
+		if cloned {
+			vfsChroot = vfsClone.Clone()
+		}
+
+		err = vfsChroot.Chroot(chrootDir)
+		if err != nil {
+			t.Errorf("Chroot : want error to be nil, got %v", err)
+		}
+
+		_, err = vfsChroot.Stat(chrootFile)
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+
+		// if the file system can be cloned it can be restored from the saved one.
+		if !cloned {
+			// Restore the original file system root if possible.
+			err = fSave.Chdir()
+			if err != nil {
+				t.Errorf("Chdir : want error to be nil, got %v", err)
+			}
+
+			err = vfs.Chroot(".")
+			if err != nil {
+				t.Errorf("Chroot : want error to be nil, got %v", err)
+			}
+		}
+
+		_, err = vfs.Stat(chrootFilePath)
+		if err != nil {
+			t.Errorf("Stat : want error to be nil, got %v", err)
+		}
+	})
+
+	t.Run("ChrootOnFile", func(t *testing.T) {
+		existingFile := sfs.CreateEmptyFile(t)
+		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
+
+		err := vfs.Chroot(existingFile)
+		CheckPathError(t, "Chroot", "chroot", existingFile, avfs.ErrNotADirectory, err)
+
+		err = vfs.Chroot(nonExistingFile)
+		CheckPathError(t, "Chroot", "chroot", nonExistingFile, avfs.ErrNotADirectory, err)
+	})
+}
+
 // TestChtimes tests Chtimes function.
 func (sfs *SuiteFS) TestChtimes(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)

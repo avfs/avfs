@@ -36,7 +36,6 @@ func (sfs *SuiteFS) TestPerm(t *testing.T) {
 // TestPermWrite runs all file systems permission tests with write access.
 func (sfs *SuiteFS) TestPermWrite(t *testing.T) {
 	sfs.TestWriteDenied(t)
-	sfs.TestChroot(t)
 }
 
 // TestPermRead runs all file systems permission tests with read access.
@@ -44,96 +43,6 @@ func (sfs *SuiteFS) TestPermRead(t *testing.T) {
 	sfs.TestAccessDir(t)
 	sfs.TestAccessFile(t)
 	sfs.TestStatT(t)
-}
-
-// TestChroot tests Chroot function.
-func (sfs *SuiteFS) TestChroot(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
-	defer removeDir()
-
-	vfs := sfs.vfsWrite
-
-	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
-		err := vfs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
-
-		return
-	}
-
-	t.Run("ChrootOnFile", func(t *testing.T) {
-		existingFile := sfs.CreateEmptyFile(t)
-		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
-
-		err := vfs.Chroot(existingFile)
-		CheckPathError(t, "Chroot", "chroot", existingFile, avfs.ErrNotADirectory, err)
-
-		err = vfs.Chroot(nonExistingFile)
-		CheckPathError(t, "Chroot", "chroot", nonExistingFile, avfs.ErrNotADirectory, err)
-	})
-
-	t.Run("ChrootOk", func(t *testing.T) {
-		// Some file systems (MemFs) don't permit exit from a chroot.
-		// A shallow clone of the file system is then used to perform the chroot
-		// without loosing access to the original root of the file system.
-		fsSave := vfs.Clone()
-
-		chrootDir := vfs.Join(rootDir, "chroot")
-
-		err := vfs.Mkdir(chrootDir, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("mkdir %s : want error to be nil, got %v", chrootDir, err)
-		}
-
-		const chrootFile = "/file-within-the-chroot.txt"
-		chrootFilePath := vfs.Join(chrootDir, chrootFile)
-
-		err = vfs.WriteFile(chrootFilePath, nil, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("WriteFile %s : want error to be nil, got %v", chrootFilePath, err)
-		}
-
-		// A file descriptor is used to save the real root of the file system.
-		// See https://devsidestory.com/exit-from-a-chroot-with-golang/
-		fSave, err := vfs.Open("/")
-		if err != nil {
-			t.Fatalf("Open / : want error to be nil, got %v", err)
-		}
-
-		defer fSave.Close()
-
-		err = vfs.Chroot(chrootDir)
-		if err != nil {
-			t.Errorf("Chroot : want error to be nil, got %v", err)
-		}
-
-		_, err = vfs.Stat(chrootFile)
-		if err != nil {
-			t.Errorf("Stat : want error to be nil, got %v", err)
-		}
-
-		// if the file system can be cloned it can be restored from the saved one.
-		if vfs.HasFeature(avfs.FeatClonable) {
-			vfs = fsSave
-
-			return
-		}
-
-		// Restore the original file system root if possible.
-		err = fSave.Chdir()
-		if err != nil {
-			t.Errorf("Chdir : want error to be nil, got %v", err)
-		}
-
-		err = vfs.Chroot(".")
-		if err != nil {
-			t.Errorf("Chroot : want error to be nil, got %v", err)
-		}
-
-		_, err = vfs.Stat(chrootFilePath)
-		if err != nil {
-			t.Errorf("Stat : want error to be nil, got %v", err)
-		}
-	})
 }
 
 // TestAccessDir tests functions on directories where read is denied.
