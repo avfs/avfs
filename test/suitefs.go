@@ -329,6 +329,7 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 // TestWrite runs all file systems tests with write access.
 func (sfs *SuiteFS) TestWrite(t *testing.T) {
 	sfs.TestChmod(t)
+	sfs.TestChown(t)
 	sfs.TestCreate(t)
 	sfs.TestChtimes(t)
 	sfs.TestLink(t)

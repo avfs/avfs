@@ -35,7 +35,6 @@ func (sfs *SuiteFS) TestPerm(t *testing.T) {
 
 // TestPermWrite runs all file systems permission tests with write access.
 func (sfs *SuiteFS) TestPermWrite(t *testing.T) {
-	sfs.TestChown(t)
 	sfs.TestLchown(t)
 	sfs.TestWriteDenied(t)
 	sfs.TestChroot(t)
@@ -46,110 +45,6 @@ func (sfs *SuiteFS) TestPermRead(t *testing.T) {
 	sfs.TestAccessDir(t)
 	sfs.TestAccessFile(t)
 	sfs.TestStatT(t)
-}
-
-// TestChown tests Chown function.
-func (sfs *SuiteFS) TestChown(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
-	defer removeDir()
-
-	vfs := sfs.vfsWrite
-
-	if !sfs.canTestPerm {
-		err := vfs.Chown(rootDir, 0, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrWinNotSupported, err)
-		default:
-			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
-		}
-
-		return
-	}
-
-	dirs := CreateDirs(t, vfs, rootDir)
-	files := CreateFiles(t, vfs, rootDir)
-	uis := UserInfos()
-
-	t.Run("ChownDir", func(t *testing.T) {
-		for _, ui := range uis {
-			wantName := ui.Name
-
-			u, err := vfs.LookupUser(wantName)
-			if err != nil {
-				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
-			}
-
-			for _, dir := range dirs {
-				path := vfs.Join(rootDir, dir.Path)
-
-				err := vfs.Chown(path, u.Uid(), u.Gid())
-				if err != nil {
-					t.Errorf("Chown %s : want error to be nil, got %v", path, err)
-				}
-
-				fst, err := vfs.Stat(path)
-				if err != nil {
-					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-
-					continue
-				}
-
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
-
-				uid, gid := int(statT.Uid), int(statT.Gid)
-				if uid != u.Uid() || gid != u.Gid() {
-					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
-						path, u.Uid(), u.Gid(), uid, gid)
-				}
-			}
-		}
-	})
-
-	t.Run("ChownFile", func(t *testing.T) {
-		for _, ui := range uis {
-			wantName := ui.Name
-
-			u, err := vfs.LookupUser(wantName)
-			if err != nil {
-				t.Fatalf("LookupUser %s : want error to be nil, got %v", wantName, err)
-			}
-
-			for _, file := range files {
-				path := vfs.Join(rootDir, file.Path)
-
-				err := vfs.Chown(path, u.Uid(), u.Gid())
-				if err != nil {
-					t.Errorf("Chown %s : want error to be nil, got %v", path, err)
-				}
-
-				fst, err := vfs.Stat(path)
-				if err != nil {
-					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-
-					continue
-				}
-
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
-
-				uid, gid := int(statT.Uid), int(statT.Gid)
-				if uid != u.Uid() || gid != u.Gid() {
-					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
-						path, u.Uid(), u.Gid(), uid, gid)
-				}
-			}
-		}
-	})
-
-	t.Run("ChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t)
-
-		err := vfs.Chown(nonExistingFile, 0, 0)
-		CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-	})
 }
 
 // Lchown tests Lchown function.
