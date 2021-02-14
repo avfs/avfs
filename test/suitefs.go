@@ -29,11 +29,11 @@ import (
 
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
-	// vfsWrite is the file system as test user with read and write permissions.
-	vfsWrite avfs.VFS
+	// vfsSetup is the file system used to setup the tests (generally with read and write access).
+	vfsSetup avfs.VFS
 
-	// vfsRead is the file system as test user with read only permissions.
-	vfsRead avfs.VFS
+	// vfsTest is the file system used to run the tests.
+	vfsTest avfs.VFS
 
 	// rootDir is the root directory for tests, it can be generated automatically or specified with WithRootDir().
 	rootDir string
@@ -63,7 +63,7 @@ type Option func(*SuiteFS)
 // NewSuiteFS creates a new test suite for a file system.
 func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 	if vfsWrite == nil {
-		tb.Fatal("New : want vfsWrite to be set, got nil")
+		tb.Fatal("New : want vfsSetup to be set, got nil")
 	}
 
 	currentUser := vfsWrite.CurrentUser()
@@ -72,8 +72,8 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 		currentUser.IsRoot()
 
 	sfs := &SuiteFS{
-		vfsWrite:    vfsWrite,
-		vfsRead:     vfsWrite,
+		vfsSetup:    vfsWrite,
+		vfsTest:     vfsWrite,
 		rootDir:     "",
 		maxRace:     1000,
 		osType:      vfsutils.RunTimeOS(),
@@ -95,9 +95,9 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 		opt(sfs)
 	}
 
-	info := "Info vfs : type = " + sfs.vfsRead.Type()
-	if sfs.vfsRead.Name() != "" {
-		info += ", name = " + sfs.vfsRead.Name()
+	info := "Info vfs : type = " + sfs.vfsTest.Type()
+	if sfs.vfsTest.Name() != "" {
+		info += ", name = " + sfs.vfsTest.Name()
 	}
 
 	tb.Log(info)
@@ -110,7 +110,7 @@ func NewSuiteFS(tb testing.TB, vfsWrite avfs.VFS, opts ...Option) *SuiteFS {
 // WithVFSRead returns an option function which sets the VFS for read access.
 func WithVFSRead(vfsRead avfs.VFS) Option {
 	return func(sfs *SuiteFS) {
-		sfs.vfsRead = vfsRead
+		sfs.vfsTest = vfsRead
 	}
 }
 
@@ -125,7 +125,7 @@ func WithOs(osType avfs.OSType) Option {
 func (sfs *SuiteFS) CreateDir(t *testing.T) string {
 	t.Helper()
 
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	path, err := vfs.TempDir(sfs.rootDir, avfs.Avfs)
 	if err != nil {
@@ -146,7 +146,7 @@ func (sfs *SuiteFS) CreateEmptyFile(t *testing.T) string {
 func (sfs *SuiteFS) CreateFile(t *testing.T, content []byte) string {
 	t.Helper()
 
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	f, err := vfs.TempFile(sfs.rootDir, avfs.Avfs)
 	if err != nil {
@@ -238,7 +238,7 @@ func (sfs *SuiteFS) CreateRndDir(t *testing.T) *vfsutils.RndTree {
 		MaxSymlinks: 10,
 	}
 
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	rndTree, err := vfsutils.NewRndTree(vfs, RndParamsOneDir)
 	if err != nil {
@@ -255,14 +255,14 @@ func (sfs *SuiteFS) CreateRndDir(t *testing.T) *vfsutils.RndTree {
 
 // NonExistingFile returns the name of a non existing file.
 func (sfs *SuiteFS) NonExistingFile(t *testing.T) string {
-	vfs := sfs.vfsRead
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return "nonExistingFile"
 	}
 
 	name := fmt.Sprintf("%s-%x", avfs.Avfs, rand.Int63())
-	path := sfs.vfsRead.Join(sfs.rootDir, name)
+	path := vfs.Join(sfs.rootDir, name)
 
 	_, err := vfs.Stat(path)
 	if !vfs.IsNotExist(err) {
@@ -276,7 +276,7 @@ func (sfs *SuiteFS) NonExistingFile(t *testing.T) string {
 func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
 	t.Helper()
 
-	vfs := sfs.vfsRead
+	vfs := sfs.vfsTest
 	name := sfs.NonExistingFile(t)
 
 	f, err := vfs.Open(name)
@@ -294,7 +294,7 @@ func (sfs *SuiteFS) OSType() avfs.OSType {
 
 // VFSAsUser sets the test user to userName.
 func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserReader) {
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	u := vfs.CurrentUser()
 	if !sfs.canTestPerm || u.Name() == name {
@@ -311,12 +311,12 @@ func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserRe
 
 // VFSRead returns the file system for read only functions.
 func (sfs *SuiteFS) VFSRead() avfs.VFS {
-	return sfs.vfsRead
+	return sfs.vfsTest
 }
 
 // VFSWrite returns the file system for read and write functions.
 func (sfs *SuiteFS) VFSWrite() avfs.VFS {
-	return sfs.vfsWrite
+	return sfs.vfsSetup
 }
 
 // TestAll runs all file systems tests.

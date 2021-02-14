@@ -56,7 +56,7 @@ func (sfs *SuiteFS) TestAccessDir(t *testing.T) {
 
 	const baseDir = "baseDir"
 
-	vfsWrite := sfs.vfsWrite
+	vfsWrite := sfs.vfsSetup
 
 	uis := UserInfos()
 
@@ -155,7 +155,7 @@ func (sfs *SuiteFS) TestAccessFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfsWrite := sfs.vfsWrite
+	vfsWrite := sfs.vfsSetup
 
 	uis := UserInfos()
 
@@ -238,7 +238,7 @@ func (sfs *SuiteFS) TestAccessFile(t *testing.T) {
 
 // TestStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
 func (sfs *SuiteFS) TestStatT(t *testing.T) {
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -266,7 +266,7 @@ func (sfs *SuiteFS) TestWriteDenied(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, avfs.UsrRoot)
 	defer removeDir()
 
-	vfsWrite := sfs.vfsWrite
+	vfsWrite := sfs.vfsSetup
 
 	if !vfsWrite.HasFeature(avfs.FeatIdentityMgr) {
 		return

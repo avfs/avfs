@@ -37,7 +37,7 @@ func (sfs *SuiteFS) TestRaceDir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	path := vfs.Join(rootDir, "mkdDirNew")
 
@@ -63,7 +63,7 @@ func (sfs *SuiteFS) TestRaceFile(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	t.Run("RaceCreate", func(t *testing.T) {
 		sfs.RaceFunc(t, "Create", RaceAllOk, func() error {
@@ -119,7 +119,7 @@ func (sfs *SuiteFS) RaceMkdirRemoveAll(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsWrite
+	vfs := sfs.vfsSetup
 
 	path := vfs.Join(rootDir, "new/path/to/test")
 
