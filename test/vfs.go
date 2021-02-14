@@ -972,10 +972,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
-
-	nonExistingFile := sfs.NonExistingFile(t)
-	existingFile := sfs.CreateEmptyFile(t)
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Mkdir(rootDir, avfs.DefaultDirPerm)
@@ -984,7 +981,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 		return
 	}
 
-	vfs = sfs.vfsTest
+	nonExistingFile := sfs.NonExistingFile(t)
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(nonExistingFile, avfs.DefaultDirPerm)
@@ -995,7 +992,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 
 	dirs := GetDirs()
 
-	t.Run("MkdirNew", func(t *testing.T) {
+	t.Run("Mkdir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := vfs.Join(rootDir, dir.Path)
 
@@ -1054,7 +1051,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 		}
 	})
 
-	t.Run("MkdirExisting", func(t *testing.T) {
+	t.Run("MkdirOnExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := vfs.Join(rootDir, dir.Path)
 
@@ -1092,6 +1089,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T) {
 	})
 
 	t.Run("MkdirOnFile", func(t *testing.T) {
+		existingFile := sfs.CreateEmptyFile(t)
 		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
 
 		err := vfs.Mkdir(subDirOnFile, avfs.DefaultDirPerm)
