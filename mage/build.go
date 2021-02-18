@@ -60,7 +60,7 @@ func buildMage() {
 		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
 
-	err = run("git", "clone", mageGitUrl)
+	err = run("git", "clone", "--depth=1", mageGitUrl)
 	if err != nil {
 		log.Fatalf("Git : want error to be nil, got %v", err)
 	}
