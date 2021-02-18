@@ -142,11 +142,15 @@ func (sfs *SuiteFS) CreateEmptyFile(t *testing.T) string {
 	return sfs.CreateFile(t, nil)
 }
 
-// CreateFile  creates a file and returns the file name.
+// CreateFile creates a file and returns the file name.
 func (sfs *SuiteFS) CreateFile(t *testing.T, content []byte) string {
 	t.Helper()
 
 	vfs := sfs.vfsSetup
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return sfs.NonExistingFile(t)
+	}
 
 	f, err := vfs.TempFile(sfs.rootDir, avfs.Avfs)
 	if err != nil {
@@ -255,6 +259,8 @@ func (sfs *SuiteFS) CreateRndDir(t *testing.T) *vfsutils.RndTree {
 
 // NonExistingFile returns the name of a non existing file.
 func (sfs *SuiteFS) NonExistingFile(t *testing.T) string {
+	t.Helper()
+
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -277,11 +283,41 @@ func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
 	t.Helper()
 
 	vfs := sfs.vfsTest
-	name := sfs.NonExistingFile(t)
+	path := sfs.NonExistingFile(t)
 
-	f, err := vfs.Open(name)
-	if vfs.IsExist(err) {
-		t.Fatalf("Open %s : want non existing file, got file exists", name)
+	f, err := vfs.Open(path)
+	if !vfs.IsNotExist(err) {
+		t.Fatalf("Open %s : want error to be not exist, got %v", path, err)
+	}
+
+	return f
+}
+
+// CreateAndOpenFile creates, open a file and returns an avfs.File.
+func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T, rootDir string) avfs.File {
+	t.Helper()
+
+	if !sfs.vfsTest.HasFeature(avfs.FeatBasicFs) {
+		return sfs.OpenNonExistingFile(t)
+	}
+
+	vfs := sfs.vfsSetup
+
+	f, err := vfs.TempFile(rootDir, avfs.Avfs)
+	if err != nil {
+		t.Fatalf("TempFile : want error to be nil, got %v", err)
+	}
+
+	path := f.Name()
+
+	err = f.Close()
+	if err != nil {
+		t.Fatalf("Close %s : want error to be nil, got %v", path, err)
+	}
+
+	f, err = vfs.Open(path)
+	if err != nil {
+		t.Fatalf("Open %s : want error to be nil, got %v", path, err)
 	}
 
 	return f
@@ -293,17 +329,17 @@ func (sfs *SuiteFS) OSType() avfs.OSType {
 }
 
 // VFSAsUser sets the test user to userName.
-func (sfs *SuiteFS) VFSAsUser(tb testing.TB, name string) (avfs.VFS, avfs.UserReader) {
+func (sfs *SuiteFS) VFSAsUser(tb testing.TB, userName string) (avfs.VFS, avfs.UserReader) {
 	vfs := sfs.vfsSetup
 
 	u := vfs.CurrentUser()
-	if !sfs.canTestPerm || u.Name() == name {
+	if !sfs.canTestPerm || u.Name() == userName {
 		return vfs, u
 	}
 
-	u, err := vfs.User(name)
+	u, err := vfs.User(userName)
 	if err != nil {
-		tb.Fatalf("User %s : want error to be nil, got %s", name, err)
+		tb.Fatalf("User %s : want error to be nil, got %s", userName, err)
 	}
 
 	return vfs, u

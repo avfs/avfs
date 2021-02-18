@@ -228,7 +228,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrWinNotSupported, err)
 		default:
-			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrPermDenied, err)
+			CheckPathError(t, "Chown", "chown", rootDir, avfs.ErrOpNotPermitted, err)
 		}
 
 		return
@@ -327,7 +327,7 @@ func (sfs *SuiteFS) TestChroot(t *testing.T) {
 
 	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chroot(rootDir)
-		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrPermDenied, err)
+		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrOpNotPermitted, err)
 
 		return
 	}
@@ -578,7 +578,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrWinNotSupported, err)
 		default:
-			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrPermDenied, err)
+			CheckPathError(t, "Lchown", "lchown", rootDir, avfs.ErrOpNotPermitted, err)
 		}
 
 		return
@@ -1730,7 +1730,7 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "ReadDir", "Readdir", existingFile, avfs.ErrNotADirectory, err)
 		default:
-			CheckSyscallError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
+			CheckPathError(t, "ReadDir", "readdirent", existingFile, avfs.ErrNotADirectory, err)
 		}
 	})
 }

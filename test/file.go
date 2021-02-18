@@ -103,7 +103,7 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenNonExistingFile(t)
@@ -112,6 +112,13 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T) {
 		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
 
 		return
+	}
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f := sfs.CreateAndOpenFile(t, rootDir)
+
+		err := f.Chmod(0)
+		CheckPathError(t, "Chmod", "chmod", f.Name(), avfs.ErrPermDenied, err)
 	}
 
 	_ = rootDir
@@ -126,7 +133,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenNonExistingFile(t)
@@ -316,9 +323,7 @@ func (sfs *SuiteFS) TestFileFuncOnClosedFile(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdir", "Readdir", existingFile, avfs.ErrWinPathNotFound, err)
 		default:
-			if err.Error() != avfs.ErrFileClosing.Error() {
-				t.Errorf("Readdir %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
-			}
+			CheckPathError(t, "Readdir", "readdirent", existingFile, avfs.ErrFileClosing, err)
 		}
 
 		_, err = f.Readdirnames(-1)
@@ -327,9 +332,7 @@ func (sfs *SuiteFS) TestFileFuncOnClosedFile(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdirnames", "Readdir", existingFile, avfs.ErrWinPathNotFound, err)
 		default:
-			if err.Error() != avfs.ErrFileClosing.Error() {
-				t.Errorf("Readdirnames %s : want error to be %v, got %v", existingFile, avfs.ErrFileClosing, err)
-			}
+			CheckPathError(t, "Readdirnames", "readdirent", existingFile, avfs.ErrFileClosing, err)
 		}
 
 		_, err = f.Stat()
@@ -668,7 +671,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdir", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
 		default:
-			CheckSyscallError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			CheckPathError(t, "Readdir", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
 		}
 	})
 }
@@ -751,7 +754,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T) {
 		case avfs.OsWindows:
 			CheckPathError(t, "Readdirnames", "Readdir", f.Name(), avfs.ErrNotADirectory, err)
 		default:
-			CheckSyscallError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
+			CheckPathError(t, "Readdirnames", "readdirent", f.Name(), avfs.ErrNotADirectory, err)
 		}
 	})
 }
