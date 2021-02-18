@@ -85,7 +85,7 @@ func (vfs *RoFS) Chmod(name string, mode os.FileMode) error {
 func (vfs *RoFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 }
 
 // Chroot changes the root to that specified in path.
@@ -93,7 +93,7 @@ func (vfs *RoFS) Chown(name string, uid, gid int) error {
 func (vfs *RoFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -250,7 +250,7 @@ func (vfs *RoFS) Join(elem ...string) string {
 func (vfs *RoFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 }
 
 // Link creates newname as a hard link to the oldname file.

@@ -315,6 +315,8 @@ func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T, rootDir string) avfs.File {
 		t.Fatalf("Close %s : want error to be nil, got %v", path, err)
 	}
 
+	vfs = sfs.vfsTest
+
 	f, err = vfs.Open(path)
 	if err != nil {
 		t.Fatalf("Open %s : want error to be nil, got %v", path, err)
