@@ -286,8 +286,8 @@ func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
 	path := sfs.NonExistingFile(t)
 
 	f, err := vfs.Open(path)
-	if !vfs.IsNotExist(err) {
-		t.Fatalf("Open %s : want error to be not exist, got %v", path, err)
+	if vfs.IsExist(err) {
+		t.Fatalf("Open %s : want non existing file, got %v", path, err)
 	}
 
 	return f
