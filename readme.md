@@ -25,7 +25,7 @@ This package can be installed with the go get command :
 ```
 go get github.com/avfs/avfs
 ```
-It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >= 1.13
+It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >= 1.15
 
 ## Getting started
 To make an existing code work with **AVFS** :

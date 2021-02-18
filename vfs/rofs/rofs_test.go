@@ -43,7 +43,6 @@ func initTest(t *testing.T) *test.SuiteFS {
 	}
 
 	vfs := rofs.New(vfsSetup)
-
 	sfs := test.NewSuiteFS(t, vfsSetup, test.WithVFSTest(vfs))
 
 	return sfs
