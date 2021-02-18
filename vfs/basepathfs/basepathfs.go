@@ -97,7 +97,7 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 func (vfs *BasePathFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return &os.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 }
 
 // Chtimes changes the access and modification times of the named
