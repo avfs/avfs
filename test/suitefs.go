@@ -174,7 +174,7 @@ func (sfs *SuiteFS) CreateFile(t *testing.T, content []byte) string {
 // Each test have its own directory in /tmp/avfs.../
 // this directory and its descendants are removed by removeDir() function.
 func (sfs *SuiteFS) CreateRootDir(tb testing.TB, userName string) (rootDir string, removeDir func()) {
-	vfs, _ := sfs.VFSAsUser(tb, userName)
+	vfs, _ := sfs.User(tb, userName)
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return avfs.TmpDir, func() {}
@@ -212,7 +212,7 @@ func (sfs *SuiteFS) CreateRootDir(tb testing.TB, userName string) (rootDir strin
 	}
 
 	removeDir = func() {
-		vfs, _ := sfs.VFSAsUser(tb, avfs.UsrRoot)
+		vfs, _ := sfs.User(tb, avfs.UsrRoot)
 
 		err = vfs.RemoveAll(rootDir)
 		if err != nil && sfs.osType != avfs.OsWindows {
@@ -330,8 +330,8 @@ func (sfs *SuiteFS) OSType() avfs.OSType {
 	return sfs.osType
 }
 
-// VFSAsUser sets the test user to userName.
-func (sfs *SuiteFS) VFSAsUser(tb testing.TB, userName string) (avfs.VFS, avfs.UserReader) {
+// User sets the test user to userName.
+func (sfs *SuiteFS) User(tb testing.TB, userName string) (avfs.VFS, avfs.UserReader) {
 	vfs := sfs.vfsSetup
 
 	u := vfs.CurrentUser()

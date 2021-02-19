@@ -96,7 +96,7 @@ func (sfs *SuiteFS) TestAccessDir(t *testing.T) {
 	t.Run("AccessDir", func(t *testing.T) {
 		for _, ui := range uis {
 			wantName := ui.Name
-			vfs, _ := sfs.VFSAsUser(t, wantName)
+			vfs, _ := sfs.User(t, wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := os.FileMode(1); mode <= 6; mode++ {
@@ -190,7 +190,7 @@ func (sfs *SuiteFS) TestAccessFile(t *testing.T) {
 	t.Run("AccessFile", func(t *testing.T) {
 		for _, ui := range uis {
 			wantName := ui.Name
-			vfs, _ := sfs.VFSAsUser(t, wantName)
+			vfs, _ := sfs.User(t, wantName)
 
 			for shift := 6; shift >= 0; shift -= 3 {
 				for mode := 1; mode <= 6; mode++ {
@@ -294,7 +294,7 @@ func (sfs *SuiteFS) TestWriteDenied(t *testing.T) {
 
 	t.Run("WriteDenied", func(t *testing.T) {
 		for _, ui := range UserInfos() {
-			vfs, u := sfs.VFSAsUser(t, ui.Name)
+			vfs, u := sfs.User(t, ui.Name)
 
 			err := vfs.Chmod(pathDir, avfs.DefaultDirPerm)
 			CheckPathError(t, "Chmod", "chmod", pathDir, avfs.ErrOpNotPermitted, err)
