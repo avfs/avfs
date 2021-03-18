@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -2747,4 +2748,29 @@ func (sfs *SuiteFS) TestWriteString(t *testing.T) {
 			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
 		}
 	})
+}
+
+// TestStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
+func (sfs *SuiteFS) TestStatT(t *testing.T) {
+	vfs := sfs.vfsSetup
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	info, err := vfs.Stat(vfs.GetTempDir())
+	if err != nil {
+		t.Errorf("Stat : want error be nil, got %v", err)
+	}
+
+	wantUid, wantGid := uint32(0), uint32(0)
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		wantUid, wantGid = math.MaxUint32, math.MaxUint32
+	}
+
+	statT := vfsutils.AsStatT(info.Sys())
+	if statT.Uid != wantUid || statT.Gid != wantGid {
+		t.Errorf("AsStatT : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+			wantUid, wantGid, statT.Uid, statT.Gid)
+	}
 }

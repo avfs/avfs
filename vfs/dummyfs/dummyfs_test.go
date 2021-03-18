@@ -51,11 +51,6 @@ func TestDummyFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestDummyFSPerm(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestPerm(t)
-}
-
 func TestDummyFSCfg(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {

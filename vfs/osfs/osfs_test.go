@@ -53,11 +53,6 @@ func TestOsFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestOsFSPerm(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestPerm(t)
-}
-
 func TestOsFSNilPtrFile(t *testing.T) {
 	f := (*os.File)(nil)
 

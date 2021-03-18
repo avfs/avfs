@@ -69,11 +69,6 @@ func TestBasePathFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestBasePathFSPerm(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestPerm(t)
-}
-
 // TestBasePathFsOptions tests BasePathFS configuration options.
 func TestBasePathFSOptions(t *testing.T) {
 	const (

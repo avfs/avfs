@@ -441,6 +441,7 @@ func (sfs *SuiteFS) TestRead(t *testing.T) {
 	sfs.TestFileReaddirnames(t)
 	sfs.TestFileSeek(t)
 	sfs.TestFileStat(t)
+	sfs.TestStatT(t)
 }
 
 // Dir contains the data to test directories.

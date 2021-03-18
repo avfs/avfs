@@ -33,6 +33,5 @@ func TestRaceOsFS(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-
 	sfs.TestRace(t)
 }

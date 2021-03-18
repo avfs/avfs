@@ -52,11 +52,6 @@ func TestMemFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestMemFSPerm(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestPerm(t)
-}
-
 func TestMemFSOptionError(t *testing.T) {
 	_, err := memfs.New(memfs.WithIdm(dummyidm.New()))
 	if err != avfs.ErrPermDenied {
