@@ -1083,13 +1083,15 @@ func (sfs *SuiteFS) TestFileSync(t *testing.T) {
 	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
 	defer removeDir()
 
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenNonExistingFile(t)
 
 		err := f.Sync()
 		CheckPathError(t, "Sync", "sync", f.Name(), avfs.ErrPermDenied, err)
+
+		return
 	}
 
 	t.Run("FileSyncClosed", func(t *testing.T) {
