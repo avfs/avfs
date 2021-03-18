@@ -142,7 +142,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !sfs.canTestPerm {
 		f := sfs.OpenNonExistingFile(t)
 
 		err := f.Chown(0, 0)
@@ -150,6 +150,8 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T) {
 
 		return
 	}
+
+	_ = vfs
 
 	t.Run("FileChownClosed", func(t *testing.T) {
 		f, fileName := sfs.ClosedFile(t, rootDir)

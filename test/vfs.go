@@ -221,7 +221,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm || vfs.HasFeature(avfs.FeatReadOnly) {
+	if !sfs.canTestPerm {
 		err := vfs.Chown(rootDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -325,7 +325,7 @@ func (sfs *SuiteFS) TestChroot(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
 		err := vfs.Chroot(rootDir)
 		CheckPathError(t, "Chroot", "chroot", rootDir, avfs.ErrOpNotPermitted, err)
 
@@ -571,7 +571,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T) {
 
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm || vfs.HasFeature(avfs.FeatReadOnly) {
+	if !sfs.canTestPerm {
 		err := vfs.Lchown(rootDir, 0, 0)
 
 		switch vfs.OSType() {

@@ -111,6 +111,9 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 func WithVFSTest(vfsTest avfs.VFS) Option {
 	return func(sfs *SuiteFS) {
 		sfs.vfsTest = vfsTest
+		if vfsTest.HasFeature(avfs.FeatReadOnly) {
+			sfs.canTestPerm = false
+		}
 	}
 }
 
