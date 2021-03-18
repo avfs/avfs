@@ -438,7 +438,7 @@ func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 		return
 	}
 
-	defer sIdm.uc.User(avfs.UsrRoot)
+	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
 
 	CreateGroups(t, idm, suffix)
 	CreateUsers(t, idm, suffix)
@@ -522,7 +522,7 @@ func (sIdm *SuiteIdm) TestUserDenied(t *testing.T) {
 		return
 	}
 
-	defer sIdm.uc.User(avfs.UsrRoot)
+	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
 
 	_, err := sIdm.uc.User(UsrTest)
 	if err != nil {
@@ -576,7 +576,7 @@ func (sIdm *SuiteIdm) TestPermDenied(t *testing.T) {
 		return
 	}
 
-	defer sIdm.uc.User(avfs.UsrRoot)
+	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
 
 	const (
 		grpName = "grpDenied"
