@@ -121,6 +121,58 @@ func WithOS(osType avfs.OSType) Option {
 	}
 }
 
+// CreateAndOpenFile creates, open a file and returns an avfs.File.
+func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T, rootDir string) avfs.File {
+	t.Helper()
+
+	if !sfs.vfsTest.HasFeature(avfs.FeatBasicFs) {
+		return sfs.OpenNonExistingFile(t)
+	}
+
+	vfs := sfs.vfsSetup
+
+	f, err := vfs.TempFile(rootDir, avfs.Avfs)
+	if err != nil {
+		t.Fatalf("TempFile : want error to be nil, got %v", err)
+	}
+
+	path := f.Name()
+
+	err = f.Close()
+	if err != nil {
+		t.Fatalf("Close %s : want error to be nil, got %v", path, err)
+	}
+
+	vfs = sfs.vfsTest
+
+	f, err = vfs.Open(path)
+	if err != nil {
+		t.Fatalf("Open %s : want error to be nil, got %v", path, err)
+	}
+
+	return f
+}
+
+// ClosedFile returns a closed avfs.File.
+func (sfs *SuiteFS) ClosedFile(t *testing.T, rootDir string) (f avfs.File, fileName string) {
+	t.Helper()
+
+	vfs := sfs.vfsSetup
+	fileName = vfs.Join(rootDir, "closedFile")
+
+	f, err := vfs.Create(fileName)
+	if err != nil {
+		t.Fatalf("Create %s : want error to be nil, got %v", fileName, err)
+	}
+
+	err = f.Close()
+	if err != nil {
+		t.Fatalf("Close %s : want error to be nil, got %v", fileName, err)
+	}
+
+	return f, fileName
+}
+
 // CreateDir creates a directory and returns the path to this directory.
 func (sfs *SuiteFS) CreateDir(t *testing.T) string {
 	t.Helper()
@@ -293,38 +345,6 @@ func (sfs *SuiteFS) OpenNonExistingFile(t *testing.T) avfs.File {
 	return f
 }
 
-// CreateAndOpenFile creates, open a file and returns an avfs.File.
-func (sfs *SuiteFS) CreateAndOpenFile(t *testing.T, rootDir string) avfs.File {
-	t.Helper()
-
-	if !sfs.vfsTest.HasFeature(avfs.FeatBasicFs) {
-		return sfs.OpenNonExistingFile(t)
-	}
-
-	vfs := sfs.vfsSetup
-
-	f, err := vfs.TempFile(rootDir, avfs.Avfs)
-	if err != nil {
-		t.Fatalf("TempFile : want error to be nil, got %v", err)
-	}
-
-	path := f.Name()
-
-	err = f.Close()
-	if err != nil {
-		t.Fatalf("Close %s : want error to be nil, got %v", path, err)
-	}
-
-	vfs = sfs.vfsTest
-
-	f, err = vfs.Open(path)
-	if err != nil {
-		t.Fatalf("Open %s : want error to be nil, got %v", path, err)
-	}
-
-	return f
-}
-
 // OSType returns the operating system, real or simulated.
 func (sfs *SuiteFS) OSType() avfs.OSType {
 	return sfs.osType
@@ -412,7 +432,6 @@ func (sfs *SuiteFS) TestRead(t *testing.T) {
 	sfs.TestFileChdir(t)
 	sfs.TestFileCloseRead(t)
 	sfs.TestFileFd(t)
-	sfs.TestFileFuncOnClosedFile(t)
 	sfs.TestFileName(t)
 	sfs.TestFileRead(t)
 	sfs.TestFileReadDir(t)
