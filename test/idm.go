@@ -438,6 +438,8 @@ func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 		return
 	}
 
+	defer sIdm.uc.User(avfs.UsrRoot)
+
 	CreateGroups(t, idm, suffix)
 	CreateUsers(t, idm, suffix)
 
@@ -520,6 +522,8 @@ func (sIdm *SuiteIdm) TestUserDenied(t *testing.T) {
 		return
 	}
 
+	defer sIdm.uc.User(avfs.UsrRoot)
+
 	_, err := sIdm.uc.User(UsrTest)
 	if err != nil {
 		t.Fatalf("User: want error to be nil, got %v", err)
@@ -571,6 +575,8 @@ func (sIdm *SuiteIdm) TestPermDenied(t *testing.T) {
 	if sIdm.canTest {
 		return
 	}
+
+	defer sIdm.uc.User(avfs.UsrRoot)
 
 	const (
 		grpName = "grpDenied"
