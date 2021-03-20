@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -2745,7 +2744,7 @@ func (sfs *SuiteFS) TestWriteString(t *testing.T) {
 
 // TestStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
 func (sfs *SuiteFS) TestStatT(t *testing.T) {
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -2757,9 +2756,6 @@ func (sfs *SuiteFS) TestStatT(t *testing.T) {
 	}
 
 	wantUid, wantGid := uint32(0), uint32(0)
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		wantUid, wantGid = math.MaxUint32, math.MaxUint32
-	}
 
 	statT := vfsutils.AsStatT(info.Sys())
 	if statT.Uid != wantUid || statT.Gid != wantGid {
