@@ -53,6 +53,16 @@ func TestOsFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
+func TestOsFSWithNoIdm(t *testing.T) {
+	vfs, err := osfs.New()
+	if err != nil {
+		t.Fatalf("New : want err to be nil, got %s", err)
+	}
+
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestAll(t)
+}
+
 func TestOsFSNilPtrFile(t *testing.T) {
 	f := (*os.File)(nil)
 

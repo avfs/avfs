@@ -27,7 +27,7 @@ import (
 )
 
 // TestOsFsWithOsIdm tests OsFS identity manager functions with OsIdn identity manager.
-func TestOsFSWithOsIdm(t *testing.T) {
+func TestIdmOsFSWithOsIdm(t *testing.T) {
 	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
@@ -38,7 +38,7 @@ func TestOsFSWithOsIdm(t *testing.T) {
 }
 
 // TestOsFSWithoutIdm test OsFS without and identity manager.
-func TestOsFSWithNoIdm(t *testing.T) {
+func TestIdmOsFSWithNoIdm(t *testing.T) {
 	vfs, err := osfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
