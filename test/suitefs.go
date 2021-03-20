@@ -267,11 +267,23 @@ func (sfs *SuiteFS) CreateRootDir(tb testing.TB, userName string) (rootDir strin
 	}
 
 	removeDir = func() {
-		vfs, _ := sfs.User(tb, avfs.UsrRoot)
-
 		err = vfs.RemoveAll(rootDir)
-		if err != nil && sfs.osType != avfs.OsWindows {
-			tb.Logf("RemoveAll : want error to be nil, got %s", err)
+		if err != nil {
+			vfs, _ := sfs.User(tb, avfs.UsrRoot)
+
+			// Cleanup permissions for RemoveAll()
+			err = vfs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return nil
+				}
+
+				return vfs.Chmod(path, 0o777)
+			})
+
+			err = vfs.RemoveAll(rootDir)
+			if err != nil {
+				tb.Fatalf("RemoveAll %s : want error to be nil, got %v", rootDir, err)
+			}
 		}
 	}
 

@@ -206,13 +206,6 @@ func (sfs *SuiteFS) TestChmod(t *testing.T) {
 		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
-
-	// Cleanup permissions for RemoveAll()
-	_ = vfs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		_ = vfs.Chmod(path, 0o777)
-
-		return nil
-	})
 }
 
 // TestChown tests Chown function.

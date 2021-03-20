@@ -812,6 +812,7 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 
 			return nil
 		})
+
 		if err != nil {
 			t.Errorf("Walk %s : want error to be nil, got %v", rootDir, err)
 		}
