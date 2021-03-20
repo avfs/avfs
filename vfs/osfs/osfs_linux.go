@@ -21,12 +21,18 @@ package osfs
 import (
 	"os"
 	"syscall"
+
+	"github.com/avfs/avfs"
 )
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Chroot(path string) error {
 	const op = "chroot"
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return &os.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+	}
 
 	err := syscall.Chroot(path)
 	if err != nil {
