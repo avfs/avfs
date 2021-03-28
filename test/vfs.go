@@ -29,6 +29,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfsutils"
 )
 
@@ -2715,7 +2716,13 @@ func (sfs *SuiteFS) TestStatT(t *testing.T, testDir string) {
 		t.Errorf("Stat : want error be nil, got %v", err)
 	}
 
-	wantUid, wantGid := uint32(0), uint32(0)
+	u := vfs.CurrentUser()
+	wantGid := uint32(u.Gid())
+	wantUid := uint32(u.Uid())
+	if u == dummyidm.NotImplementedUser {
+		wantGid = 0
+		wantUid = 0
+	}
 
 	statT := vfsutils.AsStatT(info.Sys())
 	if statT.Uid != wantUid || statT.Gid != wantGid {

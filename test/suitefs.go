@@ -243,6 +243,10 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 		return vfs.Chmod(path, 0o777)
 	})
 
+	if err != nil {
+		tb.Fatalf("Walk %s : want error to be nil, got %v", testDir, err)
+	}
+
 	err = vfs.RemoveAll(testDir)
 	if err != nil {
 		tb.Fatalf("RemoveAll %s : want error to be nil, got %v", testDir, err)
