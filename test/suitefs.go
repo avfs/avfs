@@ -307,14 +307,18 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	const existingDir = "existingDir"
 
 	vfs := sfs.vfsSetup
-	dirName := vfs.Join(testDir, existingDir)
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return vfs.Join(testDir, existingDir)
+	}
 
-	_, err := vfs.Stat(dirName)
+	dirName, err := vfs.TempDir(testDir, existingDir)
+	if err != nil {
+		tb.Fatalf("Mkdir %s : want error to be nil, got %v", dirName, err)
+	}
+
+	_, err = vfs.Stat(dirName)
 	if vfs.IsNotExist(err) {
-		err = vfs.Mkdir(dirName, avfs.DefaultDirPerm)
-		if err != nil {
-			tb.Fatalf("Mkdir %s : want error to be nil, got %v", dirName, err)
-		}
+		tb.Fatalf("Stat %s : want error to be nil, got %v", dirName, err)
 	}
 
 	return dirName
@@ -324,12 +328,14 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) string {
 	tb.Helper()
 
+	const existingFile = "existingFile"
+
 	vfs := sfs.vfsSetup
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return "existingFile"
+		return vfs.Join(testDir, existingFile)
 	}
 
-	f, err := vfs.TempFile(testDir, avfs.Avfs)
+	f, err := vfs.TempFile(testDir, existingFile)
 	if err != nil {
 		tb.Fatalf("TempFile : want error to be nil, got %v", err)
 	}
