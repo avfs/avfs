@@ -28,17 +28,18 @@ import (
 
 // TestPath tests all path related functions.
 func (sfs *SuiteFS) TestPath(t *testing.T) {
-	sfs.Abs(t)
-	sfs.Base(t)
-	sfs.Clean(t)
-	sfs.Dir(t)
-	sfs.FromToSlash(t)
-	sfs.Glob(t)
-	sfs.IsAbs(t)
-	sfs.Join(t)
-	sfs.Rel(t)
-	sfs.Split(t)
-	sfs.Walk(t)
+	sfs.RunTests(t, UsrTest,
+		sfs.Abs,
+		sfs.Base,
+		sfs.Clean,
+		sfs.Dir,
+		sfs.FromToSlash,
+		sfs.Glob,
+		sfs.IsAbs,
+		sfs.Join,
+		sfs.Rel,
+		sfs.Split,
+		sfs.Walk)
 }
 
 type pathTest struct {
@@ -46,14 +47,11 @@ type pathTest struct {
 }
 
 // Abs test Abs function.
-func (sfs *SuiteFS) Abs(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) Abs(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		_, err := vfs.Abs(rootDir)
+		_, err := vfs.Abs(testDir)
 		if err != nil {
 			t.Errorf("Name : want error to be nil, got %v", err)
 		}
@@ -93,7 +91,7 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 			t.Fatal("getwd failed: ", err)
 		}
 
-		err = vfs.Chdir(rootDir)
+		err = vfs.Chdir(testDir)
 		if err != nil {
 			t.Fatal("chdir failed: ", err)
 		}
@@ -115,7 +113,7 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 		vfs = sfs.vfsTest
 
 		for _, path := range absTests {
-			path = strings.ReplaceAll(path, "$", rootDir)
+			path = strings.ReplaceAll(path, "$", testDir)
 
 			info, err := vfs.Stat(path)
 			if err != nil {
@@ -156,16 +154,16 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 			t.Fatal("getwd failed: ", err)
 		}
 
-		err = vfs.Chdir(rootDir)
+		err = vfs.Chdir(testDir)
 		if err != nil {
 			t.Fatal("chdir failed: ", err)
 		}
 
 		defer vfs.Chdir(wd) //nolint:errcheck // Ignore errors.
 
-		info, err := vfs.Stat(rootDir)
+		info, err := vfs.Stat(testDir)
 		if err != nil {
-			t.Fatalf("%s: %s", rootDir, err)
+			t.Fatalf("%s: %s", testDir, err)
 		}
 
 		abspath, err := vfs.Abs("")
@@ -189,16 +187,13 @@ func (sfs *SuiteFS) Abs(t *testing.T) {
 }
 
 // Base tests Base function.
-func (sfs *SuiteFS) Base(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) Base(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		base := vfs.Base(rootDir)
-		if base != rootDir[1:] {
-			t.Errorf("Base : want Base to be %s, got %s", rootDir[1:], base)
+		base := vfs.Base(testDir)
+		if base != testDir[1:] {
+			t.Errorf("Base : want Base to be %s, got %s", testDir[1:], base)
 		}
 
 		return
@@ -243,10 +238,7 @@ func (sfs *SuiteFS) Base(t *testing.T) {
 }
 
 // Clean tests Clean function.
-func (sfs *SuiteFS) Clean(t *testing.T) {
-	_, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) Clean(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	var cleanTests []*pathTest
@@ -340,7 +332,7 @@ func (sfs *SuiteFS) Clean(t *testing.T) {
 }
 
 // Dir tests Dir function.
-func (sfs *SuiteFS) Dir(t *testing.T) {
+func (sfs *SuiteFS) Dir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	var dirTests []*pathTest
@@ -383,7 +375,7 @@ func (sfs *SuiteFS) Dir(t *testing.T) {
 	}
 }
 
-func (sfs *SuiteFS) FromToSlash(t *testing.T) {
+func (sfs *SuiteFS) FromToSlash(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	sep := byte('/')
@@ -410,7 +402,7 @@ func (sfs *SuiteFS) FromToSlash(t *testing.T) {
 }
 
 // IsAbs tests IsAbs function.
-func (sfs *SuiteFS) IsAbs(t *testing.T) {
+func (sfs *SuiteFS) IsAbs(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	t.Run("IsAbs", func(t *testing.T) {
@@ -480,7 +472,7 @@ func (sfs *SuiteFS) IsAbs(t *testing.T) {
 }
 
 // Join tests Join function.
-func (sfs *SuiteFS) Join(t *testing.T) {
+func (sfs *SuiteFS) Join(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	type joinTest struct {
@@ -550,7 +542,7 @@ func (sfs *SuiteFS) Join(t *testing.T) {
 }
 
 // Rel tests Rel function.
-func (sfs *SuiteFS) Rel(t *testing.T) {
+func (sfs *SuiteFS) Rel(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	type relTest struct {
@@ -636,10 +628,7 @@ func (sfs *SuiteFS) Rel(t *testing.T) {
 }
 
 // Split tests Split function.
-func (sfs *SuiteFS) Split(t *testing.T) {
-	_, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) Split(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	type splitTest struct {
@@ -681,10 +670,7 @@ func (sfs *SuiteFS) Split(t *testing.T) {
 }
 
 // Glob tests Glob function.
-func (sfs *SuiteFS) Glob(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) Glob(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -696,14 +682,14 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 		return
 	}
 
-	_ = sfs.CreateDirs(t, rootDir)
-	_ = sfs.CreateFiles(t, rootDir)
-	sl := len(sfs.CreateSymlinks(t, rootDir))
+	_ = sfs.SampleDirs(t, testDir)
+	_ = sfs.SampleFiles(t, testDir)
+	sl := len(sfs.SampleSymlinks(t, testDir))
 
 	vfs = sfs.vfsTest
 
 	t.Run("GlobNormal", func(t *testing.T) {
-		pattern := rootDir + "/*/*/[A-Z0-9]"
+		pattern := testDir + "/*/*/[A-Z0-9]"
 		dirNames, err := vfs.Glob(pattern)
 		if err != nil {
 			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
@@ -723,7 +709,7 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 	})
 
 	t.Run("GlobWithoutMeta", func(t *testing.T) {
-		pattern := rootDir
+		pattern := testDir
 		dirNames, err := vfs.Glob(pattern)
 		if err != nil {
 			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
@@ -740,7 +726,7 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 	})
 
 	t.Run("GlobWithoutMetaNonExisting", func(t *testing.T) {
-		pattern := rootDir + "/NonExisiting"
+		pattern := testDir + "/NonExisiting"
 		dirNames, err := vfs.Glob(pattern)
 		if dirNames != nil || err != nil {
 			t.Errorf("Glob %s : want error and result to be nil, got %s, %v", pattern, dirNames, err)
@@ -750,7 +736,7 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 	t.Run("GlobError", func(t *testing.T) {
 		patterns := []string{
 			"[]",
-			rootDir + "/[A-Z",
+			testDir + "/[A-Z",
 		}
 
 		for _, pattern := range patterns {
@@ -763,16 +749,13 @@ func (sfs *SuiteFS) Glob(t *testing.T) {
 }
 
 // Walk tests Walk function.
-func (sfs *SuiteFS) Walk(t *testing.T) {
-	rootDir, removeDir := sfs.CreateRootDir(t, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) Walk(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		walkFunc := func(rootDir string, info os.FileInfo, err error) error { return nil }
 
-		err := vfs.Walk(rootDir, walkFunc)
+		err := vfs.Walk(testDir, walkFunc)
 		if err != nil {
 			t.Errorf("User : want error to be nil, got %v", err)
 		}
@@ -780,26 +763,26 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 		return
 	}
 
-	dirs := sfs.CreateDirs(t, rootDir)
-	files := sfs.CreateFiles(t, rootDir)
-	symlinks := sfs.CreateSymlinks(t, rootDir)
+	dirs := sfs.SampleDirs(t, testDir)
+	files := sfs.SampleFiles(t, testDir)
+	symlinks := sfs.SampleSymlinks(t, testDir)
 
 	vfs = sfs.vfsTest
 	lnames := len(dirs) + len(files) + len(symlinks)
 	wantNames := make([]string, 0, lnames)
 
-	wantNames = append(wantNames, rootDir)
+	wantNames = append(wantNames, testDir)
 	for _, dir := range dirs {
-		wantNames = append(wantNames, vfs.Join(rootDir, dir.Path))
+		wantNames = append(wantNames, vfs.Join(testDir, dir.Path))
 	}
 
 	for _, file := range files {
-		wantNames = append(wantNames, vfs.Join(rootDir, file.Path))
+		wantNames = append(wantNames, vfs.Join(testDir, file.Path))
 	}
 
 	if vfs.HasFeature(avfs.FeatSymlink) {
 		for _, sl := range symlinks {
-			wantNames = append(wantNames, vfs.Join(rootDir, sl.NewName))
+			wantNames = append(wantNames, vfs.Join(testDir, sl.NewName))
 		}
 	}
 
@@ -807,30 +790,29 @@ func (sfs *SuiteFS) Walk(t *testing.T) {
 
 	t.Run("Walk", func(t *testing.T) {
 		gotNames := make(map[string]int)
-		err := vfs.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		err := vfs.Walk(testDir, func(path string, info os.FileInfo, err error) error {
 			gotNames[path]++
 
 			return nil
 		})
-
 		if err != nil {
-			t.Errorf("Walk %s : want error to be nil, got %v", rootDir, err)
+			t.Errorf("Walk %s : want error to be nil, got %v", testDir, err)
 		}
 
 		if len(wantNames) != len(gotNames) {
-			t.Errorf("Walk %s : want %d files or dirs, got %d", rootDir, len(wantNames), len(gotNames))
+			t.Errorf("Walk %s : want %d files or dirs, got %d", testDir, len(wantNames), len(gotNames))
 		}
 
 		for _, wantName := range wantNames {
 			n, ok := gotNames[wantName]
 			if !ok || n != 1 {
-				t.Errorf("Walk %s : path %s not found", rootDir, wantName)
+				t.Errorf("Walk %s : path %s not found", testDir, wantName)
 			}
 		}
 	})
 
 	t.Run("WalkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t)
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		err := vfs.Walk(nonExistingFile, func(path string, info os.FileInfo, err error) error {
 			return nil

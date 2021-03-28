@@ -26,20 +26,17 @@ import (
 )
 
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
-	sfs.BenchDir(b)
+	// sfs.RunTests(b, UsrTest, sfs.BenchDir)
 }
 
-func (sfs *SuiteFS) BenchDir(b *testing.B) {
-	rootDir, removeDir := sfs.CreateRootDir(b, UsrTest)
-	defer removeDir()
-
+func (sfs *SuiteFS) BenchDir(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
 
 	rand.Seed(42)
 
 	b.Run("Mkdir", func(b *testing.B) {
 		dirs := make([]string, 0, b.N)
-		dirs = append(dirs, rootDir)
+		dirs = append(dirs, testDir)
 
 		for n := 0; n < b.N; n++ {
 			nbDirs := int32(len(dirs))
