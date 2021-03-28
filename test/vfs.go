@@ -818,7 +818,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 // TestLstat tests Lstat function.
 func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Lstat(testDir)
@@ -830,6 +830,8 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 	dirs := sfs.SampleDirs(t, testDir)
 	files := sfs.SampleFiles(t, testDir)
 	sfs.SampleSymlinks(t, testDir)
+
+	vfs = sfs.vfsTest
 
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
