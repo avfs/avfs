@@ -29,29 +29,13 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// TestAll runs all file systems tests.
+// TestVFSFileAll runs all file systems tests on avfs.File methods.
 func (sfs *SuiteFS) TestVFSFileAll(t *testing.T) {
-	sfs.TestVFSFileRead(t)
-	sfs.TestVFSFileWrite(t)
-}
-
-// TestVFSFileWrite runs all file systems tests with write access.
-func (sfs *SuiteFS) TestVFSFileWrite(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		sfs.TestFileChmod,
-		sfs.TestFileChown,
-		sfs.TestFileSync,
-		sfs.TestFileTruncate,
-		sfs.TestFileWrite,
-		sfs.TestFileWriteString,
-		sfs.TestFileWriteTime,
-		sfs.TestFileCloseWrite)
-}
-
-// TestVFSFileRead runs all file systems tests with read access.
-func (sfs *SuiteFS) TestVFSFileRead(t *testing.T) {
 	sfs.RunTests(t, UsrTest,
 		sfs.TestFileChdir,
+		sfs.TestFileChmod,
+		sfs.TestFileChown,
+		sfs.TestFileCloseWrite,
 		sfs.TestFileCloseRead,
 		sfs.TestFileFd,
 		sfs.TestFileName,
@@ -60,6 +44,11 @@ func (sfs *SuiteFS) TestVFSFileRead(t *testing.T) {
 		sfs.TestFileReaddirnames,
 		sfs.TestFileSeek,
 		sfs.TestFileStat,
+		sfs.TestFileSync,
+		sfs.TestFileTruncate,
+		sfs.TestFileWrite,
+		sfs.TestFileWriteString,
+		sfs.TestFileWriteTime,
 		sfs.TestStatT)
 }
 

@@ -251,20 +251,8 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 
 // TestAll runs all file systems tests.
 func (sfs *SuiteFS) TestAll(t *testing.T) {
-	sfs.TestRead(t)
-	sfs.TestWrite(t)
-}
-
-// TestWrite runs all file systems tests with write access.
-func (sfs *SuiteFS) TestWrite(t *testing.T) {
-	sfs.TestVFSWrite(t)
-	sfs.TestVFSFileWrite(t)
-}
-
-// TestRead runs all file systems tests with read access.
-func (sfs *SuiteFS) TestRead(t *testing.T) {
-	sfs.TestVFSRead(t)
-	sfs.TestVFSFileRead(t)
+	sfs.TestVFSAll(t)
+	sfs.TestVFSFileAll(t)
 }
 
 // ClosedFile returns a closed avfs.File.

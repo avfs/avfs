@@ -34,28 +34,27 @@ import (
 
 // TestVFSAll runs all file systems tests.
 func (sfs *SuiteFS) TestVFSAll(t *testing.T) {
-	sfs.TestVFSRead(t)
-	sfs.TestVFSWrite(t)
-	sfs.TestPath(t)
-}
-
-// TestVFSWrite runs all file systems tests with write access.
-func (sfs *SuiteFS) TestVFSWrite(t *testing.T) {
 	sfs.RunTests(t, UsrTest,
-		sfs.TestChmod,
-		sfs.TestChown,
-		sfs.TestChroot,
+		sfs.TestClone,
+		sfs.TestChdir,
 		sfs.TestChtimes,
 		sfs.TestCreate,
-		sfs.TestLchown,
+		sfs.TestEvalSymlink,
+		sfs.TestGetTempDir,
 		sfs.TestLink,
+		sfs.TestLstat,
 		sfs.TestMkdir,
 		sfs.TestMkdirAll,
+		sfs.TestOpen,
 		sfs.TestOpenFileWrite,
+		sfs.TestReadDir,
+		sfs.TestReadFile,
+		sfs.TestReadlink,
 		sfs.TestRemove,
 		sfs.TestRemoveAll,
 		sfs.TestRename,
 		sfs.TestSameFile,
+		sfs.TestStat,
 		sfs.TestSymlink,
 		sfs.TestTempDir,
 		sfs.TestTempFile,
@@ -63,21 +62,14 @@ func (sfs *SuiteFS) TestVFSWrite(t *testing.T) {
 		sfs.TestWriteFile,
 		sfs.TestWriteString,
 		sfs.TestUmask)
-}
 
-// TestVFSRead runs all file systems tests with read access.
-func (sfs *SuiteFS) TestVFSRead(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		sfs.TestChdir,
-		sfs.TestClone,
-		sfs.TestEvalSymlink,
-		sfs.TestGetTempDir,
-		sfs.TestLstat,
-		sfs.TestOpen,
-		sfs.TestReadDir,
-		sfs.TestReadFile,
-		sfs.TestReadlink,
-		sfs.TestStat)
+	sfs.TestPath(t)
+
+	sfs.RunTests(t, avfs.UsrRoot,
+		sfs.TestChmod,
+		sfs.TestChown,
+		sfs.TestChroot,
+		sfs.TestLchown)
 }
 
 // TestChdir tests Chdir and Getwd functions.
