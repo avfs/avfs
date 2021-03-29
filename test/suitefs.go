@@ -215,6 +215,11 @@ func (sfs *SuiteFS) CreateTestDir(tb testing.TB, testFunc TestFunc) string {
 		tb.Fatalf("Stat %s : want error to be nil, got %s", testDir, err)
 	}
 
+	err = vfs.Chmod(testDir, 0o777)
+	if err != nil {
+		tb.Fatalf("Chmod %s : want error to be nil, got %s", testDir, err)
+	}
+
 	err = vfs.Chdir(testDir)
 	if err != nil {
 		tb.Fatalf("Chdir %s : want error to be nil, got %s", testDir, err)
@@ -226,6 +231,10 @@ func (sfs *SuiteFS) CreateTestDir(tb testing.TB, testFunc TestFunc) string {
 // RemoveTestDir removes all files under testDir.
 func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	vfs := sfs.vfsSetup
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	err := vfs.RemoveAll(testDir)
 	if err == nil {
