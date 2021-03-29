@@ -471,11 +471,11 @@ func (f *OrefaFile) Stat() (os.FileInfo, error) {
 	defer f.mu.RUnlock()
 
 	if f.name == "" {
-		return fStat{}, os.ErrInvalid
+		return &fStat{}, os.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return fStat{}, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		return &fStat{}, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	_, name := split(f.name)
@@ -646,31 +646,41 @@ func (f *OrefaFile) WriteString(s string) (n int, err error) {
 // fStat is the implementation of FileInfo returned by Stat and Lstat.
 
 // IsDir is the abbreviation for Mode().IsDir().
-func (fst fStat) IsDir() bool {
+func (fst *fStat) IsDir() bool {
 	return fst.mode.IsDir()
 }
 
 // Mode returns the file mode bits.
-func (fst fStat) Mode() os.FileMode {
+func (fst *fStat) Mode() os.FileMode {
 	return fst.mode
 }
 
 // ModTime returns the modification time.
-func (fst fStat) ModTime() time.Time {
+func (fst *fStat) ModTime() time.Time {
 	return time.Unix(0, fst.mtime)
 }
 
 // Type returns the base name of the file.
-func (fst fStat) Name() string {
+func (fst *fStat) Name() string {
 	return fst.name
 }
 
 // Size returns the length in bytes for regular files; system-dependent for others.
-func (fst fStat) Size() int64 {
+func (fst *fStat) Size() int64 {
 	return fst.size
 }
 
 // Sys returns the underlying data source (can return nil).
-func (fst fStat) Sys() interface{} {
-	return nil
+func (fst *fStat) Sys() interface{} {
+	return fst
+}
+
+// Gid returns the group id.
+func (fst *fStat) Gid() int {
+	return 0
+}
+
+// Uid returns the user id.
+func (fst *fStat) Uid() int {
+	return 0
 }

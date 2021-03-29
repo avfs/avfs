@@ -86,10 +86,10 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode os.F
 }
 
 // fillStatFrom returns a fStat (implementation of os.FileInfo) from a dirNode dn named name.
-func (nd *node) fillStatFrom(name string) fStat {
+func (nd *node) fillStatFrom(name string) *fStat {
 	nd.mu.RLock()
 
-	fst := fStat{
+	fst := &fStat{
 		name:  name,
 		size:  nd.size(),
 		mode:  nd.mode,
