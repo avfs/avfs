@@ -752,6 +752,12 @@ type IdentityMgr interface {
 	Typer
 }
 
+// GroupIdentifier is the interface that wraps the Gid method.
+type GroupIdentifier interface {
+	// Gid returns the primary group id.
+	Gid() int
+}
+
 // GroupMgr interface manages groups.
 type GroupMgr interface {
 	// GroupAdd adds a new group.
@@ -773,11 +779,26 @@ type GroupMgr interface {
 
 // GroupReader interface reads group information.
 type GroupReader interface {
-	// Gid returns the group id.
-	Gid() int
+	GroupIdentifier
 
 	// Name returns the group name.
 	Name() string
+}
+
+// UserConnecter interface manages user connections.
+type UserConnecter interface {
+	// CurrentUser returns the current user.
+	CurrentUser() UserReader
+
+	// User sets and returns the current user.
+	// If the user cannot be found, the returned error is of type UnknownUserError.
+	User(name string) (UserReader, error)
+}
+
+// UserIdentifier is the interface that wraps the Uid method.
+type UserIdentifier interface {
+	// Uid returns the user id.
+	Uid() int
 }
 
 // UserMgr interface manages the users.
@@ -798,34 +819,21 @@ type UserMgr interface {
 	LookupUserId(uid int) (UserReader, error)
 }
 
-// UserConnecter interface manages user connections.
-type UserConnecter interface {
-	// CurrentUser returns the current user.
-	CurrentUser() UserReader
-
-	// User sets and returns the current user.
-	// If the user cannot be found, the returned error is of type UnknownUserError.
-	User(name string) (UserReader, error)
-}
-
 // UserReader reads user information.
 type UserReader interface {
-	// Gid returns the primary group id.
-	Gid() int
+	GroupIdentifier
+	UserIdentifier
 
 	// IsRoot returns true if the user has root privileges.
 	IsRoot() bool
 
 	// Name returns the user name.
 	Name() string
-
-	// Uid returns the user id.
-	Uid() int
 }
 
-// StatT is the structure returned by os.FileInfo.Sys() for file systems other than OsFs.
-// OsFs returns a syscall.Stat_t type on linux.
-type StatT struct {
-	Uid uint32
-	Gid uint32
+// SysStater is the interface returned by os.FileInfo.Sys() on all file systems.
+type SysStater interface {
+	GroupIdentifier
+	UserIdentifier
+	Nlink() uint64
 }
