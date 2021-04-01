@@ -71,4 +71,5 @@ type fStat struct {
 	size  int64
 	mode  os.FileMode
 	mtime int64
+	nlink int
 }

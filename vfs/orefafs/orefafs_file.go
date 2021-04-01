@@ -684,3 +684,8 @@ func (fst *fStat) Gid() int {
 func (fst *fStat) Uid() int {
 	return 0
 }
+
+// Nlink returns the number of hard links.
+func (fst *fStat) Nlink() uint64 {
+	return uint64(fst.nlink)
+}
