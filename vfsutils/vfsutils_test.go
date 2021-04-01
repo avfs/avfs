@@ -32,35 +32,35 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-func TestAsStatT(t *testing.T) {
-	t.Run("StatT MemFS", func(t *testing.T) {
+func TestSysStat(t *testing.T) {
+	t.Run("SysStat MemFS", func(t *testing.T) {
 		vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 		if err != nil {
 			t.Errorf("memfs.New : want error to be nil, got %v", err)
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.RunTests(t, test.UsrTest, sfs.TestStatT)
+		sfs.RunTests(t, test.UsrTest, sfs.TestSysStat)
 	})
 
-	t.Run("StatT OsFS", func(t *testing.T) {
+	t.Run("SysStat OsFS", func(t *testing.T) {
 		vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 		if err != nil {
 			t.Errorf("osfs.New : want error to be nil, got %v", err)
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.RunTests(t, test.UsrTest, sfs.TestStatT)
+		sfs.RunTests(t, test.UsrTest, sfs.TestSysStat)
 	})
 
-	t.Run("StatT OrefaFS", func(t *testing.T) {
+	t.Run("SysStat OrefaFS", func(t *testing.T) {
 		vfs, err := orefafs.New(orefafs.WithMainDirs())
 		if err != nil {
 			t.Errorf("orefafs.New : want error to be nil, got %v", err)
 		}
 
 		sfs := test.NewSuiteFS(t, vfs)
-		sfs.RunTests(t, test.UsrTest, sfs.TestStatT)
+		sfs.RunTests(t, test.UsrTest, sfs.TestSysStat)
 	})
 }
 

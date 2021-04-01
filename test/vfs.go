@@ -287,10 +287,12 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
+				sst, ok := fst.Sys().(avfs.SysStater)
+				if !ok {
+					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+				}
 
-				uid, gid := int(statT.Uid), int(statT.Gid)
+				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
 					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
 						path, u.Uid(), u.Gid(), uid, gid)
@@ -323,10 +325,12 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
+				sst, ok := fst.Sys().(avfs.SysStater)
+				if !ok {
+					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+				}
 
-				uid, gid := int(statT.Uid), int(statT.Gid)
+				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
 					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
 						path, u.Uid(), u.Gid(), uid, gid)
@@ -623,10 +627,12 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
+				sst, ok := fst.Sys().(avfs.SysStater)
+				if !ok {
+					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+				}
 
-				uid, gid := int(statT.Uid), int(statT.Gid)
+				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
 					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
 						path, u.Uid(), u.Gid(), uid, gid)
@@ -659,10 +665,12 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
+				sst, ok := fst.Sys().(avfs.SysStater)
+				if !ok {
+					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+				}
 
-				uid, gid := int(statT.Uid), int(statT.Gid)
+				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
 					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
 						path, u.Uid(), u.Gid(), uid, gid)
@@ -695,10 +703,12 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sys := fst.Sys()
-				statT := vfsutils.AsStatT(sys)
+				sst, ok := fst.Sys().(avfs.SysStater)
+				if !ok {
+					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+				}
 
-				uid, gid := int(statT.Uid), int(statT.Gid)
+				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
 					t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
 						path, u.Uid(), u.Gid(), uid, gid)
@@ -2701,8 +2711,8 @@ func (sfs *SuiteFS) TestWriteString(t *testing.T, testDir string) {
 	})
 }
 
-// TestStatT tests os.FileInfo.Stat().Sys() Uid and Gid values.
-func (sfs *SuiteFS) TestStatT(t *testing.T, testDir string) {
+// TestSysStat tests os.FileInfo.Sys() Uid and Gid values.
+func (sfs *SuiteFS) TestSysStat(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -2711,22 +2721,26 @@ func (sfs *SuiteFS) TestStatT(t *testing.T, testDir string) {
 
 	existingFile := sfs.EmptyFile(t, testDir)
 
-	info, err := vfs.Stat(existingFile)
+	fst, err := vfs.Stat(existingFile)
 	if err != nil {
 		t.Errorf("Stat : want error be nil, got %v", err)
 	}
 
 	u := vfs.CurrentUser()
-	wantGid := uint32(u.Gid())
-	wantUid := uint32(u.Uid())
+
+	wantUid, wantGid := u.Uid(), u.Gid()
 	if u == dummyidm.NotImplementedUser {
-		wantGid = 0
-		wantUid = 0
+		wantUid, wantGid = 0, 0
 	}
 
-	statT := vfsutils.AsStatT(info.Sys())
-	if statT.Uid != wantUid || statT.Gid != wantGid {
-		t.Errorf("AsStatT : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
-			wantUid, wantGid, statT.Uid, statT.Gid)
+	sst, ok := fst.Sys().(avfs.SysStater)
+	if !ok {
+		t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+	}
+
+	uid, gid := sst.Uid(), sst.Gid()
+	if uid != wantUid || gid != wantGid {
+		t.Errorf("SysStater : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+			wantUid, wantGid, uid, gid)
 	}
 }

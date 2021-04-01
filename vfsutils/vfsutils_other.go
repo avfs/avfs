@@ -19,10 +19,7 @@
 package vfsutils
 
 import (
-	"math"
 	"os"
-
-	"github.com/avfs/avfs"
 )
 
 // UMaskType is the file mode creation mask.
@@ -38,14 +35,4 @@ func (um *UMaskType) Get() os.FileMode {
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask os.FileMode) {
-}
-
-// AsStatT converts a value as an avfs.StatT.
-func AsStatT(value interface{}) *avfs.StatT {
-	switch s := value.(type) {
-	case *avfs.StatT:
-		return s
-	default:
-		return &avfs.StatT{Uid: math.MaxUint32, Gid: math.MaxUint32}
-	}
 }

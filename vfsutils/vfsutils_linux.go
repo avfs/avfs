@@ -22,8 +22,6 @@ import (
 	"os"
 	"sync"
 	"syscall"
-
-	"github.com/avfs/avfs"
 )
 
 // UMaskType is the file mode creation mask.
@@ -63,16 +61,4 @@ func (um *UMaskType) Set(mask os.FileMode) {
 	}
 
 	um.mu.Unlock()
-}
-
-// AsStatT converts a value as an avfs.StatT.
-func AsStatT(value interface{}) *avfs.StatT {
-	switch s := value.(type) {
-	case *avfs.StatT:
-		return s
-	case *syscall.Stat_t:
-		return &avfs.StatT{Uid: s.Uid, Gid: s.Gid}
-	default:
-		return &avfs.StatT{Uid: 0, Gid: 0}
-	}
 }

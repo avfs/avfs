@@ -66,9 +66,8 @@ func CheckPermission(info os.FileInfo, want avfs.WantMode, u avfs.UserReader) bo
 	}
 
 	mode := info.Mode()
-	sys := info.Sys()
-	statT := AsStatT(sys)
-	uid, gid := int(statT.Uid), int(statT.Gid)
+	sst := info.Sys().(avfs.SysStater)
+	uid, gid := sst.Uid(), sst.Gid()
 
 	switch {
 	case uid == u.Uid():
