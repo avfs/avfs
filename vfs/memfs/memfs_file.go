@@ -680,8 +680,20 @@ func (fst *fStat) Size() int64 {
 
 // Sys returns the underlying data source (can return nil).
 func (fst *fStat) Sys() interface{} {
-	return &avfs.StatT{
-		Uid: uint32(fst.uid),
-		Gid: uint32(fst.gid),
-	}
+	return fst
+}
+
+// Gid returns the group id.
+func (fst *fStat) Gid() int {
+	return fst.gid
+}
+
+// Uid returns the user id.
+func (fst *fStat) Uid() int {
+	return fst.uid
+}
+
+// Nlink returns the number of hard links.
+func (fst *fStat) Nlink() uint64 {
+	return uint64(fst.nlink)
 }

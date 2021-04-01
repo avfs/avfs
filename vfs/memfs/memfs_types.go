@@ -135,6 +135,7 @@ type fStat struct {
 	mtime int64
 	uid   int
 	gid   int
+	nlink int
 }
 
 // removeStack is a stack of directories to be removed during tree traversal in RemoveAll function.

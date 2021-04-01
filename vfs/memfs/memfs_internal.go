@@ -268,6 +268,7 @@ func (dn *dirNode) fillStatFrom(name string) *fStat {
 		mtime: dn.mtime,
 		uid:   dn.uid,
 		gid:   dn.gid,
+		nlink: 0,
 	}
 
 	dn.mu.RUnlock()
@@ -351,6 +352,7 @@ func (fn *fileNode) fillStatFrom(name string) *fStat {
 		mtime: fn.mtime,
 		uid:   fn.uid,
 		gid:   fn.gid,
+		nlink: fn.nlink,
 	}
 
 	fn.mu.RUnlock()
@@ -418,6 +420,7 @@ func (sn *symlinkNode) fillStatFrom(name string) *fStat {
 		mtime: sn.mtime,
 		uid:   sn.uid,
 		gid:   sn.gid,
+		nlink: 0,
 	}
 
 	sn.mu.RUnlock()
