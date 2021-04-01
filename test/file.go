@@ -49,7 +49,7 @@ func (sfs *SuiteFS) TestVFSFileAll(t *testing.T) {
 		sfs.TestFileWrite,
 		sfs.TestFileWriteString,
 		sfs.TestFileWriteTime,
-		sfs.TestStatT)
+		sfs.TestSysStat)
 }
 
 // TestFileChdir tests File.Chdir function.
@@ -157,7 +157,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !sfs.canTestPerm {
-		f, fileName := sfs.OpenedNonExistingFile(t, testDir)
+		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
 		err := f.Chown(0, 0)
 		CheckPathError(t, "Chown", "chown", fileName, avfs.ErrPermDenied, err)

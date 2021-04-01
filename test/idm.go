@@ -19,11 +19,11 @@ package test
 import (
 	"math"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/dummyidm"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 //  TestCurrentUser tests CurrentUser function.
@@ -668,20 +668,22 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 
 	homeDir := vfs.Join(avfs.HomeDir, u.Name())
 
-	info, err := vfs.Stat(homeDir)
+	fst, err := vfs.Stat(homeDir)
 	if err != nil {
 		t.Errorf("Stat %s : want error to be nil, got %v", homeDir, err)
 	}
 
 	wantMode := os.ModeDir | avfs.HomeDirPerm&^vfs.GetUMask()
-	if info.Mode() != wantMode {
-		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, info.Mode())
+	if fst.Mode() != wantMode {
+		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
 	}
 
-	sys := info.Sys()
-	statT := vfsutils.AsStatT(sys)
+	sst, ok := fst.Sys().(avfs.SysStater)
+	if !ok {
+		t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
+	}
 
-	uid, gid := int(statT.Uid), int(statT.Gid)
+	uid, gid := sst.Uid(), sst.Gid()
 	if uid != u.Uid() || gid != u.Gid() {
 		t.Errorf("Stat %s : want uid=%d, gid=%d, got uid=%d, gid=%d", homeDir, u.Uid(), u.Gid(), uid, gid)
 	}
