@@ -62,6 +62,7 @@ func (sfs *SuiteFS) TestVFSAll(t *testing.T) {
 		sfs.TestTruncate,
 		sfs.TestWriteFile,
 		sfs.TestWriteString,
+		sfs.TestToSysStat,
 		sfs.TestUmask)
 
 	sfs.TestPath(t)
@@ -287,10 +288,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst, ok := fst.Sys().(avfs.SysStater)
-				if !ok {
-					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
-				}
+				sst := vfsutils.ToSysStat(fst.Sys())
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -325,10 +323,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst, ok := fst.Sys().(avfs.SysStater)
-				if !ok {
-					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
-				}
+				sst := vfsutils.ToSysStat(fst.Sys())
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -627,10 +622,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst, ok := fst.Sys().(avfs.SysStater)
-				if !ok {
-					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
-				}
+				sst := vfsutils.ToSysStat(fst.Sys())
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -665,10 +657,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst, ok := fst.Sys().(avfs.SysStater)
-				if !ok {
-					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
-				}
+				sst := vfsutils.ToSysStat(fst.Sys())
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -703,10 +692,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst, ok := fst.Sys().(avfs.SysStater)
-				if !ok {
-					t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
-				}
+				sst := vfsutils.ToSysStat(fst.Sys())
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -2711,8 +2697,8 @@ func (sfs *SuiteFS) TestWriteString(t *testing.T, testDir string) {
 	})
 }
 
-// TestSysStat tests os.FileInfo.Sys() Uid and Gid values.
-func (sfs *SuiteFS) TestSysStat(t *testing.T, testDir string) {
+// TestToSysStat tests ToSysStat function.
+func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -2733,14 +2719,16 @@ func (sfs *SuiteFS) TestSysStat(t *testing.T, testDir string) {
 		wantUid, wantGid = 0, 0
 	}
 
-	sst, ok := fst.Sys().(avfs.SysStater)
-	if !ok {
-		t.Errorf("SysStater : can't convert %v type to SysStater", reflect.TypeOf(fst.Sys()).Name())
-	}
+	sst := vfsutils.ToSysStat(fst.Sys())
 
 	uid, gid := sst.Uid(), sst.Gid()
 	if uid != wantUid || gid != wantGid {
 		t.Errorf("SysStater : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
 			wantUid, wantGid, uid, gid)
+	}
+
+	wantLink := uint64(1)
+	if sst.Nlink() != wantLink {
+		t.Errorf("SysStater : want Nlink to be %d, got %d", wantLink, sst.Nlink())
 	}
 }

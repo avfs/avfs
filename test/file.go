@@ -48,8 +48,7 @@ func (sfs *SuiteFS) TestVFSFileAll(t *testing.T) {
 		sfs.TestFileTruncate,
 		sfs.TestFileWrite,
 		sfs.TestFileWriteString,
-		sfs.TestFileWriteTime,
-		sfs.TestSysStat)
+		sfs.TestFileWriteTime)
 }
 
 // TestFileChdir tests File.Chdir function.
