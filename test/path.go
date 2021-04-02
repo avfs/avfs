@@ -190,15 +190,6 @@ func (sfs *SuiteFS) Abs(t *testing.T, testDir string) {
 func (sfs *SuiteFS) Base(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		base := vfs.Base(testDir)
-		if base != testDir[1:] {
-			t.Errorf("Base : want Base to be %s, got %s", testDir[1:], base)
-		}
-
-		return
-	}
-
 	var baseTests []*pathTest
 
 	switch vfs.OSType() {
