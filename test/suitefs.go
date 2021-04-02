@@ -396,14 +396,11 @@ func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (f avfs.File,
 	const openedFile = "openedFile"
 
 	vfs := sfs.vfsSetup
-	if !sfs.vfsTest.HasFeature(avfs.FeatBasicFs) {
-		return nil, openedFile
-	}
 
 	fileName = vfs.Join(testDir, openedFile)
 
 	f, err := vfs.Create(fileName)
-	if err != nil {
+	if vfs.HasFeature(avfs.FeatBasicFs) && err != nil {
 		tb.Fatalf("Create %s : want error to be nil, got %v", fileName, err)
 	}
 
@@ -411,18 +408,18 @@ func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (f avfs.File,
 }
 
 // OpenedNonExistingFile returns a non existing avfs.File and its file name.
-func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
+func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs.File) {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
-	fileName = sfs.NonExistingFile(tb, testDir)
+	fileName := sfs.NonExistingFile(tb, testDir)
 
 	f, err := vfs.Open(fileName)
-	if err == nil || vfs.IsExist(err) {
+	if vfs.HasFeature(avfs.FeatBasicFs) && (err == nil || vfs.IsExist(err)) {
 		tb.Fatalf("Open %s : want non existing file, got %v", fileName, err)
 	}
 
-	return f, fileName
+	return f
 }
 
 // RandomDir returns one directory with random empty subdirectories, files and symbolic links.
