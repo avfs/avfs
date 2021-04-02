@@ -189,18 +189,3 @@ func (f *DummyFile) WriteAt(b []byte, off int64) (n int, err error) {
 func (f *DummyFile) WriteString(s string) (n int, err error) {
 	return f.Write([]byte(s))
 }
-
-// Gid returns the group id.
-func (sst *SysStat) Gid() int {
-	return 0
-}
-
-// Uid returns the user id.
-func (sst *SysStat) Uid() int {
-	return 0
-}
-
-// Nlink returns the number of hard links.
-func (sst *SysStat) Nlink() uint64 {
-	return 1
-}

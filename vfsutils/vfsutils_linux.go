@@ -22,6 +22,8 @@ import (
 	"os"
 	"sync"
 	"syscall"
+
+	"github.com/avfs/avfs"
 )
 
 // UMaskType is the file mode creation mask.
@@ -61,4 +63,36 @@ func (um *UMaskType) Set(mask os.FileMode) {
 	}
 
 	um.mu.Unlock()
+}
+
+// ToSysStat takes a value from os.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+func ToSysStat(sys interface{}) avfs.SysStater {
+	switch s := sys.(type) {
+	case *syscall.Stat_t:
+		return &linuxSysStat{Sys: s}
+	case avfs.SysStater:
+		return s
+	default:
+		return &dummySysStat{}
+	}
+}
+
+// linuxSysStat implements SysStater interface returned by os.FileInfo.Sys() for a Linux file system.
+type linuxSysStat struct {
+	Sys *syscall.Stat_t
+}
+
+// Gid returns the group id.
+func (sst *linuxSysStat) Gid() int {
+	return int(sst.Sys.Gid)
+}
+
+// Uid returns the user id.
+func (sst *linuxSysStat) Uid() int {
+	return int(sst.Sys.Uid)
+}
+
+// Nlink returns the number of hard links.
+func (sst *linuxSysStat) Nlink() uint64 {
+	return sst.Sys.Nlink
 }

@@ -21,6 +21,3 @@ type DummyFS struct{}
 
 // DummyFile represents an open file descriptor.
 type DummyFile struct{}
-
-// SysStat implements SysStater interface returned by os.FileInfo.Sys().
-type SysStat struct{}
