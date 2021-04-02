@@ -33,3 +33,9 @@ func initTest(t *testing.T) *test.SuiteFS {
 
 	return sfs
 }
+
+func TestAferoUtils(t *testing.T) {
+	sfs := initTest(t)
+
+	sfs.RunTests(t, test.UsrTest, sfs.TestAferoUtils)
+}
