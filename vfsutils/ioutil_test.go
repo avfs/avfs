@@ -32,25 +32,21 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-func InitTest(t *testing.T) avfs.VFS {
-	vfsWrite, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+func InitTest(t *testing.T) *test.SuiteFS {
+	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(t, vfsWrite)
-	vfs := sfs.VFSTest()
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.User(t, test.UsrTest)
 
-	return vfs
+	return sfs
+
 }
 
 func TestIOUtil(t *testing.T) {
-	vfsWrite, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
-	if err != nil {
-		t.Fatalf("memfs.New : want error to be nil, got %v", err)
-	}
-
-	sfs := test.NewSuiteFS(t, vfsWrite)
+	sfs := initTest(t)
 	sfs.RunTests(t, test.UsrTest,
 		sfs.TestReadDir,
 		sfs.TestReadFile,
@@ -58,7 +54,8 @@ func TestIOUtil(t *testing.T) {
 }
 
 func TestReadOnlyWriteFile(t *testing.T) {
-	vfs := InitTest(t)
+	sfs := InitTest(t)
+	vfs := sfs.VFSTest()
 
 	// We don't want to use TempFile directly, since that opens a file for us as 0600.
 	tempDir, err := vfs.TempDir("", t.Name())
@@ -94,7 +91,8 @@ func TestReadOnlyWriteFile(t *testing.T) {
 }
 
 func TestTempFile(t *testing.T) {
-	vfs := InitTest(t)
+	sfs := InitTest(t)
+	vfs := sfs.VFSTest()
 
 	dir, err := vfs.TempDir("", "TestTempFile_BadDir")
 	if err != nil {
@@ -112,13 +110,14 @@ func TestTempFile(t *testing.T) {
 }
 
 func TestTempFile_pattern(t *testing.T) {
+	sfs := InitTest(t)
+	vfs := sfs.VFSTest()
+
 	tests := []struct{ pattern, prefix, suffix string }{
 		{"ioutil_test", "ioutil_test", ""},
 		{"ioutil_test*", "ioutil_test", ""},
 		{"ioutil_test*xyz", "ioutil_test", "xyz"},
 	}
-
-	vfs := InitTest(t)
 
 	for _, tt := range tests {
 		f, err := vfs.TempFile("", tt.pattern)
@@ -141,7 +140,8 @@ func TestTempFile_pattern(t *testing.T) {
 }
 
 func TestTempDir(t *testing.T) {
-	vfs := InitTest(t)
+	sfs := InitTest(t)
+	vfs := sfs.VFSTest()
 
 	name, err := vfs.TempDir("/_not_exists_", "foo")
 	if name != "" || err == nil {
@@ -199,7 +199,8 @@ func TestTempDir(t *testing.T) {
 // TestTempDir_BadDir tests that we return a nice error message if the dir argument to TempDir doesn't
 // exist (or that it's empty and os.TempDir doesn't exist).
 func TestTempDir_BadDir(t *testing.T) {
-	vfs := InitTest(t)
+	sfs := InitTest(t)
+	vfs := sfs.VFSTest()
 
 	dir, err := vfs.TempDir("", "TestTempDir_BadDir")
 	if err != nil {
