@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"os"
 	"sort"
+	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -69,6 +70,7 @@ func (vfs *OrefaFS) createFile(parent *node, absPath, fileName string, perm os.F
 // createNode creates a new node (directory or file).
 func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode os.FileMode) *node {
 	nd := &node{
+		id:    atomic.AddUint64(&vfs.lastId, 1),
 		mtime: time.Now().UnixNano(),
 		mode:  mode,
 		nlink: 1,
@@ -90,6 +92,7 @@ func (nd *node) fillStatFrom(name string) *fStat {
 	nd.mu.RLock()
 
 	fst := &fStat{
+		id:    nd.id,
 		name:  name,
 		size:  nd.size(),
 		mode:  nd.mode,

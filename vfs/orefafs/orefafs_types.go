@@ -27,6 +27,7 @@ import (
 type OrefaFS struct {
 	mu      sync.RWMutex
 	nodes   nodes
+	lastId  uint64
 	curDir  string
 	name    string
 	feature avfs.Feature
@@ -58,6 +59,7 @@ type children nodes
 // node is the common structure of directories and files.
 type node struct {
 	mu       sync.RWMutex
+	id       uint64
 	mtime    int64
 	mode     os.FileMode
 	children children
@@ -67,6 +69,7 @@ type node struct {
 
 // fStat is the implementation of os.FileInfo returned by Stat and Lstat.
 type fStat struct {
+	id    uint64
 	name  string
 	size  int64
 	mode  os.FileMode
