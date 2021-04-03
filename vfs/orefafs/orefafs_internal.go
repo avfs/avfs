@@ -94,6 +94,7 @@ func (nd *node) fillStatFrom(name string) *fStat {
 		size:  nd.size(),
 		mode:  nd.mode,
 		mtime: nd.mtime,
+		nlink: nd.nlink,
 	}
 
 	nd.mu.RUnlock()
