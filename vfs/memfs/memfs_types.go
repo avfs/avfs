@@ -41,6 +41,7 @@ type MemFS struct {
 type fsAttrs struct {
 	idm     avfs.IdentityMgr
 	feature avfs.Feature
+	lastId  uint64
 	name    string
 	umask   int32
 }
@@ -94,6 +95,7 @@ type children = map[string]node
 // fileNode is the structure for a file.
 type fileNode struct {
 	baseNode
+	id    uint64
 	data  []byte
 	nlink int
 }
@@ -129,6 +131,7 @@ const (
 
 // fStat is the implementation of os.FileInfo returned by Stat and Lstat.
 type fStat struct {
+	id    uint64
 	name  string
 	size  int64
 	mode  os.FileMode

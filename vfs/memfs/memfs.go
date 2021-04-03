@@ -22,7 +22,6 @@ package memfs
 import (
 	"os"
 	"path/filepath"
-	"reflect"
 	"sync/atomic"
 	"time"
 
@@ -807,7 +806,13 @@ func (vfs *MemFS) Rename(oldname, newname string) error {
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
 func (vfs *MemFS) SameFile(fi1, fi2 os.FileInfo) bool {
-	return reflect.DeepEqual(fi1, fi2)
+	fs1, ok1 := fi1.(*fStat)
+	fs2, ok2 := fi2.(*fStat)
+	if !ok1 || !ok2 {
+		return false
+	}
+
+	return fs1.id == fs2.id
 }
 
 // Split splits path immediately following the final Separator,

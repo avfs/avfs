@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"os"
 	"sort"
+	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -164,6 +165,7 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm os.FileMode) *fi
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
+		id:    atomic.AddUint64(&vfs.fsAttrs.lastId, 1),
 		nlink: 1,
 	}
 
@@ -346,6 +348,7 @@ func (fn *fileNode) fillStatFrom(name string) *fStat {
 	fn.mu.RLock()
 
 	fst := &fStat{
+		id:    fn.id,
 		name:  name,
 		size:  fn.size(),
 		mode:  fn.mode,
