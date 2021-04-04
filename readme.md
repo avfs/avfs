@@ -1,4 +1,5 @@
 # AVFS
+
 Another Virtual File System for Go
 
 ![CI](https://github.com/avfs/avfs/workflows/CI/badge.svg)
@@ -9,90 +10,106 @@ Another Virtual File System for Go
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 
 ## Overview
-**AVFS** is a virtual file system abstraction, 
-inspired mostly by [Afero](http://github.com/spf13/afero) and Go standard library.
-It provides an abstraction layer to emulate the behavior of a **Linux file system** and provides several features :
+
+**AVFS** is a virtual file system abstraction, inspired mostly
+by [Afero](http://github.com/spf13/afero) and Go standard library. It provides
+an abstraction layer to emulate the behavior of a **Linux file system** and
+provides several features :
+
 - a set of **constants**, **interfaces** and **types** for all file systems
 - a **test suite** for all file systems (emulated or real)
-- a very basic **identity manager** allows testing of user related functions (Chown, Lchown) and file system permissions
-- all file systems support user file creation mode mask (**Umask**) 
-- **symbolic links**, **hard links** and **chroot** are fully supported for some file systems (MemFS, OsFS) 
+- a very basic **identity manager** allows testing of user related functions (
+  Chown, Lchown) and file system permissions
+- all file systems support user file creation mode mask (**Umask**)
+- **symbolic links**, **hard links** and **chroot** are fully supported for some
+  file systems (MemFS, OsFS)
 - some file systems support **multiple users concurrently**  (MemFS)
 - each file system has its **own package**
 
 ## Installation
+
 This package can be installed with the go get command :
+
 ```
 go get github.com/avfs/avfs
 ```
-It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >= 1.15
+
+It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >=
+1.15
 
 ## Getting started
+
 To make an existing code work with **AVFS** :
-- replace all references of `os`, `path/filepath` and `ioutil` 
-with the variable used to initialize the file system (`vfs` in the following examples)
+
+- replace all references of `os`, `path/filepath` and `ioutil`
+  with the variable used to initialize the file system (`vfs` in the following
+  examples)
 - replace all references of `os.TempDir()` by `vfs.GetTempDir()`.
-- import the packages of the file systems and, if necessary, the `avfs` package 
-and initialize the file system variable.
-- some file systems provide specific options available at initialization.
-For instance `MemFS` needs `WithMainDirs` option to create `/home`, `/root` and `/tmp` directories.
+- import the packages of the file systems and, if necessary, the `avfs` package
+  and initialize the file system variable.
+- some file systems provide specific options available at initialization. For
+  instance `MemFS` needs `WithMainDirs` option to create `/home`, `/root`
+  and `/tmp` directories.
 
 ## Examples
 
 ### Symbolic links
-The example below demonstrates the creation of a file, a symbolic link to this file, 
-for a different file systems (depending on an environment variable).
-Error management has been omitted for the sake of simplicity :
-  
+
+The example below demonstrates the creation of a file, a symbolic link to this
+file, for a different file systems (depending on an environment variable). Error
+management has been omitted for the sake of simplicity :
+
 ```go
 package main
 
 import (
-    "bytes"
-    "log"
-    "os"
+	"bytes"
+	"os"
+	"log"
 
-    "github.com/avfs/avfs"
-    "github.com/avfs/avfs/vfs/memfs"
-    "github.com/avfs/avfs/vfs/osfs"
+	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfs/memfs"
+	"github.com/avfs/avfs/vfs/osfs"
 )
 
 func main() {
-    var vfs avfs.VFS	
+	var vfs avfs.VFS
 
-    switch os.Getenv("ENV") {
-    case "PROD": // The real file system for production.
-        vfs, _ = osfs.New()
-    default: // in memory for tests.
-        vfs, _ = memfs.New(memfs.WithMainDirs())   
-    }
-        
-    // From this point all references of 'os', 'path/filepath' and 'ioutil'
-    // should be replaced by 'vfs'
-    rootDir, _ := vfs.TempDir("", avfs.Avfs)
-    defer vfs.RemoveAll(rootDir)
+	switch os.Getenv("ENV") {
+	case "PROD": // The real file system for production.
+		vfs, _ = osfs.New()
+	default: // in memory for tests.
+		vfs, _ = memfs.New(memfs.WithMainDirs())
+	}
 
-    aFilePath := vfs.Join(rootDir, "aFile.txt")
+	// From this point all references of 'os', 'path/filepath' and 'ioutil'
+	// should be replaced by 'vfs'
+	rootDir, _ := vfs.TempDir("", avfs.Avfs)
+	defer vfs.RemoveAll(rootDir)
 
-    content := []byte("randomContent")
-    _ = vfs.WriteFile(aFilePath, content, 0o644)
-    
-    aFilePathSl := vfs.Join(rootDir, "aFileSymlink.txt")
-    _ = vfs.Symlink(aFilePath, aFilePathSl)
-    
-    gotContentSl, _ := vfs.ReadFile(aFilePathSl)
-    if !bytes.Equal(content, gotContentSl) {
-        log.Fatalf("Symlink %s : want content to be %v, got %v",
-                    aFilePathSl, content, gotContentSl)
-    }
-    
-    log.Printf("content from symbolic link %s : %s", aFilePathSl, gotContentSl)
+	aFilePath := vfs.Join(rootDir, "aFile.txt")
+
+	content := []byte("randomContent")
+	_ = vfs.WriteFile(aFilePath, content, 0o644)
+
+	aFilePathSl := vfs.Join(rootDir, "aFileSymlink.txt")
+	_ = vfs.Symlink(aFilePath, aFilePathSl)
+
+	gotContentSl, _ := vfs.ReadFile(aFilePathSl)
+	if !bytes.Equal(content, gotContentSl) {
+		log.Fatalf("Symlink %s : want content to be %v, got %v",
+			aFilePathSl, content, gotContentSl)
+	}
+
+	log.Printf("content from symbolic link %s : %s", aFilePathSl, gotContentSl)
 }
 ```
 
 ### Multiple users creating simultaneously directories
-The example below demonstrates the concurrent creation of subdirectories under a root directory 
-by several users in different goroutines (works only with MemFS) :
+
+The example below demonstrates the concurrent creation of subdirectories under a
+root directory by several users in different goroutines (works only with
+MemFS) :
 
 ```go
 package main
@@ -142,35 +159,39 @@ func main() {
 
 	infos, _ := vfs.ReadDir(rootDir)
 
-	fmt.Println("number of dirs :", len(infos))
+	log.Println("number of dirs :", len(infos))
 	for _, info := range infos {
-		statT := fsutil.AsStatT(info.Sys())
-		u, _ := vfs.LookupUserId(int(statT.Uid))
+		sst := vfsutils.ToSysStat(info.Sys())
+		u, _ := vfs.LookupUserId(sst.Uid())
 
-		fmt.Println("directory :", info.Name(), 
-                    ", mode :", info.Mode(),
-                    ", owner :", u.Name())
+		log.Println("directory :", info.Name(),
+			", mode :", info.Mode(),
+			", owner :", u.Name())
 	}
 }
 ```
 
 ## Status
+
 Don't be fooled by the coverage percentages, everything is a work in progress.
-All the file systems pass the common test suite, but you should not use this 
-in a production environment at this time.
+All the file systems pass the common test suite, but you should not use this in
+a production environment at this time.
 
 ## Diagram
-The interface diagram below represents the main interfaces, methods and relations between them :
+
+The interface diagram below represents the main interfaces, methods and
+relations between them :
 
 <img src="avfs_diagram.svg" style="max-width:100%;">
 
 ## File systems
-All file systems implement at least `avfs.FS` and `avfs.File` interfaces.
-By default, each file system supported methods are the most commonly used
-from packages `os`, `path/filepath` and `ioutil`.
-All methods (except `TempDir` which is found in packages `os` and `ioutil`)
-have identical names as their functions counterparts. 
-The following file systems are currently available :
+
+All file systems implement at least `avfs.FS` and `avfs.File` interfaces. By
+default, each file system supported methods are the most commonly used from
+packages `os`, `path/filepath` and `ioutil`. All methods (except `TempDir` which
+is found in packages `os` and `ioutil`)
+have identical names as their functions counterparts. The following file systems
+are currently available :
 
 File system |Comments
 ------------|--------
@@ -182,6 +203,7 @@ File system |Comments
 [RoFS](vfs/rofs)|Read only file system
 
 ## Supported methods
+
 File system methods <br> `avfs.FS`|Comments
 ----------------------------------|--------
 `Abs`|equivalent to `filepath.Abs`
@@ -251,12 +273,15 @@ File methods <br> `avfs.File`|Comments
 `WriteString`|equivalent to `os.File.WriteString`
 
 ## Identity Managers
-Identity managers allow users and groups management.
-The ones implemented in `avfs` are just here to allow testing of functions related to users (Chown, Lchown)
+
+Identity managers allow users and groups management. The ones implemented
+in `avfs` are just here to allow testing of functions related to users (Chown,
+Lchown)
 and access rights, so they just allow one default group per user.
 
-All file systems supporting identity manager implement by default the identity manager `DummyIdm`
-where all functions returns `avfs.ErrPermDenied`. 
+All file systems supporting identity manager implement by default the identity
+manager `DummyIdm`
+where all functions returns `avfs.ErrPermDenied`.
 
 Identity Manager |Comments
 -----------------|--------
@@ -276,9 +301,10 @@ Identity Manager methods <br>`avfs.FS` <br> `avfs.IdentityMgr`|Comments
 `UserAdd`| adds a new user
 `UserDel`| deletes an existing user
 
-All the file systems and some Identity managers (see OsFS) provide an additional interface `UserConnecter`
+All the file systems and some Identity managers (see OsFS) provide an additional
+interface `UserConnecter`
 
-UserConnecter methods <br>`avfs.FS`|Comments
+UserConnecter methods <br>`avfs.FS` |Comments
 ------------------------------------|--------
 `CurrentUser`| returns the current user
 `User`| sets and returns the current user
