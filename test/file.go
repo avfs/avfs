@@ -176,10 +176,10 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	}
 
 	if !sfs.canTestPerm {
-		f := sfs.OpenedNonExistingFile(t, testDir)
+		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
 		err := f.Chown(0, 0)
-		CheckPathError(t, "Chown", "chown", avfs.NotImplemented, avfs.ErrPermDenied, err)
+		CheckPathError(t, "Chown", "chown", fileName, avfs.ErrOpNotPermitted, err)
 
 		return
 	}
