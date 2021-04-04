@@ -18,12 +18,11 @@ package orefafs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // CurrentUser returns the current User.
 func (vfs *OrefaFS) CurrentUser() avfs.UserReader {
-	return dummyidm.NotImplementedUser
+	return vfs.currentUser
 }
 
 // GroupAdd adds a new Group.
