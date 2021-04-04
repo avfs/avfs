@@ -2712,6 +2712,10 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 	}
 
 	u := vfs.CurrentUser()
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		u = sfs.vfsSetup.CurrentUser()
+	}
+
 	wantUid, wantGid := u.Uid(), u.Gid()
 
 	sst := vfsutils.ToSysStat(fst.Sys())

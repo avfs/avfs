@@ -18,11 +18,12 @@ package rofs
 
 import (
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // CurrentUser returns the current user.
 func (vfs *RoFS) CurrentUser() avfs.UserReader {
-	return vfs.baseFS.CurrentUser()
+	return dummyidm.NotImplementedUser
 }
 
 // GroupAdd adds a new group.
