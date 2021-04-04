@@ -181,7 +181,7 @@ func (sfs *SuiteFS) VFSSetup() avfs.VFS {
 }
 
 // TestFunc
-type TestFunc func(t *testing.T, testDir string)
+type TestFunc func(t *testing.T, testDir string) //nolint:golint // TODO : find a different name.
 
 // RunTests runs all test functions testFuncs specified as user userName.
 func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...TestFunc) {

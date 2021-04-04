@@ -41,7 +41,7 @@ import (
 //  ErrPermDenied when the current user doesn't have permissions on one of the nodes on the path
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
-func (vfs *MemFS) searchNode(path string, slMode slMode) (
+func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // TODO : return a struct ?
 	parent *dirNode, child node, absPath string, start, end int, err error) {
 	absPath = path
 	if !vfs.HasFeature(avfs.FeatAbsPath) {

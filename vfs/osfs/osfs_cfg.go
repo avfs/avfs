@@ -33,6 +33,8 @@ func New(opts ...Option) (*OsFS, error) {
 	switch os {
 	case avfs.OsLinux:
 		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink | avfs.FeatIntegratedIdm
+	case avfs.OsDarwin:
+		vfs.feature |= avfs.FeatHardlink | avfs.FeatSymlink
 	}
 
 	for _, opt := range opts {
