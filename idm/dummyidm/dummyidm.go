@@ -23,8 +23,6 @@ import (
 
 // GroupAdd adds a new group.
 func (idm *DummyIdm) GroupAdd(name string) (avfs.GroupReader, error) {
-	_ = name
-
 	return nil, avfs.ErrPermDenied
 }
 
