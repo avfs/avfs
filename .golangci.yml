@@ -78,8 +78,6 @@ linters-settings:
   lll:
     line-length: 140
     tab-width: 1
-  maligned:
-    suggest-new: true
   misspell:
     locale: US
   nakedret:
@@ -190,9 +188,7 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - interfacer
     - lll
-    - maligned
     - misspell
     - nakedret
     - nlreturn
@@ -201,7 +197,6 @@ linters:
     - nolintlint
     - prealloc
     - rowserrcheck
-    - scopelint
     - sqlclosecheck
     - staticcheck
     - structcheck
