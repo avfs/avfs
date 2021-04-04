@@ -23,10 +23,13 @@ import (
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
-	feature := avfs.FeatIdentityMgr
+	var feature avfs.Feature
+
 	switch vfsutils.RunTimeOS() {
 	case avfs.OsWindows:
 		feature = 0
+	default:
+		feature = avfs.FeatIdentityMgr
 	}
 
 	return &OsIdm{

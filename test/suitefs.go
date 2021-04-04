@@ -399,7 +399,7 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 }
 
 // OpenedEmptyFile returns an opened empty avfs.File and its file name.
-func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
+func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (fd avfs.File, fileName string) {
 	tb.Helper()
 
 	fileName = sfs.EmptyFile(tb, testDir)
