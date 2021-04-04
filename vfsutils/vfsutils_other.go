@@ -45,6 +45,6 @@ func ToSysStat(sysStat interface{}) avfs.SysStater {
 	case avfs.SysStater:
 		return s
 	default:
-		return &dummySysStat{}
+		return &DummySysStat{}
 	}
 }

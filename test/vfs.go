@@ -2701,6 +2701,12 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		sst := vfsutils.ToSysStat(nil)
+
+		if _, ok := sst.(*vfsutils.DummySysStat); !ok {
+			t.Errorf("ToSysStat : want result of type DummySysStat, got %s", reflect.TypeOf(sst).Name())
+		}
+
 		return
 	}
 
@@ -2722,12 +2728,12 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 
 	uid, gid := sst.Uid(), sst.Gid()
 	if uid != wantUid || gid != wantGid {
-		t.Errorf("SysStater : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+		t.Errorf("ToSysStat : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
 			wantUid, wantGid, uid, gid)
 	}
 
 	wantLink := uint64(1)
 	if sst.Nlink() != wantLink {
-		t.Errorf("SysStater : want Nlink to be %d, got %d", wantLink, sst.Nlink())
+		t.Errorf("ToSysStat : want Nlink to be %d, got %d", wantLink, sst.Nlink())
 	}
 }

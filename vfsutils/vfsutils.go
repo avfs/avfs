@@ -147,20 +147,20 @@ func SegmentPath(path string, start int) (end int, isLast bool) {
 	return len(path), true
 }
 
-// dummySysStat implements SysStater interface returned by os.FileInfo.Sys() for.
-type dummySysStat struct{}
+// DummySysStat implements SysStater interface returned by os.FileInfo.Sys() for.
+type DummySysStat struct{}
 
 // Gid returns the group id.
-func (sst *dummySysStat) Gid() int {
+func (sst *DummySysStat) Gid() int {
 	return 0
 }
 
 // Uid returns the user id.
-func (sst *dummySysStat) Uid() int {
+func (sst *DummySysStat) Uid() int {
 	return 0
 }
 
 // Nlink returns the number of hard links.
-func (sst *dummySysStat) Nlink() uint64 {
+func (sst *DummySysStat) Nlink() uint64 {
 	return 1
 }

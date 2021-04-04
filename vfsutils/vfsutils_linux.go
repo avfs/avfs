@@ -69,30 +69,30 @@ func (um *UMaskType) Set(mask os.FileMode) {
 func ToSysStat(sys interface{}) avfs.SysStater {
 	switch s := sys.(type) {
 	case *syscall.Stat_t:
-		return &linuxSysStat{Sys: s}
+		return &LinuxSysStat{Sys: s}
 	case avfs.SysStater:
 		return s
 	default:
-		return &dummySysStat{}
+		return &DummySysStat{}
 	}
 }
 
-// linuxSysStat implements SysStater interface returned by os.FileInfo.Sys() for a Linux file system.
-type linuxSysStat struct {
+// LinuxSysStat implements SysStater interface returned by os.FileInfo.Sys() for a Linux file system.
+type LinuxSysStat struct {
 	Sys *syscall.Stat_t
 }
 
 // Gid returns the group id.
-func (sst *linuxSysStat) Gid() int {
+func (sst *LinuxSysStat) Gid() int {
 	return int(sst.Sys.Gid)
 }
 
 // Uid returns the user id.
-func (sst *linuxSysStat) Uid() int {
+func (sst *LinuxSysStat) Uid() int {
 	return int(sst.Sys.Uid)
 }
 
 // Nlink returns the number of hard links.
-func (sst *linuxSysStat) Nlink() uint64 {
+func (sst *LinuxSysStat) Nlink() uint64 {
 	return sst.Sys.Nlink
 }
