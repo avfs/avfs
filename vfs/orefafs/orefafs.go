@@ -54,7 +54,10 @@ func (vfs *OrefaFS) Chdir(dir string) error {
 
 	absPath, _ := vfs.Abs(dir)
 
+	vfs.mu.RLock()
 	nd, ok := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
+
 	if !ok {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrNoSuchFileOrDir}
 	}
@@ -91,12 +94,17 @@ func (vfs *OrefaFS) Chmod(name string, mode os.FileMode) error {
 
 	absPath, _ := vfs.Abs(name)
 
+	vfs.mu.RLock()
 	nd, ok := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
+
 	if !ok {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
 	}
 
+	nd.mu.Lock()
 	nd.setMode(mode)
+	nd.mu.Unlock()
 
 	return nil
 }
@@ -133,12 +141,17 @@ func (vfs *OrefaFS) Chtimes(name string, atime, mtime time.Time) error {
 
 	absPath, _ := vfs.Abs(name)
 
+	vfs.mu.RLock()
 	nd, ok := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
+
 	if !ok {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
 	}
 
+	nd.mu.Lock()
 	nd.setModTime(mtime)
+	nd.mu.Unlock()
 
 	return nil
 }

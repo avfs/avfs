@@ -64,8 +64,8 @@ func (f *OrefaFile) Chmod(mode os.FileMode) error {
 		return os.ErrInvalid
 	}
 
-	f.mu.RLock()
-	defer f.mu.RUnlock()
+	f.mu.Lock()
+	defer f.mu.Unlock()
 
 	if f.name == "" {
 		return os.ErrInvalid

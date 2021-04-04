@@ -155,19 +155,13 @@ func (nd *node) remove() {
 
 // setMode sets the permissions of the file node.
 func (nd *node) setMode(mode os.FileMode) {
-	nd.mu.Lock()
-
 	nd.mode &^= avfs.FileModeMask
 	nd.mode |= mode & avfs.FileModeMask
-
-	nd.mu.Unlock()
 }
 
 // setModTime sets the modification time of the node.
 func (nd *node) setModTime(mtime time.Time) {
-	nd.mu.Lock()
 	nd.mtime = mtime.UnixNano()
-	nd.mu.Unlock()
 }
 
 // size returns the size of the file.
