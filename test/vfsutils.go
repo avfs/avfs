@@ -29,46 +29,17 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-// TestDirExists tests vfsutils.DirExists function.
-func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
-	vfs := sfs.VFSTest()
-
-	existingFile := sfs.EmptyFile(t, testDir)
-
-	t.Run("DirExistsDir", func(t *testing.T) {
-		ok, err := vfsutils.DirExists(vfs, testDir)
-		if err != nil {
-			t.Errorf("DirExists : want error to be nil, got %v", err)
-		}
-
-		if !ok {
-			t.Error("DirExists : want DirExists to be true, got false")
-		}
-	})
-
-	t.Run("DirExistsFile", func(t *testing.T) {
-		ok, err := vfsutils.DirExists(vfs, existingFile)
-		if err != nil {
-			t.Errorf("DirExists : want error to be nil, got %v", err)
-		}
-
-		if ok {
-			t.Error("DirExists : want DirExists to be false, got true")
-		}
-	})
-
-	t.Run("DirExistsNotExisting", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t, testDir)
-
-		ok, err := vfsutils.DirExists(vfs, nonExistingFile)
-		if err != nil {
-			t.Errorf("DirExists : want error to be nil, got %v", err)
-		}
-
-		if ok {
-			t.Error("DirExists : want DirExists to be false, got true")
-		}
-	})
+// TestVFSUtils tests all VFSUtils functions.
+func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
+	sfs.RunTests(t, UsrTest,
+		sfs.TestCheckPermission,
+		sfs.TestCopyFile,
+		sfs.TestCreateBaseDirs,
+		sfs.TestDirExists,
+		sfs.TestHashFile,
+		sfs.TestRndTree,
+		sfs.TestUMask,
+		sfs.TestSegmentPath)
 }
 
 // TestCheckPermission tests vfsutils.CheckPermission function.
@@ -123,55 +94,6 @@ func (sfs *SuiteFS) TestCheckPermission(t *testing.T, testDir string) {
 			if wantCheckWrite != gotCheckWrite {
 				t.Errorf("CheckPermission %s : want write to be %t, got %t", path, wantCheckWrite, gotCheckWrite)
 			}
-		}
-	}
-}
-
-// TestHashFile tests vfsutils.HashFile function.
-func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
-	vfs := sfs.VFSTest()
-
-	rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
-		MinDepth: 1, MaxDepth: 1,
-		MinName: 32, MaxName: 32,
-		MinFiles: 100, MaxFiles: 100,
-		MinFileLen: 16, MaxFileLen: 100 * 1024,
-	})
-	if err != nil {
-		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
-	}
-
-	err = rtr.CreateTree(testDir)
-	if err != nil {
-		t.Fatalf("CreateTree : want error to be nil, got %v", err)
-	}
-
-	defer vfs.RemoveAll(testDir) //nolint:errcheck // Ignore errors.
-
-	h := sha512.New()
-
-	for _, fileName := range rtr.Files {
-		content, err := vfs.ReadFile(fileName)
-		if err != nil {
-			t.Fatalf("ReadFile %s : want error to be nil, got %v", fileName, err)
-		}
-
-		h.Reset()
-
-		_, err = h.Write(content)
-		if err != nil {
-			t.Errorf("Write hash : want error to be nil, got %v", err)
-		}
-
-		wantSum := h.Sum(nil)
-
-		gotSum, err := vfsutils.HashFile(vfs, fileName, h)
-		if err != nil {
-			t.Errorf("HashFile %s : want error to be nil, got %v", fileName, err)
-		}
-
-		if !bytes.Equal(wantSum, gotSum) {
-			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
 		}
 	}
 }
@@ -269,6 +191,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	})
 }
 
+// TestCreateBaseDirs tests vfsutils.CreateBaseDirs function.
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
@@ -290,64 +213,93 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	}
 }
 
-// TestUMask tests Umask and GetYMask functions.
-func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
-	umaskOs := os.FileMode(0o22)
-	umaskSet := os.FileMode(0o77)
-	umaskTest := umaskSet
+// TestDirExists tests vfsutils.DirExists function.
+func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
 
-	if vfsutils.RunTimeOS() == avfs.OsWindows {
-		umaskTest = umaskOs
-	}
+	existingFile := sfs.EmptyFile(t, testDir)
 
-	umask := vfsutils.UMask.Get()
-	if umask != umaskOs {
-		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
-	}
+	t.Run("DirExistsDir", func(t *testing.T) {
+		ok, err := vfsutils.DirExists(vfs, testDir)
+		if err != nil {
+			t.Errorf("DirExists : want error to be nil, got %v", err)
+		}
 
-	vfsutils.UMask.Set(umaskSet)
+		if !ok {
+			t.Error("DirExists : want DirExists to be true, got false")
+		}
+	})
 
-	umask = vfsutils.UMask.Get()
-	if umask != umaskTest {
-		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
-	}
+	t.Run("DirExistsFile", func(t *testing.T) {
+		ok, err := vfsutils.DirExists(vfs, existingFile)
+		if err != nil {
+			t.Errorf("DirExists : want error to be nil, got %v", err)
+		}
 
-	vfsutils.UMask.Set(umaskOs)
+		if ok {
+			t.Error("DirExists : want DirExists to be false, got true")
+		}
+	})
 
-	umask = vfsutils.UMask.Get()
-	if umask != umaskOs {
-		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
-	}
+	t.Run("DirExistsNotExisting", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		ok, err := vfsutils.DirExists(vfs, nonExistingFile)
+		if err != nil {
+			t.Errorf("DirExists : want error to be nil, got %v", err)
+		}
+
+		if ok {
+			t.Error("DirExists : want DirExists to be false, got true")
+		}
+	})
 }
 
-// TestSegmentPath tests SegmentPath function.
-func (sfs *SuiteFS) TestSegmentPath(t *testing.T, testDir string) {
-	cases := []struct {
-		path string
-		want []string
-	}{
-		{path: "", want: []string{""}},
-		{path: "/", want: []string{"", ""}},
-		{path: "//", want: []string{"", "", ""}},
-		{path: "/a", want: []string{"", "a"}},
-		{path: "/b/c/d", want: []string{"", "b", "c", "d"}},
-		{path: "/नमस्ते/दुनिया", want: []string{"", "नमस्ते", "दुनिया"}},
+// TestHashFile tests vfsutils.HashFile function.
+func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
+
+	rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
+		MinDepth: 1, MaxDepth: 1,
+		MinName: 32, MaxName: 32,
+		MinFiles: 100, MaxFiles: 100,
+		MinFileLen: 16, MaxFileLen: 100 * 1024,
+	})
+	if err != nil {
+		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
 
-	for _, c := range cases {
-		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
-			end, isLast = vfsutils.SegmentPath(c.path, start)
-			got := c.path[start:end]
+	err = rtr.CreateTree(testDir)
+	if err != nil {
+		t.Fatalf("CreateTree : want error to be nil, got %v", err)
+	}
 
-			if i > len(c.want) {
-				t.Errorf("%s : want %d parts, got only %d", c.path, i, len(c.want))
+	defer vfs.RemoveAll(testDir) //nolint:errcheck // Ignore errors.
 
-				break
-			}
+	h := sha512.New()
 
-			if got != c.want[i] {
-				t.Errorf("%s : want part %d to be %s, got %s", c.path, i, c.want[i], got)
-			}
+	for _, fileName := range rtr.Files {
+		content, err := vfs.ReadFile(fileName)
+		if err != nil {
+			t.Fatalf("ReadFile %s : want error to be nil, got %v", fileName, err)
+		}
+
+		h.Reset()
+
+		_, err = h.Write(content)
+		if err != nil {
+			t.Errorf("Write hash : want error to be nil, got %v", err)
+		}
+
+		wantSum := h.Sum(nil)
+
+		gotSum, err := vfsutils.HashFile(vfs, fileName, h)
+		if err != nil {
+			t.Errorf("HashFile %s : want error to be nil, got %v", fileName, err)
+		}
+
+		if !bytes.Equal(wantSum, gotSum) {
+			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
 		}
 	}
 }
@@ -514,4 +466,66 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 			t.Errorf("ErrOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
 		}
 	})
+}
+
+// TestUMask tests UMask functions.
+func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
+	umaskOs := os.FileMode(0o22)
+	umaskSet := os.FileMode(0o77)
+	umaskTest := umaskSet
+
+	if vfsutils.RunTimeOS() == avfs.OsWindows {
+		umaskTest = umaskOs
+	}
+
+	umask := vfsutils.UMask.Get()
+	if umask != umaskOs {
+		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
+	}
+
+	vfsutils.UMask.Set(umaskSet)
+
+	umask = vfsutils.UMask.Get()
+	if umask != umaskTest {
+		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
+	}
+
+	vfsutils.UMask.Set(umaskOs)
+
+	umask = vfsutils.UMask.Get()
+	if umask != umaskOs {
+		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
+	}
+}
+
+// TestSegmentPath tests vfsutils.SegmentPath function.
+func (sfs *SuiteFS) TestSegmentPath(t *testing.T, testDir string) {
+	cases := []struct {
+		path string
+		want []string
+	}{
+		{path: "", want: []string{""}},
+		{path: "/", want: []string{"", ""}},
+		{path: "//", want: []string{"", "", ""}},
+		{path: "/a", want: []string{"", "a"}},
+		{path: "/b/c/d", want: []string{"", "b", "c", "d"}},
+		{path: "/नमस्ते/दुनिया", want: []string{"", "नमस्ते", "दुनिया"}},
+	}
+
+	for _, c := range cases {
+		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
+			end, isLast = vfsutils.SegmentPath(c.path, start)
+			got := c.path[start:end]
+
+			if i > len(c.want) {
+				t.Errorf("%s : want %d parts, got only %d", c.path, i, len(c.want))
+
+				break
+			}
+
+			if got != c.want[i] {
+				t.Errorf("%s : want part %d to be %s, got %s", c.path, i, c.want[i], got)
+			}
+		}
+	}
 }
