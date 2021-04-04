@@ -92,7 +92,21 @@ func (f *OrefaFile) Chown(uid, gid int) error {
 		return os.ErrInvalid
 	}
 
-	return &os.PathError{Op: op, Path: avfs.NotImplemented, Err: avfs.ErrPermDenied}
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
+	if f.name == "" {
+		return os.ErrInvalid
+	}
+
+	if f.nd == nil {
+		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+	}
+
+	f.nd.uid = uid
+	f.nd.gid = gid
+
+	return nil
 }
 
 // Close closes the File, rendering it unusable for I/O.
