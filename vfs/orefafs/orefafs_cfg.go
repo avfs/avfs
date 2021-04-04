@@ -21,16 +21,18 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfsutils"
 )
 
 // New returns a new memory file system (OrefaFS).
 func New(opts ...Option) (*OrefaFS, error) {
 	vfs := &OrefaFS{
-		nodes:   make(nodes),
-		curDir:  string(avfs.PathSeparator),
-		umask:   int32(vfsutils.UMask.Get()),
-		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
+		nodes:       make(nodes),
+		curDir:      string(avfs.PathSeparator),
+		feature:     avfs.FeatBasicFs | avfs.FeatHardlink,
+		currentUser: dummyidm.NotImplementedUser,
+		umask:       int32(vfsutils.UMask.Get()),
 	}
 
 	vfs.nodes[string(avfs.PathSeparator)] = &node{

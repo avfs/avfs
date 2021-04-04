@@ -677,12 +677,12 @@ func (fst *fStat) Sys() interface{} {
 
 // Gid returns the group id.
 func (fst *fStat) Gid() int {
-	return 0
+	return fst.gid
 }
 
 // Uid returns the user id.
 func (fst *fStat) Uid() int {
-	return 0
+	return fst.uid
 }
 
 // Nlink returns the number of hard links.

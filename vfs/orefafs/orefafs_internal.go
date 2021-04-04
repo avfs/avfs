@@ -73,6 +73,8 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode os.F
 		id:    atomic.AddUint64(&vfs.lastId, 1),
 		mtime: time.Now().UnixNano(),
 		mode:  mode,
+		uid:   vfs.currentUser.Uid(),
+		gid:   vfs.currentUser.Gid(),
 		nlink: 1,
 	}
 
@@ -97,6 +99,8 @@ func (nd *node) fillStatFrom(name string) *fStat {
 		size:  nd.size(),
 		mode:  nd.mode,
 		mtime: nd.mtime,
+		uid:   nd.uid,
+		gid:   nd.gid,
 		nlink: nd.nlink,
 	}
 
