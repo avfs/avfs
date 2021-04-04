@@ -137,6 +137,8 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 
 		err := f.Chmod(0)
 		CheckPathError(t, "Chmod", "chmod", fileName, avfs.ErrPermDenied, err)
+
+		return
 	}
 
 	t.Run("FileChmodClosed", func(t *testing.T) {
@@ -154,6 +156,24 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	}
 
 	vfs := sfs.vfsTest
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f := sfs.OpenedNonExistingFile(t, testDir)
+
+		err := f.Chown(0, 0)
+		CheckPathError(t, "Chown", "chown", avfs.NotImplemented, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		err := f.Chown(0, 0)
+		CheckPathError(t, "Chown", "chown", fileName, avfs.ErrPermDenied, err)
+
+		return
+	}
 
 	if !sfs.canTestPerm {
 		f := sfs.OpenedNonExistingFile(t, testDir)
@@ -1089,13 +1109,22 @@ func (sfs *SuiteFS) TestFileSync(t *testing.T, testDir string) {
 
 // TestFileTruncate tests File.Truncate function.
 func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Truncate(0)
 		CheckPathError(t, "Truncate", "truncate", avfs.NotImplemented, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		err := f.Truncate(0)
+		CheckPathError(t, "Truncate", "truncate", fileName, avfs.ErrPermDenied, err)
 
 		return
 	}
@@ -1224,7 +1253,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 
 // TestFileWrite tests File.Write and File.WriteAt functions.
 func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
@@ -1234,6 +1263,18 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 		_, err = f.WriteAt([]byte{}, 0)
 		CheckPathError(t, "WriteAt", "write", avfs.NotImplemented, avfs.ErrPermDenied, err)
+
+		return
+	}
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		_, err := f.Write([]byte{})
+		CheckPathError(t, "Write", "write", fileName, avfs.ErrPermDenied, err)
+
+		_, err = f.WriteAt([]byte{}, 0)
+		CheckPathError(t, "WriteAt", "write", fileName, avfs.ErrPermDenied, err)
 
 		return
 	}
