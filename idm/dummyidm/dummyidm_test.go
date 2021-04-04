@@ -30,9 +30,6 @@ var (
 	// DummyIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &dummyidm.DummyIdm{}
 
-	// DummyIdm implements avfs.UserConnecter interface.
-	_ avfs.UserConnecter = &dummyidm.DummyIdm{}
-
 	// DummyIdm.User struct implements avfs.UserReader interface.
 	_ avfs.UserReader = &dummyidm.User{}
 

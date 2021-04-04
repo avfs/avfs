@@ -21,11 +21,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// CurrentUser returns the current user of the identity manager.
-func (idm *DummyIdm) CurrentUser() avfs.UserReader {
-	return NotImplementedUser
-}
-
 // GroupAdd adds a new group.
 func (idm *DummyIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	_ = name
@@ -59,12 +54,6 @@ func (idm *DummyIdm) LookupUser(name string) (avfs.UserReader, error) {
 // LookupUserId looks up a user by userid.
 // If the user cannot be found, the returned error is of type UnknownUserIdError.
 func (idm *DummyIdm) LookupUserId(uid int) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
-}
-
-// User sets the current user of the identity manager.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func (idm *DummyIdm) User(name string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
