@@ -29,7 +29,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfsutils"
 )
 
@@ -2705,30 +2704,28 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 		return
 	}
 
-	existingFile := sfs.EmptyFile(t, testDir)
+	t.Run("ToSysStat", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
 
-	fst, err := vfs.Stat(existingFile)
-	if err != nil {
-		t.Errorf("Stat : want error be nil, got %v", err)
-	}
+		fst, err := vfs.Stat(existingFile)
+		if err != nil {
+			t.Errorf("Stat : want error be nil, got %v", err)
+		}
 
-	u := vfs.CurrentUser()
+		u := vfs.CurrentUser()
+		wantUid, wantGid := u.Uid(), u.Gid()
 
-	wantUid, wantGid := u.Uid(), u.Gid()
-	if u == dummyidm.NotImplementedUser {
-		wantUid, wantGid = 0, 0
-	}
+		sst := vfsutils.ToSysStat(fst.Sys())
 
-	sst := vfsutils.ToSysStat(fst.Sys())
+		uid, gid := sst.Uid(), sst.Gid()
+		if uid != wantUid || gid != wantGid {
+			t.Errorf("SysStater : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+				wantUid, wantGid, uid, gid)
+		}
 
-	uid, gid := sst.Uid(), sst.Gid()
-	if uid != wantUid || gid != wantGid {
-		t.Errorf("SysStater : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
-			wantUid, wantGid, uid, gid)
-	}
-
-	wantLink := uint64(1)
-	if sst.Nlink() != wantLink {
-		t.Errorf("SysStater : want Nlink to be %d, got %d", wantLink, sst.Nlink())
-	}
+		wantLink := uint64(1)
+		if sst.Nlink() != wantLink {
+			t.Errorf("SysStater : want Nlink to be %d, got %d", wantLink, sst.Nlink())
+		}
+	})
 }
