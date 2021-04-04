@@ -175,16 +175,17 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 		return
 	}
 
-	if !sfs.canTestPerm {
+	t.Run("FileChown", func(t *testing.T) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
-		err := f.Chown(0, 0)
-		CheckPathError(t, "Chown", "chown", fileName, avfs.ErrOpNotPermitted, err)
+		u := vfs.CurrentUser()
+		uid, gid := u.Uid(), u.Gid()
 
-		return
-	}
-
-	_ = vfs
+		err := f.Chown(uid, gid)
+		if err != nil {
+			t.Errorf("Chown %s : want error to be nil, got %v", fileName, err)
+		}
+	})
 
 	t.Run("FileChownClosed", func(t *testing.T) {
 		f, fileName := sfs.ClosedFile(t, testDir)
