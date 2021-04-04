@@ -193,6 +193,9 @@ const (
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
 
+	// FeatIntegratedIdm indicates that the file system has an integrated Identity Manager (see OsFS)
+	FeatIntegratedIdm
+
 	// FeatMainDirs indicates that the main directories of the filesystem (/home, /root and /tmp) are present.
 	FeatMainDirs
 

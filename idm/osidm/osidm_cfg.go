@@ -24,7 +24,8 @@ import (
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
 	feature := avfs.FeatIdentityMgr
-	if vfsutils.RunTimeOS() == avfs.OsWindows {
+	switch vfsutils.RunTimeOS() {
+	case avfs.OsWindows:
 		feature = 0
 	}
 

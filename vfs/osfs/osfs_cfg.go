@@ -29,8 +29,10 @@ func New(opts ...Option) (*OsFS, error) {
 		feature: avfs.FeatBasicFs | avfs.FeatMainDirs,
 	}
 
-	if vfsutils.RunTimeOS() != avfs.OsWindows {
-		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+	os := vfsutils.RunTimeOS()
+	switch os {
+	case avfs.OsLinux:
+		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink | avfs.FeatIntegratedIdm
 	}
 
 	for _, opt := range opts {

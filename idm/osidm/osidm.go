@@ -59,3 +59,8 @@ func (u *User) Name() string {
 func (u *User) Uid() int {
 	return u.uid
 }
+
+// CurrentUser returns the current user of the OS.
+func CurrentUser() avfs.UserReader {
+	return currentUser()
+}

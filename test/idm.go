@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfsutils"
 )
 
@@ -31,46 +30,20 @@ func (sIdm *SuiteIdm) TestCurrentUser(t *testing.T) {
 	idm := sIdm.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		if uc, ok := idm.(avfs.UserConnecter); ok {
+		uc, ok := idm.(avfs.UserConnecter)
+		if ok {
 			u := uc.CurrentUser()
-			if u != dummyidm.NotImplementedUser {
-				t.Errorf("CurrentUser : want User to be %v, got %v", dummyidm.NotImplementedUser, u)
+
+			name := u.Name()
+			if name == "" {
+				t.Errorf("Name : want name to be not empty, got empty")
 			}
 
-			gid := u.Gid()
-			if gid != -1 {
-				t.Errorf("Gid : want Gid to be -1, got %d", gid)
-			}
-
-			isRoot := u.IsRoot()
+			isRoot := u.IsRoot() && !idm.HasFeature(avfs.FeatIntegratedIdm)
 			if isRoot {
 				t.Errorf("IsRoot : want isRoot to be false, got %t", isRoot)
 			}
-
-			name := u.Name()
-			if name != avfs.NotImplemented {
-				t.Errorf("Name : want name to be empty, got %s", name)
-			}
-
-			uid := u.Uid()
-			if uid != -1 {
-				t.Errorf("Uid : want Uid to be -1, got %d", uid)
-			}
-
-			g := dummyidm.Group{}
-
-			gid = g.Gid()
-			if gid != 0 {
-				t.Errorf("Gid : want Gid to be 0, got %d", gid)
-			}
-
-			name = g.Name()
-			if name != "" {
-				t.Errorf("Name : want name to be empty, got %s", name)
-			}
 		}
-
-		return
 	}
 }
 

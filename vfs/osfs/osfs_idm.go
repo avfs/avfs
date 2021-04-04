@@ -18,7 +18,7 @@ package osfs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
+	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/vfsutils"
 )
 
@@ -29,12 +29,12 @@ func (vfs *OsFS) CurrentUser() avfs.UserReader {
 		return uc.CurrentUser()
 	}
 
-	return dummyidm.NotImplementedUser
+	return osidm.CurrentUser()
 }
 
 // GroupAdd adds a new group.
 func (vfs *OsFS) GroupAdd(name string) (avfs.GroupReader, error) {
-	if !vfs.CurrentUser().IsRoot() {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
@@ -43,7 +43,7 @@ func (vfs *OsFS) GroupAdd(name string) (avfs.GroupReader, error) {
 
 // GroupDel deletes an existing group.
 func (vfs *OsFS) GroupDel(name string) error {
-	if !vfs.CurrentUser().IsRoot() {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return avfs.ErrPermDenied
 	}
 
@@ -87,7 +87,7 @@ func (vfs *OsFS) User(name string) (avfs.UserReader, error) {
 
 // UserAdd adds a new user.
 func (vfs *OsFS) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	if !vfs.CurrentUser().IsRoot() {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return nil, avfs.ErrPermDenied
 	}
 
@@ -101,7 +101,7 @@ func (vfs *OsFS) UserAdd(name, groupName string) (avfs.UserReader, error) {
 
 // UserDel deletes an existing group.
 func (vfs *OsFS) UserDel(name string) error {
-	if !vfs.CurrentUser().IsRoot() {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		return avfs.ErrPermDenied
 	}
 
