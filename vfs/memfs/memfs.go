@@ -268,7 +268,7 @@ func (vfs *MemFS) GetTempDir() string {
 
 // GetUMask returns the file mode creation mask.
 func (vfs *MemFS) GetUMask() os.FileMode {
-	u := atomic.LoadInt32(&vfs.MemAttrs.umask)
+	u := atomic.LoadInt32(&vfs.memAttrs.umask)
 
 	return os.FileMode(u)
 }
@@ -930,7 +930,7 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 
 // UMask sets the file mode creation mask.
 func (vfs *MemFS) UMask(mask os.FileMode) {
-	atomic.StoreInt32(&vfs.MemAttrs.umask, int32(mask))
+	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
 }
 
 // Walk walks the file tree rooted at root, calling walkFn for each file or

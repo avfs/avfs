@@ -34,8 +34,8 @@ type MemFS struct {
 	// rootNode represent the root directory of the file system.
 	rootNode *dirNode
 
-	// MemAttrs represents the file system attributes.
-	MemAttrs *MemAttrs
+	// memAttrs represents the file system attributes.
+	memAttrs *memAttrs
 
 	// User is the current user of the file system.
 	user avfs.UserReader
@@ -44,8 +44,8 @@ type MemFS struct {
 	curDir string
 }
 
-// MemAttrs represents the file system attributes for MemFS.
-type MemAttrs struct {
+// memAttrs represents the file system attributes for MemFS.
+type memAttrs struct {
 	// idm is the identity manager of the file system.
 	idm avfs.IdentityMgr
 
