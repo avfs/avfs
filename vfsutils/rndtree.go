@@ -72,11 +72,11 @@ type RndTreeParams struct {
 
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
-	RndTreeParams
 	vfs      avfs.VFS
 	Dirs     []string
 	Files    []string
 	SymLinks []string
+	RndTreeParams
 }
 
 // NewRndTree returns a new random tree generator.
