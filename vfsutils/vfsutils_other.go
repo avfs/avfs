@@ -40,7 +40,7 @@ func (um *UMaskType) Set(mask os.FileMode) {
 }
 
 // ToSysStat takes a value from os.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func ToSysStat(sysStat interface{}) avfs.SysStater {
+func ToSysStat(sys interface{}) avfs.SysStater {
 	switch s := sys.(type) {
 	case avfs.SysStater:
 		return s
