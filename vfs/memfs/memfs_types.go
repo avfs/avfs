@@ -32,31 +32,31 @@ const (
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
 	rootNode *dirNode
-	fsAttrs  *fsAttrs
+	MemAttrs *MemAttrs
 	user     avfs.UserReader
 	curDir   string
 }
 
-// fsAttrs represents the file system attributes for MemFS.
-type fsAttrs struct {
+// MemAttrs represents the file system attributes for MemFS.
+type MemAttrs struct {
 	idm     avfs.IdentityMgr
+	name    string
 	feature avfs.Feature
 	lastId  uint64
-	name    string
 	umask   int32
 }
 
 // MemFile represents an open file descriptor.
 type MemFile struct {
-	mu       sync.RWMutex
-	memFS    *MemFS
 	nd       node
+	memFS    *MemFS
 	name     string
-	at       int64
-	wantMode avfs.WantMode
 	dirInfos []os.FileInfo
 	dirNames []string
+	at       int64
 	dirIndex int
+	mu       sync.RWMutex
+	wantMode avfs.WantMode
 }
 
 // Option defines the option function used for initializing MemFS.
@@ -85,8 +85,11 @@ type node interface {
 
 // dirNode is the structure for a directory.
 type dirNode struct {
-	baseNode
+	// children are the nodes present in the directory.
 	children children
+
+	// baseNode is the common structure of directories, files and symbolic links.
+	baseNode
 }
 
 // children are the children of a directory.
@@ -94,25 +97,44 @@ type children = map[string]node
 
 // fileNode is the structure for a file.
 type fileNode struct {
+	// data is the file content.
+	data []byte
+
+	// baseNode is the common structure of directories, files and symbolic links.
 	baseNode
-	id    uint64
-	data  []byte
+
+	// id is a unique id to identify a file (used by SameFile function).
+	id uint64
+
+	// nlink os the number of hardlinks to this file.
 	nlink int
 }
 
 // symlinkNode is the structure for a symbolic link.
 type symlinkNode struct {
-	baseNode
+	// link is the symbolic link value.
 	link string
+
+	// baseNode is the common structure of directories, files and symbolic links.
+	baseNode
 }
 
 // baseNode is the common structure of directories, files and symbolic links.
 type baseNode struct {
-	mu    sync.RWMutex
+	// mu is the RWMutex used to access the content of the node.
+	mu sync.RWMutex
+
+	// mtime is the modification time.
 	mtime int64
-	mode  os.FileMode
-	uid   int
-	gid   int
+
+	// mode represents a file's mode and permission bits.
+	mode os.FileMode
+
+	// uid is the user id.
+	uid int
+
+	// gid is the group id.
+	gid int
 }
 
 // slMode defines the behavior of searchNode function relatively to symlinks.
@@ -131,14 +153,14 @@ const (
 
 // fStat is the implementation of os.FileInfo returned by Stat and Lstat.
 type fStat struct {
-	id    uint64
 	name  string
+	id    uint64
 	size  int64
-	mode  os.FileMode
 	mtime int64
 	uid   int
 	gid   int
 	nlink int
+	mode  os.FileMode
 }
 
 // removeStack is a stack of directories to be removed during tree traversal in RemoveAll function.

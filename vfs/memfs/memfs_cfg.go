@@ -27,7 +27,7 @@ import (
 
 // New returns a new memory file system (MemFS).
 func New(opts ...Option) (*MemFS, error) {
-	fsa := &fsAttrs{
+	fsa := &MemAttrs{
 		idm: dummyidm.NotImplementedIdm,
 		feature: avfs.FeatBasicFs |
 			avfs.FeatChroot |
@@ -45,9 +45,9 @@ func New(opts ...Option) (*MemFS, error) {
 				gid:   0,
 			},
 		},
-		fsAttrs: fsa,
-		user:    dummyidm.RootUser,
-		curDir:  string(avfs.PathSeparator),
+		MemAttrs: fsa,
+		user:     dummyidm.RootUser,
+		curDir:   string(avfs.PathSeparator),
 	}
 
 	for _, opt := range opts {
@@ -57,7 +57,7 @@ func New(opts ...Option) (*MemFS, error) {
 		}
 	}
 
-	if vfs.fsAttrs.feature&avfs.FeatMainDirs != 0 {
+	if vfs.MemAttrs.feature&avfs.FeatMainDirs != 0 {
 		um := fsa.umask
 		fsa.umask = 0
 
@@ -72,17 +72,17 @@ func New(opts ...Option) (*MemFS, error) {
 
 // Features returns the set of features provided by the file system or identity manager.
 func (vfs *MemFS) Features() avfs.Feature {
-	return vfs.fsAttrs.feature
+	return vfs.MemAttrs.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (vfs *MemFS) HasFeature(feature avfs.Feature) bool {
-	return vfs.fsAttrs.feature&feature == feature
+	return vfs.MemAttrs.feature&feature == feature
 }
 
 // Name returns the name of the fileSystem.
 func (vfs *MemFS) Name() string {
-	return vfs.fsAttrs.name
+	return vfs.MemAttrs.name
 }
 
 // OSType returns the operating system type of the file system.
@@ -100,7 +100,7 @@ func (vfs *MemFS) Type() string {
 // WithMainDirs returns an option function to create main directories.
 func WithMainDirs() Option {
 	return func(vfs *MemFS) error {
-		vfs.fsAttrs.feature |= avfs.FeatMainDirs
+		vfs.MemAttrs.feature |= avfs.FeatMainDirs
 
 		return nil
 	}
@@ -114,8 +114,8 @@ func WithIdm(idm avfs.IdentityMgr) Option {
 			return err
 		}
 
-		vfs.fsAttrs.idm = idm
-		vfs.fsAttrs.feature |= idm.Features()
+		vfs.MemAttrs.idm = idm
+		vfs.MemAttrs.feature |= idm.Features()
 		vfs.user = u
 
 		return nil
@@ -125,7 +125,7 @@ func WithIdm(idm avfs.IdentityMgr) Option {
 // WithName returns an option function which sets the name of the file system.
 func WithName(name string) Option {
 	return func(vfs *MemFS) error {
-		vfs.fsAttrs.name = name
+		vfs.MemAttrs.name = name
 
 		return nil
 	}
@@ -133,7 +133,7 @@ func WithName(name string) Option {
 
 func WithAbsPath() Option {
 	return func(vfs *MemFS) error {
-		vfs.fsAttrs.feature |= avfs.FeatAbsPath
+		vfs.MemAttrs.feature |= avfs.FeatAbsPath
 
 		return nil
 	}

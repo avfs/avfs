@@ -37,7 +37,7 @@ func (vfs *MemFS) GroupAdd(name string) (avfs.GroupReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return vfs.fsAttrs.idm.GroupAdd(name)
+	return vfs.MemAttrs.idm.GroupAdd(name)
 }
 
 // GroupDel deletes an existing group.
@@ -46,7 +46,7 @@ func (vfs *MemFS) GroupDel(name string) error {
 		return avfs.ErrPermDenied
 	}
 
-	return vfs.fsAttrs.idm.GroupDel(name)
+	return vfs.MemAttrs.idm.GroupDel(name)
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
@@ -56,7 +56,7 @@ func (vfs *MemFS) LookupGroup(name string) (avfs.GroupReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return vfs.fsAttrs.idm.LookupGroup(name)
+	return vfs.MemAttrs.idm.LookupGroup(name)
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
@@ -66,7 +66,7 @@ func (vfs *MemFS) LookupGroupId(gid int) (avfs.GroupReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return vfs.fsAttrs.idm.LookupGroupId(gid)
+	return vfs.MemAttrs.idm.LookupGroupId(gid)
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
@@ -76,7 +76,7 @@ func (vfs *MemFS) LookupUser(name string) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return vfs.fsAttrs.idm.LookupUser(name)
+	return vfs.MemAttrs.idm.LookupUser(name)
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
@@ -86,7 +86,7 @@ func (vfs *MemFS) LookupUserId(uid int) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	return vfs.fsAttrs.idm.LookupUserId(uid)
+	return vfs.MemAttrs.idm.LookupUserId(uid)
 }
 
 // User sets the current user of the file system.
@@ -100,7 +100,7 @@ func (vfs *MemFS) User(name string) (avfs.UserReader, error) {
 		return vfs.user, nil
 	}
 
-	user, err := vfs.fsAttrs.idm.LookupUser(name)
+	user, err := vfs.MemAttrs.idm.LookupUser(name)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (vfs *MemFS) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	u, err := vfs.fsAttrs.idm.UserAdd(name, groupName)
+	u, err := vfs.MemAttrs.idm.UserAdd(name, groupName)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func (vfs *MemFS) UserDel(name string) error {
 		return avfs.ErrPermDenied
 	}
 
-	err := vfs.fsAttrs.idm.UserDel(name)
+	err := vfs.MemAttrs.idm.UserDel(name)
 	if err != nil {
 		return err
 	}
