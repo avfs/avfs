@@ -80,8 +80,8 @@ linters-settings:
     # run `go tool vet help` to see all analyzers
     enable-all: true
     disable-all: false
-    disable:
-      - fieldalignment
+#    disable:
+#      - fieldalignment
   lll:
     line-length: 140
     tab-width: 1
