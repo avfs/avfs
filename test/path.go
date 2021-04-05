@@ -466,7 +466,7 @@ func (sfs *SuiteFS) IsAbs(t *testing.T, testDir string) {
 func (sfs *SuiteFS) Join(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	type joinTest struct {
+	type joinTest struct { //nolint:govet // no fieldalignment for simple structs
 		elem []string
 		path string
 	}

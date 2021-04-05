@@ -28,14 +28,14 @@ type SuiteIdm struct {
 	// idm is the identity manager to be tested.
 	idm avfs.IdentityMgr
 
+	// uc is the implementation of avfs.UserConnecter.
+	uc avfs.UserConnecter
+
 	// Groups contains the test groups created with the identity manager.
 	Groups []avfs.GroupReader
 
 	// Users contains the test users created with the identity manager.
 	Users []avfs.UserReader
-
-	// uc is the implementation of avfs.UserConnecter.
-	uc avfs.UserConnecter
 
 	// canTest is true when the identity manager can be tested..
 	canTest bool

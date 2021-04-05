@@ -35,14 +35,11 @@ type SuiteFS struct {
 	// vfsTest is the file system used to run the tests.
 	vfsTest avfs.VFS
 
+	// initUser is the initial user running the test suite.
+	initUser avfs.UserReader
+
 	// rootDir is the root directory for tests, it can be generated automatically or specified with WithRootDir().
 	rootDir string
-
-	// maxRace is the maximum number of concurrent goroutines used in race tests.
-	maxRace int
-
-	// osType is the operating system of the filesystem te test.
-	osType avfs.OSType
 
 	// Groups contains the test groups created with the identity manager.
 	Groups []avfs.GroupReader
@@ -50,8 +47,11 @@ type SuiteFS struct {
 	// Users contains the test users created with the identity manager.
 	Users []avfs.UserReader
 
-	// initUser is the initial user running the test suite.
-	initUser avfs.UserReader
+	// maxRace is the maximum number of concurrent goroutines used in race tests.
+	maxRace int
+
+	// osType is the operating system of the filesystem te test.
+	osType avfs.OSType
 
 	// canTestPerm indicates if permissions can be tested.
 	canTestPerm bool
