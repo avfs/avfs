@@ -29,28 +29,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// TestVFSFileAll runs all file systems tests on avfs.File methods.
-func (sfs *SuiteFS) TestVFSFileAll(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		sfs.TestFileChdir,
-		sfs.TestFileChmod,
-		sfs.TestFileChown,
-		sfs.TestFileCloseWrite,
-		sfs.TestFileCloseRead,
-		sfs.TestFileFd,
-		sfs.TestFileName,
-		sfs.TestFileRead,
-		sfs.TestFileReadDir,
-		sfs.TestFileReaddirnames,
-		sfs.TestFileSeek,
-		sfs.TestFileStat,
-		sfs.TestFileSync,
-		sfs.TestFileTruncate,
-		sfs.TestFileWrite,
-		sfs.TestFileWriteString,
-		sfs.TestFileWriteTime)
-}
-
 // TestFileChdir tests File.Chdir function.
 func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 	if sfs.OSType() == avfs.OsWindows {

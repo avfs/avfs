@@ -271,8 +271,74 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 
 // TestAll runs all file systems tests.
 func (sfs *SuiteFS) TestAll(t *testing.T) {
-	sfs.TestVFSAll(t)
-	sfs.TestVFSFileAll(t)
+	sfs.RunTests(t, UsrTest,
+		// VFS tests
+		sfs.TestClone,
+		sfs.TestChdir,
+		sfs.TestChtimes,
+		sfs.TestCreate,
+		sfs.TestEvalSymlink,
+		sfs.TestGetTempDir,
+		sfs.TestLink,
+		sfs.TestLstat,
+		sfs.TestMkdir,
+		sfs.TestMkdirAll,
+		sfs.TestOpen,
+		sfs.TestOpenFileWrite,
+		sfs.TestReadDir,
+		sfs.TestReadFile,
+		sfs.TestReadlink,
+		sfs.TestRemove,
+		sfs.TestRemoveAll,
+		sfs.TestRename,
+		sfs.TestSameFile,
+		sfs.TestStat,
+		sfs.TestSymlink,
+		sfs.TestTempDir,
+		sfs.TestTempFile,
+		sfs.TestTruncate,
+		sfs.TestWriteFile,
+		sfs.TestWriteString,
+		sfs.TestToSysStat,
+		sfs.TestUmask,
+
+		// File tests
+		sfs.TestFileChdir,
+		sfs.TestFileCloseWrite,
+		sfs.TestFileCloseRead,
+		sfs.TestFileFd,
+		sfs.TestFileName,
+		sfs.TestFileRead,
+		sfs.TestFileReadDir,
+		sfs.TestFileReaddirnames,
+		sfs.TestFileSeek,
+		sfs.TestFileStat,
+		sfs.TestFileSync,
+		sfs.TestFileTruncate,
+		sfs.TestFileWrite,
+		sfs.TestFileWriteString,
+		sfs.TestFileWriteTime,
+
+		// Path tests
+		sfs.Base,
+		sfs.Clean,
+		sfs.Dir,
+		sfs.FromToSlash,
+		sfs.Glob,
+		sfs.IsAbs,
+		sfs.Join,
+		sfs.Rel,
+		sfs.Split,
+		sfs.Walk)
+
+	// Tests to be run as root
+	sfs.RunTests(t, avfs.UsrRoot,
+		sfs.TestChmod,
+		sfs.TestChown,
+		sfs.TestChroot,
+		sfs.TestLchown,
+		sfs.TestFileChmod,
+		sfs.TestFileChown)
 }
 
 // ClosedFile returns a closed avfs.File.

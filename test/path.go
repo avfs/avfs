@@ -26,22 +26,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// TestPath tests all path related functions.
-func (sfs *SuiteFS) TestPath(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		sfs.Abs,
-		sfs.Base,
-		sfs.Clean,
-		sfs.Dir,
-		sfs.FromToSlash,
-		sfs.Glob,
-		sfs.IsAbs,
-		sfs.Join,
-		sfs.Rel,
-		sfs.Split,
-		sfs.Walk)
-}
-
 type pathTest struct {
 	path, result string
 }

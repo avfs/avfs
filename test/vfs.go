@@ -32,47 +32,6 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-// TestVFSAll runs all file systems tests.
-func (sfs *SuiteFS) TestVFSAll(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		sfs.TestClone,
-		sfs.TestChdir,
-		sfs.TestChtimes,
-		sfs.TestCreate,
-		sfs.TestEvalSymlink,
-		sfs.TestGetTempDir,
-		sfs.TestLink,
-		sfs.TestLstat,
-		sfs.TestMkdir,
-		sfs.TestMkdirAll,
-		sfs.TestOpen,
-		sfs.TestOpenFileWrite,
-		sfs.TestReadDir,
-		sfs.TestReadFile,
-		sfs.TestReadlink,
-		sfs.TestRemove,
-		sfs.TestRemoveAll,
-		sfs.TestRename,
-		sfs.TestSameFile,
-		sfs.TestStat,
-		sfs.TestSymlink,
-		sfs.TestTempDir,
-		sfs.TestTempFile,
-		sfs.TestTruncate,
-		sfs.TestWriteFile,
-		sfs.TestWriteString,
-		sfs.TestToSysStat,
-		sfs.TestUmask)
-
-	sfs.TestPath(t)
-
-	sfs.RunTests(t, avfs.UsrRoot,
-		sfs.TestChmod,
-		sfs.TestChown,
-		sfs.TestChroot,
-		sfs.TestLchown)
-}
-
 // TestChdir tests Chdir and Getwd functions.
 func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
