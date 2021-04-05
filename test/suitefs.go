@@ -480,7 +480,7 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 }
 
 // Dir contains the sample directories.
-type Dir struct {
+type Dir struct { //nolint:govet // no fieldalignment for simple structs
 	Path      string
 	Mode      os.FileMode
 	WantModes []os.FileMode
@@ -542,7 +542,7 @@ func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
 }
 
 // File contains the sample files.
-type File struct {
+type File struct { //nolint:govet // no fieldalignment for simple structs
 	Path    string
 	Mode    os.FileMode
 	Content []byte
@@ -612,7 +612,7 @@ func GetSampleSymlinks(vfs avfs.Featurer) []*Symlink {
 }
 
 // SymlinkEval contains the data to evaluate the sample symbolic links.
-type SymlinkEval struct {
+type SymlinkEval struct { //nolint:govet // no fieldalignment for simple structs
 	NewName   string
 	OldName   string
 	WantErr   error
