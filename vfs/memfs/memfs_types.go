@@ -31,31 +31,64 @@ const (
 
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
+	// rootNode represent the root directory of the file system.
 	rootNode *dirNode
+
+	// MemAttrs represents the file system attributes.
 	MemAttrs *MemAttrs
-	user     avfs.UserReader
-	curDir   string
+
+	// User is the current user of the file system.
+	user avfs.UserReader
+
+	// curDir is the current directory.
+	curDir string
 }
 
 // MemAttrs represents the file system attributes for MemFS.
 type MemAttrs struct {
-	idm     avfs.IdentityMgr
-	name    string
+	// idm is the identity manager of the file system.
+	idm avfs.IdentityMgr
+
+	// name is the name of the file system.
+	name string
+
+	// feature defines the list of features available on this file system.
 	feature avfs.Feature
-	lastId  uint64
-	umask   int32
+
+	// lastId is the last unique id used to identify files uniquely.
+	lastId uint64
+
+	// umask is the user file creation mode mask.
+	umask int32
 }
 
 // MemFile represents an open file descriptor.
 type MemFile struct {
-	nd       node
-	memFS    *MemFS
-	name     string
+	// nd is node of the file.
+	nd node
+
+	// memFS is the memory file system of the file.
+	memFS *MemFS
+
+	// name is the name of the file.
+	name string
+
+	// dirInfos stores the files informations returned by Readdir function.
 	dirInfos []os.FileInfo
+
+	// dirNames stores the names of the file returned by Readdirnames function.
 	dirNames []string
-	at       int64
+
+	// at is current position in the file used by Read and Write functions.
+	at int64
+
+	// dirIndex is the position of the current index for dirInfos ou dirNames slices.
 	dirIndex int
-	mu       sync.RWMutex
+
+	// mu is the RWMutex used to prevent concurrent u
+	mu sync.RWMutex
+
+	// wantMode
 	wantMode avfs.WantMode
 }
 
