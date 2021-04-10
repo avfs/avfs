@@ -345,16 +345,17 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestFileWriteTime,
 
 		// Path tests
-		sfs.Base,
-		sfs.Clean,
-		sfs.Dir,
-		sfs.FromToSlash,
-		sfs.Glob,
-		sfs.IsAbs,
-		sfs.Join,
-		sfs.Rel,
-		sfs.Split,
-		sfs.Walk)
+		sfs.TestAbs,
+		sfs.TestBase,
+		sfs.TestClean,
+		sfs.TestDir,
+		sfs.TestFromToSlash,
+		sfs.TestGlob,
+		sfs.TestIsAbs,
+		sfs.TestJoin,
+		sfs.TestRel,
+		sfs.TestSplit,
+		sfs.TestWalk)
 
 	// Tests to be run as root
 	sfs.RunTests(t, avfs.UsrRoot,

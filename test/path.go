@@ -30,8 +30,8 @@ type pathTest struct {
 	path, result string
 }
 
-// Abs test Abs function.
-func (sfs *SuiteFS) Abs(t *testing.T, testDir string) {
+// TestAbs test Abs function.
+func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -170,8 +170,8 @@ func (sfs *SuiteFS) Abs(t *testing.T, testDir string) {
 	})
 }
 
-// Base tests Base function.
-func (sfs *SuiteFS) Base(t *testing.T, testDir string) {
+// TestBase tests Base function.
+func (sfs *SuiteFS) TestBase(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	var baseTests []*pathTest
@@ -212,8 +212,8 @@ func (sfs *SuiteFS) Base(t *testing.T, testDir string) {
 	}
 }
 
-// Clean tests Clean function.
-func (sfs *SuiteFS) Clean(t *testing.T, testDir string) {
+// TestClean tests Clean function.
+func (sfs *SuiteFS) TestClean(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	var cleanTests []*pathTest
@@ -306,8 +306,8 @@ func (sfs *SuiteFS) Clean(t *testing.T, testDir string) {
 	}
 }
 
-// Dir tests Dir function.
-func (sfs *SuiteFS) Dir(t *testing.T, testDir string) {
+// TestDir tests Dir function.
+func (sfs *SuiteFS) TestDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	var dirTests []*pathTest
@@ -350,7 +350,8 @@ func (sfs *SuiteFS) Dir(t *testing.T, testDir string) {
 	}
 }
 
-func (sfs *SuiteFS) FromToSlash(t *testing.T, testDir string) {
+// TestFromToSlash tests FromSlash and ToSlash functions.
+func (sfs *SuiteFS) TestFromToSlash(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	sep := byte('/')
@@ -376,8 +377,8 @@ func (sfs *SuiteFS) FromToSlash(t *testing.T, testDir string) {
 	}
 }
 
-// IsAbs tests IsAbs function.
-func (sfs *SuiteFS) IsAbs(t *testing.T, testDir string) {
+// TestIsAbs tests IsAbs function.
+func (sfs *SuiteFS) TestIsAbs(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	t.Run("IsAbs", func(t *testing.T) {
@@ -446,8 +447,8 @@ func (sfs *SuiteFS) IsAbs(t *testing.T, testDir string) {
 	})
 }
 
-// Join tests Join function.
-func (sfs *SuiteFS) Join(t *testing.T, testDir string) {
+// TestJoin tests Join function.
+func (sfs *SuiteFS) TestJoin(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	type joinTest struct { //nolint:govet // no fieldalignment for simple structs
@@ -516,8 +517,8 @@ func (sfs *SuiteFS) Join(t *testing.T, testDir string) {
 	}
 }
 
-// Rel tests Rel function.
-func (sfs *SuiteFS) Rel(t *testing.T, testDir string) {
+// TestRel tests Rel function.
+func (sfs *SuiteFS) TestRel(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	type relTest struct {
@@ -602,8 +603,8 @@ func (sfs *SuiteFS) Rel(t *testing.T, testDir string) {
 	}
 }
 
-// Split tests Split function.
-func (sfs *SuiteFS) Split(t *testing.T, testDir string) {
+// TestSplit tests Split function.
+func (sfs *SuiteFS) TestSplit(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	type splitTest struct {
@@ -644,8 +645,8 @@ func (sfs *SuiteFS) Split(t *testing.T, testDir string) {
 	}
 }
 
-// Glob tests Glob function.
-func (sfs *SuiteFS) Glob(t *testing.T, testDir string) {
+// TestGlob tests Glob function.
+func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -723,8 +724,8 @@ func (sfs *SuiteFS) Glob(t *testing.T, testDir string) {
 	})
 }
 
-// Walk tests Walk function.
-func (sfs *SuiteFS) Walk(t *testing.T, testDir string) {
+// TestWalk tests Walk function.
+func (sfs *SuiteFS) TestWalk(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
