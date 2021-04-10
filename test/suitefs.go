@@ -205,6 +205,31 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...TestFun
 	}
 }
 
+// BenchFunc
+type BenchFunc func(b *testing.B, testDir string)
+
+// RunBenchs
+func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...BenchFunc) {
+	vfs := sfs.vfsSetup
+
+	_, _ = sfs.User(b, userName)
+	defer sfs.User(b, sfs.initUser.Name())
+
+	for _, bf := range benchFuncs {
+		funcName := runtime.FuncForPC(reflect.ValueOf(bf).Pointer()).Name()
+		funcName = funcName[strings.LastIndex(funcName, ".")+1 : strings.LastIndex(funcName, "-")]
+		testDir := vfs.Join(sfs.rootDir, funcName)
+
+		sfs.CreateTestDir(b, testDir)
+
+		b.Run(funcName, func(b *testing.B) {
+			bf(b, testDir)
+		})
+
+		sfs.RemoveTestDir(b, testDir)
+	}
+}
+
 // CreateTestDir creates the base directory for the tests.
 func (sfs *SuiteFS) CreateTestDir(tb testing.TB, testDir string) {
 	vfs := sfs.vfsSetup
