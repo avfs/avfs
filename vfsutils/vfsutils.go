@@ -18,6 +18,7 @@ package vfsutils
 
 import (
 	"errors"
+	"math/rand"
 	"os"
 	"runtime"
 	"strings"
@@ -110,6 +111,269 @@ func IsExist(err error) bool {
 // ErrNotExist as well as some syscall errors.
 func IsNotExist(err error) bool {
 	return errors.Is(err, avfs.ErrNoSuchFileOrDir)
+}
+
+// ErrRndTreeOutOfRange defines the generic error for out of range parameters RndTreeParams.
+type ErrRndTreeOutOfRange string
+
+var (
+	ErrDepthOutOfRange    = ErrRndTreeOutOfRange("depth")
+	ErrNameOutOfRange     = ErrRndTreeOutOfRange("name")
+	ErrDirsOutOfRange     = ErrRndTreeOutOfRange("dirs")
+	ErrFilesOutOfRange    = ErrRndTreeOutOfRange("files")
+	ErrFileLenOutOfRange  = ErrRndTreeOutOfRange("file length")
+	ErrSymlinksOutOfRange = ErrRndTreeOutOfRange("symbolic links")
+)
+
+func (e ErrRndTreeOutOfRange) Error() string {
+	return string(e) + " parameter out of range"
+}
+
+// RndTreeParams defines the parameters to generate a random file system tree
+// of directories, files and symbolic links.
+type RndTreeParams struct {
+	MinDepth    int // MinDepth is the minimum depth of the file system tree (must be >= 1).
+	MaxDepth    int // MaxDepth is the maximum depth of the file system tree (must be >= MinDepth).
+	MinName     int // MinName is the minimum length of a name (must be >= 1).
+	MaxName     int // MaxName is the minimum length of a name (must be >= MinName).
+	MinDirs     int // MinDirs is the minimum number of directories of a parent directory (must be >= 0).
+	MaxDirs     int // MaxDirs is the maximum number of directories of a parent directory (must be >= MinDirs).
+	MinFiles    int // MinFiles is the minimum number of files of a parent directory (must be >= 0).
+	MaxFiles    int // MaxFiles is the maximum number of Files of a parent directory (must be >= MinFiles).
+	MinFileLen  int // MinFileLen is minimum size of a file (must be >= 0).
+	MaxFileLen  int // MaxFileLen is maximum size of a file (must be >= MinFileLen).
+	MinSymlinks int // MinSymlinks is the minimum number of symbolic links of a parent directory (must be >= 0).
+	MaxSymlinks int // MaxSymlinks is the maximum number of symbolic links of a parent directory (must be >= MinSymlinks).
+	MaxTreeSize int // MaxTreeSize is the cumulative maximum size of the files in bytes.
+}
+
+// RndTree is a random file system tree generator of directories, files and symbolic links.
+type RndTree struct {
+	vfs           avfs.VFS // virtual file system.
+	Dirs          []string // all directories.
+	Files         []string // all files.
+	SymLinks      []string // all symbolic links.
+	treeSize      int      // the tree size in bytes.
+	RndTreeParams          // parameters of the tree.
+}
+
+// NewRndTree returns a new random tree generator.
+func NewRndTree(vfs avfs.VFS, p *RndTreeParams) (*RndTree, error) {
+	if p.MinDepth < 1 || p.MinDepth > p.MaxDepth {
+		return nil, ErrRndTreeOutOfRange("depth")
+	}
+
+	if p.MinName < 1 || p.MinName > p.MaxName {
+		return nil, ErrRndTreeOutOfRange("name")
+	}
+
+	if p.MinDirs < 0 || p.MinDirs > p.MaxDirs {
+		return nil, ErrRndTreeOutOfRange("dirs")
+	}
+
+	if p.MinFiles < 0 || p.MinFiles > p.MaxFiles {
+		return nil, ErrRndTreeOutOfRange("files")
+	}
+
+	if p.MinFileLen < 0 || p.MinFileLen > p.MaxFileLen {
+		return nil, ErrRndTreeOutOfRange("file length")
+	}
+
+	if p.MinSymlinks < 0 || p.MinSymlinks > p.MaxSymlinks {
+		return nil, ErrRndTreeOutOfRange("symbolic links")
+	}
+
+	if p.MaxTreeSize < 0 {
+		return nil, ErrRndTreeOutOfRange("maximum size")
+	}
+
+	rt := &RndTree{
+		RndTreeParams: *p,
+		vfs:           vfs,
+	}
+
+	return rt, nil
+}
+
+// CreateTree creates a random tree structure on a given path.
+func (rt *RndTree) CreateTree(path string) error {
+	return rt.randTree(path, 1)
+}
+
+// randTree generates recursively a random subtree of directories, files and symbolic links.
+func (rt *RndTree) randTree(parent string, depth int) error {
+	dirs, err := rt.randDirs(parent)
+	if err != nil {
+		return err
+	}
+
+	rt.Dirs = append(rt.Dirs, dirs...)
+
+	files, err := rt.randFiles(parent)
+	if err != nil {
+		return err
+	}
+
+	rt.Files = append(rt.Files, files...)
+
+	if rt.vfs.HasFeature(avfs.FeatSymlink) {
+		symLinks, err := rt.randSymlinks(parent) //nolint:govet // Shadows previous declaration of err.
+		if err != nil {
+			return err
+		}
+
+		rt.SymLinks = append(rt.SymLinks, symLinks...)
+	}
+
+	maxDepth := rt.MinDepth
+	if rt.MinDepth < rt.MaxDepth {
+		maxDepth += rand.Intn(rt.MaxDepth - rt.MinDepth) //nolint:gosec // No security-sensitive function.
+	}
+
+	depth++
+	if depth > maxDepth {
+		return nil
+	}
+
+	for _, dir := range dirs {
+		err = rt.randTree(dir, depth)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// randDirs generates random directories from a parent directory.
+func (rt *RndTree) randDirs(parent string) ([]string, error) {
+	const dirSize = 1024
+
+	nbDirs := rt.MinDirs
+	if rt.MinDirs < rt.MaxDirs {
+		nbDirs += rand.Intn(rt.MaxDirs - rt.MinDirs) //nolint:gosec // No security-sensitive function.
+	}
+
+	dirs := make([]string, 0, nbDirs)
+
+	for i := 0; i < nbDirs; i++ {
+		if rt.MaxTreeSize > 0 && (rt.treeSize+nbDirs*dirSize > rt.MaxTreeSize) {
+			return dirs, nil
+		}
+
+		rt.treeSize += nbDirs * dirSize
+
+		path := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
+
+		err := rt.vfs.Mkdir(path, avfs.DefaultDirPerm)
+		if err != nil {
+			return nil, err
+		}
+
+		dirs = append(dirs, path)
+	}
+
+	return dirs, nil
+}
+
+// randFiles generates random files from a parent directory.
+func (rt *RndTree) randFiles(parent string) ([]string, error) {
+	nbFiles := rt.MinFiles
+	if rt.MinFiles < rt.MaxFiles {
+		nbFiles += rand.Intn(rt.MaxFiles - rt.MinFiles) //nolint:gosec // No security-sensitive function.
+	}
+
+	files := make([]string, 0, nbFiles)
+
+	for i := 0; i < nbFiles; i++ {
+		size := rt.MinFileLen
+		if rt.MinFileLen < rt.MaxFileLen {
+			size += rand.Intn(rt.MaxFileLen - rt.MinFileLen) //nolint:gosec // No security-sensitive function.
+		}
+
+		if rt.MaxTreeSize > 0 && (rt.treeSize > rt.MaxTreeSize) {
+			return files, nil
+		}
+
+		rt.treeSize += size
+		buf := make([]byte, size)
+		rand.Read(buf) //nolint:gosec // No security-sensitive function.
+
+		path := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
+
+		err := rt.vfs.WriteFile(path, buf, avfs.DefaultFilePerm)
+		if err != nil {
+			return nil, err
+		}
+
+		files = append(files, path)
+	}
+
+	return files, nil
+}
+
+// randSymlinks generates random symbolic links from a parent directory.
+func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
+	const slSize = 1024
+
+	if len(rt.Files) == 0 {
+		return []string{}, nil
+	}
+
+	nbSl := rt.MinSymlinks
+	if rt.MinSymlinks < rt.MaxSymlinks {
+		nbSl += rand.Intn(rt.MaxSymlinks - rt.MinSymlinks) //nolint:gosec // No security-sensitive function.
+	}
+
+	sl := make([]string, 0, nbSl)
+
+	for i := 0; i < nbSl; i++ {
+		newName := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
+		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec // No security-sensitive function.
+		oldName := rt.Files[fileIdx]
+
+		err := rt.vfs.Symlink(oldName, newName)
+		if err != nil {
+			return nil, err
+		}
+
+		sl = append(sl, newName)
+	}
+
+	return sl, nil
+}
+
+// randName generates a random name using different sets of runes (ASCII, Cyrillic, Devanagari).
+func randName(minName, maxName int) string {
+	nbR := minName
+	if minName < maxName {
+		nbR += rand.Intn(maxName - minName) //nolint:gosec // No security-sensitive function.
+	}
+
+	var name strings.Builder
+
+	for i, s, e := 0, 0, 0; i < nbR; i++ {
+		switch rand.Intn(4) { //nolint:gosec // No security-sensitive function.
+		case 0: // ASCII Uppercase
+			s = 65
+			e = 90
+		case 1: // ASCII Lowercase
+			s = 97
+			e = 122
+		case 2: // Cyrillic
+			s = 0x400
+			e = 0x4ff
+		case 3: // Devanagari
+			s = 0x900
+			e = 0x97f
+		}
+
+		r := rune(s + rand.Intn(e-s)) //nolint:gosec // No security-sensitive function.
+
+		name.WriteRune(r)
+	}
+
+	return name.String()
 }
 
 // RunTimeOS returns the current Operating System type.
