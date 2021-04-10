@@ -26,61 +26,49 @@ import (
 // ErrOutOfRange defines the generic error for out of range parameters RndTreeParams.
 type ErrOutOfRange string
 
+var (
+	ErrDepthOutOfRange    = ErrOutOfRange("depth")
+	ErrNameOutOfRange     = ErrOutOfRange("name")
+	ErrDirsOutOfRange     = ErrOutOfRange("dirs")
+	ErrFilesOutOfRange    = ErrOutOfRange("files")
+	ErrFileLenOutOfRange  = ErrOutOfRange("file length")
+	ErrSymlinksOutOfRange = ErrOutOfRange("symbolic links")
+)
+
 func (e ErrOutOfRange) Error() string {
 	return string(e) + " parameter out of range"
 }
 
-// RndTreeParams defines the parameters to generate
-// a random file system tree of directories, files and symbolic links.
+// RndTreeParams defines the parameters to generate a random file system tree
+// of directories, files and symbolic links.
 type RndTreeParams struct {
-	// MinDepth is the minimum depth of the file system tree (must be >= 1).
-	MinDepth int
-
-	// MaxDepth is the maximum depth of the file system tree (must be >= MinDepth).
-	MaxDepth int
-
-	// MinName is the minimum length of a name (must be >= 1).
-	MinName int
-
-	// MaxName is the minimum length of a name (must be >= MinName).
-	MaxName int
-
-	// MinDirs is the minimum number of directories of a parent directory (must be >= 0).
-	MinDirs int
-
-	// MaxDirs is the maximum number of directories of a parent directory (must be >= MinDirs).
-	MaxDirs int
-
-	// MinFiles is the minimum number of files of a parent directory (must be >= 0).
-	MinFiles int
-
-	// MaxFiles is the maximum number of Files of a parent directory (must be >= MinFiles).
-	MaxFiles int
-
-	// MinFileLen is minimum size of a file (must be >= 0).
-	MinFileLen int
-
-	// MaxFileLen is maximum size of a file (must be >= MinFileLen).
-	MaxFileLen int
-
-	// MinSymlinks is the minimum number of symbolic links of a parent directory (must be >= 0).
-	MinSymlinks int
-
-	// MaxSymlinks is the maximum number of symbolic links of a parent directory (must be >= MinSymlinks).
-	MaxSymlinks int
+	MinDepth    int // MinDepth is the minimum depth of the file system tree (must be >= 1).
+	MaxDepth    int // MaxDepth is the maximum depth of the file system tree (must be >= MinDepth).
+	MinName     int // MinName is the minimum length of a name (must be >= 1).
+	MaxName     int // MaxName is the minimum length of a name (must be >= MinName).
+	MinDirs     int // MinDirs is the minimum number of directories of a parent directory (must be >= 0).
+	MaxDirs     int // MaxDirs is the maximum number of directories of a parent directory (must be >= MinDirs).
+	MinFiles    int // MinFiles is the minimum number of files of a parent directory (must be >= 0).
+	MaxFiles    int // MaxFiles is the maximum number of Files of a parent directory (must be >= MinFiles).
+	MinFileLen  int // MinFileLen is minimum size of a file (must be >= 0).
+	MaxFileLen  int // MaxFileLen is maximum size of a file (must be >= MinFileLen).
+	MinSymlinks int // MinSymlinks is the minimum number of symbolic links of a parent directory (must be >= 0).
+	MaxSymlinks int // MaxSymlinks is the maximum number of symbolic links of a parent directory (must be >= MinSymlinks).
+	MaxTreeSize int // MaxTreeSize is the cumulative maximum size of the files in bytes.
 }
 
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
-	vfs      avfs.VFS
-	Dirs     []string
-	Files    []string
-	SymLinks []string
-	RndTreeParams
+	vfs           avfs.VFS // virtual file system.
+	Dirs          []string // all directories.
+	Files         []string // all files.
+	SymLinks      []string // all symbolic links.
+	treeSize      int      // the tree size in bytes.
+	RndTreeParams          // parameters of the tree.
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(vfs avfs.VFS, p RndTreeParams) (*RndTree, error) { //nolint:gocritic // p is heavy, pass it by pointer.
+func NewRndTree(vfs avfs.VFS, p *RndTreeParams) (*RndTree, error) {
 	if p.MinDepth < 1 || p.MinDepth > p.MaxDepth {
 		return nil, ErrOutOfRange("depth")
 	}
@@ -105,8 +93,12 @@ func NewRndTree(vfs avfs.VFS, p RndTreeParams) (*RndTree, error) { //nolint:gocr
 		return nil, ErrOutOfRange("symbolic links")
 	}
 
+	if p.MaxTreeSize < 0 {
+		return nil, ErrOutOfRange("maximum size")
+	}
+
 	rt := &RndTree{
-		RndTreeParams: p,
+		RndTreeParams: *p,
 		vfs:           vfs,
 	}
 
@@ -165,6 +157,8 @@ func (rt *RndTree) randTree(parent string, depth int) error {
 
 // randDirs generates random directories from a parent directory.
 func (rt *RndTree) randDirs(parent string) ([]string, error) {
+	const dirSize = 1024
+
 	nbDirs := rt.MinDirs
 	if rt.MinDirs < rt.MaxDirs {
 		nbDirs += rand.Intn(rt.MaxDirs - rt.MinDirs) //nolint:gosec // No security-sensitive function.
@@ -173,6 +167,12 @@ func (rt *RndTree) randDirs(parent string) ([]string, error) {
 	dirs := make([]string, 0, nbDirs)
 
 	for i := 0; i < nbDirs; i++ {
+		if rt.MaxTreeSize > 0 && (rt.treeSize+nbDirs*dirSize > rt.MaxTreeSize) {
+			return dirs, nil
+		}
+
+		rt.treeSize += nbDirs * dirSize
+
 		path := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
 
 		err := rt.vfs.Mkdir(path, avfs.DefaultDirPerm)
@@ -201,6 +201,11 @@ func (rt *RndTree) randFiles(parent string) ([]string, error) {
 			size += rand.Intn(rt.MaxFileLen - rt.MinFileLen) //nolint:gosec // No security-sensitive function.
 		}
 
+		if rt.MaxTreeSize > 0 && (rt.treeSize > rt.MaxTreeSize) {
+			return files, nil
+		}
+
+		rt.treeSize += size
 		buf := make([]byte, size)
 		rand.Read(buf) //nolint:gosec // No security-sensitive function.
 

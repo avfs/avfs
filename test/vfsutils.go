@@ -107,7 +107,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	rtr, err := vfsutils.NewRndTree(srcFs, vfsutils.RndTreeParams{
+	rtr, err := vfsutils.NewRndTree(srcFs, &vfsutils.RndTreeParams{
 		MinDepth: 1, MaxDepth: 1,
 		MinName: 32, MaxName: 32,
 		MinFiles: 512, MaxFiles: 512,
@@ -259,7 +259,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
-	rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
+	rtr, err := vfsutils.NewRndTree(vfs, &vfsutils.RndTreeParams{
 		MinDepth: 1, MaxDepth: 1,
 		MinName: 32, MaxName: 32,
 		MinFiles: 100, MaxFiles: 100,
@@ -371,7 +371,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 		}
 
 		for i, rtrTest := range rtrTests {
-			rtr, err := vfsutils.NewRndTree(vfs, *rtrTest.params)
+			rtr, err := vfsutils.NewRndTree(vfs, rtrTest.params)
 
 			if rtrTest.wantErr == nil {
 				if err != nil {
@@ -424,7 +424,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	})
 
 	t.Run("RndTreeDepth", func(t *testing.T) {
-		rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
+		rtr, err := vfsutils.NewRndTree(vfs, &vfsutils.RndTreeParams{
 			MinDepth: 3, MaxDepth: 3,
 			MinName: 10, MaxName: 10,
 			MinDirs: 2, MaxDirs: 2,

@@ -557,7 +557,7 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 		MaxSymlinks: 10,
 	}
 
-	rndTree, err := vfsutils.NewRndTree(vfs, RndParamsOneDir)
+	rndTree, err := vfsutils.NewRndTree(vfs, &RndParamsOneDir)
 	if err != nil {
 		tb.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
