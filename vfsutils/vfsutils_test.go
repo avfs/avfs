@@ -36,16 +36,6 @@ func TestVFSUtils(t *testing.T) {
 	sfs.TestVFSUtils(t)
 }
 
-func TestErrOutOfRange(t *testing.T) {
-	parameter := "Some"
-	wantErrStr := parameter + " parameter out of range"
-
-	err := vfsutils.ErrOutOfRange(parameter)
-	if err.Error() != wantErrStr {
-		t.Errorf("ErrOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
-	}
-}
-
 func TestRndTree(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
@@ -196,6 +186,16 @@ func TestRndTree(t *testing.T) {
 		wantFiles := 7
 		if len(rtr.Files) != wantFiles {
 			t.Errorf("CreateTree : want number of directories to be %d, got %d", wantFiles, len(rtr.Files))
+		}
+	})
+
+	t.Run("", func(t *testing.T) {
+		parameter := "Some"
+		wantErrStr := parameter + " parameter out of range"
+
+		err := vfsutils.ErrRndTreeOutOfRange(parameter)
+		if err.Error() != wantErrStr {
+			t.Errorf("ErrRndTreeOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
 		}
 	})
 }

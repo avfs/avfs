@@ -23,19 +23,19 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// ErrOutOfRange defines the generic error for out of range parameters RndTreeParams.
-type ErrOutOfRange string
+// ErrRndTreeOutOfRange defines the generic error for out of range parameters RndTreeParams.
+type ErrRndTreeOutOfRange string
 
 var (
-	ErrDepthOutOfRange    = ErrOutOfRange("depth")
-	ErrNameOutOfRange     = ErrOutOfRange("name")
-	ErrDirsOutOfRange     = ErrOutOfRange("dirs")
-	ErrFilesOutOfRange    = ErrOutOfRange("files")
-	ErrFileLenOutOfRange  = ErrOutOfRange("file length")
-	ErrSymlinksOutOfRange = ErrOutOfRange("symbolic links")
+	ErrDepthOutOfRange    = ErrRndTreeOutOfRange("depth")
+	ErrNameOutOfRange     = ErrRndTreeOutOfRange("name")
+	ErrDirsOutOfRange     = ErrRndTreeOutOfRange("dirs")
+	ErrFilesOutOfRange    = ErrRndTreeOutOfRange("files")
+	ErrFileLenOutOfRange  = ErrRndTreeOutOfRange("file length")
+	ErrSymlinksOutOfRange = ErrRndTreeOutOfRange("symbolic links")
 )
 
-func (e ErrOutOfRange) Error() string {
+func (e ErrRndTreeOutOfRange) Error() string {
 	return string(e) + " parameter out of range"
 }
 
@@ -70,31 +70,31 @@ type RndTree struct {
 // NewRndTree returns a new random tree generator.
 func NewRndTree(vfs avfs.VFS, p *RndTreeParams) (*RndTree, error) {
 	if p.MinDepth < 1 || p.MinDepth > p.MaxDepth {
-		return nil, ErrOutOfRange("depth")
+		return nil, ErrRndTreeOutOfRange("depth")
 	}
 
 	if p.MinName < 1 || p.MinName > p.MaxName {
-		return nil, ErrOutOfRange("name")
+		return nil, ErrRndTreeOutOfRange("name")
 	}
 
 	if p.MinDirs < 0 || p.MinDirs > p.MaxDirs {
-		return nil, ErrOutOfRange("dirs")
+		return nil, ErrRndTreeOutOfRange("dirs")
 	}
 
 	if p.MinFiles < 0 || p.MinFiles > p.MaxFiles {
-		return nil, ErrOutOfRange("files")
+		return nil, ErrRndTreeOutOfRange("files")
 	}
 
 	if p.MinFileLen < 0 || p.MinFileLen > p.MaxFileLen {
-		return nil, ErrOutOfRange("file length")
+		return nil, ErrRndTreeOutOfRange("file length")
 	}
 
 	if p.MinSymlinks < 0 || p.MinSymlinks > p.MaxSymlinks {
-		return nil, ErrOutOfRange("symbolic links")
+		return nil, ErrRndTreeOutOfRange("symbolic links")
 	}
 
 	if p.MaxTreeSize < 0 {
-		return nil, ErrOutOfRange("maximum size")
+		return nil, ErrRndTreeOutOfRange("maximum size")
 	}
 
 	rt := &RndTree{
@@ -224,6 +224,8 @@ func (rt *RndTree) randFiles(parent string) ([]string, error) {
 
 // randSymlinks generates random symbolic links from a parent directory.
 func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
+	const slSize = 1024
+
 	if len(rt.Files) == 0 {
 		return []string{}, nil
 	}

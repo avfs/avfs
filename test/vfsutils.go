@@ -309,12 +309,12 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
 	var (
-		ErrDepthOutOfRange    = vfsutils.ErrOutOfRange("depth")
-		ErrNameOutOfRange     = vfsutils.ErrOutOfRange("name")
-		ErrDirsOutOfRange     = vfsutils.ErrOutOfRange("dirs")
-		ErrFilesOutOfRange    = vfsutils.ErrOutOfRange("files")
-		ErrFileLenOutOfRange  = vfsutils.ErrOutOfRange("file length")
-		ErrSymlinksOutOfRange = vfsutils.ErrOutOfRange("symbolic links")
+		ErrDepthOutOfRange    = vfsutils.ErrRndTreeOutOfRange("depth")
+		ErrNameOutOfRange     = vfsutils.ErrRndTreeOutOfRange("name")
+		ErrDirsOutOfRange     = vfsutils.ErrRndTreeOutOfRange("dirs")
+		ErrFilesOutOfRange    = vfsutils.ErrRndTreeOutOfRange("files")
+		ErrFileLenOutOfRange  = vfsutils.ErrRndTreeOutOfRange("file length")
+		ErrSymlinksOutOfRange = vfsutils.ErrRndTreeOutOfRange("symbolic links")
 	)
 
 	t.Run("RndTree", func(t *testing.T) {
@@ -461,9 +461,9 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 		parameter := "Some"
 		wantErrStr := parameter + " parameter out of range"
 
-		err := vfsutils.ErrOutOfRange(parameter)
+		err := vfsutils.ErrRndTreeOutOfRange(parameter)
 		if err.Error() != wantErrStr {
-			t.Errorf("ErrOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
+			t.Errorf("ErrRndTreeOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
 		}
 	})
 }
