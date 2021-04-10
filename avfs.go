@@ -29,105 +29,53 @@ import (
 )
 
 const (
-	// Avfs is the name of the framework.
-	Avfs = "avfs"
-
-	// PathSeparator is defined as a forward slash for all unix systems.
-	PathSeparator = '/'
-
-	// PathSeparatorWin is defined as a forward slash for Windows systems.
-	PathSeparatorWin = '\\'
-
-	// DefaultDirPerm is the default permission for directories.
-	DefaultDirPerm = 0o755
-
-	// DefaultFilePerm is the default permission for files.
-	DefaultFilePerm = 0o644
-
-	// HomeDirPerm is the default permission for home directories.
-	HomeDirPerm = 0o700
+	Avfs             = "avfs"            // Avfs is the name of the framework.
+	PathSeparator    = '/'               // PathSeparator is defined as a forward slash for all unix systems.
+	PathSeparatorWin = '\\'              // PathSeparatorWin is defined as a forward slash for Windows systems.
+	DefaultDirPerm   = 0o755             // DefaultDirPerm is the default permission for directories.
+	DefaultFilePerm  = 0o644             // DefaultFilePerm is the default permission for files.
+	HomeDirPerm      = 0o700             // HomeDirPerm is the default permission for home directories.
+	HomeDir          = "/home"           // HomeDir is the home directory.
+	RootDir          = "/root"           // RootDir is the root directory.
+	TmpDir           = "/tmp"            // TmpDir is the tmp directory.
+	UsrRoot          = "root"            // UsrRoot is the root user.
+	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
 
 	// FileModeMask is the bitmask used for permissions (see os.Chmod() comment).
 	FileModeMask = os.ModePerm | os.ModeSticky | os.ModeSetuid | os.ModeSetgid
-
-	// HomeDir is the home directory.
-	HomeDir = "/home"
-
-	// RootDir is the root directory.
-	RootDir = "/root"
-
-	// TmpDir is the tmp directory.
-	TmpDir = "/tmp"
-
-	// UsrRoot is the root user.
-	UsrRoot = "root"
-
-	// NotImplemented is the return string of a non implemented feature.
-	NotImplemented = "not implemented"
 )
 
 // Errors on linux and Windows operating systems.
 // Most of the errors below can be found there :
 // https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
 const (
-	// ErrBadFileDesc is the error Bad file descriptor.
-	ErrBadFileDesc = syscall.EBADF
-
-	// ErrDirNotEmpty is the error Directory not empty.
-	ErrDirNotEmpty = syscall.ENOTEMPTY
-
-	// ErrFileExists is the error File exists.
-	ErrFileExists = syscall.EEXIST
-
-	// ErrIsADirectory is the error Is a directory.
-	ErrIsADirectory = syscall.EISDIR
-
-	// ErrNoSuchFileOrDir is the error No such file or directory.
-	ErrNoSuchFileOrDir = syscall.ENOENT
-
-	// ErrNotADirectory is the error Not a directory.
-	ErrNotADirectory = syscall.ENOTDIR
-
-	// ErrOpNotPermitted is the error Operation not permitted.
-	ErrOpNotPermitted = syscall.EPERM
-
-	// ErrPermDenied is the error Permission denied.
-	ErrPermDenied = syscall.EACCES
-
-	// ErrTooManySymlinks is the error Too many levels of symbolic links.
-	ErrTooManySymlinks = syscall.ELOOP
+	ErrBadFileDesc     = syscall.EBADF     // Bad file descriptor.
+	ErrDirNotEmpty     = syscall.ENOTEMPTY // Directory not empty.
+	ErrFileExists      = syscall.EEXIST    // File exists.
+	ErrIsADirectory    = syscall.EISDIR    // File Is a directory.
+	ErrNoSuchFileOrDir = syscall.ENOENT    // No such file or directory.
+	ErrNotADirectory   = syscall.ENOTDIR   // Not a directory.
+	ErrOpNotPermitted  = syscall.EPERM     // Operation not permitted.
+	ErrPermDenied      = syscall.EACCES    // Permission denied.
+	ErrTooManySymlinks = syscall.ELOOP     // Too many levels of symbolic links.
 )
 
 // Errors on windows operating systems only.
 const (
-	// ErrWinInvalidHandle is the error The handle is invalid.
-	ErrWinInvalidHandle = syscall.Errno(0x6)
-
-	// ErrWinPathNotFound is the error The system cannot find the path specified (syscall.ERROR_PATH_NOT_FOUND).
-	ErrWinPathNotFound = syscall.Errno(0x3)
-
-	// ErrWinNotSupported is the error Not supported by windows (syscall.EWINDOWS).
-	ErrWinNotSupported = syscall.Errno(0x20000082)
-
-	// ErrWinDirNameInvalid is the error The directory name is invalid.
-	ErrWinDirNameInvalid = syscall.Errno(0x10B)
-
-	// ErrWinAccessDenied is the error Access is denied.
-	ErrWinAccessDenied = syscall.Errno(0x5)
-
-	// ErrWinFileExists is the error The file exists (syscall.ERROR_FILE_EXISTS).
-	ErrWinFileExists = syscall.Errno(80)
-
-	// ErrWinNegativeSeek is the error An attempt was made to move the file pointer before the beginning of the file.
-	ErrWinNegativeSeek = syscall.Errno(0x83)
+	ErrWinInvalidHandle  = syscall.Errno(0x6)        // The handle is invalid.
+	ErrWinPathNotFound   = syscall.Errno(0x3)        // The system cannot find the path specified.
+	ErrWinNotSupported   = syscall.Errno(0x20000082) // Not supported by windows.
+	ErrWinDirNameInvalid = syscall.Errno(0x10B)      // The directory name is invalid.
+	ErrWinAccessDenied   = syscall.Errno(0x5)        // Access is denied.
+	ErrWinFileExists     = syscall.Errno(80)         // The file exists.
+	ErrWinNegativeSeek   = syscall.Errno(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
 )
 
 var (
 	// ErrNegativeOffset is the Error negative offset.
 	ErrNegativeOffset = errors.New("negative offset")
 
-	// ErrFileClosing is returned when a file descriptor is used after it
-	// has been closed.
+	// ErrFileClosing is returned when a file descriptor is used after it has been closed.
 	ErrFileClosing = errors.New("use of closed file")
 )
 
@@ -217,34 +165,20 @@ const (
 type OSType uint8
 
 const (
-	// OsDarwin is the Darwin operating system.
-	OsDarwin OSType = iota + 1
-
-	// OsLinux is the Linux operating system.
-	OsLinux
-
-	// OsUnknown is an unknown operating system.
-	OsUnknown
-
-	// OsWindows is the Windows operating system.
-	OsWindows
+	OsUnknown OSType = iota + 1 // Unknown
+	OsDarwin                    // Darwin
+	OsLinux                     // Linux
+	OsWindows                   // Windows
 )
 
 // WantMode defines the permissions to check for CheckPermission() function.
 type WantMode uint8
 
 const (
-	// WantLookup checks for lookup permission on a directory.
-	WantLookup WantMode = 0o001
-
-	// WantWrite checks for write permission.
-	WantWrite WantMode = 0o002
-
-	// WantRead checks for read permission.
-	WantRead WantMode = 0o004
-
-	// WantRWX checks for all permissions.
-	WantRWX WantMode = 0o007
+	WantLookup WantMode = 0o001 // WantLookup checks for lookup permission on a directory.
+	WantWrite  WantMode = 0o002 // WantWrite checks for write permission.
+	WantRead   WantMode = 0o004 // WantRead checks for read permission.
+	WantRWX    WantMode = 0o007 // WantRWX checks for all permissions.
 )
 
 // VFS is the virtual file system interface.
