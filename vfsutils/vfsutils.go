@@ -328,6 +328,10 @@ func (rt *RndTree) randSymlinks(parent string) ([]string, error) {
 	sl := make([]string, 0, nbSl)
 
 	for i := 0; i < nbSl; i++ {
+		if rt.MaxTreeSize > 0 && (rt.treeSize+slSize > rt.MaxTreeSize) {
+			return sl, nil
+		}
+
 		newName := rt.vfs.Join(parent, randName(rt.MinName, rt.MaxName))
 		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec // No security-sensitive function.
 		oldName := rt.Files[fileIdx]
