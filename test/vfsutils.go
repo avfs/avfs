@@ -37,9 +37,14 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestCreateBaseDirs,
 		sfs.TestDirExists,
 		sfs.TestHashFile,
+		sfs.TestReadDir,
+		sfs.TestReadFile,
 		sfs.TestRndTree,
+		sfs.TestSegmentPath,
+		sfs.TestTempDir,
+		sfs.TestTempFile,
 		sfs.TestUMask,
-		sfs.TestSegmentPath)
+		sfs.TestWriteFile)
 }
 
 // TestCheckPermission tests vfsutils.CheckPermission function.
