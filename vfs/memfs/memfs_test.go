@@ -36,19 +36,23 @@ var (
 	_ avfs.File = &memfs.MemFile{}
 )
 
-func initTest(tb testing.TB) *test.SuiteFS {
+func TestMemFS(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
-		tb.Fatalf("New : want error to be nil, got %v", err)
+		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	sfs := test.NewSuiteFS(tb, vfs)
-
-	return sfs
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestAll(t)
 }
 
-func TestMemFS(t *testing.T) {
-	sfs := initTest(t)
+func TestMemFSWithNoIdm(t *testing.T) {
+	vfs, err := memfs.New(memfs.WithMainDirs())
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
@@ -122,6 +126,11 @@ func TestMemFSOSType(t *testing.T) {
 }
 
 func BenchmarkMemFSAll(b *testing.B) {
-	sfs := initTest(b)
+	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	if err != nil {
+		b.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)
 }
