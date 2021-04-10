@@ -27,24 +27,24 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
-func TestMemFsWithNoIdm(t *testing.T) {
+func TestMemFsIdmWithNoIdm(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.TestAll(t)
+	sIdm := test.NewSuiteIdm(t, vfs)
+	sIdm.TestAll(t)
 }
 
-func TestMemFsWithMemIdm(t *testing.T) {
+func TestMemFsIdmWithMemIdm(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
 
-	sidm := test.NewSuiteIdm(t, vfs)
-	sidm.TestAll(t)
+	sIdm := test.NewSuiteIdm(t, vfs)
+	sIdm.TestAll(t)
 }
 
 func TestMemFsWithOsIdm(t *testing.T) {
