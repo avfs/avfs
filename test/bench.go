@@ -22,17 +22,15 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
-	// sfs.RunTests(b, UsrTest, sfs.BenchDir)
+	sfs.RunBenchs(b, UsrTest, sfs.BenchCreate)
+	sfs.RunBenchs(b, UsrTest, sfs.BenchMkdir)
 }
 
-func (sfs *SuiteFS) BenchDir(b *testing.B, testDir string) {
+func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
-
-	rand.Seed(42)
 
 	b.Run("Mkdir", func(b *testing.B) {
 		dirs := make([]string, 0, b.N)
@@ -54,38 +52,31 @@ func (sfs *SuiteFS) BenchDir(b *testing.B, testDir string) {
 	})
 }
 
-// BenchmarkCreate is a simple benchmark to create a random tree.
-func BenchmarkCreate(b *testing.B, vfs avfs.VFS) {
-	rtr, err := vfsutils.NewRndTree(vfs, vfsutils.RndTreeParams{
-		MinName: 32, MaxName: 32,
-		MinDepth: 4, MaxDepth: 4,
-		MinDirs: 2, MaxDirs: 2,
-		MinFiles: 5, MaxFiles: 5,
-		MinFileLen: 128, MaxFileLen: 128,
+func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
+	vfs := sfs.vfsTest
+
+	b.Run("Create", func(b *testing.B) {
+		files := make([]string, 0, b.N)
+
+		for n := 0; n < b.N; n++ {
+			path := vfs.Join(testDir, strconv.FormatInt(int64(n), 10))
+			files = append(files, path)
+		}
+
+		b.ReportAllocs()
+		b.ResetTimer()
+
+		for n := 0; n < b.N; n++ {
+			fileName := files[n]
+			f, err := vfs.Create(fileName)
+			if err != nil {
+				b.Fatalf("Create %s, want error to be nil, got %v", fileName, err)
+			}
+
+			err = f.Close()
+			if err != nil {
+				b.Fatalf("Close %s, want error to be nil, got %v", fileName, err)
+			}
+		}
 	})
-	if err != nil {
-		b.Fatalf("NewRndTree : want error to be nil, got %v", err)
-	}
-
-	b.ReportAllocs()
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		rand.Seed(42)
-
-		rootDir, err := vfs.TempDir("", avfs.Avfs)
-		if err != nil {
-			b.Fatalf("TempDir : want error to be nil, got %v", err)
-		}
-
-		err = rtr.CreateTree(rootDir)
-		if err != nil {
-			b.Fatalf("CreateTree : want error to be nil, got %v", err)
-		}
-
-		err = vfs.RemoveAll(rootDir)
-		if err != nil {
-			b.Fatalf("RemoveAll : want error to be nil, got %v", err)
-		}
-	}
 }
