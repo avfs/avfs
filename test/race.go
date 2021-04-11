@@ -109,7 +109,7 @@ func (sfs *SuiteFS) TestRaceFile(t *testing.T, testDir string) {
 	})
 }
 
-// RaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
+// TestRaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
 func (sfs *SuiteFS) TestRaceMkdirRemoveAll(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 

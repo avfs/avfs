@@ -25,7 +25,7 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-//  TestCurrentUser tests CurrentUser function.
+// TestCurrentUser tests CurrentUser function.
 func (sIdm *SuiteIdm) TestCurrentUser(t *testing.T) {
 	idm := sIdm.idm
 
