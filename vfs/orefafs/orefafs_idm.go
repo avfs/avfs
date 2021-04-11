@@ -53,7 +53,7 @@ func (vfs *OrefaFS) LookupUser(name string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
-// LookupId looks up a User by userid. If the User cannot be found, the
+// LookupUserId looks up a User by userid. If the User cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (vfs *OrefaFS) LookupUserId(uid int) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
