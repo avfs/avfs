@@ -31,7 +31,7 @@ func New(opts ...Option) (*OrefaFS, error) {
 		nodes:       make(nodes),
 		curDir:      string(avfs.PathSeparator),
 		feature:     avfs.FeatBasicFs | avfs.FeatHardlink,
-		currentUser: dummyidm.NotImplementedUser,
+		currentUser: dummyidm.RootUser,
 		umask:       int32(vfsutils.UMask.Get()),
 	}
 

@@ -103,8 +103,7 @@ func (f *OrefaFile) Chown(uid, gid int) error {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
-	f.nd.uid = uid
-	f.nd.gid = gid
+	f.nd.setOwner(uid, gid)
 
 	return nil
 }

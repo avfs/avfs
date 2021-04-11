@@ -119,7 +119,21 @@ func (vfs *OrefaFS) Chmod(name string, mode os.FileMode) error {
 func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	absPath, _ := vfs.Abs(name)
+
+	vfs.mu.RLock()
+	nd, ok := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
+
+	if !ok {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+	}
+
+	nd.mu.Lock()
+	nd.setOwner(uid, gid)
+	nd.mu.Unlock()
+
+	return nil
 }
 
 // Chroot changes the root to that specified in path.
@@ -302,7 +316,21 @@ func (vfs *OrefaFS) Join(elem ...string) string {
 func (vfs *OrefaFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	absPath, _ := vfs.Abs(name)
+
+	vfs.mu.RLock()
+	nd, ok := vfs.nodes[absPath]
+	vfs.mu.RUnlock()
+
+	if !ok {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+	}
+
+	nd.mu.Lock()
+	nd.setOwner(uid, gid)
+	nd.mu.Unlock()
+
+	return nil
 }
 
 // Link creates newname as a hard link to the oldname file.

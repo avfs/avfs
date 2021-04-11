@@ -164,6 +164,12 @@ func (nd *node) setModTime(mtime time.Time) {
 	nd.mtime = mtime.UnixNano()
 }
 
+// setOwner sets the user and group id.
+func (nd *node) setOwner(uid, gid int) {
+	nd.uid = uid
+	nd.gid = gid
+}
+
 // size returns the size of the file.
 func (nd *node) size() int64 {
 	if nd.mode.IsDir() {
