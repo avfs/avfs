@@ -18,6 +18,8 @@ package dummyidm
 
 import "github.com/avfs/avfs"
 
+const maxInt = int(^uint(0) >> 1)
+
 var (
 	// NotImplementedIdm is the default identity manager for all file systems.
 	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
@@ -26,7 +28,10 @@ var (
 	RootUser = &User{name: avfs.UsrRoot, uid: 0, gid: 0} //nolint:gochecknoglobals // Used as user for other file systems.
 
 	// NotImplementedUser represents a not implemented invalid user.
-	NotImplementedUser = &User{name: avfs.NotImplemented, uid: -1, gid: -1} //nolint:gochecknoglobals // Used as user for other file systems.
+	NotImplementedUser = &User{ //nolint:gochecknoglobals // Used as user for other file systems.
+		name: avfs.NotImplemented,
+		uid:  maxInt, gid: maxInt,
+	}
 )
 
 // DummyIdm represent a non implementedy identity manager using the avfs.IdentityMgr interface.
