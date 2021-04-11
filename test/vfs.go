@@ -205,7 +205,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chown(testDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -213,6 +213,30 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 			CheckPathError(t, "Chown", "chown", testDir, avfs.ErrWinNotSupported, err)
 		default:
 			CheckPathError(t, "Chown", "chown", testDir, avfs.ErrOpNotPermitted, err)
+		}
+
+		return
+	}
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatIntegratedIdm) {
+		wantUid, wantGid := 42, 42
+
+		err := vfs.Chown(testDir, wantUid, wantGid)
+		if err != nil {
+			t.Errorf("Chown %s : want error to be nil, got %v", testDir, err)
+		}
+
+		fst, err := vfs.Stat(testDir)
+		if err != nil {
+			t.Errorf("Stat %s : want error to be nil, got %v", testDir, err)
+		}
+
+		sst := vfsutils.ToSysStat(fst.Sys())
+
+		uid, gid := sst.Uid(), sst.Gid()
+		if uid != wantUid || gid != wantGid {
+			t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
+				testDir, wantUid, wantGid, uid, gid)
 		}
 
 		return
@@ -534,11 +558,11 @@ func (sfs *SuiteFS) TestGetTempDir(t *testing.T, testDir string) {
 	}
 }
 
-// Lchown tests Lchown function.
+// TestLchown tests Lchown function.
 func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Lchown(testDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -546,6 +570,30 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 			CheckPathError(t, "Lchown", "lchown", testDir, avfs.ErrWinNotSupported, err)
 		default:
 			CheckPathError(t, "Lchown", "lchown", testDir, avfs.ErrOpNotPermitted, err)
+		}
+
+		return
+	}
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatIntegratedIdm) {
+		wantUid, wantGid := 42, 42
+
+		err := vfs.Lchown(testDir, wantUid, wantGid)
+		if err != nil {
+			t.Errorf("Chown %s : want error to be nil, got %v", testDir, err)
+		}
+
+		fst, err := vfs.Stat(testDir)
+		if err != nil {
+			t.Errorf("Stat %s : want error to be nil, got %v", testDir, err)
+		}
+
+		sst := vfsutils.ToSysStat(fst.Sys())
+
+		uid, gid := sst.Uid(), sst.Gid()
+		if uid != wantUid || gid != wantGid {
+			t.Errorf("Stat %s : want Uid=%d, Gid=%d, got Uid=%d, Gid=%d",
+				testDir, wantUid, wantGid, uid, gid)
 		}
 
 		return
@@ -1604,7 +1652,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 }
 
-// ReadDir tests ReadDir function.
+// TestReadDir tests ReadDir function.
 func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
