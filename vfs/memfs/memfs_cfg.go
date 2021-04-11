@@ -46,7 +46,7 @@ func New(opts ...Option) (*MemFS, error) {
 			},
 		},
 		memAttrs: ma,
-		user:     dummyidm.RootUser,
+		user:     dummyidm.NotImplementedUser,
 		curDir:   string(avfs.PathSeparator),
 	}
 
@@ -57,15 +57,27 @@ func New(opts ...Option) (*MemFS, error) {
 		}
 	}
 
-	if vfs.HasFeature(avfs.FeatMainDirs) {
-		um := ma.umask
-		ma.umask = 0
-
-		_ = vfsutils.CreateBaseDirs(vfs, "")
-
-		ma.umask = um
-		vfs.curDir = avfs.RootDir
+	if !vfs.HasFeature(avfs.FeatMainDirs) {
+		return vfs, nil
 	}
+
+	um := ma.umask
+	ma.umask = 0
+
+	u := vfs.user
+	if !vfs.user.IsRoot() {
+		vfs.user = dummyidm.RootUser
+	}
+
+	err := vfsutils.CreateBaseDirs(vfs, "")
+	if err != nil {
+		panic(err)
+	}
+
+	vfs.user = u
+	vfs.curDir = avfs.RootDir
+
+	ma.umask = um
 
 	return vfs, nil
 }
