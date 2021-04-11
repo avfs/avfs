@@ -65,7 +65,7 @@ func New(opts ...Option) (*MemFS, error) {
 	ma.umask = 0
 
 	u := vfs.user
-	if !vfs.user.IsRoot() {
+	if !u.IsRoot() {
 		vfs.user = dummyidm.RootUser
 	}
 
