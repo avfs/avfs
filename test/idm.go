@@ -29,21 +29,26 @@ import (
 func (sIdm *SuiteIdm) TestCurrentUser(t *testing.T) {
 	idm := sIdm.idm
 
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		uc, ok := idm.(avfs.UserConnecter)
-		if ok {
-			u := uc.CurrentUser()
+	uc, ok := idm.(avfs.UserConnecter)
+	if !ok {
+		return
+	}
 
-			name := u.Name()
-			if name == "" {
-				t.Errorf("Name : want name to be not empty, got empty")
-			}
+	u := uc.CurrentUser()
 
-			isRoot := u.IsRoot() && !idm.HasFeature(avfs.FeatIntegratedIdm)
-			if isRoot {
-				t.Errorf("IsRoot : want isRoot to be false, got %t", isRoot)
-			}
-		}
+	name := u.Name()
+	if name == "" {
+		t.Errorf("Name : want name to be not empty, got empty")
+	}
+
+	uid := u.Uid()
+	if uid < 0 {
+		t.Errorf("Uid : want uid to be >= 0, got %d", uid)
+	}
+
+	gid := u.Gid()
+	if uid < 0 {
+		t.Errorf("Uid : want gid to be >= 0, got %d", gid)
 	}
 }
 
