@@ -25,16 +25,21 @@ var (
 	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 	// RootUser represents a root user.
-	RootUser = &User{name: avfs.UsrRoot, uid: 0, gid: 0} //nolint:gochecknoglobals // Used as user for other file systems.
+	RootUser = &User{ //nolint:gochecknoglobals // Used as root user for other file systems.
+		name: avfs.UsrRoot,
+		uid:  0,
+		gid:  0,
+	}
 
 	// NotImplementedUser represents a not implemented invalid user.
-	NotImplementedUser = &User{ //nolint:gochecknoglobals // Used as user for other file systems.
+	NotImplementedUser = &User{ //nolint:gochecknoglobals // Used as not implemented user for other file systems.
 		name: avfs.NotImplemented,
-		uid:  maxInt, gid: maxInt,
+		uid:  maxInt,
+		gid:  maxInt,
 	}
 )
 
-// DummyIdm represent a non implementedy identity manager using the avfs.IdentityMgr interface.
+// DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
 type DummyIdm struct{}
 
 // User is the implementation of avfs.UserReader.
