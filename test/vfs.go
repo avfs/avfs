@@ -218,7 +218,11 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		return
 	}
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatIntegratedIdm) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		if vfs.HasFeature(avfs.FeatIntegratedIdm) {
+			return
+		}
+
 		wantUid, wantGid := 42, 42
 
 		err := vfs.Chown(testDir, wantUid, wantGid)
@@ -575,7 +579,11 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		return
 	}
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatIntegratedIdm) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		if vfs.HasFeature(avfs.FeatIntegratedIdm) {
+			return
+		}
+
 		wantUid, wantGid := 42, 42
 
 		err := vfs.Lchown(testDir, wantUid, wantGid)
