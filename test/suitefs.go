@@ -180,25 +180,25 @@ func (sfs *SuiteFS) VFSSetup() avfs.VFS {
 	return sfs.vfsSetup
 }
 
-// TestFunc
-type TestFunc func(t *testing.T, testDir string) //nolint:golint // TODO : find a different name.
+// SuiteTestFunc defines the parameters of all tests functions.
+type SuiteTestFunc func(t *testing.T, testDir string)
 
 // RunTests runs all test functions testFuncs specified as user userName.
-func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...TestFunc) {
+func (sfs *SuiteFS) RunTests(t *testing.T, userName string, stFuncs ...SuiteTestFunc) {
 	vfs := sfs.vfsSetup
 
 	_, _ = sfs.User(t, userName)
 	defer sfs.User(t, sfs.initUser.Name())
 
-	for _, tf := range testFuncs {
-		funcName := runtime.FuncForPC(reflect.ValueOf(tf).Pointer()).Name()
+	for _, stFunc := range stFuncs {
+		funcName := runtime.FuncForPC(reflect.ValueOf(stFunc).Pointer()).Name()
 		funcName = funcName[strings.LastIndex(funcName, ".")+1 : strings.LastIndex(funcName, "-")]
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
 		sfs.CreateTestDir(t, testDir)
 
 		t.Run(funcName, func(t *testing.T) {
-			tf(t, testDir)
+			stFunc(t, testDir)
 		})
 
 		sfs.RemoveTestDir(t, testDir)
