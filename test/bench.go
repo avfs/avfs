@@ -29,6 +29,7 @@ func (sfs *SuiteFS) BenchAll(b *testing.B) {
 	sfs.RunBenchs(b, UsrTest, sfs.BenchMkdir)
 }
 
+// BenchMkdir benchmarks Mkdir function.
 func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
 
@@ -52,6 +53,7 @@ func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 	})
 }
 
+// BenchCreate benchmarks Create function.
 func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
 
