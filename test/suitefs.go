@@ -29,32 +29,15 @@ import (
 
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
-	// vfsSetup is the file system used to setup the tests (generally with read and write access).
-	vfsSetup avfs.VFS
-
-	// vfsTest is the file system used to run the tests.
-	vfsTest avfs.VFS
-
-	// initUser is the initial user running the test suite.
-	initUser avfs.UserReader
-
-	// rootDir is the root directory for tests, it can be generated automatically or specified with WithRootDir().
-	rootDir string
-
-	// Groups contains the test groups created with the identity manager.
-	Groups []avfs.GroupReader
-
-	// Users contains the test users created with the identity manager.
-	Users []avfs.UserReader
-
-	// maxRace is the maximum number of concurrent goroutines used in race tests.
-	maxRace int
-
-	// osType is the operating system of the filesystem te test.
-	osType avfs.OSType
-
-	// canTestPerm indicates if permissions can be tested.
-	canTestPerm bool
+	vfsSetup    avfs.VFS           // vfsSetup is the file system used to setup the tests (generally with read/write access).
+	vfsTest     avfs.VFS           // vfsTest is the file system used to run the tests.
+	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
+	rootDir     string             // rootDir is the root directory for tests.
+	Groups      []avfs.GroupReader // Groups contains the test groups created with the identity manager.
+	Users       []avfs.UserReader  // Users contains the test users created with the identity manager.
+	maxRace     int                // maxRace is the maximum number of concurrent goroutines used in race tests.
+	osType      avfs.OSType        // osType is the operating system of the filesystem te test.
+	canTestPerm bool               // canTestPerm indicates if permissions can be tested.
 }
 
 // Option defines the option function used for initializing SuiteFS.
@@ -75,10 +58,10 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	sfs := &SuiteFS{
 		vfsSetup:    vfs,
 		vfsTest:     vfs,
+		initUser:    initUser,
 		rootDir:     vfs.GetTempDir(),
 		maxRace:     1000,
 		osType:      vfsutils.RunTimeOS(),
-		initUser:    initUser,
 		canTestPerm: canTestPerm,
 	}
 

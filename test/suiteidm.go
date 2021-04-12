@@ -25,20 +25,11 @@ import (
 
 // SuiteIdm is a test suite for an identity manager.
 type SuiteIdm struct {
-	// idm is the identity manager to be tested.
-	idm avfs.IdentityMgr
-
-	// uc is the implementation of avfs.UserConnecter.
-	uc avfs.UserConnecter
-
-	// Groups contains the test groups created with the identity manager.
-	Groups []avfs.GroupReader
-
-	// Users contains the test users created with the identity manager.
-	Users []avfs.UserReader
-
-	// canTest is true when the identity manager can be tested..
-	canTest bool
+	idm     avfs.IdentityMgr   // idm is the identity manager to be tested.
+	uc      avfs.UserConnecter // uc is the implementation of avfs.UserConnecter.
+	Groups  []avfs.GroupReader // Groups contains the test groups created with the identity manager.
+	Users   []avfs.UserReader  // Users contains the test users created with the identity manager.
+	canTest bool               // canTest is true when the identity manager can be tested.
 }
 
 // NewSuiteIdm returns a new test suite for an identity manager.
@@ -97,14 +88,9 @@ type GroupInfo struct {
 }
 
 const (
-	// grpTest is the default group of the default test user UsrTest.
-	grpTest = "grpTest"
-
-	// grpOther is the group to test users who are not members of grpTest.
-	grpOther = "grpOther"
-
-	// grpEmpty is a group without users.
-	grpEmpty = "grpEmpty"
+	grpTest  = "grpTest"  // grpTest is the default group of the default test user UsrTest.
+	grpOther = "grpOther" // grpOther is the group to test users who are not members of grpTest.
+	grpEmpty = "grpEmpty" // grpEmpty is a group without users.
 )
 
 // GroupInfos returns a GroupInfo slice describing the test groups.
@@ -142,14 +128,9 @@ type UserInfo struct {
 }
 
 const (
-	// UsrTest is used to test user access rights.
-	UsrTest = "UsrTest"
-
-	// UsrGrp is a member of the group GrpTest used to test default group access rights.
-	UsrGrp = "UsrGrp"
-
-	// UsrOth is a member of the group GrpOth used to test non members access rights.
-	UsrOth = "UsrOth"
+	UsrTest = "UsrTest" // UsrTest is used to test user access rights.
+	UsrGrp  = "UsrGrp"  // UsrGrp is a member of the group GrpTest used to test default group access rights.
+	UsrOth  = "UsrOth"  // UsrOth is a member of the group GrpOth used to test non members access rights.
 )
 
 // UserInfos returns a UserInfo slice describing the test users.
