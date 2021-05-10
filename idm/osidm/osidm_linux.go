@@ -207,7 +207,7 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("useradd", "-M", "-g", groupName, "-s", "/usr/sbin/nologin", name)
+	cmd := exec.Command("useradd", "-M", "-g", groupName, name)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
