@@ -188,14 +188,14 @@ func DockerBuild() error {
 func DockerConsole() error {
 	mg.Deps(DockerBuild)
 
-	return sh.RunV(dockerCmd, "run", "-ti", dockerImage, "/bin/bash")
+	return sh.RunV(dockerCmd, "run", "-ti", dockerImage, "/bin/sh")
 }
 
 // DockerTest runs tests in the docker image for AVFS.
 func DockerTest() error {
 	mg.Deps(DockerBuild)
 
-	err := sh.RunV(dockerCmd, "run", "--network", "host", "-ti", dockerImage)
+	err := sh.RunV(dockerCmd, "run", "-ti", dockerImage)
 	if err != nil {
 		return err
 	}
