@@ -74,13 +74,6 @@ func BuildAvfs() error {
 	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", path)
 }
 
-// BinDocker builds a static binary of this script to be used in docker.
-func BinDocker() error {
-	appNamePath := filepath.Join("bin", appName)
-
-	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", appNamePath, "-goos=linux")
-}
-
 // Env returns the go environment variables.
 func Env() {
 	sh.RunV(goCmd, "version")
@@ -175,8 +168,6 @@ func Bench() error {
 
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
-	mg.Deps(BinDocker)
-
 	if !isExecutable(dockerCmd) {
 		fmt.Errorf("can't find %s in the current path", dockerCmd)
 	}
