@@ -131,6 +131,8 @@ func (e UnknownUserIdError) Error() string {
 // Feature defines the list of features available on a file system.
 type Feature uint64
 
+//go:generate stringer -type Feature -trimprefix Feat -bitmask -output avfs_feature.go
+
 const (
 	// FeatAbsPath indicates that all paths passed as parameters are absolute paths.
 	FeatAbsPath Feature = 1 << iota
@@ -163,6 +165,8 @@ const (
 
 // OSType defines the operating system type.
 type OSType uint8
+
+//go:generate stringer -type OSType -linecomment -output avfs_ostype.go
 
 const (
 	OsUnknown OSType = iota + 1 // Unknown
