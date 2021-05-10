@@ -14,10 +14,14 @@
 ##	limitations under the License.
 ##
 
-# go test -race needs CGO_ENABLED=1, gcc and glibc
-# Alpine Linux does not provide glibc and can't be used https://github.com/golang/go/issues/14481
-FROM golang:buster
+FROM golang:buster AS base
 WORKDIR /go/src
+
+FROM base AS avfscmd
+COPY ./mage ./mage
+RUN go run mage/build.go
+
+FROM base
+COPY --from=avfscmd /go/bin/avfs /go/bin/avfs
 COPY . .
-RUN ln ./mage/bin/avfs ../bin/avfs
 CMD avfs test
