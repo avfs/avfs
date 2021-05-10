@@ -66,12 +66,8 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	}
 
 	defer func() {
-		info := "Info vfs : type = " + sfs.vfsTest.Type()
-		if sfs.vfsTest.Name() != "" {
-			info += ", name = " + sfs.vfsTest.Name()
-		}
-
-		tb.Log(info)
+		vfs = sfs.vfsTest
+		tb.Logf("Info vfs : type=%s, OSType=%s, Features=%s", vfs.Type(), vfs.OSType(), vfs.Features())
 	}()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
