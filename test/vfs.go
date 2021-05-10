@@ -1513,18 +1513,19 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 
 	t.Run("OpenFileAppend", func(t *testing.T) {
 		existingFile := sfs.ExistingFile(t, testDir, data)
+		appendData := []byte("appendData")
 
 		f, err := vfs.OpenFile(existingFile, os.O_WRONLY|os.O_APPEND, avfs.DefaultFilePerm)
 		if err != nil {
 			t.Errorf("OpenFile : want error to be nil, got %v", err)
 		}
 
-		n, err := f.Write(whateverData)
+		n, err := f.Write(appendData)
 		if err != nil {
 			t.Errorf("Write : want error to be nil, got %v", err)
 		}
 
-		if n != len(whateverData) {
+		if n != len(appendData) {
 			t.Errorf("Write : want error to be %d, got %d", len(whateverData), n)
 		}
 
@@ -1535,7 +1536,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 			t.Errorf("ReadFile : want error to be nil, got %v", err)
 		}
 
-		wantContent := append(data, whateverData...)
+		wantContent := append(data, appendData...) //nolint:gocritic // append result not assigned to the same slice.
 		if !bytes.Equal(wantContent, gotContent) {
 			t.Errorf("ReadAll : want content to be %s, got %s", wantContent, gotContent)
 		}
