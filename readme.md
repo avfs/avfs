@@ -8,6 +8,7 @@ Another Virtual File System for Go
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Favfs%2Favfs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Favfs%2Favfs?ref=badge_shield)
 
 ## Overview
 
@@ -309,3 +310,7 @@ UserConnecter methods <br>`avfs.FS` |Comments
 `CurrentUser`| returns the current user
 `User`| sets and returns the current user
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Favfs%2Favfs.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Favfs%2Favfs?ref=badge_large)
