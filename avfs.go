@@ -143,9 +143,6 @@ const (
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
 
-	// FeatIntegratedIdm indicates that the file system has an integrated Identity Manager (see OsFS)
-	FeatIntegratedIdm
-
 	// FeatMainDirs indicates that the main directories of the filesystem (/home, /root and /tmp) are present.
 	FeatMainDirs
 
@@ -158,6 +155,9 @@ const (
 
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
 	FeatReadOnly
+
+	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS)
+	FeatRealFS
 
 	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).
 	FeatSymlink

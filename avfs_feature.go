@@ -11,26 +11,26 @@ func _() {
 	_ = x[FeatAbsPath-1]
 	_ = x[FeatBasicFs-2]
 	_ = x[FeatChroot-4]
-	_ = x[FeatIntegratedIdm-8]
-	_ = x[FeatMainDirs-16]
-	_ = x[FeatHardlink-32]
-	_ = x[FeatIdentityMgr-64]
-	_ = x[FeatReadOnly-128]
+	_ = x[FeatMainDirs-8]
+	_ = x[FeatHardlink-16]
+	_ = x[FeatIdentityMgr-32]
+	_ = x[FeatReadOnly-64]
+	_ = x[FeatRealFS-128]
 	_ = x[FeatSymlink-256]
 }
 
-const _Feature_name = "AbsPathBasicFsChrootIntegratedIdmMainDirsHardlinkIdentityMgrReadOnlySymlink"
+const _Feature_name = "AbsPathBasicFsChrootMainDirsHardlinkIdentityMgrReadOnlyRealFSSymlink"
 
 var _Feature_map = map[Feature]string{
 	1:   _Feature_name[0:7],
 	2:   _Feature_name[7:14],
 	4:   _Feature_name[14:20],
-	8:   _Feature_name[20:33],
-	16:  _Feature_name[33:41],
-	32:  _Feature_name[41:49],
-	64:  _Feature_name[49:60],
-	128: _Feature_name[60:68],
-	256: _Feature_name[68:75],
+	8:   _Feature_name[20:28],
+	16:  _Feature_name[28:36],
+	32:  _Feature_name[36:47],
+	64:  _Feature_name[47:55],
+	128: _Feature_name[55:61],
+	256: _Feature_name[61:68],
 }
 
 func (i Feature) String() string {

@@ -219,7 +219,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	}
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		if vfs.HasFeature(avfs.FeatIntegratedIdm) {
+		if vfs.HasFeature(avfs.FeatRealFS) {
 			return
 		}
 
@@ -580,7 +580,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	}
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		if vfs.HasFeature(avfs.FeatIntegratedIdm) {
+		if vfs.HasFeature(avfs.FeatRealFS) {
 			return
 		}
 

@@ -26,13 +26,13 @@ import (
 func New(opts ...Option) (*OsFS, error) {
 	vfs := &OsFS{
 		idm:     dummyidm.NotImplementedIdm,
-		feature: avfs.FeatBasicFs | avfs.FeatMainDirs,
+		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs,
 	}
 
 	os := vfsutils.RunTimeOS()
 	switch os {
 	case avfs.OsLinux:
-		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink | avfs.FeatIntegratedIdm
+		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
 	case avfs.OsDarwin:
 		vfs.feature |= avfs.FeatHardlink | avfs.FeatSymlink
 	}
