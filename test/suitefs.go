@@ -170,8 +170,7 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, stFuncs ...SuiteTest
 	defer sfs.User(t, sfs.initUser.Name())
 
 	for _, stFunc := range stFuncs {
-		funcName := runtime.FuncForPC(reflect.ValueOf(stFunc).Pointer()).Name()
-		funcName = funcName[strings.LastIndex(funcName, ".")+1 : strings.LastIndex(funcName, "-")]
+		funcName := functionName(stFunc)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
 		sfs.CreateTestDir(t, testDir)
@@ -195,8 +194,7 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Bench
 	defer sfs.User(b, sfs.initUser.Name())
 
 	for _, bf := range benchFuncs {
-		funcName := runtime.FuncForPC(reflect.ValueOf(bf).Pointer()).Name()
-		funcName = funcName[strings.LastIndex(funcName, ".")+1 : strings.LastIndex(funcName, "-")]
+		funcName := functionName(benchFuncs)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
 		sfs.CreateTestDir(b, testDir)
@@ -207,6 +205,29 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Bench
 
 		sfs.RemoveTestDir(b, testDir)
 	}
+}
+
+// functionName return the name of a function or an empty string if not available.
+func functionName(i interface{}) string {
+	pc := reflect.ValueOf(i).Pointer()
+	if pc == 0 {
+		return ""
+	}
+
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return ""
+	}
+
+	name := fn.Name()
+	start := strings.LastIndex(name, ".") + 1
+
+	end := strings.LastIndex(name, "-")
+	if end == -1 {
+		return name[start:]
+	}
+
+	return name[start:end]
 }
 
 // CreateTestDir creates the base directory for the tests.
