@@ -23,13 +23,11 @@ import (
 	"fmt"
 	"go/build"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -38,40 +36,31 @@ import (
 )
 
 const (
-	appName      = "avfs"
-	dockerCmd    = "docker"
-	goFumptCmd   = "gofumpt"
-	gitCmd       = "git"
-	golangCiCmd  = "golangci-lint"
-	golangCiGit  = "github.com/golangci/golangci-lint"
-	golangCiBin  = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
-	goCmd        = "go"
-	mageCmd      = "mage"
-	dockerImage  = "avfs-docker"
-	coverageFile = "coverage.txt"
-	raceCount    = 5
-	benchCount   = 5
+	dockerCmd      = "docker"
+	goFumptCmd     = "gofumpt"
+	gitCmd         = "git"
+	golangCiCmd    = "golangci-lint"
+	golangCiGit    = "github.com/golangci/golangci-lint"
+	golangCiBin    = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
+	goCmd          = "go"
+	dockerImage    = "avfs-docker"
+	coverDir       = "./coverage"
+	coverFile      = "coverage.txt"
+	dockerCoverDir = "/go/src/coverage"
+	raceCount      = 5
+	benchCount     = 5
 )
 
-// BuildAvfs builds a static binary of this script to be used on the current operating system.
-func BuildAvfs() error {
-	dir := filepath.Join(build.Default.GOPATH, "bin")
+var (
+	cwd        string
+	coverPath  string
+	coverMount string
+)
 
-	err := os.MkdirAll(dir, 0o755)
-	if err != nil {
-		log.Fatalf("MkdirAll : want error to be nil, got %v", err)
-	}
-
-	bin := appName
-	if runtime.GOOS == "windows" {
-		bin += ".exe"
-	}
-
-	path := filepath.Join(dir, bin)
-
-	log.Printf("bin : %s", path)
-
-	return sh.RunV(mageCmd, "-d", "mage", "-w", ".", "-compile", path)
+func init() {
+	cwd, _ = os.Getwd()
+	coverPath = coverDir + "/" + coverFile
+	coverMount = filepath.Join(cwd, coverDir) + ":" + dockerCoverDir
 }
 
 // Env returns the go environment variables.
@@ -125,45 +114,60 @@ func Lint() error {
 	return sh.RunV(golangCiCmd, "run", "-v")
 }
 
+// CoverInit resets the coverage file.
+func CoverInit() error {
+	err := os.WriteFile(coverPath, nil, 0o666)
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod(coverPath, 0o666)
+}
+
 // Cover opens a web browser with the latest coverage file.
 func Cover() error {
 	if isCI() {
 		return nil
 	}
 
-	return sh.RunV(goCmd, "tool", "cover", "-html="+coverageFile)
+	return sh.RunV(goCmd, "tool", "cover", "-html="+coverPath)
 }
 
 // Test runs tests with coverage.
 func Test() error {
-	mg.Deps(Env)
+	mg.Deps(CoverInit)
 
-	err := sh.Rm(coverageFile)
+	err := sh.RunV(goCmd, "test",
+		"-run=.",
+		"-race", "-v",
+		"-covermode=atomic",
+		"-coverprofile="+coverPath,
+		"./...")
 	if err != nil {
 		return err
 	}
 
-	err = sh.RunV(goCmd, "test", "-run=.", "-race", "-v", "-covermode=atomic",
-		"-coverprofile="+coverageFile, "./...")
-	if err != nil {
-		return err
-	}
-
-	Cover()
-
-	return nil
+	return Cover()
 }
 
 // Race runs data race tests.
 func Race() error {
-	return sh.RunV(goCmd, "test", "-tags=datarace", "-run=TestRace", "-race", "-v",
-		"-count="+strconv.Itoa(raceCount), "./...")
+	return sh.RunV(goCmd, "test",
+		"-tags=datarace",
+		"-run=TestRace",
+		"-race", "-v",
+		"-count="+strconv.Itoa(raceCount),
+		"./...")
 }
 
 // Bench runs benchmarks.
 func Bench() error {
-	return sh.RunV(goCmd, "test", "-run=^a", "-bench=.", "-benchmem",
-		"-count="+strconv.Itoa(benchCount), "./...")
+	return sh.RunV(goCmd, "test",
+		"-run=^a",
+		"-bench=.",
+		"-benchmem",
+		"-count="+strconv.Itoa(benchCount),
+		"./...")
 }
 
 // DockerBuild builds docker image for AVFS.
@@ -179,31 +183,27 @@ func DockerBuild() error {
 func DockerConsole() error {
 	mg.Deps(DockerBuild)
 
-	return sh.RunV(dockerCmd, "run", "-ti", dockerImage, "/bin/sh")
+	return sh.RunV(dockerCmd, "run",
+		"-ti",
+		"-v", coverMount,
+		dockerImage,
+		"/bin/sh")
 }
 
 // DockerTest runs tests in the docker image for AVFS.
 func DockerTest() error {
-	mg.Deps(DockerBuild)
+	mg.Deps(DockerBuild, CoverInit)
 
-	err := sh.RunV(dockerCmd, "run", "-ti", dockerImage)
+	err := sh.RunV(dockerCmd, "run",
+		"-ti",
+		"-v", coverMount,
+		dockerImage)
+
 	if err != nil {
 		return err
 	}
 
-	container, err := sh.Output(dockerCmd, "ps", "-alq")
-	if err != nil {
-		return err
-	}
-
-	err = sh.RunV(dockerCmd, "cp", container+":/go/src/"+coverageFile, coverageFile)
-	if err != nil {
-		return err
-	}
-
-	Cover()
-
-	return nil
+	return Cover()
 }
 
 // DockerPrune removes unused data from Docker.
@@ -214,6 +214,7 @@ func DockerPrune() error {
 // isExecutable checks if name is an executable in the current path.
 func isExecutable(name string) bool {
 	_, err := exec.LookPath(name)
+
 	return err == nil
 }
 
@@ -230,7 +231,12 @@ func gitLastVersion(repo string) (string, error) {
 		repo = "https://" + repo
 	}
 
-	out, err := sh.Output(gitCmd, "ls-remote", "--tags", "--refs", "--sort=v:refname", repo)
+	out, err := sh.Output(gitCmd, "ls-remote",
+		"--tags",
+		"--refs",
+		"--sort=v:refname",
+		repo)
+
 	if err != nil {
 		return "", err
 	}

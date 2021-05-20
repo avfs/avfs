@@ -33,16 +33,14 @@ import (
 const mageGitUrl = "https://github.com/magefile/mage"
 
 func main() {
-	if isExecutable("mage") {
-		log.Printf("mage binary already exists")
-	}
-
 	appDir, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Getwd : want error to be nil, got %v", err)
 	}
 
-	if !isExecutable("mage") {
+	if isExecutable("mage") {
+		log.Printf("mage binary already exists")
+	} else {
 		tmpDir, err := ioutil.TempDir("", "mage")
 		if err != nil {
 			log.Fatalf("TempDir : want error to be nil, got %v", err)
