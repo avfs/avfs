@@ -39,9 +39,10 @@ jobs:
         if: ${{ !startsWith(matrix.os, 'ubuntu') }}
         run: avfs test
 
-      - name: Upload linux coverage to Codecov
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
           env_vars: os,go
-          file: ./coverage.txt
+          files: ./coverage.txt
+          flags: unittests
+          verbose: true
