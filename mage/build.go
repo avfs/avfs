@@ -27,18 +27,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
+const mageGitUrl = "https://github.com/magefile/mage"
+
 func main() {
-	buildMage()
-	buildAvfs()
-	run("avfs")
-}
-
-// buildMage builds mage binary and saves it in $GOPATH/bin.
-func buildMage() {
-	const mageGitUrl = "https://github.com/magefile/mage"
-
 	if isExecutable("mage") {
 		log.Printf("mage binary already exists")
 	}
@@ -48,46 +42,64 @@ func buildMage() {
 		log.Fatalf("Getwd : want error to be nil, got %v", err)
 	}
 
-	rootDir, err := ioutil.TempDir("", "mage")
-	if err != nil {
-		log.Fatalf("TempDir : want error to be nil, got %v", err)
+	if !isExecutable("mage") {
+		tmpDir, err := ioutil.TempDir("", "mage")
+		if err != nil {
+			log.Fatalf("TempDir : want error to be nil, got %v", err)
+		}
+
+		defer os.RemoveAll(tmpDir)
+
+		err = os.Chdir(tmpDir)
+		if err != nil {
+			log.Fatalf("Chdir : want error to be nil, got %v", err)
+		}
+
+		err = run("git", "clone", "--depth=1", mageGitUrl)
+		if err != nil {
+			log.Fatalf("Git : want error to be nil, got %v", err)
+		}
+
+		err = os.Chdir("mage")
+		if err != nil {
+			log.Fatalf("Chdir : want error to be nil, got %v", err)
+		}
+
+		err = run("go", "run", "bootstrap.go")
+		if err != nil {
+			log.Fatalf("Bootstap : want error to be nil, got %v", err)
+		}
 	}
 
-	defer os.RemoveAll(rootDir)
+	mageDir := filepath.Join(appDir, "mage")
 
-	err = os.Chdir(rootDir)
+	err = os.Chdir(mageDir)
 	if err != nil {
 		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
 
-	err = run("git", "clone", "--depth=1", mageGitUrl)
+	binDir := filepath.Join(build.Default.GOPATH, "bin")
+
+	err = os.MkdirAll(binDir, 0o755)
 	if err != nil {
-		log.Fatalf("Git : want error to be nil, got %v", err)
+		log.Fatalf("MkdirAll : want error to be nil, got %v", err)
 	}
 
-	err = os.Chdir("mage")
-	if err != nil {
-		log.Fatalf("Chdir : want error to be nil, got %v", err)
+	avfsBin := "avfs"
+	if runtime.GOOS == "windows" {
+		avfsBin += ".exe"
 	}
 
-	err = run("go", "run", "bootstrap.go")
+	avfsPath := filepath.Join(binDir, avfsBin)
+
+	err = run("mage", "-compile", avfsPath)
 	if err != nil {
-		log.Fatalf("Bootstap : want error to be nil, got %v", err)
+		log.Fatalf("mage compile : want error to be nil, got %v", err)
 	}
 
-	err = os.Chdir(appDir)
+	err = run("avfs", "-l")
 	if err != nil {
-		log.Fatalf("Chdir : want error to be nil, got %v", err)
-	}
-}
-
-// buildAvfs builds avfs binary as saves it in $GOPATH/bin.
-func buildAvfs() {
-	mage := filepath.Join(build.Default.GOPATH, "bin", "mage")
-
-	err := run(mage, "-d", "mage", "-w", ".", "BuildAvfs")
-	if err != nil {
-		log.Fatalf("mage : want error to be nil, got %v", err)
+		log.Fatalf("avfs : want error to be nil, got %v", err)
 	}
 }
 
