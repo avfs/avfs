@@ -116,7 +116,12 @@ func Lint() error {
 
 // CoverInit resets the coverage file.
 func CoverInit() error {
-	err := os.WriteFile(coverPath, nil, 0o666)
+	err := os.MkdirAll(coverDir, 0o777)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(coverPath, nil, 0o666)
 	if err != nil {
 		return err
 	}
