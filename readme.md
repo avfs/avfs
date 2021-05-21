@@ -7,8 +7,8 @@ Another Virtual File System for Go
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/avfs/avfs)](https://pkg.go.dev/github.com/avfs/avfs)
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
-[![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Favfs%2Favfs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Favfs%2Favfs?ref=badge_shield)
+[![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 
 ## Overview
 
@@ -65,9 +65,9 @@ package main
 
 import (
 	"bytes"
-	"os"
 	"log"
-
+	"os"
+	
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfs/memfs"
 	"github.com/avfs/avfs/vfs/osfs"
@@ -117,6 +117,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/avfs/avfs"
@@ -183,7 +184,7 @@ a production environment at this time.
 The interface diagram below represents the main interfaces, methods and
 relations between them :
 
-<img src="avfs_diagram.svg" style="max-width:100%;">
+<img src="avfs_diagram.svg" alt="Avfs diagram" style="max-width:100%;">
 
 ## File systems
 
