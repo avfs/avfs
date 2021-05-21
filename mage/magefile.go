@@ -36,31 +36,30 @@ import (
 )
 
 const (
-	dockerCmd      = "docker"
-	goFumptCmd     = "gofumpt"
-	gitCmd         = "git"
-	golangCiCmd    = "golangci-lint"
-	golangCiGit    = "github.com/golangci/golangci-lint"
-	golangCiBin    = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
-	goCmd          = "go"
-	dockerImage    = "avfs-docker"
-	coverDir       = "./coverage"
-	coverFile      = "coverage.txt"
-	dockerCoverDir = "/go/src/coverage"
-	raceCount      = 5
-	benchCount     = 5
+	dockerCmd         = "docker"
+	goFumptCmd        = "gofumpt"
+	gitCmd            = "git"
+	golangCiCmd       = "golangci-lint"
+	golangCiGit       = "github.com/golangci/golangci-lint"
+	golangCiBin       = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
+	goCmd             = "go"
+	dockerImage       = "avfs-docker"
+	coverDir          = "./coverage"
+	coverFile         = "coverage.txt"
+	dockerCoverDir    = "/go/src/coverage"
+	dockerTestDataDir = "/go/src/test/testdata"
+	raceCount         = 5
+	benchCount        = 5
 )
 
 var (
-	cwd        string
-	coverPath  string
-	coverMount string
+	cwd       string
+	coverPath string
 )
 
 func init() {
 	cwd, _ = os.Getwd()
 	coverPath = coverDir + "/" + coverFile
-	coverMount = filepath.Join(cwd, coverDir) + ":" + dockerCoverDir
 }
 
 // Env returns the go environment variables.
@@ -77,7 +76,17 @@ func Build() error {
 // Fmt runs gofumpt on the project.
 func Fmt() error {
 	if !isExecutable(goFumptCmd) {
-		err := sh.RunV(goCmd, "get", "mvdan.cc/gofumpt")
+		err := os.Chdir(os.TempDir())
+		if err != nil {
+			return err
+		}
+
+		err = sh.RunV(goCmd, "get", "mvdan.cc/gofumpt")
+		if err != nil {
+			return err
+		}
+
+		err = os.Chdir(cwd)
 		if err != nil {
 			return err
 		}
@@ -114,21 +123,6 @@ func Lint() error {
 	return sh.RunV(golangCiCmd, "run", "-v")
 }
 
-// CoverInit resets the coverage file.
-func CoverInit() error {
-	err := os.MkdirAll(coverDir, 0o777)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(coverPath, nil, 0o666)
-	if err != nil {
-		return err
-	}
-
-	return os.Chmod(coverPath, 0o666)
-}
-
 // Cover opens a web browser with the latest coverage file.
 func Cover() error {
 	if isCI() {
@@ -140,9 +134,12 @@ func Cover() error {
 
 // Test runs tests with coverage.
 func Test() error {
-	mg.Deps(CoverInit)
+	err := coverInit()
+	if err != nil {
+		return err
+	}
 
-	err := sh.RunV(goCmd, "test",
+	err = sh.RunV(goCmd, "test",
 		"-run=.",
 		"-race", "-v",
 		"-covermode=atomic",
@@ -188,22 +185,19 @@ func DockerBuild() error {
 func DockerConsole() error {
 	mg.Deps(DockerBuild)
 
-	return sh.RunV(dockerCmd, "run",
-		"-ti",
-		"-v", coverMount,
-		dockerImage,
-		"/bin/sh")
+	return dockerTest("bash")
 }
 
-// DockerTest runs tests in the docker image for AVFS.
+// DockerTest runs tests in the docker image and displays the coverage.
 func DockerTest() error {
-	mg.Deps(DockerBuild, CoverInit)
+	mg.Deps(DockerBuild)
 
-	err := sh.RunV(dockerCmd, "run",
-		"-ti",
-		"-v", coverMount,
-		dockerImage)
+	err := coverInit()
+	if err != nil {
+		return err
+	}
 
+	err = dockerTest()
 	if err != nil {
 		return err
 	}
@@ -214,6 +208,37 @@ func DockerTest() error {
 // DockerPrune removes unused data from Docker.
 func DockerPrune() error {
 	return sh.RunV(dockerCmd, "system", "prune", "-f")
+}
+
+// dockerTest runs tests in the docker image for AVFS.
+func dockerTest(args ...string) error {
+	coverMount := filepath.Join(cwd, coverDir) + ":" + dockerCoverDir
+	testDataMount := filepath.Join(cwd, "test", "testdata") + ":" + dockerTestDataDir
+	cmdArgs := []string{
+		"run",
+		"-ti",
+		"-v", coverMount,
+		"-v", testDataMount,
+		dockerImage,
+	}
+	cmdArgs = append(cmdArgs, args...)
+
+	return sh.RunV(dockerCmd, cmdArgs...)
+}
+
+// coverInit resets the coverage file.
+func coverInit() error {
+	err := os.MkdirAll(coverDir, 0o777)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(coverPath, nil, 0o666)
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod(coverPath, 0o666)
 }
 
 // isExecutable checks if name is an executable in the current path.
@@ -241,7 +266,6 @@ func gitLastVersion(repo string) (string, error) {
 		"--refs",
 		"--sort=v:refname",
 		repo)
-
 	if err != nil {
 		return "", err
 	}
