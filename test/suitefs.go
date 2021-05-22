@@ -169,10 +169,11 @@ type SuiteTestFunc func(t *testing.T, testDir string)
 func (sfs *SuiteFS) RunTests(t *testing.T, userName string, stFuncs ...SuiteTestFunc) {
 	vfs := sfs.vfsSetup
 
-	sfs.User(t, userName)
 	defer sfs.User(t, sfs.initUser.Name())
 
 	for _, stFunc := range stFuncs {
+		sfs.User(t, userName)
+
 		funcName := functionName(stFunc)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
@@ -425,8 +426,20 @@ func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
 
 	for _, ui := range UserInfos() {
 		u := sfs.User(tb, ui.Name)
+		usrPath := vfs.Join(testDir, u.Name())
+
+		err := vfs.MkdirAll(usrPath, avfs.DefaultDirPerm)
+		if err != nil {
+			tb.Fatalf("MkdirAll %s : want error to be nil, got %v", usrPath, err)
+		}
+
+		err = vfs.Chmod(usrPath, 0o777)
+		if err != nil {
+			tb.Fatalf("Chmod %s : want error to be nil, got %v", usrPath, err)
+		}
+
 		for m := os.FileMode(0); m <= 0o777; m++ {
-			path := vfs.Join(testDir, u.Name(), fmt.Sprintf("%03o", m))
+			path := vfs.Join(usrPath, fmt.Sprintf("%03o", m))
 
 			err := vfs.MkdirAll(path, avfs.DefaultDirPerm)
 			if err != nil {
@@ -436,11 +449,6 @@ func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
 			err = vfs.Chmod(path, m)
 			if err != nil {
 				tb.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
-			}
-
-			err = vfs.Chown(path, u.Uid(), u.Gid())
-			if err != nil {
-				tb.Fatalf("Chown %s : want error to be nil, got %v", path, err)
 			}
 		}
 	}
@@ -481,6 +489,7 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 
 			err := permFunc(path)
 			if err != nil {
+				// remove testDir from error string
 				errStr = strings.ReplaceAll(err.Error(), testDir, "")
 			}
 
