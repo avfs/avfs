@@ -385,7 +385,7 @@ type PermFunc func(path string) error
 // permGoldenName returns the name of a golden file
 func (sfs *SuiteFS) permGoldenName(testDir string) string {
 	testName := filepath.Base(testDir)
-	goldenFile := fmt.Sprintf("%s-%s.golden", testName, sfs.osType)
+	goldenFile := fmt.Sprintf("perm%s.golden", testName)
 
 	return filepath.Join(testDataDir(), goldenFile)
 }
@@ -420,6 +420,8 @@ func (sfs *SuiteFS) permGoldenSave(tb testing.TB, testDir string, pt permTests) 
 	if err != nil {
 		tb.Fatalf("Marshal %s : want error to be nil, got %v", fileName, err)
 	}
+
+	sfs.User(tb, sfs.initUser.Name())
 
 	err = os.WriteFile(fileName, data, avfs.DefaultFilePerm)
 	if err != nil {

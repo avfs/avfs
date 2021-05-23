@@ -1078,6 +1078,10 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	})
 
 	t.Run("MkdirPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
 		sfs.PermGolden(t, testDir, func(path string) error {
 			testPath := vfs.Join(path, "test")
 			err := vfs.Mkdir(testPath, avfs.DefaultDirPerm)
