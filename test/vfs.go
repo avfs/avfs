@@ -211,6 +211,18 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
+
+	t.Run("ChmodPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			err := vfs.Chmod(path, 0o777)
+
+			return err
+		})
+	})
 }
 
 // TestChown tests Chown function.
