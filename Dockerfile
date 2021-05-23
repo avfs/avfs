@@ -21,7 +21,14 @@ FROM base AS avfscmd
 COPY ./mage ./mage
 RUN go run mage/build.go
 
-FROM base
+FROM base AS copyfiles
 COPY --from=avfscmd /go/bin/avfs /go/bin/avfs
-COPY . .
+COPY ./vfsutils ./vfsutils
+COPY ./*.go ./
+COPY ./go.mod ./
+COPY ./idm ./idm
+COPY ./vfs ./vfs
+COPY ./test ./test
+
+FROM copyfiles
 CMD avfs test
