@@ -1190,6 +1190,19 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 		err := vfs.MkdirAll(subDirOnFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
 	})
+
+	t.Run("MkdirAllPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			testPath := vfs.Join(path, "test")
+			err := vfs.MkdirAll(testPath, avfs.DefaultDirPerm)
+
+			return err
+		})
+	})
 }
 
 // TestOpen tests Open function.

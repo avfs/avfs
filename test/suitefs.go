@@ -493,7 +493,8 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 			err := permFunc(permDir)
 			if err != nil {
 				// Strip testDir from error string.
-				errStr = strings.ReplaceAll(err.Error(), testDir, "")
+				errStrRaw := err.Error()
+				errStr = strings.ReplaceAll(errStrRaw, testDir, "")
 			}
 
 			if create {
@@ -509,7 +510,7 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 			}
 
 			if wantErrStr != errStr {
-				tb.Errorf("%s %s: want error to be %v, got %v", testName, m, wantErrStr, err)
+				tb.Errorf("%s: want error to be %v, got %v", usrMode, wantErrStr, err)
 			}
 		}
 	}
