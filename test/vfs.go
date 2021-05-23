@@ -19,7 +19,6 @@ package test
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -1336,180 +1335,16 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t, testDir)
-		buf := make([]byte, 1)
+		fileName := sfs.NonExistingFile(t, testDir)
+		_, err := vfs.Open(fileName)
 
-		f, err := vfs.Open(nonExistingFile)
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			if err != nil {
 				t.Errorf("Truncate : want error to be nil, got %v", err)
 			}
 		default:
-			CheckPathError(t, "Open", "open", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
-		}
-
-		if f == nil {
-			t.Fatal("Open : want f to be != nil, got nil")
-		}
-
-		err = f.Chdir()
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chdir", "chdir", nonExistingFile, avfs.ErrWinNotSupported, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Chdir : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		err = f.Chmod(0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Chmod", "chmod", nonExistingFile, avfs.ErrWinNotSupported, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Chmod : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		if vfs.HasFeature(avfs.FeatIdentityMgr) {
-			err = f.Chown(0, 0)
-			if err != os.ErrInvalid {
-				t.Errorf("Chown : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		err = f.Close()
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			if err != nil {
-				t.Errorf("Truncate : want error to be nil, got %v", err)
-			}
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.Read(buf)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Read", "read", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Read : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.ReadAt(buf, 0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "ReadAt", "read", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("ReadAt : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.Readdir(-1)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Readdir", "Readdir", nonExistingFile, avfs.ErrWinPathNotFound, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Readdir : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.Readdirnames(-1)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Readdirnames", "Readdir", nonExistingFile, avfs.ErrWinPathNotFound, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Readdirnames : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.Seek(0, io.SeekStart)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Seek", "seek", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Seek : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.Stat()
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Stat", "GetFileType", nonExistingFile, avfs.ErrFileClosing, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		err = f.Sync()
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Sync", "sync", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Sync : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		err = f.Truncate(0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Truncate", "truncate", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Truncate : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.Write(buf)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Write", "write", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Write : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.WriteAt(buf, 0)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "WriteAt", "write", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("WriteAt : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		_, err = f.WriteString("")
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "WriteString", "write", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("WriteString : want error to be %v, got %v", os.ErrInvalid, err)
-			}
-		}
-
-		err = f.Close()
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, "Close", "close", nonExistingFile, os.ErrClosed, err)
-		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
-			}
+			CheckPathError(t, "Open", "open", fileName, avfs.ErrNoSuchFileOrDir, err)
 		}
 	})
 }
