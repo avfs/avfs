@@ -168,8 +168,9 @@ func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !child.setModTime(mtime, vfs.user) {
-		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	err = child.setModTime(mtime, vfs.user)
+	if err != nil {
+		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
 	return nil

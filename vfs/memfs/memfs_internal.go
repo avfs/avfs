@@ -223,17 +223,17 @@ func (bn *baseNode) checkPermission(want avfs.WantMode, u avfs.UserReader) bool 
 }
 
 // setModTime sets the modification time of the node.
-func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) bool {
+func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) error {
 	bn.mu.Lock()
 	defer bn.mu.Unlock()
 
 	if bn.uid != u.Uid() && !u.IsRoot() {
-		return false
+		return avfs.ErrOpNotPermitted
 	}
 
 	bn.mtime = mtime.UnixNano()
 
-	return true
+	return nil
 }
 
 // setOwner sets the owner of the node.

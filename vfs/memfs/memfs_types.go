@@ -74,7 +74,7 @@ type node interface {
 	setMode(mode os.FileMode, u avfs.UserReader) error
 
 	// setModTime sets the modification time of the node.
-	setModTime(mtime time.Time, u avfs.UserReader) bool
+	setModTime(mtime time.Time, u avfs.UserReader) error
 
 	// setOwner sets the owner of the node.
 	setOwner(uid, git int)
