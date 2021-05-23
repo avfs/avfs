@@ -128,6 +128,18 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 			CheckPathError(t, "Chdir", "chdir", existingFile, avfs.ErrNotADirectory, err)
 		}
 	})
+
+	t.Run("ChdirPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			err := vfs.Chdir(path)
+
+			return err
+		})
+	})
 }
 
 // TestChmod tests Chmod function.
