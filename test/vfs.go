@@ -492,6 +492,18 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 		err := vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
 		CheckPathError(t, "Chtimes", "chtimes", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
+
+	t.Run("ChtimesPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			err := vfs.Chtimes(path, time.Now(), time.Now())
+
+			return err
+		})
+	})
 }
 
 // TestClone tests Clone function.
