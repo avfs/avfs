@@ -77,7 +77,7 @@ type node interface {
 	setModTime(mtime time.Time, u avfs.UserReader) error
 
 	// setOwner sets the owner of the node.
-	setOwner(uid, git int)
+	setOwner(uid, gid int)
 
 	// size returns the size of the node.
 	size() int64

@@ -771,6 +771,18 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		err := vfs.Lchown(nonExistingFile, 0, 0)
 		CheckPathError(t, "Lchown", "lchown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
+
+	t.Run("LchownPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			err := vfs.Lchown(path, 0, 0)
+
+			return err
+		})
+	})
 }
 
 // TestLink tests Link function.
