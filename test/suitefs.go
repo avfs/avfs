@@ -162,36 +162,36 @@ func (sfs *SuiteFS) VFSSetup() avfs.VFS {
 	return sfs.vfsSetup
 }
 
-// SuiteTestFunc defines the parameters of all tests functions.
+// SuiteTestFunc is a test function to be used by RunTest.
 type SuiteTestFunc func(t *testing.T, testDir string)
 
 // RunTests runs all test functions testFuncs specified as user userName.
-func (sfs *SuiteFS) RunTests(t *testing.T, userName string, stFuncs ...SuiteTestFunc) {
+func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTestFunc) {
 	vfs := sfs.vfsSetup
 
 	defer sfs.User(t, sfs.initUser.Name())
 
-	for _, stFunc := range stFuncs {
+	for _, tf := range testFuncs {
 		sfs.User(t, userName)
 
-		funcName := functionName(stFunc)
+		funcName := functionName(tf)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
 		sfs.CreateTestDir(t, testDir)
 
 		t.Run(funcName, func(t *testing.T) {
-			stFunc(t, testDir)
+			tf(t, testDir)
 		})
 
 		sfs.RemoveTestDir(t, testDir)
 	}
 }
 
-// BenchFunc
-type BenchFunc func(b *testing.B, testDir string)
+// SuiteBenchFunc is a bench function to be used by RunBenchs.
+type SuiteBenchFunc func(b *testing.B, testDir string)
 
-// RunBenchs
-func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...BenchFunc) {
+// RunBenchs runs all benchmark functions benchFuncs specified as user userName.
+func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...SuiteBenchFunc) {
 	vfs := sfs.vfsSetup
 
 	sfs.User(b, userName)
@@ -375,6 +375,13 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestFileChown)
 }
 
+// permTests stores current permission tests where the key is composed of userName and mode
+// and the value is an error string.
+type permTests map[string]string
+
+// PermFunc returns an error depending on the permissions of the user and the file mode on the path.
+type PermFunc func(path string) error
+
 // permGoldenName returns the name of a golden file
 func (sfs *SuiteFS) permGoldenName(testDir string) string {
 	testName := filepath.Base(testDir)
@@ -454,12 +461,6 @@ func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
 	}
 }
 
-// permTests
-type permTests map[string]string
-
-// PermFunc
-type PermFunc func(path string) error
-
 // PermGolden generates or tests the golden file of the permissions for a specific function.
 func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc) {
 	vfs := sfs.vfsSetup
@@ -489,7 +490,7 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 
 			err := permFunc(path)
 			if err != nil {
-				// remove testDir from error string
+				// Strip testDir from error string.
 				errStr = strings.ReplaceAll(err.Error(), testDir, "")
 			}
 
@@ -499,7 +500,7 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 				continue
 			}
 
-			// compare
+			// Compare current error to golden file error.
 			wantErrStr, ok := pt[key]
 			if !ok {
 				tb.Errorf("%s: cant find result for %03o", testName, m)
