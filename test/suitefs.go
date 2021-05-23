@@ -432,32 +432,32 @@ func (sfs *SuiteFS) permGoldenSave(tb testing.TB, testDir string, pt permTests) 
 // permCreateDirs creates directories and sets permissions to all tests directories.
 func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
 	vfs := sfs.vfsSetup
+	sfs.User(tb, UsrTest)
 
 	for _, ui := range UserInfos() {
-		u := sfs.User(tb, ui.Name)
-		usrPath := vfs.Join(testDir, u.Name())
+		usrDir := vfs.Join(testDir, "perm", ui.Name)
 
-		err := vfs.MkdirAll(usrPath, avfs.DefaultDirPerm)
+		err := vfs.MkdirAll(usrDir, avfs.DefaultDirPerm)
 		if err != nil {
-			tb.Fatalf("MkdirAll %s : want error to be nil, got %v", usrPath, err)
+			tb.Fatalf("Mkdir %s : want error to be nil, got %v", usrDir, err)
 		}
 
-		err = vfs.Chmod(usrPath, 0o777)
+		err = vfs.Chmod(usrDir, 0o777)
 		if err != nil {
-			tb.Fatalf("Chmod %s : want error to be nil, got %v", usrPath, err)
+			tb.Fatalf("Chmod %s : want error to be nil, got %v", usrDir, err)
 		}
 
 		for m := os.FileMode(0); m <= 0o777; m++ {
-			path := vfs.Join(usrPath, fmt.Sprintf("%03o", m))
+			permDir := vfs.Join(usrDir, m.String())
 
-			err := vfs.MkdirAll(path, avfs.DefaultDirPerm)
+			err = vfs.Mkdir(permDir, avfs.DefaultDirPerm)
 			if err != nil {
-				tb.Fatalf("MkdirAll %s : want error to be nil, got %v", path, err)
+				tb.Fatalf("MkdirAll %s : want error to be nil, got %v", permDir, err)
 			}
 
-			err = vfs.Chmod(path, m)
+			err = vfs.Chmod(permDir, m)
 			if err != nil {
-				tb.Fatalf("Chmod %s : want error to be nil, got %v", path, err)
+				tb.Fatalf("Chmod %s : want error to be nil, got %v", permDir, err)
 			}
 		}
 	}
@@ -486,30 +486,30 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 	for _, ui := range UserInfos() {
 		u := sfs.User(tb, ui.Name)
 		for m := os.FileMode(0); m <= 0o777; m++ {
-			path := vfs.Join(testDir, u.Name(), fmt.Sprintf("%03o", m))
-			key := fmt.Sprintf("%s|%03o", u.Name(), m)
+			usrMode := fmt.Sprintf("%s/%s", u.Name(), m)
+			permDir := vfs.Join(testDir, "perm", usrMode)
 			errStr := ""
 
-			err := permFunc(path)
+			err := permFunc(permDir)
 			if err != nil {
 				// Strip testDir from error string.
 				errStr = strings.ReplaceAll(err.Error(), testDir, "")
 			}
 
 			if create {
-				pt[key] = errStr
+				pt[usrMode] = errStr
 
 				continue
 			}
 
 			// Compare current error to golden file error.
-			wantErrStr, ok := pt[key]
+			wantErrStr, ok := pt[usrMode]
 			if !ok {
-				tb.Errorf("%s: cant find result for %03o", testName, m)
+				tb.Errorf("%s: cant find result for %s", testName, usrMode)
 			}
 
 			if wantErrStr != errStr {
-				tb.Errorf("%s %03o: want error to be %v, got %v", testName, m, wantErrStr, err)
+				tb.Errorf("%s %s: want error to be %v, got %v", testName, m, wantErrStr, err)
 			}
 		}
 	}
