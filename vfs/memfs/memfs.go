@@ -529,7 +529,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, 
 		parent.mu.Lock()
 		defer parent.mu.Unlock()
 
-		if f.wantMode&avfs.WantWrite == 0 || !parent.checkPermission(f.wantMode, vfs.user) {
+		if f.wantMode&avfs.WantWrite == 0 || !parent.checkPermission(avfs.WantWrite|avfs.WantLookup, vfs.user) {
 			return &MemFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 

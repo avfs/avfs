@@ -533,6 +533,23 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 
 		return
 	}
+
+	t.Run("CreatePerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			newFile := vfs.Join(path, defaultFile)
+
+			f, err := vfs.Create(newFile)
+			if err == nil {
+				f.Close()
+			}
+
+			return err
+		})
+	})
 }
 
 // TestEvalSymlink tests EvalSymlink function.
