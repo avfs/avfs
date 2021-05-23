@@ -454,15 +454,19 @@ func (vfs *MemFS) MkdirAll(path string, perm os.FileMode) error {
 		return nil
 	}
 
-	if parent == nil || err != avfs.ErrNoSuchFileOrDir {
+	if parent == nil || err == avfs.ErrNotADirectory {
 		return &os.PathError{Op: op, Path: absPath[:end], Err: err}
+	}
+
+	if err != avfs.ErrNoSuchFileOrDir {
+		return &os.PathError{Op: op, Path: path, Err: err}
 	}
 
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
 	if !parent.checkPermission(avfs.WantWrite|avfs.WantLookup, vfs.user) {
-		return &os.PathError{Op: op, Path: absPath[:end], Err: avfs.ErrPermDenied}
+		return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
 
 	for dn, isLast := parent, len(absPath) <= 1; !isLast; start = end + 1 {
