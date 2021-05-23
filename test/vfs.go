@@ -97,7 +97,7 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 
 	t.Run("ChdirNonExisting", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := vfs.Join(testDir, dir.Path, "NonExistingDir")
+			path := vfs.Join(testDir, dir.Path, defaultNonExisting)
 
 			oldPath, err := vfs.Getwd()
 			if err != nil {
@@ -861,7 +861,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 	t.Run("LinkErrorDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			oldPath := vfs.Join(testDir, dir.Path)
-			newPath := vfs.Join(testDir, "WhateverDir")
+			newPath := vfs.Join(testDir, defaultDir)
 
 			err := vfs.Link(oldPath, newPath)
 			CheckLinkError(t, "Link", "link", oldPath, newPath, avfs.ErrOpNotPermitted, err)
@@ -870,8 +870,8 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 	t.Run("LinkErrorFile", func(t *testing.T) {
 		for _, file := range files {
-			InvalidPath := vfs.Join(testDir, file.Path, "OldInvalidPath")
-			NewInvalidPath := vfs.Join(pathLinks, "WhateverFile")
+			InvalidPath := vfs.Join(testDir, file.Path, defaultNonExisting)
+			NewInvalidPath := vfs.Join(pathLinks, defaultFile)
 
 			err := vfs.Link(InvalidPath, NewInvalidPath)
 			CheckLinkError(t, "Link", "link", InvalidPath, NewInvalidPath, avfs.ErrNoSuchFileOrDir, err)
@@ -1131,7 +1131,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 	t.Run("MkdirOnFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
-		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
+		subDirOnFile := vfs.Join(existingFile, defaultDir)
 
 		err := vfs.Mkdir(subDirOnFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "Mkdir", "mkdir", subDirOnFile, avfs.ErrNotADirectory, err)
@@ -1143,7 +1143,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 		}
 
 		sfs.PermGolden(t, testDir, func(path string) error {
-			testPath := vfs.Join(path, "test")
+			testPath := vfs.Join(path, defaultDir)
 			err := vfs.Mkdir(testPath, avfs.DefaultDirPerm)
 
 			return err
@@ -1245,7 +1245,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 	})
 
 	t.Run("MkdirAllSubDirOnFile", func(t *testing.T) {
-		subDirOnFile := vfs.Join(existingFile, "subDirOnFile")
+		subDirOnFile := vfs.Join(existingFile, defaultDir)
 
 		err := vfs.MkdirAll(subDirOnFile, avfs.DefaultDirPerm)
 		CheckPathError(t, "MkdirAll", "mkdir", existingFile, avfs.ErrNotADirectory, err)
@@ -1257,7 +1257,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 		}
 
 		sfs.PermGolden(t, testDir, func(path string) error {
-			testPath := vfs.Join(path, "test")
+			testPath := vfs.Join(path, defaultDir)
 			err := vfs.MkdirAll(testPath, avfs.DefaultDirPerm)
 
 			return err
@@ -1509,7 +1509,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	whateverData := []byte("whatever")
+	defaultData := []byte("Default data")
 	buf3 := make([]byte, 3)
 
 	t.Run("OpenFileWriteOnly", func(t *testing.T) {
@@ -1522,13 +1522,13 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 
 		defer f.Close()
 
-		n, err := f.Write(whateverData)
+		n, err := f.Write(defaultData)
 		if err != nil {
 			t.Errorf("Write : want error to be nil, got %v", err)
 		}
 
-		if n != len(whateverData) {
-			t.Errorf("Write : want bytes written to be %d, got %d", len(whateverData), n)
+		if n != len(defaultData) {
+			t.Errorf("Write : want bytes written to be %d, got %d", len(defaultData), n)
 		}
 
 		n, err = f.Read(buf3)
@@ -1612,7 +1612,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 
 		if n != len(appendData) {
-			t.Errorf("Write : want error to be %d, got %d", len(whateverData), n)
+			t.Errorf("Write : want error to be %d, got %d", len(defaultData), n)
 		}
 
 		_ = f.Close()
@@ -1638,7 +1638,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 
 		defer f.Close()
 
-		n, err := f.Write(whateverData)
+		n, err := f.Write(defaultData)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
@@ -1651,7 +1651,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 			t.Errorf("Write : want bytes written to be 0, got %d", n)
 		}
 
-		n, err = f.WriteAt(whateverData, 3)
+		n, err = f.WriteAt(defaultData, 3)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:

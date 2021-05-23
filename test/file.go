@@ -1041,7 +1041,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatSubDirOnFile", func(t *testing.T) {
-		path := vfs.Join(testDir, files[0].Path, "subDirOnFile")
+		path := vfs.Join(testDir, files[0].Path, defaultNonExisting)
 
 		f, err := vfs.Open(path)
 		CheckPathError(t, "Open", "open", path, avfs.ErrNotADirectory, err)
@@ -1503,10 +1503,10 @@ func (sfs *SuiteFS) TestFileWriteTime(t *testing.T, testDir string) {
 		return
 	}
 
-	data := []byte("AAABBBCCCDDD")
-	existingFile := vfs.Join(testDir, "ExistingFile.txt")
-
 	var start, end int64
+
+	data := []byte("AAABBBCCCDDD")
+	existingFile := vfs.Join(testDir, defaultFile)
 
 	f, err := vfs.Create(existingFile)
 	if err != nil {

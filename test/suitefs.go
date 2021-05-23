@@ -30,6 +30,12 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
+const (
+	defaultDir         = "defaultDir"
+	defaultFile        = "defaultFile"
+	defaultNonExisting = "defaultNonExisting"
+)
+
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
 	vfsSetup    avfs.VFS           // vfsSetup is the file system used to setup the tests (generally with read/write access).
@@ -382,12 +388,15 @@ type permTests map[string]string
 // PermFunc returns an error depending on the permissions of the user and the file mode on the path.
 type PermFunc func(path string) error
 
-// permGoldenName returns the name of a golden file
+// permGoldenName returns the name of a golden file.
 func (sfs *SuiteFS) permGoldenName(testDir string) string {
 	testName := filepath.Base(testDir)
 	goldenFile := fmt.Sprintf("perm%s.golden", testName)
 
-	return filepath.Join(testDataDir(), goldenFile)
+	_, file, _, _ := runtime.Caller(0)
+	testDataDir := filepath.Join(filepath.Dir(file), "testdata")
+
+	return filepath.Join(testDataDir, goldenFile)
 }
 
 // permGoldenLoad loads a golden file.
@@ -520,13 +529,6 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 	}
 }
 
-// testDataDir return the test data directory.
-func testDataDir() string {
-	_, file, _, _ := runtime.Caller(0)
-
-	return filepath.Join(filepath.Dir(file), "testdata")
-}
-
 // ClosedFile returns a closed avfs.File.
 func (sfs *SuiteFS) ClosedFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
 	tb.Helper()
@@ -577,14 +579,12 @@ func (sfs *SuiteFS) EmptyFile(tb testing.TB, testDir string) string {
 func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	tb.Helper()
 
-	const existingDir = "existingDir"
-
 	vfs := sfs.vfsSetup
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return vfs.Join(testDir, existingDir)
+		return vfs.Join(testDir, defaultDir)
 	}
 
-	dirName, err := vfs.TempDir(testDir, existingDir)
+	dirName, err := vfs.TempDir(testDir, defaultDir)
 	if err != nil {
 		tb.Fatalf("Mkdir %s : want error to be nil, got %v", dirName, err)
 	}
@@ -601,15 +601,13 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) string {
 	tb.Helper()
 
-	const existingFile = "existingFile"
-
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return vfs.Join(testDir, existingFile)
+		return vfs.Join(testDir, defaultFile)
 	}
 
-	f, err := vfs.TempFile(testDir, existingFile)
+	f, err := vfs.TempFile(testDir, defaultFile)
 	if err != nil {
 		tb.Fatalf("TempFile : want error to be nil, got %v", err)
 	}
@@ -633,11 +631,9 @@ func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) 
 func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	tb.Helper()
 
-	const nonExistingFile = "nonExistingFile"
-
 	vfs := sfs.vfsSetup
 
-	fileName := vfs.Join(testDir, nonExistingFile)
+	fileName := vfs.Join(testDir, defaultNonExisting)
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return fileName
 	}
