@@ -34,6 +34,7 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestCopyFile,
 		sfs.TestCreateBaseDirs,
 		sfs.TestDirExists,
+		sfs.TestExists,
 		sfs.TestHashFile,
 		sfs.TestRndTree,
 		sfs.TestSegmentPath)
@@ -158,8 +159,6 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
-	existingFile := sfs.EmptyFile(t, testDir)
-
 	t.Run("DirExistsDir", func(t *testing.T) {
 		ok, err := vfsutils.DirExists(vfs, testDir)
 		if err != nil {
@@ -172,6 +171,8 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	})
 
 	t.Run("DirExistsFile", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+
 		ok, err := vfsutils.DirExists(vfs, existingFile)
 		if err != nil {
 			t.Errorf("DirExists : want error to be nil, got %v", err)
@@ -192,6 +193,48 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 
 		if ok {
 			t.Error("DirExists : want DirExists to be false, got true")
+		}
+	})
+}
+
+// TestExists tests vfsutils.Exists function.
+func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
+
+	t.Run("ExistsDir", func(t *testing.T) {
+		ok, err := vfsutils.Exists(vfs, testDir)
+		if err != nil {
+			t.Errorf("Exists : want error to be nil, got %v", err)
+		}
+
+		if !ok {
+			t.Error("Exists : want DirExists to be true, got false")
+		}
+	})
+
+	t.Run("ExistsFile", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+
+		ok, err := vfsutils.Exists(vfs, existingFile)
+		if err != nil {
+			t.Errorf("Exists : want error to be nil, got %v", err)
+		}
+
+		if !ok {
+			t.Error("Exists : want DirExists to be true, got false")
+		}
+	})
+
+	t.Run("ExistsNotExisting", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		ok, err := vfsutils.Exists(vfs, nonExistingFile)
+		if err != nil {
+			t.Errorf("Exists : want error to be nil, got %v", err)
+		}
+
+		if ok {
+			t.Error("Exists : want Exists to be false, got true")
 		}
 	})
 }
