@@ -56,7 +56,7 @@ type MemFile struct {
 	at       int64         // at is current position in the file used by Read and Write functions.
 	dirIndex int           // dirIndex is the position of the current index for dirInfos ou dirNames slices.
 	mu       sync.RWMutex  // mu is the RWMutex used to access content of MemFile.
-	wantMode avfs.WantMode // wantMode
+	permMode avfs.PermMode // permMode
 }
 
 // Option defines the option function used for initializing MemFS.
@@ -65,10 +65,10 @@ type Option func(*MemFS) error
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {
 	// accessMode returns de access mode of the node bn.
-	accessMode(u avfs.UserReader) avfs.WantMode
+	accessMode(u avfs.UserReader) avfs.PermMode
 
-	// checkPermissionLck returns true if the current user has the wanted permissions (want) on the node.
-	checkPermissionLck(want avfs.WantMode, u avfs.UserReader) bool
+	// checkPermissionLck returns true if the current user has the desired permissions (perm) on the node.
+	checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool
 
 	// fillStatFrom returns a *fStat (implementation of os.FileInfo) from a node named name.
 	fillStatFrom(name string) *fStat

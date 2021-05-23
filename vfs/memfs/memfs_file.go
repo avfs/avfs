@@ -108,7 +108,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
-	if !f.nd.checkPermissionLck(avfs.WantWrite, f.memFS.user) {
+	if !f.nd.checkPermissionLck(avfs.PermWrite, f.memFS.user) {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -195,7 +195,7 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
 	}
 
-	if f.wantMode&avfs.WantRead == 0 {
+	if f.permMode&avfs.PermRead == 0 {
 		f.mu.RUnlock()
 
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
@@ -248,7 +248,7 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 		return 0, &os.PathError{Op: "readat", Path: f.name, Err: avfs.ErrNegativeOffset}
 	}
 
-	if f.wantMode&avfs.WantRead == 0 {
+	if f.permMode&avfs.PermRead == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
@@ -542,7 +542,7 @@ func (f *MemFile) Truncate(size int64) error {
 	}
 
 	nd, ok := f.nd.(*fileNode)
-	if !ok || f.wantMode&avfs.WantWrite == 0 {
+	if !ok || f.permMode&avfs.PermWrite == 0 {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
 	}
 
@@ -578,7 +578,7 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 	}
 
 	nd, ok := f.nd.(*fileNode)
-	if !ok || f.wantMode&avfs.WantWrite == 0 {
+	if !ok || f.permMode&avfs.PermWrite == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
@@ -625,7 +625,7 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 	}
 
 	nd, ok := f.nd.(*fileNode)
-	if !ok || f.wantMode&avfs.WantWrite == 0 {
+	if !ok || f.permMode&avfs.PermWrite == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 

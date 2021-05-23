@@ -76,7 +76,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 				return
 			}
 
-			if !c.checkPermissionLck(avfs.WantLookup, vfs.user) {
+			if !c.checkPermissionLck(avfs.PermLookup, vfs.user) {
 				err = avfs.ErrPermDenied
 
 				return
@@ -194,9 +194,9 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 // baseNode
 
 // accessMode returns de access mode of the node bn.
-func (bn *baseNode) accessMode(u avfs.UserReader) avfs.WantMode {
+func (bn *baseNode) accessMode(u avfs.UserReader) avfs.PermMode {
 	if u.IsRoot() {
-		return avfs.WantRWX
+		return avfs.PermRWX
 	}
 
 	mode := bn.mode
@@ -208,20 +208,21 @@ func (bn *baseNode) accessMode(u avfs.UserReader) avfs.WantMode {
 		mode >>= 3
 	}
 
-	return avfs.WantMode(mode)
+	return avfs.PermMode(mode)
 }
 
-// checkPermissionLck checks if the current user has the wanted permissions (want)
+// checkPermissionLck checks if the current user has the desired permissions (perm)
 // on the node using a read lock on the node.
-func (bn *baseNode) checkPermissionLck(want avfs.WantMode, u avfs.UserReader) bool {
+func (bn *baseNode) checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool {
 	bn.mu.RLock()
-	defer bn.mu.RUnlock()
+	b := bn.checkPermission(perm, u)
+	bn.mu.RUnlock()
 
-	return bn.checkPermission(want, u)
+	return b
 }
 
-// checkPermissionLck checks if the current user has the wanted permissions (want) on the node.
-func (bn *baseNode) checkPermission(want avfs.WantMode, u avfs.UserReader) bool {
+// checkPermissionLck checks if the current user has the desired permissions (perm) on the node.
+func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool {
 	if u.IsRoot() {
 		return true
 	}
@@ -235,9 +236,9 @@ func (bn *baseNode) checkPermission(want avfs.WantMode, u avfs.UserReader) bool 
 		mode >>= 3
 	}
 
-	want &= avfs.WantRWX
+	perm &= avfs.PermRWX
 
-	return avfs.WantMode(mode)&want == want
+	return avfs.PermMode(mode)&perm == perm
 }
 
 // setModTime sets the modification time of the node.

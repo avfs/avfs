@@ -512,16 +512,16 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 
 	var (
 		at      int64
-		wm      avfs.WantMode
+		wm      avfs.PermMode
 		nilFile *OrefaFile
 	)
 
 	if flag == os.O_RDONLY || flag&os.O_RDWR != 0 {
-		wm = avfs.WantRead
+		wm = avfs.PermRead
 	}
 
 	if flag&(os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC|os.O_WRONLY) != 0 {
-		wm |= avfs.WantWrite
+		wm |= avfs.PermWrite
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -549,14 +549,14 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 			return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
 		}
 
-		if wm&avfs.WantWrite == 0 {
+		if wm&avfs.PermWrite == 0 {
 			return &OrefaFile{}, &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 		}
 
 		child = vfs.createFile(parent, absPath, fileName, perm)
 	} else {
 		if child.mode.IsDir() {
-			if wm&avfs.WantWrite != 0 {
+			if wm&avfs.PermWrite != 0 {
 				return nilFile, &os.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
 			}
 		} else {
@@ -579,7 +579,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File
 	f := &OrefaFile{
 		orFS:     vfs,
 		nd:       child,
-		wantMode: wm,
+		permMode: wm,
 		name:     name,
 		at:       at,
 	}

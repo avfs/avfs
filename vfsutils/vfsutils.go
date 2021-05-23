@@ -60,28 +60,6 @@ func CreateBaseDirs(vfs avfs.VFS, basePath string) error {
 	return nil
 }
 
-// CheckPermission returns true is a user 'u' has 'want' permission on a file or directory represented by 'info'.
-func CheckPermission(info os.FileInfo, want avfs.WantMode, u avfs.UserReader) bool {
-	if u.IsRoot() {
-		return true
-	}
-
-	mode := info.Mode()
-	sst := ToSysStat(info.Sys())
-	uid, gid := sst.Uid(), sst.Gid()
-
-	switch {
-	case uid == u.Uid():
-		mode >>= 6
-	case gid == u.Gid():
-		mode >>= 3
-	}
-
-	want &= avfs.WantRWX
-
-	return avfs.WantMode(mode)&want == want
-}
-
 // CreateHomeDir creates the home directory of a user.
 func CreateHomeDir(vfs avfs.VFS, u avfs.UserReader) (avfs.UserReader, error) {
 	userDir := vfs.Join(avfs.HomeDir, u.Name())

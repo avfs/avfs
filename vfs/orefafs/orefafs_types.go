@@ -45,7 +45,7 @@ type OrefaFile struct {
 	at       int64
 	dirIndex int
 	mu       sync.RWMutex
-	wantMode avfs.WantMode
+	permMode avfs.PermMode
 }
 
 // Option defines the option function used for initializing OrefaFS.

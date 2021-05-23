@@ -175,14 +175,14 @@ const (
 	OsWindows                   // Windows
 )
 
-// WantMode defines the permissions to check for CheckPermission() function.
-type WantMode uint8
+// PermMode defines the permissions to check for CheckPermission() function.
+type PermMode uint8
 
 const (
-	WantLookup WantMode = 0o001 // WantLookup checks for lookup permission on a directory.
-	WantWrite  WantMode = 0o002 // WantWrite checks for write permission.
-	WantRead   WantMode = 0o004 // WantRead checks for read permission.
-	WantRWX    WantMode = 0o007 // WantRWX checks for all permissions.
+	PermLookup PermMode = 0o001 // PermLookup checks for lookup permission on a directory.
+	PermWrite  PermMode = 0o002 // PermWrite checks for write permission.
+	PermRead   PermMode = 0o004 // PermRead checks for read permission.
+	PermRWX    PermMode = 0o007 // PermRWX checks for all permissions.
 )
 
 // VFS is the virtual file system interface.

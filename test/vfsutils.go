@@ -19,7 +19,6 @@ package test
 import (
 	"bytes"
 	"crypto/sha512"
-	"fmt"
 	"os"
 	"strconv"
 	"testing"
@@ -32,69 +31,12 @@ import (
 // TestVFSUtils tests all VFSUtils functions.
 func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 	sfs.RunTests(t, UsrTest,
-		sfs.TestCheckPermission,
 		sfs.TestCopyFile,
 		sfs.TestCreateBaseDirs,
 		sfs.TestDirExists,
 		sfs.TestHashFile,
 		sfs.TestRndTree,
 		sfs.TestSegmentPath)
-}
-
-// TestCheckPermission tests vfsutils.CheckPermission function.
-func (sfs *SuiteFS) TestCheckPermission(t *testing.T, testDir string) {
-	vfs := sfs.VFSTest()
-
-	for perm := os.FileMode(0); perm <= 0o777; perm++ {
-		path := fmt.Sprintf("%s/file%03o", testDir, perm)
-
-		err := vfs.WriteFile(path, []byte(path), perm)
-		if err != nil {
-			t.Fatalf("WriteFile %s : want error to be nil, got %v", path, err)
-		}
-	}
-
-	for _, u := range sfs.Users {
-		_, err := vfs.User(u.Name())
-		if err != nil {
-			t.Fatalf("User %s : want error to be nil, got %v", u.Name(), err)
-		}
-
-		for perm := os.FileMode(0); perm <= 0o777; perm++ {
-			path := fmt.Sprintf("%s/file%03o", testDir, perm)
-
-			info, err := vfs.Stat(path)
-			if err != nil {
-				t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
-			}
-
-			u := vfs.CurrentUser()
-
-			wantCheckRead := vfsutils.CheckPermission(info, avfs.WantRead, u)
-			gotCheckRead := true
-
-			_, err = vfs.ReadFile(path)
-			if err != nil {
-				gotCheckRead = false
-			}
-
-			if wantCheckRead != gotCheckRead {
-				t.Errorf("CheckPermission %s : want read to be %t, got %t", path, wantCheckRead, gotCheckRead)
-			}
-
-			wantCheckWrite := vfsutils.CheckPermission(info, avfs.WantWrite, u)
-			gotCheckWrite := true
-
-			err = vfs.WriteFile(path, []byte(path), perm)
-			if err != nil {
-				gotCheckWrite = false
-			}
-
-			if wantCheckWrite != gotCheckWrite {
-				t.Errorf("CheckPermission %s : want write to be %t, got %t", path, wantCheckWrite, gotCheckWrite)
-			}
-		}
-	}
 }
 
 // TestCopyFile tests vfsutils.CopyFile function.

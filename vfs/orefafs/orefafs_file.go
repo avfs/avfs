@@ -179,7 +179,7 @@ func (f *OrefaFile) Read(b []byte) (n int, err error) {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
 	}
 
-	if f.wantMode&avfs.WantRead == 0 {
+	if f.permMode&avfs.PermRead == 0 {
 		f.mu.RUnlock()
 
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
@@ -233,7 +233,7 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 		return 0, &os.PathError{Op: "readat", Path: f.name, Err: avfs.ErrNegativeOffset}
 	}
 
-	if f.wantMode&avfs.WantRead == 0 {
+	if f.permMode&avfs.PermRead == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
@@ -543,7 +543,7 @@ func (f *OrefaFile) Truncate(size int64) error {
 	}
 
 	nd := f.nd
-	if nd.mode.IsDir() || f.wantMode&avfs.WantWrite == 0 {
+	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
 	}
 
@@ -583,7 +583,7 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 	}
 
 	nd := f.nd
-	if nd.mode.IsDir() || f.wantMode&avfs.WantWrite == 0 {
+	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
@@ -630,7 +630,7 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 	}
 
 	nd := f.nd
-	if nd.mode.IsDir() || f.wantMode&avfs.WantWrite == 0 {
+	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
