@@ -350,6 +350,18 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		err := vfs.Chown(nonExistingFile, 0, 0)
 		CheckPathError(t, "Chown", "chown", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
+
+	t.Run("ChownPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			err := vfs.Chown(path, 0, 0)
+
+			return err
+		})
+	})
 }
 
 // TestChroot tests Chroot function.

@@ -121,7 +121,7 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if !child.checkPermissionLck(avfs.WantWrite, vfs.user) {
+	if vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.user.IsRoot() {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
