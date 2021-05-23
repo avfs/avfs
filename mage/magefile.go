@@ -36,7 +36,6 @@ import (
 )
 
 const (
-	dockerCmd         = "docker"
 	goFumptCmd        = "gofumpt"
 	gitCmd            = "git"
 	golangCiCmd       = "golangci-lint"
@@ -55,11 +54,21 @@ const (
 var (
 	cwd       string
 	coverPath string
+	dockerCmd string
 )
 
 func init() {
 	cwd, _ = os.Getwd()
 	coverPath = coverDir + "/" + coverFile
+
+	switch {
+	case isExecutable("docker"):
+		dockerCmd = "docker"
+	case isExecutable("podman"):
+		dockerCmd = "podman"
+	default:
+		dockerCmd = ""
+	}
 }
 
 // Env returns the go environment variables.
@@ -174,8 +183,8 @@ func Bench() error {
 
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
-	if !isExecutable(dockerCmd) {
-		fmt.Errorf("can't find %s in the current path", dockerCmd)
+	if dockerCmd == "" {
+		return fmt.Errorf("can't find docker or podman in the current path")
 	}
 
 	return sh.RunV(dockerCmd, "build", ".", "-t", dockerImage)
