@@ -48,4 +48,4 @@ jobs:
           env_vars: OS,GO
           files: ./coverage/coverage.txt
           flags: unittests
-          verbose: true
+          verbose: false

@@ -1159,8 +1159,8 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 		}
 
 		sfs.PermGolden(t, testDir, func(path string) error {
-			testPath := vfs.Join(path, defaultDir)
-			err := vfs.Mkdir(testPath, avfs.DefaultDirPerm)
+			newDir := vfs.Join(path, "newDir")
+			err := vfs.Mkdir(newDir, avfs.DefaultDirPerm)
 
 			return err
 		})
@@ -1273,8 +1273,8 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 		}
 
 		sfs.PermGolden(t, testDir, func(path string) error {
-			testPath := vfs.Join(path, defaultDir)
-			err := vfs.MkdirAll(testPath, avfs.DefaultDirPerm)
+			newDir := vfs.Join(path, "newDir")
+			err := vfs.MkdirAll(newDir, avfs.DefaultDirPerm)
 
 			return err
 		})
@@ -1868,6 +1868,20 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 
 		err := vfs.Remove(nonExistingFile)
 		CheckPathError(t, "Remove", "remove", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+	})
+
+	t.Run("RemovePerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			removeDir := vfs.Join(path, defaultDir)
+
+			err := vfs.Remove(removeDir)
+
+			return err
+		})
 	})
 }
 

@@ -458,8 +458,9 @@ func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
 
 		for m := os.FileMode(0); m <= 0o777; m++ {
 			permDir := vfs.Join(usrDir, m.String())
+			subDir := vfs.Join(permDir, defaultDir)
 
-			err = vfs.Mkdir(permDir, avfs.DefaultDirPerm)
+			err = vfs.MkdirAll(subDir, avfs.DefaultDirPerm)
 			if err != nil {
 				tb.Fatalf("MkdirAll %s : want error to be nil, got %v", permDir, err)
 			}
