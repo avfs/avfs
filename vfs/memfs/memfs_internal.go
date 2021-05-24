@@ -193,24 +193,6 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 
 // baseNode
 
-// accessMode returns de access mode of the node bn.
-func (bn *baseNode) accessMode(u avfs.UserReader) avfs.PermMode {
-	if u.IsRoot() {
-		return avfs.PermRWX
-	}
-
-	mode := bn.mode
-
-	switch {
-	case bn.uid == u.Uid():
-		mode >>= 6
-	case bn.gid == u.Gid():
-		mode >>= 3
-	}
-
-	return avfs.PermMode(mode)
-}
-
 // checkPermissionLck checks if the current user has the desired permissions (perm)
 // on the node using a read lock on the node.
 func (bn *baseNode) checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool {
@@ -239,6 +221,24 @@ func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool 
 	perm &= avfs.PermRWX
 
 	return avfs.PermMode(mode)&perm == perm
+}
+
+// permMode returns de access mode of the node bn.
+func (bn *baseNode) permMode(u avfs.UserReader) avfs.PermMode {
+	if u.IsRoot() {
+		return avfs.PermRWX
+	}
+
+	mode := bn.mode
+
+	switch {
+	case bn.uid == u.Uid():
+		mode >>= 6
+	case bn.gid == u.Gid():
+		mode >>= 3
+	}
+
+	return avfs.PermMode(mode)
 }
 
 // setModTime sets the modification time of the node.

@@ -64,14 +64,14 @@ type Option func(*MemFS) error
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {
-	// accessMode returns de access mode of the node bn.
-	accessMode(u avfs.UserReader) avfs.PermMode
-
 	// checkPermissionLck returns true if the current user has the desired permissions (perm) on the node.
 	checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool
 
 	// fillStatFrom returns a *fStat (implementation of os.FileInfo) from a node named name.
 	fillStatFrom(name string) *fStat
+
+	// permMode returns de permission of the user u on the node bn.
+	permMode(u avfs.UserReader) avfs.PermMode
 
 	// setMode sets the permissions of the node.
 	setMode(mode os.FileMode, u avfs.UserReader) error
