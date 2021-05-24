@@ -43,11 +43,6 @@ const (
 	golangCiBin       = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
 	goCmd             = "go"
 	dockerImage       = "avfs-docker"
-	coverDir          = "./coverage"
-	coverTest         = "cover_test.txt"
-	coverTestPath     = coverDir + "/" + coverTest
-	coverRace         = "cover_race.txt"
-	coverRacePath     = coverDir + "/" + coverRace
 	dockerGoPath      = "/go/src"
 	dockerCoverDir    = dockerGoPath + "/coverage"
 	dockerTestDataDir = dockerGoPath + "/test/testdata"
@@ -56,12 +51,20 @@ const (
 )
 
 var (
-	cwd       string
-	dockerCmd string
+	cwd           string
+	dockerCmd     string
+	coverDir      string
+	coverTestPath string
+	coverRacePath string
+	testDataDir   string
 )
 
 func init() {
 	cwd, _ = os.Getwd()
+	coverDir = filepath.Join(cwd, "coverage")
+	coverTestPath = filepath.Join(coverDir, "cover_test.txt")
+	coverRacePath = filepath.Join(coverDir, "cover_race.txt")
+	testDataDir = filepath.Join(cwd, "test/testdata")
 
 	switch {
 	case isExecutable("docker"):
@@ -75,8 +78,9 @@ func init() {
 
 // Env returns the go environment variables.
 func Env() {
-	sh.RunV(goCmd, "version")
 	sh.RunV(goCmd, "env")
+	fmt.Printf("\nCoverDir=%s\nCoverTest=%s\nCoverRace=%s\nTestDataDir=%s\n",
+		coverDir, coverTestPath, coverRacePath, testDataDir)
 }
 
 // Build builds the project.
@@ -230,8 +234,8 @@ func DockerPrune() error {
 
 // dockerTest runs tests in the docker image for AVFS.
 func dockerTest(args ...string) error {
-	coverMount := filepath.Join(cwd, coverDir) + ":" + dockerCoverDir
-	testDataMount := filepath.Join(cwd, "test", "testdata") + ":" + dockerTestDataDir
+	coverMount := coverDir + ":" + dockerCoverDir
+	testDataMount := testDataDir + ":" + dockerTestDataDir
 	cmdArgs := []string{
 		"run",
 		"-ti",
