@@ -644,7 +644,6 @@ func (vfs *MemFS) Remove(name string) error {
 	defer parent.mu.Unlock()
 
 	if !child.checkPermissionLck(avfs.PermWrite, vfs.user) {
-
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 

@@ -44,22 +44,24 @@ const (
 	goCmd             = "go"
 	dockerImage       = "avfs-docker"
 	coverDir          = "./coverage"
-	coverFile         = "coverage.txt"
-	dockerCoverDir    = "/go/src/coverage"
-	dockerTestDataDir = "/go/src/test/testdata"
+	coverTest         = "cover_test.txt"
+	coverTestPath     = coverDir + "/" + coverTest
+	coverRace         = "cover_race.txt"
+	coverRacePath     = coverDir + "/" + coverRace
+	dockerGoPath      = "/go/src"
+	dockerCoverDir    = dockerGoPath + "/coverage"
+	dockerTestDataDir = dockerGoPath + "/test/testdata"
 	raceCount         = 5
 	benchCount        = 5
 )
 
 var (
 	cwd       string
-	coverPath string
 	dockerCmd string
 )
 
 func init() {
 	cwd, _ = os.Getwd()
-	coverPath = coverDir + "/" + coverFile
 
 	switch {
 	case isExecutable("docker"):
@@ -138,12 +140,12 @@ func Cover() error {
 		return nil
 	}
 
-	return sh.RunV(goCmd, "tool", "cover", "-html="+coverPath)
+	return sh.RunV(goCmd, "tool", "cover", "-html="+coverTestPath)
 }
 
 // Test runs tests with coverage.
 func Test() error {
-	err := coverInit()
+	err := coverInit(coverTestPath)
 	if err != nil {
 		return err
 	}
@@ -152,7 +154,7 @@ func Test() error {
 		"-run=.",
 		"-race", "-v",
 		"-covermode=atomic",
-		"-coverprofile="+coverPath,
+		"-coverprofile="+coverTestPath,
 		"./...")
 	if err != nil {
 		return err
@@ -163,11 +165,18 @@ func Test() error {
 
 // Race runs data race tests.
 func Race() error {
+	err := coverInit(coverRacePath)
+	if err != nil {
+		return err
+	}
+
 	return sh.RunV(goCmd, "test",
 		"-tags=datarace",
 		"-run=TestRace",
 		"-race", "-v",
 		"-count="+strconv.Itoa(raceCount),
+		"-covermode=atomic",
+		"-coverprofile="+coverRacePath,
 		"./...")
 }
 
@@ -201,7 +210,7 @@ func DockerConsole() error {
 func DockerTest() error {
 	mg.Deps(DockerBuild)
 
-	err := coverInit()
+	err := coverInit(coverTestPath)
 	if err != nil {
 		return err
 	}
@@ -230,13 +239,14 @@ func dockerTest(args ...string) error {
 		"-v", testDataMount,
 		dockerImage,
 	}
+
 	cmdArgs = append(cmdArgs, args...)
 
 	return sh.RunV(dockerCmd, cmdArgs...)
 }
 
 // coverInit resets the coverage file.
-func coverInit() error {
+func coverInit(coverPath string) error {
 	err := os.MkdirAll(coverDir, 0o777)
 	if err != nil {
 		return err
