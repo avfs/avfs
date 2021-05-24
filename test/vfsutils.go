@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"crypto/sha512"
 	"os"
+	"reflect"
 	"strconv"
 	"testing"
 
@@ -37,12 +38,18 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestExists,
 		sfs.TestHashFile,
 		sfs.TestRndTree,
-		sfs.TestSegmentPath)
+		sfs.TestSegmentPath,
+		sfs.TestToSysStat,
+		sfs.TestUmask)
 }
 
 // TestCopyFile tests vfsutils.CopyFile function.
 func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	srcFs := sfs.VFSTest()
+
+	if !srcFs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	dstFs, err := memfs.New(memfs.WithMainDirs())
 	if err != nil {
@@ -137,6 +144,10 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	err := vfsutils.CreateBaseDirs(vfs, testDir)
 	if err != nil {
 		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
@@ -158,6 +169,10 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 // TestDirExists tests vfsutils.DirExists function.
 func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	t.Run("DirExistsDir", func(t *testing.T) {
 		ok, err := vfsutils.DirExists(vfs, testDir)
@@ -201,6 +216,10 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
 	t.Run("ExistsDir", func(t *testing.T) {
 		ok, err := vfsutils.Exists(vfs, testDir)
 		if err != nil {
@@ -242,6 +261,10 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 // TestHashFile tests vfsutils.HashFile function.
 func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	rtr, err := vfsutils.NewRndTree(vfs, &vfsutils.RndTreeParams{
 		MinDepth: 1, MaxDepth: 1,
@@ -291,6 +314,10 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 // TestRndTree tests vfsutils.RndTree function.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
 
 	var (
 		ErrDepthOutOfRange    = vfsutils.ErrRndTreeOutOfRange("depth")
@@ -450,6 +477,48 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 			t.Errorf("ErrRndTreeOutOfRange : want error to be %s, got %s", wantErrStr, err.Error())
 		}
 	})
+}
+
+// TestToSysStat tests ToSysStat function.
+func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		sst := vfsutils.ToSysStat(nil)
+
+		if _, ok := sst.(*vfsutils.DummySysStat); !ok {
+			t.Errorf("ToSysStat : want result of type DummySysStat, got %s", reflect.TypeOf(sst).Name())
+		}
+
+		return
+	}
+
+	existingFile := sfs.EmptyFile(t, testDir)
+
+	fst, err := vfs.Stat(existingFile)
+	if err != nil {
+		t.Errorf("Stat : want error be nil, got %v", err)
+	}
+
+	u := vfs.CurrentUser()
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		u = sfs.vfsSetup.CurrentUser()
+	}
+
+	wantUid, wantGid := u.Uid(), u.Gid()
+
+	sst := vfsutils.ToSysStat(fst.Sys())
+
+	uid, gid := sst.Uid(), sst.Gid()
+	if uid != wantUid || gid != wantGid {
+		t.Errorf("ToSysStat : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+			wantUid, wantGid, uid, gid)
+	}
+
+	wantLink := uint64(1)
+	if sst.Nlink() != wantLink {
+		t.Errorf("ToSysStat : want Nlink to be %d, got %d", wantLink, sst.Nlink())
+	}
 }
 
 // TestUMask tests UMask functions.
