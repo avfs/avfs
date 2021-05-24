@@ -145,7 +145,7 @@ func Cover() error {
 
 // Test runs tests with coverage.
 func Test() error {
-	err := coverInit(coverTestPath)
+	err := coverInit()
 	if err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ func Test() error {
 
 // Race runs data race tests.
 func Race() error {
-	err := coverInit(coverRacePath)
+	err := coverInit()
 	if err != nil {
 		return err
 	}
@@ -210,7 +210,7 @@ func DockerConsole() error {
 func DockerTest() error {
 	mg.Deps(DockerBuild)
 
-	err := coverInit(coverTestPath)
+	err := coverInit()
 	if err != nil {
 		return err
 	}
@@ -246,18 +246,18 @@ func dockerTest(args ...string) error {
 }
 
 // coverInit resets the coverage file.
-func coverInit(coverPath string) error {
-	err := os.MkdirAll(coverDir, 0o777)
+func coverInit() error {
+	_, err := os.Stat(coverDir)
+	if err == nil {
+		return nil
+	}
+
+	err = os.MkdirAll(coverDir, 0o755)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile(coverPath, nil, 0o666)
-	if err != nil {
-		return err
-	}
-
-	return os.Chmod(coverPath, 0o666)
+	return os.Chmod(coverDir, 0o777)
 }
 
 // isExecutable checks if name is an executable in the current path.
