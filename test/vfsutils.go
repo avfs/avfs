@@ -29,23 +29,9 @@ import (
 	"github.com/avfs/avfs/vfsutils"
 )
 
-// TestVFSUtils tests all VFSUtils functions.
-func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		sfs.TestCopyFile,
-		sfs.TestCreateBaseDirs,
-		sfs.TestDirExists,
-		sfs.TestExists,
-		sfs.TestHashFile,
-		sfs.TestRndTree,
-		sfs.TestSegmentPath,
-		sfs.TestToSysStat,
-		sfs.TestUmask)
-}
-
 // TestCopyFile tests vfsutils.CopyFile function.
 func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
-	srcFs := sfs.VFSTest()
+	srcFs := sfs.VFSSetup()
 
 	if !srcFs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -142,7 +128,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 // TestCreateBaseDirs tests vfsutils.CreateBaseDirs function.
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
-	vfs := sfs.VFSTest()
+	vfs := sfs.VFSSetup()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -260,7 +246,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 
 // TestHashFile tests vfsutils.HashFile function.
 func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
-	vfs := sfs.VFSTest()
+	vfs := sfs.VFSSetup()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -313,7 +299,7 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 
 // TestRndTree tests vfsutils.RndTree function.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
-	vfs := sfs.VFSTest()
+	vfs := sfs.VFSSetup()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return

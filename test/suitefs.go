@@ -379,6 +379,18 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestLchown,
 		sfs.TestFileChmod,
 		sfs.TestFileChown)
+
+	// VfsUtils tests
+	sfs.RunTests(t, UsrTest,
+		sfs.TestCopyFile,
+		sfs.TestCreateBaseDirs,
+		sfs.TestDirExists,
+		sfs.TestExists,
+		sfs.TestHashFile,
+		sfs.TestRndTree,
+		sfs.TestSegmentPath,
+		sfs.TestToSysStat,
+		sfs.TestUmask)
 }
 
 // permTests stores current permission tests where the key is composed of userName and mode
