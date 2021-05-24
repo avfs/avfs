@@ -34,7 +34,7 @@ func TestVFSUtilsMemFS(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	sfs.TestVFSUtils(t)
 }
 
 func TestVFSUtilsOsFS(t *testing.T) {
@@ -44,7 +44,7 @@ func TestVFSUtilsOsFS(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	sfs.TestVFSUtils(t)
 }
 
 func TestVFSUtilsDummyFS(t *testing.T) {
@@ -54,5 +54,5 @@ func TestVFSUtilsDummyFS(t *testing.T) {
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	sfs.TestVFSUtils(t)
 }

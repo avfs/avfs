@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+// Package vfsutils implements some file system utility functions.
 package vfsutils
 
 import (

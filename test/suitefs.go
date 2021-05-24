@@ -308,8 +308,14 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	}
 }
 
-// TestAll runs all file systems tests.
+// TestAll runs all tests.
 func (sfs *SuiteFS) TestAll(t *testing.T) {
+	sfs.TestVFS(t)
+	sfs.TestVFSUtils(t)
+}
+
+// TestVFS runs all file system tests.
+func (sfs *SuiteFS) TestVFS(t *testing.T) {
 	sfs.RunTests(t, UsrTest,
 		// VFS tests
 		sfs.TestClone,
@@ -324,8 +330,6 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestMkdirAll,
 		sfs.TestOpen,
 		sfs.TestOpenFileWrite,
-		sfs.TestReadDir,
-		sfs.TestReadFile,
 		sfs.TestReadlink,
 		sfs.TestRemove,
 		sfs.TestRemoveAll,
@@ -333,13 +337,8 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestSameFile,
 		sfs.TestStat,
 		sfs.TestSymlink,
-		sfs.TestTempDir,
-		sfs.TestTempFile,
 		sfs.TestTruncate,
-		sfs.TestWriteFile,
 		sfs.TestWriteString,
-		sfs.TestToSysStat,
-		sfs.TestUmask,
 
 		// File tests
 		sfs.TestFileChdir,
@@ -356,8 +355,21 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestFileTruncate,
 		sfs.TestFileWrite,
 		sfs.TestFileWriteString,
-		sfs.TestFileWriteTime,
+		sfs.TestFileWriteTime)
 
+	// Tests to be run as root
+	sfs.RunTests(t, avfs.UsrRoot,
+		sfs.TestChmod,
+		sfs.TestChown,
+		sfs.TestChroot,
+		sfs.TestLchown,
+		sfs.TestFileChmod,
+		sfs.TestFileChown)
+}
+
+// TestVFSUtils runs vfsutils package tests.
+func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
+	sfs.RunTests(t, UsrTest,
 		// Path tests
 		sfs.TestAbs,
 		sfs.TestBase,
@@ -369,19 +381,16 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestJoin,
 		sfs.TestRel,
 		sfs.TestSplit,
-		sfs.TestWalk)
+		sfs.TestWalk,
 
-	// Tests to be run as root
-	sfs.RunTests(t, avfs.UsrRoot,
-		sfs.TestChmod,
-		sfs.TestChown,
-		sfs.TestChroot,
-		sfs.TestLchown,
-		sfs.TestFileChmod,
-		sfs.TestFileChown)
+		// ioutils functions
+		sfs.TestReadDir,
+		sfs.TestReadFile,
+		sfs.TestTempDir,
+		sfs.TestTempFile,
+		sfs.TestWriteFile,
 
-	// VfsUtils tests
-	sfs.RunTests(t, UsrTest,
+		// other functions
 		sfs.TestCopyFile,
 		sfs.TestCreateBaseDirs,
 		sfs.TestDirExists,
@@ -390,7 +399,8 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestRndTree,
 		sfs.TestSegmentPath,
 		sfs.TestToSysStat,
-		sfs.TestUmask)
+		sfs.TestUmask,
+	)
 }
 
 // permTests stores current permission tests where the key is composed of userName and mode
