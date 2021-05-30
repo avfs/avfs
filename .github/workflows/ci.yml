@@ -49,7 +49,6 @@ jobs:
           GO: ${{ matrix.go }}
         with:
           env_vars: OS,GO
-          directory: ./coverage
-          files: cover_test.txt,cover_race.txt
+          files: ./coverage/cover_test.txt,./coverage/cover_race.txt
           flags: unittests
           verbose: false
