@@ -40,6 +40,7 @@ const (
 type SuiteFS struct {
 	vfsSetup    avfs.VFS           // vfsSetup is the file system used to setup the tests (generally with read/write access).
 	vfsTest     avfs.VFS           // vfsTest is the file system used to run the tests.
+	initDir     string             // initDir is the initial directory of the tests.
 	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
 	rootDir     string             // rootDir is the root directory for tests.
 	Groups      []avfs.GroupReader // Groups contains the test groups created with the identity manager.
@@ -60,6 +61,10 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	vfs := vfsSetup
 	initUser := vfs.CurrentUser()
+
+	_, file, _, _ := runtime.Caller(0)
+	initDir := filepath.Dir(file)
+
 	canTestPerm := vfs.HasFeature(avfs.FeatBasicFs) &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) &&
 		initUser.IsRoot()
@@ -67,6 +72,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	sfs := &SuiteFS{
 		vfsSetup:    vfs,
 		vfsTest:     vfs,
+		initDir:     initDir,
 		initUser:    initUser,
 		rootDir:     vfs.GetTempDir(),
 		maxRace:     1000,
@@ -175,7 +181,14 @@ type SuiteTestFunc func(t *testing.T, testDir string)
 func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTestFunc) {
 	vfs := sfs.vfsSetup
 
-	defer sfs.User(t, sfs.initUser.Name())
+	defer func() {
+		sfs.User(t, sfs.initUser.Name())
+
+		err := os.Chdir(sfs.initDir)
+		if err != nil {
+			t.Fatalf("Chdir %s : want error to be nil, got %v", sfs.initDir, err)
+		}
+	}()
 
 	for _, tf := range testFuncs {
 		sfs.User(t, userName)
@@ -415,10 +428,7 @@ func (sfs *SuiteFS) permGoldenName(testDir string) string {
 	testName := filepath.Base(testDir)
 	goldenFile := fmt.Sprintf("perm%s.golden", testName)
 
-	_, file, _, _ := runtime.Caller(0)
-	testDataDir := filepath.Join(filepath.Dir(file), "testdata")
-
-	return filepath.Join(testDataDir, goldenFile)
+	return filepath.Join(sfs.initDir, "testdata", goldenFile)
 }
 
 // permGoldenLoad loads a golden file.
