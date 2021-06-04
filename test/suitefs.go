@@ -733,26 +733,25 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 	vfs := sfs.vfsSetup
 
 	RndParamsOneDir := vfsutils.RndTreeParams{
-		MinDepth:    1,
-		MaxDepth:    1,
 		MinName:     4,
 		MaxName:     32,
 		MinDirs:     10,
 		MaxDirs:     20,
 		MinFiles:    50,
 		MaxFiles:    100,
-		MinFileLen:  0,
-		MaxFileLen:  0,
+		MinFileSize: 0,
+		MaxFileSize: 0,
 		MinSymlinks: 5,
 		MaxSymlinks: 10,
+		OneLevel:    true,
 	}
 
-	rndTree, err := vfsutils.NewRndTree(vfs, &RndParamsOneDir)
+	rndTree, err := vfsutils.NewRndTree(vfs, testDir, &RndParamsOneDir)
 	if err != nil {
 		tb.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
 
-	err = rndTree.CreateTree(testDir)
+	err = rndTree.CreateTree()
 	if err != nil {
 		tb.Fatalf("rndTree.Create : want error to be nil, got %v", err)
 	}
