@@ -93,14 +93,15 @@ func TestMemFSNilPtrFile(t *testing.T) {
 	test.FileNilPtr(t, f)
 }
 
-func TestMemFSFeatures(t *testing.T) {
+func TestMemFSConfig(t *testing.T) {
 	vfs, err := memfs.New()
 	if err != nil {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	if vfs.Features()&avfs.FeatIdentityMgr != 0 {
-		t.Errorf("Features : want FeatIdentityMgr missing, got present")
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+	if vfs.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
 
 	vfs, err = memfs.New(memfs.WithIdm(memidm.New()))
@@ -108,15 +109,14 @@ func TestMemFSFeatures(t *testing.T) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	if vfs.Features()&avfs.FeatIdentityMgr == 0 {
-		t.Errorf("Features : want FeatIdentityMgr present, got missing")
+	wantFeatures = avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSymlink
+	if vfs.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
-}
 
-func TestMemFSOSType(t *testing.T) {
-	vfs, err := memfs.New()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
+	name := vfs.Name()
+	if name != "" {
+		t.Errorf("Name : want name to be empty, got %v", name)
 	}
 
 	ost := vfs.OSType()

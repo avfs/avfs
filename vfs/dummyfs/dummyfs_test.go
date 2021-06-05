@@ -51,7 +51,7 @@ func TestDummyFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestDummyFSCfg(t *testing.T) {
+func TestDummyFSConfig(t *testing.T) {
 	vfs, err := dummyfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)

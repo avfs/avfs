@@ -69,10 +69,21 @@ func TestOsFSNilPtrFile(t *testing.T) {
 	test.FileNilPtr(t, f)
 }
 
-func TestOsFSOSType(t *testing.T) {
+func TestOsFSConfig(t *testing.T) {
 	vfs, err := osfs.New()
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatMainDirs |
+		avfs.FeatHardlink | avfs.FeatRealFS | avfs.FeatSymlink
+	if vfs.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
+	}
+
+	name := vfs.Name()
+	if name != "" {
+		t.Errorf("Name : want name to be empty, got %v", name)
 	}
 
 	ost := vfs.OSType()

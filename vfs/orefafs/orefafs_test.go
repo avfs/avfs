@@ -56,21 +56,20 @@ func TestOrefaFSNilPtrFile(t *testing.T) {
 	test.FileNilPtr(t, f)
 }
 
-func TestOrefaFSFeatures(t *testing.T) {
+func TestOrefaFSConfig(t *testing.T) {
 	vfs, err := orefafs.New()
 	if err != nil {
 		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
 	}
 
-	if vfs.Features() != avfs.FeatBasicFs|avfs.FeatHardlink {
-		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatBasicFs, vfs.Features())
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink
+	if vfs.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
 	}
-}
 
-func TestOrefaFSOSType(t *testing.T) {
-	vfs, err := orefafs.New()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
+	name := vfs.Name()
+	if name != "" {
+		t.Errorf("Name : want name to be empty, got %v", name)
 	}
 
 	ost := vfs.OSType()

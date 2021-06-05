@@ -53,13 +53,23 @@ func TestRoFS(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestRoFSOSType(t *testing.T) {
+func TestRoFSConfig(t *testing.T) {
 	vfsWrite, err := memfs.New()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %v", err)
 	}
 
 	vfs := rofs.New(vfsWrite)
+
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatReadOnly | avfs.FeatSymlink
+	if vfs.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
+	}
+
+	name := vfs.Name()
+	if name != "" {
+		t.Errorf("Name : want name to be empty, got %v", name)
+	}
 
 	ost := vfs.OSType()
 	if ost != vfsWrite.OSType() {
