@@ -42,16 +42,18 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	rtr, err := vfsutils.NewRndTree(srcFs, testDir, &vfsutils.RndTreeParams{
+	rtParams := &vfsutils.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinFiles: 512, MaxFiles: 512,
 		MinFileSize: 0, MaxFileSize: 100 * 1024,
-	})
+	}
+
+	rt, err := vfsutils.NewRndTree(srcFs, testDir, rtParams)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
 
-	err = rtr.CreateTree()
+	err = rt.CreateTree()
 	if err != nil {
 		t.Fatalf("CreateTree : want error to be nil, got %v", err)
 	}
@@ -66,7 +68,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 		defer dstFs.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
 
-		for _, srcPath := range rtr.Files {
+		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
 			dstPath := vfsutils.Join(dstDir, fileName)
 
@@ -93,7 +95,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 			t.Fatalf("TempDir : want error to be nil, got %v", err)
 		}
 
-		for _, srcPath := range rtr.Files {
+		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
 			dstPath := vfsutils.Join(dstDir, fileName)
 
@@ -251,16 +253,18 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 		return
 	}
 
-	rtr, err := vfsutils.NewRndTree(vfs, testDir, &vfsutils.RndTreeParams{
+	rtParams := &vfsutils.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinFiles: 100, MaxFiles: 100,
 		MinFileSize: 16, MaxFileSize: 100 * 1024,
-	})
+	}
+
+	rt, err := vfsutils.NewRndTree(vfs, testDir, rtParams)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
 
-	err = rtr.CreateTree()
+	err = rt.CreateTree()
 	if err != nil {
 		t.Fatalf("CreateTree : want error to be nil, got %v", err)
 	}
@@ -269,7 +273,7 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 
 	h := sha512.New()
 
-	for _, fileName := range rtr.Files {
+	for _, fileName := range rt.Files {
 		content, err := vfs.ReadFile(fileName)
 		if err != nil {
 			t.Fatalf("ReadFile %s : want error to be nil, got %v", fileName, err)

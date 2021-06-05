@@ -132,7 +132,7 @@ type SymLinkParams struct {
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
 	vfs           avfs.VFS        // virtual file system.
-	baseDir       string          //
+	baseDir       string          // base directory of the random tree.
 	Dirs          []string        // all directories.
 	Files         []string        // all files.
 	SymLinks      []SymLinkParams // all symbolic links.

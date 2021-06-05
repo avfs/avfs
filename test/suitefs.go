@@ -746,17 +746,17 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 		OneLevel:    true,
 	}
 
-	rndTree, err := vfsutils.NewRndTree(vfs, testDir, &RndParamsOneDir)
+	rt, err := vfsutils.NewRndTree(vfs, testDir, &RndParamsOneDir)
 	if err != nil {
 		tb.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
 
-	err = rndTree.CreateTree()
+	err = rt.CreateTree()
 	if err != nil {
-		tb.Fatalf("rndTree.Create : want error to be nil, got %v", err)
+		tb.Fatalf("rt.Create : want error to be nil, got %v", err)
 	}
 
-	return rndTree
+	return rt
 }
 
 // Dir contains the sample directories.
