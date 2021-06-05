@@ -213,10 +213,18 @@ type SuiteBenchFunc func(b *testing.B, testDir string)
 func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...SuiteBenchFunc) {
 	vfs := sfs.vfsSetup
 
-	sfs.User(b, userName)
-	defer sfs.User(b, sfs.initUser.Name())
+	defer func() {
+		sfs.User(b, sfs.initUser.Name())
+
+		err := os.Chdir(sfs.initDir)
+		if err != nil {
+			b.Fatalf("Chdir %s : want error to be nil, got %v", sfs.initDir, err)
+		}
+	}()
 
 	for _, bf := range benchFuncs {
+		sfs.User(b, userName)
+
 		funcName := functionName(benchFuncs)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
