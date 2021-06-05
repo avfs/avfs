@@ -311,9 +311,12 @@ func (dn *dirNode) infos() []os.FileInfo {
 		return nil
 	}
 
-	dirInfos := make([]os.FileInfo, 0, l)
+	dirInfos := make([]os.FileInfo, l)
+	i := 0
+
 	for name, node := range dn.children {
-		dirInfos = append(dirInfos, node.fillStatFrom(name))
+		dirInfos[i] = node.fillStatFrom(name)
+		i++
 	}
 
 	sort.Slice(dirInfos, func(i, j int) bool { return dirInfos[i].Name() < dirInfos[j].Name() })
@@ -328,9 +331,12 @@ func (dn *dirNode) names() []string {
 		return nil
 	}
 
-	dirNames := make([]string, 0, l)
+	dirNames := make([]string, l)
+	i := 0
+
 	for name := range dn.children {
-		dirNames = append(dirNames, name)
+		dirNames[i] = name
+		i++
 	}
 
 	sort.Strings(dirNames)
