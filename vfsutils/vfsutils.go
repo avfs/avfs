@@ -101,10 +101,19 @@ func (e ErrRndTreeOutOfRange) Error() string {
 }
 
 var (
-	ErrNameOutOfRange     = ErrRndTreeOutOfRange("name")
-	ErrDirsOutOfRange     = ErrRndTreeOutOfRange("dirs")
-	ErrFilesOutOfRange    = ErrRndTreeOutOfRange("files")
+	// ErrNameOutOfRange is the error when MinName or MaxName is out of range.
+	ErrNameOutOfRange = ErrRndTreeOutOfRange("name")
+
+	// ErrDirsOutOfRange is the error when MinDirs or MaxDirs is out of range.
+	ErrDirsOutOfRange = ErrRndTreeOutOfRange("dirs")
+
+	// ErrFilesOutOfRange is the error when MinFiles or MaxFiles is out of range.
+	ErrFilesOutOfRange = ErrRndTreeOutOfRange("files")
+
+	// ErrFileSizeOutOfRange is the error when MinFileSize or MaxFileSize is out of range.
 	ErrFileSizeOutOfRange = ErrRndTreeOutOfRange("file size")
+
+	// ErrSymlinksOutOfRange is the error when MinSymlinks or MaxSymlinks is out of range.
 	ErrSymlinksOutOfRange = ErrRndTreeOutOfRange("symbolic links")
 )
 
@@ -254,7 +263,7 @@ func (rt *RndTree) CreateDirs() error {
 // CreateFiles creates random files.
 func (rt *RndTree) CreateFiles() error {
 	buf := make([]byte, rt.MaxFileSize)
-	rand.Read(buf) //nolint:gosec // No security-sensitive function.
+	rand.Read(buf)
 
 	vfs := rt.vfs
 
@@ -293,12 +302,12 @@ func (rt *RndTree) randDir(max int) string {
 		return rt.baseDir
 	}
 
-	return rt.Dirs[rand.Intn(max)] //nolint:gosec // No security-sensitive function.
+	return rt.Dirs[rand.Intn(max)]
 }
 
 // randFile returns a random file.
 func (rt *RndTree) randFile(max int) string {
-	return rt.Files[rand.Intn(max)] //nolint:gosec // No security-sensitive function.
+	return rt.Files[rand.Intn(max)]
 }
 
 // randName generates a random name.
@@ -310,7 +319,7 @@ func (rt *RndTree) randName() string {
 func randRange(min, max int) int {
 	val := min
 	if min < max {
-		val += rand.Intn(max - min) //nolint:gosec // No security-sensitive function.
+		val += rand.Intn(max - min)
 	}
 
 	return val
@@ -323,7 +332,7 @@ func randName(minName, maxName int) string {
 	var name strings.Builder
 
 	for i, s, e := 0, 0, 0; i < nbRunes; i++ {
-		switch rand.Intn(4) { //nolint:gosec // No security-sensitive function.
+		switch rand.Intn(4) {
 		case 0: // ASCII Uppercase
 			s = 65
 			e = 90
@@ -338,7 +347,7 @@ func randName(minName, maxName int) string {
 			e = 0x97f
 		}
 
-		r := rune(s + rand.Intn(e-s)) //nolint:gosec // No security-sensitive function.
+		r := rune(s + rand.Intn(e-s))
 
 		name.WriteRune(r)
 	}

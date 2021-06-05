@@ -66,7 +66,7 @@ func TestOsFSWithNoIdm(t *testing.T) {
 func TestOsFSNilPtrFile(t *testing.T) {
 	f := (*os.File)(nil)
 
-	test.TestFileNilPtr(t, f)
+	test.FileNilPtr(t, f)
 }
 
 func TestOsFSOSType(t *testing.T) {

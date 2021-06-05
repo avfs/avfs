@@ -53,7 +53,7 @@ func TestOrefaFS(t *testing.T) {
 func TestOrefaFSNilPtrFile(t *testing.T) {
 	f := (*orefafs.OrefaFile)(nil)
 
-	test.TestFileNilPtr(t, f)
+	test.FileNilPtr(t, f)
 }
 
 func TestOrefaFSFeatures(t *testing.T) {

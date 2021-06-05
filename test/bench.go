@@ -39,8 +39,8 @@ func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 
 		for n := 0; n < b.N; n++ {
 			nbDirs := int32(len(dirs))
-			parent := dirs[rand.Int31n(nbDirs)]                             //nolint:gosec // No security-sensitive function.
-			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10)) //nolint:gosec // No security-sensitive function.
+			parent := dirs[rand.Int31n(nbDirs)]
+			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10))
 			dirs = append(dirs, path)
 		}
 

@@ -188,10 +188,9 @@ linters:
     - gofumpt
     #- goheader
     - goimports
-    - golint
     #- gomnd
     - goprintffuncname
-    - gosec
+    #- gosec
     - gosimple
     - govet
     - ineffassign
@@ -203,6 +202,7 @@ linters:
     - noctx
     - nolintlint
     - prealloc
+    - revive
     - rowserrcheck
     - sqlclosecheck
     - staticcheck
@@ -223,8 +223,11 @@ issues:
   exclude-rules:
     - text: ".*id.* should be .*ID.*"
       linters:
-        - golint
+        - revive
         - stylecheck
+    - text: "exported: exported const"
+      linters:
+        - revive
     - text: "Line contains TODO/BUG/FIXME"
       linters:
         - godox

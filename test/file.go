@@ -373,8 +373,8 @@ func (sfs *SuiteFS) TestFileName(t *testing.T, testDir string) {
 	}
 }
 
-// TestFileNilPtr test calls to File methods when f is a nil File.
-func TestFileNilPtr(t *testing.T, f avfs.File) {
+// FileNilPtr test calls to File methods when f is a nil File.
+func FileNilPtr(t *testing.T, f avfs.File) {
 	err := f.Chdir()
 	CheckInvalid(t, "Chdir", err)
 

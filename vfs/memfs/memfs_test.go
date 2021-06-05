@@ -90,7 +90,7 @@ func TestMemFSOptionName(t *testing.T) {
 func TestMemFSNilPtrFile(t *testing.T) {
 	f := (*memfs.MemFile)(nil)
 
-	test.TestFileNilPtr(t, f)
+	test.FileNilPtr(t, f)
 }
 
 func TestMemFSFeatures(t *testing.T) {
