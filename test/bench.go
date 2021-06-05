@@ -25,8 +25,9 @@ import (
 )
 
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
-	sfs.RunBenchs(b, UsrTest, sfs.BenchCreate)
-	sfs.RunBenchs(b, UsrTest, sfs.BenchMkdir)
+	sfs.RunBenchs(b, UsrTest,
+		sfs.BenchCreate,
+		sfs.BenchMkdir)
 }
 
 // BenchMkdir benchmarks Mkdir function.
@@ -34,14 +35,13 @@ func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
 
 	b.Run("Mkdir", func(b *testing.B) {
-		dirs := make([]string, 0, b.N)
-		dirs = append(dirs, testDir)
+		dirs := make([]string, b.N)
+		dirs[0] = testDir
 
-		for n := 0; n < b.N; n++ {
-			nbDirs := int32(len(dirs))
-			parent := dirs[rand.Int31n(nbDirs)]
+		for n := 1; n < b.N; n++ {
+			parent := dirs[rand.Intn(n)]
 			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10))
-			dirs = append(dirs, path)
+			dirs[n] = path
 		}
 
 		b.ReportAllocs()
@@ -58,11 +58,11 @@ func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
 
 	b.Run("Create", func(b *testing.B) {
-		files := make([]string, 0, b.N)
+		files := make([]string, b.N)
 
 		for n := 0; n < b.N; n++ {
-			path := vfs.Join(testDir, strconv.FormatInt(int64(n), 10))
-			files = append(files, path)
+			path := vfs.Join(testDir, strconv.FormatUint(uint64(n), 10))
+			files[n] = path
 		}
 
 		b.ReportAllocs()
