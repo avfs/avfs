@@ -225,7 +225,7 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Suite
 	for _, bf := range benchFuncs {
 		sfs.User(b, userName)
 
-		funcName := functionName(benchFuncs)
+		funcName := functionName(bf)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
 		sfs.CreateTestDir(b, testDir)
