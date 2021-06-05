@@ -20,25 +20,13 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs/idm/memidm"
-	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/dummyfs"
 	"github.com/avfs/avfs/vfs/memfs"
-	"github.com/avfs/avfs/vfs/osfs"
 )
 
 func TestVFSUtilsMemFS(t *testing.T) {
 	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
-
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestVFSUtils(t)
-}
-
-func TestVFSUtilsOsFS(t *testing.T) {
-	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
 	if err != nil {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}

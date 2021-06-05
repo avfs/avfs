@@ -124,23 +124,23 @@ type RndTreeParams struct {
 	OneLevel    bool //
 }
 
+// SymLinkParams contains parameters to create a symbolic link.
+type SymLinkParams struct {
+	OldName, NewName string
+}
+
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
-	vfs           avfs.VFS // virtual file system.
-	baseDir       string   //
-	Dirs          []string // all directories.
-	Files         []string // all files.
-	SymLinks      []string // all symbolic links.
-	RndTreeParams          // parameters of the tree.
+	vfs           avfs.VFS        // virtual file system.
+	baseDir       string          //
+	Dirs          []string        // all directories.
+	Files         []string        // all files.
+	SymLinks      []SymLinkParams // all symbolic links.
+	RndTreeParams                 // parameters of the tree.
 }
 
 // NewRndTree returns a new random tree generator.
 func NewRndTree(vfs avfs.VFS, baseDir string, p *RndTreeParams) (*RndTree, error) {
-	_, err := vfs.Stat(baseDir)
-	if err != nil {
-		return nil, err
-	}
-
 	if p.MinName < 1 || p.MinName > p.MaxName {
 		return nil, ErrNameOutOfRange
 	}
@@ -167,116 +167,128 @@ func NewRndTree(vfs avfs.VFS, baseDir string, p *RndTreeParams) (*RndTree, error
 		RndTreeParams: *p,
 	}
 
+	rt.generateDirs()
+	rt.generateFiles()
+	rt.generateSymlinks()
+
 	return rt, nil
 }
 
-// CreateTree creates a random tree structure.
-func (rt *RndTree) CreateTree() error {
-	return rt.CreateSymlinks()
-}
-
-// CreateDirs creates random directories.
-func (rt *RndTree) CreateDirs() error {
-	if rt.Dirs != nil {
-		return nil
-	}
-
+// generateDirs generates random directories.
+func (rt *RndTree) generateDirs() {
 	nbDirs := randRange(rt.MinDirs, rt.MaxDirs)
 	rt.Dirs = make([]string, nbDirs)
 	vfs := rt.vfs
 
 	for i := 0; i < nbDirs; i++ {
-		parent := rt.RandDir(i)
-		newDir := vfs.Join(parent, rt.RandName())
+		parent := rt.randDir(i)
+		newDir := vfs.Join(parent, rt.randName())
+		rt.Dirs[i] = newDir
+	}
+}
 
-		err := vfs.Mkdir(newDir, avfs.DefaultDirPerm)
+// generateFiles generates random files from existing directories.
+func (rt *RndTree) generateFiles() {
+	nbFiles := randRange(rt.MinFiles, rt.MaxFiles)
+	rt.Files = make([]string, nbFiles)
+	vfs := rt.vfs
+
+	for i := 0; i < nbFiles; i++ {
+		parent := rt.randDir(len(rt.Dirs))
+		newFile := vfs.Join(parent, rt.randName())
+		rt.Files[i] = newFile
+	}
+}
+
+// generateSymlinks generate random symbolic links from existing random files and directories.
+func (rt *RndTree) generateSymlinks() {
+	vfs := rt.vfs
+	if !vfs.HasFeature(avfs.FeatSymlink) {
+		return
+	}
+
+	nbSymlinks := randRange(rt.MinSymlinks, rt.MaxSymlinks)
+	rt.SymLinks = make([]SymLinkParams, nbSymlinks)
+
+	for i := 0; i < nbSymlinks; i++ {
+		oldName := rt.randFile(len(rt.Files))
+		newName := vfs.Join(rt.randDir(len(rt.Dirs)), rt.randName())
+		rt.SymLinks[i] = SymLinkParams{OldName: oldName, NewName: newName}
+	}
+}
+
+// CreateTree creates a random tree structure.
+func (rt *RndTree) CreateTree() error {
+	err := rt.CreateDirs()
+	if err != nil {
+		return err
+	}
+
+	err = rt.CreateFiles()
+	if err != nil {
+		return err
+	}
+
+	return rt.CreateSymlinks()
+}
+
+// CreateDirs creates random directories.
+func (rt *RndTree) CreateDirs() error {
+	vfs := rt.vfs
+
+	err := vfs.MkdirAll(rt.baseDir, avfs.DefaultDirPerm)
+	if err != nil {
+		return err
+	}
+
+	for _, dirName := range rt.Dirs {
+		err = vfs.Mkdir(dirName, avfs.DefaultDirPerm)
 		if err != nil {
 			return err
 		}
-
-		rt.Dirs[i] = newDir
 	}
 
 	return nil
 }
 
-// CreateFiles generates random files from already created directories.
+// CreateFiles creates random files.
 func (rt *RndTree) CreateFiles() error {
-	if rt.Files != nil {
-		return nil
-	}
-
-	if rt.Dirs == nil {
-		err := rt.CreateDirs()
-		if err != nil {
-			return err
-		}
-	}
-
-	nbFiles := randRange(rt.MinFiles, rt.MaxFiles)
-	rt.Files = make([]string, nbFiles)
-
 	buf := make([]byte, rt.MaxFileSize)
 	rand.Read(buf) //nolint:gosec // No security-sensitive function.
 
 	vfs := rt.vfs
 
-	for i := 0; i < nbFiles; i++ {
-		parent := rt.RandDir(len(rt.Dirs))
-		newFile := vfs.Join(parent, rt.RandName())
+	for _, fileName := range rt.Files {
 		size := randRange(rt.MinFileSize, rt.MaxFileSize)
 
-		err := vfs.WriteFile(newFile, buf[:size], avfs.DefaultFilePerm)
+		err := vfs.WriteFile(fileName, buf[:size], avfs.DefaultFilePerm)
 		if err != nil {
 			return err
 		}
-
-		rt.Files[i] = newFile
 	}
 
 	return nil
 }
 
-// CreateSymlinks creates random symbolic links from existing random files and directories.
+// CreateSymlinks creates random symbolic links.
 func (rt *RndTree) CreateSymlinks() error {
-	if rt.SymLinks != nil {
-		return nil
-	}
-
-	if rt.Files == nil {
-		err := rt.CreateFiles()
-		if err != nil {
-			return err
-		}
-	}
-
 	vfs := rt.vfs
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
 	}
 
-	nbSymlinks := randRange(rt.MinSymlinks, rt.MaxSymlinks)
-	rt.SymLinks = make([]string, nbSymlinks)
-
-	for i := 0; i < nbSymlinks; i++ {
-		fileIdx := rand.Intn(len(rt.Files)) //nolint:gosec // No security-sensitive function.
-		oldName := rt.Files[fileIdx]
-		parent := rt.RandDir(len(rt.Dirs))
-		newName := vfs.Join(parent, rt.RandName())
-
-		err := rt.vfs.Symlink(oldName, newName)
+	for _, symlink := range rt.SymLinks {
+		err := vfs.Symlink(symlink.OldName, symlink.NewName)
 		if err != nil {
 			return err
 		}
-
-		rt.SymLinks[i] = newName
 	}
 
 	return nil
 }
 
-// RandDir returns a random directory.
-func (rt *RndTree) RandDir(max int) string {
+// randDir returns a random directory.
+func (rt *RndTree) randDir(max int) string {
 	if rt.OneLevel || max <= 0 {
 		return rt.baseDir
 	}
@@ -284,9 +296,24 @@ func (rt *RndTree) RandDir(max int) string {
 	return rt.Dirs[rand.Intn(max)] //nolint:gosec // No security-sensitive function.
 }
 
-// RandName generates a random name.
-func (rt *RndTree) RandName() string {
+// randFile returns a random file.
+func (rt *RndTree) randFile(max int) string {
+	return rt.Files[rand.Intn(max)] //nolint:gosec // No security-sensitive function.
+}
+
+// randName generates a random name.
+func (rt *RndTree) randName() string {
 	return randName(rt.MinName, rt.MaxName)
+}
+
+// randRange returns a random integer between min and max.
+func randRange(min, max int) int {
+	val := min
+	if min < max {
+		val += rand.Intn(max - min) //nolint:gosec // No security-sensitive function.
+	}
+
+	return val
 }
 
 // randName generates a random name using different sets of runes (ASCII, Cyrillic, Devanagari).
@@ -317,16 +344,6 @@ func randName(minName, maxName int) string {
 	}
 
 	return name.String()
-}
-
-// randRange returns a random integer between min and max.
-func randRange(min, max int) int {
-	val := min
-	if min < max {
-		val += rand.Intn(max - min) //nolint:gosec // No security-sensitive function.
-	}
-
-	return val
 }
 
 // RunTimeOS returns the current Operating System type.
