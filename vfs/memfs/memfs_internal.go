@@ -76,12 +76,16 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 				return
 			}
 
-			if !c.checkPermissionLck(avfs.PermLookup, vfs.user) {
+			c.mu.RLock()
+			if !c.checkPermission(avfs.PermLookup, vfs.user) {
+				c.mu.RUnlock()
+
 				err = avfs.ErrPermDenied
 
 				return
 			}
 
+			c.mu.RUnlock()
 			parent = c
 
 		case *fileNode:
@@ -196,17 +200,7 @@ func (bn *baseNode) base() *baseNode {
 	return bn
 }
 
-// checkPermissionLck checks if the current user has the desired permissions (perm)
-// on the node using a read lock on the node.
-func (bn *baseNode) checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool {
-	bn.mu.RLock()
-	b := bn.checkPermission(perm, u)
-	bn.mu.RUnlock()
-
-	return b
-}
-
-// checkPermissionLck checks if the current user has the desired permissions (perm) on the node.
+// checkPermission checks if the current user has the desired permissions (perm) on the node.
 func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool {
 	if u.IsRoot() {
 		return true

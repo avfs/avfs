@@ -63,7 +63,10 @@ func (vfs *MemFS) Chdir(dir string) error {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrNotADirectory}
 	}
 
-	if !c.checkPermissionLck(avfs.PermLookup, vfs.user) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if !c.checkPermission(avfs.PermLookup, vfs.user) {
 		return &os.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 	}
 
@@ -376,7 +379,10 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
-	if !nParent.checkPermissionLck(avfs.PermWrite, vfs.user) {
+	nParent.mu.Lock()
+	defer nParent.mu.Unlock()
+
+	if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -387,12 +393,10 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 
 	part := absPath[start:end]
 
-	nParent.mu.Lock()
 	c.mu.Lock()
 	nParent.addChild(part, c)
 	c.nlink++
 	c.mu.Unlock()
-	nParent.mu.Unlock()
 
 	return nil
 }
@@ -656,7 +660,12 @@ func (vfs *MemFS) Remove(name string) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	if !child.checkPermissionLck(avfs.PermWrite, vfs.user) {
+	bn := child.base()
+
+	bn.mu.Lock()
+	defer bn.mu.Unlock()
+
+	if !bn.checkPermission(avfs.PermWrite, vfs.user) {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 
@@ -674,9 +683,7 @@ func (vfs *MemFS) Remove(name string) error {
 	parent.removeChild(part)
 
 	if c, ok := child.(*fileNode); ok {
-		c.mu.Lock()
 		c.deleteData()
-		c.mu.Unlock()
 	}
 
 	return nil
@@ -704,9 +711,14 @@ func (vfs *MemFS) RemoveAll(path string) error {
 		return &os.PathError{Op: op, Path: path, Err: err}
 	}
 
-	if !parent.checkPermissionLck(avfs.PermWrite, vfs.user) {
+	parent.mu.Lock()
+	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
+		parent.mu.Unlock()
+
 		return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
+
+	parent.mu.Unlock()
 
 	var rs removeStack
 
@@ -750,67 +762,65 @@ func (vfs *MemFS) RemoveAll(path string) error {
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (vfs *MemFS) Rename(oldname, newname string) error {
+func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	const op = "rename"
 
-	oparent, ochild, oabsPath, ostart, oend, oerr := vfs.searchNode(oldname, slmLstat)
-	if oerr != avfs.ErrFileExists {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: oerr}
+	oParent, oChild, oAbsPath, oStart, oEnd, oErr := vfs.searchNode(oldpath, slmLstat)
+	if oErr != avfs.ErrFileExists || oParent == nil {
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: oErr}
 	}
 
-	if oparent == nil || !oparent.checkPermissionLck(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	nParent, nChild, nAbsPath, nStart, nEnd, nErr := vfs.searchNode(newpath, slmLstat)
+	if !(nErr == avfs.ErrFileExists || nErr == avfs.ErrNoSuchFileOrDir) || nParent == nil {
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 	}
 
-	nparent, nchild, nabsPath, nstart, nend, nerr := vfs.searchNode(newname, slmLstat)
-	if nparent == nil || !nparent.checkPermissionLck(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	oParent.mu.Lock()
+	defer oParent.mu.Unlock()
+
+	if nParent != oParent {
+		nParent.mu.Lock()
+		defer nParent.mu.Unlock()
 	}
 
-	if oabsPath == nabsPath {
+	if !oParent.checkPermission(avfs.PermWrite, vfs.user) {
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrPermDenied}
+	}
+
+	if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrPermDenied}
+	}
+
+	if oAbsPath == nAbsPath {
 		return nil
 	}
 
-	npart := nabsPath[nstart:nend]
-	opart := oabsPath[ostart:oend]
+	nPart := nAbsPath[nStart:nEnd]
+	oPart := oAbsPath[oStart:oEnd]
 
-	switch ochild.(type) {
+	switch oChild.(type) {
 	case *dirNode:
-		if nerr != avfs.ErrNoSuchFileOrDir {
-			return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
+		if nErr != avfs.ErrNoSuchFileOrDir {
+			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 		}
 
 	case *fileNode:
-		if nchild == nil {
+		if nChild == nil {
 			break
 		}
 
-		switch nc := nchild.(type) {
+		switch nc := nChild.(type) {
 		case *fileNode:
-			nc.mu.Lock()
 			nc.deleteData()
-			nc.mu.Unlock()
 		default:
-			return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
+			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrFileExists}
 		}
 	default:
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrPermDenied}
 	}
 
-	nparent.mu.Lock()
-
-	if nparent != oparent {
-		oparent.mu.Lock()
-	}
-
-	nparent.addChild(npart, ochild)
-	oparent.removeChild(opart)
-
-	if nparent != oparent {
-		oparent.mu.Unlock()
-	}
-
-	nparent.mu.Unlock()
+	nParent.addChild(nPart, oChild)
+	oParent.removeChild(oPart)
 
 	return nil
 }
@@ -870,16 +880,17 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
-	if !parent.checkPermissionLck(avfs.PermWrite, vfs.user) {
+	parent.mu.Lock()
+	defer parent.mu.Unlock()
+
+	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 	}
 
 	link := vfsutils.Clean(oldname)
 	part := absPath[start:end]
 
-	parent.mu.Lock()
 	vfs.createSymlink(parent, part, link)
-	parent.mu.Unlock()
 
 	return nil
 }

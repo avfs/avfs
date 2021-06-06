@@ -66,8 +66,8 @@ type node interface {
 	// base returns the baseNode.
 	base() *baseNode
 
-	// checkPermissionLck returns true if the current user has the desired permissions (perm) on the node.
-	checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool
+	// checkPermission returns true if the current user has the desired permissions (perm) on the node.
+	checkPermission(perm avfs.PermMode, u avfs.UserReader) bool
 
 	// fillStatFrom returns a *fStat (implementation of os.FileInfo) from a node named name.
 	fillStatFrom(name string) *fStat
