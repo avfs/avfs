@@ -64,6 +64,9 @@ type Option func(*MemFS) error
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {
+	// base returns the baseNode.
+	base() *baseNode
+
 	// checkPermissionLck returns true if the current user has the desired permissions (perm) on the node.
 	checkPermissionLck(perm avfs.PermMode, u avfs.UserReader) bool
 
@@ -78,9 +81,6 @@ type node interface {
 
 	// setModTime sets the modification time of the node.
 	setModTime(mtime time.Time, u avfs.UserReader) error
-
-	// setOwner sets the owner of the node.
-	setOwner(uid, gid int)
 
 	// size returns the size of the node.
 	size() int64

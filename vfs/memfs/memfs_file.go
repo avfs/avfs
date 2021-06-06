@@ -108,11 +108,16 @@ func (f *MemFile) Chown(uid, gid int) error {
 		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
-	if !f.nd.checkPermissionLck(avfs.PermWrite, f.memFS.user) {
+	bn := f.nd.base()
+
+	bn.mu.Lock()
+	defer bn.mu.Unlock()
+
+	if !bn.checkPermission(avfs.PermWrite, f.memFS.user) {
 		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
 	}
 
-	f.nd.setOwner(uid, gid)
+	bn.setOwner(uid, gid)
 
 	return nil
 }

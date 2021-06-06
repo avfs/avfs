@@ -125,7 +125,11 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
-	child.setOwner(uid, gid)
+	bn := child.base()
+
+	bn.mu.Lock()
+	bn.setOwner(uid, gid)
+	bn.mu.Unlock()
 
 	return nil
 }
@@ -343,7 +347,11 @@ func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
-	child.setOwner(uid, gid)
+	bn := child.base()
+
+	bn.mu.Lock()
+	bn.setOwner(uid, gid)
+	bn.mu.Unlock()
 
 	return nil
 }

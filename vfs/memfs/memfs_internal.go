@@ -41,7 +41,7 @@ import (
 //  ErrPermDenied when the current user doesn't have permissions on one of the nodes on the path
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
-func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // , consider to simplif
+func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // consider to simplify the function
 	parent *dirNode, child node, absPath string, start, end int, err error) {
 	absPath = path
 	if !vfs.HasFeature(avfs.FeatAbsPath) {
@@ -191,7 +191,10 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 	return child
 }
 
-// baseNode
+// base returns the baseNode.
+func (bn *baseNode) base() *baseNode {
+	return bn
+}
 
 // checkPermissionLck checks if the current user has the desired permissions (perm)
 // on the node using a read lock on the node.
@@ -257,10 +260,8 @@ func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) error {
 
 // setOwner sets the owner of the node.
 func (bn *baseNode) setOwner(uid, gid int) {
-	bn.mu.Lock()
 	bn.uid = uid
 	bn.gid = gid
-	bn.mu.Unlock()
 }
 
 // dirNode
