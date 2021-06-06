@@ -22,8 +22,9 @@ COPY ./bin/avfs* /gopath/bin/
 COPY ./*.go ./
 COPY ./go.mod ./
 COPY ./idm ./idm
-COPY ./vfs ./vfs
+COPY ./mage ./mage
 COPY ./test ./test
+COPY ./vfs ./vfs
 COPY ./vfsutils ./vfsutils
 
 FROM copyfiles

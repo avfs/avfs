@@ -61,8 +61,8 @@ var (
 )
 
 func init() {
-	_, file, _, _ := runtime.Caller(0)
-	appDir = filepath.Dir(filepath.Dir(file))
+	appDir, _ = os.Getwd()
+	appDir = strings.TrimSuffix(appDir, "mage")
 
 	coverDir = filepath.Join(appDir, "coverage")
 	coverTestPath = filepath.Join(coverDir, "cover_test.txt")
@@ -90,8 +90,17 @@ func init() {
 // Env returns the go environment variables.
 func Env() {
 	sh.RunV(goCmd, "env")
-	fmt.Printf("\nCoverDir=%s\nCoverTest=%s\nCoverRace=%s\nTestDataDir=%s\n",
-		coverDir, coverTestPath, coverRacePath, testDataDir)
+	fmt.Printf(`
+appDir=%s
+coverDir=%s
+coverTestPath=%s
+coverRacePath=%s
+testDataDir=%s
+dockerGoPath=%s
+dockerCoverDir=%s
+dockerTestDataDir=%s`,
+		appDir, coverDir, coverTestPath, coverRacePath,
+		testDataDir, dockerGoPath, dockerCoverDir, dockerTestDataDir)
 }
 
 // Build builds the project.

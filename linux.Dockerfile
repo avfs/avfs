@@ -17,18 +17,14 @@
 FROM golang:buster AS base
 WORKDIR /go/src
 
-FROM base AS avfscmd
-COPY ./mage ./mage
-RUN go run mage/build.go
-
 FROM base AS copyfiles
-COPY --from=avfscmd /go/bin/avfs /go/bin/avfs
-COPY ./vfsutils ./vfsutils
+COPY ./bin/avfs* /gopath/bin/
 COPY ./*.go ./
 COPY ./go.mod ./
 COPY ./idm ./idm
-COPY ./vfs ./vfs
 COPY ./test ./test
+COPY ./vfs ./vfs
+COPY ./vfsutils ./vfsutils
 
 FROM copyfiles
 CMD avfs test
