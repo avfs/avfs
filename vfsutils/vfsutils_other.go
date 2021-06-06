@@ -28,12 +28,12 @@ import (
 // it must be set to be read, so it must be protected with a mutex.
 type UMaskType struct{}
 
-// GetUMask returns the file mode creation mask.
+// Get returns the file mode creation mask.
 func (um *UMaskType) Get() os.FileMode {
 	return 0o022
 }
 
-// UMask sets the file mode creation mask.
+// Set sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask os.FileMode) {
