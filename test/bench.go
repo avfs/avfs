@@ -22,35 +22,14 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
 	sfs.RunBenchs(b, UsrTest,
 		sfs.BenchCreate,
-		sfs.BenchMkdir)
-}
-
-// BenchMkdir benchmarks Mkdir function.
-func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
-
-	b.Run("Mkdir", func(b *testing.B) {
-		dirs := make([]string, b.N)
-		dirs[0] = testDir
-
-		for n := 1; n < b.N; n++ {
-			parent := dirs[rand.Intn(n)]
-			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10))
-			dirs[n] = path
-		}
-
-		b.ReportAllocs()
-		b.ResetTimer()
-
-		for n := 0; n < b.N; n++ {
-			_ = vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
-		}
-	})
+		sfs.BenchMkdir,
+		sfs.BenchRemove)
 }
 
 // BenchCreate benchmarks Create function.
@@ -79,6 +58,58 @@ func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 			if err != nil {
 				b.Fatalf("Close %s, want error to be nil, got %v", fileName, err)
 			}
+		}
+	})
+}
+
+// BenchMkdir benchmarks Mkdir function.
+func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
+	vfs := sfs.vfsTest
+
+	b.Run("Mkdir", func(b *testing.B) {
+		dirs := make([]string, b.N)
+		dirs[0] = testDir
+
+		for n := 1; n < b.N; n++ {
+			parent := dirs[rand.Intn(n)]
+			path := vfs.Join(parent, strconv.FormatUint(rand.Uint64(), 10))
+			dirs[n] = path
+		}
+
+		b.ReportAllocs()
+		b.ResetTimer()
+
+		for n := 0; n < b.N; n++ {
+			_ = vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
+		}
+	})
+}
+
+// BenchRemove benchmarks Remove function.
+func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
+	vfs := sfs.vfsTest
+
+	b.Run("Remove", func(b *testing.B) {
+		rt, err := vfsutils.NewRndTree(vfs, testDir, &vfsutils.RndTreeParams{
+			MinName: 10,
+			MaxName: 10,
+			MinDirs: b.N,
+			MaxDirs: b.N,
+		})
+		if err != nil {
+			b.Fatalf("RndTree %s, want error to be nil, got %v", testDir, err)
+		}
+
+		err = rt.CreateTree()
+		if err != nil {
+			b.Fatalf("CreateTree %s, want error to be nil, got %v", testDir, err)
+		}
+
+		b.ReportAllocs()
+		b.ResetTimer()
+
+		for n := b.N - 1; n >= 0; n-- {
+			_ = vfs.Remove(rt.Dirs[n])
 		}
 	})
 }
