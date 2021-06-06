@@ -21,7 +21,9 @@
 package main
 
 import (
+	"fmt"
 	"go/build"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -30,13 +32,15 @@ import (
 	"runtime"
 )
 
-const mageGitUrl = "https://github.com/magefile/mage"
+const (
+	gitCmd     = "git"
+	goCmd      = "go"
+	mageGitUrl = "https://github.com/magefile/mage"
+)
 
 func main() {
-	appDir, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Getwd : want error to be nil, got %v", err)
-	}
+	_, file, _, _ := runtime.Caller(0)
+	mageDir := filepath.Dir(file)
 
 	if isExecutable("mage") {
 		log.Printf("mage binary already exists")
@@ -53,7 +57,7 @@ func main() {
 			log.Fatalf("Chdir : want error to be nil, got %v", err)
 		}
 
-		err = run("git", "clone", "--depth=1", mageGitUrl)
+		err = run(gitCmd, "clone", "--depth=1", mageGitUrl)
 		if err != nil {
 			log.Fatalf("Git : want error to be nil, got %v", err)
 		}
@@ -63,39 +67,55 @@ func main() {
 			log.Fatalf("Chdir : want error to be nil, got %v", err)
 		}
 
-		err = run("go", "run", "bootstrap.go")
+		err = run(goCmd, "run", "bootstrap.go")
 		if err != nil {
 			log.Fatalf("Bootstap : want error to be nil, got %v", err)
 		}
 	}
 
-	mageDir := filepath.Join(appDir, "mage")
-
-	err = os.Chdir(mageDir)
+	err := os.Chdir(mageDir)
 	if err != nil {
 		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
 
-	binDir := filepath.Join(build.Default.GOPATH, "bin")
-
-	err = os.MkdirAll(binDir, 0o755)
-	if err != nil {
-		log.Fatalf("MkdirAll : want error to be nil, got %v", err)
-	}
-
-	avfsBin := "avfs"
+	avfsExe := "avfs"
 	if runtime.GOOS == "windows" {
-		avfsBin += ".exe"
+		avfsExe += ".exe"
 	}
 
-	avfsPath := filepath.Join(binDir, avfsBin)
+	avfsDir := filepath.Join(filepath.Dir(mageDir), "bin")
 
-	err = run("mage", "-compile", avfsPath)
+	err = os.MkdirAll(avfsDir, 0o777)
+	if err != nil {
+		log.Fatalf("MkdirAll %s : want error to be nil, got %v", avfsDir, err)
+	}
+
+	avfsBin := filepath.Join(avfsDir, avfsExe)
+
+	err = run("mage", "-compile", avfsBin)
 	if err != nil {
 		log.Fatalf("mage compile : want error to be nil, got %v", err)
 	}
 
-	err = run("avfs", "-l")
+	goPath := os.Getenv("GOPATH")
+	if goPath == "" {
+		goPath = build.Default.GOPATH
+	}
+
+	goPathDir := filepath.Join(goPath, "bin")
+	goPathBin := filepath.Join(goPathDir, avfsExe)
+
+	err = os.MkdirAll(goPathDir, 0o777)
+	if err != nil {
+		log.Fatalf("MkdirAll %s : want error to be nil, got %v", goPathDir, err)
+	}
+
+	err = copy(goPathBin, avfsBin)
+	if err != nil {
+		log.Fatalf("copy %s %s : want error to be nil, got %v", goPathBin, avfsBin, err)
+	}
+
+	err = run(avfsExe, "-l")
 	if err != nil {
 		log.Fatalf("avfs : want error to be nil, got %v", err)
 	}
@@ -114,5 +134,35 @@ func run(cmd string, args ...string) error {
 // isExecutable checks if name is an executable in the current path.
 func isExecutable(name string) bool {
 	_, err := exec.LookPath(name)
+
 	return err == nil
+}
+
+// copy robustly copies the source file to the destination, overwriting the destination if necessary.
+func copy(dst string, src string) error {
+	from, err := os.Open(src)
+	if err != nil {
+		return fmt.Errorf(`can't copy %s: %v`, src, err)
+	}
+
+	defer from.Close()
+
+	finfo, err := from.Stat()
+	if err != nil {
+		return fmt.Errorf(`can't stat %s: %v`, src, err)
+	}
+
+	to, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, finfo.Mode())
+	if err != nil {
+		return fmt.Errorf(`can't copy to %s: %v`, dst, err)
+	}
+
+	defer to.Close()
+
+	_, err = io.Copy(to, from)
+	if err != nil {
+		return fmt.Errorf(`error copying %s to %s: %v`, src, dst, err)
+	}
+
+	return nil
 }
