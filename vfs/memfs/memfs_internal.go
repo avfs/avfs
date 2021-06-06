@@ -246,9 +246,6 @@ func (bn *baseNode) permMode(u avfs.UserReader) avfs.PermMode {
 
 // setModTime sets the modification time of the node.
 func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) error {
-	bn.mu.Lock()
-	defer bn.mu.Unlock()
-
 	if bn.uid != u.Uid() && !u.IsRoot() {
 		return avfs.ErrOpNotPermitted
 	}

@@ -172,7 +172,12 @@ func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}
 
-	err = child.setModTime(mtime, vfs.user)
+	bn := child.base()
+
+	bn.mu.Lock()
+	defer bn.mu.Unlock()
+
+	err = bn.setModTime(mtime, vfs.user)
 	if err != nil {
 		return &os.PathError{Op: op, Path: name, Err: err}
 	}

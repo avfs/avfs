@@ -19,7 +19,6 @@ package memfs
 import (
 	"os"
 	"sync"
-	"time"
 
 	"github.com/avfs/avfs"
 )
@@ -78,9 +77,6 @@ type node interface {
 
 	// setMode sets the permissions of the node.
 	setMode(mode os.FileMode, u avfs.UserReader) error
-
-	// setModTime sets the modification time of the node.
-	setModTime(mtime time.Time, u avfs.UserReader) error
 
 	// size returns the size of the node.
 	size() int64
