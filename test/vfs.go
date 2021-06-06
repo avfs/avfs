@@ -1869,6 +1869,19 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 		err := vfs.Remove(nonExistingFile)
 		CheckPathError(t, "Remove", "remove", nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
 	})
+
+	t.Run("RemovePerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		sfs.PermGolden(t, testDir, func(path string) error {
+			rmDir := vfs.Join(path, defaultDir)
+			err := vfs.Remove(rmDir)
+
+			return err
+		})
+	})
 }
 
 // TestRemoveAll tests RemoveAll function.

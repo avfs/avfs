@@ -660,14 +660,14 @@ func (vfs *MemFS) Remove(name string) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
+	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	}
+
 	bn := child.base()
 
 	bn.mu.Lock()
 	defer bn.mu.Unlock()
-
-	if !bn.checkPermission(avfs.PermWrite, vfs.user) {
-		return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
-	}
 
 	if c, ok := child.(*dirNode); ok {
 		if len(c.children) != 0 {
