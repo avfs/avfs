@@ -28,6 +28,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -36,35 +37,45 @@ import (
 )
 
 const (
-	goFumptCmd        = "gofumpt"
-	gitCmd            = "git"
-	golangCiCmd       = "golangci-lint"
-	golangCiGit       = "github.com/golangci/golangci-lint"
-	golangCiBin       = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
-	goCmd             = "go"
-	dockerImage       = "avfs-docker"
-	dockerGoPath      = "/go/src"
-	dockerCoverDir    = dockerGoPath + "/coverage"
-	dockerTestDataDir = dockerGoPath + "/test/testdata"
-	raceCount         = 5
-	benchCount        = 5
+	goFumptCmd  = "gofumpt"
+	gitCmd      = "git"
+	golangCiCmd = "golangci-lint"
+	golangCiGit = "github.com/golangci/golangci-lint"
+	golangCiBin = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
+	goCmd       = "go"
+	dockerImage = "avfs-docker"
+	raceCount   = 5
+	benchCount  = 5
 )
 
 var (
-	cwd           string
-	dockerCmd     string
-	coverDir      string
-	coverTestPath string
-	coverRacePath string
-	testDataDir   string
+	appDir            string
+	dockerCmd         string
+	coverDir          string
+	coverTestPath     string
+	coverRacePath     string
+	testDataDir       string
+	dockerGoPath      string
+	dockerCoverDir    string
+	dockerTestDataDir string
 )
 
 func init() {
-	cwd, _ = os.Getwd()
-	coverDir = filepath.Join(cwd, "coverage")
+	_, file, _, _ := runtime.Caller(0)
+	appDir = filepath.Dir(filepath.Dir(file))
+
+	coverDir = filepath.Join(appDir, "coverage")
 	coverTestPath = filepath.Join(coverDir, "cover_test.txt")
 	coverRacePath = filepath.Join(coverDir, "cover_race.txt")
-	testDataDir = filepath.Join(cwd, "test/testdata")
+	testDataDir = filepath.Join(appDir, "test/testdata")
+
+	if runtime.GOOS == "windows" {
+		dockerGoPath = "c:"
+	}
+
+	dockerGoPath += "/gopath/src"
+	dockerCoverDir = dockerGoPath + "/coverage"
+	dockerTestDataDir = dockerGoPath + "/test/testdata"
 
 	switch {
 	case isExecutable("docker"):
@@ -101,7 +112,7 @@ func Fmt() error {
 			return err
 		}
 
-		err = os.Chdir(cwd)
+		err = os.Chdir(appDir)
 		if err != nil {
 			return err
 		}
@@ -200,14 +211,24 @@ func DockerBuild() error {
 		return fmt.Errorf("can't find docker or podman in the current path")
 	}
 
-	return sh.RunV(dockerCmd, "build", ".", "-t", dockerImage)
+	dockerFile := runtime.GOOS + ".Dockerfile"
+
+	return sh.RunV(dockerCmd,
+		"build", ".",
+		"-f", dockerFile,
+		"-t", dockerImage)
 }
 
 // DockerConsole opens a shell as root in the docker image for AVFS.
 func DockerConsole() error {
 	mg.Deps(DockerBuild)
 
-	return dockerTest("bash")
+	shell := "bash"
+	if runtime.GOOS == "windows" {
+		shell = "cmd"
+	}
+
+	return dockerTest(shell)
 }
 
 // DockerTest runs tests in the docker image and displays the coverage.
