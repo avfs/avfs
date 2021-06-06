@@ -98,7 +98,8 @@ coverRacePath=%s
 testDataDir=%s
 dockerGoPath=%s
 dockerCoverDir=%s
-dockerTestDataDir=%s`,
+dockerTestDataDir=%s
+`,
 		appDir, coverDir, coverTestPath, coverRacePath,
 		testDataDir, dockerGoPath, dockerCoverDir, dockerTestDataDir)
 }
