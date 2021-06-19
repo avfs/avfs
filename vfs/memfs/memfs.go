@@ -703,22 +703,21 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	}
 
 	parent, child, absPath, start, end, err := vfs.searchNode(path, slmLstat)
-	if vfsutils.IsNotExist(err) {
+	if vfs.IsNotExist(err) || parent == nil {
 		return nil
 	}
 
-	if err != avfs.ErrFileExists || parent == nil {
+	if err != avfs.ErrFileExists {
 		return &os.PathError{Op: op, Path: path, Err: err}
 	}
 
 	parent.mu.Lock()
-	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
-		parent.mu.Unlock()
+	ok := parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
+	parent.mu.Unlock()
 
+	if !ok {
 		return &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
-
-	parent.mu.Unlock()
 
 	var rs removeStack
 

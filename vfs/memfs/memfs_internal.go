@@ -220,7 +220,7 @@ func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool 
 	return avfs.PermMode(mode)&perm == perm
 }
 
-// permMode returns de access mode of the node bn.
+// permMode returns the access mode of the node bn.
 func (bn *baseNode) permMode(u avfs.UserReader) avfs.PermMode {
 	if u.IsRoot() {
 		return avfs.PermRWX
