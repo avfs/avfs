@@ -77,15 +77,15 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 			}
 
 			c.mu.RLock()
-			if !c.checkPermission(avfs.PermLookup, vfs.user) {
-				c.mu.RUnlock()
+			ok := c.checkPermission(avfs.PermLookup, vfs.user)
+			c.mu.RUnlock()
 
+			if !ok {
 				err = avfs.ErrPermDenied
 
 				return
 			}
 
-			c.mu.RUnlock()
 			parent = c
 
 		case *fileNode:
