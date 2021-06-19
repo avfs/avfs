@@ -180,40 +180,31 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 		return 0, os.ErrInvalid
 	}
 
-	f.mu.RLock()
-	if f.name == "" {
-		f.mu.RUnlock()
+	f.mu.Lock()
+	defer f.mu.Unlock()
 
+	if f.name == "" {
 		return 0, os.ErrInvalid
 	}
 
 	if f.nd == nil {
-		f.mu.RUnlock()
-
 		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		f.mu.RUnlock()
-
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
-		f.mu.RUnlock()
-
 		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
 	nd.mu.RLock()
 	n = copy(b, nd.data[f.at:])
 	nd.mu.RUnlock()
-	f.mu.RUnlock()
 
-	f.mu.Lock()
 	f.at += int64(n)
-	f.mu.Unlock()
 
 	if n == 0 {
 		return 0, io.EOF
