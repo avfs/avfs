@@ -479,7 +479,7 @@ func (sfs *SuiteFS) permGoldenSave(tb testing.TB, testDir string, pt permTests) 
 }
 
 // permCreateDirs creates directories and sets permissions to all tests directories.
-func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
+func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string, withSubdir bool) {
 	vfs := sfs.vfsSetup
 	sfs.User(tb, UsrTest)
 
@@ -498,11 +498,24 @@ func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string) {
 
 		for m := os.FileMode(0); m <= 0o777; m++ {
 			permDir := vfs.Join(usrDir, m.String())
-			subDir := vfs.Join(permDir, defaultDir)
 
-			err = vfs.MkdirAll(subDir, avfs.DefaultDirPerm)
+			err = vfs.Mkdir(permDir, avfs.DefaultDirPerm)
 			if err != nil {
-				tb.Fatalf("MkdirAll %s : want error to be nil, got %v", permDir, err)
+				tb.Fatalf("Mkdir %s : want error to be nil, got %v", permDir, err)
+			}
+
+			if withSubdir {
+				subDir := vfs.Join(permDir, defaultDir)
+
+				err = vfs.Mkdir(subDir, avfs.DefaultDirPerm)
+				if err != nil {
+					tb.Fatalf("Mkdir %s : want error to be nil, got %v", subDir, err)
+				}
+
+				err = vfs.Chmod(subDir, m)
+				if err != nil {
+					tb.Fatalf("Chmod %s : want error to be nil, got %v", permDir, err)
+				}
 			}
 
 			err = vfs.Chmod(permDir, m)
@@ -530,8 +543,6 @@ func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc)
 		create = true
 		pt = make(permTests)
 	}
-
-	sfs.permCreateDirs(tb, testDir)
 
 	for _, ui := range UserInfos() {
 		u := sfs.User(tb, ui.Name)
