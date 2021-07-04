@@ -980,24 +980,6 @@ func CheckSyscallError(tb testing.TB, testName, wantOp, wantPath string, wantErr
 	}
 }
 
-// CheckLinkError checks errors of type os.LinkError.
-func CheckLinkError(tb testing.TB, testName, wantOp, oldPath, newPath string, wantErr, gotErr error) {
-	tb.Helper()
-
-	if gotErr == nil {
-		tb.Fatalf("%s %s : want error to be %v, got nil", testName, newPath, wantErr)
-	}
-
-	err, ok := gotErr.(*os.LinkError)
-	if !ok {
-		tb.Fatalf("%s %s : want error type *os.LinkError,\n got %v", testName, newPath, reflect.TypeOf(gotErr))
-	}
-
-	if err.Op != wantOp || err.Err != wantErr {
-		tb.Errorf("%s %s %s : want error to be %v,\n got %v", testName, oldPath, newPath, wantErr, err)
-	}
-}
-
 // CheckInvalid checks if the error in os.ErrInvalid.
 func CheckInvalid(tb testing.TB, funcName string, err error) {
 	tb.Helper()
@@ -1105,4 +1087,91 @@ func (cp *CheckPath) ErrAsString(wantErr error) *CheckPath {
 	}
 
 	return cp
+}
+
+type CheckLink struct {
+	tb   testing.TB
+	err  *os.LinkError
+	halt bool
+}
+
+func CheckLinkError(tb testing.TB, err error) *CheckLink {
+	tb.Helper()
+
+	halt := false
+
+	if err == nil {
+		halt = true
+
+		tb.Error("want error to be not nil")
+	}
+
+	e, ok := err.(*os.LinkError)
+	if !ok {
+		halt = true
+
+		tb.Errorf("want error type to be *fs.LinkError, got %v", reflect.TypeOf(err))
+	}
+
+	return &CheckLink{tb: tb, err: e, halt: halt}
+}
+
+func (cl *CheckLink) Op(wantOp string) *CheckLink {
+	cl.tb.Helper()
+
+	if cl.halt {
+		return cl
+	}
+
+	err := cl.err
+	if err.Op != wantOp {
+		cl.tb.Errorf("want Op to be %s, got %s", wantOp, err.Op)
+	}
+
+	return cl
+}
+
+func (cl *CheckLink) Old(wantOld string) *CheckLink {
+	cl.tb.Helper()
+
+	if cl.halt {
+		return cl
+	}
+
+	err := cl.err
+	if err.Old != wantOld {
+		cl.tb.Errorf("want old path to be %s, got %s", wantOld, err.Old)
+	}
+
+	return cl
+}
+
+func (cl *CheckLink) New(wantNew string) *CheckLink {
+	cl.tb.Helper()
+
+	if cl.halt {
+		return cl
+	}
+
+	err := cl.err
+	if err.New != wantNew {
+		cl.tb.Errorf("want new path to be %s, got %s", wantNew, err.New)
+	}
+
+	return cl
+}
+
+func (cl *CheckLink) Err(wantErr error) *CheckLink {
+	cl.tb.Helper()
+
+	if cl.halt {
+		return cl
+	}
+
+	err := cl.err
+	if err.Err != wantErr {
+		cl.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	}
+
+	return cl
 }

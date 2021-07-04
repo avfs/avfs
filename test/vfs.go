@@ -816,9 +816,9 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckLinkError(t, "Link", "link", testDir, testDir, avfs.ErrWinPathNotFound, err)
+			CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).Err(avfs.ErrWinPathNotFound)
 		default:
-			CheckLinkError(t, "Link", "link", testDir, testDir, avfs.ErrPermDenied, err)
+			CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).Err(avfs.ErrPermDenied)
 		}
 
 		return
@@ -855,7 +855,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 			newPath := vfs.Join(pathLinks, vfs.Base(file.Path))
 
 			err := vfs.Link(oldPath, newPath)
-			CheckLinkError(t, "Link", "link", oldPath, newPath, avfs.ErrFileExists, err)
+			CheckLinkError(t, err).Op("link").Old(oldPath).New(newPath).Err(avfs.ErrFileExists)
 		}
 	})
 
@@ -886,7 +886,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 			newPath := vfs.Join(testDir, defaultDir)
 
 			err := vfs.Link(oldPath, newPath)
-			CheckLinkError(t, "Link", "link", oldPath, newPath, avfs.ErrOpNotPermitted, err)
+			CheckLinkError(t, err).Op("link").Old(oldPath).New(newPath).Err(avfs.ErrOpNotPermitted)
 		}
 	})
 
@@ -896,7 +896,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 			NewInvalidPath := vfs.Join(pathLinks, defaultFile)
 
 			err := vfs.Link(InvalidPath, NewInvalidPath)
-			CheckLinkError(t, "Link", "link", InvalidPath, NewInvalidPath, avfs.ErrNoSuchFileOrDir, err)
+			CheckLinkError(t, err).Op("link").Old(InvalidPath).New(NewInvalidPath).Err(avfs.ErrNoSuchFileOrDir)
 		}
 	})
 
@@ -905,7 +905,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
 		err := vfs.Link(nonExistingFile, existingFile)
-		CheckLinkError(t, "Link", "link", nonExistingFile, nonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		CheckLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).Err(avfs.ErrNoSuchFileOrDir)
 	})
 }
 
@@ -2005,7 +2005,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Rename(testDir, testDir)
-		CheckLinkError(t, "Rename", "rename", testDir, testDir, avfs.ErrPermDenied, err)
+		CheckLinkError(t, err).Op("rename").Old(testDir).New(testDir).Err(avfs.ErrPermDenied)
 
 		return
 	}
@@ -2082,7 +2082,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		dstNonExistingFile := vfs.Join(testDir, "dstNonExistingFile2")
 
 		err := vfs.Rename(srcNonExistingFile, dstNonExistingFile)
-		CheckLinkError(t, "Rename", "rename", srcNonExistingFile, dstNonExistingFile, avfs.ErrNoSuchFileOrDir, err)
+		CheckLinkError(t, err).Op("rename").Old(srcNonExistingFile).New(dstNonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("RenameDirToExistingDir", func(t *testing.T) {
@@ -2090,7 +2090,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		dstExistingDir := sfs.ExistingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingDir, dstExistingDir)
-		CheckLinkError(t, "Rename", "rename", srcExistingDir, dstExistingDir, avfs.ErrFileExists, err)
+		CheckLinkError(t, err).Op("rename").Old(srcExistingDir).New(dstExistingDir).Err(avfs.ErrFileExists)
 	})
 
 	t.Run("RenameFileToExistingFile", func(t *testing.T) {
@@ -2120,7 +2120,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		dstExistingDir := sfs.ExistingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingFile, dstExistingDir)
-		CheckLinkError(t, "Rename", "rename", srcExistingFile, dstExistingDir, avfs.ErrFileExists, err)
+		CheckLinkError(t, err).Op("rename").Old(srcExistingFile).New(dstExistingDir).Err(avfs.ErrFileExists)
 	})
 }
 
@@ -2367,7 +2367,7 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Symlink(testDir, testDir)
-		CheckLinkError(t, "Symlink", "symlink", testDir, testDir, avfs.ErrPermDenied, err)
+		CheckLinkError(t, err).Op("symlink").Old(testDir).New(testDir).Err(avfs.ErrPermDenied)
 
 		return
 	}
