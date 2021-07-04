@@ -558,7 +558,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		}
 
 		n, err = f.ReadAt(b, -1)
-		CheckPathError(t, err).Op("readat").Path(path).Err(avfs.ErrNegativeOffset)
+		CheckPathError(t, err).Op("readat").Path(path).ErrAsString(avfs.ErrNegativeOffset)
 
 		if n != 0 {
 			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
@@ -699,7 +699,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("Readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
 		default:
-			CheckPathError(t, err).Op("readdirent").Path(fileName).Err(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("readdirent").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		}
 	})
 
@@ -806,7 +806,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("Readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
 		default:
-			CheckPathError(t, err).Op("readdirent").Path(fileName).Err(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("readdirent").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		}
 	})
 
@@ -902,7 +902,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrWinNegativeSeek)
 		default:
-			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrInvalidArgument)
 		}
 
 		if pos != 0 {
@@ -937,7 +937,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrWinNegativeSeek)
 		default:
-			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrInvalidArgument)
 		}
 
 		if pos != 0 {
@@ -958,7 +958,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrWinNegativeSeek)
 		default:
-			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrInvalidArgument)
 		}
 
 		if pos != 0 {
@@ -984,7 +984,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 				t.Errorf("Seek : want error to be nil, got %v", err)
 			}
 		default:
-			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrInvalidArgument)
 		}
 
 		if pos != 0 {
@@ -1191,9 +1191,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		_, err := f.Stat()
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("GetFileType").Path(fileName).Err(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("GetFileType").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		default:
-			CheckPathError(t, err).Op("stat").Path(fileName).Err(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("stat").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		}
 	})
 
@@ -1204,7 +1204,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("GetFileType").Path(defaultFile).Err(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("GetFileType").Path(defaultFile).ErrAsString(avfs.ErrFileClosing)
 		default:
 			if err != os.ErrInvalid {
 				t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
@@ -1314,7 +1314,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("truncate").Path(testDir).Err(avfs.ErrWinInvalidHandle)
 		default:
-			CheckPathError(t, err).Op("truncate").Path(testDir).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("truncate").Path(testDir).Err(avfs.ErrInvalidArgument)
 		}
 	})
 
@@ -1333,7 +1333,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("truncate").Path(path).Err(avfs.ErrWinNegativeSeek)
 		default:
-			CheckPathError(t, err).Op("truncate").Path(path).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("truncate").Path(path).Err(avfs.ErrInvalidArgument)
 		}
 	})
 
@@ -1550,7 +1550,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		defer f.Close()
 
 		n, err := f.WriteAt(data, -1)
-		CheckPathError(t, err).Op("writeat").Path(path).Err(avfs.ErrNegativeOffset)
+		CheckPathError(t, err).Op("writeat").Path(path).ErrAsString(avfs.ErrNegativeOffset)
 
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)

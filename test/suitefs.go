@@ -1091,3 +1091,18 @@ func (cp *CheckPath) Err(wantErr error) *CheckPath {
 
 	return cp
 }
+
+func (cp *CheckPath) ErrAsString(wantErr error) *CheckPath {
+	cp.tb.Helper()
+
+	if cp.halt {
+		return cp
+	}
+
+	err := cp.err
+	if err.Err.Error() != wantErr.Error() {
+		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	}
+
+	return cp
+}

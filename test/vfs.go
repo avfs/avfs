@@ -1559,7 +1559,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("truncate").Path(existingFile).Err(avfs.ErrWinAccessDenied)
 		default:
-			CheckPathError(t, err).Op("truncate").Path(existingFile).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("truncate").Path(existingFile).Err(avfs.ErrInvalidArgument)
 		}
 	})
 
@@ -1762,7 +1762,7 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, dir.Path)
 
 			_, err := vfs.Readlink(path)
-			CheckPathError(t, err).Op("readlink").Path(path).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrInvalidArgument)
 		}
 	})
 
@@ -1771,7 +1771,7 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, file.Path)
 
 			_, err := vfs.Readlink(path)
-			CheckPathError(t, err).Op("readlink").Path(path).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrInvalidArgument)
 		}
 	})
 
@@ -2512,7 +2512,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("truncate").Path(path).Err(avfs.ErrWinNegativeSeek)
 		default:
-			CheckPathError(t, err).Op("truncate").Path(path).Err(os.ErrInvalid)
+			CheckPathError(t, err).Op("truncate").Path(path).Err(avfs.ErrInvalidArgument)
 		}
 	})
 

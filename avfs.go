@@ -52,6 +52,7 @@ const (
 	ErrBadFileDesc     = syscall.EBADF     // Bad file descriptor.
 	ErrDirNotEmpty     = syscall.ENOTEMPTY // Directory not empty.
 	ErrFileExists      = syscall.EEXIST    // File exists.
+	ErrInvalidArgument = syscall.EINVAL    // invalid argument
 	ErrIsADirectory    = syscall.EISDIR    // File Is a directory.
 	ErrNoSuchFileOrDir = syscall.ENOENT    // No such file or directory.
 	ErrNotADirectory   = syscall.ENOTDIR   // Not a directory.
