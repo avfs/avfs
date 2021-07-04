@@ -962,24 +962,6 @@ func (sfs *SuiteFS) SampleSymlinks(tb testing.TB, testDir string) []*Symlink {
 	return symlinks
 }
 
-// CheckSyscallError checks errors of type os.SyscallError.
-func CheckSyscallError(tb testing.TB, testName, wantOp, wantPath string, wantErr, gotErr error) {
-	tb.Helper()
-
-	if gotErr == nil {
-		tb.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)
-	}
-
-	err, ok := gotErr.(*os.SyscallError)
-	if !ok {
-		tb.Fatalf("%s %s : want error type *os.SyscallError, got %v", testName, wantPath, reflect.TypeOf(gotErr))
-	}
-
-	if err.Syscall != wantOp || err.Err != wantErr {
-		tb.Errorf("%s %s : want error to be %v, got %v", testName, wantPath, wantErr, err)
-	}
-}
-
 // CheckInvalid checks if the error in os.ErrInvalid.
 func CheckInvalid(tb testing.TB, funcName string, err error) {
 	tb.Helper()

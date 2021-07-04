@@ -673,7 +673,7 @@ func (fst *fStat) ModTime() time.Time {
 	return time.Unix(0, fst.mtime)
 }
 
-// Type returns the base name of the file.
+// Name returns the base name of the file.
 func (fst *fStat) Name() string {
 	return fst.name
 }
