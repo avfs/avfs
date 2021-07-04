@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+//go:build ignore
 // +build ignore
 
 // Download, build and install Mage and Avfs binaries in $GOPATH/bin.
@@ -139,7 +140,7 @@ func isExecutable(name string) bool {
 }
 
 // copy robustly copies the source file to the destination, overwriting the destination if necessary.
-func copy(dst string, src string) error {
+func copy(dst, src string) error {
 	from, err := os.Open(src)
 	if err != nil {
 		return fmt.Errorf(`can't copy %s: %v`, src, err)
