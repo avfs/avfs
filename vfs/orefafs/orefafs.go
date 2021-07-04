@@ -921,7 +921,7 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	}
 
 	if size < 0 {
-		return &os.PathError{Op: op, Path: name, Err: os.ErrInvalid}
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrInvalidArgument}
 	}
 
 	child.mu.Lock()

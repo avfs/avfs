@@ -448,24 +448,24 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 	switch whence {
 	case io.SeekStart:
 		if offset < 0 {
-			return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+			return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 		}
 
 		f.at = offset
 	case io.SeekCurrent:
 		if f.at+offset < 0 {
-			return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+			return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 		}
 
 		f.at += offset
 	case io.SeekEnd:
 		if size+offset < 0 {
-			return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+			return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 		}
 
 		f.at = size + offset
 	default:
-		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	return f.at, nil
@@ -544,11 +544,11 @@ func (f *OrefaFile) Truncate(size int64) error {
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	if size < 0 {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrInvalid}
+		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	nd.mu.Lock()
