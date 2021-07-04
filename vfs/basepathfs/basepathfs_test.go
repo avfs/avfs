@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+//go:build !datarace
 // +build !datarace
 
 package basepathfs_test
@@ -87,10 +88,10 @@ func TestBasePathFSOptions(t *testing.T) {
 	}
 
 	_, err = basepathfs.New(vfs, nonExistingDir)
-	test.CheckPathError(t, "BasePath", "basepath", nonExistingDir, avfs.ErrNoSuchFileOrDir, err)
+	test.CheckPathError(t, err).Op("basepath").Path(nonExistingDir).Err(avfs.ErrNoSuchFileOrDir)
 
 	_, err = basepathfs.New(vfs, existingFile)
-	test.CheckPathError(t, "BasePath", "basepath", existingFile, avfs.ErrNotADirectory, err)
+	test.CheckPathError(t, err).Op("basepath").Path(existingFile).Err(avfs.ErrNotADirectory)
 }
 
 func TestBasePathFSFeatures(t *testing.T) {

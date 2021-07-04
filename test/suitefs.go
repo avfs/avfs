@@ -962,25 +962,6 @@ func (sfs *SuiteFS) SampleSymlinks(tb testing.TB, testDir string) []*Symlink {
 	return symlinks
 }
 
-// CheckPathError checks errors of type os.PathError.
-func CheckPathError(tb testing.TB, testName, wantOp, wantPath string, wantErr, gotErr error) {
-	tb.Helper()
-
-	if gotErr == nil {
-		tb.Fatalf("%s %s : want error to be %v, got nil", testName, wantPath, wantErr)
-	}
-
-	err, ok := gotErr.(*os.PathError)
-	if !ok {
-		tb.Fatalf("%s %s : want error type *os.PathError, got %v", testName, wantPath, reflect.TypeOf(gotErr))
-	}
-
-	if wantOp != err.Op || wantPath != err.Path || (wantErr != err.Err && wantErr.Error() != err.Err.Error()) {
-		wantPathErr := &os.PathError{Op: wantOp, Path: wantPath, Err: wantErr}
-		tb.Errorf("%s %s: want error to be %v, got %v", testName, wantPath, wantPathErr, gotErr)
-	}
-}
-
 // CheckSyscallError checks errors of type os.SyscallError.
 func CheckSyscallError(tb testing.TB, testName, wantOp, wantPath string, wantErr, gotErr error) {
 	tb.Helper()
@@ -1037,4 +1018,76 @@ func CheckPanic(tb testing.TB, funcName string, f func()) {
 	}()
 
 	f()
+}
+
+type CheckPath struct {
+	tb   testing.TB
+	err  *os.PathError
+	halt bool
+}
+
+func CheckPathError(tb testing.TB, err error) *CheckPath {
+	tb.Helper()
+
+	halt := false
+
+	if err == nil {
+		halt = true
+
+		tb.Error("want error to be not nil")
+	}
+
+	e, ok := err.(*os.PathError)
+	if !ok {
+		halt = true
+
+		tb.Errorf("want error type to be *fs.PathError, got %v", reflect.TypeOf(err))
+	}
+
+	return &CheckPath{tb: tb, err: e, halt: halt}
+}
+
+func (cp *CheckPath) Op(wantOp string) *CheckPath {
+	cp.tb.Helper()
+
+	if cp.halt {
+		return cp
+	}
+
+	err := cp.err
+	if err.Op != wantOp {
+		cp.tb.Errorf("want Op to be %s, got %s", wantOp, err.Op)
+	}
+
+	return cp
+}
+
+func (cp *CheckPath) Path(wantPath string) *CheckPath {
+	cp.tb.Helper()
+
+	if cp.halt {
+		return cp
+	}
+
+	err := cp.err
+	if err.Path != wantPath {
+		cp.tb.Errorf("want Path to be %s, got %s", wantPath, err.Path)
+	}
+
+	return cp
+}
+
+func (cp *CheckPath) Err(wantErr error) *CheckPath {
+	cp.tb.Helper()
+
+	if cp.halt {
+		return cp
+	}
+
+	err := cp.err
+	if err.Err != wantErr {
+		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	}
+
+	return cp
 }
