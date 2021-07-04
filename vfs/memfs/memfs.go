@@ -629,7 +629,7 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 
 	sl, ok := child.(*symlinkNode)
 	if !ok {
-		return "", &os.PathError{Op: op, Path: name, Err: os.ErrInvalid}
+		return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrInvalidArgument}
 	}
 
 	return sl.link, nil
@@ -944,7 +944,7 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 	}
 
 	if size < 0 {
-		return &os.PathError{Op: op, Path: name, Err: os.ErrInvalid}
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrInvalidArgument}
 	}
 
 	c.mu.Lock()
