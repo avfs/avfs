@@ -1345,15 +1345,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
 		fileName := sfs.NonExistingFile(t, testDir)
 		_, err := vfs.Open(fileName)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			if err != nil {
-				t.Errorf("Truncate : want error to be nil, got %v", err)
-			}
-		default:
-			CheckPathError(t, err).Op("open").Path(fileName).Err(avfs.ErrNoSuchFileOrDir)
-		}
+		CheckPathError(t, err).Op("open").Path(fileName).Err(avfs.ErrNoSuchFileOrDir)
 	})
 }
 
@@ -1418,14 +1410,8 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 
 		err = f.Chmod(0o777)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("chmod").Path(existingFile).Err(avfs.ErrWinNotSupported)
-		default:
-			if err != nil {
-				t.Errorf("Chmod : want error to be nil, got %v", err)
-			}
+		if err != nil {
+			t.Errorf("Chmod : want error to be nil, got %v", err)
 		}
 
 		if vfs.HasFeature(avfs.FeatIdentityMgr) {
@@ -1525,14 +1511,8 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 
 		err = f.Chmod(0o777)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("chmod").Path(existingFile).Err(avfs.ErrWinNotSupported)
-		default:
-			if err != nil {
-				t.Errorf("Chmod : want error to be nil, got %v", err)
-			}
+		if err != nil {
+			t.Errorf("Chmod : want error to be nil, got %v", err)
 		}
 
 		if vfs.HasFeature(avfs.FeatIdentityMgr) {
