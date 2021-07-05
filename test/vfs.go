@@ -175,6 +175,13 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 				}
 
 				gotMode := fst.Mode() & os.ModePerm
+
+				// On Windows, only the 0200 bit (owner writable) of mode is used.
+				if vfs.OSType() == avfs.OsWindows {
+					wantMode &= 0o200
+					gotMode &= 0o200
+				}
+
 				if gotMode != wantMode {
 					t.Errorf("Stat %s : want mode to be %03o, got %03o", path, wantMode, gotMode)
 				}
@@ -198,6 +205,13 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 				}
 
 				gotMode := fst.Mode() & os.ModePerm
+
+				// On Windows, only the 0200 bit (owner writable) of mode is used.
+				if vfs.OSType() == avfs.OsWindows {
+					wantMode &= 0o200
+					gotMode &= 0o200
+				}
+
 				if gotMode != wantMode {
 					t.Errorf("Stat %s : want mode to be %03o, got %03o", existingFile, wantMode, gotMode)
 				}
