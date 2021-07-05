@@ -76,6 +76,7 @@ func TestOsFSConfig(t *testing.T) {
 	}
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs
+
 	switch vfs.OSType() {
 	case avfs.OsLinux:
 		wantFeatures |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
