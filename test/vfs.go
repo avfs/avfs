@@ -1843,6 +1843,14 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 			fmt.Println(s.String())
 		}
 
+		wantStatOp := "stat"
+		wantDirErr := avfs.ErrDirNotEmpty
+
+		if vfs.OSType() == avfs.OsWindows {
+			wantStatOp = "CreateFile"
+			wantDirErr = avfs.ErrWinDirNotEmpty
+		}
+
 		for _, dir := range dirs {
 			path := vfs.Join(testDir, dir.Path)
 
@@ -1860,14 +1868,16 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 				}
 
 				_, err = vfs.Stat(path)
-				CheckPathError(t, err).Op("stat").Path(path).Err(avfs.ErrNoSuchFileOrDir)
-			} else {
-				CheckPathError(t, err).Op("remove").Path(path).Err(avfs.ErrDirNotEmpty)
+				CheckPathError(t, err).Op(wantStatOp).Path(path).Err(avfs.ErrNoSuchFileOrDir)
 
-				_, err = vfs.Stat(path)
-				if err != nil {
-					t.Errorf("Remove %s : want error to be nil, got %v", path, err)
-				}
+				continue
+			}
+
+			CheckPathError(t, err).Op("remove").Path(path).Err(wantDirErr)
+
+			_, err = vfs.Stat(path)
+			if err != nil {
+				t.Errorf("Remove %s : want error to be nil, got %v", path, err)
 			}
 		}
 	})
