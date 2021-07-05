@@ -576,7 +576,15 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
-		CheckPathError(t, err).Op("lstat").Path(testDir).Err(avfs.ErrPermDenied)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			if err != nil {
+				t.Errorf("want error to be nil, got %v", err)
+			}
+		default:
+			CheckPathError(t, err).Op("lstat").Path(testDir).Err(avfs.ErrPermDenied)
+		}
 
 		return
 	}
