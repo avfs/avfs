@@ -1058,9 +1058,15 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 
 	t.Run("LStatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(testDir, files[0].Path, "subDirOnFile")
-
 		_, err := vfs.Lstat(subDirOnFile)
-		CheckPathError(t, err).Op("lstat").Path(subDirOnFile).Err(avfs.ErrNotADirectory)
+
+		wantOp := "lstat"
+
+		if vfs.OSType() == avfs.OsWindows {
+			wantOp = "CreateFile"
+		}
+
+		CheckPathError(t, err).Op(wantOp).Path(subDirOnFile).Err(avfs.ErrNotADirectory)
 	})
 }
 
