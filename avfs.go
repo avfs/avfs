@@ -63,13 +63,14 @@ const (
 
 // Errors on windows operating systems only.
 const (
-	ErrWinInvalidHandle  = syscall.Errno(0x6)        // The handle is invalid.
-	ErrWinPathNotFound   = syscall.Errno(0x3)        // The system cannot find the path specified.
-	ErrWinNotSupported   = syscall.Errno(0x20000082) // Not supported by windows.
-	ErrWinDirNameInvalid = syscall.Errno(0x10B)      // The directory name is invalid.
-	ErrWinAccessDenied   = syscall.Errno(0x5)        // Access is denied.
-	ErrWinFileExists     = syscall.Errno(80)         // The file exists.
-	ErrWinNegativeSeek   = syscall.Errno(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinAccessDenied     = syscall.Errno(0x5)        // Access is denied.
+	ErrWinDirNameInvalid   = syscall.Errno(0x10B)      // The directory name is invalid.
+	ErrWinFileExists       = syscall.Errno(80)         // The file exists.
+	ErrWinNegativeSeek     = syscall.Errno(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinInvalidHandle    = syscall.Errno(0x6)        // The handle is invalid.
+	ErrWinNotSupported     = syscall.Errno(0x20000082) // Not supported by windows.
+	ErrWinPathNotFound     = syscall.Errno(0x3)        // The system cannot find the path specified.
+	ErrWinPrivilegeNotHeld = syscall.Errno(1314)       // A required privilege is not held by the client.
 )
 
 var (

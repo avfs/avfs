@@ -2361,7 +2361,13 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Symlink(testDir, testDir)
-		CheckLinkError(t, err).Op("symlink").Old(testDir).New(testDir).Err(avfs.ErrPermDenied)
+		wantErr := avfs.ErrPermDenied
+
+		if vfs.OSType() == avfs.OsWindows {
+			wantErr = avfs.ErrWinPrivilegeNotHeld
+		}
+
+		CheckLinkError(t, err).Op("symlink").Old(testDir).New(testDir).Err(wantErr)
 
 		return
 	}
