@@ -67,6 +67,7 @@ const (
 	ErrWinDirNameInvalid   = syscall.Errno(0x10B)      // The directory name is invalid.
 	ErrWinFileExists       = syscall.Errno(80)         // The file exists.
 	ErrWinNegativeSeek     = syscall.Errno(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinNotReparsePoint  = syscall.Errno(4390)       // The file or directory is not a reparse point.
 	ErrWinInvalidHandle    = syscall.Errno(0x6)        // The handle is invalid.
 	ErrWinNotSupported     = syscall.Errno(0x20000082) // Not supported by windows.
 	ErrWinPathNotFound     = syscall.Errno(0x3)        // The system cannot find the path specified.

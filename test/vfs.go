@@ -1738,7 +1738,14 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.Readlink(testDir)
-		CheckPathError(t, err).Op("readlink").Path(testDir).Err(avfs.ErrPermDenied)
+
+		wantErr := avfs.ErrPermDenied
+
+		if vfs.OSType() == avfs.OsWindows {
+			wantErr = avfs.ErrWinNotReparsePoint
+		}
+
+		CheckPathError(t, err).Op("readlink").Path(testDir).Err(wantErr)
 
 		return
 	}
