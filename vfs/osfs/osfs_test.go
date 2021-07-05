@@ -75,8 +75,14 @@ func TestOsFSConfig(t *testing.T) {
 		t.Fatalf("New : want error to be nil, got %v", err)
 	}
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatMainDirs |
-		avfs.FeatHardlink | avfs.FeatRealFS | avfs.FeatSymlink
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs
+	switch vfs.OSType() {
+	case avfs.OsLinux:
+		wantFeatures |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+	case avfs.OsDarwin:
+		wantFeatures |= avfs.FeatHardlink | avfs.FeatSymlink
+	}
+
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
