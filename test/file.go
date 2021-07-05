@@ -684,7 +684,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(fileName).Err(avfs.ErrNotADirectory)
+			CheckPathError(t, err).Op("readdir").Path(fileName).Err(avfs.ErrNotADirectory)
 		default:
 			CheckPathError(t, err).Op("readdirent").Path(fileName).Err(avfs.ErrNotADirectory)
 		}
@@ -697,7 +697,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
+			CheckPathError(t, err).Op("readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
 		default:
 			CheckPathError(t, err).Op("readdirent").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		}
@@ -710,7 +710,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(defaultFile).Err(avfs.ErrWinPathNotFound)
+			CheckPathError(t, err).Op("readdir").Path(defaultFile).Err(avfs.ErrWinPathNotFound)
 		default:
 			if err != os.ErrInvalid {
 				t.Errorf("Readdir : want error to be %v, got %v", os.ErrInvalid, err)
@@ -792,7 +792,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(f.Name()).Err(avfs.ErrNotADirectory)
+			CheckPathError(t, err).Op("readdir").Path(f.Name()).Err(avfs.ErrNotADirectory)
 		default:
 			CheckPathError(t, err).Op("readdirent").Path(f.Name()).Err(avfs.ErrNotADirectory)
 		}
@@ -804,7 +804,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 		_, err := f.Readdirnames(-1)
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
+			CheckPathError(t, err).Op("readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
 		default:
 			CheckPathError(t, err).Op("readdirent").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		}
@@ -817,7 +817,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(defaultFile).Err(avfs.ErrWinPathNotFound)
+			CheckPathError(t, err).Op("readdir").Path(defaultFile).Err(avfs.ErrWinPathNotFound)
 		default:
 			if err != os.ErrInvalid {
 				t.Errorf("Readdirnames : want error to be %v, got %v", os.ErrInvalid, err)

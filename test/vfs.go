@@ -1676,7 +1676,7 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("Readdir").Path(existingFile).Err(avfs.ErrNotADirectory)
+			CheckPathError(t, err).Op("readdir").Path(existingFile).Err(avfs.ErrNotADirectory)
 		default:
 			CheckPathError(t, err).Op("readdirent").Path(existingFile).Err(avfs.ErrNotADirectory)
 		}
