@@ -1940,29 +1940,37 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 			t.Fatalf("RemoveAll %s : want error to be nil, got %v", baseDir, err)
 		}
 
+		wantOp := "stat"
+		wantErr := avfs.ErrNoSuchFileOrDir
+
+		if vfs.OSType() == avfs.OsWindows {
+			wantOp = "CreateFile"
+			wantErr = avfs.ErrWinPathNotFound
+		}
+
 		for _, dir := range dirs {
 			path := vfs.Join(baseDir, dir.Path)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).Op("stat").Path(path).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).Op(wantOp).Path(path).Err(wantErr)
 		}
 
 		for _, file := range files {
 			path := vfs.Join(baseDir, file.Path)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).Op("stat").Path(path).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).Op(wantOp).Path(path).Err(wantErr)
 		}
 
 		for _, sl := range symlinks {
 			path := vfs.Join(baseDir, sl.NewName)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).Op("stat").Path(path).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).Op(wantOp).Path(path).Err(wantErr)
 		}
 
 		_, err = vfs.Stat(baseDir)
-		CheckPathError(t, err).Op("stat").Path(baseDir).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).Op(wantOp).Path(baseDir).Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("RemoveAllOneFile", func(t *testing.T) {
