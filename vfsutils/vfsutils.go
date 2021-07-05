@@ -23,6 +23,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/avfs/avfs"
 )
@@ -388,6 +389,27 @@ func SegmentPath(path string, start int) (end int, isLast bool) {
 	}
 
 	return len(path), true
+}
+
+// UMaskType is the file mode creation mask.
+// it must be set to be read, so it must be protected with a mutex.
+type UMaskType struct {
+	once sync.Once
+	mu   sync.RWMutex
+	mask os.FileMode
+}
+
+// Get returns the file mode creation mask.
+func (um *UMaskType) Get() os.FileMode {
+	um.once.Do(func() {
+		um.Set(0)
+	})
+
+	um.mu.RLock()
+	u := um.mask
+	um.mu.RUnlock()
+
+	return u
 }
 
 // DummySysStat implements SysStater interface returned by os.FileInfo.Sys() for.

@@ -40,6 +40,7 @@ const (
 	TmpDir           = "/tmp"            // TmpDir is the tmp directory.
 	UsrRoot          = "root"            // UsrRoot is the root user.
 	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
+	DefaultUmask     = os.FileMode(0o22) // DefaultUmask is the default umask when the syscall is not available.
 
 	// FileModeMask is the bitmask used for permissions (see os.Chmod() comment).
 	FileModeMask = os.ModePerm | os.ModeSticky | os.ModeSetuid | os.ModeSetgid

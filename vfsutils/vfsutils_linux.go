@@ -20,32 +20,10 @@ package vfsutils
 
 import (
 	"os"
-	"sync"
 	"syscall"
 
 	"github.com/avfs/avfs"
 )
-
-// UMaskType is the file mode creation mask.
-// it must be set to be read, so it must be protected with a mutex.
-type UMaskType struct {
-	once sync.Once
-	mu   sync.RWMutex
-	mask os.FileMode
-}
-
-// Get returns the file mode creation mask.
-func (um *UMaskType) Get() os.FileMode {
-	um.once.Do(func() {
-		um.Set(0)
-	})
-
-	um.mu.RLock()
-	u := um.mask
-	um.mu.RUnlock()
-
-	return u
-}
 
 // Set sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,

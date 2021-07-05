@@ -467,17 +467,17 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 
 // TestUMask tests UMask functions.
 func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
-	umaskOs := os.FileMode(0o22)
-	umaskSet := os.FileMode(0o77)
+	const umaskSet = os.FileMode(0o77)
+
 	umaskTest := umaskSet
 
 	if vfsutils.RunTimeOS() == avfs.OsWindows {
-		umaskTest = umaskOs
+		umaskTest = avfs.DefaultUmask
 	}
 
 	umask := vfsutils.UMask.Get()
-	if umask != umaskOs {
-		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
+	if umask != avfs.DefaultUmask {
+		t.Errorf("GetUMask : want OS umask %o, got %o", avfs.DefaultUmask, umask)
 	}
 
 	vfsutils.UMask.Set(umaskSet)
@@ -487,11 +487,11 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
-	vfsutils.UMask.Set(umaskOs)
+	vfsutils.UMask.Set(avfs.DefaultUmask)
 
 	umask = vfsutils.UMask.Get()
-	if umask != umaskOs {
-		t.Errorf("GetUMask : want OS umask %o, got %o", umaskOs, umask)
+	if umask != avfs.DefaultUmask {
+		t.Errorf("GetUMask : want OS umask %o, got %o", avfs.DefaultUmask, umask)
 	}
 }
 

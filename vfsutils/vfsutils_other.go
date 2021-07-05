@@ -24,19 +24,18 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// UMaskType is the file mode creation mask.
-// it must be set to be read, so it must be protected with a mutex.
-type UMaskType struct{}
-
-// Get returns the file mode creation mask.
-func (um *UMaskType) Get() os.FileMode {
-	return 0o022
-}
-
 // Set sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask os.FileMode) {
+	// if umask system call is not available set value to linux default.
+	if mask == 0 {
+		mask = avfs.DefaultUmask
+	}
+
+	um.mu.Lock()
+	um.mask = mask
+	um.mu.Unlock()
 }
 
 // ToSysStat takes a value from os.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
