@@ -830,7 +830,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).Err(avfs.ErrWinPathNotFound)
+			CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).Err(avfs.ErrWinAccessDenied)
 		default:
 			CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).Err(avfs.ErrPermDenied)
 		}
