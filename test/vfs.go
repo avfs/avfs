@@ -1048,25 +1048,14 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		_, err := vfs.Lstat(nonExistingFile)
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("CreateFile").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
-		default:
-			CheckPathError(t, err).Op("lstat").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
-		}
+		CheckPathError(t, err).OpLstat(vfs).Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("LStatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(testDir, files[0].Path, "subDirOnFile")
+
 		_, err := vfs.Lstat(subDirOnFile)
-
-		wantOp := "lstat"
-
-		if vfs.OSType() == avfs.OsWindows {
-			wantOp = "CreateFile"
-		}
-
-		CheckPathError(t, err).Op(wantOp).Path(subDirOnFile).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).OpLstat(vfs).Path(subDirOnFile).Err(avfs.ErrNotADirectory)
 	})
 }
 

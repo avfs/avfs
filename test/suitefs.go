@@ -1026,6 +1026,15 @@ func (cp *CheckPath) Op(wantOp string) *CheckPath {
 	return cp
 }
 
+func (cp *CheckPath) OpLstat(vfs avfs.VFS) *CheckPath {
+	op := "lstat"
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+	}
+
+	return cp.Op(op)
+}
+
 func (cp *CheckPath) OpStat(vfs avfs.VFS) *CheckPath {
 	op := "stat"
 	if vfs.OSType() == avfs.OsWindows {

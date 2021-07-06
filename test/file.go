@@ -1151,6 +1151,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		_, err := f.Stat()
+
 		switch vfs.OSType() {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("GetFileType").Path(fileName).ErrAsString(avfs.ErrFileClosing)
