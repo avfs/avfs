@@ -101,9 +101,7 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("chdir").Path(defaultFile).Err(avfs.ErrWinNotSupported)
 		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Chdir : want error to be %v, got %v", os.ErrInvalid, err)
-			}
+			CheckInvalid(t, "Chdir", err)
 		}
 	})
 }
@@ -150,9 +148,7 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("chmod").Path(defaultFile).Err(avfs.ErrWinNotSupported)
 		default:
-			if err != os.ErrInvalid {
-				t.Errorf("Chmod : want error to be %v, got %v", os.ErrInvalid, err)
-			}
+			CheckInvalid(t, "Chmod", err)
 		}
 	})
 }
@@ -206,9 +202,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Chown(0, 0)
-		if err != os.ErrInvalid {
-			t.Errorf("Chown : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Chown", err)
 	})
 }
 
@@ -263,9 +257,7 @@ func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Close()
-		if err != os.ErrInvalid {
-			t.Errorf("Close : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Close", err)
 	})
 }
 
@@ -473,9 +465,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		buf := make([]byte, 0)
 
 		_, err := f.Read(buf)
-		if err != os.ErrInvalid {
-			t.Errorf("Read : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Read", err)
 	})
 
 	t.Run("FileReadAt", func(t *testing.T) {
@@ -511,9 +501,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		buf := make([]byte, 0)
 
 		_, err := f.ReadAt(buf, 0)
-		if err != os.ErrInvalid {
-			t.Errorf("ReadAt : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "ReadAt", err)
 	})
 
 	t.Run("FileReadAfterEndOfFile", func(t *testing.T) {
@@ -687,9 +675,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.Readdir(-1)
-		if err != os.ErrInvalid {
-			t.Errorf("Readdir : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Readdir", err)
 	})
 }
 
@@ -788,9 +774,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.Readdirnames(-1)
-		if err != os.ErrInvalid {
-			t.Errorf("Readdirnames : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Readdirnames", err)
 	})
 }
 
@@ -991,9 +975,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err = f.Seek(0, io.SeekStart)
-		if err != os.ErrInvalid {
-			t.Errorf("Seek : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Seek", err)
 	})
 }
 
@@ -1130,9 +1112,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.Stat()
-		if err != os.ErrInvalid {
-			t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Stat", err)
 	})
 
 	t.Run("FileStatSubDirOnFile", func(t *testing.T) {
@@ -1142,9 +1122,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		CheckPathError(t, err).Op("open").Path(path).Err(avfs.ErrNotADirectory)
 
 		_, err = f.Stat()
-		if err != os.ErrInvalid {
-			t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Stat", err)
 	})
 
 	t.Run("FileStatClosed", func(t *testing.T) {
@@ -1164,9 +1142,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.Stat()
-		if err != os.ErrInvalid {
-			t.Errorf("Stat : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Stat", err)
 	})
 }
 
@@ -1190,13 +1166,11 @@ func (sfs *SuiteFS) TestFileSync(t *testing.T, testDir string) {
 		CheckPathError(t, err).Op("sync").Path(fileName).Err(os.ErrClosed)
 	})
 
-	t.Run("FileStatNonExisting", func(t *testing.T) {
+	t.Run("FileSyncNonExisting", func(t *testing.T) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Sync()
-		if err != os.ErrInvalid {
-			t.Errorf("Sync : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Sync", err)
 	})
 }
 
@@ -1331,9 +1305,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Truncate(0)
-		if err != os.ErrInvalid {
-			t.Errorf("Truncate : want error to be nil, got %v", err)
-		}
+		CheckInvalid(t, "Truncate", err)
 	})
 
 	t.Run("FileTruncateClosed", func(t *testing.T) {
@@ -1341,15 +1313,6 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 
 		err := f.Truncate(0)
 		CheckPathError(t, err).Op("truncate").Path(fileName).Err(os.ErrClosed)
-	})
-
-	t.Run("FileStatNonExisting", func(t *testing.T) {
-		f := sfs.OpenedNonExistingFile(t, testDir)
-
-		err := f.Truncate(0)
-		if err != os.ErrInvalid {
-			t.Errorf("Truncate : want error to be %v, got %v", os.ErrInvalid, err)
-		}
 	})
 }
 
@@ -1422,9 +1385,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		buf := make([]byte, 0)
 
 		_, err := f.Write(buf)
-		if err != os.ErrInvalid {
-			t.Errorf("Write : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "Write", err)
 	})
 
 	t.Run("FileWriteAtNonExisting", func(t *testing.T) {
@@ -1432,9 +1393,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		buf := make([]byte, 0)
 
 		_, err := f.WriteAt(buf, 0)
-		if err != os.ErrInvalid {
-			t.Errorf("WriteAt : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "WriteAt", err)
 	})
 
 	t.Run("FileWriteAt", func(t *testing.T) {
@@ -1641,9 +1600,7 @@ func (sfs *SuiteFS) TestFileWriteString(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.WriteString("")
-		if err != os.ErrInvalid {
-			t.Errorf("WriteString : want error to be %v, got %v", os.ErrInvalid, err)
-		}
+		CheckInvalid(t, "WriteString", err)
 	})
 }
 
