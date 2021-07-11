@@ -14,12 +14,15 @@
 //  limitations under the License.
 //
 
+//go:build !datarace
 // +build !datarace
 
 package osidm_test
 
 import (
 	"testing"
+
+	"github.com/avfs/avfs/vfsutils"
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/osidm"
@@ -43,4 +46,20 @@ func TestOsIdmAll(t *testing.T) {
 
 	sidm := test.NewSuiteIdm(t, idm)
 	sidm.TestAll(t)
+}
+
+func TestOsIdmCfg(t *testing.T) {
+	var wantFeat avfs.Feature
+
+	switch vfsutils.RunTimeOS() {
+	case avfs.OsWindows:
+		wantFeat = 0
+	default:
+		wantFeat = avfs.FeatIdentityMgr
+	}
+
+	idm := osidm.New()
+	if idm.Features() != wantFeat {
+		t.Errorf("want feature to be %v, got %v", wantFeat, idm.Features())
+	}
 }
