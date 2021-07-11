@@ -133,11 +133,9 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			err := vfs.Chdir(path)
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.Chdir(path)
 		})
 	})
 }
@@ -231,11 +229,9 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			err := vfs.Chmod(path, 0o777)
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.Chmod(path, 0o777)
 		})
 	})
 }
@@ -371,11 +367,9 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			err := vfs.Chown(path, 0, 0)
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.Chown(path, 0, 0)
 		})
 	})
 }
@@ -514,11 +508,9 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			err := vfs.Chtimes(path, time.Now(), time.Now())
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.Chtimes(path, time.Now(), time.Now())
 		})
 	})
 }
@@ -556,8 +548,8 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
 			newFile := vfs.Join(path, defaultFile)
 
 			f, err := vfs.Create(newFile)
@@ -820,11 +812,9 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			err := vfs.Lchown(path, 0, 0)
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.Lchown(path, 0, 0)
 		})
 	})
 }
@@ -1181,12 +1171,11 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
-			err := vfs.Mkdir(newDir, avfs.DefaultDirPerm)
 
-			return err
+			return vfs.Mkdir(newDir, avfs.DefaultDirPerm)
 		})
 	})
 }
@@ -1296,12 +1285,11 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, false)
-		sfs.PermGolden(t, testDir, func(path string) error {
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
-			err := vfs.MkdirAll(newDir, avfs.DefaultDirPerm)
 
-			return err
+			return vfs.MkdirAll(newDir, avfs.DefaultDirPerm)
 		})
 	})
 }
@@ -1885,16 +1873,15 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemovePerm", func(t *testing.T) {
+		t.Skip("TODO: Remove")
+
 		if !sfs.canTestPerm {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, true)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			rmDir := vfs.Join(path, defaultDir)
-			err := vfs.Remove(rmDir)
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.Remove(path)
 		})
 	})
 }
@@ -1995,18 +1982,15 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveAllPerm", func(t *testing.T) {
-		t.Skip("TODO: different Op values for for RemoveAll")
+		t.Skip("TODO: RemoveAll")
 
 		if !sfs.canTestPerm {
 			return
 		}
 
-		sfs.permCreateDirs(t, testDir, true)
-		sfs.PermGolden(t, testDir, func(path string) error {
-			rmDir := vfs.Join(path, defaultDir)
-			err := vfs.RemoveAll(rmDir)
-
-			return err
+		pt := NewPermTest(sfs, testDir)
+		pt.Test(t, func(path string) error {
+			return vfs.RemoveAll(path)
 		})
 	})
 }

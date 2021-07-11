@@ -17,8 +17,6 @@
 package test
 
 import (
-	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -196,7 +194,8 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTe
 		funcName := functionName(tf)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
-		sfs.CreateTestDir(t, testDir)
+		sfs.CreateDir(t, testDir, 0o777)
+		sfs.ChangeDir(t, testDir)
 
 		t.Run(funcName, func(t *testing.T) {
 			tf(t, testDir)
@@ -228,7 +227,8 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Suite
 		funcName := functionName(bf)
 		testDir := vfs.Join(sfs.rootDir, funcName)
 
-		sfs.CreateTestDir(b, testDir)
+		sfs.CreateDir(b, testDir, 0o777)
+		sfs.ChangeDir(b, testDir)
 
 		b.Run(funcName, func(b *testing.B) {
 			bf(b, testDir)
@@ -265,32 +265,38 @@ func functionName(i interface{}) string {
 	return name[start:end]
 }
 
-// CreateTestDir creates the base directory for the tests.
-func (sfs *SuiteFS) CreateTestDir(tb testing.TB, testDir string) {
-	vfs := sfs.vfsSetup
+// CreateDir creates a directory for the tests.
+func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode os.FileMode) {
+	tb.Helper()
 
+	vfs := sfs.vfsSetup
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
-	err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
+	err := vfs.MkdirAll(dir, mode)
 	if err != nil {
-		tb.Fatalf("MkdirAll %s : want error to be nil, got %s", testDir, err)
+		tb.Fatalf("MkdirAll %s : want error to be nil, got %s", dir, err)
 	}
 
-	_, err = vfs.Stat(testDir)
+	err = vfs.Chmod(dir, mode)
 	if err != nil {
-		tb.Fatalf("Stat %s : want error to be nil, got %s", testDir, err)
+		tb.Fatalf("Chmod %s : want error to be nil, got %s", dir, err)
+	}
+}
+
+// ChangeDir changes the current directory for the tests.
+func (sfs *SuiteFS) ChangeDir(tb testing.TB, dir string) {
+	tb.Helper()
+
+	vfs := sfs.vfsTest
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
 	}
 
-	err = vfs.Chmod(testDir, 0o777)
+	err := vfs.Chdir(dir)
 	if err != nil {
-		tb.Fatalf("Chmod %s : want error to be nil, got %s", testDir, err)
-	}
-
-	err = vfs.Chdir(testDir)
-	if err != nil {
-		tb.Fatalf("Chdir %s : want error to be nil, got %s", testDir, err)
+		tb.Fatalf("Chdir %s : want error to be nil, got %s", dir, err)
 	}
 }
 
@@ -424,163 +430,6 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 	)
 }
 
-// permTests stores current permission tests where the key is composed of userName and mode
-// and the value is an error string.
-type permTests map[string]string
-
-// PermFunc returns an error depending on the permissions of the user and the file mode on the path.
-type PermFunc func(path string) error
-
-// permGoldenName returns the name of a golden file.
-func (sfs *SuiteFS) permGoldenName(testDir string) string {
-	testName := filepath.Base(testDir)
-	goldenFile := fmt.Sprintf("perm%s.golden", testName)
-
-	return filepath.Join(sfs.initDir, "testdata", goldenFile)
-}
-
-// permGoldenLoad loads a golden file.
-func (sfs *SuiteFS) permGoldenLoad(tb testing.TB, testDir string) permTests {
-	fileName := sfs.permGoldenName(testDir)
-	pt := make(permTests)
-
-	data, err := os.ReadFile(fileName)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			tb.Fatalf("ReadFile %s : want error to be nil, got %v", fileName, err)
-		}
-
-		return nil
-	}
-
-	err = json.Unmarshal(data, &pt)
-	if err != nil {
-		tb.Fatalf("WriteFile %s : want error to be nil, got %v", fileName, err)
-	}
-
-	return pt
-}
-
-// permGoldenSave saves a golden file.
-func (sfs *SuiteFS) permGoldenSave(tb testing.TB, testDir string, pt permTests) {
-	fileName := sfs.permGoldenName(testDir)
-
-	data, err := json.MarshalIndent(pt, "", "\t")
-	if err != nil {
-		tb.Fatalf("Marshal %s : want error to be nil, got %v", fileName, err)
-	}
-
-	sfs.User(tb, sfs.initUser.Name())
-
-	err = os.WriteFile(fileName, data, avfs.DefaultFilePerm)
-	if err != nil {
-		tb.Fatalf("WriteFile %s : want error to be nil, got %v", fileName, err)
-	}
-}
-
-// permCreateDirs creates directories and sets permissions to all tests directories.
-func (sfs *SuiteFS) permCreateDirs(tb testing.TB, testDir string, withSubdir bool) {
-	vfs := sfs.vfsSetup
-	sfs.User(tb, UsrTest)
-
-	for _, ui := range UserInfos() {
-		usrDir := vfs.Join(testDir, "perm", ui.Name)
-
-		err := vfs.MkdirAll(usrDir, avfs.DefaultDirPerm)
-		if err != nil {
-			tb.Fatalf("Mkdir %s : want error to be nil, got %v", usrDir, err)
-		}
-
-		err = vfs.Chmod(usrDir, 0o777)
-		if err != nil {
-			tb.Fatalf("Chmod %s : want error to be nil, got %v", usrDir, err)
-		}
-
-		for m := os.FileMode(0); m <= 0o777; m++ {
-			permDir := vfs.Join(usrDir, m.String())
-
-			err = vfs.Mkdir(permDir, avfs.DefaultDirPerm)
-			if err != nil {
-				tb.Fatalf("Mkdir %s : want error to be nil, got %v", permDir, err)
-			}
-
-			if withSubdir {
-				subDir := vfs.Join(permDir, defaultDir)
-
-				err = vfs.Mkdir(subDir, avfs.DefaultDirPerm)
-				if err != nil {
-					tb.Fatalf("Mkdir %s : want error to be nil, got %v", subDir, err)
-				}
-
-				err = vfs.Chmod(subDir, m)
-				if err != nil {
-					tb.Fatalf("Chmod %s : want error to be nil, got %v", permDir, err)
-				}
-			}
-
-			err = vfs.Chmod(permDir, m)
-			if err != nil {
-				tb.Fatalf("Chmod %s : want error to be nil, got %v", permDir, err)
-			}
-		}
-	}
-}
-
-// PermGolden generates or tests the golden file of the permissions for a specific function.
-func (sfs *SuiteFS) PermGolden(tb testing.TB, testDir string, permFunc PermFunc) {
-	vfs := sfs.vfsSetup
-	testName := filepath.Base(testDir)
-	create := false
-
-	pt := sfs.permGoldenLoad(tb, testDir)
-	if pt == nil {
-		if !vfs.HasFeature(avfs.FeatRealFS) {
-			tb.Errorf("Can't test emulated file system %s : golden file not present", vfs.Type())
-
-			return
-		}
-
-		create = true
-		pt = make(permTests)
-	}
-
-	for _, ui := range UserInfos() {
-		u := sfs.User(tb, ui.Name)
-		for m := os.FileMode(0); m <= 0o777; m++ {
-			usrMode := fmt.Sprintf("%s/%s", u.Name(), m)
-			permDir := vfs.Join(testDir, "perm", usrMode)
-			errStr := ""
-
-			err := permFunc(permDir)
-			if err != nil {
-				// Strip testDir from error string.
-				errStrRaw := err.Error()
-				errStr = strings.ReplaceAll(errStrRaw, testDir, "")
-			}
-
-			if create {
-				pt[usrMode] = errStr
-
-				continue
-			}
-
-			// Compare current error to golden file error.
-			wantErrStr, ok := pt[usrMode]
-			if !ok {
-				tb.Errorf("%s: cant find result for %s", testName, usrMode)
-			}
-
-			if wantErrStr != errStr {
-				tb.Errorf("%s: want error to be %v, got %v", usrMode, wantErrStr, err)
-			}
-		}
-	}
-
-	if create {
-		sfs.permGoldenSave(tb, testDir, pt)
-	}
-}
-
 // ClosedFile returns a closed avfs.File.
 func (sfs *SuiteFS) ClosedFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
 	tb.Helper()
@@ -654,7 +503,6 @@ func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) 
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
-
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return vfs.Join(testDir, defaultFile)
 	}
@@ -750,7 +598,6 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
-
 	RndParamsOneDir := vfsutils.RndTreeParams{
 		MinName:     4,
 		MaxName:     32,
