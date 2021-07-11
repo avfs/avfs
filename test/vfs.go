@@ -2473,6 +2473,13 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 		}
 	})
 
+	t.Run("TruncateNonExistingFile", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		err := vfs.Truncate(nonExistingFile, 0)
+		CheckPathError(t, err).Op("truncate").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+	})
+
 	t.Run("TruncateOnDir", func(t *testing.T) {
 		err := vfs.Truncate(testDir, 0)
 
