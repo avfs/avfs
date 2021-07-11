@@ -57,11 +57,6 @@ func (vfs *BasePathFS) restoreError(err error) error {
 			New: vfs.fromBasePath(e.New),
 			Err: e.Err,
 		}
-	case *os.SyscallError:
-		return &os.SyscallError{
-			Syscall: strings.ReplaceAll(e.Syscall, vfs.basePath, ""),
-			Err:     e.Err,
-		}
 	default:
 		return err
 	}
