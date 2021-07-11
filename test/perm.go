@@ -160,7 +160,7 @@ func (pt *PermTest) NormalizeError(err error) error {
 
 // CompareErrors compares wanted error to error.
 func (pt *PermTest) CompareErrors(t *testing.T, wantErr, err error) {
-	if reflect.DeepEqual(wantErr, err) {
+	if reflect.DeepEqual(wantErr, err) { //nolint:govet // avoid using reflect.DeepEqual with errors.
 		return
 	}
 
@@ -176,7 +176,7 @@ func (pt *PermTest) Test(t *testing.T, permFunc PermFunc) {
 
 	pt.Load(t)
 
-	if false && pt.create && !vfs.HasFeature(avfs.FeatRealFS) {
+	if pt.create && !vfs.HasFeature(avfs.FeatRealFS) {
 		t.Errorf("Can't test emulated file system %s : golden file not present", vfs.Type())
 
 		return
