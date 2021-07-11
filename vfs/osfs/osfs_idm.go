@@ -24,11 +24,6 @@ import (
 
 // CurrentUser returns the current user.
 func (vfs *OsFS) CurrentUser() avfs.UserReader {
-	uc, ok := vfs.idm.(avfs.UserConnecter)
-	if ok {
-		return uc.CurrentUser()
-	}
-
 	return osidm.CurrentUser()
 }
 

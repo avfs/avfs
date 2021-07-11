@@ -22,11 +22,10 @@ package osidm_test
 import (
 	"testing"
 
-	"github.com/avfs/avfs/vfsutils"
-
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 var (
@@ -61,5 +60,11 @@ func TestOsIdmCfg(t *testing.T) {
 	idm := osidm.New()
 	if idm.Features() != wantFeat {
 		t.Errorf("want feature to be %v, got %v", wantFeat, idm.Features())
+	}
+
+	if idm.HasFeature(avfs.FeatIdentityMgr) {
+		if osidm.CurrentUser() == idm.CurrentUser() {
+			t.Errorf("want current user (%v) = OS curent user (%v)", osidm.CurrentUser(), idm.CurrentUser())
+		}
 	}
 }
