@@ -64,7 +64,7 @@ func TestOsIdmCfg(t *testing.T) {
 
 	if idm.HasFeature(avfs.FeatIdentityMgr) {
 		if osidm.CurrentUser() == idm.CurrentUser() {
-			t.Errorf("want current user (%v) = OS curent user (%v)", osidm.CurrentUser(), idm.CurrentUser())
+			t.Errorf("want current user (%v) = OS current user (%v)", osidm.CurrentUser(), idm.CurrentUser())
 		}
 	}
 }
