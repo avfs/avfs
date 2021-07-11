@@ -328,10 +328,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 		for i, rtTest := range rtTests {
 			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
 
-			err := vfs.MkdirAll(path, avfs.DefaultDirPerm)
-			if err != nil {
-				t.Fatalf("MkdirAll %s :  want error to be nil, got %v", path, err)
-			}
+			sfs.CreateDir(t, path, avfs.DefaultDirPerm)
 
 			rt, err := vfsutils.NewRndTree(vfs, path, rtTest)
 			if err != nil {

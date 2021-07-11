@@ -667,15 +667,18 @@ func GetSampleDirsAll() []*Dir {
 func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
 	tb.Helper()
 
-	sfs.CreateDir(tb, testDir, avfs.DefaultDirPerm)
-
 	vfs := sfs.vfsSetup
-	dirs := GetSampleDirs()
 
+	err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
+	if err != nil {
+		tb.Fatalf("MkdirAll %s : want error to be nil, got %v", testDir, err)
+	}
+
+	dirs := GetSampleDirs()
 	for _, dir := range dirs {
 		path := vfs.Join(testDir, dir.Path)
 
-		err := vfs.Mkdir(path, dir.Mode)
+		err = vfs.Mkdir(path, dir.Mode)
 		if err != nil {
 			tb.Fatalf("Mkdir %s : want error to be nil, got %v", path, err)
 		}
