@@ -18,8 +18,6 @@ package basepathfs
 
 import (
 	"io/fs"
-
-	"github.com/avfs/avfs"
 )
 
 // Chdir changes the current working directory to the file,
@@ -101,11 +99,9 @@ func (f *BasePathFile) ReadAt(b []byte, off int64) (n int, err error) {
 // If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
 // When it succeeds, it returns a nil error (not io.EOF).
 func (f *BasePathFile) ReadDir(n int) ([]fs.DirEntry, error) {
-	const op = "readdirent"
+	de, err := f.baseFile.ReadDir(n)
 
-	// TODO : implement ReadDir
-
-	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return de, f.bpFS.restoreError(err)
 }
 
 // Readdir reads the contents of the directory associated with file and
