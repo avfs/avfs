@@ -566,7 +566,7 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatSymlink) {
+	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
 
 		switch vfs.OSType() {
