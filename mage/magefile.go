@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+//go:build mage
 // +build mage
 
 // avfs is the build script for AVFS.
@@ -269,7 +270,7 @@ func dockerTest(args ...string) error {
 	testDataMount := testDataDir + ":" + dockerTestDataDir
 	cmdArgs := []string{
 		"run",
-		"-ti",
+		"-i",
 		"-v", coverMount,
 		"-v", testDataMount,
 		dockerImage,
