@@ -7,7 +7,6 @@ Another Virtual File System for Go
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/avfs/avfs)](https://pkg.go.dev/github.com/avfs/avfs)
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Favfs%2Favfs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Favfs%2Favfs?ref=badge_shield)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 
 ## Overview
@@ -32,11 +31,10 @@ provides several features :
 This package can be installed with the go get command :
 
 ```
-go get github.com/avfs/avfs
+go get github.com/avfs/avfs@latest
 ```
 
-It is only tested with Go modules enabled (`GO111MODULE=on`) and Go version >=
-1.15
+It is only tested with Go version >= 1.16
 
 ## Getting started
 
@@ -310,8 +308,3 @@ UserConnecter methods <br>`avfs.FS` |Comments
 ------------------------------------|--------
 `CurrentUser`| returns the current user
 `User`| sets and returns the current user
-
-
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Favfs%2Favfs.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Favfs%2Favfs?ref=badge_large)
