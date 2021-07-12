@@ -79,7 +79,7 @@ func IsEmpty(vfs avfs.VFS, path string) (bool, error) {
 
 		defer f.Close()
 
-		list, err := f.Readdir(-1)
+		list, err := f.ReadDir(-1)
 		if err != nil {
 			return false, err
 		}

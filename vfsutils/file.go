@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"sort"
 	"strconv"
 	"sync"
 	"time"
@@ -166,6 +167,26 @@ func MkdirTemp(vfs avfs.VFS, dir, pattern string) (string, error) {
 
 		return "", err
 	}
+}
+
+// ReadDir reads the named directory,
+// returning all its directory entries sorted by filename.
+// If an error occurs reading the directory,
+// ReadDir returns the entries it was able to read before the error,
+// along with the error.
+func ReadDir(vfs avfs.VFS, name string) ([]fs.DirEntry, error) {
+	f, err := vfs.Open(name)
+	if err != nil {
+		return nil, err
+	}
+
+	defer f.Close()
+
+	dirs, err := f.ReadDir(-1)
+
+	sort.Slice(dirs, func(i, j int) bool { return dirs[i].Name() < dirs[j].Name() })
+
+	return dirs, err
 }
 
 // ReadFile reads the named file and returns the contents.
