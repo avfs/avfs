@@ -240,7 +240,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) || vfs.OSType() == avfs.OsWindows {
 		err := vfs.Chown(testDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -566,7 +566,7 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatSymlink) {
+	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.OSType() == avfs.OsWindows {
 		_, err := vfs.EvalSymlinks(testDir)
 
 		switch vfs.OSType() {
@@ -649,7 +649,7 @@ func (sfs *SuiteFS) TestGetTempDir(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) || vfs.OSType() == avfs.OsWindows {
 		err := vfs.Lchown(testDir, 0, 0)
 
 		switch vfs.OSType() {
