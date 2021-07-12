@@ -129,7 +129,7 @@ func (f *OrefaFile) Close() error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
-	f.dirInfos = nil
+	f.dirEntries = nil
 	f.dirNames = nil
 	f.nd = nil
 
@@ -265,29 +265,6 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	const op = "readdirent"
 
-	// TODO : implement ReadDir
-
-	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
-}
-
-// Readdir reads the contents of the directory associated with file and
-// returns a slice of up to n FileInfo values, as would be returned
-// by Lstat, in directory order. Subsequent calls on the same file will yield
-// further FileInfos.
-//
-// If n > 0, Readdir returns at most n FileInfo structures. In this case, if
-// Readdir returns an empty slice, it will return a non-nil error
-// explaining why. At the end of a directory, the error is io.EOF.
-//
-// If n <= 0, Readdir returns all the FileInfo from the directory in
-// a single slice. In this case, if Readdir succeeds (reads all
-// the way to the end of the directory), it returns the slice and a
-// nil error. If it encounters an error before the end of the
-// directory, Readdir returns the FileInfo read until that point
-// and a non-nil error.
-func (f *OrefaFile) Readdir(n int) (fi []fs.FileInfo, err error) {
-	const op = "readdirent"
-
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -318,38 +295,38 @@ func (f *OrefaFile) Readdir(n int) (fi []fs.FileInfo, err error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if n <= 0 || f.dirInfos == nil {
+	if n <= 0 || f.dirEntries == nil {
 		nd.mu.RLock()
-		infos := nd.infos()
+		de := nd.dirEntries()
 		nd.mu.RUnlock()
 
 		f.dirIndex = 0
 
 		if n <= 0 {
-			f.dirInfos = nil
+			f.dirEntries = nil
 
-			return infos, nil
+			return de, nil
 		}
 
-		f.dirInfos = infos
+		f.dirEntries = de
 	}
 
 	start := f.dirIndex
-	if start >= len(f.dirInfos) {
+	if start >= len(f.dirEntries) {
 		f.dirIndex = 0
-		f.dirInfos = nil
+		f.dirEntries = nil
 
 		return nil, io.EOF
 	}
 
 	end := start + n
-	if end > len(f.dirInfos) {
-		end = len(f.dirInfos)
+	if end > len(f.dirEntries) {
+		end = len(f.dirEntries)
 	}
 
 	f.dirIndex = end
 
-	return f.dirInfos[start:end], nil
+	return f.dirEntries[start:end], nil
 }
 
 // Readdirnames reads and returns a slice of names from the directory f.
@@ -674,49 +651,65 @@ func (f *OrefaFile) WriteString(s string) (n int, err error) {
 	return f.Write([]byte(s))
 }
 
-// OrefaInfo is the implementation of FileInfo returned by Stat and Lstat.
+// OrefaInfo is the implementation fs.DirEntry (returned by ReadDir) and fs.FileInfo (returned by Stat and Lstat).
+
+// Info returns the FileInfo for the file or subdirectory described by the entry.
+// The returned FileInfo may be from the time of the original directory read
+// or from the time of the call to Info. If the file has been removed or renamed
+// since the directory read, Info may return an error satisfying errors.Is(err, ErrNotExist).
+// If the entry denotes a symbolic link, Info reports the information about the link itself,
+// not the link's target.
+func (info *OrefaInfo) Info() (fs.FileInfo, error) {
+	return info, nil
+}
 
 // IsDir is the abbreviation for Mode().IsDir().
-func (fst *OrefaInfo) IsDir() bool {
-	return fst.mode.IsDir()
+func (info *OrefaInfo) IsDir() bool {
+	return info.mode.IsDir()
 }
 
 // Mode returns the file mode bits.
-func (fst *OrefaInfo) Mode() fs.FileMode {
-	return fst.mode
+func (info *OrefaInfo) Mode() fs.FileMode {
+	return info.mode
 }
 
 // ModTime returns the modification time.
-func (fst *OrefaInfo) ModTime() time.Time {
-	return time.Unix(0, fst.mtime)
+func (info *OrefaInfo) ModTime() time.Time {
+	return time.Unix(0, info.mtime)
 }
 
 // Name returns the base name of the file.
-func (fst *OrefaInfo) Name() string {
-	return fst.name
+func (info *OrefaInfo) Name() string {
+	return info.name
 }
 
 // Size returns the length in bytes for regular files; system-dependent for others.
-func (fst *OrefaInfo) Size() int64 {
-	return fst.size
+func (info *OrefaInfo) Size() int64 {
+	return info.size
 }
 
 // Sys returns the underlying data source (can return nil).
-func (fst *OrefaInfo) Sys() interface{} {
-	return fst
+func (info *OrefaInfo) Sys() interface{} {
+	return info
+}
+
+// Type returns the type bits for the entry.
+// The type bits are a subset of the usual FileMode bits, those returned by the FileMode.Type method.
+func (info *OrefaInfo) Type() fs.FileMode {
+	return info.mode & fs.ModeType
 }
 
 // Gid returns the group id.
-func (fst *OrefaInfo) Gid() int {
-	return fst.gid
+func (info *OrefaInfo) Gid() int {
+	return info.gid
 }
 
 // Uid returns the user id.
-func (fst *OrefaInfo) Uid() int {
-	return fst.uid
+func (info *OrefaInfo) Uid() int {
+	return info.uid
 }
 
 // Nlink returns the number of hard links.
-func (fst *OrefaInfo) Nlink() uint64 {
-	return uint64(fst.nlink)
+func (info *OrefaInfo) Nlink() uint64 {
+	return uint64(info.nlink)
 }

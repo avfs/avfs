@@ -110,21 +110,21 @@ func (nd *node) fillStatFrom(name string) *OrefaInfo {
 	return fst
 }
 
-// infos returns a slice of FileInfo from a directory ordered by name.
-func (nd *node) infos() []fs.FileInfo {
+// dirEntries returns a slice of fs.DirEntry from a directory ordered by name.
+func (nd *node) dirEntries() []fs.DirEntry {
 	l := len(nd.children)
 	if l == 0 {
 		return nil
 	}
 
-	dirInfos := make([]fs.FileInfo, 0, l)
+	de := make([]fs.DirEntry, 0, l)
 	for name, cn := range nd.children {
-		dirInfos = append(dirInfos, cn.fillStatFrom(name))
+		de = append(de, cn.fillStatFrom(name))
 	}
 
-	sort.Slice(dirInfos, func(i, j int) bool { return dirInfos[i].Name() < dirInfos[j].Name() })
+	sort.Slice(de, func(i, j int) bool { return de[i].Name() < de[j].Name() })
 
-	return dirInfos
+	return de
 }
 
 // names returns a slice of file names from a directory ordered by name.
@@ -134,14 +134,14 @@ func (nd *node) names() []string {
 		return nil
 	}
 
-	dirNames := make([]string, 0, l)
+	dn := make([]string, 0, l)
 	for name := range nd.children {
-		dirNames = append(dirNames, name)
+		dn = append(dn, name)
 	}
 
-	sort.Strings(dirNames)
+	sort.Strings(dn)
 
-	return dirNames
+	return dn
 }
 
 // remove deletes the content of a node.

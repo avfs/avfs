@@ -385,7 +385,7 @@ func FileNilPtr(t *testing.T, f avfs.File) {
 	_, err = f.ReadAt([]byte{}, 0)
 	CheckInvalid(t, "ReadAt", err)
 
-	_, err = f.Readdir(0)
+	_, err = f.ReadDir(0)
 	CheckInvalid(t, "Readdir", err)
 
 	_, err = f.Readdirnames(0)
@@ -581,7 +581,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f, _ := sfs.OpenedEmptyFile(t, testDir)
 
-		_, err := f.Readdir(0)
+		_, err := f.ReadDir(0)
 		CheckPathError(t, err).Op("readdirent").Path(avfs.NotImplemented).Err(avfs.ErrPermDenied)
 
 		return
@@ -607,7 +607,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		var rdInfos []fs.FileInfo
 
 		for {
-			rdInfoN, err := f.Readdir(maxRead)
+			rdInfoN, err := f.ReadDir(maxRead)
 			if err == io.EOF {
 				break
 			}
@@ -649,7 +649,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 		defer f.Close()
 
-		_, err := f.Readdir(-1)
+		_, err := f.ReadDir(-1)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
@@ -662,7 +662,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	t.Run("FileReadDirClosed", func(t *testing.T) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
-		_, err := f.Readdir(-1)
+		_, err := f.ReadDir(-1)
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
@@ -675,7 +675,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	t.Run("FileReaddirNonExisting", func(t *testing.T) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
-		_, err := f.Readdir(-1)
+		_, err := f.ReadDir(-1)
 		CheckInvalid(t, "Readdir", err)
 	})
 }

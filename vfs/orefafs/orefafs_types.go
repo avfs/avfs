@@ -37,15 +37,15 @@ type OrefaFS struct {
 
 // OrefaFile represents an open file descriptor.
 type OrefaFile struct {
-	orFS     *OrefaFS
-	nd       *node
-	name     string
-	dirInfos []fs.FileInfo
-	dirNames []string
-	at       int64
-	dirIndex int
-	mu       sync.RWMutex
-	permMode avfs.PermMode
+	orFS       *OrefaFS
+	nd         *node
+	name       string
+	dirEntries []fs.DirEntry
+	dirNames   []string
+	at         int64
+	dirIndex   int
+	mu         sync.RWMutex
+	permMode   avfs.PermMode
 }
 
 // Option defines the option function used for initializing OrefaFS.

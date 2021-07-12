@@ -1338,7 +1338,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 
 		defer f.Close()
 
-		dirs, err := f.Readdir(-1)
+		dirs, err := f.ReadDir(-1)
 		if err != nil {
 			t.Errorf("Readdir : want error to be nil, got %v", err)
 		}
@@ -1612,14 +1612,14 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 	existingFile := rndTree.Files[0]
 
 	t.Run("ReadDirAll", func(t *testing.T) {
-		rdInfos, err := vfs.ReadDir(testDir)
+		entries, err := vfs.ReadDir(testDir)
 		if err != nil {
 			t.Fatalf("ReadDir : want error to be nil, got %v", err)
 		}
 
 		var gDirs, gFiles, gSymlinks int
-		for _, rdInfo := range rdInfos {
-			mode := rdInfo.Mode()
+		for _, entry := range entries {
+			mode := entry.Mode()
 			switch {
 			case mode.IsDir():
 				gDirs++
