@@ -17,7 +17,7 @@
 package orefafs
 
 import (
-	"os"
+	"io/fs"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -37,7 +37,7 @@ func New(opts ...Option) (*OrefaFS, error) {
 
 	vfs.nodes[string(avfs.PathSeparator)] = &node{
 		mtime: time.Now().UnixNano(),
-		mode:  os.ModeDir | 0o755,
+		mode:  fs.ModeDir | 0o755,
 	}
 
 	for _, opt := range opts {

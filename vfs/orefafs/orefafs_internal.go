@@ -18,12 +18,14 @@ package orefafs
 
 import (
 	"bytes"
+	"io/fs"
 	"os"
 	"sort"
 	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfsutils"
 )
 
 // split splits path immediately following the final Separator,
@@ -33,7 +35,7 @@ import (
 // The returned values have the property that path = dir+file.
 func split(path string) (dir, file string) {
 	i := len(path) - 1
-	for i >= 0 && !os.IsPathSeparator(path[i]) {
+	for i >= 0 && !vfsutils.IsPathSeparator(path[i]) {
 		i--
 	}
 
@@ -54,21 +56,21 @@ func (nd *node) addChild(name string, child *node) {
 }
 
 // createDir creates a new directory.
-func (vfs *OrefaFS) createDir(parent *node, absPath, fileName string, perm os.FileMode) *node {
-	mode := os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.umask))
+func (vfs *OrefaFS) createDir(parent *node, absPath, fileName string, perm fs.FileMode) *node {
+	mode := fs.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.umask))
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createFile creates a new file.
-func (vfs *OrefaFS) createFile(parent *node, absPath, fileName string, perm os.FileMode) *node {
-	mode := perm & avfs.FileModeMask &^ os.FileMode(vfs.umask)
+func (vfs *OrefaFS) createFile(parent *node, absPath, fileName string, perm fs.FileMode) *node {
+	mode := perm & avfs.FileModeMask &^ fs.FileMode(vfs.umask)
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createNode creates a new node (directory or file).
-func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode os.FileMode) *node {
+func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.FileMode) *node {
 	nd := &node{
 		id:    atomic.AddUint64(&vfs.lastId, 1),
 		mtime: time.Now().UnixNano(),
@@ -89,7 +91,7 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode os.F
 	return nd
 }
 
-// fillStatFrom returns a fStat (implementation of os.FileInfo) from a dirNode dn named name.
+// fillStatFrom returns a fStat (implementation of fs.FileInfo) from a dirNode dn named name.
 func (nd *node) fillStatFrom(name string) *fStat {
 	nd.mu.RLock()
 
@@ -110,13 +112,13 @@ func (nd *node) fillStatFrom(name string) *fStat {
 }
 
 // infos returns a slice of FileInfo from a directory ordered by name.
-func (nd *node) infos() []os.FileInfo {
+func (nd *node) infos() []fs.FileInfo {
 	l := len(nd.children)
 	if l == 0 {
 		return nil
 	}
 
-	dirInfos := make([]os.FileInfo, 0, l)
+	dirInfos := make([]fs.FileInfo, 0, l)
 	for name, cn := range nd.children {
 		dirInfos = append(dirInfos, cn.fillStatFrom(name))
 	}
@@ -154,7 +156,7 @@ func (nd *node) remove() {
 }
 
 // setMode sets the permissions of the file node.
-func (nd *node) setMode(mode os.FileMode) {
+func (nd *node) setMode(mode fs.FileMode) {
 	nd.mode &^= avfs.FileModeMask
 	nd.mode |= mode & avfs.FileModeMask
 }

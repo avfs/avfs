@@ -17,7 +17,7 @@
 package orefafs
 
 import (
-	"os"
+	"io/fs"
 	"sync"
 
 	"github.com/avfs/avfs"
@@ -40,7 +40,7 @@ type OrefaFile struct {
 	orFS     *OrefaFS
 	nd       *node
 	name     string
-	dirInfos []os.FileInfo
+	dirInfos []fs.FileInfo
 	dirNames []string
 	at       int64
 	dirIndex int
@@ -67,10 +67,10 @@ type node struct {
 	gid      int
 	nlink    int
 	mu       sync.RWMutex
-	mode     os.FileMode
+	mode     fs.FileMode
 }
 
-// fStat is the implementation of os.FileInfo returned by Stat and Lstat.
+// fStat is the implementation of fs.FileInfo returned by Stat and Lstat.
 type fStat struct {
 	name  string
 	id    uint64
@@ -79,5 +79,5 @@ type fStat struct {
 	uid   int
 	gid   int
 	nlink int
-	mode  os.FileMode
+	mode  fs.FileMode
 }

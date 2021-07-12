@@ -14,6 +14,7 @@
 //  limitations under the License.
 //
 
+//go:build !datarace
 // +build !datarace
 
 package orefafs_test
@@ -32,6 +33,9 @@ var (
 
 	// orefafs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
+
+	// fStat struct implements fs.FileInfo interface.
+	// var _ fs.FileInfo = &fStat{}
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {

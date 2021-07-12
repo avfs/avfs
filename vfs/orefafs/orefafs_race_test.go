@@ -14,7 +14,8 @@
 //  limitations under the License.
 //
 
-//+build datarace
+//go:build datarace
+// +build datarace
 
 package orefafs_test
 
