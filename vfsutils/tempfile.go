@@ -101,11 +101,14 @@ func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
 	prefix = joinPath(dir, prefix)
 
 	try := 0
+
 	for {
 		name := prefix + nextRandom() + suffix
+
 		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
 		if IsExist(err) {
-			if try++; try < 10000 {
+			try++
+			if try < 10000 {
 				continue
 			}
 
@@ -136,24 +139,30 @@ func MkdirTemp(vfs avfs.VFS, dir, pattern string) (string, error) {
 	prefix = joinPath(dir, prefix)
 
 	try := 0
+
 	for {
 		name := prefix + nextRandom() + suffix
+
 		err := vfs.Mkdir(name, 0o700)
 		if err == nil {
 			return name, nil
 		}
 
 		if vfs.IsExist(err) {
-			if try++; try < 10000 {
+			try++
+			if try < 10000 {
 				continue
 			}
+
 			return "", &fs.PathError{Op: "mkdirtemp", Path: dir + string(os.PathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
+
 		if vfs.IsNotExist(err) {
-			if _, err := vfs.Stat(dir); vfs.IsNotExist(err) {
+			if _, err = vfs.Stat(dir); vfs.IsNotExist(err) {
 				return "", err
 			}
 		}
+
 		return "", err
 	}
 }
