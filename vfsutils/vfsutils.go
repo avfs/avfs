@@ -26,6 +26,7 @@ import (
 	"sync"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 var (
@@ -417,12 +418,12 @@ type DummySysStat struct{}
 
 // Gid returns the group id.
 func (sst *DummySysStat) Gid() int {
-	return 0
+	return dummyidm.NotImplementedUser.Gid()
 }
 
 // Uid returns the user id.
 func (sst *DummySysStat) Uid() int {
-	return 0
+	return dummyidm.NotImplementedUser.Uid()
 }
 
 // Nlink returns the number of hard links.
