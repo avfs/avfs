@@ -214,11 +214,11 @@ File system methods <br> `avfs.FS`|Comments
 `Clean`|equivalent to `filepath.Clean`
 `Clone`| returns a shallow copy of the current file system (see MemFS) or the file system itself
 `Create`|equivalent to `os.Create`
+`CreateTemp`|equivalent to `os.CreateTemp`
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
 `FromSlash`|equivalent to `filepath.FromSlash`
 `Features`| returns the set of features provided by the file system or identity manager
-`GetTempDir`|equivalent to `os.TempDir`
 `Getwd`|equivalent to `os.Getwd`
 `Glob`|equivalent to `filepath.Glob`
 `HasFeature`| returns true if the file system or identity manager provides a given feature
@@ -230,6 +230,7 @@ File system methods <br> `avfs.FS`|Comments
 `Lstat`|equivalent to `os.Lstat`
 `Mkdir`|equivalent to `os.Mkdir`
 `MkdirAll`|equivalent to `os.MkdirAll`
+`MkdirTemp`|equivalent to `os.MkdirTemp`
 `Open`|equivalent to `os.Open`
 `OpenFile`|equivalent to `os.OpenFile`
 `OSType`| returns the operating system type of the file system
@@ -244,8 +245,7 @@ File system methods <br> `avfs.FS`|Comments
 `Split`|equivalent to `filepath.Split`
 `Stat`|equivalent to `os.Stat`
 `Symlink`|equivalent to `os.Symlink`
-`MkdirTemp`|equivalent to `os.MkdirTemp`
-`TempFile`|equivalent to `ioutil.TempFile`
+`TempDir`|equivalent to `os.TempDir`
 `ToSlash`|equivalent to `filepath.ToSlash`
 `Truncate`|equivalent to `os.Truncate`
 `Walk`|equivalent to `filepath.Walk`

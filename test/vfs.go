@@ -2409,14 +2409,14 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	})
 }
 
-// TestTempFile tests TempFile function.
+// TestTempFile tests CreateTemp function.
 func (sfs *SuiteFS) TestTempFile(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		_, err := vfs.TempFile(testDir, "")
+		_, err := vfs.CreateTemp(testDir, "")
 		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("CreateTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		return
@@ -2425,11 +2425,11 @@ func (sfs *SuiteFS) TestTempFile(t *testing.T, testDir string) {
 	existingFile := sfs.EmptyFile(t, testDir)
 
 	t.Run("TempFileOnFile", func(t *testing.T) {
-		_, err := vfs.TempFile(existingFile, "")
+		_, err := vfs.CreateTemp(existingFile, "")
 
 		e, ok := err.(*fs.PathError)
 		if !ok {
-			t.Fatalf("TempFile : want error type *fs.PathError, got %v", reflect.TypeOf(err))
+			t.Fatalf("CreateTemp : want error type *fs.PathError, got %v", reflect.TypeOf(err))
 		}
 
 		const op = "open"

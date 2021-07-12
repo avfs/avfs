@@ -17,9 +17,9 @@ var (
 	// Random number state.
 	// We generate random temporary file names so that there's a good
 	// chance the file doesn't exist yet - keeps the number of tries in
-	// TempFile to a minimum.
-	randno uint32     //nolint:gochecknoglobals // Used by MkdirTemp and TempFile.
-	randmu sync.Mutex //nolint:gochecknoglobals // Used by MkdirTemp and TempFile.
+	// CreateTemp to a minimum.
+	randno uint32     //nolint:gochecknoglobals // Used by MkdirTemp and CreateTemp.
+	randmu sync.Mutex //nolint:gochecknoglobals // Used by MkdirTemp and CreateTemp.
 )
 
 func reseed() uint32 {

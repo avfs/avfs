@@ -509,9 +509,9 @@ func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) 
 		return vfs.Join(testDir, defaultFile)
 	}
 
-	f, err := vfs.TempFile(testDir, defaultFile)
+	f, err := vfs.CreateTemp(testDir, defaultFile)
 	if err != nil {
-		tb.Fatalf("TempFile : want error to be nil, got %v", err)
+		tb.Fatalf("CreateTemp : want error to be nil, got %v", err)
 	}
 
 	fileName := f.Name()
