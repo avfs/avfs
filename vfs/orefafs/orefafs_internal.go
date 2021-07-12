@@ -19,7 +19,6 @@ package orefafs
 import (
 	"bytes"
 	"io/fs"
-	"os"
 	"sort"
 	"sync/atomic"
 	"time"
@@ -57,7 +56,7 @@ func (nd *node) addChild(name string, child *node) {
 
 // createDir creates a new directory.
 func (vfs *OrefaFS) createDir(parent *node, absPath, fileName string, perm fs.FileMode) *node {
-	mode := fs.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.umask))
+	mode := fs.ModeDir | (perm & avfs.FileModeMask &^ fs.FileMode(vfs.umask))
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }

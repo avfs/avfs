@@ -14,12 +14,13 @@
 //  limitations under the License.
 //
 
+//go:build linux
 // +build linux
 
 package vfsutils
 
 import (
-	"os"
+	"io/fs"
 	"syscall"
 
 	"github.com/avfs/avfs"
@@ -28,14 +29,14 @@ import (
 // Set sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
-func (um *UMaskType) Set(mask os.FileMode) {
+func (um *UMaskType) Set(mask fs.FileMode) {
 	um.mu.Lock()
 
 	u := syscall.Umask(int(mask))
 
 	if mask == 0 {
 		syscall.Umask(u)
-		um.mask = os.FileMode(u)
+		um.mask = fs.FileMode(u)
 	} else {
 		um.mask = mask
 	}
@@ -43,7 +44,7 @@ func (um *UMaskType) Set(mask os.FileMode) {
 	um.mu.Unlock()
 }
 
-// ToSysStat takes a value from os.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func ToSysStat(sys interface{}) avfs.SysStater {
 	switch s := sys.(type) {
 	case *syscall.Stat_t:
@@ -55,7 +56,7 @@ func ToSysStat(sys interface{}) avfs.SysStater {
 	}
 }
 
-// LinuxSysStat implements SysStater interface returned by os.FileInfo.Sys() for a Linux file system.
+// LinuxSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Linux file system.
 type LinuxSysStat struct {
 	Sys *syscall.Stat_t
 }

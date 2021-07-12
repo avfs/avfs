@@ -18,6 +18,7 @@ package vfsutils
 
 import (
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"sort"
@@ -59,7 +60,7 @@ func nextRandom() string {
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func ReadDir(vfs avfs.VFS, dirname string) ([]os.FileInfo, error) {
+func ReadDir(vfs avfs.VFS, dirname string) ([]fs.FileInfo, error) {
 	f, err := vfs.Open(dirname)
 	if err != nil {
 		return nil, err
@@ -196,7 +197,7 @@ func TempFile(vfs avfs.VFS, dir, pattern string) (f avfs.File, err error) {
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func WriteFile(vfs avfs.VFS, filename string, data []byte, perm os.FileMode) error {
+func WriteFile(vfs avfs.VFS, filename string, data []byte, perm fs.FileMode) error {
 	f, err := vfs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err

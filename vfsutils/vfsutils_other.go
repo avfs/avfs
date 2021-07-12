@@ -14,12 +14,13 @@
 //  limitations under the License.
 //
 
+//go:build !linux
 // +build !linux
 
 package vfsutils
 
 import (
-	"os"
+	"io/fs"
 
 	"github.com/avfs/avfs"
 )
@@ -27,7 +28,7 @@ import (
 // Set sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
-func (um *UMaskType) Set(mask os.FileMode) {
+func (um *UMaskType) Set(mask fs.FileMode) {
 	// if umask system call is not available set value to linux default.
 	if mask == 0 {
 		mask = avfs.DefaultUmask
@@ -38,7 +39,7 @@ func (um *UMaskType) Set(mask os.FileMode) {
 	um.mu.Unlock()
 }
 
-// ToSysStat takes a value from os.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func ToSysStat(sys interface{}) avfs.SysStater {
 	switch s := sys.(type) {
 	case avfs.SysStater:

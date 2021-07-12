@@ -33,7 +33,7 @@ package "avfs" {
 	interface "VFS" as avfs.VFS {
 		+Create(name: string): (avfs.File, error)
         +Open(name: string): (avfs.File, error)
-        +OpenFile(name: string, flag: int, perm: os.FileMode): (avfs.File, error)
+        +OpenFile(name: string, flag: int, perm: fs.FileMode): (avfs.File, error)
 	}
 }
 

@@ -19,8 +19,8 @@ package vfsutils
 
 import (
 	"errors"
+	"io/fs"
 	"math/rand"
-	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -36,7 +36,7 @@ var (
 	// BaseDirs are the base directories present in a file system.
 	BaseDirs = []struct { //nolint:gochecknoglobals // Used by CreateBaseDirs and TestCreateBaseDirs.
 		Path string
-		Perm os.FileMode
+		Perm fs.FileMode
 	}{
 		{Path: avfs.HomeDir, Perm: 0o755},
 		{Path: avfs.RootDir, Perm: 0o700},
@@ -397,11 +397,11 @@ func SegmentPath(path string, start int) (end int, isLast bool) {
 type UMaskType struct {
 	once sync.Once
 	mu   sync.RWMutex
-	mask os.FileMode
+	mask fs.FileMode
 }
 
 // Get returns the file mode creation mask.
-func (um *UMaskType) Get() os.FileMode {
+func (um *UMaskType) Get() fs.FileMode {
 	um.once.Do(func() {
 		um.Set(0)
 	})
@@ -413,7 +413,7 @@ func (um *UMaskType) Get() os.FileMode {
 	return u
 }
 
-// DummySysStat implements SysStater interface returned by os.FileInfo.Sys() for.
+// DummySysStat implements SysStater interface returned by fs.FileInfo.Sys() for.
 type DummySysStat struct{}
 
 // Gid returns the group id.

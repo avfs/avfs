@@ -73,7 +73,7 @@ func (vfs *RoFS) Chdir(dir string) error {
 func (vfs *RoFS) Chmod(name string, mode fs.FileMode) error {
 	const op = "chmod"
 
-	return &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
