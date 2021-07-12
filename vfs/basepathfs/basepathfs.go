@@ -177,7 +177,7 @@ func (vfs *BasePathFS) FromSlash(path string) string {
 	return vfs.baseFS.FromSlash(path)
 }
 
-// GetTempDir returns the default directory to use for temporary files.
+// TempDir returns the default directory to use for temporary files.
 //
 // On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
 // On Windows, it uses GetTempPath, returning the first non-empty
@@ -186,8 +186,8 @@ func (vfs *BasePathFS) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfs *BasePathFS) GetTempDir() string {
-	return vfs.baseFS.GetTempDir()
+func (vfs *BasePathFS) TempDir() string {
+	return vfs.baseFS.TempDir()
 }
 
 // GetUMask returns the file mode creation mask.

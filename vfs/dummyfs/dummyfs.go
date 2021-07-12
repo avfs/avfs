@@ -175,7 +175,7 @@ func (vfs *DummyFS) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
-// GetTempDir returns the default directory to use for temporary files.
+// TempDir returns the default directory to use for temporary files.
 //
 // On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
 // On Windows, it uses GetTempPath, returning the first non-empty
@@ -184,7 +184,7 @@ func (vfs *DummyFS) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfs *DummyFS) GetTempDir() string {
+func (vfs *DummyFS) TempDir() string {
 	return avfs.TmpDir
 }
 

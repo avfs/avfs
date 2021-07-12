@@ -90,7 +90,7 @@ func prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
 	if dir == "" {
-		dir = vfs.GetTempDir()
+		dir = vfs.TempDir()
 	}
 
 	prefix, suffix, err := prefixAndSuffix(pattern)
@@ -128,7 +128,7 @@ func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func MkdirTemp(vfs avfs.VFS, dir, pattern string) (string, error) {
 	if dir == "" {
-		dir = vfs.GetTempDir()
+		dir = vfs.TempDir()
 	}
 
 	prefix, suffix, err := prefixAndSuffix(pattern)

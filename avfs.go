@@ -219,17 +219,6 @@ type BasicVFS interface {
 	// If there is an error, it will be of type *PathError.
 	Create(name string) (File, error)
 
-	// GetTempDir returns the default directory to use for temporary files.
-	//
-	// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
-	// On Windows, it uses GetTempPath, returning the first non-empty
-	// value from %TMP%, %TEMP%, %USERPROFILE%, or the Windows directory.
-	// On Plan 9, it returns /tmp.
-	//
-	// The directory is neither guaranteed to exist nor have accessible
-	// permissions.
-	GetTempDir() string
-
 	// IsExist returns a boolean indicating whether the error is known to report
 	// that a file or directory already exists. It is satisfied by ErrExist as
 	// well as some syscall errors.
@@ -313,6 +302,17 @@ type BasicVFS interface {
 	// Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 	// It is the caller's responsibility to remove the directory when it is no longer needed.
 	MkdirTemp(dir, pattern string) (string, error)
+
+	// TempDir returns the default directory to use for temporary files.
+	//
+	// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
+	// On Windows, it uses GetTempPath, returning the first non-empty
+	// value from %TMP%, %TEMP%, %USERPROFILE%, or the Windows directory.
+	// On Plan 9, it returns /tmp.
+	//
+	// The directory is neither guaranteed to exist nor have accessible
+	// permissions.
+	TempDir() string
 
 	// TempFile creates a new temporary file in the directory dir,
 	// opens the file for reading and writing, and returns the resulting *os.File.

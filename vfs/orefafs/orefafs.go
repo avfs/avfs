@@ -235,7 +235,7 @@ func (vfs *OrefaFS) FromSlash(path string) string {
 	return path
 }
 
-// GetTempDir returns the default directory to use for temporary files.
+// TempDir returns the default directory to use for temporary files.
 //
 // On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
 // On Windows, it uses GetTempPath, returning the first non-empty
@@ -244,7 +244,7 @@ func (vfs *OrefaFS) FromSlash(path string) string {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfs *OrefaFS) GetTempDir() string {
+func (vfs *OrefaFS) TempDir() string {
 	return avfs.TmpDir
 }
 

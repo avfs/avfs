@@ -74,7 +74,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 		vfsTest:     vfs,
 		initDir:     initDir,
 		initUser:    initUser,
-		rootDir:     vfs.GetTempDir(),
+		rootDir:     vfs.TempDir(),
 		maxRace:     1000,
 		osType:      vfsutils.RunTimeOS(),
 		canTestPerm: canTestPerm,
@@ -352,7 +352,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestChtimes,
 		sfs.TestCreate,
 		sfs.TestEvalSymlink,
-		sfs.TestGetTempDir,
+		sfs.TestTempDir,
 		sfs.TestLink,
 		sfs.TestLstat,
 		sfs.TestMkdir,
@@ -415,7 +415,7 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		// ioutils functions
 		sfs.TestReadDir,
 		sfs.TestReadFile,
-		sfs.TestTempDir,
+		sfs.TestMkdirTemp,
 		sfs.TestTempFile,
 		sfs.TestWriteFile,
 

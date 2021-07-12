@@ -616,14 +616,14 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	})
 }
 
-// TestGetTempDir tests GetTempDir function.
-func (sfs *SuiteFS) TestGetTempDir(t *testing.T, testDir string) {
+// TestTempDir tests TempDir function.
+func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		tmp := vfs.GetTempDir()
+		tmp := vfs.TempDir()
 		if tmp != avfs.TmpDir {
-			t.Errorf("GetTempDir : want error to be %v, got %v", avfs.NotImplemented, tmp)
+			t.Errorf("TempDir : want error to be %v, got %v", avfs.NotImplemented, tmp)
 		}
 
 		return
@@ -640,9 +640,9 @@ func (sfs *SuiteFS) TestGetTempDir(t *testing.T, testDir string) {
 		wantTmp = avfs.TmpDir
 	}
 
-	gotTmp := vfs.GetTempDir()
+	gotTmp := vfs.TempDir()
 	if gotTmp != wantTmp {
-		t.Fatalf("GetTempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
+		t.Fatalf("TempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
 	}
 }
 
@@ -2377,8 +2377,8 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 	})
 }
 
-// TestTempDir tests MkdirTemp function.
-func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
+// TestMkdirTemp tests MkdirTemp function.
+func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
