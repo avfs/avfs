@@ -853,7 +853,7 @@ func CheckPathError(tb testing.TB, err error) *CheckPath {
 	if !ok {
 		halt = true
 
-		tb.Errorf("want error type to be *fs.PathError, got %v", reflect.TypeOf(err))
+		tb.Errorf("want error type to be *fs.PathError, got %v : %v", reflect.TypeOf(err), err)
 	}
 
 	return &CheckPath{tb: tb, err: e, halt: halt}
@@ -958,7 +958,7 @@ func CheckLinkError(tb testing.TB, err error) *CheckLink {
 	if !ok {
 		halt = true
 
-		tb.Errorf("want error type to be *fs.LinkError, got %v", reflect.TypeOf(err))
+		tb.Errorf("want error type to be *fs.LinkError, got %v : %v", reflect.TypeOf(err), err)
 	}
 
 	return &CheckLink{tb: tb, err: e, halt: halt}
