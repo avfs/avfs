@@ -571,8 +571,8 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			if err != nil {
-				t.Errorf("want error to be nil, got %v", err)
+			if err != avfs.ErrWinAccessDenied {
+				t.Errorf("want error to be %v, got %v", avfs.ErrWinAccessDenied, err)
 			}
 		default:
 			CheckPathError(t, err).Op("lstat").Path(testDir).Err(avfs.ErrPermDenied)
