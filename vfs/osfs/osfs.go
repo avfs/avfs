@@ -14,12 +14,11 @@
 //  limitations under the License.
 //
 
-// Package osfs implements a file system using functions from os, ioutil and path/filepath packages.
+// Package osfs implements a file system using functions from os and path/filepath packages.
 package osfs
 
 import (
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -287,10 +286,13 @@ func (vfs *OsFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 	return os.OpenFile(name, flag, perm)
 }
 
-// ReadDir reads the directory named by dirname and returns
-// a list of directory entries sorted by filename.
-func (vfs *OsFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
-	return ioutil.ReadDir(dirname)
+// ReadDir reads the named directory,
+// returning all its directory entries sorted by filename.
+// If an error occurs reading the directory,
+// ReadDir returns the entries it was able to read before the error,
+// along with the error.
+func (vfs *OsFS) ReadDir(name string) ([]fs.DirEntry, error) {
+	return os.ReadDir(name)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
