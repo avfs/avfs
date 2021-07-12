@@ -70,8 +70,8 @@ type node struct {
 	mode     fs.FileMode
 }
 
-// fStat is the implementation of fs.FileInfo returned by Stat and Lstat.
-type fStat struct {
+// OrefaInfo is the implementation of fs.FileInfo returned by Stat and Lstat.
+type OrefaInfo struct {
 	name  string
 	id    uint64
 	size  int64

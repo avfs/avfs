@@ -798,12 +798,12 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
 func (vfs *OrefaFS) SameFile(fi1, fi2 fs.FileInfo) bool {
-	fs1, ok1 := fi1.(*fStat)
+	fs1, ok1 := fi1.(*OrefaInfo)
 	if !ok1 {
 		return false
 	}
 
-	fs2, ok2 := fi2.(*fStat)
+	fs2, ok2 := fi2.(*OrefaInfo)
 	if !ok2 {
 		return false
 	}

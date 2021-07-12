@@ -20,6 +20,7 @@
 package orefafs_test
 
 import (
+	"io/fs"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -34,8 +35,8 @@ var (
 	// orefafs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
 
-	// fStat struct implements fs.FileInfo interface.
-	// var _ fs.FileInfo = &fStat{}
+	// OrefaInfo struct implements fs.FileInfo interface.
+	_ fs.FileInfo = &orefafs.OrefaInfo{}
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {
