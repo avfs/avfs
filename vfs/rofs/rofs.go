@@ -320,10 +320,13 @@ func (vfs *RoFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 	return f, err
 }
 
-// ReadDir reads the directory named by dirname and returns
-// a list of directory entries sorted by filename.
-func (vfs *RoFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
-	return vfs.baseFS.ReadDir(dirname)
+// ReadDir reads the named directory,
+// returning all its directory entries sorted by filename.
+// If an error occurs reading the directory,
+// ReadDir returns the entries it was able to read before the error,
+// along with the error.
+func (vfs *RoFS) ReadDir(name string) ([]fs.DirEntry, error) {
+	return vfsutils.ReadDir(vfs, name)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
