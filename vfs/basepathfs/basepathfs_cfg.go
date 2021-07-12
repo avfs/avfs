@@ -18,7 +18,7 @@ package basepathfs
 
 import (
 	"errors"
-	"os"
+	"io/fs"
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfsutils"
@@ -32,11 +32,11 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
 
 	info, err := baseFs.Stat(absPath)
 	if err != nil {
-		return nil, &os.PathError{Op: op, Path: basePath, Err: errors.Unwrap(err)}
+		return nil, &fs.PathError{Op: op, Path: basePath, Err: errors.Unwrap(err)}
 	}
 
 	if !info.IsDir() {
-		return nil, &os.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
 	}
 
 	vfs := &BasePathFS{

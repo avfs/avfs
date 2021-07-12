@@ -18,6 +18,7 @@
 package basepathfs
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -73,7 +74,7 @@ func (vfs *BasePathFS) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (vfs *BasePathFS) Chmod(name string, mode os.FileMode) error {
+func (vfs *BasePathFS) Chmod(name string, mode fs.FileMode) error {
 	err := vfs.baseFS.Chmod(vfs.toBasePath(name), mode)
 
 	return vfs.restoreError(err)
@@ -97,7 +98,7 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 func (vfs *BasePathFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -166,7 +167,7 @@ func (vfs *BasePathFS) Dir(path string) string {
 func (vfs *BasePathFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
-	return "", &os.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
@@ -190,7 +191,7 @@ func (vfs *BasePathFS) GetTempDir() string {
 }
 
 // GetUMask returns the file mode creation mask.
-func (vfs *BasePathFS) GetUMask() os.FileMode {
+func (vfs *BasePathFS) GetUMask() fs.FileMode {
 	return vfs.baseFS.GetUMask()
 }
 
@@ -274,7 +275,7 @@ func (vfs *BasePathFS) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) Lstat(path string) (os.FileInfo, error) {
+func (vfs *BasePathFS) Lstat(path string) (fs.FileInfo, error) {
 	info, err := vfs.baseFS.Lstat(vfs.toBasePath(path))
 
 	return info, vfs.restoreError(err)
@@ -283,7 +284,7 @@ func (vfs *BasePathFS) Lstat(path string) (os.FileInfo, error) {
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) Mkdir(name string, perm os.FileMode) error {
+func (vfs *BasePathFS) Mkdir(name string, perm fs.FileMode) error {
 	err := vfs.baseFS.Mkdir(vfs.toBasePath(name), perm)
 
 	return vfs.restoreError(err)
@@ -296,7 +297,7 @@ func (vfs *BasePathFS) Mkdir(name string, perm os.FileMode) error {
 // directories that MkdirAll creates.
 // If name is already a directory, MkdirAll does nothing
 // and returns nil.
-func (vfs *BasePathFS) MkdirAll(path string, perm os.FileMode) error {
+func (vfs *BasePathFS) MkdirAll(path string, perm fs.FileMode) error {
 	err := vfs.baseFS.MkdirAll(vfs.toBasePath(path), perm)
 
 	return vfs.restoreError(err)
@@ -316,7 +317,7 @@ func (vfs *BasePathFS) Open(path string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
+func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	f, err := vfs.baseFS.OpenFile(vfs.toBasePath(name), flag, perm)
 	if err != nil {
 		return f, vfs.restoreError(err)
@@ -332,7 +333,7 @@ func (vfs *BasePathFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.F
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (vfs *BasePathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
+func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
 	return vfsutils.ReadDir(vfs, dirname)
 }
 
@@ -349,7 +350,7 @@ func (vfs *BasePathFS) ReadFile(filename string) ([]byte, error) {
 func (vfs *BasePathFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &os.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -402,7 +403,7 @@ func (vfs *BasePathFS) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (vfs *BasePathFS) SameFile(fi1, fi2 os.FileInfo) bool {
+func (vfs *BasePathFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return vfs.baseFS.SameFile(fi1, fi2)
 }
 
@@ -417,7 +418,7 @@ func (vfs *BasePathFS) Split(path string) (dir, file string) {
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) Stat(path string) (os.FileInfo, error) {
+func (vfs *BasePathFS) Stat(path string) (fs.FileInfo, error) {
 	info, err := vfs.baseFS.Stat(vfs.toBasePath(path))
 
 	return info, vfs.restoreError(err)
@@ -474,7 +475,7 @@ func (vfs *BasePathFS) Truncate(name string, size int64) error {
 }
 
 // UMask sets the file mode creation mask.
-func (vfs *BasePathFS) UMask(mask os.FileMode) {
+func (vfs *BasePathFS) UMask(mask fs.FileMode) {
 	vfs.baseFS.UMask(mask)
 }
 
@@ -485,7 +486,7 @@ func (vfs *BasePathFS) UMask(mask os.FileMode) {
 // large directories Walk can be inefficient.
 // Walk does not follow symbolic links.
 func (vfs *BasePathFS) Walk(root string, walkFn filepath.WalkFunc) error {
-	err := vfs.baseFS.Walk(vfs.toBasePath(root), func(path string, info os.FileInfo, err error) error {
+	err := vfs.baseFS.Walk(vfs.toBasePath(root), func(path string, info fs.FileInfo, err error) error {
 		return walkFn(vfs.fromBasePath(path), info, err)
 	})
 
@@ -495,6 +496,6 @@ func (vfs *BasePathFS) Walk(root string, walkFn filepath.WalkFunc) error {
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (vfs *BasePathFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (vfs *BasePathFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
 	return vfsutils.WriteFile(vfs, filename, data, perm)
 }

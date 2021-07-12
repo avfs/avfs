@@ -17,6 +17,7 @@
 package basepathfs
 
 import (
+	"io/fs"
 	"os"
 	"strings"
 )
@@ -44,8 +45,8 @@ func (vfs *BasePathFS) restoreError(err error) error {
 	}
 
 	switch e := err.(type) {
-	case *os.PathError:
-		return &os.PathError{
+	case *fs.PathError:
+		return &fs.PathError{
 			Op:   e.Op,
 			Path: vfs.fromBasePath(e.Path),
 			Err:  e.Err,

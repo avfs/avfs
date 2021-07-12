@@ -16,7 +16,11 @@
 
 package basepathfs
 
-import "os"
+import (
+	"io/fs"
+
+	"github.com/avfs/avfs"
+)
 
 // Chdir changes the current working directory to the file,
 // which must be a directory.
@@ -29,7 +33,7 @@ func (f *BasePathFile) Chdir() error {
 
 // Chmod changes the mode of the file to mode.
 // If there is an error, it will be of type *PathError.
-func (f *BasePathFile) Chmod(mode os.FileMode) error {
+func (f *BasePathFile) Chmod(mode fs.FileMode) error {
 	err := f.baseFile.Chmod(mode)
 
 	return f.bpFS.restoreError(err)
@@ -86,6 +90,24 @@ func (f *BasePathFile) ReadAt(b []byte, off int64) (n int, err error) {
 	return n, f.bpFS.restoreError(err)
 }
 
+// ReadDir reads the contents of the directory associated with the file f
+// and returns a slice of DirEntry values in directory order.
+// Subsequent calls on the same file will yield later DirEntry records in the directory.
+//
+// If n > 0, ReadDir returns at most n DirEntry records.
+// In this case, if ReadDir returns an empty slice, it will return an error explaining why.
+// At the end of a directory, the error is io.EOF.
+//
+// If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
+// When it succeeds, it returns a nil error (not io.EOF).
+func (f *BasePathFile) ReadDir(n int) ([]fs.DirEntry, error) {
+	const op = "readdirent"
+
+	// TODO : implement ReadDir
+
+	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+}
+
 // Readdir reads the contents of the directory associated with file and
 // returns a slice of up to n FileInfo values, as would be returned
 // by Lstat, in directory order. Subsequent calls on the same file will yield
@@ -101,7 +123,7 @@ func (f *BasePathFile) ReadAt(b []byte, off int64) (n int, err error) {
 // nil error. If it encounters an error before the end of the
 // directory, Readdir returns the FileInfo read until that point
 // and a non-nil error.
-func (f *BasePathFile) Readdir(n int) (fi []os.FileInfo, err error) {
+func (f *BasePathFile) Readdir(n int) (fi []fs.FileInfo, err error) {
 	fi, err = f.baseFile.Readdir(n)
 
 	return fi, f.bpFS.restoreError(err)
@@ -138,7 +160,7 @@ func (f *BasePathFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
-func (f *BasePathFile) Stat() (os.FileInfo, error) {
+func (f *BasePathFile) Stat() (fs.FileInfo, error) {
 	info, err := f.baseFile.Stat()
 
 	return info, f.bpFS.restoreError(err)
