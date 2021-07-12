@@ -143,7 +143,7 @@ func (f *MemFile) Close() error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
-	f.dirInfos = nil
+	f.dirEntries = nil
 	f.dirNames = nil
 	f.nd = nil
 
@@ -276,29 +276,6 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	const op = "readdirent"
 
-	// TODO : implement ReadDir
-
-	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
-}
-
-// Readdir reads the contents of the directory associated with file and
-// returns a slice of up to n FileInfo values, as would be returned
-// by Lstat, in directory order. Subsequent calls on the same file will yield
-// further FileInfos.
-//
-// If n > 0, Readdir returns at most n FileInfo structures. In this case, if
-// Readdir returns an empty slice, it will return a non-nil error
-// explaining why. At the end of a directory, the error is io.EOF.
-//
-// If n <= 0, Readdir returns all the FileInfo from the directory in
-// a single slice. In this case, if Readdir succeeds (reads all
-// the way to the end of the directory), it returns the slice and a
-// nil error. If it encounters an error before the end of the
-// directory, Readdir returns the FileInfo read until that point
-// and a non-nil error.
-func (f *MemFile) Readdir(n int) (fi []fs.FileInfo, err error) {
-	const op = "readdirent"
-
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -319,38 +296,38 @@ func (f *MemFile) Readdir(n int) (fi []fs.FileInfo, err error) {
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
-	if n <= 0 || f.dirInfos == nil {
+	if n <= 0 || f.dirEntries == nil {
 		nd.mu.RLock()
-		infos := nd.infos()
+		entries := nd.entries()
 		nd.mu.RUnlock()
 
 		f.dirIndex = 0
 
 		if n <= 0 {
-			f.dirInfos = nil
+			f.dirEntries = nil
 
-			return infos, nil
+			return entries, nil
 		}
 
-		f.dirInfos = infos
+		f.dirEntries = entries
 	}
 
 	start := f.dirIndex
-	if start >= len(f.dirInfos) {
+	if start >= len(f.dirEntries) {
 		f.dirIndex = 0
-		f.dirInfos = nil
+		f.dirEntries = nil
 
 		return nil, io.EOF
 	}
 
 	end := start + n
-	if end > len(f.dirInfos) {
-		end = len(f.dirInfos)
+	if end > len(f.dirEntries) {
+		end = len(f.dirEntries)
 	}
 
 	f.dirIndex = end
 
-	return f.dirInfos[start:end], nil
+	return f.dirEntries[start:end], nil
 }
 
 // Readdirnames reads and returns a slice of names from the directory f.

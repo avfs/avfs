@@ -47,15 +47,15 @@ type memAttrs struct {
 
 // MemFile represents an open file descriptor.
 type MemFile struct {
-	nd       node          // nd is node of the file.
-	memFS    *MemFS        // memFS is the memory file system of the file.
-	name     string        // name is the name of the file.
-	dirInfos []fs.FileInfo // dirInfos stores the files informations returned by Readdir function.
-	dirNames []string      // dirNames stores the names of the file returned by Readdirnames function.
-	at       int64         // at is current position in the file used by Read and Write functions.
-	dirIndex int           // dirIndex is the position of the current index for dirInfos ou dirNames slices.
-	mu       sync.RWMutex  // mu is the RWMutex used to access content of MemFile.
-	permMode avfs.PermMode // permMode
+	nd         node          // nd is node of the file.
+	memFS      *MemFS        // memFS is the memory file system of the file.
+	name       string        // name is the name of the file.
+	dirEntries []fs.DirEntry // dirEntries stores the file information returned by ReadDir function.
+	dirNames   []string      // dirNames stores the names of the file returned by Readdirnames function.
+	at         int64         // at is current position in the file used by Read and Write functions.
+	dirIndex   int           // dirIndex is the position of the current index for dirEntries ou dirNames slices.
+	mu         sync.RWMutex  // mu is the RWMutex used to access content of MemFile.
+	permMode   avfs.PermMode // permMode
 }
 
 // Option defines the option function used for initializing MemFS.
@@ -123,7 +123,7 @@ const (
 	slmEval                    // slmEval makes searchNode function follow symbolic links like EvalSymlink.
 )
 
-// MemInfo is the implementation of fs.FileInfo returned by Stat and Lstat.
+// MemInfo is the implementation of fs.DirEntry (returned by ReadDir) and fs.FileInfo (returned by Stat and Lstat).
 type MemInfo struct {
 	name  string      // name is the name of the file.
 	id    uint64      // id is a unique id to identify a file (used by SameFile function).

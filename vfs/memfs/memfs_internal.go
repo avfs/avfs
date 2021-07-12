@@ -296,24 +296,24 @@ func (dn *dirNode) fillStatFrom(name string) *MemInfo {
 	return fst
 }
 
-// infos returns a slice of FileInfo from a directory ordered by name.
-func (dn *dirNode) infos() []fs.FileInfo {
+// entries returns a slice of fs.DirEntry from a directory ordered by name.
+func (dn *dirNode) entries() []fs.DirEntry {
 	l := len(dn.children)
 	if l == 0 {
 		return nil
 	}
 
-	dirInfos := make([]fs.FileInfo, l)
+	entries := make([]fs.DirEntry, l)
 	i := 0
 
 	for name, node := range dn.children {
-		dirInfos[i] = node.fillStatFrom(name)
+		entries[i] = node.fillStatFrom(name)
 		i++
 	}
 
-	sort.Slice(dirInfos, func(i, j int) bool { return dirInfos[i].Name() < dirInfos[j].Name() })
+	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
 
-	return dirInfos
+	return entries
 }
 
 // names returns a slice of file names from a directory ordered by name.

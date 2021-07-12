@@ -604,10 +604,13 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 	return f, nil
 }
 
-// ReadDir reads the directory named by dirname and returns
-// a list of directory entries sorted by filename.
-func (vfs *MemFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
-	return vfsutils.ReadDir(vfs, dirname)
+// ReadDir reads the named directory,
+// returning all its directory entries sorted by filename.
+// If an error occurs reading the directory,
+// ReadDir returns the entries it was able to read before the error,
+// along with the error.
+func (vfs *MemFS) ReadDir(name string) ([]fs.DirEntry, error) {
+	return vfsutils.ReadDir(vfs, name)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
