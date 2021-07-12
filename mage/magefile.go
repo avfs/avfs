@@ -230,8 +230,8 @@ func DockerBuild() error {
 		"-t", dockerImage)
 }
 
-// DockerConsole opens a shell as root in the docker image for AVFS.
-func DockerConsole() error {
+// DockerTerm opens a shell as root in the docker image for AVFS.
+func DockerTerm() error {
 	mg.Deps(DockerBuild)
 
 	shell := "bash"
@@ -266,11 +266,16 @@ func DockerPrune() error {
 
 // dockerTest runs tests in the docker image for AVFS.
 func dockerTest(args ...string) error {
+	termOptions := "-it"
+	if runtime.GOOS == "windows" {
+		termOptions = "-i"
+	}
+
 	coverMount := coverDir + ":" + dockerCoverDir
 	testDataMount := testDataDir + ":" + dockerTestDataDir
 	cmdArgs := []string{
 		"run",
-		"-i",
+		termOptions,
 		"-v", coverMount,
 		"-v", testDataMount,
 		dockerImage,
