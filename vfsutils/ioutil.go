@@ -17,10 +17,7 @@
 package vfsutils
 
 import (
-	"io"
 	"io/fs"
-	"io/ioutil"
-	"os"
 	"sort"
 
 	"github.com/avfs/avfs"
@@ -44,40 +41,4 @@ func ReadDir(vfs avfs.VFS, dirname string) ([]fs.FileInfo, error) {
 	sort.Slice(list, func(i, j int) bool { return list[i].Name() < list[j].Name() })
 
 	return list, nil
-}
-
-// ReadFile reads the file named by filename and returns the contents.
-// A successful call returns err == nil, not err == EOF. Because ReadFile
-// reads the whole file, it does not treat an EOF from Read as an error
-// to be reported.
-func ReadFile(vfs avfs.VFS, filename string) ([]byte, error) {
-	f, err := vfs.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	defer f.Close()
-
-	return ioutil.ReadAll(f)
-}
-
-// WriteFile writes data to a file named by filename.
-// If the file does not exist, WriteFile creates it with permissions perm;
-// otherwise WriteFile truncates it before writing.
-func WriteFile(vfs avfs.VFS, filename string, data []byte, perm fs.FileMode) error {
-	f, err := vfs.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
-	if err != nil {
-		return err
-	}
-
-	n, err := f.Write(data)
-	if err == nil && n < len(data) {
-		err = io.ErrShortWrite
-	}
-
-	if err1 := f.Close(); err == nil {
-		err = err1
-	}
-
-	return err
 }
