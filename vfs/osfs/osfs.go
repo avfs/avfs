@@ -18,6 +18,7 @@
 package osfs
 
 import (
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -70,7 +71,7 @@ func (vfs *OsFS) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (vfs *OsFS) Chmod(name string, mode os.FileMode) error {
+func (vfs *OsFS) Chmod(name string, mode fs.FileMode) error {
 	return os.Chmod(name, mode)
 }
 
@@ -171,7 +172,7 @@ func (vfs *OsFS) GetTempDir() string {
 }
 
 // GetUMask returns the file mode creation mask.
-func (vfs *OsFS) GetUMask() os.FileMode {
+func (vfs *OsFS) GetUMask() fs.FileMode {
 	return vfsutils.UMask.Get()
 }
 
@@ -216,7 +217,7 @@ func (vfs *OsFS) IsNotExist(err error) bool {
 
 // IsPathSeparator reports whether c is a directory separator character.
 func (vfs *OsFS) IsPathSeparator(c uint8) bool {
-	return vfsutils.IsPathSeparator(c)
+	return os.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
@@ -246,14 +247,14 @@ func (vfs *OsFS) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (vfs *OsFS) Lstat(name string) (os.FileInfo, error) {
+func (vfs *OsFS) Lstat(name string) (fs.FileInfo, error) {
 	return os.Lstat(name)
 }
 
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (vfs *OsFS) Mkdir(name string, perm os.FileMode) error {
+func (vfs *OsFS) Mkdir(name string, perm fs.FileMode) error {
 	return os.Mkdir(name, perm)
 }
 
@@ -264,7 +265,7 @@ func (vfs *OsFS) Mkdir(name string, perm os.FileMode) error {
 // directories that MkdirAll creates.
 // If path is already a directory, MkdirAll does nothing
 // and returns nil.
-func (vfs *OsFS) MkdirAll(path string, perm os.FileMode) error {
+func (vfs *OsFS) MkdirAll(path string, perm fs.FileMode) error {
 	return os.MkdirAll(path, perm)
 }
 
@@ -282,13 +283,13 @@ func (vfs *OsFS) Open(name string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned OsFile can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (vfs *OsFS) OpenFile(name string, flag int, perm os.FileMode) (avfs.File, error) {
+func (vfs *OsFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	return os.OpenFile(name, flag, perm)
 }
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (vfs *OsFS) ReadDir(dirname string) ([]os.FileInfo, error) {
+func (vfs *OsFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
 	return ioutil.ReadDir(dirname)
 }
 
@@ -297,7 +298,7 @@ func (vfs *OsFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
 func (vfs *OsFS) ReadFile(filename string) ([]byte, error) {
-	return ioutil.ReadFile(filename)
+	return os.ReadFile(filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
@@ -347,13 +348,13 @@ func (vfs *OsFS) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (vfs *OsFS) SameFile(fi1, fi2 os.FileInfo) bool {
+func (vfs *OsFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return os.SameFile(fi1, fi2)
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (vfs *OsFS) Stat(name string) (os.FileInfo, error) {
+func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
 	return os.Stat(name)
 }
 
@@ -413,7 +414,7 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 }
 
 // UMask sets the file mode creation mask.
-func (vfs *OsFS) UMask(mask os.FileMode) {
+func (vfs *OsFS) UMask(mask fs.FileMode) {
 	vfsutils.UMask.Set(mask)
 }
 
@@ -430,6 +431,6 @@ func (vfs *OsFS) Walk(root string, walkFn filepath.WalkFunc) error {
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (vfs *OsFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (vfs *OsFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
 	return ioutil.WriteFile(filename, data, perm)
 }

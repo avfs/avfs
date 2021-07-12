@@ -14,12 +14,13 @@
 //  limitations under the License.
 //
 
+//go:build !linux
 // +build !linux
 
 package osfs
 
 import (
-	"os"
+	"io/fs"
 
 	"github.com/avfs/avfs"
 )
@@ -29,5 +30,5 @@ import (
 func (vfs *OsFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &os.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 }

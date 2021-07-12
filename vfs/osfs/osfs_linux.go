@@ -14,12 +14,13 @@
 //  limitations under the License.
 //
 
+//go:build linux
 // +build linux
 
 package osfs
 
 import (
-	"os"
+	"io/fs"
 	"syscall"
 
 	"github.com/avfs/avfs"
@@ -31,12 +32,12 @@ func (vfs *OsFS) Chroot(path string) error {
 	const op = "chroot"
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return &os.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 	}
 
 	err := syscall.Chroot(path)
 	if err != nil {
-		return &os.PathError{Op: op, Path: path, Err: err}
+		return &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
 	return nil
