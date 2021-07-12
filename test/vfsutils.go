@@ -131,7 +131,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfsutils.RunTimeOS() == avfs.OsWindows {
 		return
 	}
 
