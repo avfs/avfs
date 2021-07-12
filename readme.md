@@ -261,7 +261,7 @@ File methods <br> `avfs.File`|Comments
 `Name`|equivalent to `os.File.Name`
 `Read`|equivalent to `os.File.Read`
 `ReadAt`|equivalent to `os.File.ReadAt`
-`Readdir`|equivalent to `os.File.Readdir`
+`ReadDir`|equivalent to `os.File.ReadDir`
 `Readdirnames`|equivalent to `os.File.Readdirnames`
 `Seek`|equivalent to `os.File.Seek`
 `Stat`|equivalent to `os.File.Stat`
