@@ -497,7 +497,7 @@ func (f *MemFile) Stat() (fs.FileInfo, error) {
 	}
 
 	if f.nd == nil {
-		return &MemStat{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		return &MemInfo{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	name := vfsutils.Base(f.name)
@@ -665,7 +665,7 @@ func (f *MemFile) WriteString(s string) (n int, err error) {
 	return f.Write([]byte(s))
 }
 
-// MemStat is the implementation of FileInfo returned by Stat and Lstat.
+// MemInfo is the implementation of FileInfo returned by Stat and Lstat.
 
 // Info returns the FileInfo for the file or subdirectory described by the entry.
 // The returned FileInfo may be from the time of the original directory read
@@ -673,57 +673,57 @@ func (f *MemFile) WriteString(s string) (n int, err error) {
 // since the directory read, Info may return an error satisfying errors.Is(err, ErrNotExist).
 // If the entry denotes a symbolic link, Info reports the information about the link itself,
 // not the link's target.
-func (fst *MemStat) Info() (fs.FileInfo, error) {
+func (fst *MemInfo) Info() (fs.FileInfo, error) {
 	return fst, nil
 }
 
 // IsDir reports whether the entry describes a directory.
-func (fst *MemStat) IsDir() bool {
+func (fst *MemInfo) IsDir() bool {
 	return fst.mode.IsDir()
 }
 
 // Mode returns the file mode bits.
-func (fst *MemStat) Mode() fs.FileMode {
+func (fst *MemInfo) Mode() fs.FileMode {
 	return fst.mode
 }
 
 // ModTime returns the modification time.
-func (fst *MemStat) ModTime() time.Time {
+func (fst *MemInfo) ModTime() time.Time {
 	return time.Unix(0, fst.mtime)
 }
 
 // Name returns the base name of the file.
-func (fst *MemStat) Name() string {
+func (fst *MemInfo) Name() string {
 	return fst.name
 }
 
 // Size returns the length in bytes for regular files; system-dependent for others.
-func (fst *MemStat) Size() int64 {
+func (fst *MemInfo) Size() int64 {
 	return fst.size
 }
 
 // Sys returns the underlying data source (can return nil).
-func (fst *MemStat) Sys() interface{} {
+func (fst *MemInfo) Sys() interface{} {
 	return fst
 }
 
 // Type returns the type bits for the entry.
 // The type bits are a subset of the usual FileMode bits, those returned by the FileMode.Type method.
-func (fst *MemStat) Type() fs.FileMode {
+func (fst *MemInfo) Type() fs.FileMode {
 	return fst.mode & fs.ModeType
 }
 
 // Gid returns the group id.
-func (fst *MemStat) Gid() int {
+func (fst *MemInfo) Gid() int {
 	return fst.gid
 }
 
 // Uid returns the user id.
-func (fst *MemStat) Uid() int {
+func (fst *MemInfo) Uid() int {
 	return fst.uid
 }
 
 // Nlink returns the number of hard links.
-func (fst *MemStat) Nlink() uint64 {
+func (fst *MemInfo) Nlink() uint64 {
 	return uint64(fst.nlink)
 }

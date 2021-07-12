@@ -69,8 +69,8 @@ type node interface {
 	// checkPermission returns true if the current user has the desired permissions (perm) on the node.
 	checkPermission(perm avfs.PermMode, u avfs.UserReader) bool
 
-	// fillStatFrom returns a *MemStat (implementation of fs.FileInfo) from a node named name.
-	fillStatFrom(name string) *MemStat
+	// fillStatFrom returns a *MemInfo (implementation of fs.FileInfo) from a node named name.
+	fillStatFrom(name string) *MemInfo
 
 	// permMode returns de permission of the user u on the node bn.
 	permMode(u avfs.UserReader) avfs.PermMode
@@ -123,8 +123,8 @@ const (
 	slmEval                    // slmEval makes searchNode function follow symbolic links like EvalSymlink.
 )
 
-// MemStat is the implementation of fs.FileInfo returned by Stat and Lstat.
-type MemStat struct {
+// MemInfo is the implementation of fs.FileInfo returned by Stat and Lstat.
+type MemInfo struct {
 	name  string      // name is the name of the file.
 	id    uint64      // id is a unique id to identify a file (used by SameFile function).
 	size  int64       // size is the size of the file.

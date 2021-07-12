@@ -36,8 +36,8 @@ var (
 	// symlinkNode struct implements node interface.
 	_ node = &symlinkNode{}
 
-	// MemStat struct implements fs.FileInfo interface.
-	_ fs.FileInfo = &MemStat{}
+	// MemInfo struct implements fs.FileInfo interface.
+	_ fs.FileInfo = &MemInfo{}
 )
 
 func TestSearchNode(t *testing.T) {

@@ -37,11 +37,11 @@ var (
 	// memfs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}
 
-	// memfs.MemStat struct implements fs.DirEntry interface.
-	_ fs.DirEntry = &memfs.MemStat{}
+	// memfs.MemInfo struct implements fs.DirEntry interface.
+	_ fs.DirEntry = &memfs.MemInfo{}
 
-	// memfs.MemStat struct implements fs.FileInfo interface.
-	_ fs.FileInfo = &memfs.MemStat{}
+	// memfs.MemInfo struct implements fs.FileInfo interface.
+	_ fs.FileInfo = &memfs.MemInfo{}
 )
 
 func TestMemFS(t *testing.T) {

@@ -831,12 +831,12 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
 func (vfs *MemFS) SameFile(fi1, fi2 os.FileInfo) bool {
-	fs1, ok1 := fi1.(*MemStat)
+	fs1, ok1 := fi1.(*MemInfo)
 	if !ok1 {
 		return false
 	}
 
-	fs2, ok2 := fi2.(*MemStat)
+	fs2, ok2 := fi2.(*MemInfo)
 	if !ok2 {
 		return false
 	}

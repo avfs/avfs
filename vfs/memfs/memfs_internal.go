@@ -277,11 +277,11 @@ func (dn *dirNode) child(name string) node {
 	return dn.children[name]
 }
 
-// fillStatFrom returns a MemStat (implementation of fs.FileInfo) from a dirNode dn named name.
-func (dn *dirNode) fillStatFrom(name string) *MemStat {
+// fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a dirNode dn named name.
+func (dn *dirNode) fillStatFrom(name string) *MemInfo {
 	dn.mu.RLock()
 
-	fst := &MemStat{
+	fst := &MemInfo{
 		name:  name,
 		size:  dn.size(),
 		mode:  dn.mode,
@@ -367,11 +367,11 @@ func (fn *fileNode) deleteData() {
 	}
 }
 
-// fillStatFrom returns a MemStat (implementation of fs.FileInfo) from a fileNode fn named name.
-func (fn *fileNode) fillStatFrom(name string) *MemStat {
+// fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a fileNode fn named name.
+func (fn *fileNode) fillStatFrom(name string) *MemInfo {
 	fn.mu.RLock()
 
-	fst := &MemStat{
+	fst := &MemInfo{
 		id:    fn.id,
 		name:  name,
 		size:  fn.size(),
@@ -436,11 +436,11 @@ func (fn *fileNode) truncate(size int64) {
 
 // symlinkNode
 
-// fillStatFrom returns a MemStat (implementation of fs.FileInfo) from a symlinkNode dn named name.
-func (sn *symlinkNode) fillStatFrom(name string) *MemStat {
+// fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a symlinkNode dn named name.
+func (sn *symlinkNode) fillStatFrom(name string) *MemInfo {
 	sn.mu.RLock()
 
-	fst := &MemStat{
+	fst := &MemInfo{
 		name:  name,
 		size:  sn.size(),
 		mode:  sn.mode,
