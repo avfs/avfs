@@ -18,8 +18,8 @@ var (
 	// We generate random temporary file names so that there's a good
 	// chance the file doesn't exist yet - keeps the number of tries in
 	// TempFile to a minimum.
-	randno uint32     //nolint:gochecknoglobals // Used by TempDir and TempFile.
-	randmu sync.Mutex //nolint:gochecknoglobals // Used by TempDir and TempFile.
+	randno uint32     //nolint:gochecknoglobals // Used by MkdirTemp and TempFile.
+	randmu sync.Mutex //nolint:gochecknoglobals // Used by MkdirTemp and TempFile.
 )
 
 func reseed() uint32 {
@@ -103,7 +103,7 @@ func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
 	try := 0
 	for {
 		name := prefix + nextRandom() + suffix
-		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
 		if IsExist(err) {
 			if try++; try < 10000 {
 				continue
@@ -138,7 +138,7 @@ func MkdirTemp(vfs avfs.VFS, dir, pattern string) (string, error) {
 	try := 0
 	for {
 		name := prefix + nextRandom() + suffix
-		err := vfs.Mkdir(name, 0700)
+		err := vfs.Mkdir(name, 0o700)
 		if err == nil {
 			return name, nil
 		}

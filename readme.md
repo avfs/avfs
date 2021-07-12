@@ -43,7 +43,6 @@ To make an existing code work with **AVFS** :
 - replace all references of `os`, `path/filepath` and `ioutil`
   with the variable used to initialize the file system (`vfs` in the following
   examples)
-- replace all references of `os.TempDir()` by `vfs.GetTempDir()`.
 - import the packages of the file systems and, if necessary, the `avfs` package
   and initialize the file system variable.
 - some file systems provide specific options available at initialization. For
@@ -83,7 +82,7 @@ func main() {
 
 	// From this point all references of 'os', 'path/filepath' and 'ioutil'
 	// should be replaced by 'vfs'
-	rootDir, _ := vfs.TempDir("", avfs.Avfs)
+	rootDir, _ := vfs.MkdirTemp("", avfs.Avfs)
 	defer vfs.RemoveAll(rootDir)
 
 	aFilePath := vfs.Join(rootDir, "aFile.txt")
@@ -132,7 +131,7 @@ func main() {
 
 	vfs, _ := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
-	rootDir, _ := vfs.TempDir("", avfs.Avfs)
+	rootDir, _ := vfs.MkdirTemp("", avfs.Avfs)
 	vfs.Chmod(rootDir, 0o777)
 
 	g, _ := vfs.GroupAdd(groupName)
@@ -188,8 +187,7 @@ relations between them :
 
 All file systems implement at least `avfs.FS` and `avfs.File` interfaces. By
 default, each file system supported methods are the most commonly used from
-packages `os`, `path/filepath` and `ioutil`. All methods (except `TempDir` which
-is found in packages `os` and `ioutil`)
+packages `os`, `path/filepath` and `ioutil`. All methods
 have identical names as their functions counterparts. The following file systems
 are currently available :
 
@@ -246,7 +244,7 @@ File system methods <br> `avfs.FS`|Comments
 `Split`|equivalent to `filepath.Split`
 `Stat`|equivalent to `os.Stat`
 `Symlink`|equivalent to `os.Symlink`
-`TempDir`|equivalent to `ioutil.TempDir`
+`MkdirTemp`|equivalent to `os.MkdirTemp`
 `TempFile`|equivalent to `ioutil.TempFile`
 `ToSlash`|equivalent to `filepath.ToSlash`
 `Truncate`|equivalent to `os.Truncate`

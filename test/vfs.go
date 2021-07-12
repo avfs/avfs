@@ -158,9 +158,9 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 		for shift := 6; shift >= 0; shift -= 3 {
 			for mode := fs.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
-				path, err := vfs.TempDir(testDir, "")
+				path, err := vfs.MkdirTemp(testDir, "")
 				if err != nil {
-					t.Fatalf("TempDir %s : want error to be nil, got %v", testDir, err)
+					t.Fatalf("MkdirTemp %s : want error to be nil, got %v", testDir, err)
 				}
 
 				err = vfs.Chmod(path, wantMode)
@@ -2377,14 +2377,14 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 	})
 }
 
-// TestTempDir tests TempDir function.
+// TestTempDir tests MkdirTemp function.
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		_, err := vfs.TempDir(testDir, "")
+		_, err := vfs.MkdirTemp(testDir, "")
 		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("MkdirTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		return
@@ -2393,18 +2393,18 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	existingFile := sfs.EmptyFile(t, testDir)
 
 	t.Run("TempDirOnFile", func(t *testing.T) {
-		_, err := vfs.TempDir(existingFile, "")
+		_, err := vfs.MkdirTemp(existingFile, "")
 
 		e, ok := err.(*fs.PathError)
 		if !ok {
-			t.Fatalf("TempDir : want error type *fs.PathError, got %v", reflect.TypeOf(err))
+			t.Fatalf("MkdirTemp : want error type *fs.PathError, got %v", reflect.TypeOf(err))
 		}
 
 		const op = "mkdir"
 		wantErr := avfs.ErrNotADirectory
 		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
 			wantPathErr := &fs.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
-			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
+			t.Errorf("MkdirTemp : want error to be %v, got %v", wantPathErr, err)
 		}
 	})
 }
@@ -2436,7 +2436,7 @@ func (sfs *SuiteFS) TestTempFile(t *testing.T, testDir string) {
 		wantErr := avfs.ErrNotADirectory
 		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
 			wantPathErr := &fs.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
-			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
+			t.Errorf("MkdirTemp : want error to be %v, got %v", wantPathErr, err)
 		}
 	})
 }

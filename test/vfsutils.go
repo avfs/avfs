@@ -61,9 +61,9 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	h := sha512.New()
 
 	t.Run("CopyFile_WithHashSum", func(t *testing.T) {
-		dstDir, err := dstFs.TempDir("", avfs.Avfs)
+		dstDir, err := dstFs.MkdirTemp("", avfs.Avfs)
 		if err != nil {
-			t.Fatalf("TempDir : want error to be nil, got %v", err)
+			t.Fatalf("MkdirTemp : want error to be nil, got %v", err)
 		}
 
 		defer dstFs.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
@@ -90,9 +90,9 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	})
 
 	t.Run("CopyFile", func(t *testing.T) {
-		dstDir, err := dstFs.TempDir("", avfs.Avfs)
+		dstDir, err := dstFs.MkdirTemp("", avfs.Avfs)
 		if err != nil {
-			t.Fatalf("TempDir : want error to be nil, got %v", err)
+			t.Fatalf("MkdirTemp : want error to be nil, got %v", err)
 		}
 
 		for _, srcPath := range rt.Files {

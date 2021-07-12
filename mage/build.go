@@ -48,7 +48,7 @@ func main() {
 	} else {
 		tmpDir, err := ioutil.TempDir("", "mage")
 		if err != nil {
-			log.Fatalf("TempDir : want error to be nil, got %v", err)
+			log.Fatalf("MkdirTemp : want error to be nil, got %v", err)
 		}
 
 		defer os.RemoveAll(tmpDir)
