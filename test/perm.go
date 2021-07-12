@@ -19,6 +19,7 @@ package test
 import (
 	"encoding/gob"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -78,7 +79,7 @@ func (pt *PermTest) CreateDirs(t *testing.T) {
 		usrDir := vfs.Join(pt.permDir, ui.Name)
 		sfs.CreateDir(t, usrDir, 0o777)
 
-		for m := os.FileMode(0); m <= 0o777; m++ {
+		for m := fs.FileMode(0); m <= 0o777; m++ {
 			permDir := vfs.Join(usrDir, m.String())
 			sfs.CreateDir(t, permDir, m)
 		}
@@ -86,7 +87,7 @@ func (pt *PermTest) CreateDirs(t *testing.T) {
 }
 
 func (pt *PermTest) registerGob() {
-	gob.Register(&os.PathError{})
+	gob.Register(&fs.PathError{})
 	gob.Register(&os.LinkError{})
 	gob.Register(syscall.ENOENT)
 }
@@ -144,8 +145,8 @@ func (pt *PermTest) Save(t *testing.T) {
 
 func (pt *PermTest) NormalizeError(err error) error {
 	switch e := err.(type) {
-	case *os.PathError:
-		return &os.PathError{Op: e.Op, Path: strings.TrimPrefix(e.Path, pt.permDir), Err: e.Err}
+	case *fs.PathError:
+		return &fs.PathError{Op: e.Op, Path: strings.TrimPrefix(e.Path, pt.permDir), Err: e.Err}
 	case *os.LinkError:
 		return &os.LinkError{
 			Op:  e.Op,
@@ -186,7 +187,7 @@ func (pt *PermTest) Test(t *testing.T, permFunc PermFunc) {
 
 	for _, ui := range UserInfos() {
 		u := sfs.User(t, ui.Name)
-		for m := os.FileMode(0); m <= 0o777; m++ {
+		for m := fs.FileMode(0); m <= 0o777; m++ {
 			usrMode := fmt.Sprintf("%s/%s", u.Name(), m)
 			permDir := vfs.Join(pt.permDir, usrMode)
 			err := permFunc(permDir)

@@ -17,8 +17,8 @@
 package test
 
 import (
+	"io/fs"
 	"math"
-	"os"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -651,7 +651,7 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 		t.Errorf("Stat %s : want error to be nil, got %v", homeDir, err)
 	}
 
-	wantMode := os.ModeDir | avfs.HomeDirPerm&^vfs.GetUMask()
+	wantMode := fs.ModeDir | avfs.HomeDirPerm&^vfs.GetUMask()
 	if fst.Mode() != wantMode {
 		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
 	}

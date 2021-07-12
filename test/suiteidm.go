@@ -17,7 +17,7 @@
 package test
 
 import (
-	"os"
+	"io/fs"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -154,7 +154,7 @@ func CreateUsers(tb testing.TB, idm avfs.IdentityMgr, suffix string) (users []av
 		u, err := idm.UserAdd(userName, groupName)
 		if err != nil {
 			switch e := err.(type) {
-			case *os.PathError:
+			case *fs.PathError:
 				if e.Op != "mkdir" || e.Err != avfs.ErrFileExists {
 					tb.Fatalf("UserAdd %s : want Mkdir error, got %v", userName, err)
 				}

@@ -17,6 +17,7 @@
 package test
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -267,7 +268,7 @@ func functionName(i interface{}) string {
 }
 
 // CreateDir creates a directory for the tests.
-func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode os.FileMode) {
+func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode fs.FileMode) {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
@@ -318,7 +319,7 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	// as the user who started the tests.
 	sfs.User(tb, sfs.initUser.Name())
 
-	err = vfs.Walk(testDir, func(path string, info os.FileInfo, err error) error {
+	err = vfs.Walk(testDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}
@@ -629,25 +630,25 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 // Dir contains the sample directories.
 type Dir struct { //nolint:govet // no fieldalignment for simple structs
 	Path      string
-	Mode      os.FileMode
-	WantModes []os.FileMode
+	Mode      fs.FileMode
+	WantModes []fs.FileMode
 }
 
 // GetSampleDirs returns the sample directories used by Mkdir function.
 func GetSampleDirs() []*Dir {
 	dirs := []*Dir{
-		{Path: "/A", Mode: 0o777, WantModes: []os.FileMode{0o777}},
-		{Path: "/B", Mode: 0o755, WantModes: []os.FileMode{0o755}},
-		{Path: "/B/1", Mode: 0o755, WantModes: []os.FileMode{0o755, 0o755}},
-		{Path: "/B/1/D", Mode: 0o700, WantModes: []os.FileMode{0o755, 0o755, 0o700}},
-		{Path: "/B/1/E", Mode: 0o755, WantModes: []os.FileMode{0o755, 0o755, 0o755}},
-		{Path: "/B/2", Mode: 0o750, WantModes: []os.FileMode{0o755, 0o750}},
-		{Path: "/B/2/F", Mode: 0o755, WantModes: []os.FileMode{0o755, 0o750, 0o755}},
-		{Path: "/B/2/F/3", Mode: 0o755, WantModes: []os.FileMode{0o755, 0o750, 0o755, 0o755}},
-		{Path: "/B/2/F/3/G", Mode: 0o777, WantModes: []os.FileMode{0o755, 0o750, 0o755, 0o755, 0o777}},
-		{Path: "/B/2/F/3/G/4", Mode: 0o777, WantModes: []os.FileMode{0o755, 0o750, 0o755, 0o755, 0o777, 0o777}},
-		{Path: "/C", Mode: 0o750, WantModes: []os.FileMode{0o750}},
-		{Path: "/C/5", Mode: 0o750, WantModes: []os.FileMode{0o750, 0o750}},
+		{Path: "/A", Mode: 0o777, WantModes: []fs.FileMode{0o777}},
+		{Path: "/B", Mode: 0o755, WantModes: []fs.FileMode{0o755}},
+		{Path: "/B/1", Mode: 0o755, WantModes: []fs.FileMode{0o755, 0o755}},
+		{Path: "/B/1/D", Mode: 0o700, WantModes: []fs.FileMode{0o755, 0o755, 0o700}},
+		{Path: "/B/1/E", Mode: 0o755, WantModes: []fs.FileMode{0o755, 0o755, 0o755}},
+		{Path: "/B/2", Mode: 0o750, WantModes: []fs.FileMode{0o755, 0o750}},
+		{Path: "/B/2/F", Mode: 0o755, WantModes: []fs.FileMode{0o755, 0o750, 0o755}},
+		{Path: "/B/2/F/3", Mode: 0o755, WantModes: []fs.FileMode{0o755, 0o750, 0o755, 0o755}},
+		{Path: "/B/2/F/3/G", Mode: 0o777, WantModes: []fs.FileMode{0o755, 0o750, 0o755, 0o755, 0o777}},
+		{Path: "/B/2/F/3/G/4", Mode: 0o777, WantModes: []fs.FileMode{0o755, 0o750, 0o755, 0o755, 0o777, 0o777}},
+		{Path: "/C", Mode: 0o750, WantModes: []fs.FileMode{0o750}},
+		{Path: "/C/5", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
 	}
 
 	return dirs
@@ -656,9 +657,9 @@ func GetSampleDirs() []*Dir {
 // GetSampleDirsAll returns the sample directories used by MkdirAll function.
 func GetSampleDirsAll() []*Dir {
 	dirs := []*Dir{
-		{Path: "/H/6", Mode: 0o750, WantModes: []os.FileMode{0o750, 0o750}},
-		{Path: "/H/6/I/7", Mode: 0o755, WantModes: []os.FileMode{0o750, 0o750, 0o755, 0o755}},
-		{Path: "/H/6/I/7/J/8", Mode: 0o777, WantModes: []os.FileMode{0o750, 0o750, 0o755, 0o755, 0o777, 0o777}},
+		{Path: "/H/6", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
+		{Path: "/H/6/I/7", Mode: 0o755, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755}},
+		{Path: "/H/6/I/7/J/8", Mode: 0o777, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755, 0o777, 0o777}},
 	}
 
 	return dirs
@@ -691,7 +692,7 @@ func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
 // File contains the sample files.
 type File struct { //nolint:govet // no fieldalignment for simple structs
 	Path    string
-	Mode    os.FileMode
+	Mode    fs.FileMode
 	Content []byte
 }
 
@@ -764,7 +765,7 @@ type SymlinkEval struct { //nolint:govet // no fieldalignment for simple structs
 	OldName   string
 	WantErr   error
 	IsSymlink bool
-	Mode      os.FileMode
+	Mode      fs.FileMode
 }
 
 // GetSampleSymlinksEval return the sample symbolic links to evaluate.
@@ -774,16 +775,16 @@ func GetSampleSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 	}
 
 	sl := []*SymlinkEval{
-		{NewName: "/A/lroot/", OldName: "/", WantErr: nil, IsSymlink: true, Mode: os.ModeDir | 0o777},
-		{NewName: "/A/lroot/B", OldName: "/B", WantErr: nil, IsSymlink: false, Mode: os.ModeDir | 0o755},
+		{NewName: "/A/lroot/", OldName: "/", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o777},
+		{NewName: "/A/lroot/B", OldName: "/B", WantErr: nil, IsSymlink: false, Mode: fs.ModeDir | 0o755},
 		{NewName: "/C/lNonExist", OldName: "A/path", WantErr: avfs.ErrNoSuchFileOrDir, IsSymlink: true},
-		{NewName: "/", OldName: "/", WantErr: nil, IsSymlink: false, Mode: os.ModeDir | 0o777},
-		{NewName: "/lC", OldName: "/C", WantErr: nil, IsSymlink: true, Mode: os.ModeDir | 0o750},
+		{NewName: "/", OldName: "/", WantErr: nil, IsSymlink: false, Mode: fs.ModeDir | 0o777},
+		{NewName: "/lC", OldName: "/C", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o750},
 		{NewName: "/B/1/lafile2.txt", OldName: "/A/afile2.txt", WantErr: nil, IsSymlink: true, Mode: 0o644},
-		{NewName: "/B/2/lf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: os.ModeDir | 0o755},
-		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: os.ModeDir | 0o755},
-		{NewName: "/C/lllf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: os.ModeDir | 0o755},
-		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: os.ModeDir | 0o755},
+		{NewName: "/B/2/lf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/C/lllf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
 		{NewName: "/C/lllf/3/3file1.txt", OldName: "/B/2/F/3/3file1.txt", WantErr: nil, IsSymlink: false, Mode: 0o640},
 	}
 
@@ -810,12 +811,12 @@ func (sfs *SuiteFS) SampleSymlinks(tb testing.TB, testDir string) []*Symlink {
 	return symlinks
 }
 
-// CheckInvalid checks if the error in os.ErrInvalid.
+// CheckInvalid checks if the error in fs.ErrInvalid.
 func CheckInvalid(tb testing.TB, funcName string, err error) {
 	tb.Helper()
 
 	if err != os.ErrInvalid {
-		tb.Errorf("%s : want error to be %v, got %v", funcName, os.ErrInvalid, err)
+		tb.Errorf("%s : want error to be %v, got %v", funcName, fs.ErrInvalid, err)
 	}
 }
 
@@ -834,7 +835,7 @@ func CheckPanic(tb testing.TB, funcName string, f func()) {
 
 type CheckPath struct {
 	tb   testing.TB
-	err  *os.PathError
+	err  *fs.PathError
 	halt bool
 }
 
@@ -849,7 +850,7 @@ func CheckPathError(tb testing.TB, err error) *CheckPath {
 		tb.Error("want error to be not nil")
 	}
 
-	e, ok := err.(*os.PathError)
+	e, ok := err.(*fs.PathError)
 	if !ok {
 		halt = true
 

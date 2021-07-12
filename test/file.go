@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"io/fs"
 	"math"
 	"os"
 	"reflect"
@@ -89,7 +90,7 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		err := f.Chdir()
-		CheckPathError(t, err).Op("chdir").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("chdir").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileChdirNonExisting", func(t *testing.T) {
@@ -136,7 +137,7 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		err := f.Chmod(avfs.DefaultFilePerm)
-		CheckPathError(t, err).Op("chmod").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("chmod").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileChmodNonExisting", func(t *testing.T) {
@@ -195,7 +196,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		err := f.Chown(0, 0)
-		CheckPathError(t, err).Op("chown").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("chown").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileChownNonExisting", func(t *testing.T) {
@@ -250,7 +251,7 @@ func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
 		}
 
 		err = f.Close()
-		CheckPathError(t, err).Op("close").Path(path).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("close").Path(path).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileCloseNonExisting", func(t *testing.T) {
@@ -307,7 +308,7 @@ func (sfs *SuiteFS) TestFileCloseWrite(t *testing.T, testDir string) {
 		}
 
 		err = f.Close()
-		CheckPathError(t, err).Op("close").Path(path).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("close").Path(path).Err(fs.ErrClosed)
 	})
 }
 
@@ -566,10 +567,10 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		b := make([]byte, 1)
 
 		_, err := f.Read(b)
-		CheckPathError(t, err).Op("read").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
 
 		_, err = f.ReadAt(b, 0)
-		CheckPathError(t, err).Op("read").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
 	})
 }
 
@@ -603,7 +604,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 		defer f.Close()
 
-		var rdInfos []os.FileInfo
+		var rdInfos []fs.FileInfo
 
 		for {
 			rdInfoN, err := f.Readdir(maxRead)
@@ -624,7 +625,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 			switch {
 			case mode.IsDir():
 				gDirs++
-			case mode&os.ModeSymlink != 0:
+			case mode&fs.ModeSymlink != 0:
 				gSymlinks++
 			default:
 				gFiles++
@@ -968,7 +969,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		_, err = f.Seek(0, io.SeekStart)
-		CheckPathError(t, err).Op("seek").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("seek").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileSeekNonExisting", func(t *testing.T) {
@@ -1018,9 +1019,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := (dir.Mode | os.ModeDir) &^ vfs.GetUMask()
+			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.GetUMask()
 			if vfs.OSType() == avfs.OsWindows {
-				wantMode = os.ModeDir | os.ModePerm
+				wantMode = fs.ModeDir | fs.ModePerm
 			}
 
 			if wantMode != info.Mode() {
@@ -1088,7 +1089,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 			var (
 				wantName string
-				wantMode os.FileMode
+				wantMode fs.FileMode
 			)
 
 			if sl.IsSymlink {
@@ -1163,7 +1164,7 @@ func (sfs *SuiteFS) TestFileSync(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		err := f.Sync()
-		CheckPathError(t, err).Op("sync").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("sync").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileSyncNonExisting", func(t *testing.T) {
@@ -1312,7 +1313,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		err := f.Truncate(0)
-		CheckPathError(t, err).Op("truncate").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("truncate").Path(fileName).Err(fs.ErrClosed)
 	})
 }
 
@@ -1576,10 +1577,10 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 		f, fileName := sfs.ClosedFile(t, testDir)
 		_, err := f.Write(b)
-		CheckPathError(t, err).Op("write").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
 
 		_, err = f.WriteAt(b, 0)
-		CheckPathError(t, err).Op("write").Path(fileName).Err(os.ErrClosed)
+		CheckPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
 	})
 }
 

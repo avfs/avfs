@@ -19,6 +19,7 @@ package test
 import (
 	"bytes"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -155,7 +156,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 
 	t.Run("ChmodDir", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
-			for mode := os.FileMode(1); mode <= 6; mode++ {
+			for mode := fs.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
 				path, err := vfs.TempDir(testDir, "")
 				if err != nil {
@@ -172,7 +173,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 					t.Errorf("Stat %s : want error to be nil, got %v", path, err)
 				}
 
-				gotMode := fst.Mode() & os.ModePerm
+				gotMode := fst.Mode() & fs.ModePerm
 
 				// On Windows, only the 0200 bit (owner writable) of mode is used.
 				if vfs.OSType() == avfs.OsWindows {
@@ -189,7 +190,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 
 	t.Run("ChmodFile", func(t *testing.T) {
 		for shift := 6; shift >= 0; shift -= 3 {
-			for mode := os.FileMode(1); mode <= 6; mode++ {
+			for mode := fs.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
 
 				err := vfs.Chmod(existingFile, wantMode)
@@ -202,7 +203,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 					t.Errorf("Stat %s : want error to be nil, got %v", existingFile, err)
 				}
 
-				gotMode := fst.Mode() & os.ModePerm
+				gotMode := fst.Mode() & fs.ModePerm
 
 				// On Windows, only the 0200 bit (owner writable) of mode is used.
 				if vfs.OSType() == avfs.OsWindows {
@@ -601,7 +602,7 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 				continue
 			}
 
-			e, ok := err.(*os.PathError)
+			e, ok := err.(*fs.PathError)
 			if !ok && sl.WantErr != err {
 				t.Errorf("EvalSymlinks %s : want error %v, got %v", slPath, sl.WantErr, err)
 			}
@@ -953,9 +954,9 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 				t.Errorf("Lstat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := (dir.Mode | os.ModeDir) &^ vfs.GetUMask()
+			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.GetUMask()
 			if vfs.OSType() == avfs.OsWindows {
-				wantMode = os.ModeDir | os.ModePerm
+				wantMode = fs.ModeDir | fs.ModePerm
 			}
 
 			if wantMode != info.Mode() {
@@ -1013,12 +1014,12 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 
 			var (
 				wantName string
-				wantMode os.FileMode
+				wantMode fs.FileMode
 			)
 
 			if sl.IsSymlink {
 				wantName = vfs.Base(newPath)
-				wantMode = os.ModeSymlink | os.ModePerm
+				wantMode = fs.ModeSymlink | fs.ModePerm
 			} else {
 				wantName = vfs.Base(oldPath)
 				wantMode = sl.Mode
@@ -1110,10 +1111,10 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 				wantMode &^= vfs.GetUMask()
 				if vfs.OSType() == avfs.OsWindows {
-					wantMode = os.ModePerm
+					wantMode = fs.ModePerm
 				}
 
-				mode := info.Mode() & os.ModePerm
+				mode := info.Mode() & fs.ModePerm
 				if wantMode != mode {
 					t.Errorf("stat %s %s : want mode to be %s, got %s", path, curPath, wantMode, mode)
 				}
@@ -1246,10 +1247,10 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 				wantMode &^= vfs.GetUMask()
 				if vfs.OSType() == avfs.OsWindows {
-					wantMode = os.ModePerm
+					wantMode = fs.ModePerm
 				}
 
-				mode := info.Mode() & os.ModePerm
+				mode := info.Mode() & fs.ModePerm
 				if wantMode != mode {
 					t.Errorf("stat %s %s : want mode to be %s, got %s", path, curPath, wantMode, mode)
 				}
@@ -1622,7 +1623,7 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 			switch {
 			case mode.IsDir():
 				gDirs++
-			case mode&os.ModeSymlink != 0:
+			case mode&fs.ModeSymlink != 0:
 				gSymlinks++
 			default:
 				gFiles++
@@ -2238,9 +2239,9 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := (dir.Mode | os.ModeDir) &^ vfs.GetUMask()
+			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.GetUMask()
 			if vfs.OSType() == avfs.OsWindows {
-				wantMode = os.ModeDir | os.ModePerm
+				wantMode = fs.ModeDir | fs.ModePerm
 			}
 
 			if wantMode != info.Mode() {
@@ -2298,7 +2299,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 
 			var (
 				wantName string
-				wantMode os.FileMode
+				wantMode fs.FileMode
 			)
 
 			if sl.IsSymlink {
@@ -2382,7 +2383,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.TempDir(testDir, "")
-		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
 			t.Errorf("TempDir : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
@@ -2394,15 +2395,15 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	t.Run("TempDirOnFile", func(t *testing.T) {
 		_, err := vfs.TempDir(existingFile, "")
 
-		e, ok := err.(*os.PathError)
+		e, ok := err.(*fs.PathError)
 		if !ok {
-			t.Fatalf("TempDir : want error type *os.PathError, got %v", reflect.TypeOf(err))
+			t.Fatalf("TempDir : want error type *fs.PathError, got %v", reflect.TypeOf(err))
 		}
 
 		const op = "mkdir"
 		wantErr := avfs.ErrNotADirectory
 		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
-			wantPathErr := &os.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
+			wantPathErr := &fs.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
 			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
 		}
 	})
@@ -2414,7 +2415,7 @@ func (sfs *SuiteFS) TestTempFile(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.TempFile(testDir, "")
-		if err.(*os.PathError).Err != avfs.ErrPermDenied {
+		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
 			t.Errorf("TempFile : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
@@ -2426,15 +2427,15 @@ func (sfs *SuiteFS) TestTempFile(t *testing.T, testDir string) {
 	t.Run("TempFileOnFile", func(t *testing.T) {
 		_, err := vfs.TempFile(existingFile, "")
 
-		e, ok := err.(*os.PathError)
+		e, ok := err.(*fs.PathError)
 		if !ok {
-			t.Fatalf("TempFile : want error type *os.PathError, got %v", reflect.TypeOf(err))
+			t.Fatalf("TempFile : want error type *fs.PathError, got %v", reflect.TypeOf(err))
 		}
 
 		const op = "open"
 		wantErr := avfs.ErrNotADirectory
 		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
-			wantPathErr := &os.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
+			wantPathErr := &fs.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
 			t.Errorf("TempDir : want error to be %v, got %v", wantPathErr, err)
 		}
 	})

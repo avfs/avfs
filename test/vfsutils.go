@@ -19,7 +19,7 @@ package test
 import (
 	"bytes"
 	"crypto/sha512"
-	"os"
+	"io/fs"
 	"reflect"
 	"strconv"
 	"testing"
@@ -146,7 +146,7 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 		}
 
-		gotMode := info.Mode() & os.ModePerm
+		gotMode := info.Mode() & fs.ModePerm
 		if gotMode != dir.Perm {
 			t.Errorf("CreateBaseDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
 		}
@@ -464,7 +464,7 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 
 // TestUMask tests UMask functions.
 func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
-	const umaskSet = os.FileMode(0o77)
+	const umaskSet = fs.FileMode(0o77)
 
 	umaskTest := umaskSet
 

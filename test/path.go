@@ -17,7 +17,7 @@
 package test
 
 import (
-	"os"
+	"io/fs"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -729,7 +729,7 @@ func (sfs *SuiteFS) TestWalk(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		walkFunc := func(rootDir string, info os.FileInfo, err error) error { return nil }
+		walkFunc := func(rootDir string, info fs.FileInfo, err error) error { return nil }
 
 		err := vfs.Walk(testDir, walkFunc)
 		if err != nil {
@@ -766,7 +766,7 @@ func (sfs *SuiteFS) TestWalk(t *testing.T, testDir string) {
 
 	t.Run("Walk", func(t *testing.T) {
 		gotNames := make(map[string]int)
-		err := vfs.Walk(testDir, func(path string, info os.FileInfo, err error) error {
+		err := vfs.Walk(testDir, func(path string, info fs.FileInfo, err error) error {
 			gotNames[path]++
 
 			return nil
@@ -790,7 +790,7 @@ func (sfs *SuiteFS) TestWalk(t *testing.T, testDir string) {
 	t.Run("WalkNonExistingFile", func(t *testing.T) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
-		err := vfs.Walk(nonExistingFile, func(path string, info os.FileInfo, err error) error {
+		err := vfs.Walk(nonExistingFile, func(path string, info fs.FileInfo, err error) error {
 			return nil
 		})
 		if err != nil {
