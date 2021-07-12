@@ -20,7 +20,7 @@ package avfs
 import (
 	"errors"
 	"io"
-	"os"
+	"io/fs"
 	"path/filepath"
 	"reflect"
 	"strconv"
@@ -40,10 +40,10 @@ const (
 	TmpDir           = "/tmp"            // TmpDir is the tmp directory.
 	UsrRoot          = "root"            // UsrRoot is the root user.
 	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
-	DefaultUmask     = os.FileMode(0o22) // DefaultUmask is the default umask when the syscall is not available.
+	DefaultUmask     = fs.FileMode(0o22) // DefaultUmask is the default umask when the syscall is not available.
 
-	// FileModeMask is the bitmask used for permissions (see os.Chmod() comment).
-	FileModeMask = os.ModePerm | os.ModeSticky | os.ModeSetuid | os.ModeSetgid
+	// FileModeMask is the bitmask used for permissions.
+	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
 
 // Errors on linux and Windows operating systems.
@@ -243,7 +243,7 @@ type BasicVFS interface {
 	// Mkdir creates a new directory with the specified name and permission
 	// bits (before umask).
 	// If there is an error, it will be of type *PathError.
-	Mkdir(name string, perm os.FileMode) error
+	Mkdir(name string, perm fs.FileMode) error
 
 	// MkdirAll creates a directory named path,
 	// along with any necessary parents, and returns nil,
@@ -252,7 +252,7 @@ type BasicVFS interface {
 	// directories that MkdirAll creates.
 	// If path is already a directory, MkdirAll does nothing
 	// and returns nil.
-	MkdirAll(path string, perm os.FileMode) error
+	MkdirAll(path string, perm fs.FileMode) error
 
 	// Open opens the named file for reading. If successful, methods on
 	// the returned file can be used for reading; the associated file
@@ -265,11 +265,11 @@ type BasicVFS interface {
 	// (O_RDONLY etc.) and perm (before umask), if applicable. If successful,
 	// methods on the returned File can be used for I/O.
 	// If there is an error, it will be of type *PathError.
-	OpenFile(name string, flag int, perm os.FileMode) (File, error)
+	OpenFile(name string, flag int, perm fs.FileMode) (File, error)
 
 	// ReadDir reads the directory named by dirname and returns
 	// a list of directory entries sorted by filename.
-	ReadDir(dirname string) ([]os.FileInfo, error)
+	ReadDir(dirname string) ([]fs.FileInfo, error)
 
 	// ReadFile reads the file named by filename and returns the contents.
 	// A successful call returns err == nil, not err == EOF. Because ReadFile
@@ -299,11 +299,11 @@ type BasicVFS interface {
 	// the decision may be based on the path names.
 	// SameFile only applies to results returned by this package's Stat.
 	// It returns false in other cases.
-	SameFile(fi1, fi2 os.FileInfo) bool
+	SameFile(fi1, fi2 fs.FileInfo) bool
 
 	// Stat returns a FileInfo describing the named file.
 	// If there is an error, it will be of type *PathError.
-	Stat(name string) (os.FileInfo, error)
+	Stat(name string) (fs.FileInfo, error)
 
 	// TempDir creates a new temporary directory in the directory dir
 	// with a name beginning with prefix and returns the path of the
@@ -335,7 +335,7 @@ type BasicVFS interface {
 	// WriteFile writes data to a file named by filename.
 	// If the file does not exist, WriteFile creates it with permissions perm;
 	// otherwise WriteFile truncates it before writing.
-	WriteFile(filename string, data []byte, perm os.FileMode) error
+	WriteFile(filename string, data []byte, perm fs.FileMode) error
 }
 
 // ChDirer is the interface that wraps the Chdir and Getwd methods.
@@ -371,7 +371,7 @@ type ChModer interface {
 	//
 	// On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 	// and ModeTemporary are used.
-	Chmod(name string, mode os.FileMode) error
+	Chmod(name string, mode fs.FileMode) error
 }
 
 // ChOwner is the interface that wraps the Chown and Lchown methods.
@@ -559,7 +559,7 @@ type SymLinker interface {
 	// If the file is a symbolic link, the returned FileInfo
 	// describes the symbolic link. Lstat makes no attempt to follow the link.
 	// If there is an error, it will be of type *PathError.
-	Lstat(name string) (os.FileInfo, error)
+	Lstat(name string) (fs.FileInfo, error)
 
 	// Readlink returns the destination of the named symbolic link.
 	// If there is an error, it will be of type *PathError.
@@ -585,10 +585,10 @@ type OSTyper interface {
 // UMasker is the interface that groups functions related to file mode creation mask.
 type UMasker interface {
 	// GetUMask returns the file mode creation mask.
-	GetUMask() os.FileMode
+	GetUMask() fs.FileMode
 
 	// UMask sets the file mode creation mask.
-	UMask(mask os.FileMode)
+	UMask(mask fs.FileMode)
 }
 
 // File represents a file in the file system.
@@ -616,6 +616,18 @@ type BasicFile interface {
 	// Name returns the name of the file as presented to Open.
 	Name() string
 
+	// ReadDir reads the contents of the directory associated with the file f
+	// and returns a slice of DirEntry values in directory order.
+	// Subsequent calls on the same file will yield later DirEntry records in the directory.
+	//
+	// If n > 0, ReadDir returns at most n DirEntry records.
+	// In this case, if ReadDir returns an empty slice, it will return an error explaining why.
+	// At the end of a directory, the error is io.EOF.
+	//
+	// If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
+	// When it succeeds, it returns a nil error (not io.EOF).
+	ReadDir(n int) ([]fs.DirEntry, error)
+
 	// Readdir reads the contents of the directory associated with file and
 	// returns a slice of up to n FileInfo values, as would be returned
 	// by Lstat, in directory order. Subsequent calls on the same file will yield
@@ -631,7 +643,7 @@ type BasicFile interface {
 	// nil error. If it encounters an error before the end of the
 	// directory, Readdir returns the FileInfo read until that point
 	// and a non-nil error.
-	Readdir(n int) ([]os.FileInfo, error)
+	Readdir(n int) ([]fs.FileInfo, error)
 
 	// Readdirnames reads and returns a slice of names from the directory f.
 	//
@@ -649,7 +661,7 @@ type BasicFile interface {
 
 	// Stat returns the FileInfo structure describing file.
 	// If there is an error, it will be of type *PathError.
-	Stat() (os.FileInfo, error)
+	Stat() (fs.FileInfo, error)
 
 	// Truncate changes the size of the file.
 	// It does not change the I/O offset.
@@ -669,7 +681,7 @@ type FileChDirer interface {
 type FileChModer interface {
 	// Chmod changes the mode of the file to mode.
 	// If there is an error, it will be of type *PathError.
-	Chmod(mode os.FileMode) error
+	Chmod(mode fs.FileMode) error
 }
 
 // FileChOwner is the interface that wraps the Chown method of a File.
@@ -777,7 +789,7 @@ type UserReader interface {
 	Name() string
 }
 
-// SysStater is the interface returned by os.FileInfo.Sys() on all file systems.
+// SysStater is the interface returned by fs.FileInfo.Sys() on all file systems.
 type SysStater interface {
 	GroupIdentifier
 	UserIdentifier
