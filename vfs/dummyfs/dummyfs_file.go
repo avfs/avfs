@@ -17,7 +17,7 @@
 package dummyfs
 
 import (
-	"os"
+	"io/fs"
 
 	"github.com/avfs/avfs"
 )
@@ -28,15 +28,15 @@ import (
 func (f *DummyFile) Chdir() error {
 	const op = "chdir"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Chmod changes the mode of the file to mode.
 // If there is an error, it will be of type *PathError.
-func (f *DummyFile) Chmod(mode os.FileMode) error {
+func (f *DummyFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -47,7 +47,7 @@ func (f *DummyFile) Chmod(mode os.FileMode) error {
 func (f *DummyFile) Chown(uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Close closes the DummyFile, rendering it unusable for I/O.
@@ -56,7 +56,7 @@ func (f *DummyFile) Chown(uid, gid int) error {
 func (f *DummyFile) Close() error {
 	const op = "close"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Fd returns the integer Unix file descriptor referencing the open file.
@@ -77,7 +77,7 @@ func (f *DummyFile) Name() string {
 func (f *DummyFile) Read(b []byte) (n int, err error) {
 	const op = "read"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // ReadAt reads len(b) bytes from the DummyFile starting at byte offset off.
@@ -87,7 +87,23 @@ func (f *DummyFile) Read(b []byte) (n int, err error) {
 func (f *DummyFile) ReadAt(b []byte, off int64) (n int, err error) {
 	const op = "read"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+}
+
+// ReadDir reads the contents of the directory associated with the file f
+// and returns a slice of DirEntry values in directory order.
+// Subsequent calls on the same file will yield later DirEntry records in the directory.
+//
+// If n > 0, ReadDir returns at most n DirEntry records.
+// In this case, if ReadDir returns an empty slice, it will return an error explaining why.
+// At the end of a directory, the error is io.EOF.
+//
+// If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
+// When it succeeds, it returns a nil error (not io.EOF).
+func (f *DummyFile) ReadDir(n int) ([]fs.DirEntry, error) {
+	const op = "readdirent"
+
+	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Readdir reads the contents of the directory associated with file and
@@ -105,10 +121,12 @@ func (f *DummyFile) ReadAt(b []byte, off int64) (n int, err error) {
 // nil error. If it encounters an error before the end of the
 // directory, Readdir returns the FileInfo read until that point
 // and a non-nil error.
-func (f *DummyFile) Readdir(n int) ([]os.FileInfo, error) {
+//
+// Most clients are better served by the more efficient ReadDir method.
+func (f *DummyFile) Readdir(n int) ([]fs.FileInfo, error) {
 	const op = "readdirent"
 
-	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Readdirnames reads and returns a slice of names from the directory f.
@@ -126,7 +144,7 @@ func (f *DummyFile) Readdir(n int) ([]os.FileInfo, error) {
 func (f *DummyFile) Readdirnames(n int) (names []string, err error) {
 	const op = "readdirent"
 
-	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Seek sets the offset for the next Read or Write on file to offset, interpreted
@@ -137,15 +155,15 @@ func (f *DummyFile) Readdirnames(n int) (names []string, err error) {
 func (f *DummyFile) Seek(offset int64, whence int) (ret int64, err error) {
 	const op = "seek"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
-func (f *DummyFile) Stat() (os.FileInfo, error) {
+func (f *DummyFile) Stat() (fs.FileInfo, error) {
 	const op = "stat"
 
-	return nil, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Sync commits the current contents of the file to stable storage.
@@ -154,7 +172,7 @@ func (f *DummyFile) Stat() (os.FileInfo, error) {
 func (f *DummyFile) Sync() error {
 	const op = "sync"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Truncate changes the size of the file.
@@ -163,7 +181,7 @@ func (f *DummyFile) Sync() error {
 func (f *DummyFile) Truncate(size int64) error {
 	const op = "truncate"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Write writes len(b) bytes to the DummyFile.
@@ -172,7 +190,7 @@ func (f *DummyFile) Truncate(size int64) error {
 func (f *DummyFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // WriteAt writes len(b) bytes to the DummyFile starting at byte offset off.
@@ -181,7 +199,7 @@ func (f *DummyFile) Write(b []byte) (n int, err error) {
 func (f *DummyFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // WriteString is like Write, but writes the contents of string s rather than
