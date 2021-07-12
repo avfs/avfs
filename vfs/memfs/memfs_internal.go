@@ -18,7 +18,7 @@ package memfs
 
 import (
 	"bytes"
-	"os"
+	"io/fs"
 	"sort"
 	"sync/atomic"
 	"time"
@@ -144,11 +144,11 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 }
 
 // createDir creates a new directory.
-func (vfs *MemFS) createDir(parent *dirNode, name string, perm os.FileMode) *dirNode {
+func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dirNode {
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  os.ModeDir | (perm & avfs.FileModeMask &^ os.FileMode(vfs.memAttrs.umask)),
+			mode:  fs.ModeDir | (perm & avfs.FileModeMask &^ fs.FileMode(vfs.memAttrs.umask)),
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
@@ -161,11 +161,11 @@ func (vfs *MemFS) createDir(parent *dirNode, name string, perm os.FileMode) *dir
 }
 
 // createFile creates a new file.
-func (vfs *MemFS) createFile(parent *dirNode, name string, perm os.FileMode) *fileNode {
+func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fileNode {
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  perm & avfs.FileModeMask &^ os.FileMode(vfs.memAttrs.umask),
+			mode:  perm & avfs.FileModeMask &^ fs.FileMode(vfs.memAttrs.umask),
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
@@ -183,7 +183,7 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 	child := &symlinkNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  os.ModeSymlink | os.ModePerm,
+			mode:  fs.ModeSymlink | fs.ModePerm,
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
@@ -277,11 +277,11 @@ func (dn *dirNode) child(name string) node {
 	return dn.children[name]
 }
 
-// fillStatFrom returns a fStat (implementation of os.FileInfo) from a dirNode dn named name.
-func (dn *dirNode) fillStatFrom(name string) *fStat {
+// fillStatFrom returns a MemStat (implementation of fs.FileInfo) from a dirNode dn named name.
+func (dn *dirNode) fillStatFrom(name string) *MemStat {
 	dn.mu.RLock()
 
-	fst := &fStat{
+	fst := &MemStat{
 		name:  name,
 		size:  dn.size(),
 		mode:  dn.mode,
@@ -297,13 +297,13 @@ func (dn *dirNode) fillStatFrom(name string) *fStat {
 }
 
 // infos returns a slice of FileInfo from a directory ordered by name.
-func (dn *dirNode) infos() []os.FileInfo {
+func (dn *dirNode) infos() []fs.FileInfo {
 	l := len(dn.children)
 	if l == 0 {
 		return nil
 	}
 
-	dirInfos := make([]os.FileInfo, l)
+	dirInfos := make([]fs.FileInfo, l)
 	i := 0
 
 	for name, node := range dn.children {
@@ -337,7 +337,7 @@ func (dn *dirNode) names() []string {
 }
 
 // setMode sets the permissions of the directory node.
-func (dn *dirNode) setMode(mode os.FileMode, u avfs.UserReader) error {
+func (dn *dirNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
 	dn.mu.Lock()
 	defer dn.mu.Unlock()
 
@@ -367,11 +367,11 @@ func (fn *fileNode) deleteData() {
 	}
 }
 
-// fillStatFrom returns a fStat (implementation of os.FileInfo) from a fileNode fn named name.
-func (fn *fileNode) fillStatFrom(name string) *fStat {
+// fillStatFrom returns a MemStat (implementation of fs.FileInfo) from a fileNode fn named name.
+func (fn *fileNode) fillStatFrom(name string) *MemStat {
 	fn.mu.RLock()
 
-	fst := &fStat{
+	fst := &MemStat{
 		id:    fn.id,
 		name:  name,
 		size:  fn.size(),
@@ -388,7 +388,7 @@ func (fn *fileNode) fillStatFrom(name string) *fStat {
 }
 
 // setMode sets the permissions of the file node.
-func (fn *fileNode) setMode(mode os.FileMode, u avfs.UserReader) error {
+func (fn *fileNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
 	fn.mu.Lock()
 	defer fn.mu.Unlock()
 
@@ -436,11 +436,11 @@ func (fn *fileNode) truncate(size int64) {
 
 // symlinkNode
 
-// fillStatFrom returns a fStat (implementation of os.FileInfo) from a symlinkNode dn named name.
-func (sn *symlinkNode) fillStatFrom(name string) *fStat {
+// fillStatFrom returns a MemStat (implementation of fs.FileInfo) from a symlinkNode dn named name.
+func (sn *symlinkNode) fillStatFrom(name string) *MemStat {
 	sn.mu.RLock()
 
-	fst := &fStat{
+	fst := &MemStat{
 		name:  name,
 		size:  sn.size(),
 		mode:  sn.mode,
@@ -456,7 +456,7 @@ func (sn *symlinkNode) fillStatFrom(name string) *fStat {
 }
 
 // setMode sets the permissions of the symlink node.
-func (sn *symlinkNode) setMode(mode os.FileMode, u avfs.UserReader) error {
+func (sn *symlinkNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
 	return avfs.ErrOpNotPermitted
 }
 

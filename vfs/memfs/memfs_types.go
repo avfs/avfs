@@ -17,7 +17,7 @@
 package memfs
 
 import (
-	"os"
+	"io/fs"
 	"sync"
 
 	"github.com/avfs/avfs"
@@ -50,7 +50,7 @@ type MemFile struct {
 	nd       node          // nd is node of the file.
 	memFS    *MemFS        // memFS is the memory file system of the file.
 	name     string        // name is the name of the file.
-	dirInfos []os.FileInfo // dirInfos stores the files informations returned by Readdir function.
+	dirInfos []fs.FileInfo // dirInfos stores the files informations returned by Readdir function.
 	dirNames []string      // dirNames stores the names of the file returned by Readdirnames function.
 	at       int64         // at is current position in the file used by Read and Write functions.
 	dirIndex int           // dirIndex is the position of the current index for dirInfos ou dirNames slices.
@@ -69,14 +69,14 @@ type node interface {
 	// checkPermission returns true if the current user has the desired permissions (perm) on the node.
 	checkPermission(perm avfs.PermMode, u avfs.UserReader) bool
 
-	// fillStatFrom returns a *fStat (implementation of os.FileInfo) from a node named name.
-	fillStatFrom(name string) *fStat
+	// fillStatFrom returns a *MemStat (implementation of fs.FileInfo) from a node named name.
+	fillStatFrom(name string) *MemStat
 
 	// permMode returns de permission of the user u on the node bn.
 	permMode(u avfs.UserReader) avfs.PermMode
 
 	// setMode sets the permissions of the node.
-	setMode(mode os.FileMode, u avfs.UserReader) error
+	setMode(mode fs.FileMode, u avfs.UserReader) error
 
 	// size returns the size of the node.
 	size() int64
@@ -109,7 +109,7 @@ type symlinkNode struct {
 type baseNode struct {
 	mu    sync.RWMutex // mu is the RWMutex used to access the content of the node.
 	mtime int64        // mtime is the modification time.
-	mode  os.FileMode  // mode represents a file's mode and permission bits.
+	mode  fs.FileMode  // mode represents a file's mode and permission bits.
 	uid   int          // uid is the user id.
 	gid   int          // gid is the group id.
 }
@@ -123,8 +123,8 @@ const (
 	slmEval                    // slmEval makes searchNode function follow symbolic links like EvalSymlink.
 )
 
-// fStat is the implementation of os.FileInfo returned by Stat and Lstat.
-type fStat struct {
+// MemStat is the implementation of fs.FileInfo returned by Stat and Lstat.
+type MemStat struct {
 	name  string      // name is the name of the file.
 	id    uint64      // id is a unique id to identify a file (used by SameFile function).
 	size  int64       // size is the size of the file.
@@ -132,7 +132,7 @@ type fStat struct {
 	uid   int         // uid is the user id.
 	gid   int         // gid is the group id.
 	nlink int         // nlink is the number of hardlinks to this fileNode.
-	mode  os.FileMode // mode represents a file's mode and permission bits.
+	mode  fs.FileMode // mode represents a file's mode and permission bits.
 }
 
 // removeStack is a stack of directories to be removed during tree traversal in RemoveAll function.

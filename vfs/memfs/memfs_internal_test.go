@@ -14,12 +14,13 @@
 //  limitations under the License.
 //
 
+//go:build !datarace
 // +build !datarace
 
 package memfs
 
 import (
-	"os"
+	"io/fs"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -35,8 +36,8 @@ var (
 	// symlinkNode struct implements node interface.
 	_ node = &symlinkNode{}
 
-	// fStat struct implements os.FileInfo interface.
-	_ os.FileInfo = &fStat{}
+	// MemStat struct implements fs.FileInfo interface.
+	_ fs.FileInfo = &MemStat{}
 )
 
 func TestSearchNode(t *testing.T) {

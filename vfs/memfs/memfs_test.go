@@ -14,11 +14,13 @@
 //  limitations under the License.
 //
 
+//go:build !datarace
 // +build !datarace
 
 package memfs_test
 
 import (
+	"io/fs"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -34,6 +36,12 @@ var (
 
 	// memfs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}
+
+	// memfs.MemStat struct implements fs.DirEntry interface.
+	_ fs.DirEntry = &memfs.MemStat{}
+
+	// memfs.MemStat struct implements fs.FileInfo interface.
+	_ fs.FileInfo = &memfs.MemStat{}
 )
 
 func TestMemFS(t *testing.T) {

@@ -18,8 +18,8 @@ package memfs
 
 import (
 	"io"
+	"io/fs"
 	"math"
-	"os"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -33,23 +33,23 @@ func (f *MemFile) Chdir() error {
 	const op = "chdir"
 
 	if f == nil {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	_, ok := f.nd.(*dirNode)
 	if !ok {
-		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	f.memFS.curDir = f.name
@@ -59,27 +59,27 @@ func (f *MemFile) Chdir() error {
 
 // Chmod changes the mode of the file to mode.
 // If there is an error, it will be of type *PathError.
-func (f *MemFile) Chmod(mode os.FileMode) error {
+func (f *MemFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
 	if f == nil {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	err := f.nd.setMode(mode, f.memFS.user)
 	if err != nil {
-		return &os.PathError{Op: op, Path: f.name, Err: err}
+		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	return nil
@@ -94,18 +94,18 @@ func (f *MemFile) Chown(uid, gid int) error {
 	const op = "chown"
 
 	if f == nil {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	bn := f.nd.base()
@@ -114,7 +114,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 	defer bn.mu.Unlock()
 
 	if !bn.checkPermission(avfs.PermWrite, f.memFS.user) {
-		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
 	}
 
 	bn.setOwner(uid, gid)
@@ -129,7 +129,7 @@ func (f *MemFile) Close() error {
 	const op = "close"
 
 	if f == nil {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	f.mu.Lock()
@@ -137,10 +137,10 @@ func (f *MemFile) Close() error {
 
 	if f.nd == nil {
 		if f.name == "" {
-			return os.ErrInvalid
+			return fs.ErrInvalid
 		}
 
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	f.dirInfos = nil
@@ -177,27 +177,27 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 	const op = "read"
 
 	if f == nil {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
 	nd.mu.RLock()
@@ -221,31 +221,31 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 	const op = "read"
 
 	if f == nil {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
 	if f.name == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
 	}
 
 	if off < 0 {
-		return 0, &os.PathError{Op: "readat", Path: f.name, Err: avfs.ErrNegativeOffset}
+		return 0, &fs.PathError{Op: "readat", Path: f.name, Err: avfs.ErrNegativeOffset}
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
 	nd.mu.RLock()
@@ -263,6 +263,24 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 	return n, nil
 }
 
+// ReadDir reads the contents of the directory associated with the file f
+// and returns a slice of DirEntry values in directory order.
+// Subsequent calls on the same file will yield later DirEntry records in the directory.
+//
+// If n > 0, ReadDir returns at most n DirEntry records.
+// In this case, if ReadDir returns an empty slice, it will return an error explaining why.
+// At the end of a directory, the error is io.EOF.
+//
+// If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
+// When it succeeds, it returns a nil error (not io.EOF).
+func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
+	const op = "readdirent"
+
+	// TODO : implement ReadDir
+
+	return nil, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+}
+
 // Readdir reads the contents of the directory associated with file and
 // returns a slice of up to n FileInfo values, as would be returned
 // by Lstat, in directory order. Subsequent calls on the same file will yield
@@ -278,27 +296,27 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 // nil error. If it encounters an error before the end of the
 // directory, Readdir returns the FileInfo read until that point
 // and a non-nil error.
-func (f *MemFile) Readdir(n int) (fi []os.FileInfo, err error) {
+func (f *MemFile) Readdir(n int) (fi []fs.FileInfo, err error) {
 	const op = "readdirent"
 
 	if f == nil {
-		return nil, os.ErrInvalid
+		return nil, fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return nil, os.ErrInvalid
+		return nil, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	if n <= 0 || f.dirInfos == nil {
@@ -351,23 +369,23 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 	const op = "readdirent"
 
 	if f == nil {
-		return nil, os.ErrInvalid
+		return nil, fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return nil, os.ErrInvalid
+		return nil, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
 	}
 
 	if n <= 0 || f.dirNames == nil {
@@ -413,18 +431,18 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 	const op = "seek"
 
 	if f == nil {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
@@ -439,24 +457,24 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 	switch whence {
 	case io.SeekStart:
 		if offset < 0 {
-			return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 		}
 
 		f.at = offset
 	case io.SeekCurrent:
 		if f.at+offset < 0 {
-			return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 		}
 
 		f.at += offset
 	case io.SeekEnd:
 		if size+offset < 0 {
-			return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 		}
 
 		f.at = size + offset
 	default:
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	return f.at, nil
@@ -464,22 +482,22 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
-func (f *MemFile) Stat() (os.FileInfo, error) {
+func (f *MemFile) Stat() (fs.FileInfo, error) {
 	const op = "stat"
 
 	if f == nil {
-		return nil, os.ErrInvalid
+		return nil, fs.ErrInvalid
 	}
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
 	if f.name == "" {
-		return nil, os.ErrInvalid
+		return nil, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return &fStat{}, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		return &MemStat{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
 	name := vfsutils.Base(f.name)
@@ -495,18 +513,18 @@ func (f *MemFile) Sync() error {
 	const op = "sync"
 
 	if f == nil {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
 	if f.name == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	return nil
@@ -519,27 +537,27 @@ func (f *MemFile) Truncate(size int64) error {
 	const op = "truncate"
 
 	if f == nil {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
 	if f.name == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
 	if size < 0 {
-		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	if f.nd == nil {
-		return &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return &os.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	nd.mu.Lock()
@@ -559,23 +577,23 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
 	if f == nil {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
 	if f.name == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
 	nd.mu.Lock()
@@ -602,27 +620,27 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
 	if f == nil {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	if off < 0 {
-		return 0, &os.PathError{Op: "writeat", Path: f.name, Err: avfs.ErrNegativeOffset}
+		return 0, &fs.PathError{Op: "writeat", Path: f.name, Err: avfs.ErrNegativeOffset}
 	}
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
 	if f.name == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
 	if f.nd == nil {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: os.ErrClosed}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
 	}
 
 	nd.mu.Lock()
@@ -647,49 +665,65 @@ func (f *MemFile) WriteString(s string) (n int, err error) {
 	return f.Write([]byte(s))
 }
 
-// fStat is the implementation of FileInfo returned by Stat and Lstat.
+// MemStat is the implementation of FileInfo returned by Stat and Lstat.
 
-// IsDir is the abbreviation for Mode().IsDir().
-func (fst *fStat) IsDir() bool {
+// Info returns the FileInfo for the file or subdirectory described by the entry.
+// The returned FileInfo may be from the time of the original directory read
+// or from the time of the call to Info. If the file has been removed or renamed
+// since the directory read, Info may return an error satisfying errors.Is(err, ErrNotExist).
+// If the entry denotes a symbolic link, Info reports the information about the link itself,
+// not the link's target.
+func (fst *MemStat) Info() (fs.FileInfo, error) {
+	return fst, nil
+}
+
+// IsDir reports whether the entry describes a directory.
+func (fst *MemStat) IsDir() bool {
 	return fst.mode.IsDir()
 }
 
 // Mode returns the file mode bits.
-func (fst *fStat) Mode() os.FileMode {
+func (fst *MemStat) Mode() fs.FileMode {
 	return fst.mode
 }
 
 // ModTime returns the modification time.
-func (fst *fStat) ModTime() time.Time {
+func (fst *MemStat) ModTime() time.Time {
 	return time.Unix(0, fst.mtime)
 }
 
 // Name returns the base name of the file.
-func (fst *fStat) Name() string {
+func (fst *MemStat) Name() string {
 	return fst.name
 }
 
 // Size returns the length in bytes for regular files; system-dependent for others.
-func (fst *fStat) Size() int64 {
+func (fst *MemStat) Size() int64 {
 	return fst.size
 }
 
 // Sys returns the underlying data source (can return nil).
-func (fst *fStat) Sys() interface{} {
+func (fst *MemStat) Sys() interface{} {
 	return fst
 }
 
+// Type returns the type bits for the entry.
+// The type bits are a subset of the usual FileMode bits, those returned by the FileMode.Type method.
+func (fst *MemStat) Type() fs.FileMode {
+	return fst.mode & fs.ModeType
+}
+
 // Gid returns the group id.
-func (fst *fStat) Gid() int {
+func (fst *MemStat) Gid() int {
 	return fst.gid
 }
 
 // Uid returns the user id.
-func (fst *fStat) Uid() int {
+func (fst *MemStat) Uid() int {
 	return fst.uid
 }
 
 // Nlink returns the number of hard links.
-func (fst *fStat) Nlink() uint64 {
+func (fst *MemStat) Nlink() uint64 {
 	return uint64(fst.nlink)
 }
