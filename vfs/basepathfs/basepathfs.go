@@ -333,7 +333,7 @@ func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.F
 
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
-func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
+func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
 	return vfsutils.ReadDir(vfs, dirname)
 }
 
