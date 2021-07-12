@@ -17,7 +17,7 @@
 package rofs
 
 import (
-	"os"
+	"io/fs"
 
 	"github.com/avfs/avfs"
 )
@@ -31,14 +31,14 @@ func (f *RoFile) Chdir() error {
 
 // Chmod changes the mode of the file to mode.
 // If there is an error, it will be of type *PathError.
-func (f *RoFile) Chmod(mode os.FileMode) error {
+func (f *RoFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
 	if f.baseFile.Name() == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -49,7 +49,7 @@ func (f *RoFile) Chmod(mode os.FileMode) error {
 func (f *RoFile) Chown(uid, gid int) error {
 	const op = "chown"
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Close closes the RoFile, rendering it unusable for I/O.
@@ -86,6 +86,20 @@ func (f *RoFile) ReadAt(b []byte, off int64) (n int, err error) {
 	return f.baseFile.ReadAt(b, off)
 }
 
+// ReadDir reads the contents of the directory associated with the file f
+// and returns a slice of DirEntry values in directory order.
+// Subsequent calls on the same file will yield later DirEntry records in the directory.
+//
+// If n > 0, ReadDir returns at most n DirEntry records.
+// In this case, if ReadDir returns an empty slice, it will return an error explaining why.
+// At the end of a directory, the error is io.EOF.
+//
+// If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
+// When it succeeds, it returns a nil error (not io.EOF).
+func (f *RoFile) ReadDir(n int) ([]fs.DirEntry, error) {
+	return f.baseFile.ReadDir(n)
+}
+
 // Readdir reads the contents of the directory associated with file and
 // returns a slice of up to n FileInfo values, as would be returned
 // by Lstat, in directory order. Subsequent calls on the same file will yield
@@ -101,7 +115,7 @@ func (f *RoFile) ReadAt(b []byte, off int64) (n int, err error) {
 // nil error. If it encounters an error before the end of the
 // directory, Readdir returns the FileInfo read until that point
 // and a non-nil error.
-func (f *RoFile) Readdir(n int) ([]os.FileInfo, error) {
+func (f *RoFile) Readdir(n int) ([]fs.FileInfo, error) {
 	return f.baseFile.Readdir(n)
 }
 
@@ -132,7 +146,7 @@ func (f *RoFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
-func (f *RoFile) Stat() (os.FileInfo, error) {
+func (f *RoFile) Stat() (fs.FileInfo, error) {
 	return f.baseFile.Stat()
 }
 
@@ -150,10 +164,10 @@ func (f *RoFile) Truncate(size int64) error {
 	const op = "truncate"
 
 	if f.baseFile.Name() == "" {
-		return os.ErrInvalid
+		return fs.ErrInvalid
 	}
 
-	return &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // Write writes len(b) bytes to the RoFile.
@@ -163,10 +177,10 @@ func (f *RoFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
 	if f.baseFile.Name() == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // WriteAt writes len(b) bytes to the File starting at byte offset off.
@@ -176,10 +190,10 @@ func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
 	if f.baseFile.Name() == "" {
-		return 0, os.ErrInvalid
+		return 0, fs.ErrInvalid
 	}
 
-	return 0, &os.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
 // WriteString is like Write, but writes the contents of string s rather than
