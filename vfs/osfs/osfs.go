@@ -381,7 +381,7 @@ func (vfs *OsFS) Symlink(oldname, newname string) error {
 // will not choose the same directory. It is the caller's responsibility
 // to remove the directory when no longer needed.
 func (vfs *OsFS) TempDir(dir, prefix string) (name string, err error) {
-	return ioutil.TempDir(dir, prefix)
+	return os.MkdirTemp(dir, prefix)
 }
 
 // TempFile creates a new temporary file in the directory dir,
@@ -396,7 +396,7 @@ func (vfs *OsFS) TempDir(dir, prefix string) (name string, err error) {
 // to find the pathname of the file. It is the caller's responsibility
 // to remove the file when no longer needed.
 func (vfs *OsFS) TempFile(dir, pattern string) (f avfs.File, err error) {
-	return ioutil.TempFile(dir, pattern)
+	return os.CreateTemp(dir, pattern)
 }
 
 // ToSlash returns the result of replacing each separator character

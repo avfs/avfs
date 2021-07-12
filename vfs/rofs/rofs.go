@@ -422,7 +422,7 @@ func (vfs *RoFS) Symlink(oldname, newname string) error {
 // will not choose the same directory. It is the caller's responsibility
 // to remove the directory when no longer needed.
 func (vfs *RoFS) TempDir(dir, prefix string) (name string, err error) {
-	return vfsutils.TempDir(vfs, dir, prefix)
+	return vfsutils.MkdirTemp(vfs, dir, prefix)
 }
 
 // TempFile creates a new temporary file in the directory dir,
@@ -437,7 +437,7 @@ func (vfs *RoFS) TempDir(dir, prefix string) (name string, err error) {
 // to find the pathname of the file. It is the caller's responsibility
 // to remove the file when no longer needed.
 func (vfs *RoFS) TempFile(dir, pattern string) (f avfs.File, err error) {
-	return vfsutils.TempFile(vfs, dir, pattern)
+	return vfsutils.CreateTemp(vfs, dir, pattern)
 }
 
 // ToSlash returns the result of replacing each separator character
