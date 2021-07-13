@@ -19,8 +19,8 @@ package test
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -1320,7 +1320,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 
 		defer f.Close()
 
-		gotData, err := ioutil.ReadAll(f)
+		gotData, err := io.ReadAll(f)
 		if err != nil {
 			t.Errorf("ReadAll : want error to be nil, got %v", err)
 		}

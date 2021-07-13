@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"go/build"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -46,7 +45,7 @@ func main() {
 	if isExecutable("mage") {
 		log.Printf("mage binary already exists")
 	} else {
-		tmpDir, err := ioutil.TempDir("", "mage")
+		tmpDir, err := os.MkdirTemp("", "mage")
 		if err != nil {
 			log.Fatalf("MkdirTemp : want error to be nil, got %v", err)
 		}

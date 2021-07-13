@@ -40,7 +40,7 @@ It is only tested with Go version >= 1.16
 
 To make an existing code work with **AVFS** :
 
-- replace all references of `os`, `path/filepath` and `ioutil`
+- replace all references of `os`, `path/filepath`
   with the variable used to initialize the file system (`vfs` in the following
   examples)
 - import the packages of the file systems and, if necessary, the `avfs` package
@@ -80,7 +80,7 @@ func main() {
 		vfs, _ = memfs.New(memfs.WithMainDirs())
 	}
 
-	// From this point all references of 'os', 'path/filepath' and 'ioutil'
+	// From this point all references of 'os', 'path/filepath'
 	// should be replaced by 'vfs'
 	rootDir, _ := vfs.MkdirTemp("", avfs.Avfs)
 	defer vfs.RemoveAll(rootDir)
@@ -187,8 +187,7 @@ relations between them :
 
 All file systems implement at least `avfs.FS` and `avfs.File` interfaces. By
 default, each file system supported methods are the most commonly used from
-packages `os`, `path/filepath` and `ioutil`. All methods
-have identical names as their functions counterparts. The following file systems
+packages `os` and `path/filepath`. All methods have identical names as their functions counterparts. The following file systems
 are currently available :
 
 File system |Comments
@@ -234,8 +233,8 @@ File system methods <br> `avfs.FS`|Comments
 `Open`|equivalent to `os.Open`
 `OpenFile`|equivalent to `os.OpenFile`
 `OSType`| returns the operating system type of the file system
-`ReadDir`|equivalent to `ioutil.ReadDir`
-`ReadFile`|equivalent to `ioutil.ReadFile`
+`ReadDir`|equivalent to `os.ReadDir`
+`ReadFile`|equivalent to `os.ReadFile`
 `Readlink`|equivalent to `os.Readlink`
 `Rel`|equivalent to `filepath.Rel`
 `Remove`|equivalent to `os.Remove`
@@ -249,7 +248,7 @@ File system methods <br> `avfs.FS`|Comments
 `ToSlash`|equivalent to `filepath.ToSlash`
 `Truncate`|equivalent to `os.Truncate`
 `Walk`|equivalent to `filepath.Walk`
-`WriteFile`|equivalent to `ioutil.WriteFile`
+`WriteFile`|equivalent to `os.WriteFile`
 
 File methods <br> `avfs.File`|Comments
 -----------------------------|--------

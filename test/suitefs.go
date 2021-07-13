@@ -412,14 +412,12 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestSplit,
 		sfs.TestWalk,
 
-		// ioutils functions
+		// other functions
 		sfs.TestReadDir,
 		sfs.TestReadFile,
 		sfs.TestMkdirTemp,
 		sfs.TestTempFile,
 		sfs.TestWriteFile,
-
-		// other functions
 		sfs.TestCopyFile,
 		sfs.TestCreateBaseDirs,
 		sfs.TestDirExists,
