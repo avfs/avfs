@@ -416,7 +416,7 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestReadDir,
 		sfs.TestReadFile,
 		sfs.TestMkdirTemp,
-		sfs.TestTempFile,
+		sfs.TestCreateTemp,
 		sfs.TestWriteFile,
 		sfs.TestCopyFile,
 		sfs.TestCreateBaseDirs,
