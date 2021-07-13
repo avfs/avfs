@@ -446,7 +446,7 @@ func (sn *symlinkNode) delete() {
 	sn.link = ""
 }
 
-// fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a symlinkNode dn named name.
+// fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a symlinkNode named name.
 func (sn *symlinkNode) fillStatFrom(name string) *MemInfo {
 	sn.mu.RLock()
 
