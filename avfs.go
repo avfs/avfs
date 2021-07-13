@@ -602,11 +602,12 @@ type File interface {
 
 // BasicFile represents a basic file in the file system.
 type BasicFile interface {
-	io.Closer
-	io.ReadWriteSeeker
+	fs.File
+	fs.ReadDirFile
 	io.ReaderAt
 	io.StringWriter
 	io.WriterAt
+	io.WriteSeeker
 
 	// Fd returns the integer Unix file descriptor referencing the open file.
 	// The file descriptor is valid only until f.Close is called or f is garbage collected.
@@ -615,18 +616,6 @@ type BasicFile interface {
 
 	// Name returns the name of the file as presented to Open.
 	Name() string
-
-	// ReadDir reads the contents of the directory associated with the file f
-	// and returns a slice of DirEntry values in directory order.
-	// Subsequent calls on the same file will yield later DirEntry records in the directory.
-	//
-	// If n > 0, ReadDir returns at most n DirEntry records.
-	// In this case, if ReadDir returns an empty slice, it will return an error explaining why.
-	// At the end of a directory, the error is io.EOF.
-	//
-	// If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
-	// When it succeeds, it returns a nil error (not io.EOF).
-	ReadDir(n int) ([]fs.DirEntry, error)
 
 	// Readdirnames reads and returns a slice of names from the directory f.
 	//
@@ -641,10 +630,6 @@ type BasicFile interface {
 	// directory, Readdirnames returns the names read until that point and
 	// a non-nil error.
 	Readdirnames(n int) (names []string, err error)
-
-	// Stat returns the FileInfo structure describing file.
-	// If there is an error, it will be of type *PathError.
-	Stat() (fs.FileInfo, error)
 
 	// Truncate changes the size of the file.
 	// It does not change the I/O offset.
