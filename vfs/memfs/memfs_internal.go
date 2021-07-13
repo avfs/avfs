@@ -296,8 +296,8 @@ func (dn *dirNode) fillStatFrom(name string) *MemInfo {
 	return fst
 }
 
-// entries returns a slice of fs.DirEntry from a directory ordered by name.
-func (dn *dirNode) entries() []fs.DirEntry {
+// dirEntries returns a slice of fs.DirEntry from a directory ordered by name.
+func (dn *dirNode) dirEntries() []fs.DirEntry {
 	l := len(dn.children)
 	if l == 0 {
 		return nil
@@ -316,24 +316,24 @@ func (dn *dirNode) entries() []fs.DirEntry {
 	return entries
 }
 
-// names returns a slice of file names from a directory ordered by name.
-func (dn *dirNode) names() []string {
+// dirNames returns a slice of file names from a directory ordered by name.
+func (dn *dirNode) dirNames() []string {
 	l := len(dn.children)
 	if l == 0 {
 		return nil
 	}
 
-	dirNames := make([]string, l)
+	names := make([]string, l)
 	i := 0
 
 	for name := range dn.children {
-		dirNames[i] = name
+		names[i] = name
 		i++
 	}
 
-	sort.Strings(dirNames)
+	sort.Strings(names)
 
-	return dirNames
+	return names
 }
 
 // setMode sets the permissions of the directory node.

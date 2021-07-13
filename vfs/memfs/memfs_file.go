@@ -298,7 +298,7 @@ func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 
 	if n <= 0 || f.dirEntries == nil {
 		nd.mu.RLock()
-		entries := nd.entries()
+		entries := nd.dirEntries()
 		nd.mu.RUnlock()
 
 		f.dirIndex = 0
@@ -367,7 +367,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 
 	if n <= 0 || f.dirNames == nil {
 		nd.mu.RLock()
-		names := nd.names()
+		names := nd.dirNames()
 		nd.mu.RUnlock()
 
 		f.dirIndex = 0
@@ -650,57 +650,57 @@ func (f *MemFile) WriteString(s string) (n int, err error) {
 // since the directory read, Info may return an error satisfying errors.Is(err, ErrNotExist).
 // If the entry denotes a symbolic link, Info reports the information about the link itself,
 // not the link's target.
-func (fst *MemInfo) Info() (fs.FileInfo, error) {
-	return fst, nil
+func (info *MemInfo) Info() (fs.FileInfo, error) {
+	return info, nil
 }
 
 // IsDir reports whether the entry describes a directory.
-func (fst *MemInfo) IsDir() bool {
-	return fst.mode.IsDir()
+func (info *MemInfo) IsDir() bool {
+	return info.mode.IsDir()
 }
 
 // Mode returns the file mode bits.
-func (fst *MemInfo) Mode() fs.FileMode {
-	return fst.mode
+func (info *MemInfo) Mode() fs.FileMode {
+	return info.mode
 }
 
 // ModTime returns the modification time.
-func (fst *MemInfo) ModTime() time.Time {
-	return time.Unix(0, fst.mtime)
+func (info *MemInfo) ModTime() time.Time {
+	return time.Unix(0, info.mtime)
 }
 
 // Name returns the base name of the file.
-func (fst *MemInfo) Name() string {
-	return fst.name
+func (info *MemInfo) Name() string {
+	return info.name
 }
 
 // Size returns the length in bytes for regular files; system-dependent for others.
-func (fst *MemInfo) Size() int64 {
-	return fst.size
+func (info *MemInfo) Size() int64 {
+	return info.size
 }
 
 // Sys returns the underlying data source (can return nil).
-func (fst *MemInfo) Sys() interface{} {
-	return fst
+func (info *MemInfo) Sys() interface{} {
+	return info
 }
 
 // Type returns the type bits for the entry.
 // The type bits are a subset of the usual FileMode bits, those returned by the FileMode.Type method.
-func (fst *MemInfo) Type() fs.FileMode {
-	return fst.mode & fs.ModeType
+func (info *MemInfo) Type() fs.FileMode {
+	return info.mode & fs.ModeType
 }
 
 // Gid returns the group id.
-func (fst *MemInfo) Gid() int {
-	return fst.gid
+func (info *MemInfo) Gid() int {
+	return info.gid
 }
 
 // Uid returns the user id.
-func (fst *MemInfo) Uid() int {
-	return fst.uid
+func (info *MemInfo) Uid() int {
+	return info.uid
 }
 
 // Nlink returns the number of hard links.
-func (fst *MemInfo) Nlink() uint64 {
-	return uint64(fst.nlink)
+func (info *MemInfo) Nlink() uint64 {
+	return uint64(info.nlink)
 }
