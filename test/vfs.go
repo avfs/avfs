@@ -1340,11 +1340,11 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 
 		dirs, err := f.ReadDir(-1)
 		if err != nil {
-			t.Errorf("Readdir : want error to be nil, got %v", err)
+			t.Errorf("ReadDir : want error to be nil, got %v", err)
 		}
 
 		if len(dirs) != 0 {
-			t.Errorf("Readdir : want number of directories to be 0, got %d", len(dirs))
+			t.Errorf("ReadDir : want number of directories to be 0, got %d", len(dirs))
 		}
 	})
 

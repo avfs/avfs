@@ -386,7 +386,7 @@ func FileNilPtr(t *testing.T, f avfs.File) {
 	CheckInvalid(t, "ReadAt", err)
 
 	_, err = f.ReadDir(0)
-	CheckInvalid(t, "Readdir", err)
+	CheckInvalid(t, "ReadDir", err)
 
 	_, err = f.Readdirnames(0)
 	CheckInvalid(t, "Readdirnames", err)
@@ -671,11 +671,11 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("FileReaddirNonExisting", func(t *testing.T) {
+	t.Run("FileReadDirNonExisting", func(t *testing.T) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.ReadDir(-1)
-		CheckInvalid(t, "Readdir", err)
+		CheckInvalid(t, "ReadDir", err)
 	})
 }
 
