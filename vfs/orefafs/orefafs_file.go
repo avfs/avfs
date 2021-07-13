@@ -376,7 +376,7 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 
 	if n <= 0 || f.dirNames == nil {
 		nd.mu.RLock()
-		names := nd.names()
+		names := nd.dirNames()
 		nd.mu.RUnlock()
 
 		f.dirIndex = 0

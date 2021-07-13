@@ -117,31 +117,37 @@ func (nd *node) dirEntries() []fs.DirEntry {
 		return nil
 	}
 
-	de := make([]fs.DirEntry, 0, l)
-	for name, cn := range nd.children {
-		de = append(de, cn.fillStatFrom(name))
+	entries := make([]fs.DirEntry, l)
+	i := 0
+
+	for name, node := range nd.children {
+		entries[i] = node.fillStatFrom(name)
+		i++
 	}
 
-	sort.Slice(de, func(i, j int) bool { return de[i].Name() < de[j].Name() })
+	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
 
-	return de
+	return entries
 }
 
-// names returns a slice of file names from a directory ordered by name.
-func (nd *node) names() []string {
+// dirNames returns a slice of file names from a directory ordered by name.
+func (nd *node) dirNames() []string {
 	l := len(nd.children)
 	if l == 0 {
 		return nil
 	}
 
-	dn := make([]string, 0, l)
+	names := make([]string, l)
+	i := 0
+
 	for name := range nd.children {
-		dn = append(dn, name)
+		names[i] = name
+		i++
 	}
 
-	sort.Strings(dn)
+	sort.Strings(names)
 
-	return dn
+	return names
 }
 
 // remove deletes the content of a node.
