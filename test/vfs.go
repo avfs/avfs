@@ -1612,18 +1612,17 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 	existingFile := rndTree.Files[0]
 
 	t.Run("ReadDirAll", func(t *testing.T) {
-		entries, err := vfs.ReadDir(testDir)
+		dirEntries, err := vfs.ReadDir(testDir)
 		if err != nil {
 			t.Fatalf("ReadDir : want error to be nil, got %v", err)
 		}
 
 		var gDirs, gFiles, gSymlinks int
-		for _, entry := range entries {
-			mode := entry.Mode()
+		for _, dirEntry := range dirEntries {
 			switch {
-			case mode.IsDir():
+			case dirEntry.IsDir():
 				gDirs++
-			case mode&fs.ModeSymlink != 0:
+			case dirEntry.Type()&fs.ModeSymlink != 0:
 				gSymlinks++
 			default:
 				gFiles++

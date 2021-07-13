@@ -604,10 +604,10 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 		defer f.Close()
 
-		var rdInfos []fs.FileInfo
+		var dirEntries []fs.DirEntry
 
 		for {
-			rdInfoN, err := f.ReadDir(maxRead)
+			dirEntriesN, err := f.ReadDir(maxRead)
 			if err == io.EOF {
 				break
 			}
@@ -616,16 +616,15 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 				t.Fatalf("ReadDir : want error to be nil, got %v", err)
 			}
 
-			rdInfos = append(rdInfos, rdInfoN...)
+			dirEntries = append(dirEntries, dirEntriesN...)
 		}
 
 		var gDirs, gFiles, gSymlinks int
-		for _, rdInfo := range rdInfos {
-			mode := rdInfo.Mode()
+		for _, dirEntry := range dirEntries {
 			switch {
-			case mode.IsDir():
+			case dirEntry.IsDir():
 				gDirs++
-			case mode&fs.ModeSymlink != 0:
+			case dirEntry.Type()&fs.ModeSymlink != 0:
 				gSymlinks++
 			default:
 				gFiles++
