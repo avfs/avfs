@@ -1474,7 +1474,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 			t.Errorf("ReadFile : want error to be nil, got %v", err)
 		}
 
-		wantContent := append(data, appendData...) //nolint:gocritic // append result not assigned to the same slice.
+		wantContent := append(data, appendData...)
 		if !bytes.Equal(wantContent, gotContent) {
 			t.Errorf("ReadAll : want content to be %s, got %s", wantContent, gotContent)
 		}

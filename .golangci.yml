@@ -231,3 +231,6 @@ issues:
     - text: "Line contains TODO/BUG/FIXME"
       linters:
         - godox
+    - text: "appendAssign: append result not assigned to the same slice"
+      linters:
+        - gocritic
