@@ -77,7 +77,12 @@ func (f *MemFile) Chmod(mode fs.FileMode) error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
-	err := f.nd.setMode(mode, f.memFS.user)
+	nd := f.nd
+
+	nd.Lock()
+	defer nd.Unlock()
+
+	err := nd.setMode(mode, f.memFS.user)
 	if err != nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
@@ -108,16 +113,16 @@ func (f *MemFile) Chown(uid, gid int) error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
-	bn := f.nd.base()
+	nd := f.nd
 
-	bn.mu.Lock()
-	defer bn.mu.Unlock()
+	nd.Lock()
+	defer nd.Unlock()
 
-	if !bn.checkPermission(avfs.PermWrite, f.memFS.user) {
+	if !nd.checkPermission(avfs.PermWrite, f.memFS.user) {
 		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
 	}
 
-	bn.setOwner(uid, gid)
+	nd.setOwner(uid, gid)
 
 	return nil
 }

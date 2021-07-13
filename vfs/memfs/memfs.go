@@ -102,6 +102,9 @@ func (vfs *MemFS) Chmod(name string, mode fs.FileMode) error {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
+	child.Lock()
+	defer child.Unlock()
+
 	err = child.setMode(mode, vfs.user)
 	if err != nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
@@ -129,11 +132,9 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
-	bn := child.base()
-
-	bn.mu.Lock()
-	bn.setOwner(uid, gid)
-	bn.mu.Unlock()
+	child.Lock()
+	child.setOwner(uid, gid)
+	child.Unlock()
 
 	return nil
 }
@@ -176,12 +177,10 @@ func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
-	bn := child.base()
+	child.Lock()
+	defer child.Unlock()
 
-	bn.mu.Lock()
-	defer bn.mu.Unlock()
-
-	err = bn.setModTime(mtime, vfs.user)
+	err = child.setModTime(mtime, vfs.user)
 	if err != nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
@@ -356,11 +355,9 @@ func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
-	bn := child.base()
-
-	bn.mu.Lock()
-	bn.setOwner(uid, gid)
-	bn.mu.Unlock()
+	child.Lock()
+	child.setOwner(uid, gid)
+	child.Unlock()
 
 	return nil
 }
@@ -657,7 +654,7 @@ func (vfs *MemFS) Remove(name string) error {
 	const op = "remove"
 
 	parent, child, absPath, start, end, err := vfs.searchNode(name, slmLstat)
-	if err != avfs.ErrFileExists || parent == nil {
+	if err != avfs.ErrFileExists || parent == nil || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -668,10 +665,8 @@ func (vfs *MemFS) Remove(name string) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 	}
 
-	bn := child.base()
-
-	bn.mu.Lock()
-	defer bn.mu.Unlock()
+	child.Lock()
+	defer child.Unlock()
 
 	if c, ok := child.(*dirNode); ok {
 		if len(c.children) != 0 {
@@ -685,10 +680,7 @@ func (vfs *MemFS) Remove(name string) error {
 	}
 
 	parent.removeChild(part)
-
-	if c, ok := child.(*fileNode); ok {
-		c.deleteData()
-	}
+	child.delete()
 
 	return nil
 }
@@ -723,25 +715,19 @@ func (vfs *MemFS) RemoveAll(path string) error {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
 
-	err = nil
+	defer child.delete()
 
-	switch c := child.(type) {
-	case *dirNode:
-		err = vfs.removeAll(c)
+	if c, ok := child.(*dirNode); ok {
+		err := vfs.removeAll(c)
 		if err != nil {
-			err = &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+			return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 		}
-
-	case *fileNode:
-		c.mu.Lock()
-		c.deleteData()
-		c.mu.Unlock()
 	}
 
 	part := absPath[start:end]
 	parent.removeChild(part)
 
-	return err
+	return nil
 }
 
 func (vfs *MemFS) removeAll(dn *dirNode) error {
@@ -754,19 +740,14 @@ func (vfs *MemFS) removeAll(dn *dirNode) error {
 	}
 
 	for _, child := range dn.children {
-		switch c := child.(type) {
-		case *dirNode:
+		if c, ok := child.(*dirNode); ok {
 			err := vfs.removeAll(c)
 			if err != nil {
 				return err
 			}
-
-			c.children = nil
-		case *fileNode:
-			c.mu.Lock()
-			c.deleteData()
-			c.mu.Unlock()
 		}
+
+		child.delete()
 	}
 
 	return nil
@@ -825,7 +806,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 
 		switch nc := nChild.(type) {
 		case *fileNode:
-			nc.deleteData()
+			nc.delete()
 		default:
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrFileExists}
 		}

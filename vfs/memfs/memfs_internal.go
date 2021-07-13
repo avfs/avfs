@@ -195,11 +195,6 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 	return child
 }
 
-// base returns the baseNode.
-func (bn *baseNode) base() *baseNode {
-	return bn
-}
-
 // checkPermission checks if the current user has the desired permissions (perm) on the node.
 func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool {
 	if u.IsRoot() {
@@ -218,6 +213,11 @@ func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool 
 	perm &= avfs.PermRWX
 
 	return avfs.PermMode(mode)&perm == perm
+}
+
+// Lock locks the node.
+func (bn *baseNode) Lock() {
+	bn.mu.Lock()
 }
 
 // permMode returns the access mode of the node bn.
@@ -255,6 +255,11 @@ func (bn *baseNode) setOwner(uid, gid int) {
 	bn.gid = gid
 }
 
+// Unlock unlocks the node.
+func (bn *baseNode) Unlock() {
+	bn.mu.Unlock()
+}
+
 // dirNode
 
 // addChild adds a child to a dirNode.
@@ -275,6 +280,11 @@ func (dn *dirNode) removeChild(name string) {
 // it returns nil if the child is not found or if there is no children.
 func (dn *dirNode) child(name string) node {
 	return dn.children[name]
+}
+
+// delete removes all information from the node.
+func (dn *dirNode) delete() {
+	dn.children = nil
 }
 
 // fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a dirNode dn named name.
@@ -338,9 +348,6 @@ func (dn *dirNode) dirNames() []string {
 
 // setMode sets the permissions of the directory node.
 func (dn *dirNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
-	dn.mu.Lock()
-	defer dn.mu.Unlock()
-
 	if dn.uid != u.Uid() && !u.IsRoot() {
 		return avfs.ErrOpNotPermitted
 	}
@@ -358,9 +365,10 @@ func (dn *dirNode) size() int64 {
 
 // fileNode
 
-// deleteData decrements the reference counter of the fileNode.
+// delete removes all information from the node.
+// decrementing the reference counter of the fileNode.
 // if there is no more references, the data is deleted.
-func (fn *fileNode) deleteData() {
+func (fn *fileNode) delete() {
 	fn.nlink--
 	if fn.nlink == 0 {
 		fn.data = nil
@@ -389,9 +397,6 @@ func (fn *fileNode) fillStatFrom(name string) *MemInfo {
 
 // setMode sets the permissions of the file node.
 func (fn *fileNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
-	fn.mu.Lock()
-	defer fn.mu.Unlock()
-
 	if fn.uid != u.Uid() && !u.IsRoot() {
 		return avfs.ErrPermDenied
 	}
@@ -435,6 +440,11 @@ func (fn *fileNode) truncate(size int64) {
 }
 
 // symlinkNode
+
+// delete removes all information from the node.
+func (sn *symlinkNode) delete() {
+	sn.link = ""
+}
 
 // fillStatFrom returns a MemInfo (implementation of fs.FileInfo) from a symlinkNode dn named name.
 func (sn *symlinkNode) fillStatFrom(name string) *MemInfo {

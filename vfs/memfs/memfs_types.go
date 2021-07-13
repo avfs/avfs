@@ -19,6 +19,7 @@ package memfs
 import (
 	"io/fs"
 	"sync"
+	"time"
 
 	"github.com/avfs/avfs"
 )
@@ -63,14 +64,17 @@ type Option func(*MemFS) error
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {
-	// base returns the baseNode.
-	base() *baseNode
-
 	// checkPermission returns true if the current user has the desired permissions (perm) on the node.
 	checkPermission(perm avfs.PermMode, u avfs.UserReader) bool
 
+	// delete removes all information from the node.
+	delete()
+
 	// fillStatFrom returns a *MemInfo (implementation of fs.FileInfo) from a node named name.
 	fillStatFrom(name string) *MemInfo
+
+	// Lock locks the node.
+	Lock()
 
 	// permMode returns de permission of the user u on the node bn.
 	permMode(u avfs.UserReader) avfs.PermMode
@@ -78,8 +82,17 @@ type node interface {
 	// setMode sets the permissions of the node.
 	setMode(mode fs.FileMode, u avfs.UserReader) error
 
+	// setModTime sets the modification time of the node.
+	setModTime(mtime time.Time, u avfs.UserReader) error
+
+	// setOwner sets the owner of the node.
+	setOwner(uid, gid int)
+
 	// size returns the size of the node.
 	size() int64
+
+	// Unlock unlocks the node.
+	Unlock()
 }
 
 // dirNode is the structure for a directory.
