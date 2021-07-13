@@ -134,8 +134,3 @@ type MemInfo struct {
 	nlink int         // nlink is the number of hardlinks to this fileNode.
 	mode  fs.FileMode // mode represents a file's mode and permission bits.
 }
-
-// removeStack is a stack of directories to be removed during tree traversal in RemoveAll function.
-type removeStack struct {
-	stack []*dirNode
-}

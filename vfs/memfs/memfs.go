@@ -716,18 +716,21 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	}
 
 	parent.mu.Lock()
-	ok := parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
-	parent.mu.Unlock()
+	defer parent.mu.Unlock()
 
+	ok := parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
 	if !ok {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
 
-	var rs removeStack
+	err = nil
 
 	switch c := child.(type) {
 	case *dirNode:
-		rs.push(c)
+		err = vfs.removeAll(c)
+		if err != nil {
+			err = &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+		}
 
 	case *fileNode:
 		c.mu.Lock()
@@ -735,28 +738,36 @@ func (vfs *MemFS) RemoveAll(path string) error {
 		c.mu.Unlock()
 	}
 
-	for rs.len() > 0 {
-		p := rs.pop()
-		p.mu.Lock()
-		for _, child := range p.children {
-			switch c := child.(type) {
-			case *dirNode:
-				rs.push(c)
+	part := absPath[start:end]
+	parent.removeChild(part)
 
-			case *fileNode:
-				c.deleteData()
-			}
-		}
+	return err
+}
 
-		p.children = nil
-		p.mu.Unlock()
+func (vfs *MemFS) removeAll(dn *dirNode) error {
+	dn.mu.Lock()
+	defer dn.mu.Unlock()
+
+	ok := dn.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
+	if !ok {
+		return avfs.ErrPermDenied
 	}
 
-	part := absPath[start:end]
+	for _, child := range dn.children {
+		switch c := child.(type) {
+		case *dirNode:
+			err := vfs.removeAll(c)
+			if err != nil {
+				return err
+			}
 
-	parent.mu.Lock()
-	parent.removeChild(part)
-	parent.mu.Unlock()
+			c.children = nil
+		case *fileNode:
+			c.mu.Lock()
+			c.deleteData()
+			c.mu.Unlock()
+		}
+	}
 
 	return nil
 }
