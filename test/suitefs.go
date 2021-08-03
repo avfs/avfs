@@ -352,7 +352,6 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestChtimes,
 		sfs.TestCreate,
 		sfs.TestEvalSymlink,
-		sfs.TestTempDir,
 		sfs.TestLink,
 		sfs.TestLstat,
 		sfs.TestMkdir,
@@ -366,8 +365,9 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestSameFile,
 		sfs.TestStat,
 		sfs.TestSymlink,
-		sfs.TestTruncate,
+		sfs.TestTempDir,
 		sfs.TestToSysStat,
+		sfs.TestTruncate,
 		sfs.TestWriteString,
 
 		// File tests
@@ -414,19 +414,19 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestWalk,
 
 		// other functions
-		sfs.TestReadDir,
-		sfs.TestReadFile,
-		sfs.TestMkdirTemp,
-		sfs.TestCreateTemp,
-		sfs.TestWriteFile,
 		sfs.TestCopyFile,
 		sfs.TestCreateBaseDirs,
+		sfs.TestCreateTemp,
 		sfs.TestDirExists,
 		sfs.TestExists,
 		sfs.TestHashFile,
+		sfs.TestMkdirTemp,
+		sfs.TestReadDir,
+		sfs.TestReadFile,
 		sfs.TestRndTree,
 		sfs.TestSegmentPath,
 		sfs.TestUmask,
+		sfs.TestWriteFile,
 	)
 }
 
