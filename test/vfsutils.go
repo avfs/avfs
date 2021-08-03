@@ -19,6 +19,7 @@ package test
 import (
 	"bytes"
 	"crypto/sha512"
+	"fmt"
 	"io/fs"
 	"strconv"
 	"testing"
@@ -240,6 +241,127 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 
 		if ok {
 			t.Error("Exists : want Exists to be false, got true")
+		}
+	})
+
+	t.Run("ExistsInvalidPath", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+		invalidPath := vfs.Join(existingFile, defaultFile)
+
+		ok, err := vfsutils.Exists(vfs, invalidPath)
+		CheckPathError(t, err).Op("stat").Path(invalidPath).Err(avfs.ErrNotADirectory)
+
+		if ok {
+			t.Error("Exists : want Exists to be false, got true")
+		}
+	})
+}
+
+// TestIsDir tests vfsutils.IsDir function.
+func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	t.Run("IsDir", func(t *testing.T) {
+		existingDir := sfs.ExistingDir(t, testDir)
+
+		ok, err := vfsutils.IsDir(vfs, existingDir)
+		if err != nil {
+			t.Errorf("IsDir : want error to be nil, got %v", err)
+		}
+
+		if !ok {
+			t.Error("IsDir : want IsDir to be true, got false")
+		}
+	})
+
+	t.Run("IsDirFile", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+
+		ok, err := vfsutils.IsDir(vfs, existingFile)
+		if err != nil {
+			t.Errorf("IsDirFile : want error to be nil, got %v", err)
+		}
+
+		if ok {
+			t.Error("IsDirFile : want DirExists to be false, got true")
+		}
+	})
+
+	t.Run("IsDirNonExisting", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		ok, err := vfsutils.IsDir(vfs, nonExistingFile)
+		CheckPathError(t, err).Op("stat").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+
+		if ok {
+			t.Error("IsDirNonExisting : want DirExists to be false, got true")
+		}
+	})
+}
+
+// TestIsEmpty tests vfsutils.IsEmpty function.
+func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	t.Run("IsEmptyFile", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+
+		ok, err := vfsutils.IsEmpty(vfs, existingFile)
+		if err != nil {
+			t.Errorf("IsEmpty : want error to be nil, got %v", err)
+		}
+
+		if !ok {
+			t.Error("IsEmpty : want IsEmpty to be true, got false")
+		}
+	})
+
+	t.Run("IsEmptyDirEmpty", func(t *testing.T) {
+		emptyDir := sfs.ExistingDir(t, testDir)
+
+		ok, err := vfsutils.IsEmpty(vfs, emptyDir)
+		if err != nil {
+			t.Errorf("IsEmpty : want error to be nil, got %v", err)
+		}
+
+		if !ok {
+			t.Error("IsEmpty : want IsEmpty to be true, got false")
+		}
+	})
+
+	t.Run("IsEmptyDir", func(t *testing.T) {
+		sfs.ExistingDir(t, testDir)
+
+		ok, err := vfsutils.IsEmpty(vfs, testDir)
+		if err != nil {
+			t.Errorf("IsEmpty : want error to be nil, got %v", err)
+		}
+
+		if ok {
+			t.Error("IsEmpty : want IsEmpty to be false, got true")
+		}
+	})
+
+	t.Run("IsEmptyNonExisting", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		wantErr := fmt.Errorf("%q path does not exist", nonExistingFile)
+
+		ok, err := vfsutils.IsEmpty(vfs, nonExistingFile)
+		if err.Error() != wantErr.Error() {
+			t.Errorf("IsEmpty : want error to be %v, got %v", wantErr, err)
+		}
+
+		if ok {
+			t.Error("IsEmpty : want IsEmpty to be false, got true")
 		}
 	})
 }
