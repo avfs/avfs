@@ -1,7 +1,6 @@
 package vfsutils
 
 import (
-	"errors"
 	"io"
 	"io/fs"
 	"os"
@@ -43,8 +42,6 @@ func nextRandom() string {
 	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
-var errPatternHasSeparator = errors.New("pattern contains path separator")
-
 func joinPath(dir, name string) string {
 	if len(dir) > 0 && IsPathSeparator(dir[len(dir)-1]) {
 		return dir + name
@@ -69,7 +66,7 @@ func lastIndex(s string, sep byte) int {
 func prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
 	for i := 0; i < len(pattern); i++ {
 		if IsPathSeparator(pattern[i]) {
-			return "", "", errPatternHasSeparator
+			return "", "", avfs.ErrPatternHasSeparator
 		}
 	}
 
@@ -91,13 +88,15 @@ func prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
+	const op = "createtemp"
+
 	if dir == "" {
 		dir = vfs.TempDir()
 	}
 
 	prefix, suffix, err := prefixAndSuffix(pattern)
 	if err != nil {
-		return nil, &fs.PathError{Op: "createtemp", Path: pattern, Err: err}
+		return nil, &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
 	prefix = joinPath(dir, prefix)
@@ -114,7 +113,7 @@ func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
 				continue
 			}
 
-			return nil, &fs.PathError{Op: "createtemp", Path: dir + string(os.PathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
+			return nil, &fs.PathError{Op: op, Path: dir + string(os.PathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
 		return f, err
@@ -129,13 +128,15 @@ func CreateTemp(vfs avfs.VFS, dir, pattern string) (avfs.File, error) {
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func MkdirTemp(vfs avfs.VFS, dir, pattern string) (string, error) {
+	const op = "mkdirtemp"
+
 	if dir == "" {
 		dir = vfs.TempDir()
 	}
 
 	prefix, suffix, err := prefixAndSuffix(pattern)
 	if err != nil {
-		return "", &fs.PathError{Op: "mkdirtemp", Path: pattern, Err: err}
+		return "", &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
 	prefix = joinPath(dir, prefix)
@@ -156,7 +157,7 @@ func MkdirTemp(vfs avfs.VFS, dir, pattern string) (string, error) {
 				continue
 			}
 
-			return "", &fs.PathError{Op: "mkdirtemp", Path: dir + string(os.PathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
+			return "", &fs.PathError{Op: op, Path: dir + string(os.PathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
 		if vfs.IsNotExist(err) {

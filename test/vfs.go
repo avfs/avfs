@@ -564,6 +564,48 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 	})
 }
 
+// TestCreateTemp tests CreateTemp function.
+func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+		_, err := vfs.CreateTemp(testDir, "")
+		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("CreateTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	t.Run("CreateTempEmptyDir", func(t *testing.T) {
+		f, err := vfs.CreateTemp("", "")
+		if err != nil {
+			t.Errorf("want error to be nil, got %v", err)
+		}
+
+		wantDir := vfs.TempDir()
+		dir := vfs.Dir(f.Name())
+
+		if dir != wantDir {
+			t.Errorf("want directory to be %s, got %s", wantDir, dir)
+		}
+	})
+
+	t.Run("CreateTempBadPattern", func(t *testing.T) {
+		badPattern := vfs.TempDir()
+
+		_, err := vfs.CreateTemp("", badPattern)
+		CheckPathError(t, err).Op("createtemp").Path(badPattern).ErrAsString(avfs.ErrPatternHasSeparator)
+	})
+
+	t.Run("CreateTempOnFile", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+
+		_, err := vfs.CreateTemp(existingFile, "")
+		CheckPathError(t, err).Op("open").Err(avfs.ErrNotADirectory)
+	})
+}
+
 // TestEvalSymlink tests EvalSymlink function.
 func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
@@ -1293,6 +1335,48 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 			return vfs.MkdirAll(newDir, avfs.DefaultDirPerm)
 		})
+	})
+}
+
+// TestMkdirTemp tests MkdirTemp function.
+func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+		_, err := vfs.MkdirTemp(testDir, "")
+		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
+			t.Errorf("MkdirTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	t.Run("MkdirTempEmptyDir", func(t *testing.T) {
+		tmpDir, err := vfs.MkdirTemp("", "")
+		if err != nil {
+			t.Errorf("want error to be nil, got %v", err)
+		}
+
+		wantDir := vfs.TempDir()
+		dir := vfs.Dir(tmpDir)
+
+		if dir != wantDir {
+			t.Errorf("want directory to be %s, got %s", wantDir, dir)
+		}
+	})
+
+	t.Run("MkdirTempBadPattern", func(t *testing.T) {
+		badPattern := vfs.TempDir()
+
+		_, err := vfs.MkdirTemp("", badPattern)
+		CheckPathError(t, err).Op("mkdirtemp").Path(badPattern).ErrAsString(avfs.ErrPatternHasSeparator)
+	})
+
+	t.Run("MkdirTempOnFile", func(t *testing.T) {
+		existingFile := sfs.EmptyFile(t, testDir)
+
+		_, err := vfs.MkdirTemp(existingFile, "")
+		CheckPathError(t, err).Op("mkdir").Err(avfs.ErrNotADirectory)
 	})
 }
 
@@ -2379,59 +2463,6 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 				t.Errorf("ReadLink %s : want link to be %s, got %s", newPath, oldPath, gotPath)
 			}
 		}
-	})
-}
-
-// TestMkdirTemp tests MkdirTemp function.
-func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		_, err := vfs.MkdirTemp(testDir, "")
-		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("MkdirTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-
-		return
-	}
-
-	existingFile := sfs.EmptyFile(t, testDir)
-
-	t.Run("TempDirOnFile", func(t *testing.T) {
-		_, err := vfs.MkdirTemp(existingFile, "")
-
-		e, ok := err.(*fs.PathError)
-		if !ok {
-			t.Fatalf("MkdirTemp : want error type *fs.PathError, got %v", reflect.TypeOf(err))
-		}
-
-		const op = "mkdir"
-		wantErr := avfs.ErrNotADirectory
-		if e.Op != op || vfs.Dir(e.Path) != existingFile || e.Err != wantErr {
-			wantPathErr := &fs.PathError{Op: op, Path: existingFile + "/<random number>", Err: wantErr}
-			t.Errorf("MkdirTemp : want error to be %v, got %v", wantPathErr, err)
-		}
-	})
-}
-
-// TestCreateTemp tests CreateTemp function.
-func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		_, err := vfs.CreateTemp(testDir, "")
-		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("CreateTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-
-		return
-	}
-
-	t.Run("CreateTempOnFile", func(t *testing.T) {
-		existingFile := sfs.EmptyFile(t, testDir)
-
-		_, err := vfs.CreateTemp(existingFile, "")
-		CheckPathError(t, err).Op("open").Err(avfs.ErrNotADirectory)
 	})
 }
 

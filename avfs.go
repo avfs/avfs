@@ -82,6 +82,9 @@ var (
 
 	// ErrFileClosing is returned when a file descriptor is used after it has been closed.
 	ErrFileClosing = errors.New("use of closed file")
+
+	// ErrPatternHasSeparator is returned when a bad pattern is used in CreateTemp or MkdirTemp.
+	ErrPatternHasSeparator = errors.New("pattern contains path separator")
 )
 
 // AlreadyExistsGroupError is returned when the group name already exists.
