@@ -1620,6 +1620,11 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 
 		var gDirs, gFiles, gSymlinks int
 		for _, dirEntry := range dirEntries {
+			_, err = dirEntry.Info()
+			if err != nil {
+				t.Fatalf("want error to be nil, got %v", err)
+			}
+
 			switch {
 			case dirEntry.IsDir():
 				gDirs++
