@@ -73,11 +73,11 @@ func (vfs *OsFS) LookupUserId(uid int) (avfs.UserReader, error) {
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (vfs *OsFS) User(name string) (avfs.UserReader, error) {
 	uc, ok := vfs.idm.(avfs.UserConnecter)
-	if ok {
-		return uc.User(name)
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !ok {
+		return nil, avfs.ErrPermDenied
 	}
 
-	return nil, avfs.ErrPermDenied
+	return uc.User(name)
 }
 
 // UserAdd adds a new user.
