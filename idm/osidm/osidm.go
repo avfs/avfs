@@ -17,7 +17,6 @@
 // Package osidm implements an identity manager using os functions.
 //
 // For testing only, should not be used in a production environment.
-
 package osidm
 
 import "github.com/avfs/avfs"
