@@ -37,7 +37,7 @@ func (vfs *DummyFS) HasFeature(feature avfs.Feature) bool {
 
 // Name returns the name of the fileSystem.
 func (vfs *DummyFS) Name() string {
-	return avfs.NotImplemented
+	return ""
 }
 
 // OSType returns the operating system type of the file system.

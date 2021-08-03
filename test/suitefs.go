@@ -356,6 +356,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestLstat,
 		sfs.TestMkdir,
 		sfs.TestMkdirAll,
+		sfs.TestName,
 		sfs.TestOpen,
 		sfs.TestOpenFileWrite,
 		sfs.TestReadlink,

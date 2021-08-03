@@ -1380,6 +1380,15 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	})
 }
 
+// TestName tests Name function.
+func (sfs *SuiteFS) TestName(t *testing.T, testDir string) {
+	vfs := sfs.vfsSetup
+
+	if vfs.Name() != "" {
+		t.Errorf("want name to be empty, got %s", vfs.Name())
+	}
+}
+
 // TestOpen tests Open function.
 func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
