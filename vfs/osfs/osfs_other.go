@@ -23,6 +23,7 @@ import (
 	"io/fs"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // Chroot changes the root to that specified in path.
@@ -31,4 +32,27 @@ func (vfs *OsFS) Chroot(path string) error {
 	const op = "chroot"
 
 	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+}
+
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
+	return info.Sys().(*OtherSysStat)
+}
+
+// OtherSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a non linux file system.
+type OtherSysStat struct{}
+
+// Gid returns the group id.
+func (sst *OtherSysStat) Gid() int {
+	return dummyidm.NotImplementedUser.Gid()
+}
+
+// Uid returns the user id.
+func (sst *OtherSysStat) Uid() int {
+	return dummyidm.NotImplementedUser.Uid()
+}
+
+// Nlink returns the number of hard links.
+func (sst *OtherSysStat) Nlink() uint64 {
+	return 1
 }

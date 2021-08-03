@@ -42,3 +42,28 @@ func (vfs *OsFS) Chroot(path string) error {
 
 	return nil
 }
+
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
+	return &LinuxSysStat{Sys: info.Sys().(*syscall.Stat_t)}
+}
+
+// LinuxSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Linux file system.
+type LinuxSysStat struct {
+	Sys *syscall.Stat_t
+}
+
+// Gid returns the group id.
+func (lst *LinuxSysStat) Gid() int {
+	return int(lst.Sys.Gid)
+}
+
+// Uid returns the user id.
+func (lst *LinuxSysStat) Uid() int {
+	return int(lst.Sys.Uid)
+}
+
+// Nlink returns the number of hard links.
+func (lst *LinuxSysStat) Nlink() uint64 {
+	return lst.Sys.Nlink
+}

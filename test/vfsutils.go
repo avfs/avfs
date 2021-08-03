@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"crypto/sha512"
 	"io/fs"
-	"reflect"
 	"strconv"
 	"testing"
 
@@ -418,48 +417,6 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 			}
 		}
 	})
-}
-
-// TestToSysStat tests ToSysStat function.
-func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		sst := vfsutils.ToSysStat(nil)
-
-		if _, ok := sst.(*vfsutils.DummySysStat); !ok {
-			t.Errorf("ToSysStat : want result of type DummySysStat, got %s", reflect.TypeOf(sst).Name())
-		}
-
-		return
-	}
-
-	existingFile := sfs.EmptyFile(t, testDir)
-
-	fst, err := vfs.Stat(existingFile)
-	if err != nil {
-		t.Errorf("Stat : want error be nil, got %v", err)
-	}
-
-	u := vfs.CurrentUser()
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		u = sfs.vfsSetup.CurrentUser()
-	}
-
-	wantUid, wantGid := u.Uid(), u.Gid()
-
-	sst := vfsutils.ToSysStat(fst.Sys())
-
-	uid, gid := sst.Uid(), sst.Gid()
-	if uid != wantUid || gid != wantGid {
-		t.Errorf("ToSysStat : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
-			wantUid, wantGid, uid, gid)
-	}
-
-	wantLink := uint64(1)
-	if sst.Nlink() != wantLink {
-		t.Errorf("ToSysStat : want Nlink to be %d, got %d", wantLink, sst.Nlink())
-	}
 }
 
 // TestUMask tests UMask functions.

@@ -29,6 +29,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfs/dummyfs"
 	"github.com/avfs/avfs/vfsutils"
 )
 
@@ -271,7 +272,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 			t.Errorf("Stat %s : want error to be nil, got %v", testDir, err)
 		}
 
-		sst := vfsutils.ToSysStat(fst.Sys())
+		sst := vfs.ToSysStat(fst)
 
 		uid, gid := sst.Uid(), sst.Gid()
 		if uid != wantUid || gid != wantGid {
@@ -310,7 +311,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst := vfsutils.ToSysStat(fst.Sys())
+				sst := vfs.ToSysStat(fst)
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -345,7 +346,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst := vfsutils.ToSysStat(fst.Sys())
+				sst := vfs.ToSysStat(fst)
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -680,7 +681,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 			t.Errorf("Stat %s : want error to be nil, got %v", testDir, err)
 		}
 
-		sst := vfsutils.ToSysStat(fst.Sys())
+		sst := vfs.ToSysStat(fst)
 
 		uid, gid := sst.Uid(), sst.Gid()
 		if uid != wantUid || gid != wantGid {
@@ -720,7 +721,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst := vfsutils.ToSysStat(fst.Sys())
+				sst := vfs.ToSysStat(fst)
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -755,7 +756,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst := vfsutils.ToSysStat(fst.Sys())
+				sst := vfs.ToSysStat(fst)
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -790,7 +791,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 					continue
 				}
 
-				sst := vfsutils.ToSysStat(fst.Sys())
+				sst := vfs.ToSysStat(fst)
 
 				uid, gid := sst.Uid(), sst.Gid()
 				if uid != u.Uid() || gid != u.Gid() {
@@ -2427,6 +2428,48 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 		_, err := vfs.CreateTemp(existingFile, "")
 		CheckPathError(t, err).Op("open").Err(avfs.ErrNotADirectory)
 	})
+}
+
+// TestToSysStat tests ToSysStat function.
+func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		sst := vfs.ToSysStat(nil)
+
+		if _, ok := sst.(*dummyfs.DummySysStat); !ok {
+			t.Errorf("ToSysStat : want result of type DummySysStat, got %s", reflect.TypeOf(sst).Name())
+		}
+
+		return
+	}
+
+	existingFile := sfs.EmptyFile(t, testDir)
+
+	fst, err := vfs.Stat(existingFile)
+	if err != nil {
+		t.Errorf("Stat : want error be nil, got %v", err)
+	}
+
+	u := vfs.CurrentUser()
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		u = sfs.vfsSetup.CurrentUser()
+	}
+
+	wantUid, wantGid := u.Uid(), u.Gid()
+
+	sst := vfs.ToSysStat(fst)
+
+	uid, gid := sst.Uid(), sst.Gid()
+	if uid != wantUid || gid != wantGid {
+		t.Errorf("ToSysStat : want Uid = %d, Gid = %d, got Uid = %d, Gid = %d",
+			wantUid, wantGid, uid, gid)
+	}
+
+	wantLink := uint64(1)
+	if sst.Nlink() != wantLink {
+		t.Errorf("ToSysStat : want Nlink to be %d, got %d", wantLink, sst.Nlink())
+	}
 }
 
 // TestTruncate tests Truncate function.

@@ -367,6 +367,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestStat,
 		sfs.TestSymlink,
 		sfs.TestTruncate,
+		sfs.TestToSysStat,
 		sfs.TestWriteString,
 
 		// File tests
@@ -425,7 +426,6 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestHashFile,
 		sfs.TestRndTree,
 		sfs.TestSegmentPath,
-		sfs.TestToSysStat,
 		sfs.TestUmask,
 	)
 }

@@ -34,6 +34,9 @@ var (
 
 	// dummyfs.DummyFile struct implements avfs.File interface.
 	_ avfs.File = &dummyfs.DummyFile{}
+
+	// dummyfs.DummySysStat struct implements avfs.SysStater interface.
+	_ avfs.SysStater = &dummyfs.DummySysStat{}
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {

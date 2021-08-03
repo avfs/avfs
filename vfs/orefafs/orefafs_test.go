@@ -32,11 +32,17 @@ var (
 	// orefafs.OrefaFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &orefafs.OrefaFS{}
 
-	// orefafs.MemFile struct implements avfs.File interface.
+	// orefafs.OrefaFile struct implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
 
-	// OrefaInfo struct implements fs.FileInfo interface.
+	// orefafs.OrefaInfo struct implements fs.DirEntry interface.
+	_ fs.DirEntry = &orefafs.OrefaInfo{}
+
+	// orefafs.OrefaInfo struct implements fs.FileInfo interface.
 	_ fs.FileInfo = &orefafs.OrefaInfo{}
+
+	// orefafs.OrefaInfo struct implements avfs.SysStater interface.
+	_ avfs.SysStater = &orefafs.OrefaInfo{}
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {

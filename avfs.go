@@ -205,6 +205,7 @@ type VFS interface {
 	OSTyper
 	Pather
 	SymLinker
+	ToSysStater
 	UMasker
 	UserConnecter
 }
@@ -755,6 +756,12 @@ type UserReader interface {
 
 	// Name returns the user name.
 	Name() string
+}
+
+// ToSysStater is the interface that wraps the ToSysStat method.
+type ToSysStater interface {
+	// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+	ToSysStat(info fs.FileInfo) SysStater
 }
 
 // SysStater is the interface returned by fs.FileInfo.Sys() on all file systems.

@@ -26,7 +26,6 @@ import (
 	"sync"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 var (
@@ -411,22 +410,4 @@ func (um *UMaskType) Get() fs.FileMode {
 	um.mu.RUnlock()
 
 	return u
-}
-
-// DummySysStat implements SysStater interface returned by fs.FileInfo.Sys() for.
-type DummySysStat struct{}
-
-// Gid returns the group id.
-func (sst *DummySysStat) Gid() int {
-	return dummyidm.NotImplementedUser.Gid()
-}
-
-// Uid returns the user id.
-func (sst *DummySysStat) Uid() int {
-	return dummyidm.NotImplementedUser.Uid()
-}
-
-// Nlink returns the number of hard links.
-func (sst *DummySysStat) Nlink() uint64 {
-	return 1
 }

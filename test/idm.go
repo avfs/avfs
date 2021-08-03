@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // TestCurrentUser tests CurrentUser function.
@@ -656,7 +655,7 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
 	}
 
-	sst := vfsutils.ToSysStat(fst.Sys())
+	sst := vfs.ToSysStat(fst)
 
 	uid, gid := sst.Uid(), sst.Gid()
 	if uid != u.Uid() || gid != u.Gid() {

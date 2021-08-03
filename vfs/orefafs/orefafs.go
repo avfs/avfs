@@ -901,6 +901,11 @@ func (vfs *OrefaFS) ToSlash(path string) string {
 	return path
 }
 
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+func (vfs *OrefaFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
+	return info.Sys().(avfs.SysStater)
+}
+
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.

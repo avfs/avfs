@@ -22,8 +22,6 @@ package vfsutils
 import (
 	"io/fs"
 	"syscall"
-
-	"github.com/avfs/avfs"
 )
 
 // Set sets the file mode creation mask.
@@ -42,36 +40,4 @@ func (um *UMaskType) Set(mask fs.FileMode) {
 	}
 
 	um.mu.Unlock()
-}
-
-// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func ToSysStat(sys interface{}) avfs.SysStater {
-	switch s := sys.(type) {
-	case *syscall.Stat_t:
-		return &LinuxSysStat{Sys: s}
-	case avfs.SysStater:
-		return s
-	default:
-		return &DummySysStat{}
-	}
-}
-
-// LinuxSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Linux file system.
-type LinuxSysStat struct {
-	Sys *syscall.Stat_t
-}
-
-// Gid returns the group id.
-func (sst *LinuxSysStat) Gid() int {
-	return int(sst.Sys.Gid)
-}
-
-// Uid returns the user id.
-func (sst *LinuxSysStat) Uid() int {
-	return int(sst.Sys.Uid)
-}
-
-// Nlink returns the number of hard links.
-func (sst *LinuxSysStat) Nlink() uint64 {
-	return sst.Sys.Nlink
 }

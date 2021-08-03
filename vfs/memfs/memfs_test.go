@@ -42,6 +42,9 @@ var (
 
 	// memfs.MemInfo struct implements fs.FileInfo interface.
 	_ fs.FileInfo = &memfs.MemInfo{}
+
+	// memfs.MemInfo struct implements avfs.SysStater interface.
+	_ avfs.SysStater = &memfs.MemInfo{}
 )
 
 func TestMemFS(t *testing.T) {

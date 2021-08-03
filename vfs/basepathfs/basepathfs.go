@@ -462,6 +462,11 @@ func (vfs *BasePathFS) ToSlash(path string) string {
 	return vfs.baseFS.ToSlash(path)
 }
 
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+func (vfs *BasePathFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
+	return vfs.baseFS.ToSysStat(info)
+}
+
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.

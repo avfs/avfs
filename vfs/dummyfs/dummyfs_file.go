@@ -20,6 +20,7 @@ import (
 	"io/fs"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // Chdir changes the current working directory to the file,
@@ -183,4 +184,19 @@ func (f *DummyFile) WriteAt(b []byte, off int64) (n int, err error) {
 // a slice of bytes.
 func (f *DummyFile) WriteString(s string) (n int, err error) {
 	return f.Write([]byte(s))
+}
+
+// Gid returns the group id.
+func (sst *DummySysStat) Gid() int {
+	return dummyidm.NotImplementedUser.Gid()
+}
+
+// Uid returns the user id.
+func (sst *DummySysStat) Uid() int {
+	return dummyidm.NotImplementedUser.Uid()
+}
+
+// Nlink returns the number of hard links.
+func (sst *DummySysStat) Nlink() uint64 {
+	return 1
 }

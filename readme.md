@@ -120,7 +120,6 @@ import (
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/vfs/memfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 func main() {
@@ -160,7 +159,7 @@ func main() {
 
 	log.Println("number of dirs :", len(infos))
 	for _, info := range infos {
-		sst := vfsutils.ToSysStat(info.Sys())
+		sst := vfs.ToSysStat(info)
 		u, _ := vfs.LookupUserId(sst.Uid())
 
 		log.Println("directory :", info.Name(),
@@ -220,7 +219,7 @@ File system methods <br> `avfs.FS`|Comments
 `Features`| returns the set of features provided by the file system or identity manager
 `Getwd`|equivalent to `os.Getwd`
 `Glob`|equivalent to `filepath.Glob`
-`HasFeature`| returns true if the file system or identity manager provides a given feature
+`HasFeature`|returns true if the file system or identity manager provides a given feature
 `IsAbs`|equivalent to `filepath.IsAbs`
 `IsPathSeparator`|equivalent to `filepath.IsPathSeparator`
 `Join`|equivalent to `filepath.Join`
@@ -232,7 +231,7 @@ File system methods <br> `avfs.FS`|Comments
 `MkdirTemp`|equivalent to `os.MkdirTemp`
 `Open`|equivalent to `os.Open`
 `OpenFile`|equivalent to `os.OpenFile`
-`OSType`| returns the operating system type of the file system
+`OSType`|returns the operating system type of the file system
 `ReadDir`|equivalent to `os.ReadDir`
 `ReadFile`|equivalent to `os.ReadFile`
 `Readlink`|equivalent to `os.Readlink`
@@ -246,6 +245,7 @@ File system methods <br> `avfs.FS`|Comments
 `Symlink`|equivalent to `os.Symlink`
 `TempDir`|equivalent to `os.TempDir`
 `ToSlash`|equivalent to `filepath.ToSlash`
+`ToSysStat`|takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 `Truncate`|equivalent to `os.Truncate`
 `Walk`|equivalent to `filepath.Walk`
 `WriteFile`|equivalent to `os.WriteFile`
