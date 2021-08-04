@@ -247,7 +247,7 @@ File system methods <br> `avfs.FS`|Comments
 `ToSlash`|equivalent to `filepath.ToSlash`
 `ToSysStat`|takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 `Truncate`|equivalent to `os.Truncate`
-`Walk`|equivalent to `filepath.Walk`
+`WalkDir`|equivalent to `filepath.WalkDir`
 `WriteFile`|equivalent to `os.WriteFile`
 
 File methods <br> `avfs.File`|Comments
