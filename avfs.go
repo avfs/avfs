@@ -21,7 +21,6 @@ import (
 	"errors"
 	"io"
 	"io/fs"
-	"path/filepath"
 	"reflect"
 	"strconv"
 	"syscall"
@@ -541,13 +540,18 @@ type Pather interface {
 	// replaced by multiple slashes.
 	ToSlash(path string) string
 
-	// Walk walks the file tree rooted at root, calling walkFn for each file or
-	// directory in the tree, including root. All errors that arise visiting files
-	// and directories are filtered by walkFn. The files are walked in lexical
-	// order, which makes the output deterministic but means that for very
-	// large directories Walk can be inefficient.
-	// Walk does not follow symbolic links.
-	Walk(root string, walkFn filepath.WalkFunc) error
+	// WalkDir walks the file tree rooted at root, calling fn for each file or
+	// directory in the tree, including root.
+	//
+	// All errors that arise visiting files and directories are filtered by fn:
+	// see the fs.WalkDirFunc documentation for details.
+	//
+	// The files are walked in lexical order, which makes the output deterministic
+	// but requires WalkDir to read an entire directory into memory before proceeding
+	// to walk that directory.
+	//
+	// WalkDir does not follow symbolic links.
+	WalkDir(root string, fn fs.WalkDirFunc) error
 }
 
 // SymLinker is the interface that groups functions related to symbolic links.

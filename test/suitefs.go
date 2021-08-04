@@ -319,7 +319,7 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	// as the user who started the tests.
 	sfs.User(tb, sfs.initUser.Name())
 
-	err = vfs.Walk(testDir, func(path string, info fs.FileInfo, err error) error {
+	err = vfs.WalkDir(testDir, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return nil
 		}
@@ -412,7 +412,7 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestJoin,
 		sfs.TestRel,
 		sfs.TestSplit,
-		sfs.TestWalk,
+		sfs.TestWalkDir,
 
 		// other functions
 		sfs.TestCopyFile,

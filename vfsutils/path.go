@@ -18,7 +18,7 @@ package vfsutils
 
 import (
 	"errors"
-	"os"
+	"io/fs"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -480,18 +480,23 @@ func ToSlash(path string) string {
 	return strings.ReplaceAll(path, string(avfs.PathSeparatorWin), "/")
 }
 
-// Walk walks the file tree rooted at root, calling walkFn for each file or
-// directory in the tree, including root. All errors that arise visiting files
-// and directories are filtered by walkFn. The files are walked in lexical
-// order, which makes the output deterministic but means that for very
-// large directories Walk can be inefficient.
-// Walk does not follow symbolic links.
-func Walk(vfs avfs.VFS, root string, walkFn filepath.WalkFunc) error {
+// WalkDir walks the file tree rooted at root, calling fn for each file or
+// directory in the tree, including root.
+//
+// All errors that arise visiting files and directories are filtered by fn:
+// see the fs.WalkDirFunc documentation for details.
+//
+// The files are walked in lexical order, which makes the output deterministic
+// but requires WalkDir to read an entire directory into memory before proceeding
+// to walk that directory.
+//
+// WalkDir does not follow symbolic links.
+func WalkDir(vfs avfs.VFS, root string, fn fs.WalkDirFunc) error {
 	info, err := vfs.Lstat(root)
 	if err != nil {
-		err = walkFn(root, nil, err)
+		err = fn(root, nil, err)
 	} else {
-		err = walk(vfs, root, info, walkFn)
+		err = walkDir(vfs, root, &statDirEntry{info}, fn)
 	}
 
 	if err == filepath.SkipDir {
@@ -501,63 +506,66 @@ func Walk(vfs avfs.VFS, root string, walkFn filepath.WalkFunc) error {
 	return err
 }
 
-// walk recursively descends path, calling walkFn.
-func walk(vfs avfs.VFS, path string, info os.FileInfo, walkFn filepath.WalkFunc) error {
-	if !info.IsDir() {
-		return walkFn(path, info, nil)
+type statDirEntry struct {
+	info fs.FileInfo
+}
+
+func (d *statDirEntry) Name() string               { return d.info.Name() }
+func (d *statDirEntry) IsDir() bool                { return d.info.IsDir() }
+func (d *statDirEntry) Type() fs.FileMode          { return d.info.Mode().Type() }
+func (d *statDirEntry) Info() (fs.FileInfo, error) { return d.info, nil }
+
+// walkDir recursively descends path, calling walkDirFn.
+func walkDir(vfs avfs.VFS, path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
+	if err := walkDirFn(path, d, nil); err != nil || !d.IsDir() {
+		if err == filepath.SkipDir && d.IsDir() {
+			// Successfully skipped directory.
+			err = nil
+		}
+
+		return err
 	}
 
-	names, err := readDirNames(vfs, path)
-	err1 := walkFn(path, info, err)
-	// If err != nil, walk can't walk into this directory.
-	// err1 != nil means walkFn want walk to skip this directory or stop walking.
-	// Therefore, if one of err and err1 isn't nil, walk will return.
-	if err != nil || err1 != nil {
-		// The caller's behavior is controlled by the return value, which is decided
-		// by walkFn. walkFn may ignore err and return nil.
-		// If walkFn returns SkipDir, it will be handled by the caller.
-		// So walk should return whatever walkFn returns.
-		return err1
-	}
-
-	for _, name := range names {
-		filename := Join(path, name)
-
-		fileInfo, err := vfs.Lstat(filename)
+	dirs, err := readDir(vfs, path)
+	if err != nil {
+		// Second call, to report ReadDir error.
+		err = walkDirFn(path, d, err)
 		if err != nil {
-			if err = walkFn(filename, fileInfo, err); err != nil && err != filepath.SkipDir {
-				return err
+			return err
+		}
+	}
+
+	for _, d1 := range dirs {
+		path1 := Join(path, d1.Name())
+		if err := walkDir(vfs, path1, d1, walkDirFn); err != nil {
+			if err == filepath.SkipDir {
+				break
 			}
-		} else {
-			err = walk(vfs, filename, fileInfo, walkFn)
-			if err != nil {
-				if !fileInfo.IsDir() || err != filepath.SkipDir {
-					return err
-				}
-			}
+
+			return err
 		}
 	}
 
 	return nil
 }
 
-// readDirNames reads the directory named by dirname and returns
+// readDir reads the directory named by dirname and returns
 // a sorted list of directory entries.
-func readDirNames(vfs avfs.VFS, dirname string) ([]string, error) {
+func readDir(vfs avfs.VFS, dirname string) ([]fs.DirEntry, error) {
 	f, err := vfs.Open(dirname)
 	if err != nil {
 		return nil, err
 	}
 
-	names, err := f.Readdirnames(-1)
+	dirs, err := f.ReadDir(-1)
 
-	_ = f.Close()
+	f.Close()
 
 	if err != nil {
 		return nil, err
 	}
 
-	sort.Strings(names)
+	sort.Slice(dirs, func(i, j int) bool { return dirs[i].Name() < dirs[j].Name() })
 
-	return names, nil
+	return dirs, nil
 }

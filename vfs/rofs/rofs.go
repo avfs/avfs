@@ -20,7 +20,6 @@ package rofs
 import (
 	"io/fs"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -465,14 +464,19 @@ func (vfs *RoFS) Truncate(name string, size int64) error {
 func (vfs *RoFS) UMask(mask fs.FileMode) {
 }
 
-// Walk walks the file tree rooted at root, calling walkFn for each file or
-// directory in the tree, including root. All errors that arise visiting files
-// and directories are filtered by walkFn. The files are walked in lexical
-// order, which makes the output deterministic but means that for very
-// large directories Walk can be inefficient.
-// Walk does not follow symbolic links.
-func (vfs *RoFS) Walk(root string, walkFn filepath.WalkFunc) error {
-	return vfs.baseFS.Walk(root, walkFn)
+// WalkDir walks the file tree rooted at root, calling fn for each file or
+// directory in the tree, including root.
+//
+// All errors that arise visiting files and directories are filtered by fn:
+// see the fs.WalkDirFunc documentation for details.
+//
+// The files are walked in lexical order, which makes the output deterministic
+// but requires WalkDir to read an entire directory into memory before proceeding
+// to walk that directory.
+//
+// WalkDir does not follow symbolic links.
+func (vfs *RoFS) WalkDir(root string, fn fs.WalkDirFunc) error {
+	return vfsutils.WalkDir(vfs, root, fn)
 }
 
 // WriteFile writes data to a file named by filename.
