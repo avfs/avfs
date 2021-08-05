@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // Chdir changes the current working directory to the file,
@@ -482,7 +481,7 @@ func (f *MemFile) Stat() (fs.FileInfo, error) {
 		return &MemInfo{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
-	name := vfsutils.Base(f.name)
+	name := f.memFS.Base(f.name)
 	fst := f.nd.fillStatFrom(name)
 
 	return fst, nil

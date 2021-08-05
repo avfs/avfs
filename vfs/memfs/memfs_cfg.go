@@ -17,36 +17,34 @@
 package memfs
 
 import (
-	"os"
+	"io/fs"
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // New returns a new memory file system (MemFS).
 func New(opts ...Option) (*MemFS, error) {
 	ma := &memAttrs{
-		idm: dummyidm.NotImplementedIdm,
+		idm: avfs.NotImplementedIdm,
 		feature: avfs.FeatBasicFs |
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
-		umask: int32(vfsutils.UMask.Get()),
+		umask: int32(avfs.UMask.Get()),
 	}
 
 	vfs := &MemFS{
 		rootNode: &dirNode{
 			baseNode: baseNode{
 				mtime: time.Now().UnixNano(),
-				mode:  os.ModeDir | 0o755,
+				mode:  fs.ModeDir | 0o755,
 				uid:   0,
 				gid:   0,
 			},
 		},
 		memAttrs: ma,
-		user:     dummyidm.NotImplementedUser,
+		user:     avfs.NotImplementedUser,
 		curDir:   string(avfs.PathSeparator),
 	}
 
@@ -66,10 +64,10 @@ func New(opts ...Option) (*MemFS, error) {
 
 	u := vfs.user
 	if !u.IsRoot() {
-		vfs.user = dummyidm.RootUser
+		vfs.user = avfs.RootUser
 	}
 
-	err := vfsutils.CreateBaseDirs(vfs, "")
+	err := avfs.CreateBaseDirs(vfs, "")
 	if err != nil {
 		panic(err)
 	}
@@ -95,11 +93,6 @@ func (vfs *MemFS) HasFeature(feature avfs.Feature) bool {
 // Name returns the name of the fileSystem.
 func (vfs *MemFS) Name() string {
 	return vfs.memAttrs.name
-}
-
-// OSType returns the operating system type of the file system.
-func (vfs *MemFS) OSType() avfs.OSType {
-	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.

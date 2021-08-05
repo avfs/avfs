@@ -24,7 +24,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
@@ -68,7 +67,7 @@ func TestMemFSWithNoIdm(t *testing.T) {
 }
 
 func TestMemFSOptionError(t *testing.T) {
-	_, err := memfs.New(memfs.WithIdm(dummyidm.New()))
+	_, err := memfs.New(memfs.WithIdm(avfs.NewBaseIdm()))
 	if err != avfs.ErrPermDenied {
 		t.Errorf("New : want error to be %v, got %v", avfs.ErrPermDenied, err)
 	}
