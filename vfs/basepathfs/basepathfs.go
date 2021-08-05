@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // file system functions.
@@ -44,7 +43,7 @@ func (vfs *BasePathFS) Abs(path string) (string, error) {
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
 func (vfs *BasePathFS) Base(path string) string {
-	return vfsutils.Base(path)
+	return vfs.baseFS.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.
@@ -136,7 +135,7 @@ func (vfs *BasePathFS) Chtimes(name string, atime, mtime time.Time) error {
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
 func (vfs *BasePathFS) Clean(path string) string {
-	return vfsutils.Clean(path)
+	return vfs.baseFS.Clean(path)
 }
 
 // Create creates or truncates the named file. If the file already exists,
@@ -157,7 +156,7 @@ func (vfs *BasePathFS) Create(name string) (avfs.File, error) {
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func (vfs *BasePathFS) CreateTemp(dir, pattern string) (avfs.File, error) {
-	return vfsutils.CreateTemp(vfs, dir, pattern)
+	return vfs.baseFS.CreateTemp(dir, pattern)
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -167,7 +166,7 @@ func (vfs *BasePathFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
 func (vfs *BasePathFS) Dir(path string) string {
-	return vfsutils.Dir(path)
+	return vfs.baseFS.Dir(path)
 }
 
 // EvalSymlinks returns the path name after the evaluation of any symbolic
@@ -220,33 +219,33 @@ func (vfs *BasePathFS) Glob(pattern string) (matches []string, err error) {
 
 // IsAbs reports whether the path is absolute.
 func (vfs *BasePathFS) IsAbs(path string) bool {
-	return vfsutils.IsAbs(path)
+	return vfs.baseFS.IsAbs(path)
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
 func (vfs *BasePathFS) IsExist(err error) bool {
-	return vfsutils.IsExist(err)
+	return vfs.baseFS.IsExist(err)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
 func (vfs *BasePathFS) IsNotExist(err error) bool {
-	return vfsutils.IsNotExist(err)
+	return vfs.baseFS.IsNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
 func (vfs *BasePathFS) IsPathSeparator(c uint8) bool {
-	return vfsutils.IsPathSeparator(c)
+	return vfs.baseFS.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
 func (vfs *BasePathFS) Join(elem ...string) string {
-	return vfsutils.Join(elem...)
+	return vfs.baseFS.Join(elem...)
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -309,7 +308,7 @@ func (vfs *BasePathFS) MkdirAll(path string, perm fs.FileMode) error {
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func (vfs *BasePathFS) MkdirTemp(dir, prefix string) (name string, err error) {
-	return vfsutils.MkdirTemp(vfs, dir, prefix)
+	return vfs.baseFS.MkdirTemp(dir, prefix)
 }
 
 // Open opens the named file for reading. If successful, methods on
@@ -340,10 +339,15 @@ func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.F
 	return bf, nil
 }
 
+// PathSeparator return the OS-specific path separator.
+func (vfs *BasePathFS) PathSeparator() uint8 {
+	return vfs.baseFS.PathSeparator()
+}
+
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
 func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
-	return vfsutils.ReadDir(vfs, dirname)
+	return vfs.baseFS.ReadDir(dirname)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
@@ -351,7 +355,7 @@ func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
 func (vfs *BasePathFS) ReadFile(filename string) ([]byte, error) {
-	return vfsutils.ReadFile(vfs, filename)
+	return vfs.baseFS.ReadFile(filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
@@ -371,7 +375,7 @@ func (vfs *BasePathFS) Readlink(name string) (string, error) {
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
 func (vfs *BasePathFS) Rel(basepath, targpath string) (string, error) {
-	return vfsutils.Rel(basepath, targpath)
+	return vfs.baseFS.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
@@ -422,7 +426,7 @@ func (vfs *BasePathFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (vfs *BasePathFS) Split(path string) (dir, file string) {
-	return vfsutils.Split(vfs, path)
+	return vfs.baseFS.Split(path)
 }
 
 // Stat returns a FileInfo describing the named file.
@@ -492,12 +496,12 @@ func (vfs *BasePathFS) UMask(mask fs.FileMode) {
 //
 // WalkDir does not follow symbolic links.
 func (vfs *BasePathFS) WalkDir(root string, fn fs.WalkDirFunc) error {
-	return vfsutils.WalkDir(vfs, root, fn)
+	return vfs.baseFS.WalkDir(root, fn)
 }
 
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
 func (vfs *BasePathFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
-	return vfsutils.WriteFile(vfs, filename, data, perm)
+	return vfs.baseFS.WriteFile(filename, data, perm)
 }
