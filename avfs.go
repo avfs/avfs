@@ -197,14 +197,11 @@ const (
 type VFS interface {
 	BasicVFS
 	ChDirer
-	ChModer
 	ChOwner
 	ChRooter
-	ChTimer
 	IdentityMgr
 	HardLinker
 	Namer
-	OSTyper
 	Pather
 	SymLinker
 	ToSysStater
@@ -215,6 +212,34 @@ type VFS interface {
 // BasicVFS is the basic virtual file system interface (no hard links, symbolic links, users, permissions or chroot).
 // Any simulated or real file system should implement this interface.
 type BasicVFS interface {
+	// Chmod changes the mode of the named file to mode.
+	// If the file is a symbolic link, it changes the mode of the link's target.
+	// If there is an error, it will be of type *PathError.
+	//
+	// A different subset of the mode bits are used, depending on the
+	// operating system.
+	//
+	// On Unix, the mode's permission bits, ModeSetuid, ModeSetgid, and
+	// ModeSticky are used.
+	//
+	// On Windows, only the 0200 bit (owner writable) of mode is used; it
+	// controls whether the file's read-only attribute is set or cleared.
+	// The other bits are currently unused. For compatibility with Go 1.12
+	// and earlier, use a non-zero mode. Use mode 0400 for a read-only
+	// file and 0600 for a readable+writable file.
+	//
+	// On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
+	// and ModeTemporary are used.
+	Chmod(name string, mode fs.FileMode) error
+
+	// Chtimes changes the access and modification times of the named
+	// file, similar to the Unix utime() or utimes() functions.
+	//
+	// The underlying file system may truncate or round the values to a
+	// less precise time unit.
+	// If there is an error, it will be of type *PathError.
+	Chtimes(name string, atime, mtime time.Time) error
+
 	// Create creates the named file with mode 0666 (before umask), truncating
 	// it if it already exists. If successful, methods on the returned
 	// File can be used for I/O; the associated file descriptor has mode
@@ -277,6 +302,9 @@ type BasicVFS interface {
 	// methods on the returned File can be used for I/O.
 	// If there is an error, it will be of type *PathError.
 	OpenFile(name string, flag int, perm fs.FileMode) (File, error)
+
+	// OSType returns the operating system type of the file system.
+	OSType() OSType
 
 	// ReadDir reads the named directory,
 	// returning all its directory entries sorted by filename.
@@ -354,29 +382,6 @@ type ChDirer interface {
 	Getwd() (dir string, err error)
 }
 
-// ChModer is the interface that wraps the Chmod method.
-type ChModer interface {
-	// Chmod changes the mode of the named file to mode.
-	// If the file is a symbolic link, it changes the mode of the link's target.
-	// If there is an error, it will be of type *PathError.
-	//
-	// A different subset of the mode bits are used, depending on the
-	// operating system.
-	//
-	// On Unix, the mode's permission bits, ModeSetuid, ModeSetgid, and
-	// ModeSticky are used.
-	//
-	// On Windows, only the 0200 bit (owner writable) of mode is used; it
-	// controls whether the file's read-only attribute is set or cleared.
-	// The other bits are currently unused. For compatibility with Go 1.12
-	// and earlier, use a non-zero mode. Use mode 0400 for a read-only
-	// file and 0600 for a readable+writable file.
-	//
-	// On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
-	// and ModeTemporary are used.
-	Chmod(name string, mode fs.FileMode) error
-}
-
 // ChOwner is the interface that wraps the Chown and Lchown methods.
 type ChOwner interface {
 	// Chown changes the numeric uid and gid of the named file.
@@ -403,17 +408,6 @@ type ChRooter interface {
 	// If the user has not root privileges avfs.errPermDenied is returned.
 	// If there is an error, it will be of type *PathError.
 	Chroot(path string) error
-}
-
-// ChTimer is the interface that wraps the Chtimes method.
-type ChTimer interface {
-	// Chtimes changes the access and modification times of the named
-	// file, similar to the Unix utime() or utimes() functions.
-	//
-	// The underlying file system may truncate or round the values to a
-	// less precise time unit.
-	// If there is an error, it will be of type *PathError.
-	Chtimes(name string, atime, mtime time.Time) error
 }
 
 // Cloner is the interface that wraps the Clone method.
@@ -582,12 +576,6 @@ type SymLinker interface {
 type Typer interface {
 	// Type returns the type of the fileSystem or Identity manager.
 	Type() string
-}
-
-// OSTyper is the interface that wraps the OSType method.
-type OSTyper interface {
-	// OSType returns the operating system type of the file system.
-	OSType() OSType
 }
 
 // UMasker is the interface that groups functions related to file mode creation mask.
