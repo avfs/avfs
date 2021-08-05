@@ -553,7 +553,7 @@ Pattern:
 		// if we're the last chunk, make sure we've exhausted the name
 		// otherwise we'll give a false result even if we could still match
 		// using the star
-		if ok && (len(t) == 0 || len(pattern) > 0) {
+		if ok && (t == "" || len(pattern) > 0) {
 			name = t
 
 			continue
@@ -570,7 +570,7 @@ Pattern:
 				t, ok, err := vfs.matchChunk(chunk, name[i+1:])
 				if ok {
 					// if we're the last chunk, make sure we exhausted the name
-					if len(pattern) == 0 && len(t) > 0 {
+					if pattern == "" && len(t) > 0 {
 						continue
 					}
 					name = t
@@ -586,7 +586,7 @@ Pattern:
 		return false, nil
 	}
 
-	return len(name) == 0, nil
+	return name == "", nil
 }
 
 // Mkdir creates a new directory with the specified name and permission
@@ -642,7 +642,8 @@ func (vfs *BaseFS) MkdirTemp(dir, pattern string) (string, error) {
 		}
 
 		if vfs.IsExist(err) {
-			if try++; try < 10000 {
+			try++
+			if try < 10000 {
 				continue
 			}
 
@@ -754,6 +755,7 @@ func (vfs *BaseFS) ReadFile(name string) ([]byte, error) {
 
 		n, err := f.Read(data[len(data):cap(data)])
 		data = data[:len(data)+n]
+
 		if err != nil {
 			if err == io.EOF {
 				err = nil

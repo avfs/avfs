@@ -33,8 +33,8 @@ var (
 	// We generate random temporary file names so that there's a good
 	// chance the file doesn't exist yet - keeps the number of tries in
 	// CreateTemp to a minimum.
-	randno uint32
-	randmu sync.Mutex
+	randno uint32     //nolint:gochecknoglobals // Used by nextRandom().
+	randmu sync.Mutex //nolint:gochecknoglobals // Used by nextRandom().
 )
 
 // cleanGlobPath prepares path for glob matching.
@@ -73,7 +73,7 @@ func (vfs *BaseFS) cleanGlobPathWindows(path string) (prefixLen int, cleaned str
 
 // getEsc gets a possibly-escaped character from chunk, for a character class.
 func (vfs *BaseFS) getEsc(chunk string) (r rune, nchunk string, err error) {
-	if len(chunk) == 0 || chunk[0] == '-' || chunk[0] == ']' {
+	if chunk == "" || chunk[0] == '-' || chunk[0] == ']' {
 		err = filepath.ErrBadPattern
 
 		return
@@ -81,7 +81,7 @@ func (vfs *BaseFS) getEsc(chunk string) (r rune, nchunk string, err error) {
 
 	if chunk[0] == '\\' && vfs.osType != OsWindows {
 		chunk = chunk[1:]
-		if len(chunk) == 0 {
+		if chunk == "" {
 			err = filepath.ErrBadPattern
 
 			return
@@ -94,7 +94,7 @@ func (vfs *BaseFS) getEsc(chunk string) (r rune, nchunk string, err error) {
 	}
 
 	nchunk = chunk[n:]
-	if len(nchunk) == 0 {
+	if nchunk == "" {
 		err = filepath.ErrBadPattern
 	}
 
@@ -155,7 +155,7 @@ func (vfs *BaseFS) hasMeta(path string) bool {
 // reservedNames lists reserved Windows names. Search for PRN in
 // https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file
 // for details.
-var reservedNames = []string{
+var reservedNames = []string{ //nolint:gochecknoglobals // Used by isReservedName().
 	"CON", "PRN", "AUX", "NUL",
 	"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
 	"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
@@ -164,7 +164,7 @@ var reservedNames = []string{
 // isReservedName returns true, if path is Windows reserved name.
 // See reservedNames for the full list.
 func isReservedName(path string) bool {
-	if len(path) == 0 {
+	if path == "" {
 		return false
 	}
 
@@ -187,7 +187,7 @@ func (vfs *BaseFS) matchChunk(chunk, s string) (rest string, ok bool, err error)
 	failed := false
 
 	for len(chunk) > 0 {
-		if !failed && len(s) == 0 {
+		if !failed && s == "" {
 			failed = true
 		}
 
@@ -260,7 +260,7 @@ func (vfs *BaseFS) matchChunk(chunk, s string) (rest string, ok bool, err error)
 		case '\\':
 			if vfs.osType != OsWindows {
 				chunk = chunk[1:]
-				if len(chunk) == 0 {
+				if chunk == "" {
 					return "", false, filepath.ErrBadPattern
 				}
 			}
@@ -464,9 +464,9 @@ func sameWord(a, b string) bool {
 // to hold the output until that output diverges from s.
 type lazybuf struct {
 	path       string
+	volAndPath string
 	buf        []byte
 	w          int
-	volAndPath string
 	volLen     int
 }
 
