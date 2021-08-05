@@ -198,6 +198,7 @@ func (vfs *BaseFS) Clean(path string) string {
 
 	if rooted {
 		out.append(vfs.pathSeparator)
+
 		r, dotdot = 1, 1
 	}
 
@@ -212,6 +213,7 @@ func (vfs *BaseFS) Clean(path string) string {
 		case path[r] == '.' && path[r+1] == '.' && (r+2 == n || vfs.IsPathSeparator(path[r+2])):
 			// .. element: remove to last separator
 			r += 2
+
 			switch {
 			case out.w > dotdot:
 				// can backtrack
@@ -224,6 +226,7 @@ func (vfs *BaseFS) Clean(path string) string {
 				if out.w > 0 {
 					out.append(vfs.pathSeparator)
 				}
+
 				out.append('.')
 				out.append('.')
 				dotdot = out.w
@@ -369,7 +372,7 @@ func (vfs *BaseFS) Getwd() (dir string, err error) {
 // is malformed.
 func (vfs *BaseFS) Glob(pattern string) (matches []string, err error) {
 	// Check pattern is well-formed.
-	if _, err := vfs.Match(pattern, ""); err != nil {
+	if _, err = vfs.Match(pattern, ""); err != nil {
 		return nil, err
 	}
 
@@ -400,6 +403,7 @@ func (vfs *BaseFS) Glob(pattern string) (matches []string, err error) {
 	}
 
 	var m []string
+
 	m, err = vfs.Glob(dir)
 	if err != nil {
 		return
@@ -570,6 +574,7 @@ Pattern:
 						continue
 					}
 					name = t
+
 					continue Pattern
 				}
 				if err != nil {
@@ -645,7 +650,7 @@ func (vfs *BaseFS) MkdirTemp(dir, pattern string) (string, error) {
 		}
 
 		if vfs.IsNotExist(err) {
-			_, err := vfs.Stat(dir)
+			_, err = vfs.Stat(dir)
 			if vfs.IsNotExist(err) {
 				return "", err
 			}
@@ -740,6 +745,7 @@ func (vfs *BaseFS) ReadFile(name string) ([]byte, error) {
 	}
 
 	data := make([]byte, 0, size)
+
 	for {
 		if len(data) >= cap(data) {
 			d := append(data[:cap(data)], 0)
@@ -771,11 +777,14 @@ func (vfs *BaseFS) Rel(basepath, targpath string) (string, error) {
 	targVol := vfs.VolumeName(targpath)
 	base := vfs.Clean(basepath)
 	targ := vfs.Clean(targpath)
+
 	if sameWord(targ, base) {
 		return ".", nil
 	}
+
 	base = base[len(baseVol):]
 	targ = targ[len(targVol):]
+
 	if base == "." {
 		base = ""
 	} else if base == "" && vfs.volumeNameLen(baseVol) > 2 /* isUNC */ {
@@ -786,29 +795,38 @@ func (vfs *BaseFS) Rel(basepath, targpath string) (string, error) {
 	// Can't use IsAbs - `\a` and `a` are both relative in Windows.
 	baseSlashed := len(base) > 0 && base[0] == vfs.pathSeparator
 	targSlashed := len(targ) > 0 && targ[0] == vfs.pathSeparator
+
 	if baseSlashed != targSlashed || !sameWord(baseVol, targVol) {
 		return "", errors.New("Rel: can't make " + targpath + " relative to " + basepath)
 	}
+
 	// Position base[b0:bi] and targ[t0:ti] at the first differing elements.
 	bl := len(base)
 	tl := len(targ)
+
 	var b0, bi, t0, ti int
+
 	for {
 		for bi < bl && base[bi] != vfs.pathSeparator {
 			bi++
 		}
+
 		for ti < tl && targ[ti] != vfs.pathSeparator {
 			ti++
 		}
+
 		if !sameWord(targ[t0:ti], base[b0:bi]) {
 			break
 		}
+
 		if bi < bl {
 			bi++
 		}
+
 		if ti < tl {
 			ti++
 		}
+
 		b0 = bi
 		t0 = ti
 	}

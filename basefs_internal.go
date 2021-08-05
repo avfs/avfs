@@ -132,6 +132,7 @@ func (vfs *BaseFS) glob(dir, pattern string, matches []string) (m []string, e er
 		if err != nil {
 			return m, err
 		}
+
 		if matched {
 			m = append(m, vfs.Join(dir, n))
 		}
@@ -217,10 +218,12 @@ func (vfs *BaseFS) matchChunk(chunk, s string) (rest string, ok bool, err error)
 			for {
 				if len(chunk) > 0 && chunk[0] == ']' && nrange > 0 {
 					chunk = chunk[1:]
+
 					break
 				}
 
 				var lo, hi rune
+
 				if lo, chunk, err = vfs.getEsc(chunk); err != nil {
 					return "", false, err
 				}
@@ -239,6 +242,7 @@ func (vfs *BaseFS) matchChunk(chunk, s string) (rest string, ok bool, err error)
 
 				nrange++
 			}
+
 			if match == negated {
 				failed = true
 			}
@@ -247,6 +251,7 @@ func (vfs *BaseFS) matchChunk(chunk, s string) (rest string, ok bool, err error)
 				if s[0] == vfs.pathSeparator {
 					failed = true
 				}
+
 				_, n := utf8.DecodeRuneInString(s)
 				s = s[n:]
 			}
@@ -327,6 +332,7 @@ func (vfs *BaseFS) scanChunk(pattern string) (star bool, chunk, rest string) {
 	}
 
 	inrange := false
+
 	var i int
 
 Scan:
@@ -476,6 +482,7 @@ func (b *lazybuf) append(c byte) {
 	if b.buf == nil {
 		if b.w < len(b.path) && b.path[b.w] == c {
 			b.w++
+
 			return
 		}
 
