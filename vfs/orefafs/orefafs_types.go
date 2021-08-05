@@ -25,6 +25,7 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
+	avfs.BaseFS
 	currentUser avfs.UserReader
 	nodes       nodes
 	curDir      string

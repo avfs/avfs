@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // split splits path immediately following the final Separator,
@@ -32,9 +31,9 @@ import (
 // If there is no Separator in path, split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func split(path string) (dir, file string) {
+func (vfs *OrefaFS) split(path string) (dir, file string) {
 	i := len(path) - 1
-	for i >= 0 && !vfsutils.IsPathSeparator(path[i]) {
+	for i >= 0 && !vfs.IsPathSeparator(path[i]) {
 		i--
 	}
 

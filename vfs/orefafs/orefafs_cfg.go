@@ -18,21 +18,21 @@ package orefafs
 
 import (
 	"io/fs"
+	"sync"
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // New returns a new memory file system (OrefaFS).
 func New(opts ...Option) (*OrefaFS, error) {
 	vfs := &OrefaFS{
+		currentUser: avfs.RootUser,
 		nodes:       make(nodes),
 		curDir:      string(avfs.PathSeparator),
 		feature:     avfs.FeatBasicFs | avfs.FeatHardlink,
-		currentUser: dummyidm.RootUser,
-		umask:       int32(vfsutils.UMask.Get()),
+		mu:          sync.RWMutex{},
+		umask:       int32(avfs.UMask.Get()),
 	}
 
 	vfs.nodes[string(avfs.PathSeparator)] = &node{
@@ -51,7 +51,7 @@ func New(opts ...Option) (*OrefaFS, error) {
 		um := vfs.umask
 		vfs.umask = 0
 
-		_ = vfsutils.CreateBaseDirs(vfs, "")
+		_ = avfs.CreateBaseDirs(vfs, "")
 
 		vfs.umask = um
 		vfs.curDir = avfs.RootDir
@@ -73,11 +73,6 @@ func (vfs *OrefaFS) HasFeature(feature avfs.Feature) bool {
 // Name returns the name of the fileSystem.
 func (vfs *OrefaFS) Name() string {
 	return vfs.name
-}
-
-// OSType returns the operating system type of the file system.
-func (vfs *OrefaFS) OSType() avfs.OSType {
-	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
