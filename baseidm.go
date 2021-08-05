@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,66 +14,61 @@
 //  limitations under the License.
 //
 
-// Package dummyidm implements a dummy identity manager where all functions are not implemented.
-package dummyidm
-
-import (
-	"github.com/avfs/avfs"
-)
+package avfs
 
 // CurrentUser returns the current user.
-func (idm *DummyIdm) CurrentUser() avfs.UserReader {
+func (idm *BaseIdm) CurrentUser() UserReader {
 	return NotImplementedUser
 }
 
 // GroupAdd adds a new group.
-func (idm *DummyIdm) GroupAdd(name string) (avfs.GroupReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *BaseIdm) GroupAdd(name string) (GroupReader, error) {
+	return nil, ErrPermDenied
 }
 
 // GroupDel deletes an existing group.
-func (idm *DummyIdm) GroupDel(name string) error {
-	return avfs.ErrPermDenied
+func (idm *BaseIdm) GroupDel(name string) error {
+	return ErrPermDenied
 }
 
 // LookupGroup looks up a group by name.
 // If the group cannot be found, the returned error is of type UnknownGroupError.
-func (idm *DummyIdm) LookupGroup(name string) (avfs.GroupReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *BaseIdm) LookupGroup(name string) (GroupReader, error) {
+	return nil, ErrPermDenied
 }
 
 // LookupGroupId looks up a group by groupid.
 // If the group cannot be found, the returned error is of type UnknownGroupIdError.
-func (idm *DummyIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *BaseIdm) LookupGroupId(gid int) (GroupReader, error) {
+	return nil, ErrPermDenied
 }
 
 // LookupUser looks up a user by username.
 // If the user cannot be found, the returned error is of type UnknownUserError.
-func (idm *DummyIdm) LookupUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *BaseIdm) LookupUser(name string) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // LookupUserId looks up a user by userid.
 // If the user cannot be found, the returned error is of type UnknownUserIdError.
-func (idm *DummyIdm) LookupUserId(uid int) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *BaseIdm) LookupUserId(uid int) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // User sets the current user of the file system to uid.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func (idm *DummyIdm) User(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+// If the current user has not root privileges errPermDenied is returned.
+func (idm *BaseIdm) User(name string) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // UserAdd adds a new user.
-func (idm *DummyIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *BaseIdm) UserAdd(name, groupName string) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // UserDel deletes an existing group.
-func (idm *DummyIdm) UserDel(name string) error {
-	return avfs.ErrPermDenied
+func (idm *BaseIdm) UserDel(name string) error {
+	return ErrPermDenied
 }
 
 // Group

@@ -14,26 +14,24 @@
 //  limitations under the License.
 //
 
-package dummyidm
+package avfs
 
-import "github.com/avfs/avfs"
-
-// New create a new identity manager.
-func New() *DummyIdm {
-	return &DummyIdm{}
+// NewBaseIdm create a new identity manager.
+func NewBaseIdm() *BaseIdm {
+	return &BaseIdm{}
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (idm *DummyIdm) Type() string {
-	return "DummyIdm"
+func (idm *BaseIdm) Type() string {
+	return "BaseIdm"
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (idm *DummyIdm) Features() avfs.Feature {
+func (idm *BaseIdm) Features() Feature {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (idm *DummyIdm) HasFeature(feature avfs.Feature) bool {
+func (idm *BaseIdm) HasFeature(feature Feature) bool {
 	return false
 }

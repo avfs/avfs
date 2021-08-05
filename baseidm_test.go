@@ -17,29 +17,28 @@
 //go:build !datarace
 // +build !datarace
 
-package dummyidm_test
+package avfs_test
 
 import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/test"
 )
 
 var (
-	// DummyIdm implements avfs.IdentityMgr interface.
-	_ avfs.IdentityMgr = &dummyidm.DummyIdm{}
+	// avfs.BaseIdm implements avfs.IdentityMgr interface.
+	_ avfs.IdentityMgr = &avfs.BaseIdm{}
 
-	// DummyIdm.User struct implements avfs.UserReader interface.
-	_ avfs.UserReader = &dummyidm.User{}
+	// avfs.User struct implements avfs.UserReader interface.
+	_ avfs.UserReader = &avfs.User{}
 
-	// DummyIdm.Group struct implements avfs.GroupReader interface.
-	_ avfs.GroupReader = &dummyidm.Group{}
+	// avfs.Group struct implements avfs.GroupReader interface.
+	_ avfs.GroupReader = &avfs.Group{}
 )
 
-func TestDummyIdm(t *testing.T) {
-	idm := dummyidm.New()
+func TestBaseIdm(t *testing.T) {
+	idm := avfs.NewBaseIdm()
 
 	t.Logf("Idm = %v", idm.Type())
 
@@ -47,8 +46,8 @@ func TestDummyIdm(t *testing.T) {
 	sIdm.TestAll(t)
 }
 
-func TestDummyIdmFeatures(t *testing.T) {
-	idm := dummyidm.New()
+func TestBaseIdmFeatures(t *testing.T) {
+	idm := avfs.NewBaseIdm()
 
 	if idm.Features() != 0 {
 		t.Errorf("Features : want Features to be 0, got %d", idm.Features())

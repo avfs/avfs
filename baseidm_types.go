@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,33 +14,31 @@
 //  limitations under the License.
 //
 
-package dummyidm
-
-import "github.com/avfs/avfs"
+package avfs
 
 const maxInt = int(^uint(0) >> 1)
 
 var (
 	// NotImplementedIdm is the default identity manager for all file systems.
-	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
+	NotImplementedIdm = &BaseIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 	// RootUser represents a root user.
 	RootUser = &User{ //nolint:gochecknoglobals // Used as root user for other file systems.
-		name: avfs.UsrRoot,
+		name: UsrRoot,
 		uid:  0,
 		gid:  0,
 	}
 
 	// NotImplementedUser represents a not implemented invalid user.
 	NotImplementedUser = &User{ //nolint:gochecknoglobals // Used as not implemented user for other file systems.
-		name: avfs.NotImplemented,
+		name: NotImplemented,
 		uid:  maxInt,
 		gid:  maxInt,
 	}
 )
 
-// DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
-type DummyIdm struct{}
+// BaseIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
+type BaseIdm struct{}
 
 // User is the implementation of avfs.UserReader.
 type User struct {
