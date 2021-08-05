@@ -26,10 +26,9 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfs/memfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
-// TestCopyFile tests vfsutils.CopyFile function.
+// TestCopyFile tests avfs.CopyFile function.
 func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	srcFs := sfs.VFSSetup()
 
@@ -42,13 +41,13 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 		t.Fatalf("memfs.New : want error to be nil, got %v", err)
 	}
 
-	rtParams := &vfsutils.RndTreeParams{
+	rtParams := &avfs.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinFiles: 512, MaxFiles: 512,
 		MinFileSize: 0, MaxFileSize: 100 * 1024,
 	}
 
-	rt, err := vfsutils.NewRndTree(srcFs, testDir, rtParams)
+	rt, err := avfs.NewRndTree(srcFs, testDir, rtParams)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -70,15 +69,15 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
-			dstPath := vfsutils.Join(dstDir, fileName)
+			dstPath := srcFs.Join(dstDir, fileName)
 
-			wantSum, err := vfsutils.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
+			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
 			if err != nil {
 				t.Errorf("CopyFile (%s)%s, (%s)%s : want error to be nil, got %v",
 					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
 			}
 
-			gotSum, err := vfsutils.HashFile(dstFs, dstPath, h)
+			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
 			if err != nil {
 				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", dstFs.Type(), dstPath, err)
 			}
@@ -97,9 +96,9 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
-			dstPath := vfsutils.Join(dstDir, fileName)
+			dstPath := srcFs.Join(dstDir, fileName)
 
-			wantSum, err := vfsutils.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
+			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
 			if err != nil {
 				t.Errorf("CopyFile (%s)%s, (%s)%s : want error to be nil, got %v",
 					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
@@ -110,12 +109,12 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
 			}
 
-			wantSum, err = vfsutils.HashFile(srcFs, srcPath, h)
+			wantSum, err = avfs.HashFile(srcFs, srcPath, h)
 			if err != nil {
 				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", srcFs.Type(), srcPath, err)
 			}
 
-			gotSum, err := vfsutils.HashFile(dstFs, dstPath, h)
+			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
 			if err != nil {
 				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", dstFs.Type(), dstPath, err)
 			}
@@ -127,20 +126,20 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	})
 }
 
-// TestCreateBaseDirs tests vfsutils.CreateBaseDirs function.
+// TestCreateBaseDirs tests avfs.CreateBaseDirs function.
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfsutils.RunTimeOS() == avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatBasicFs) || avfs.RunTimeOS() == avfs.OsWindows {
 		return
 	}
 
-	err := vfsutils.CreateBaseDirs(vfs, testDir)
+	err := avfs.CreateBaseDirs(vfs, testDir)
 	if err != nil {
 		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 	}
 
-	for _, dir := range vfsutils.BaseDirs {
+	for _, dir := range avfs.BaseDirs {
 		info, err := vfs.Stat(dir.Path)
 		if err != nil {
 			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
@@ -153,7 +152,7 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	}
 }
 
-// TestDirExists tests vfsutils.DirExists function.
+// TestDirExists tests avfs.DirExists function.
 func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
@@ -162,7 +161,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	}
 
 	t.Run("DirExistsDir", func(t *testing.T) {
-		ok, err := vfsutils.DirExists(vfs, testDir)
+		ok, err := avfs.DirExists(vfs, testDir)
 		if err != nil {
 			t.Errorf("DirExists : want error to be nil, got %v", err)
 		}
@@ -175,7 +174,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	t.Run("DirExistsFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
-		ok, err := vfsutils.DirExists(vfs, existingFile)
+		ok, err := avfs.DirExists(vfs, existingFile)
 		if err != nil {
 			t.Errorf("DirExists : want error to be nil, got %v", err)
 		}
@@ -188,7 +187,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	t.Run("DirExistsNotExisting", func(t *testing.T) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
-		ok, err := vfsutils.DirExists(vfs, nonExistingFile)
+		ok, err := avfs.DirExists(vfs, nonExistingFile)
 		if err != nil {
 			t.Errorf("DirExists : want error to be nil, got %v", err)
 		}
@@ -199,7 +198,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	})
 }
 
-// TestExists tests vfsutils.Exists function.
+// TestExists tests avfs.Exists function.
 func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
@@ -208,7 +207,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	}
 
 	t.Run("ExistsDir", func(t *testing.T) {
-		ok, err := vfsutils.Exists(vfs, testDir)
+		ok, err := avfs.Exists(vfs, testDir)
 		if err != nil {
 			t.Errorf("Exists : want error to be nil, got %v", err)
 		}
@@ -221,7 +220,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	t.Run("ExistsFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
-		ok, err := vfsutils.Exists(vfs, existingFile)
+		ok, err := avfs.Exists(vfs, existingFile)
 		if err != nil {
 			t.Errorf("Exists : want error to be nil, got %v", err)
 		}
@@ -234,7 +233,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	t.Run("ExistsNotExisting", func(t *testing.T) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
-		ok, err := vfsutils.Exists(vfs, nonExistingFile)
+		ok, err := avfs.Exists(vfs, nonExistingFile)
 		if err != nil {
 			t.Errorf("Exists : want error to be nil, got %v", err)
 		}
@@ -248,7 +247,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 		invalidPath := vfs.Join(existingFile, defaultFile)
 
-		ok, err := vfsutils.Exists(vfs, invalidPath)
+		ok, err := avfs.Exists(vfs, invalidPath)
 		CheckPathError(t, err).Op("stat").Path(invalidPath).Err(avfs.ErrNotADirectory)
 
 		if ok {
@@ -257,7 +256,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	})
 }
 
-// TestIsDir tests vfsutils.IsDir function.
+// TestIsDir tests avfs.IsDir function.
 func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
@@ -268,7 +267,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	t.Run("IsDir", func(t *testing.T) {
 		existingDir := sfs.ExistingDir(t, testDir)
 
-		ok, err := vfsutils.IsDir(vfs, existingDir)
+		ok, err := avfs.IsDir(vfs, existingDir)
 		if err != nil {
 			t.Errorf("IsDir : want error to be nil, got %v", err)
 		}
@@ -281,7 +280,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	t.Run("IsDirFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
-		ok, err := vfsutils.IsDir(vfs, existingFile)
+		ok, err := avfs.IsDir(vfs, existingFile)
 		if err != nil {
 			t.Errorf("IsDirFile : want error to be nil, got %v", err)
 		}
@@ -294,7 +293,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	t.Run("IsDirNonExisting", func(t *testing.T) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
-		ok, err := vfsutils.IsDir(vfs, nonExistingFile)
+		ok, err := avfs.IsDir(vfs, nonExistingFile)
 		CheckPathError(t, err).Op("stat").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 
 		if ok {
@@ -303,7 +302,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	})
 }
 
-// TestIsEmpty tests vfsutils.IsEmpty function.
+// TestIsEmpty tests avfs.IsEmpty function.
 func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	vfs := sfs.VFSTest()
 
@@ -314,7 +313,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	t.Run("IsEmptyFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
-		ok, err := vfsutils.IsEmpty(vfs, existingFile)
+		ok, err := avfs.IsEmpty(vfs, existingFile)
 		if err != nil {
 			t.Errorf("IsEmpty : want error to be nil, got %v", err)
 		}
@@ -327,7 +326,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	t.Run("IsEmptyDirEmpty", func(t *testing.T) {
 		emptyDir := sfs.ExistingDir(t, testDir)
 
-		ok, err := vfsutils.IsEmpty(vfs, emptyDir)
+		ok, err := avfs.IsEmpty(vfs, emptyDir)
 		if err != nil {
 			t.Errorf("IsEmpty : want error to be nil, got %v", err)
 		}
@@ -340,7 +339,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	t.Run("IsEmptyDir", func(t *testing.T) {
 		sfs.ExistingDir(t, testDir)
 
-		ok, err := vfsutils.IsEmpty(vfs, testDir)
+		ok, err := avfs.IsEmpty(vfs, testDir)
 		if err != nil {
 			t.Errorf("IsEmpty : want error to be nil, got %v", err)
 		}
@@ -355,7 +354,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 
 		wantErr := fmt.Errorf("%q path does not exist", nonExistingFile)
 
-		ok, err := vfsutils.IsEmpty(vfs, nonExistingFile)
+		ok, err := avfs.IsEmpty(vfs, nonExistingFile)
 		if err.Error() != wantErr.Error() {
 			t.Errorf("IsEmpty : want error to be %v, got %v", wantErr, err)
 		}
@@ -366,7 +365,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	})
 }
 
-// TestHashFile tests vfsutils.HashFile function.
+// TestHashFile tests avfs.HashFile function.
 func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
 
@@ -374,13 +373,13 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 		return
 	}
 
-	rtParams := &vfsutils.RndTreeParams{
+	rtParams := &avfs.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinFiles: 100, MaxFiles: 100,
 		MinFileSize: 16, MaxFileSize: 100 * 1024,
 	}
 
-	rt, err := vfsutils.NewRndTree(vfs, testDir, rtParams)
+	rt, err := avfs.NewRndTree(vfs, testDir, rtParams)
 	if err != nil {
 		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
@@ -409,7 +408,7 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 
 		wantSum := h.Sum(nil)
 
-		gotSum, err := vfsutils.HashFile(vfs, fileName, h)
+		gotSum, err := avfs.HashFile(vfs, fileName, h)
 		if err != nil {
 			t.Errorf("HashFile %s : want error to be nil, got %v", fileName, err)
 		}
@@ -420,7 +419,7 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 	}
 }
 
-// TestRndTree tests vfsutils.RndTree function.
+// TestRndTree tests avfs.RndTree function.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
 
@@ -429,7 +428,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	}
 
 	t.Run("RndTree", func(t *testing.T) {
-		rtTests := []*vfsutils.RndTreeParams{
+		rtTests := []*avfs.RndTreeParams{
 			{
 				MinName: 10, MaxName: 20,
 				MinDirs: 5, MaxDirs: 10,
@@ -451,7 +450,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 
 			sfs.CreateDir(t, path, avfs.DefaultDirPerm)
 
-			rt, err := vfsutils.NewRndTree(vfs, path, rtTest)
+			rt, err := avfs.NewRndTree(vfs, path, rtTest)
 			if err != nil {
 				t.Errorf("NewRndTree %d : want error to be nil, got %v", i, err)
 			}
@@ -487,53 +486,53 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 
 	t.Run("RndTreeErrors", func(t *testing.T) {
 		rtTests := []struct {
-			params  *vfsutils.RndTreeParams
+			params  *avfs.RndTreeParams
 			wantErr error
 		}{
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 0, MaxName: 0},
-				wantErr: vfsutils.ErrNameOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 0, MaxName: 0},
+				wantErr: avfs.ErrNameOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 0},
-				wantErr: vfsutils.ErrNameOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 0},
+				wantErr: avfs.ErrNameOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: -1, MaxDirs: 0},
-				wantErr: vfsutils.ErrDirsOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: -1, MaxDirs: 0},
+				wantErr: avfs.ErrDirsOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: 1, MaxDirs: 0},
-				wantErr: vfsutils.ErrDirsOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: 1, MaxDirs: 0},
+				wantErr: avfs.ErrDirsOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: -1, MaxFiles: 0},
-				wantErr: vfsutils.ErrFilesOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: -1, MaxFiles: 0},
+				wantErr: avfs.ErrFilesOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: 1, MaxFiles: 0},
-				wantErr: vfsutils.ErrFilesOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: 1, MaxFiles: 0},
+				wantErr: avfs.ErrFilesOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinFileSize: -1, MaxFileSize: 0},
-				wantErr: vfsutils.ErrFileSizeOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFileSize: -1, MaxFileSize: 0},
+				wantErr: avfs.ErrFileSizeOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinFileSize: 1, MaxFileSize: 0},
-				wantErr: vfsutils.ErrFileSizeOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFileSize: 1, MaxFileSize: 0},
+				wantErr: avfs.ErrFileSizeOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: -1, MaxSymlinks: 0},
-				wantErr: vfsutils.ErrSymlinksOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: -1, MaxSymlinks: 0},
+				wantErr: avfs.ErrSymlinksOutOfRange,
 			},
 			{
-				params:  &vfsutils.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: 1, MaxSymlinks: 0},
-				wantErr: vfsutils.ErrSymlinksOutOfRange,
+				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: 1, MaxSymlinks: 0},
+				wantErr: avfs.ErrSymlinksOutOfRange,
 			},
 		}
 
 		for i, rtTest := range rtTests {
-			_, err := vfsutils.NewRndTree(vfs, testDir, rtTest.params)
+			_, err := avfs.NewRndTree(vfs, testDir, rtTest.params)
 			if rtTest.wantErr != err {
 				t.Errorf("NewRndTree %d : want error to be %v, got %v", i, rtTest.wantErr, err)
 			}
@@ -547,32 +546,34 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umaskTest := umaskSet
 
-	if vfsutils.RunTimeOS() == avfs.OsWindows {
+	if avfs.RunTimeOS() == avfs.OsWindows {
 		umaskTest = avfs.DefaultUmask
 	}
 
-	umask := vfsutils.UMask.Get()
+	umask := avfs.UMask.Get()
 	if umask != avfs.DefaultUmask {
 		t.Errorf("GetUMask : want OS umask %o, got %o", avfs.DefaultUmask, umask)
 	}
 
-	vfsutils.UMask.Set(umaskSet)
+	avfs.UMask.Set(umaskSet)
 
-	umask = vfsutils.UMask.Get()
+	umask = avfs.UMask.Get()
 	if umask != umaskTest {
 		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
-	vfsutils.UMask.Set(avfs.DefaultUmask)
+	avfs.UMask.Set(avfs.DefaultUmask)
 
-	umask = vfsutils.UMask.Get()
+	umask = avfs.UMask.Get()
 	if umask != avfs.DefaultUmask {
 		t.Errorf("GetUMask : want OS umask %o, got %o", avfs.DefaultUmask, umask)
 	}
 }
 
-// TestSegmentPath tests vfsutils.SegmentPath function.
+// TestSegmentPath tests avfs.SegmentPath function.
 func (sfs *SuiteFS) TestSegmentPath(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
+
 	cases := []struct {
 		path string
 		want []string
@@ -587,7 +588,7 @@ func (sfs *SuiteFS) TestSegmentPath(t *testing.T, testDir string) {
 
 	for _, c := range cases {
 		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
-			end, isLast = vfsutils.SegmentPath(c.path, start)
+			end, isLast = avfs.SegmentPath(vfs, c.path, start)
 			got := c.path[start:end]
 
 			if i > len(c.want) {

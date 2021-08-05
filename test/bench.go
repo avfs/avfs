@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
@@ -90,7 +89,7 @@ func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
 	vfs := sfs.vfsTest
 
 	b.Run("Remove", func(b *testing.B) {
-		rt, err := vfsutils.NewRndTree(vfs, testDir, &vfsutils.RndTreeParams{
+		rt, err := avfs.NewRndTree(vfs, testDir, &avfs.RndTreeParams{
 			MinName: 10,
 			MaxName: 10,
 			MinDirs: b.N,

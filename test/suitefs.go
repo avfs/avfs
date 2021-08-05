@@ -26,7 +26,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 const (
@@ -63,8 +62,9 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	_, file, _, _ := runtime.Caller(0)
 	initDir := filepath.Dir(file)
+	osType := avfs.RunTimeOS()
 
-	canTestPerm := vfsutils.RunTimeOS() != avfs.OsWindows &&
+	canTestPerm := osType != avfs.OsWindows &&
 		vfs.HasFeature(avfs.FeatBasicFs) &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) &&
 		initUser.IsRoot()
@@ -76,7 +76,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 		initUser:    initUser,
 		rootDir:     vfs.TempDir(),
 		maxRace:     1000,
-		osType:      vfsutils.RunTimeOS(),
+		osType:      osType,
 		canTestPerm: canTestPerm,
 	}
 
@@ -597,11 +597,11 @@ func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs
 }
 
 // RandomDir returns one directory with random empty subdirectories, files and symbolic links.
-func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
+func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *avfs.RndTree {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
-	RndParamsOneDir := vfsutils.RndTreeParams{
+	RndParamsOneDir := avfs.RndTreeParams{
 		MinName:     4,
 		MaxName:     32,
 		MinDirs:     10,
@@ -615,7 +615,7 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *vfsutils.RndTree {
 		OneLevel:    true,
 	}
 
-	rt, err := vfsutils.NewRndTree(vfs, testDir, &RndParamsOneDir)
+	rt, err := avfs.NewRndTree(vfs, testDir, &RndParamsOneDir)
 	if err != nil {
 		tb.Fatalf("NewRndTree : want error to be nil, got %v", err)
 	}
