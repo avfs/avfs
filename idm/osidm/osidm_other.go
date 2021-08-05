@@ -19,10 +19,7 @@
 
 package osidm
 
-import (
-	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
-)
+import "github.com/avfs/avfs"
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
@@ -75,5 +72,5 @@ func (idm *OsIdm) UserDel(name string) error {
 }
 
 func currentUser() avfs.UserReader {
-	return dummyidm.NotImplementedUser
+	return avfs.NotImplementedUser
 }

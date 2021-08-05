@@ -22,7 +22,7 @@ type BaseFS struct {
 	osType OSType
 
 	// OS-specific path separator
-	PathSeparator uint8
+	pathSeparator uint8
 }
 
 // BaseFile represents an open file descriptor.

@@ -25,7 +25,6 @@ import (
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 var (
@@ -50,7 +49,7 @@ func TestOsIdmAll(t *testing.T) {
 func TestOsIdmCfg(t *testing.T) {
 	var wantFeat avfs.Feature
 
-	switch vfsutils.RunTimeOS() {
+	switch avfs.RunTimeOS() {
 	case avfs.OsWindows:
 		wantFeat = 0
 	default:

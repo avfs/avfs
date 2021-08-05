@@ -14,16 +14,12 @@
 //  limitations under the License.
 //
 
-package vfsutils
+package avfs
 
-import (
-	"fmt"
-
-	"github.com/avfs/avfs"
-)
+import "fmt"
 
 // DirExists checks if a path exists and is a directory.
-func DirExists(vfs avfs.VFS, path string) (bool, error) {
+func DirExists(vfs VFS, path string) (bool, error) {
 	fi, err := vfs.Stat(path)
 	if err == nil && fi.IsDir() {
 		return true, nil
@@ -37,7 +33,7 @@ func DirExists(vfs avfs.VFS, path string) (bool, error) {
 }
 
 // Exists Check if a file or directory exists.
-func Exists(vfs avfs.VFS, path string) (bool, error) {
+func Exists(vfs VFS, path string) (bool, error) {
 	_, err := vfs.Stat(path)
 	if err == nil {
 		return true, nil
@@ -51,7 +47,7 @@ func Exists(vfs avfs.VFS, path string) (bool, error) {
 }
 
 // IsDir checks if a given path is a directory.
-func IsDir(vfs avfs.VFS, path string) (bool, error) {
+func IsDir(vfs VFS, path string) (bool, error) {
 	fi, err := vfs.Stat(path)
 	if err != nil {
 		return false, err
@@ -61,7 +57,7 @@ func IsDir(vfs avfs.VFS, path string) (bool, error) {
 }
 
 // IsEmpty checks if a given file or directory is empty.
-func IsEmpty(vfs avfs.VFS, path string) (bool, error) {
+func IsEmpty(vfs VFS, path string) (bool, error) {
 	if b, _ := Exists(vfs, path); !b {
 		return false, fmt.Errorf("%q path does not exist", path)
 	}

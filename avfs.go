@@ -306,6 +306,9 @@ type BasicVFS interface {
 	// OSType returns the operating system type of the file system.
 	OSType() OSType
 
+	// PathSeparator return the OS-specific path separator.
+	PathSeparator() uint8
+
 	// ReadDir reads the named directory,
 	// returning all its directory entries sorted by filename.
 	// If an error occurs reading the directory,

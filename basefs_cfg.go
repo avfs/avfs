@@ -20,7 +20,7 @@ package avfs
 func NewBaseFS() (*BaseFS, error) {
 	vfs := &BaseFS{
 		osType:        OsLinux,
-		PathSeparator: PathSeparator,
+		pathSeparator: PathSeparator,
 	}
 
 	return vfs, nil

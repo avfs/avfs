@@ -14,13 +14,11 @@
 //  limitations under the License.
 //
 
-package vfsutils
+package avfs
 
 import (
 	"math/rand"
 	"strings"
-
-	"github.com/avfs/avfs"
 )
 
 // ErrRndTreeOutOfRange defines the generic error for out of range parameters RndTreeParams.
@@ -71,7 +69,7 @@ type SymLinkParams struct {
 
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
-	vfs           avfs.VFS        // virtual file system.
+	vfs           VFS             // virtual file system.
 	baseDir       string          // base directory of the random tree.
 	Dirs          []string        // all directories.
 	Files         []string        // all files.
@@ -80,7 +78,7 @@ type RndTree struct {
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(vfs avfs.VFS, baseDir string, p *RndTreeParams) (*RndTree, error) {
+func NewRndTree(vfs VFS, baseDir string, p *RndTreeParams) (*RndTree, error) {
 	if p.MinName < 1 || p.MinName > p.MaxName {
 		return nil, ErrNameOutOfRange
 	}
@@ -143,7 +141,7 @@ func (rt *RndTree) generateFiles() {
 // generateSymlinks generate random symbolic links from existing random files and directories.
 func (rt *RndTree) generateSymlinks() {
 	vfs := rt.vfs
-	if !vfs.HasFeature(avfs.FeatSymlink) {
+	if !vfs.HasFeature(FeatSymlink) {
 		return
 	}
 
@@ -176,13 +174,13 @@ func (rt *RndTree) CreateTree() error {
 func (rt *RndTree) CreateDirs() error {
 	vfs := rt.vfs
 
-	err := vfs.MkdirAll(rt.baseDir, avfs.DefaultDirPerm)
+	err := vfs.MkdirAll(rt.baseDir, DefaultDirPerm)
 	if err != nil {
 		return err
 	}
 
 	for _, dirName := range rt.Dirs {
-		err = vfs.Mkdir(dirName, avfs.DefaultDirPerm)
+		err = vfs.Mkdir(dirName, DefaultDirPerm)
 		if err != nil {
 			return err
 		}
@@ -201,7 +199,7 @@ func (rt *RndTree) CreateFiles() error {
 	for _, fileName := range rt.Files {
 		size := randRange(rt.MinFileSize, rt.MaxFileSize)
 
-		err := vfs.WriteFile(fileName, buf[:size], avfs.DefaultFilePerm)
+		err := vfs.WriteFile(fileName, buf[:size], DefaultFilePerm)
 		if err != nil {
 			return err
 		}
@@ -213,7 +211,7 @@ func (rt *RndTree) CreateFiles() error {
 // CreateSymlinks creates random symbolic links.
 func (rt *RndTree) CreateSymlinks() error {
 	vfs := rt.vfs
-	if !vfs.HasFeature(avfs.FeatSymlink) {
+	if !vfs.HasFeature(FeatSymlink) {
 		return nil
 	}
 

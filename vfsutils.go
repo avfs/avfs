@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 //  limitations under the License.
 //
 
-package vfsutils
+package avfs
 
 import (
 	"hash"
 	"io"
+	"io/fs"
+	"strings"
 	"sync"
-
-	"github.com/avfs/avfs"
 )
 
 // bufSize is the size of each buffer used to copy files.
@@ -45,7 +45,7 @@ func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //no
 }
 
 // CopyFile copies a file between file systems and returns the hash sum of the source file.
-func CopyFile(dstFs, srcFs avfs.VFS, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
+func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
 	src, err := srcFs.Open(srcPath)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func CopyFile(dstFs, srcFs avfs.VFS, dstPath, srcPath string, hasher hash.Hash) 
 }
 
 // HashFile hashes a file and returns the hash sum.
-func HashFile(vfs avfs.VFS, name string, hasher hash.Hash) (sum []byte, err error) {
+func HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
@@ -120,4 +120,74 @@ func HashFile(vfs avfs.VFS, name string, hasher hash.Hash) (sum []byte, err erro
 	sum = hasher.Sum(nil)
 
 	return sum, nil
+}
+
+// BaseDir is a directory always present in a file system.
+type BaseDir struct {
+	Path string
+	Perm fs.FileMode
+}
+
+// BaseDirs are the base directories present in a file system.
+var BaseDirs = []BaseDir{ //nolint:gochecknoglobals // Used by CreateBaseDirs and TestCreateBaseDirs.
+	{Path: HomeDir, Perm: 0o755},
+	{Path: RootDir, Perm: 0o700},
+	{Path: TmpDir, Perm: 0o777},
+}
+
+// CreateBaseDirs creates base directories on a file system.
+func CreateBaseDirs(vfs VFS, basePath string) error {
+	for _, dir := range BaseDirs {
+		path := vfs.Join(basePath, dir.Path)
+
+		err := vfs.Mkdir(path, dir.Perm)
+		if err != nil {
+			return err
+		}
+
+		err = vfs.Chmod(path, dir.Perm)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CreateHomeDir creates the home directory of a user.
+func CreateHomeDir(vfs VFS, u UserReader) (UserReader, error) {
+	userDir := vfs.Join(HomeDir, u.Name())
+
+	err := vfs.Mkdir(userDir, HomeDirPerm)
+	if err != nil {
+		return nil, err
+	}
+
+	err = vfs.Chown(userDir, u.Uid(), u.Gid())
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
+
+// SegmentPath segments string key paths by separator (using avfs.PathSeparator).
+// For example with path = "/a/b/c" it will return in successive calls :
+//
+// "a", "/b/c"
+// "b", "/c"
+// "c", ""
+//
+// 	for start, end, isLast := 1, 0, len(path) <= 1; !isLast; start = end + 1 {
+//		end, isLast = avfs.SegmentPath(path, start)
+//		fmt.Println(path[start:end], path[end:])
+//	}
+//
+func SegmentPath(vfs VFS, path string, start int) (end int, isLast bool) {
+	pos := strings.IndexRune(path[start:], rune(vfs.PathSeparator()))
+	if pos != -1 {
+		return start + pos, false
+	}
+
+	return len(path), true
 }

@@ -25,6 +25,9 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/memidm"
+	"github.com/avfs/avfs/test"
+	"github.com/avfs/avfs/vfs/memfs"
 )
 
 func TestAvfsErrors(t *testing.T) {
@@ -81,4 +84,24 @@ func TestAvfsErrors(t *testing.T) {
 	if uuiErr.Error() != wantErrStr {
 		t.Errorf("UnknownUserIdError : want error to be %s, got %s", wantErrStr, uuiErr.Error())
 	}
+}
+
+func TestAvfsMemFS(t *testing.T) {
+	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestVFSUtils(t)
+}
+
+func TestAvfsBaseFS(t *testing.T) {
+	vfs, err := avfs.NewBaseFS()
+	if err != nil {
+		t.Fatalf("New : want error to be nil, got %v", err)
+	}
+
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestVFSUtils(t)
 }
