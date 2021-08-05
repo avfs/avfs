@@ -328,6 +328,11 @@ func (vfs *RoFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 	return f, err
 }
 
+// PathSeparator return the OS-specific path separator.
+func (vfs *RoFS) PathSeparator() uint8 {
+	return vfs.baseFS.PathSeparator()
+}
+
 // ReadDir reads the named directory,
 // returning all its directory entries sorted by filename.
 // If an error occurs reading the directory,
