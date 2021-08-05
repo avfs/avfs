@@ -17,13 +17,13 @@
 package avfs
 
 // NewBaseFS creates a new NewBaseFS file system.
-func NewBaseFS() (*BaseFS, error) {
-	vfs := &BaseFS{
+func NewBaseFS() BaseFS {
+	vfs := BaseFS{
 		osType:        OsLinux,
 		pathSeparator: PathSeparator,
 	}
 
-	return vfs, nil
+	return vfs
 }
 
 // Features returns the set of features provided by the file system or identity manager.

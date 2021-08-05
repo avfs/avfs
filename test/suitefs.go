@@ -827,7 +827,7 @@ func CheckPanic(tb testing.TB, funcName string, f func()) {
 
 	defer func() {
 		if r := recover(); r == nil {
-			tb.Errorf("%s : want function to panic, not panicing", funcName)
+			tb.Errorf("%s : want function to panic, not panicking", funcName)
 		}
 	}()
 

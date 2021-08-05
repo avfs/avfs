@@ -41,10 +41,7 @@ var (
 )
 
 func TestSearchNode(t *testing.T) {
-	vfs, err := New()
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %v", err)
-	}
+	vfs := New()
 
 	rn := vfs.rootNode
 

@@ -29,20 +29,14 @@ import (
 )
 
 func TestMemFsIdmWithNoIdm(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
+	vfs := memfs.New(memfs.WithMainDirs())
 
 	sIdm := test.NewSuiteIdm(t, vfs)
 	sIdm.TestAll(t)
 }
 
 func TestMemFsIdmWithMemIdm(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 
 	sIdm := test.NewSuiteIdm(t, vfs)
 	sIdm.TestAll(t)
@@ -54,10 +48,7 @@ func TestMemFsWithOsIdm(t *testing.T) {
 		t.Skip("OsIdm only works on when connected as root on a linux platform, skipping")
 	}
 
-	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm))
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm))
 
 	sIdm := test.NewSuiteIdm(t, vfs)
 	sIdm.TestAll(t)

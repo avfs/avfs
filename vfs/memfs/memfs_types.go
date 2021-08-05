@@ -35,7 +35,7 @@ type MemFS struct {
 	rootNode    *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs    *memAttrs       // memAttrs represents the file system attributes.
 	curDir      string          // curDir is the current directory.
-	avfs.BaseFS                 // BaseFS represents the file system.
+	avfs.BaseFS                 // BaseFS represents the base file system.
 }
 
 // memAttrs represents the file system attributes for MemFS.
@@ -61,7 +61,7 @@ type MemFile struct {
 }
 
 // Option defines the option function used for initializing MemFS.
-type Option func(*MemFS) error
+type Option func(*MemFS)
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {

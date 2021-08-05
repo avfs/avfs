@@ -36,10 +36,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 		return
 	}
 
-	dstFs, err := memfs.New(memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("memfs.New : want error to be nil, got %v", err)
-	}
+	dstFs := memfs.New(memfs.WithMainDirs())
 
 	rtParams := &avfs.RndTreeParams{
 		MinName: 32, MaxName: 32,

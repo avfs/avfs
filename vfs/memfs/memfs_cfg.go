@@ -24,7 +24,7 @@ import (
 )
 
 // New returns a new memory file system (MemFS).
-func New(opts ...Option) (*MemFS, error) {
+func New(opts ...Option) *MemFS {
 	ma := &memAttrs{
 		idm: avfs.NotImplementedIdm,
 		feature: avfs.FeatBasicFs |
@@ -35,6 +35,7 @@ func New(opts ...Option) (*MemFS, error) {
 	}
 
 	vfs := &MemFS{
+		user: avfs.NotImplementedUser,
 		rootNode: &dirNode{
 			baseNode: baseNode{
 				mtime: time.Now().UnixNano(),
@@ -44,19 +45,16 @@ func New(opts ...Option) (*MemFS, error) {
 			},
 		},
 		memAttrs: ma,
-		user:     avfs.NotImplementedUser,
 		curDir:   string(avfs.PathSeparator),
+		BaseFS:   avfs.NewBaseFS(),
 	}
 
 	for _, opt := range opts {
-		err := opt(vfs)
-		if err != nil {
-			return nil, err
-		}
+		opt(vfs)
 	}
 
 	if !vfs.HasFeature(avfs.FeatMainDirs) {
-		return vfs, nil
+		return vfs
 	}
 
 	um := ma.umask
@@ -77,7 +75,7 @@ func New(opts ...Option) (*MemFS, error) {
 
 	ma.umask = um
 
-	return vfs, nil
+	return vfs
 }
 
 // Features returns the set of features provided by the file system or identity manager.
@@ -104,42 +102,34 @@ func (vfs *MemFS) Type() string {
 
 // WithMainDirs returns an option function to create main directories.
 func WithMainDirs() Option {
-	return func(vfs *MemFS) error {
+	return func(vfs *MemFS) {
 		vfs.memAttrs.feature |= avfs.FeatMainDirs
-
-		return nil
 	}
 }
 
 // WithIdm returns an option function which sets the identity manager.
 func WithIdm(idm avfs.IdentityMgr) Option {
-	return func(vfs *MemFS) error {
+	return func(vfs *MemFS) {
 		u, err := idm.LookupUser(avfs.UsrRoot)
 		if err != nil {
-			return err
+			panic(err)
 		}
 
 		vfs.memAttrs.idm = idm
 		vfs.memAttrs.feature |= idm.Features()
 		vfs.user = u
-
-		return nil
 	}
 }
 
 // WithName returns an option function which sets the name of the file system.
 func WithName(name string) Option {
-	return func(vfs *MemFS) error {
+	return func(vfs *MemFS) {
 		vfs.memAttrs.name = name
-
-		return nil
 	}
 }
 
 func WithAbsPath() Option {
-	return func(vfs *MemFS) error {
+	return func(vfs *MemFS) {
 		vfs.memAttrs.feature |= avfs.FeatAbsPath
-
-		return nil
 	}
 }

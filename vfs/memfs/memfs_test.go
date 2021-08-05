@@ -47,49 +47,33 @@ var (
 )
 
 func TestMemFS(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
-
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
-
+	vfs := memfs.New(memfs.WithMainDirs())
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSOptionError(t *testing.T) {
-	_, err := memfs.New(memfs.WithIdm(avfs.NewBaseIdm()))
-	if err != avfs.ErrPermDenied {
-		t.Errorf("New : want error to be %v, got %v", avfs.ErrPermDenied, err)
-	}
+	test.CheckPanic(t, "PanicOnInvalidIdm", func() {
+		_ = memfs.New(memfs.WithIdm(avfs.NewBaseIdm()))
+	})
 }
 
 // TestMemFsOptionName tests MemFS initialization with or without option name (WithName()).
 func TestMemFSOptionName(t *testing.T) {
 	const wantName = "whatever"
 
-	vfs, err := memfs.New()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
-
+	vfs := memfs.New()
 	if vfs.Name() != "" {
 		t.Errorf("New : want name to be '', got %s", vfs.Name())
 	}
 
-	vfs, err = memfs.New(memfs.WithName(wantName))
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs = memfs.New(memfs.WithName(wantName))
 
 	name := vfs.Name()
 	if name != wantName {
@@ -104,20 +88,14 @@ func TestMemFSNilPtrFile(t *testing.T) {
 }
 
 func TestMemFSConfig(t *testing.T) {
-	vfs, err := memfs.New()
-	if err != nil {
-		t.Fatalf("memfs.New : want error to be nil, got %v", err)
-	}
+	vfs := memfs.New()
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
 
-	vfs, err = memfs.New(memfs.WithIdm(memidm.New()))
-	if err != nil {
-		t.Fatalf("memfs.New : want error to be nil, got %v", err)
-	}
+	vfs = memfs.New(memfs.WithIdm(memidm.New()))
 
 	wantFeatures = avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSymlink
 	if vfs.Features() != wantFeatures {
@@ -136,10 +114,7 @@ func TestMemFSConfig(t *testing.T) {
 }
 
 func BenchmarkMemFSAll(b *testing.B) {
-	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
-	if err != nil {
-		b.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 
 	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)
