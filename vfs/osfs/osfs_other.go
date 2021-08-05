@@ -23,7 +23,6 @@ import (
 	"io/fs"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // Chroot changes the root to that specified in path.
@@ -44,12 +43,12 @@ type OtherSysStat struct{}
 
 // Gid returns the group id.
 func (sst *OtherSysStat) Gid() int {
-	return dummyidm.NotImplementedUser.Gid()
+	return avfs.NotImplementedUser.Gid()
 }
 
 // Uid returns the user id.
 func (sst *OtherSysStat) Uid() int {
-	return dummyidm.NotImplementedUser.Uid()
+	return avfs.NotImplementedUser.Uid()
 }
 
 // Nlink returns the number of hard links.

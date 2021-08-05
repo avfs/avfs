@@ -27,7 +27,6 @@ import (
 	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/osfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 var (
@@ -95,8 +94,8 @@ func TestOsFSConfig(t *testing.T) {
 	}
 
 	ost := vfs.OSType()
-	if ost != vfsutils.RunTimeOS() {
-		t.Errorf("OSType : want os type to be %v, got %v", vfsutils.RunTimeOS(), ost)
+	if ost != avfs.RunTimeOS() {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.RunTimeOS(), ost)
 	}
 }
 

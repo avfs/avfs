@@ -18,18 +18,16 @@ package osfs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // New returns a new OsFS file system.
 func New(opts ...Option) (*OsFS, error) {
 	vfs := &OsFS{
-		idm:     dummyidm.NotImplementedIdm,
+		idm:     avfs.NotImplementedIdm,
 		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs,
 	}
 
-	os := vfsutils.RunTimeOS()
+	os := avfs.RunTimeOS()
 	switch os {
 	case avfs.OsLinux:
 		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
@@ -64,7 +62,7 @@ func (vfs *OsFS) Name() string {
 
 // OSType returns the operating system type of the file system.
 func (vfs *OsFS) OSType() avfs.OSType {
-	return vfsutils.RunTimeOS()
+	return avfs.RunTimeOS()
 }
 
 // Type returns the type of the fileSystem or Identity manager.

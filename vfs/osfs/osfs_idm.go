@@ -19,7 +19,6 @@ package osfs
 import (
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/osidm"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // CurrentUser returns the current user.
@@ -91,7 +90,7 @@ func (vfs *OsFS) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		return nil, err
 	}
 
-	return vfsutils.CreateHomeDir(vfs, u)
+	return avfs.CreateHomeDir(vfs, u)
 }
 
 // UserDel deletes an existing group.
@@ -105,7 +104,7 @@ func (vfs *OsFS) UserDel(name string) error {
 		return err
 	}
 
-	userDir := vfsutils.Join(avfs.HomeDir, name)
+	userDir := vfs.Join(avfs.HomeDir, name)
 
 	err = vfs.RemoveAll(userDir)
 	if err != nil {

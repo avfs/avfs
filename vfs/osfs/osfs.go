@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
 // file system functions.
@@ -171,7 +170,7 @@ func (vfs *OsFS) FromSlash(path string) string {
 
 // GetUMask returns the file mode creation mask.
 func (vfs *OsFS) GetUMask() fs.FileMode {
-	return vfsutils.UMask.Get()
+	return avfs.UMask.Get()
 }
 
 // Getwd returns a rooted path name corresponding to the
@@ -296,6 +295,11 @@ func (vfs *OsFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 	return os.OpenFile(name, flag, perm)
 }
 
+// PathSeparator return the OS-specific path separator.
+func (vfs *OsFS) PathSeparator() uint8 {
+	return os.PathSeparator
+}
+
 // ReadDir reads the named directory,
 // returning all its directory entries sorted by filename.
 // If an error occurs reading the directory,
@@ -414,7 +418,7 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 
 // UMask sets the file mode creation mask.
 func (vfs *OsFS) UMask(mask fs.FileMode) {
-	vfsutils.UMask.Set(mask)
+	avfs.UMask.Set(mask)
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
