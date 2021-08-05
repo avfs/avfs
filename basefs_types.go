@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
 //  limitations under the License.
 //
 
-package dummyfs
+package avfs
 
-// DummyFS represents the file system.
-type DummyFS struct{}
+// BaseFS represents the file system.
+type BaseFS struct {
+	// OSType defines the operating system type.
+	osType OSType
 
-// DummyFile represents an open file descriptor.
-type DummyFile struct{}
+	// OS-specific path separator
+	PathSeparator uint8
+}
 
-// DummySysStat implements SysStater interface returned by fs.FileInfo.Sys().
-type DummySysStat struct{}
+// BaseFile represents an open file descriptor.
+type BaseFile struct{}
+
+// BaseSysStat implements SysStater interface returned by fs.FileInfo.Sys().
+type BaseSysStat struct{}

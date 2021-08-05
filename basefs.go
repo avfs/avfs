@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,44 +14,40 @@
 //  limitations under the License.
 //
 
-// Package dummyfs implements a dummy file system where all functions are not implemented.
-package dummyfs
+package avfs
 
 import (
 	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
-
-	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfsutils"
 )
 
-// DummyFile system functions.
+// BaseFS file system functions.
 
 // Abs returns an absolute representation of path.
 // If the path is not absolute it will be joined with the current
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (vfs *DummyFS) Abs(path string) (string, error) {
-	return vfsutils.Abs(vfs, path)
+func (vfs *BaseFS) Abs(path string) (string, error) {
+
 }
 
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (vfs *DummyFS) Base(path string) string {
-	return vfsutils.Base(path)
+func (vfs *BaseFS) Base(path string) string {
+
 }
 
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Chdir(dir string) error {
+func (vfs *BaseFS) Chdir(dir string) error {
 	const op = "chdir"
 
-	return &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: dir, Err: ErrPermDenied}
 }
 
 // Chmod changes the mode of the named file to mode.
@@ -72,10 +68,10 @@ func (vfs *DummyFS) Chdir(dir string) error {
 //
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
-func (vfs *DummyFS) Chmod(name string, mode fs.FileMode) error {
+func (vfs *BaseFS) Chmod(name string, mode fs.FileMode) error {
 	const op = "chmod"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -85,18 +81,18 @@ func (vfs *DummyFS) Chmod(name string, mode fs.FileMode) error {
 //
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
-func (vfs *DummyFS) Chown(name string, uid, gid int) error {
+func (vfs *BaseFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: name, Err: ErrOpNotPermitted}
 }
 
 // Chroot changes the root to that specified in path.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Chroot(path string) error {
+func (vfs *BaseFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: path, Err: ErrOpNotPermitted}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -105,10 +101,10 @@ func (vfs *DummyFS) Chroot(path string) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *BaseFS) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // Clean returns the shortest path name equivalent to path
@@ -134,8 +130,8 @@ func (vfs *DummyFS) Chtimes(name string, atime, mtime time.Time) error {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (vfs *DummyFS) Clean(path string) string {
-	return vfsutils.Clean(path)
+func (vfs *BaseFS) Clean(path string) string {
+
 }
 
 // Create creates or truncates the named file. If the file already exists,
@@ -143,7 +139,7 @@ func (vfs *DummyFS) Clean(path string) string {
 // (before umask). If successful, methods on the returned DummyFile can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Create(name string) (avfs.File, error) {
+func (vfs *BaseFS) Create(name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
@@ -155,8 +151,8 @@ func (vfs *DummyFS) Create(name string) (avfs.File, error) {
 // Multiple programs or goroutines calling CreateTemp simultaneously will not choose the same file.
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
-func (vfs *DummyFS) CreateTemp(dir, pattern string) (avfs.File, error) {
-	return vfsutils.CreateTemp(vfs, dir, pattern)
+func (vfs *BaseFS) CreateTemp(dir, pattern string) (File, error) {
+
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -165,8 +161,8 @@ func (vfs *DummyFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (vfs *DummyFS) Dir(path string) string {
-	return vfsutils.Dir(path)
+func (vfs *BaseFS) Dir(path string) string {
+
 }
 
 // EvalSymlinks returns the path name after the evaluation of any symbolic
@@ -174,21 +170,21 @@ func (vfs *DummyFS) Dir(path string) string {
 // If path is relative the result will be relative to the current directory,
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
-func (vfs *DummyFS) EvalSymlinks(path string) (string, error) {
+func (vfs *BaseFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
-	return "", &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: path, Err: ErrPermDenied}
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (vfs *DummyFS) FromSlash(path string) string {
+func (vfs *BaseFS) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
 // GetUMask returns the file mode creation mask.
-func (vfs *DummyFS) GetUMask() fs.FileMode {
+func (vfs *BaseFS) GetUMask() fs.FileMode {
 	return 0o022
 }
 
@@ -196,10 +192,10 @@ func (vfs *DummyFS) GetUMask() fs.FileMode {
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
 // Getwd may return any one of them.
-func (vfs *DummyFS) Getwd() (dir string, err error) {
+func (vfs *BaseFS) Getwd() (dir string, err error) {
 	const op = "getwd"
 
-	return "", &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: dir, Err: ErrPermDenied}
 }
 
 // Glob returns the names of all files matching pattern or nil
@@ -210,39 +206,39 @@ func (vfs *DummyFS) Getwd() (dir string, err error) {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (vfs *DummyFS) Glob(pattern string) (matches []string, err error) {
-	return vfsutils.Glob(vfs, pattern)
+func (vfs *BaseFS) Glob(pattern string) (matches []string, err error) {
+
 }
 
 // IsAbs reports whether the path is absolute.
-func (vfs *DummyFS) IsAbs(path string) bool {
-	return vfsutils.IsAbs(path)
+func (vfs *BaseFS) IsAbs(path string) bool {
+
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
-func (vfs *DummyFS) IsExist(err error) bool {
-	return vfsutils.IsExist(err)
+func (vfs *BaseFS) IsExist(err error) bool {
+
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
-func (vfs *DummyFS) IsNotExist(err error) bool {
-	return vfsutils.IsNotExist(err)
+func (vfs *BaseFS) IsNotExist(err error) bool {
+
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (vfs *DummyFS) IsPathSeparator(c uint8) bool {
-	return vfsutils.IsPathSeparator(c)
+func (vfs *BaseFS) IsPathSeparator(c uint8) bool {
+
 }
 
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (vfs *DummyFS) Join(elem ...string) string {
-	return vfsutils.Join(elem...)
+func (vfs *BaseFS) Join(elem ...string) string {
+
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -251,37 +247,37 @@ func (vfs *DummyFS) Join(elem ...string) string {
 //
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
-func (vfs *DummyFS) Lchown(name string, uid, gid int) error {
+func (vfs *BaseFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: name, Err: ErrOpNotPermitted}
 }
 
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
-func (vfs *DummyFS) Link(oldname, newname string) error {
+func (vfs *BaseFS) Link(oldname, newname string) error {
 	const op = "link"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: ErrPermDenied}
 }
 
 // Lstat returns a FileInfo describing the named file.
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Lstat(name string) (fs.FileInfo, error) {
+func (vfs *BaseFS) Lstat(name string) (fs.FileInfo, error) {
 	const op = "lstat"
 
-	return nil, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return nil, &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Mkdir(name string, perm fs.FileMode) error {
+func (vfs *BaseFS) Mkdir(name string, perm fs.FileMode) error {
 	const op = "mkdir"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // MkdirAll creates a directory named path,
@@ -291,10 +287,10 @@ func (vfs *DummyFS) Mkdir(name string, perm fs.FileMode) error {
 // directories that MkdirAll creates.
 // If path is already a directory, MkdirAll does nothing
 // and returns nil.
-func (vfs *DummyFS) MkdirAll(path string, perm fs.FileMode) error {
+func (vfs *BaseFS) MkdirAll(path string, perm fs.FileMode) error {
 	const op = "mkdir"
 
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: path, Err: ErrPermDenied}
 }
 
 // MkdirTemp creates a new temporary directory in the directory dir
@@ -304,15 +300,15 @@ func (vfs *DummyFS) MkdirAll(path string, perm fs.FileMode) error {
 // If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by TempDir.
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
-func (vfs *DummyFS) MkdirTemp(dir, prefix string) (name string, err error) {
-	return vfsutils.MkdirTemp(vfs, dir, prefix)
+func (vfs *BaseFS) MkdirTemp(dir, prefix string) (name string, err error) {
+
 }
 
 // Open opens the named file for reading. If successful, methods on
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Open(name string) (avfs.File, error) {
+func (vfs *BaseFS) Open(name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }
 
@@ -322,10 +318,10 @@ func (vfs *DummyFS) Open(name string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask). If successful,
 // methods on the returned DummyFile can be used for I/O.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
+func (vfs *BaseFS) OpenFile(name string, flag int, perm fs.FileMode) (File, error) {
 	const op = "open"
 
-	return &DummyFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &BaseFile{}, &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // ReadDir reads the named directory,
@@ -333,24 +329,24 @@ func (vfs *DummyFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 // If an error occurs reading the directory,
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
-func (vfs *DummyFS) ReadDir(name string) ([]fs.DirEntry, error) {
-	return vfsutils.ReadDir(vfs, name)
+func (vfs *BaseFS) ReadDir(name string) ([]fs.DirEntry, error) {
+
 }
 
 // Readlink returns the destination of the named symbolic link.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Readlink(name string) (string, error) {
+func (vfs *BaseFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // ReadFile reads the file named by filename and returns the contents.
 // A successful call returns err == nil, not err == EOF. Because ReadFile
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
-func (vfs *DummyFS) ReadFile(filename string) ([]byte, error) {
-	return vfsutils.ReadFile(vfs, filename)
+func (vfs *BaseFS) ReadFile(filename string) ([]byte, error) {
+
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -361,16 +357,16 @@ func (vfs *DummyFS) ReadFile(filename string) ([]byte, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (vfs *DummyFS) Rel(basepath, targpath string) (string, error) {
-	return vfsutils.Rel(basepath, targpath)
+func (vfs *BaseFS) Rel(basepath, targpath string) (string, error) {
+
 }
 
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Remove(name string) error {
+func (vfs *BaseFS) Remove(name string) error {
 	const op = "remove"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // RemoveAll removes path and any children it contains.
@@ -378,20 +374,20 @@ func (vfs *DummyFS) Remove(name string) error {
 // it encounters. If the path does not exist, RemoveAll
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) RemoveAll(path string) error {
+func (vfs *BaseFS) RemoveAll(path string) error {
 	const op = "removeall"
 
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: path, Err: ErrPermDenied}
 }
 
 // Rename renames (moves) oldpath to newpath.
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (vfs *DummyFS) Rename(oldname, newname string) error {
+func (vfs *BaseFS) Rename(oldname, newname string) error {
 	const op = "rename"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: ErrPermDenied}
 }
 
 // SameFile reports whether fi1 and fi2 describe the same file.
@@ -400,7 +396,7 @@ func (vfs *DummyFS) Rename(oldname, newname string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (vfs *DummyFS) SameFile(fi1, fi2 fs.FileInfo) bool {
+func (vfs *BaseFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return false
 }
 
@@ -409,24 +405,24 @@ func (vfs *DummyFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (vfs *DummyFS) Split(path string) (dir, file string) {
-	return vfsutils.Split(vfs, path)
+func (vfs *BaseFS) Split(path string) (dir, file string) {
+
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Stat(name string) (fs.FileInfo, error) {
+func (vfs *BaseFS) Stat(name string) (fs.FileInfo, error) {
 	const op = "stat"
 
-	return nil, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return nil, &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
-func (vfs *DummyFS) Symlink(oldname, newname string) error {
+func (vfs *BaseFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: ErrPermDenied}
 }
 
 // TempDir returns the default directory to use for temporary files.
@@ -438,33 +434,33 @@ func (vfs *DummyFS) Symlink(oldname, newname string) error {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfs *DummyFS) TempDir() string {
-	return avfs.TmpDir
+func (vfs *BaseFS) TempDir() string {
+	return TmpDir
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (vfs *DummyFS) ToSlash(path string) string {
+func (vfs *BaseFS) ToSlash(path string) string {
 	return filepath.ToSlash(path)
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func (vfs *DummyFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	return &DummySysStat{}
+func (vfs *BaseFS) ToSysStat(info fs.FileInfo) SysStater {
+	return &BaseSysStat{}
 }
 
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
-func (vfs *DummyFS) Truncate(name string, size int64) error {
+func (vfs *BaseFS) Truncate(name string, size int64) error {
 	const op = "truncate"
 
-	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
 // UMask sets the file mode creation mask.
-func (vfs *DummyFS) UMask(mask fs.FileMode) {
+func (vfs *BaseFS) UMask(mask fs.FileMode) {
 	_ = mask
 }
 
@@ -479,13 +475,13 @@ func (vfs *DummyFS) UMask(mask fs.FileMode) {
 // to walk that directory.
 //
 // WalkDir does not follow symbolic links.
-func (vfs *DummyFS) WalkDir(root string, fn fs.WalkDirFunc) error {
-	return vfsutils.WalkDir(vfs, root, fn)
+func (vfs *BaseFS) WalkDir(root string, fn fs.WalkDirFunc) error {
+
 }
 
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
-func (vfs *DummyFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
-	return vfsutils.WriteFile(vfs, filename, data, perm)
+func (vfs *BaseFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
+
 }

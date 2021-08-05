@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 //go:build !datarace
 // +build !datarace
 
-package dummyfs_test
+package avfs_test
 
 import (
 	"math"
@@ -25,22 +25,21 @@ import (
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/test"
-	"github.com/avfs/avfs/vfs/dummyfs"
 )
 
 var (
-	// dummyFs.DummyFS struct implements avfs.VFS interface.
-	_ avfs.VFS = &dummyfs.DummyFS{}
+	// avfs.BaseFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &avfs.BaseFS{}
 
-	// dummyfs.DummyFile struct implements avfs.File interface.
-	_ avfs.File = &dummyfs.DummyFile{}
+	// avfs.BaseFile struct implements avfs.File interface.
+	_ avfs.File = &avfs.BaseFile{}
 
-	// dummyfs.DummySysStat struct implements avfs.SysStater interface.
-	_ avfs.SysStater = &dummyfs.DummySysStat{}
+	// avfs.BaseSysStat struct implements avfs.SysStater interface.
+	_ avfs.SysStater = &avfs.BaseSysStat{}
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {
-	vfs, err := dummyfs.New()
+	vfs, err := avfs.NewBaseFS()
 	if err != nil {
 		tb.Fatalf("New : want err to be nil, got %s", err)
 	}
@@ -50,13 +49,13 @@ func initTest(tb testing.TB) *test.SuiteFS {
 	return sfs
 }
 
-func TestDummyFS(t *testing.T) {
+func TestBaseFS(t *testing.T) {
 	sfs := initTest(t)
 	sfs.TestAll(t)
 }
 
-func TestDummyFSConfig(t *testing.T) {
-	vfs, err := dummyfs.New()
+func TestBaseFSConfig(t *testing.T) {
+	vfs, err := avfs.NewBaseFS()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}

@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,38 +14,39 @@
 //  limitations under the License.
 //
 
-package dummyfs
+package avfs
 
-import (
-	"github.com/avfs/avfs"
-)
+// NewBaseFS creates a new NewBaseFS file system.
+func NewBaseFS() (*BaseFS, error) {
+	vfs := &BaseFS{
+		osType:        OsLinux,
+		PathSeparator: PathSeparator,
+	}
 
-// New creates a new DummyFS file system.
-func New() (*DummyFS, error) {
-	return &DummyFS{}, nil
+	return vfs, nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *DummyFS) Features() avfs.Feature {
+func (vfs *BaseFS) Features() Feature {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *DummyFS) HasFeature(feature avfs.Feature) bool {
+func (vfs *BaseFS) HasFeature(feature Feature) bool {
 	return false
 }
 
 // Name returns the name of the fileSystem.
-func (vfs *DummyFS) Name() string {
+func (vfs *BaseFS) Name() string {
 	return ""
 }
 
 // OSType returns the operating system type of the file system.
-func (vfs *DummyFS) OSType() avfs.OSType {
-	return avfs.OsLinux
+func (vfs *BaseFS) OSType() OSType {
+	return vfs.osType
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *DummyFS) Type() string {
-	return "DummyFS"
+func (vfs *BaseFS) Type() string {
+	return "BaseFS"
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2021 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 //go:build !datarace
 // +build !datarace
 
-package dummyfs_test
+package avfs_test
 
 import (
 	"testing"
 
+	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/test"
-	"github.com/avfs/avfs/vfs/dummyfs"
 )
 
 func TestDummyFSIdm(t *testing.T) {
-	vfs, err := dummyfs.New()
+	vfs, err := avfs.NewBaseFS()
 	if err != nil {
 		t.Fatalf("New : want err to be nil, got %s", err)
 	}
