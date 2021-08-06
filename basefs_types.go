@@ -18,11 +18,7 @@ package avfs
 
 // BaseFS represents the file system.
 type BaseFS struct {
-	// OSType defines the operating system type.
-	osType OSType
-
-	// OS-specific path separator
-	pathSeparator uint8
+	utils Utils
 }
 
 // BaseFile represents an open file descriptor.

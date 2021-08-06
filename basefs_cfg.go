@@ -19,8 +19,7 @@ package avfs
 // NewBaseFS creates a new NewBaseFS file system.
 func NewBaseFS() BaseFS {
 	vfs := BaseFS{
-		osType:        OsLinux,
-		pathSeparator: PathSeparator,
+		utils: NewUtils(OsLinux),
 	}
 
 	return vfs
@@ -43,7 +42,7 @@ func (vfs *BaseFS) Name() string {
 
 // OSType returns the operating system type of the file system.
 func (vfs *BaseFS) OSType() OSType {
-	return vfs.osType
+	return vfs.utils.osType
 }
 
 // Type returns the type of the fileSystem or Identity manager.
