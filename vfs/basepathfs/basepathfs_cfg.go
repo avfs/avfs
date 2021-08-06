@@ -24,18 +24,20 @@ import (
 )
 
 // New returns a new base path file system (BasePathFS).
-func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
+func New(baseFs avfs.VFS, basePath string) *BasePathFS {
 	const op = "basepath"
 
 	absPath, _ := baseFs.Abs(basePath)
 
 	info, err := baseFs.Stat(absPath)
 	if err != nil {
-		return nil, &fs.PathError{Op: op, Path: basePath, Err: errors.Unwrap(err)}
+		err = &fs.PathError{Op: op, Path: basePath, Err: errors.Unwrap(err)}
+		panic(err)
 	}
 
 	if !info.IsDir() {
-		return nil, &fs.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
+		err = &fs.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
+		panic(err)
 	}
 
 	vfs := &BasePathFS{
@@ -47,11 +49,11 @@ func New(baseFs avfs.VFS, basePath string) (*BasePathFS, error) {
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
 		err = avfs.CreateBaseDirs(vfs.baseFS, vfs.basePath)
 		if err != nil {
-			return nil, err
+			panic(err)
 		}
 	}
 
-	return vfs, nil
+	return vfs
 }
 
 // Features returns the set of features provided by the file system or identity manager.
