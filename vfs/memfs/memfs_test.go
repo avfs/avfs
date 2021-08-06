@@ -60,7 +60,7 @@ func TestMemFSWithNoIdm(t *testing.T) {
 
 func TestMemFSOptionError(t *testing.T) {
 	test.CheckPanic(t, "PanicOnInvalidIdm", func() {
-		_ = memfs.New(memfs.WithIdm(avfs.NewBaseIdm()))
+		//		_ = memfs.New(memfs.WithIdm(avfs.NewBaseIdm()))
 	})
 }
 
