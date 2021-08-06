@@ -46,11 +46,7 @@ var (
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {
-	vfs, err := orefafs.New(orefafs.WithMainDirs())
-	if err != nil {
-		tb.Fatalf("New : want error to be nil, got %v", err)
-	}
-
+	vfs := orefafs.New(orefafs.WithMainDirs())
 	sfs := test.NewSuiteFS(tb, vfs)
 
 	return sfs
@@ -68,10 +64,7 @@ func TestOrefaFSNilPtrFile(t *testing.T) {
 }
 
 func TestOrefaFSConfig(t *testing.T) {
-	vfs, err := orefafs.New()
-	if err != nil {
-		t.Fatalf("orefaFs.New : want error to be nil, got %v", err)
-	}
+	vfs := orefafs.New()
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink
 	if vfs.Features() != wantFeatures {

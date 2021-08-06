@@ -87,20 +87,7 @@ func TestAvfsErrors(t *testing.T) {
 }
 
 func TestAvfsMemFS(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
-
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestVFSUtils(t)
-}
-
-func TestAvfsBaseFS(t *testing.T) {
-	vfs, err := avfs.NewBaseFS()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestVFSUtils(t)

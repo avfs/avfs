@@ -25,7 +25,7 @@ import (
 )
 
 // New returns a new memory file system (OrefaFS).
-func New(opts ...Option) (*OrefaFS, error) {
+func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
 		currentUser: avfs.RootUser,
 		nodes:       make(nodes),
@@ -41,10 +41,7 @@ func New(opts ...Option) (*OrefaFS, error) {
 	}
 
 	for _, opt := range opts {
-		err := opt(vfs)
-		if err != nil {
-			return nil, err
-		}
+		opt(vfs)
 	}
 
 	if vfs.feature&avfs.FeatMainDirs != 0 {
@@ -57,7 +54,7 @@ func New(opts ...Option) (*OrefaFS, error) {
 		vfs.curDir = avfs.RootDir
 	}
 
-	return vfs, nil
+	return vfs
 }
 
 // Features returns the set of features provided by the file system or identity manager.
@@ -84,9 +81,7 @@ func (vfs *OrefaFS) Type() string {
 
 // WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
 func WithMainDirs() Option {
-	return func(vfs *OrefaFS) error {
+	return func(vfs *OrefaFS) {
 		vfs.feature |= avfs.FeatMainDirs
-
-		return nil
 	}
 }

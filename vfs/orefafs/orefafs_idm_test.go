@@ -27,10 +27,7 @@ import (
 )
 
 func TestOrefaFsIdm(t *testing.T) {
-	vfs, err := orefafs.New(orefafs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs := orefafs.New(orefafs.WithMainDirs())
 
 	sIdm := test.NewSuiteIdm(t, vfs)
 	sIdm.TestAll(t)

@@ -50,7 +50,7 @@ type OrefaFile struct {
 }
 
 // Option defines the option function used for initializing OrefaFS.
-type Option func(*OrefaFS) error
+type Option func(*OrefaFS)
 
 // nodes is the map of nodes (files or directory) where the key is the absolute path.
 type nodes map[string]*node
