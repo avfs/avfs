@@ -137,7 +137,8 @@ func (vfs *BaseFS) glob(dir, pattern string, matches []string) (m []string, e er
 			m = append(m, vfs.Join(dir, n))
 		}
 	}
-	return
+
+	return //nolint:nakedret // Adapted from standard library.
 }
 
 // hasMeta reports whether path contains any of the magic characters
@@ -381,7 +382,7 @@ func (vfs *BaseFS) volumeNameLen(path string) int {
 
 	// with drive letter
 	c := path[0]
-	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') {
+	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') { //nolint:gocritic // Adapted from standard library.
 		return 2
 	}
 

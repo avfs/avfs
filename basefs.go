@@ -416,7 +416,7 @@ func (vfs *BaseFS) Glob(pattern string) (matches []string, err error) {
 		}
 	}
 
-	return
+	return //nolint:nakedret // Adapted from standard library.
 }
 
 // IsAbs reports whether the path is absolute.
@@ -462,7 +462,6 @@ func (vfs *BaseFS) IsPathSeparator(c uint8) bool {
 		return PathSeparator == c
 	}
 
-	// NOTE: Windows accept / as path separator.
 	return c == '\\' || c == '/'
 }
 
