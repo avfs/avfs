@@ -27,4 +27,4 @@ type OsFS struct {
 }
 
 // Option defines the option function used for initializing OsFS.
-type Option func(*OsFS) error
+type Option func(*OsFS)

@@ -38,11 +38,7 @@ var (
 )
 
 func initTest(tb testing.TB) *test.SuiteFS {
-	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
-	if err != nil {
-		tb.Fatalf("New : want err to be nil, got %s", err)
-	}
-
+	vfs := osfs.New(osfs.WithIdm(osidm.New()))
 	sfs := test.NewSuiteFS(tb, vfs)
 
 	return sfs
@@ -54,10 +50,7 @@ func TestOsFS(t *testing.T) {
 }
 
 func TestOsFSWithNoIdm(t *testing.T) {
-	vfs, err := osfs.New()
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
+	vfs := osfs.New()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
@@ -70,10 +63,7 @@ func TestOsFSNilPtrFile(t *testing.T) {
 }
 
 func TestOsFSConfig(t *testing.T) {
-	vfs, err := osfs.New()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs := osfs.New()
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs
 

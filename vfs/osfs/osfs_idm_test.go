@@ -29,10 +29,7 @@ import (
 
 // TestOsFsWithOsIdm tests OsFS identity manager functions with OsIdn identity manager.
 func TestIdmOsFSWithOsIdm(t *testing.T) {
-	vfs, err := osfs.New(osfs.WithIdm(osidm.New()))
-	if err != nil {
-		t.Fatalf("New : want err to be nil, got %s", err)
-	}
+	vfs := osfs.New(osfs.WithIdm(osidm.New()))
 
 	sidm := test.NewSuiteIdm(t, vfs)
 	sidm.TestAll(t)
@@ -40,10 +37,7 @@ func TestIdmOsFSWithOsIdm(t *testing.T) {
 
 // TestOsFSWithoutIdm test OsFS without and identity manager.
 func TestIdmOsFSWithNoIdm(t *testing.T) {
-	vfs, err := osfs.New()
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs := osfs.New()
 
 	sidm := test.NewSuiteIdm(t, vfs)
 	sidm.TestAll(t)

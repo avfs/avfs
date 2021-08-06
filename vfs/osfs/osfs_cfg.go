@@ -21,7 +21,7 @@ import (
 )
 
 // New returns a new OsFS file system.
-func New(opts ...Option) (*OsFS, error) {
+func New(opts ...Option) *OsFS {
 	vfs := &OsFS{
 		idm:     avfs.NotImplementedIdm,
 		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs,
@@ -36,13 +36,10 @@ func New(opts ...Option) (*OsFS, error) {
 	}
 
 	for _, opt := range opts {
-		err := opt(vfs)
-		if err != nil {
-			return nil, err
-		}
+		opt(vfs)
 	}
 
-	return vfs, nil
+	return vfs
 }
 
 // Features returns the set of features provided by the file system or identity manager.
@@ -74,10 +71,8 @@ func (vfs *OsFS) Type() string {
 
 // WithIdm returns a function setting the identity manager for the file system.
 func WithIdm(idm avfs.IdentityMgr) Option {
-	return func(vfs *OsFS) error {
+	return func(vfs *OsFS) {
 		vfs.idm = idm
 		vfs.feature |= idm.Features()
-
-		return nil
 	}
 }
