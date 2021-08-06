@@ -46,7 +46,7 @@ func New(opts ...Option) *MemFS {
 		},
 		memAttrs: ma,
 		curDir:   string(avfs.PathSeparator),
-		BaseFS:   avfs.NewBaseFS(),
+		utils:    avfs.NewUtils(avfs.OsLinux),
 	}
 
 	for _, opt := range opts {
@@ -91,6 +91,11 @@ func (vfs *MemFS) HasFeature(feature avfs.Feature) bool {
 // Name returns the name of the fileSystem.
 func (vfs *MemFS) Name() string {
 	return vfs.memAttrs.name
+}
+
+// OSType returns the operating system type of the file system.
+func (vfs *MemFS) OSType() avfs.OSType {
+	return vfs.utils.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
