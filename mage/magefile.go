@@ -38,13 +38,14 @@ import (
 )
 
 const (
-	goFumptCmd  = "gofumpt"
+	dockerImage = "avfs-docker"
 	gitCmd      = "git"
+	goCmd       = "go"
+	goFumptCmd  = "gofumpt"
+	goFumptUrl  = "mvdan.cc/gofumpt@master"
 	golangCiCmd = "golangci-lint"
 	golangCiGit = "github.com/golangci/golangci-lint"
 	golangCiBin = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
-	goCmd       = "go"
-	dockerImage = "avfs-docker"
 	raceCount   = 5
 	benchCount  = 5
 )
@@ -118,7 +119,7 @@ func Fmt() error {
 			return err
 		}
 
-		err = sh.RunV(goCmd, "get", "mvdan.cc/gofumpt")
+		err = sh.RunV(goCmd, "install", goFumptUrl)
 		if err != nil {
 			return err
 		}
