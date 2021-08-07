@@ -25,7 +25,6 @@ COPY ./idm ./idm
 COPY ./mage ./mage
 COPY ./test ./test
 COPY ./vfs ./vfs
-COPY ./vfsutils ./vfsutils
 
 FROM copyfiles
 CMD avfs test

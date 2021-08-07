@@ -24,7 +24,6 @@ COPY ./go.mod ./
 COPY ./idm ./idm
 COPY ./test ./test
 COPY ./vfs ./vfs
-COPY ./vfsutils ./vfsutils
 
 FROM copyfiles
 ENV PATH "/gopath/bin:$PATH"
