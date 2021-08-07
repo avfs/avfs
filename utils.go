@@ -240,7 +240,7 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 		return nil, &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
-	prefix = vfs.Join(dir, prefix)
+	prefix = ut.joinPath(dir, prefix)
 
 	try := 0
 
@@ -531,13 +531,13 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 		return "", &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
-	prefix = ut.Join(dir, prefix)
+	prefix = ut.joinPath(dir, prefix)
 	try := 0
 
 	for {
 		name := prefix + ut.nextRandom() + suffix
-		err = vfs.Mkdir(name, 0o700)
 
+		err := vfs.Mkdir(name, 0o700)
 		if err == nil {
 			return name, nil
 		}

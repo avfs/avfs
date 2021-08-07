@@ -154,6 +154,14 @@ func (ut *Utils) hasMeta(path string) bool {
 	return strings.ContainsAny(path, magicChars)
 }
 
+func (ut *Utils) joinPath(dir, name string) string {
+	if len(dir) > 0 && ut.IsPathSeparator(dir[len(dir)-1]) {
+		return dir + name
+	}
+
+	return dir + string(ut.pathSeparator) + name
+}
+
 // reservedNames lists reserved Windows names. Search for PRN in
 // https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file
 // for details.
