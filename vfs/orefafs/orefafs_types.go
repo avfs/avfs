@@ -33,7 +33,7 @@ type OrefaFS struct {
 	lastId      uint64
 	mu          sync.RWMutex
 	umask       int32
-	avfs.BaseFS
+	utils       avfs.Utils
 }
 
 // OrefaFile represents an open file descriptor.

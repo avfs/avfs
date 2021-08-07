@@ -39,11 +39,11 @@ var (
 )
 
 // cleanGlobPath prepares path for glob matching.
-func (vu *Utils) cleanGlobPath(path string) string {
+func (ut *Utils) cleanGlobPath(path string) string {
 	switch path {
 	case "":
 		return "."
-	case string(vu.pathSeparator):
+	case string(ut.pathSeparator):
 		// do nothing to the path
 		return path
 	default:
@@ -52,13 +52,13 @@ func (vu *Utils) cleanGlobPath(path string) string {
 }
 
 // cleanGlobPathWindows is windows version of cleanGlobPath.
-func (vu *Utils) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
-	vollen := vu.volumeNameLen(path)
+func (ut *Utils) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
+	vollen := ut.volumeNameLen(path)
 
 	switch {
 	case path == "":
 		return 0, "."
-	case vollen+1 == len(path) && vu.IsPathSeparator(path[len(path)-1]): // /, \, C:\ and C:/
+	case vollen+1 == len(path) && ut.IsPathSeparator(path[len(path)-1]): // /, \, C:\ and C:/
 		// do nothing to the path
 		return vollen + 1, path
 	case vollen == len(path) && len(path) == 2: // C:
@@ -73,14 +73,14 @@ func (vu *Utils) cleanGlobPathWindows(path string) (prefixLen int, cleaned strin
 }
 
 // getEsc gets a possibly-escaped character from chunk, for a character class.
-func (vu *Utils) getEsc(chunk string) (r rune, nchunk string, err error) {
+func (ut *Utils) getEsc(chunk string) (r rune, nchunk string, err error) {
 	if chunk == "" || chunk[0] == '-' || chunk[0] == ']' {
 		err = filepath.ErrBadPattern
 
 		return
 	}
 
-	if chunk[0] == '\\' && vu.osType != OsWindows {
+	if chunk[0] == '\\' && ut.osType != OsWindows {
 		chunk = chunk[1:]
 		if chunk == "" {
 			err = filepath.ErrBadPattern
@@ -106,7 +106,7 @@ func (vu *Utils) getEsc(chunk string) (r rune, nchunk string, err error) {
 // and appends them to matches. If the directory cannot be
 // opened, it returns the existing matches. New matches are
 // added in lexicographical order.
-func (vu *Utils) glob(vfs VFS, dir, pattern string, matches []string) (m []string, e error) {
+func (ut *Utils) glob(vfs VFS, dir, pattern string, matches []string) (m []string, e error) {
 	m = matches
 
 	fi, err := vfs.Stat(dir)
@@ -129,7 +129,7 @@ func (vu *Utils) glob(vfs VFS, dir, pattern string, matches []string) (m []strin
 	sort.Strings(names)
 
 	for _, n := range names {
-		matched, err := vu.Match(pattern, n)
+		matched, err := ut.Match(pattern, n)
 		if err != nil {
 			return m, err
 		}
@@ -144,10 +144,10 @@ func (vu *Utils) glob(vfs VFS, dir, pattern string, matches []string) (m []strin
 
 // hasMeta reports whether path contains any of the magic characters
 // recognized by Match.
-func (vu *Utils) hasMeta(path string) bool {
+func (ut *Utils) hasMeta(path string) bool {
 	magicChars := `*?[`
 
-	if vu.osType != OsWindows {
+	if ut.osType != OsWindows {
 		magicChars = `*?[\`
 	}
 
@@ -182,7 +182,7 @@ func isReservedName(path string) bool {
 // matchChunk checks whether chunk matches the beginning of s.
 // If so, it returns the remainder of s (after the match).
 // Chunk is all single-character operators: literals, char classes, and ?.
-func (vu *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
+func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 	// failed records whether the match has failed.
 	// After the match fails, the loop continues on processing chunk,
 	// checking that the pattern is well-formed but no longer reading s.
@@ -226,14 +226,14 @@ func (vu *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 
 				var lo, hi rune
 
-				if lo, chunk, err = vu.getEsc(chunk); err != nil {
+				if lo, chunk, err = ut.getEsc(chunk); err != nil {
 					return "", false, err
 				}
 
 				hi = lo
 
 				if chunk[0] == '-' {
-					if hi, chunk, err = vu.getEsc(chunk[1:]); err != nil {
+					if hi, chunk, err = ut.getEsc(chunk[1:]); err != nil {
 						return "", false, err
 					}
 				}
@@ -250,7 +250,7 @@ func (vu *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 			}
 		case '?':
 			if !failed {
-				if s[0] == vu.pathSeparator {
+				if s[0] == ut.pathSeparator {
 					failed = true
 				}
 
@@ -260,7 +260,7 @@ func (vu *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 
 			chunk = chunk[1:]
 		case '\\':
-			if vu.osType != OsWindows {
+			if ut.osType != OsWindows {
 				chunk = chunk[1:]
 				if chunk == "" {
 					return "", false, filepath.ErrBadPattern
@@ -290,7 +290,7 @@ func (vu *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 
 // scanChunk gets the next segment of pattern, which is a non-star string
 // possibly preceded by a star.
-func (vu *Utils) scanChunk(pattern string) (star bool, chunk, rest string) {
+func (ut *Utils) scanChunk(pattern string) (star bool, chunk, rest string) {
 	for len(pattern) > 0 && pattern[0] == '*' {
 		pattern = pattern[1:]
 		star = true
@@ -304,7 +304,7 @@ Scan:
 	for i = 0; i < len(pattern); i++ {
 		switch pattern[i] {
 		case '\\':
-			if vu.osType != OsWindows {
+			if ut.osType != OsWindows {
 				// error check handled in matchChunk: bad pattern.
 				if i+1 < len(pattern) {
 					i++
@@ -344,12 +344,12 @@ func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //no
 	return
 }
 
-func (vu *Utils) nextRandom() string {
+func (ut *Utils) nextRandom() string {
 	randmu.Lock()
 
 	r := randno
 	if r == 0 {
-		r = vu.reseed()
+		r = ut.reseed()
 	}
 
 	r = r*1664525 + 1013904223 // constants from Numerical Recipes
@@ -361,9 +361,9 @@ func (vu *Utils) nextRandom() string {
 
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
 // returning prefix as the part before "*" and suffix as the part after "*".
-func (vu *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
+func (ut *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
 	for i := 0; i < len(pattern); i++ {
-		if vu.IsPathSeparator(pattern[i]) {
+		if ut.IsPathSeparator(pattern[i]) {
 			return "", "", ErrPatternHasSeparator
 		}
 	}
@@ -377,14 +377,14 @@ func (vu *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err err
 	return prefix, suffix, nil
 }
 
-func (vu *Utils) reseed() uint32 {
+func (ut *Utils) reseed() uint32 {
 	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
 }
 
 // volumeNameLen returns length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func (vu *Utils) volumeNameLen(path string) int {
-	if vu.osType != OsWindows {
+func (ut *Utils) volumeNameLen(path string) int {
+	if ut.osType != OsWindows {
 		return 0
 	}
 
@@ -430,7 +430,7 @@ func (vu *Utils) volumeNameLen(path string) int {
 }
 
 // walkDir recursively descends path, calling walkDirFn.
-func (vu *Utils) walkDir(vfs VFS, path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
+func (ut *Utils) walkDir(vfs VFS, path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
 	if err := walkDirFn(path, d, nil); err != nil || !d.IsDir() {
 		if err == filepath.SkipDir && d.IsDir() {
 			// Successfully skipped directory.
@@ -451,7 +451,7 @@ func (vu *Utils) walkDir(vfs VFS, path string, d fs.DirEntry, walkDirFn fs.WalkD
 
 	for _, d1 := range dirs {
 		path1 := vfs.Join(path, d1.Name())
-		if err := vu.walkDir(vfs, path1, d1, walkDirFn); err != nil {
+		if err := ut.walkDir(vfs, path1, d1, walkDirFn); err != nil {
 			if err == filepath.SkipDir {
 				break
 			}

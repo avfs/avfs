@@ -585,7 +585,7 @@ func (sfs *SuiteFS) TestSegmentPath(t *testing.T, testDir string) {
 
 	for _, c := range cases {
 		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
-			end, isLast = avfs.SegmentPath(vfs, c.path, start)
+			end, isLast = avfs.SegmentPath(vfs.PathSeparator(), c.path, start)
 			got := c.path[start:end]
 
 			if i > len(c.want) {

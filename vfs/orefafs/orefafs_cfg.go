@@ -72,6 +72,11 @@ func (vfs *OrefaFS) Name() string {
 	return vfs.name
 }
 
+// OSType returns the operating system type of the file system.
+func (vfs *OrefaFS) OSType() avfs.OSType {
+	return vfs.utils.OSType()
+}
+
 // Type returns the type of the fileSystem or Identity manager.
 func (vfs *OrefaFS) Type() string {
 	return "OrefaFS"

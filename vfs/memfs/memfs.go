@@ -510,7 +510,7 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	}
 
 	for dn, isLast := parent, len(absPath) <= 1; !isLast; start = end + 1 {
-		end, isLast = vfs.utils.SegmentPath(absPath, start)
+		end, isLast = avfs.SegmentPath(vfs.PathSeparator(), absPath, start)
 
 		part := absPath[start:end]
 		if dn.child(part) != nil {
@@ -984,6 +984,11 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 	return nil
 }
 
+// UMask sets the file mode creation mask.
+func (vfs *MemFS) UMask(mask fs.FileMode) {
+	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
+}
+
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
@@ -1004,9 +1009,4 @@ func (vfs *MemFS) WalkDir(root string, fn fs.WalkDirFunc) error {
 // otherwise WriteFile truncates it before writing, without changing permissions.
 func (vfs *MemFS) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	return vfs.utils.WriteFile(vfs, name, data, perm)
-}
-
-// UMask sets the file mode creation mask.
-func (vfs *MemFS) UMask(mask fs.FileMode) {
-	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
 }

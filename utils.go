@@ -56,7 +56,7 @@ func NewUtils(osType OSType) Utils {
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (vu *Utils) Abs(vfs VFS, path string) (string, error) {
+func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
 	if vfs.IsAbs(path) {
 		return vfs.Clean(path), nil
 	}
@@ -73,7 +73,7 @@ func (vu *Utils) Abs(vfs VFS, path string) (string, error) {
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (vu *Utils) Base(vfs VFS, path string) string {
+func (ut *Utils) Base(vfs VFS, path string) string {
 	if path == "" {
 		return "."
 	}
@@ -84,7 +84,7 @@ func (vu *Utils) Base(vfs VFS, path string) string {
 	}
 
 	// Throw away volume name
-	path = path[len(vu.VolumeName(path)):]
+	path = path[len(ut.VolumeName(path)):]
 
 	// Find the last element
 	i := len(path) - 1
@@ -98,7 +98,7 @@ func (vu *Utils) Base(vfs VFS, path string) string {
 
 	// If empty now, it had only slashes.
 	if path == "" {
-		return string(vu.pathSeparator)
+		return string(ut.pathSeparator)
 	}
 
 	return path
@@ -127,21 +127,21 @@ func (vu *Utils) Base(vfs VFS, path string) string {
 // See also Rob Pike, ``Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,''
 // https://9p.io/sys/doc/lexnames.html
-func (vu *Utils) Clean(path string) string {
+func (ut *Utils) Clean(path string) string {
 	originalPath := path
-	volLen := vu.volumeNameLen(path)
+	volLen := ut.volumeNameLen(path)
 
 	path = path[volLen:]
 	if path == "" {
 		if volLen > 1 && originalPath[1] != ':' {
 			// should be UNC
-			return vu.FromSlash(originalPath)
+			return ut.FromSlash(originalPath)
 		}
 
 		return originalPath + "."
 	}
 
-	rooted := vu.IsPathSeparator(path[0])
+	rooted := ut.IsPathSeparator(path[0])
 
 	// Invariants:
 	//	reading from path; r is index of next byte to process.
@@ -153,20 +153,20 @@ func (vu *Utils) Clean(path string) string {
 	r, dotdot := 0, 0
 
 	if rooted {
-		out.append(vu.pathSeparator)
+		out.append(ut.pathSeparator)
 
 		r, dotdot = 1, 1
 	}
 
 	for r < n {
 		switch {
-		case vu.IsPathSeparator(path[r]):
+		case ut.IsPathSeparator(path[r]):
 			// empty path element
 			r++
-		case path[r] == '.' && (r+1 == n || vu.IsPathSeparator(path[r+1])):
+		case path[r] == '.' && (r+1 == n || ut.IsPathSeparator(path[r+1])):
 			// . element
 			r++
-		case path[r] == '.' && path[r+1] == '.' && (r+2 == n || vu.IsPathSeparator(path[r+2])):
+		case path[r] == '.' && path[r+1] == '.' && (r+2 == n || ut.IsPathSeparator(path[r+2])):
 			// .. element: remove to last separator
 			r += 2
 
@@ -174,13 +174,13 @@ func (vu *Utils) Clean(path string) string {
 			case out.w > dotdot:
 				// can backtrack
 				out.w--
-				for out.w > dotdot && !vu.IsPathSeparator(out.index(out.w)) {
+				for out.w > dotdot && !ut.IsPathSeparator(out.index(out.w)) {
 					out.w--
 				}
 			case !rooted:
 				// cannot backtrack, but not rooted, so append .. element.
 				if out.w > 0 {
-					out.append(vu.pathSeparator)
+					out.append(ut.pathSeparator)
 				}
 
 				out.append('.')
@@ -191,10 +191,10 @@ func (vu *Utils) Clean(path string) string {
 			// real path element.
 			// add slash if needed
 			if rooted && out.w != 1 || !rooted && out.w != 0 {
-				out.append(vu.pathSeparator)
+				out.append(ut.pathSeparator)
 			}
 			// copy element
-			for ; r < n && !vu.IsPathSeparator(path[r]); r++ {
+			for ; r < n && !ut.IsPathSeparator(path[r]); r++ {
 				out.append(path[r])
 			}
 		}
@@ -205,7 +205,7 @@ func (vu *Utils) Clean(path string) string {
 		out.append('.')
 	}
 
-	return vu.FromSlash(out.string())
+	return ut.FromSlash(out.string())
 }
 
 // Create creates or truncates the named file. If the file already exists,
@@ -213,7 +213,7 @@ func (vu *Utils) Clean(path string) string {
 // (before umask). If successful, methods on the returned DummyFile can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (vu *Utils) Create(vfs VFS, name string) (File, error) {
+func (ut *Utils) Create(vfs VFS, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
@@ -225,14 +225,14 @@ func (vu *Utils) Create(vfs VFS, name string) (File, error) {
 // Multiple programs or goroutines calling CreateTemp simultaneously will not choose the same file.
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
-func (vu *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
+func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 	const op = "createtemp"
 
 	if dir == "" {
 		dir = vfs.TempDir()
 	}
 
-	prefix, suffix, err := vu.prefixAndSuffix(pattern)
+	prefix, suffix, err := ut.prefixAndSuffix(pattern)
 	if err != nil {
 		return nil, &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
@@ -242,7 +242,7 @@ func (vu *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 	try := 0
 
 	for {
-		name := prefix + vu.nextRandom() + suffix
+		name := prefix + ut.nextRandom() + suffix
 
 		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
 		if vfs.IsExist(err) {
@@ -251,68 +251,11 @@ func (vu *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 				continue
 			}
 
-			return nil, &fs.PathError{Op: op, Path: dir + string(vu.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
+			return nil, &fs.PathError{Op: op, Path: dir + string(ut.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
 		return f, err
 	}
-}
-
-// CopyFile copies a file between file systems and returns the hash sum of the source file.
-func (vu *Utils) CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
-	src, err := srcFs.Open(srcPath)
-	if err != nil {
-		return nil, err
-	}
-
-	defer src.Close()
-
-	dst, err := dstFs.Create(dstPath)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		cerr := dst.Close()
-		if cerr == nil {
-			err = cerr
-		}
-	}()
-
-	var out io.Writer
-
-	if hasher == nil {
-		out = dst
-	} else {
-		hasher.Reset()
-		out = io.MultiWriter(dst, hasher)
-	}
-
-	_, err = copyBufPool(out, src)
-	if err != nil {
-		return nil, err
-	}
-
-	err = dst.Sync()
-	if err != nil {
-		return nil, err
-	}
-
-	info, err := srcFs.Stat(srcPath)
-	if err != nil {
-		return nil, err
-	}
-
-	err = dstFs.Chmod(dstPath, info.Mode())
-	if err != nil {
-		return nil, err
-	}
-
-	if hasher == nil {
-		return nil, nil
-	}
-
-	return hasher.Sum(nil), nil
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -321,15 +264,15 @@ func (vu *Utils) CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (vu *Utils) Dir(path string) string {
-	vol := vu.VolumeName(path)
+func (ut *Utils) Dir(path string) string {
+	vol := ut.VolumeName(path)
 
 	i := len(path) - 1
-	for i >= len(vol) && !vu.IsPathSeparator(path[i]) {
+	for i >= len(vol) && !ut.IsPathSeparator(path[i]) {
 		i--
 	}
 
-	dir := vu.Clean(path[len(vol) : i+1])
+	dir := ut.Clean(path[len(vol) : i+1])
 	if dir == "." && len(vol) > 2 {
 		// must be UNC
 		return vol
@@ -341,16 +284,16 @@ func (vu *Utils) Dir(path string) string {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (vu *Utils) FromSlash(path string) string {
-	if vu.osType != OsWindows {
+func (ut *Utils) FromSlash(path string) string {
+	if ut.osType != OsWindows {
 		return path
 	}
 
-	return strings.ReplaceAll(path, "/", string(vu.pathSeparator))
+	return strings.ReplaceAll(path, "/", string(ut.pathSeparator))
 }
 
 // HashFile hashes a file and returns the hash sum.
-func (vu *Utils) HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
+func HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
@@ -378,13 +321,13 @@ func (vu *Utils) HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, e
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (vu *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
+func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 	// Check pattern is well-formed.
-	if _, err = vu.Match(pattern, ""); err != nil {
+	if _, err = ut.Match(pattern, ""); err != nil {
 		return nil, err
 	}
 
-	if !vu.hasMeta(pattern) {
+	if !ut.hasMeta(pattern) {
 		if _, err = vfs.Lstat(pattern); err != nil {
 			return nil, nil
 		}
@@ -395,14 +338,14 @@ func (vu *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 	dir, file := vfs.Split(pattern)
 	volumeLen := 0
 
-	if vu.osType == OsWindows {
-		volumeLen, dir = vu.cleanGlobPathWindows(dir)
+	if ut.osType == OsWindows {
+		volumeLen, dir = ut.cleanGlobPathWindows(dir)
 	} else {
-		dir = vu.cleanGlobPath(dir)
+		dir = ut.cleanGlobPath(dir)
 	}
 
-	if !vu.hasMeta(dir[volumeLen:]) {
-		return vu.glob(vfs, dir, file, nil)
+	if !ut.hasMeta(dir[volumeLen:]) {
+		return ut.glob(vfs, dir, file, nil)
 	}
 
 	// Prevent infinite recursion. See issue 15879.
@@ -418,7 +361,7 @@ func (vu *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 	}
 
 	for _, d := range m {
-		matches, err = vu.glob(vfs, d, file, matches)
+		matches, err = ut.glob(vfs, d, file, matches)
 		if err != nil {
 			return
 		}
@@ -428,8 +371,8 @@ func (vu *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 }
 
 // IsAbs reports whether the path is absolute.
-func (vu *Utils) IsAbs(path string) bool {
-	if vu.osType != OsWindows {
+func (ut *Utils) IsAbs(path string) bool {
+	if ut.osType != OsWindows {
 		return strings.HasPrefix(path, "/")
 	}
 
@@ -437,7 +380,7 @@ func (vu *Utils) IsAbs(path string) bool {
 		return true
 	}
 
-	l := vu.volumeNameLen(path)
+	l := ut.volumeNameLen(path)
 	if l == 0 {
 		return false
 	}
@@ -453,20 +396,20 @@ func (vu *Utils) IsAbs(path string) bool {
 // IsExist returns a boolean indicating whether the error is known to report
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
-func (vu *Utils) IsExist(err error) bool {
+func (ut *Utils) IsExist(err error) bool {
 	return errors.Is(err, ErrFileExists)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
-func (vu *Utils) IsNotExist(err error) bool {
+func (ut *Utils) IsNotExist(err error) bool {
 	return errors.Is(err, ErrNoSuchFileOrDir)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (vu *Utils) IsPathSeparator(c uint8) bool {
-	if vu.osType != OsWindows {
+func (ut *Utils) IsPathSeparator(c uint8) bool {
+	if ut.osType != OsWindows {
 		return PathSeparator == c
 	}
 
@@ -476,11 +419,11 @@ func (vu *Utils) IsPathSeparator(c uint8) bool {
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (vu *Utils) Join(elem ...string) string {
+func (ut *Utils) Join(elem ...string) string {
 	// If there's a bug here, fix the logic in ./path_plan9.go too.
 	for i, e := range elem {
 		if e != "" {
-			return vu.Clean(strings.Join(elem[i:], string(vu.pathSeparator)))
+			return ut.Clean(strings.Join(elem[i:], string(ut.pathSeparator)))
 		}
 	}
 
@@ -512,20 +455,20 @@ func (vu *Utils) Join(elem ...string) string {
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
 //
-func (vu *Utils) Match(pattern, name string) (matched bool, err error) {
+func (ut *Utils) Match(pattern, name string) (matched bool, err error) {
 Pattern:
 	for len(pattern) > 0 {
 		var star bool
 		var chunk string
 
-		star, chunk, pattern = vu.scanChunk(pattern)
+		star, chunk, pattern = ut.scanChunk(pattern)
 		if star && chunk == "" {
 			// Trailing * matches rest of string unless it has a /.
-			return !strings.Contains(name, string(vu.pathSeparator)), nil
+			return !strings.Contains(name, string(ut.pathSeparator)), nil
 		}
 
 		// Look for match at current position.
-		t, ok, err := vu.matchChunk(chunk, name)
+		t, ok, err := ut.matchChunk(chunk, name)
 
 		// if we're the last chunk, make sure we've exhausted the name
 		// otherwise we'll give a false result even if we could still match
@@ -543,8 +486,8 @@ Pattern:
 		if star {
 			// Look for match skipping i+1 bytes.
 			// Cannot skip /.
-			for i := 0; i < len(name) && name[i] != vu.pathSeparator; i++ {
-				t, ok, err := vu.matchChunk(chunk, name[i+1:])
+			for i := 0; i < len(name) && name[i] != ut.pathSeparator; i++ {
+				t, ok, err := ut.matchChunk(chunk, name[i+1:])
 				if ok {
 					// if we're the last chunk, make sure we exhausted the name
 					if pattern == "" && len(t) > 0 {
@@ -573,23 +516,23 @@ Pattern:
 // If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by TempDir.
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
-func (vu *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
+func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
 		dir = vfs.TempDir()
 	}
 
-	prefix, suffix, err := vu.prefixAndSuffix(pattern)
+	prefix, suffix, err := ut.prefixAndSuffix(pattern)
 	if err != nil {
 		return "", &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
-	prefix = vu.Join(dir, prefix)
+	prefix = ut.Join(dir, prefix)
 	try := 0
 
 	for {
-		name := prefix + vu.nextRandom() + suffix
+		name := prefix + ut.nextRandom() + suffix
 		err = vfs.Mkdir(name, 0o700)
 
 		if err == nil {
@@ -602,7 +545,7 @@ func (vu *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 				continue
 			}
 
-			return "", &fs.PathError{Op: op, Path: dir + string(vu.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
+			return "", &fs.PathError{Op: op, Path: dir + string(ut.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
 		if vfs.IsNotExist(err) {
@@ -620,39 +563,18 @@ func (vu *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (vu *Utils) Open(vfs VFS, name string) (File, error) {
+func (ut *Utils) Open(vfs VFS, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }
 
 // PathSeparator return the OS-specific path separator.
-func (vu *Utils) PathSeparator() uint8 {
-	return vu.pathSeparator
+func (ut *Utils) PathSeparator() uint8 {
+	return ut.pathSeparator
 }
 
 // OSType returns the operating system type of the file system.
-func (vu *Utils) OSType() OSType {
-	return vu.osType
-}
-
-// SegmentPath segments string key paths by separator (using avfs.PathSeparator).
-// For example with path = "/a/b/c" it will return in successive calls :
-//
-// "a", "/b/c"
-// "b", "/c"
-// "c", ""
-//
-// 	for start, end, isLast := 1, 0, len(path) <= 1; !isLast; start = end + 1 {
-//		end, isLast = avfs.SegmentPath(path, start)
-//		fmt.Println(path[start:end], path[end:])
-//	}
-//
-func (vu *Utils) SegmentPath(path string, start int) (end int, isLast bool) {
-	pos := strings.IndexRune(path[start:], rune(vu.pathSeparator))
-	if pos != -1 {
-		return start + pos, false
-	}
-
-	return len(path), true
+func (ut *Utils) OSType() OSType {
+	return ut.osType
 }
 
 // ReadDir reads the named directory,
@@ -660,7 +582,7 @@ func (vu *Utils) SegmentPath(path string, start int) (end int, isLast bool) {
 // If an error occurs reading the directory,
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
-func (vu *Utils) ReadDir(vfs VFS, name string) ([]fs.DirEntry, error) {
+func (ut *Utils) ReadDir(vfs VFS, name string) ([]fs.DirEntry, error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
@@ -679,7 +601,7 @@ func (vu *Utils) ReadDir(vfs VFS, name string) ([]fs.DirEntry, error) {
 // A successful call returns err == nil, not err == EOF.
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
-func (vu *Utils) ReadFile(vfs VFS, name string) ([]byte, error) {
+func (ut *Utils) ReadFile(vfs VFS, name string) ([]byte, error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
@@ -735,11 +657,11 @@ func (vu *Utils) ReadFile(vfs VFS, name string) ([]byte, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (vu *Utils) Rel(basepath, targpath string) (string, error) {
-	baseVol := vu.VolumeName(basepath)
-	targVol := vu.VolumeName(targpath)
-	base := vu.Clean(basepath)
-	targ := vu.Clean(targpath)
+func (ut *Utils) Rel(basepath, targpath string) (string, error) {
+	baseVol := ut.VolumeName(basepath)
+	targVol := ut.VolumeName(targpath)
+	base := ut.Clean(basepath)
+	targ := ut.Clean(targpath)
 
 	if sameWord(targ, base) {
 		return ".", nil
@@ -750,14 +672,14 @@ func (vu *Utils) Rel(basepath, targpath string) (string, error) {
 
 	if base == "." {
 		base = ""
-	} else if base == "" && vu.volumeNameLen(baseVol) > 2 /* isUNC */ {
+	} else if base == "" && ut.volumeNameLen(baseVol) > 2 /* isUNC */ {
 		// Treat any targetpath matching `\\host\share` basepath as absolute path.
-		base = string(vu.pathSeparator)
+		base = string(ut.pathSeparator)
 	}
 
 	// Can't use IsAbs - `\a` and `a` are both relative in Windows.
-	baseSlashed := len(base) > 0 && base[0] == vu.pathSeparator
-	targSlashed := len(targ) > 0 && targ[0] == vu.pathSeparator
+	baseSlashed := len(base) > 0 && base[0] == ut.pathSeparator
+	targSlashed := len(targ) > 0 && targ[0] == ut.pathSeparator
 
 	if baseSlashed != targSlashed || !sameWord(baseVol, targVol) {
 		return "", errors.New("Rel: can't make " + targpath + " relative to " + basepath)
@@ -770,11 +692,11 @@ func (vu *Utils) Rel(basepath, targpath string) (string, error) {
 	var b0, bi, t0, ti int
 
 	for {
-		for bi < bl && base[bi] != vu.pathSeparator {
+		for bi < bl && base[bi] != ut.pathSeparator {
 			bi++
 		}
 
-		for ti < tl && targ[ti] != vu.pathSeparator {
+		for ti < tl && targ[ti] != ut.pathSeparator {
 			ti++
 		}
 
@@ -800,7 +722,7 @@ func (vu *Utils) Rel(basepath, targpath string) (string, error) {
 
 	if b0 != bl {
 		// Base elements left. Must go up before going down.
-		seps := strings.Count(base[b0:bl], string(vu.pathSeparator))
+		seps := strings.Count(base[b0:bl], string(ut.pathSeparator))
 		size := 2 + seps*3
 
 		if tl != t0 {
@@ -811,13 +733,13 @@ func (vu *Utils) Rel(basepath, targpath string) (string, error) {
 		n := copy(buf, "..")
 
 		for i := 0; i < seps; i++ {
-			buf[n] = vu.pathSeparator
+			buf[n] = ut.pathSeparator
 			copy(buf[n+1:], "..")
 			n += 3
 		}
 
 		if t0 != tl {
-			buf[n] = vu.pathSeparator
+			buf[n] = ut.pathSeparator
 			copy(buf[n+1:], targ[t0:])
 		}
 
@@ -832,11 +754,11 @@ func (vu *Utils) Rel(basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (vu *Utils) Split(path string) (dir, file string) {
-	vol := vu.VolumeName(path)
+func (ut *Utils) Split(path string) (dir, file string) {
+	vol := ut.VolumeName(path)
 
 	i := len(path) - 1
-	for i >= len(vol) && !vu.IsPathSeparator(path[i]) {
+	for i >= len(vol) && !ut.IsPathSeparator(path[i]) {
 		i--
 	}
 
@@ -852,27 +774,27 @@ func (vu *Utils) Split(path string) (dir, file string) {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vu *Utils) TempDir() string {
+func (ut *Utils) TempDir() string {
 	return TmpDir
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (vu *Utils) ToSlash(path string) string {
-	if vu.pathSeparator == '/' {
+func (ut *Utils) ToSlash(path string) string {
+	if ut.pathSeparator == '/' {
 		return path
 	}
 
-	return strings.ReplaceAll(path, string(vu.pathSeparator), "/")
+	return strings.ReplaceAll(path, string(ut.pathSeparator), "/")
 }
 
 // VolumeName returns leading volume name.
 // Given "C:\foo\bar" it returns "C:" on Windows.
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
-func (vu *Utils) VolumeName(path string) string {
-	return path[:vu.volumeNameLen(path)]
+func (ut *Utils) VolumeName(path string) string {
+	return path[:ut.volumeNameLen(path)]
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
@@ -886,12 +808,12 @@ func (vu *Utils) VolumeName(path string) string {
 // to walk that directory.
 //
 // WalkDir does not follow symbolic links.
-func (vu *Utils) WalkDir(vfs VFS, root string, fn fs.WalkDirFunc) error {
+func (ut *Utils) WalkDir(vfs VFS, root string, fn fs.WalkDirFunc) error {
 	info, err := vfs.Lstat(root)
 	if err != nil {
 		err = fn(root, nil, err)
 	} else {
-		err = vu.walkDir(vfs, root, &statDirEntry{info}, fn)
+		err = ut.walkDir(vfs, root, &statDirEntry{info}, fn)
 	}
 
 	if err == filepath.SkipDir {
@@ -904,7 +826,7 @@ func (vu *Utils) WalkDir(vfs VFS, root string, fn fs.WalkDirFunc) error {
 // WriteFile writes data to the named file, creating it if necessary.
 // If the file does not exist, WriteFile creates it with permissions perm (before umask);
 // otherwise WriteFile truncates it before writing, without changing permissions.
-func (vu *Utils) WriteFile(vfs VFS, name string, data []byte, perm fs.FileMode) error {
+func (ut *Utils) WriteFile(vfs VFS, name string, data []byte, perm fs.FileMode) error {
 	f, err := vfs.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
@@ -916,6 +838,63 @@ func (vu *Utils) WriteFile(vfs VFS, name string, data []byte, perm fs.FileMode) 
 	}
 
 	return err
+}
+
+// CopyFile copies a file between file systems and returns the hash sum of the source file.
+func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
+	src, err := srcFs.Open(srcPath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer src.Close()
+
+	dst, err := dstFs.Create(dstPath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		cerr := dst.Close()
+		if cerr == nil {
+			err = cerr
+		}
+	}()
+
+	var out io.Writer
+
+	if hasher == nil {
+		out = dst
+	} else {
+		hasher.Reset()
+		out = io.MultiWriter(dst, hasher)
+	}
+
+	_, err = copyBufPool(out, src)
+	if err != nil {
+		return nil, err
+	}
+
+	err = dst.Sync()
+	if err != nil {
+		return nil, err
+	}
+
+	info, err := srcFs.Stat(srcPath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = dstFs.Chmod(dstPath, info.Mode())
+	if err != nil {
+		return nil, err
+	}
+
+	if hasher == nil {
+		return nil, nil
+	}
+
+	return hasher.Sum(nil), nil
 }
 
 // CreateBaseDirs creates base directories on a file system.
@@ -966,6 +945,27 @@ func RunTimeOS() OSType {
 	default:
 		return OsUnknown
 	}
+}
+
+// SegmentPath segments string key paths by separator (using avfs.PathSeparator).
+// For example with path = "/a/b/c" it will return in successive calls :
+//
+// "a", "/b/c"
+// "b", "/c"
+// "c", ""
+//
+// 	for start, end, isLast := 1, 0, len(path) <= 1; !isLast; start = end + 1 {
+//		end, isLast = avfs.SegmentPath(path, start)
+//		fmt.Println(path[start:end], path[end:])
+//	}
+//
+func SegmentPath(pathSeparator uint8, path string, start int) (end int, isLast bool) {
+	pos := strings.IndexRune(path[start:], rune(pathSeparator))
+	if pos != -1 {
+		return start + pos, false
+	}
+
+	return len(path), true
 }
 
 // BaseDir is a directory always present in a file system.
