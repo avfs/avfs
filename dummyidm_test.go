@@ -27,18 +27,18 @@ import (
 )
 
 var (
-	// avfs.BaseIdm implements avfs.IdentityMgr interface.
-	_ avfs.IdentityMgr = &avfs.BaseIdm{}
+	// avfs.DummyIdm implements avfs.IdentityMgr interface.
+	_ avfs.IdentityMgr = &avfs.DummyIdm{}
 
 	// avfs.User struct implements avfs.UserReader interface.
-	_ avfs.UserReader = &avfs.User{}
+	_ avfs.UserReader = &avfs.DummyUser{}
 
 	// avfs.Group struct implements avfs.GroupReader interface.
-	_ avfs.GroupReader = &avfs.Group{}
+	_ avfs.GroupReader = &avfs.DummyGroup{}
 )
 
-func TestBaseIdm(t *testing.T) {
-	idm := avfs.NewBaseIdm()
+func TestDummyIdm(t *testing.T) {
+	idm := avfs.NewDummyIdm()
 
 	t.Logf("Idm = %v", idm.Type())
 
@@ -46,8 +46,8 @@ func TestBaseIdm(t *testing.T) {
 	sIdm.TestAll(t)
 }
 
-func TestBaseIdmFeatures(t *testing.T) {
-	idm := avfs.NewBaseIdm()
+func TestDummyIdmFeatures(t *testing.T) {
+	idm := avfs.NewDummyIdm()
 
 	if idm.Features() != 0 {
 		t.Errorf("Features : want Features to be 0, got %d", idm.Features())
