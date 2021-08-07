@@ -28,31 +28,25 @@ import (
 )
 
 var (
-	// avfs.BaseFS struct implements avfs.VFS interface.
-	_ avfs.VFS = &avfs.BaseFS{}
+	// avfs.DummyFS struct implements avfs.VFS interface.
+	_ avfs.VFS = &avfs.DummyFS{}
 
-	// avfs.BaseFile struct implements avfs.File interface.
-	_ avfs.File = &avfs.BaseFile{}
+	// avfs.DummyFile struct implements avfs.File interface.
+	_ avfs.File = &avfs.DummyFile{}
 
-	// avfs.BaseSysStat struct implements avfs.SysStater interface.
-	_ avfs.SysStater = &avfs.BaseSysStat{}
+	// avfs.DummySysStat struct implements avfs.SysStater interface.
+	_ avfs.SysStater = &avfs.DummySysStat{}
 )
 
-func initTest(tb testing.TB) *test.SuiteFS {
-	vfs := avfs.NewBaseFS()
+func TestDummyFS(t *testing.T) {
+	vfs := avfs.NewDummyFS()
 
-	sfs := test.NewSuiteFS(tb, &vfs)
-
-	return sfs
-}
-
-func TestBaseFS(t *testing.T) {
-	sfs := initTest(t)
+	sfs := test.NewSuiteFS(t, &vfs)
 	sfs.TestAll(t)
 }
 
-func TestBaseFSConfig(t *testing.T) {
-	vfs := avfs.NewBaseFS()
+func TestDummyFSConfig(t *testing.T) {
+	vfs := avfs.NewDummyFS()
 
 	if vfs.HasFeature(avfs.Feature(math.MaxUint64)) {
 		t.Error("HasFeature : want HasFeature(whatever) to be false, got true")
@@ -65,4 +59,11 @@ func TestBaseFSConfig(t *testing.T) {
 	if vfs.OSType() != avfs.OsLinux {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, vfs.OSType())
 	}
+}
+
+func TestDummyFSIdm(t *testing.T) {
+	vfs := avfs.NewDummyFS()
+
+	sIdm := test.NewSuiteIdm(t, &vfs)
+	sIdm.TestAll(t)
 }
