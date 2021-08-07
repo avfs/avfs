@@ -2480,8 +2480,8 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		sst := vfs.ToSysStat(nil)
 
-		if _, ok := sst.(*avfs.BaseSysStat); !ok {
-			t.Errorf("ToSysStat : want result of type BaseSysStat, got %s", reflect.TypeOf(sst).Name())
+		if _, ok := sst.(*avfs.DummySysStat); !ok {
+			t.Errorf("ToSysStat : want result of type DummySysStat, got %s", reflect.TypeOf(sst).Name())
 		}
 
 		return

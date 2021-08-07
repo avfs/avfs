@@ -35,7 +35,7 @@ type MemFS struct {
 	rootNode *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
 	curDir   string          // curDir is the current directory.
-	utils    avfs.Utils      // BaseFS represents the base file system.
+	utils    avfs.Utils      // utils are somme common functions used by emulated file system implementation.
 }
 
 // memAttrs represents the file system attributes for MemFS.

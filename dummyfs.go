@@ -37,9 +37,7 @@ type DummySysStat struct{}
 
 // NewDummyFS creates a new NewDummyFS file system.
 func NewDummyFS() DummyFS {
-	vfs := DummyFS{
-		utils: NewUtils(OsLinux),
-	}
+	vfs := DummyFS{utils: NewUtils(OsLinux)}
 
 	return vfs
 }
@@ -85,7 +83,7 @@ func (vfs *DummyFS) Abs(path string) (string, error) {
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
 func (vfs *DummyFS) Base(path string) string {
-	return vfs.utils.Base(vfs, path)
+	return vfs.utils.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.

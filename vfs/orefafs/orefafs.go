@@ -43,7 +43,7 @@ func (vfs *OrefaFS) Abs(path string) (string, error) {
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
 func (vfs *OrefaFS) Base(path string) string {
-	return vfs.utils.Base(vfs, path)
+	return vfs.utils.Base(path)
 }
 
 // Chdir changes the current working directory to the named directory.

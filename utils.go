@@ -28,7 +28,10 @@ import (
 	"strings"
 )
 
-// Utils are utilities functions used by some file system.
+// Utils are somme common functions used by emulated file system implementation.
+//
+// Most of these functions are extracted and adapted from Go standard library
+// to be used indifferently on Unix or Windows system.
 type Utils struct {
 	// OSType defines the operating system type.
 	osType OSType
@@ -73,13 +76,13 @@ func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (ut *Utils) Base(vfs VFS, path string) string {
+func (ut *Utils) Base(path string) string {
 	if path == "" {
 		return "."
 	}
 
 	// Strip trailing slashes.
-	for len(path) > 0 && vfs.IsPathSeparator(path[len(path)-1]) {
+	for len(path) > 0 && ut.IsPathSeparator(path[len(path)-1]) {
 		path = path[0 : len(path)-1]
 	}
 
@@ -88,7 +91,7 @@ func (ut *Utils) Base(vfs VFS, path string) string {
 
 	// Find the last element
 	i := len(path) - 1
-	for i >= 0 && !vfs.IsPathSeparator(path[i]) {
+	for i >= 0 && !ut.IsPathSeparator(path[i]) {
 		i--
 	}
 
