@@ -18,7 +18,6 @@ package orefafs
 
 import (
 	"io/fs"
-	"sync"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -31,8 +30,8 @@ func New(opts ...Option) *OrefaFS {
 		nodes:       make(nodes),
 		curDir:      string(avfs.PathSeparator),
 		feature:     avfs.FeatBasicFs | avfs.FeatHardlink,
-		mu:          sync.RWMutex{},
 		umask:       int32(avfs.UMask.Get()),
+		utils:       avfs.NewUtils(avfs.OsLinux),
 	}
 
 	vfs.nodes[string(avfs.PathSeparator)] = &node{
