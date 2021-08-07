@@ -154,7 +154,9 @@ func (vfs *RoFS) Create(name string) (avfs.File, error) {
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func (vfs *RoFS) CreateTemp(dir, pattern string) (avfs.File, error) {
-	return vfs.baseFS.CreateTemp(dir, pattern)
+	const op = "createtemp"
+
+	return &RoFile{}, &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -297,7 +299,9 @@ func (vfs *RoFS) MkdirAll(path string, perm fs.FileMode) error {
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func (vfs *RoFS) MkdirTemp(dir, prefix string) (name string, err error) {
-	return vfs.baseFS.MkdirTemp(dir, prefix)
+	const op = "mkdirtemp"
+
+	return "", &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 }
 
 // Open opens the named file for reading. If successful, methods on
@@ -487,5 +491,7 @@ func (vfs *RoFS) WalkDir(root string, fn fs.WalkDirFunc) error {
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
 func (vfs *RoFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
-	return vfs.baseFS.WriteFile(filename, data, perm)
+	const op = "open"
+
+	return &fs.PathError{Op: op, Path: filename, Err: avfs.ErrPermDenied}
 }
