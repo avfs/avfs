@@ -90,14 +90,7 @@ func TestBasePathFSOptions(t *testing.T) {
 }
 
 func TestBasePathFSFeatures(t *testing.T) {
-	mfs := memfs.New()
-
-	if mfs.HasFeature(avfs.FeatSymlink) {
-		t.Errorf("Features : want FeatSymlink present, got missing")
-	}
-
-	vfs := basepathfs.New(mfs, "/")
-
+	vfs := basepathfs.New(memfs.New(), "/")
 	if vfs.HasFeature(avfs.FeatSymlink) {
 		t.Errorf("Features : want FeatSymlink missing, got present")
 	}
@@ -106,10 +99,10 @@ func TestBasePathFSFeatures(t *testing.T) {
 		t.Errorf("Features : want FeatIdentityMgr missing, got present")
 	}
 
-	mfs = memfs.New(memfs.WithIdm(memidm.New()))
+	mfs := memfs.New(memfs.WithIdm(memidm.New()))
 
 	vfs = basepathfs.New(mfs, "/")
-	if vfs.HasFeature(avfs.FeatIdentityMgr) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		t.Errorf("Features : want FeatIdentityMgr present, got missing")
 	}
 }
