@@ -60,8 +60,8 @@ func NewUtils(osType OSType) Utils {
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
 func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
-	if vfs.IsAbs(path) {
-		return vfs.Clean(path), nil
+	if ut.IsAbs(path) {
+		return ut.Clean(path), nil
 	}
 
 	wd, err := vfs.Getwd()
@@ -69,7 +69,7 @@ func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
 		return "", err
 	}
 
-	return vfs.Join(wd, path), nil
+	return ut.Join(wd, path), nil
 }
 
 // Base returns the last element of path.
@@ -232,7 +232,7 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 	const op = "createtemp"
 
 	if dir == "" {
-		dir = vfs.TempDir()
+		dir = ut.TempDir()
 	}
 
 	prefix, suffix, err := ut.prefixAndSuffix(pattern)
@@ -248,7 +248,7 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 		name := prefix + ut.nextRandom() + suffix
 
 		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
-		if vfs.IsExist(err) {
+		if ut.IsExist(err) {
 			try++
 			if try < 10000 {
 				continue
@@ -523,7 +523,7 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
-		dir = vfs.TempDir()
+		dir = ut.TempDir()
 	}
 
 	prefix, suffix, err := ut.prefixAndSuffix(pattern)
@@ -542,7 +542,7 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 			return name, nil
 		}
 
-		if vfs.IsExist(err) {
+		if ut.IsExist(err) {
 			try++
 			if try < 10000 {
 				continue
@@ -551,9 +551,9 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 			return "", &fs.PathError{Op: op, Path: dir + string(ut.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
-		if vfs.IsNotExist(err) {
+		if ut.IsNotExist(err) {
 			_, err = vfs.Stat(dir)
-			if vfs.IsNotExist(err) {
+			if ut.IsNotExist(err) {
 				return "", err
 			}
 		}
