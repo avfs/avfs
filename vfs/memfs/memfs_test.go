@@ -48,19 +48,21 @@ var (
 
 func TestMemFS(t *testing.T) {
 	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
 	vfs := memfs.New(memfs.WithMainDirs())
+
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSOptionError(t *testing.T) {
 	test.CheckPanic(t, "PanicOnInvalidIdm", func() {
-		//		_ = memfs.New(memfs.WithIdm(avfs.NewBaseIdm()))
+		_ = memfs.New(memfs.WithIdm(avfs.NewDummyIdm()))
 	})
 }
 
