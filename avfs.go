@@ -31,15 +31,15 @@ const (
 	Avfs             = "avfs"            // Avfs is the name of the framework.
 	PathSeparator    = '/'               // PathSeparator is defined as a forward slash for all unix systems.
 	PathSeparatorWin = '\\'              // PathSeparatorWin is defined as a forward slash for Windows systems.
-	DefaultDirPerm   = 0o755             // DefaultDirPerm is the default permission for directories.
-	DefaultFilePerm  = 0o644             // DefaultFilePerm is the default permission for files.
+	DefaultDirPerm   = 0o777             // DefaultDirPerm is the default permission for directories.
+	DefaultFilePerm  = 0o666             // DefaultFilePerm is the default permission for files.
+	DefaultUmask     = fs.FileMode(0o22) // DefaultUmask is the default umask.
 	HomeDirPerm      = 0o700             // HomeDirPerm is the default permission for home directories.
 	HomeDir          = "/home"           // HomeDir is the home directory.
 	RootDir          = "/root"           // RootDir is the root directory.
 	TmpDir           = "/tmp"            // TmpDir is the tmp directory.
 	UsrRoot          = "root"            // UsrRoot is the root user.
 	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
-	DefaultUmask     = fs.FileMode(0o22) // DefaultUmask is the default umask when the syscall is not available.
 
 	// FileModeMask is the bitmask used for permissions.
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
