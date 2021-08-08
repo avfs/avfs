@@ -141,11 +141,8 @@ type Feature uint64
 //go:generate stringer -type Feature -trimprefix Feat -bitmask -output avfs_feature.go
 
 const (
-	// FeatAbsPath indicates that all paths passed as parameters are absolute paths.
-	FeatAbsPath Feature = 1 << iota
-
 	// FeatBasicFs indicates that the file system implements all basic functions.
-	FeatBasicFs
+	FeatBasicFs Feature = 1 << iota
 
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
@@ -176,10 +173,10 @@ type OSType uint8
 //go:generate stringer -type OSType -linecomment -output avfs_ostype.go
 
 const (
-	OsUnknown OSType = iota + 1 // Unknown
-	OsDarwin                    // Darwin
-	OsLinux                     // Linux
-	OsWindows                   // Windows
+	OsUnknown OSType = iota // Unknown
+	OsDarwin                // Darwin
+	OsLinux                 // Linux
+	OsWindows               // Windows
 )
 
 // PermMode defines the permissions to check for CheckPermission() function.
