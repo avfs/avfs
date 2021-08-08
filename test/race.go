@@ -143,16 +143,21 @@ const (
 // and expecting a result rr.
 func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs ...func() error) {
 	var (
-		wg      sync.WaitGroup
-		starter sync.RWMutex
-		wantOk  uint32
-		gotOk   uint32
-		wantErr uint32
-		gotErr  uint32
+		wgSetup    sync.WaitGroup
+		wgTeardown sync.WaitGroup
+		starter    sync.RWMutex
+		wantOk     uint32
+		gotOk      uint32
+		wantErr    uint32
+		gotErr     uint32
 	)
 
 	t.Run("Race_"+name, func(t *testing.T) {
-		wg.Add(sfs.maxRace * len(testFuncs))
+		maxGo := sfs.maxRace * len(testFuncs)
+
+		wgSetup.Add(maxGo)
+		wgTeardown.Add(maxGo)
+
 		starter.Lock()
 
 		for i := 0; i < sfs.maxRace; i++ {
@@ -160,9 +165,10 @@ func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs
 				go func(f func() error) {
 					defer func() {
 						starter.RUnlock()
-						wg.Done()
+						wgTeardown.Done()
 					}()
 
+					wgSetup.Done()
 					starter.RLock()
 
 					err := f()
@@ -177,8 +183,14 @@ func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs
 			}
 		}
 
+		// All goroutines wait for the Starter lock.
+		wgSetup.Wait()
+
+		// All goroutines execute the testFuncs.
 		starter.Unlock()
-		wg.Wait()
+
+		// Wait for all goroutines to stop.
+		wgTeardown.Wait()
 
 		switch rr {
 		case RaceNoneOk:
@@ -186,14 +198,14 @@ func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs
 		case RaceOneOk:
 			wantOk = 1
 		case RaceAllOk:
-			wantOk = uint32(sfs.maxRace)
+			wantOk = uint32(maxGo)
 		case RaceUndefined:
 			t.Logf("Race %s : ok = %d, error = %d", name, gotOk, gotErr)
 
 			return
 		}
 
-		wantErr = uint32(sfs.maxRace) - wantOk
+		wantErr = uint32(maxGo) - wantOk
 
 		if gotOk != wantOk {
 			t.Errorf("Race %s : want number of responses without error to be %d, got %d ", name, wantOk, gotOk)
