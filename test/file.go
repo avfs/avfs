@@ -32,11 +32,11 @@ import (
 
 // TestFileChdir tests File.Chdir function.
 func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
-	if sfs.OSType() == avfs.OsWindows {
+	vfs := sfs.vfsSetup
+
+	if vfs.OSType() == avfs.OsWindows {
 		return
 	}
-
-	vfs := sfs.vfsSetup
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
@@ -109,11 +109,11 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 
 // TestFileChmod tests File.Chmod function.
 func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
-	if sfs.OSType() == avfs.OsWindows {
+	vfs := sfs.vfsTest
+
+	if vfs.OSType() == avfs.OsWindows {
 		return
 	}
-
-	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
@@ -156,11 +156,11 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 
 // TestFileChown tests File.Chown function.
 func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
-	if sfs.OSType() == avfs.OsWindows {
+	vfs := sfs.vfsTest
+
+	if vfs.OSType() == avfs.OsWindows {
 		return
 	}
-
-	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)

@@ -44,7 +44,6 @@ type SuiteFS struct {
 	Groups      []avfs.GroupReader // Groups contains the test groups created with the identity manager.
 	Users       []avfs.UserReader  // Users contains the test users created with the identity manager.
 	maxRace     int                // maxRace is the maximum number of concurrent goroutines used in race tests.
-	osType      avfs.OSType        // osType is the operating system of the filesystem te test.
 	canTestPerm bool               // canTestPerm indicates if permissions can be tested.
 }
 
@@ -62,9 +61,8 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	_, file, _, _ := runtime.Caller(0)
 	initDir := filepath.Dir(file)
-	osType := avfs.RunTimeOS()
 
-	canTestPerm := osType != avfs.OsWindows &&
+	canTestPerm := vfs.OSType() != avfs.OsWindows &&
 		vfs.HasFeature(avfs.FeatBasicFs) &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) &&
 		initUser.IsRoot()
@@ -76,7 +74,6 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 		initUser:    initUser,
 		rootDir:     vfs.TempDir(),
 		maxRace:     1000,
-		osType:      osType,
 		canTestPerm: canTestPerm,
 	}
 
@@ -133,18 +130,6 @@ func WithVFSTest(vfsTest avfs.VFS) Option {
 			sfs.canTestPerm = false
 		}
 	}
-}
-
-// WithOS returns an option function which sets the operating system for the tests.
-func WithOS(osType avfs.OSType) Option {
-	return func(sfs *SuiteFS) {
-		sfs.osType = osType
-	}
-}
-
-// OSType returns the operating system, real or simulated.
-func (sfs *SuiteFS) OSType() avfs.OSType {
-	return sfs.osType
 }
 
 // User sets the test user to userName.
