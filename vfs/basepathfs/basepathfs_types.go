@@ -25,6 +25,7 @@ type BasePathFS struct {
 	baseFS   avfs.VFS
 	basePath string
 	feature  avfs.Feature
+	utils    avfs.Utils
 }
 
 // BasePathFile represents an open file descriptor.

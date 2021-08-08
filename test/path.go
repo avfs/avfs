@@ -764,7 +764,7 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 
 	sort.Strings(wantNames)
 
-	t.Run("Walk", func(t *testing.T) {
+	t.Run("WalkDir", func(t *testing.T) {
 		gotNames := make(map[string]int)
 		err := vfs.WalkDir(testDir, func(path string, info fs.DirEntry, err error) error {
 			gotNames[path]++

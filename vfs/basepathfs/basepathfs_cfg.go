@@ -44,6 +44,7 @@ func New(baseFs avfs.VFS, basePath string) *BasePathFS {
 		baseFS:   baseFs,
 		basePath: absPath,
 		feature:  baseFs.Features() &^ (avfs.FeatSymlink | avfs.FeatChroot),
+		utils:    avfs.NewUtils(baseFs.OSType()),
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {

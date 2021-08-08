@@ -24,13 +24,11 @@ import (
 
 // toBasePath transforms a BasePathFS path to a BaseFS path.
 func (vfs *BasePathFS) toBasePath(path string) string {
-	if path == "" {
-		return ""
+	if vfs.IsAbs(path) {
+		return vfs.basePath + path
 	}
 
-	absPath, _ := vfs.Abs(path)
-
-	return vfs.basePath + absPath
+	return path
 }
 
 // fromBasePath returns a BasePathFS path from a BaseFs path.
