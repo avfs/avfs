@@ -75,9 +75,9 @@ func main() {
 
 	switch os.Getenv("ENV") {
 	case "PROD": // The real file system for production.
-		vfs, _ = osfs.New()
+		vfs = osfs.New()
 	default: // in memory for tests.
-		vfs, _ = memfs.New(memfs.WithMainDirs())
+		vfs = memfs.New(memfs.WithMainDirs())
 	}
 
 	// From this point all references of 'os', 'path/filepath'
@@ -128,7 +128,7 @@ func main() {
 		groupName = "test_users"
 	)
 
-	vfs, _ := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
 	rootDir, _ := vfs.MkdirTemp("", avfs.Avfs)
 	vfs.Chmod(rootDir, 0o777)
@@ -155,14 +155,16 @@ func main() {
 
 	wg.Wait()
 
-	infos, _ := vfs.ReadDir(rootDir)
+	entries, _ := vfs.ReadDir(rootDir)
 
-	log.Println("number of dirs :", len(infos))
-	for _, info := range infos {
+	log.Println("number of dirs :", len(entries))
+	for _, entry := range entries {
+		info, _ := entry.Info()
 		sst := vfs.ToSysStat(info)
+
 		u, _ := vfs.LookupUserId(sst.Uid())
 
-		log.Println("directory :", info.Name(),
+		log.Println("dir :", info.Name(),
 			", mode :", info.Mode(),
 			", owner :", u.Name())
 	}
