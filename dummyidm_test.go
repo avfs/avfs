@@ -30,10 +30,10 @@ var (
 	// avfs.DummyIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &avfs.DummyIdm{}
 
-	// avfs.User struct implements avfs.UserReader interface.
+	// avfs.DummyUser struct implements avfs.UserReader interface.
 	_ avfs.UserReader = &avfs.DummyUser{}
 
-	// avfs.Group struct implements avfs.GroupReader interface.
+	// avfs.DummyGroup struct implements avfs.GroupReader interface.
 	_ avfs.GroupReader = &avfs.DummyGroup{}
 )
 

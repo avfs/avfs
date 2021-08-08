@@ -41,7 +41,7 @@ var (
 func TestDummyFS(t *testing.T) {
 	vfs := avfs.NewDummyFS()
 
-	sfs := test.NewSuiteFS(t, &vfs)
+	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
@@ -64,6 +64,6 @@ func TestDummyFSConfig(t *testing.T) {
 func TestDummyFSIdm(t *testing.T) {
 	vfs := avfs.NewDummyFS()
 
-	sIdm := test.NewSuiteIdm(t, &vfs)
+	sIdm := test.NewSuiteIdm(t, vfs)
 	sIdm.TestAll(t)
 }

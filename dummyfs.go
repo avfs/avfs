@@ -36,8 +36,8 @@ type DummySysStat struct{}
 // DummyFS configuration functions.
 
 // NewDummyFS creates a new NewDummyFS file system.
-func NewDummyFS() DummyFS {
-	vfs := DummyFS{utils: NewUtils(OsLinux)}
+func NewDummyFS() *DummyFS {
+	vfs := &DummyFS{utils: NewUtils(OsLinux)}
 
 	return vfs
 }
