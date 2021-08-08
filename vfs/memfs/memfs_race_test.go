@@ -28,10 +28,7 @@ import (
 )
 
 func TestRaceMemFS(t *testing.T) {
-	vfs, err := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
-	if err != nil {
-		t.Fatalf("New : want error to be nil, got %v", err)
-	}
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestRace(t)
