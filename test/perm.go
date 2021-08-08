@@ -48,6 +48,10 @@ type PermFunc func(path string) error
 
 // NewPermTest loads a golden file.
 func NewPermTest(sfs *SuiteFS, testDir string) *PermTest {
+	if sfs.vfsTest.OSType() == avfs.OsWindows {
+		return nil
+	}
+
 	name := filepath.Base(testDir)
 	fileName := fmt.Sprintf("perm%s.golden", name)
 	path := filepath.Join(sfs.initDir, "testdata", fileName)
@@ -71,8 +75,13 @@ func (pt *PermTest) PermFolder() string {
 
 // CreateDirs creates directories and sets permissions to all tests directories.
 func (pt *PermTest) CreateDirs(t *testing.T) {
+	if pt == nil {
+		return
+	}
+
 	sfs := pt.sfs
 	vfs := sfs.vfsSetup
+
 	sfs.User(t, UsrTest)
 
 	for _, ui := range UserInfos() {
@@ -94,6 +103,10 @@ func (pt *PermTest) registerGob() {
 
 // Load loads a permissions test file.
 func (pt *PermTest) Load(t *testing.T) {
+	if pt == nil {
+		return
+	}
+
 	f, err := os.Open(pt.path)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -119,6 +132,10 @@ func (pt *PermTest) Load(t *testing.T) {
 
 // Save saves a permissions test file.
 func (pt *PermTest) Save(t *testing.T) {
+	if pt == nil {
+		return
+	}
+
 	if !pt.create {
 		return
 	}
@@ -172,6 +189,10 @@ func (pt *PermTest) CompareErrors(t *testing.T, wantErr, err error) {
 
 // Test generates or tests the golden file of the permissions for a specific function.
 func (pt *PermTest) Test(t *testing.T, permFunc PermFunc) {
+	if pt == nil {
+		return
+	}
+
 	sfs := pt.sfs
 	vfs := sfs.vfsSetup
 
