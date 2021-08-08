@@ -46,11 +46,14 @@ func New(opts ...Option) *MemFS {
 		},
 		memAttrs: ma,
 		curDir:   string(avfs.PathSeparator),
-		utils:    avfs.NewUtils(avfs.OsLinux),
 	}
 
 	for _, opt := range opts {
 		opt(vfs)
+	}
+
+	if vfs.utils.OSType() == avfs.OsUnknown {
+		vfs.utils = avfs.NewUtils(avfs.OsLinux)
 	}
 
 	if !vfs.HasFeature(avfs.FeatMainDirs) {
@@ -133,8 +136,9 @@ func WithName(name string) Option {
 	}
 }
 
-func WithAbsPath() Option {
+// WithOS returns an option function which sets the OS type.
+func WithOS(osType avfs.OSType) Option {
 	return func(vfs *MemFS) {
-		vfs.memAttrs.feature |= avfs.FeatAbsPath
+		vfs.utils = avfs.NewUtils(osType)
 	}
 }

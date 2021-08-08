@@ -42,11 +42,7 @@ import (
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
 func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // consider to simplify the function
 	parent *dirNode, child node, absPath string, start, end int, err error) {
-	absPath = path
-	if !vfs.HasFeature(avfs.FeatAbsPath) {
-		absPath, _ = vfs.Abs(path)
-	}
-
+	absPath, _ = vfs.Abs(path)
 	rootNode := vfs.rootNode
 	parent = rootNode
 	slCount := 0
