@@ -154,6 +154,60 @@ func (ut *Utils) hasMeta(path string) bool {
 	return strings.ContainsAny(path, magicChars)
 }
 
+func (ut *Utils) joinWindows(elem []string) string {
+	for i, e := range elem {
+		if e != "" {
+			return ut.joinNonEmpty(elem[i:])
+		}
+	}
+
+	return ""
+}
+
+// joinNonEmpty is like join, but it assumes that the first element is non-empty.
+func (ut *Utils) joinNonEmpty(elem []string) string {
+	if len(elem[0]) == 2 && elem[0][1] == ':' {
+		// First element is drive letter without terminating slash.
+		// Keep path relative to current directory on that drive.
+		// Skip empty elements.
+		i := 1
+		for ; i < len(elem); i++ {
+			if elem[i] != "" {
+				break
+			}
+		}
+
+		return ut.Clean(elem[0] + strings.Join(elem[i:], string(ut.pathSeparator)))
+	}
+	// The following logic prevents Join from inadvertently creating a
+	// UNC path on Windows. Unless the first element is a UNC path, Join
+	// shouldn't create a UNC path. See golang.org/issue/9167.
+	p := ut.Clean(strings.Join(elem, string(ut.pathSeparator)))
+	if !ut.isUNC(p) {
+		return p
+	}
+
+	// p == UNC only allowed when the first element is a UNC path.
+	head := ut.Clean(elem[0])
+	if ut.isUNC(head) {
+		return p
+	}
+
+	// head + tail == UNC, but joining two non-UNC paths should not result
+	// in a UNC path. Undo creation of UNC path.
+	tail := ut.Clean(strings.Join(elem[1:], string(ut.pathSeparator)))
+	if head[len(head)-1] == ut.pathSeparator {
+		return head + tail
+	}
+
+	return head + string(ut.pathSeparator) + tail
+}
+
+// isUNC reports whether path is a UNC path.
+func (ut *Utils) isUNC(path string) bool {
+	return ut.volumeNameLen(path) > 2
+}
+
 func (ut *Utils) joinPath(dir, name string) string {
 	if len(dir) > 0 && ut.IsPathSeparator(dir[len(dir)-1]) {
 		return dir + name

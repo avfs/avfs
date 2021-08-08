@@ -423,14 +423,18 @@ func (ut *Utils) IsPathSeparator(c uint8) bool {
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
 func (ut *Utils) Join(elem ...string) string {
-	// If there's a bug here, fix the logic in ./path_plan9.go too.
-	for i, e := range elem {
-		if e != "" {
-			return ut.Clean(strings.Join(elem[i:], string(ut.pathSeparator)))
+	if ut.osType != OsWindows {
+		// If there's a bug here, fix the logic in ./path_plan9.go too.
+		for i, e := range elem {
+			if e != "" {
+				return ut.Clean(strings.Join(elem[i:], string(ut.pathSeparator)))
+			}
 		}
+
+		return ""
 	}
 
-	return ""
+	return ut.joinWindows(elem)
 }
 
 // Match reports whether name matches the shell file name pattern.
