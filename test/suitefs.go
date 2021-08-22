@@ -306,7 +306,7 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 
 	err = vfs.WalkDir(testDir, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
-			return nil
+			return err
 		}
 
 		return vfs.Chmod(path, 0o777)

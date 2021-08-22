@@ -160,7 +160,7 @@ const (
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
 	FeatReadOnly
 
-	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS)
+	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS).
 	FeatRealFS
 
 	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).

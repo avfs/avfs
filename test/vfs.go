@@ -18,7 +18,6 @@ package test
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -1907,10 +1906,6 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveDir", func(t *testing.T) {
-		if s, ok := vfs.(fmt.Stringer); ok {
-			fmt.Println(s.String())
-		}
-
 		wantDirErr := avfs.ErrDirNotEmpty
 
 		if vfs.OSType() == avfs.OsWindows {

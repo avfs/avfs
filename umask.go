@@ -22,7 +22,7 @@ import (
 )
 
 // UMaskType is the file mode creation mask.
-// it must be set to be read, so it must be protected with a mutex.
+// It must be set to be read, so it must be protected with a mutex.
 type UMaskType struct {
 	once sync.Once
 	mu   sync.RWMutex

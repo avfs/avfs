@@ -21,29 +21,29 @@ import (
 	"strings"
 )
 
-// ErrRndTreeOutOfRange defines the generic error for out of range parameters RndTreeParams.
-type ErrRndTreeOutOfRange string
+// RndTreeError defines the generic error for out of range parameters RndTreeParams.
+type RndTreeError string
 
-// Error returns an ErrRndTreeOutOfRange error.
-func (e ErrRndTreeOutOfRange) Error() string {
+// Error returns an RndTreeError error.
+func (e RndTreeError) Error() string {
 	return string(e) + " parameter out of range"
 }
 
 var (
 	// ErrNameOutOfRange is the error when MinName or MaxName is out of range.
-	ErrNameOutOfRange = ErrRndTreeOutOfRange("name")
+	ErrNameOutOfRange = RndTreeError("name")
 
 	// ErrDirsOutOfRange is the error when MinDirs or MaxDirs is out of range.
-	ErrDirsOutOfRange = ErrRndTreeOutOfRange("dirs")
+	ErrDirsOutOfRange = RndTreeError("dirs")
 
 	// ErrFilesOutOfRange is the error when MinFiles or MaxFiles is out of range.
-	ErrFilesOutOfRange = ErrRndTreeOutOfRange("files")
+	ErrFilesOutOfRange = RndTreeError("files")
 
 	// ErrFileSizeOutOfRange is the error when MinFileSize or MaxFileSize is out of range.
-	ErrFileSizeOutOfRange = ErrRndTreeOutOfRange("file size")
+	ErrFileSizeOutOfRange = RndTreeError("file size")
 
 	// ErrSymlinksOutOfRange is the error when MinSymlinks or MaxSymlinks is out of range.
-	ErrSymlinksOutOfRange = ErrRndTreeOutOfRange("symbolic links")
+	ErrSymlinksOutOfRange = RndTreeError("symbolic links")
 )
 
 // RndTreeParams defines the parameters to generate a random file system tree

@@ -25,7 +25,7 @@ import (
 )
 
 // Set sets the file mode creation mask.
-// umask must be set to 0 using umask(2) system call to be read,
+// Umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask fs.FileMode) {
 	um.mu.Lock()
