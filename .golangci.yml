@@ -165,14 +165,19 @@ linters:
   enable:
     - asciicheck
     - bodyclose
+    #- cyclop
     - deadcode
     - depguard
     - dogsled
+    - durationcheck
     #- dupl
     - errcheck
+    - errname
     #- errorlint
     #- exhaustive
     - exportloopref
+    - forbidigo
+    #- forcetypeassert
     #- funlen
     - gci
     - gochecknoglobals
@@ -188,34 +193,51 @@ linters:
     - gofumpt
     #- goheader
     - goimports
+    - golint
     #- gomnd
     - goprintffuncname
     #- gosec
     - gosimple
     - govet
+    #- ifshort
     - ineffassign
+    - importas
+    - interfacer
     - lll
+    - makezero
+    - maligned
+    #- nestif
     - misspell
     - nakedret
+    #- nilerr
     - nlreturn
     #- nestif
     - noctx
     - nolintlint
+    #- paralleltest
     - prealloc
+    - predeclared
+    - promlinter
     - revive
     - rowserrcheck
+    #- scopelint
     - sqlclosecheck
     - staticcheck
     - structcheck
     - stylecheck
+    - tagliatelle
     - testpackage
+    #- thelper
+    - tparallel
     - typecheck
     - unconvert
     - unparam
     - unused
     - varcheck
     - vet
+    #- wastedassign
     - whitespace
+    #- wrapcheck
     - wsl
 
 issues:
@@ -223,6 +245,7 @@ issues:
   exclude-rules:
     - text: ".*id.* should be .*ID.*"
       linters:
+        - golint
         - revive
         - stylecheck
     - text: "exported: exported const"
