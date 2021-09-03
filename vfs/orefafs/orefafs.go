@@ -923,7 +923,7 @@ func (vfs *OrefaFS) Symlink(oldname, newname string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfs *OrefaFS) TempDir() string {
-	return vfs.utils.TempDir()
+	return vfs.utils.TempDir(vfs)
 }
 
 // ToSlash returns the result of replacing each separator character

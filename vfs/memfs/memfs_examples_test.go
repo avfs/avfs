@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
@@ -29,9 +28,11 @@ import (
 func ExampleNew() {
 	vfs := memfs.New()
 
-	_, err := vfs.Stat(avfs.TmpDir)
+	tmpDir := vfs.TempDir()
+
+	_, err := vfs.Stat(tmpDir)
 	if vfs.IsNotExist(err) {
-		fmt.Printf("%s does not exist", avfs.TmpDir)
+		fmt.Printf("%s does not exist", tmpDir)
 	}
 
 	// Output: /tmp does not exist
@@ -40,7 +41,7 @@ func ExampleNew() {
 func ExampleWithMainDirs() {
 	vfs := memfs.New(memfs.WithMainDirs())
 
-	info, err := vfs.Stat(avfs.TmpDir)
+	info, err := vfs.Stat(vfs.TempDir())
 	if err != nil {
 		log.Fatalf("stat : want error to be nil, got %v", err)
 	}

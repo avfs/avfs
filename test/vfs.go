@@ -21,7 +21,6 @@ import (
 	"io"
 	"io/fs"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -659,30 +658,20 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 // TestTempDir tests TempDir function.
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
+	wantTmpDir := os.TempDir()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		tmp := vfs.TempDir()
-		if tmp != avfs.TmpDir {
-			t.Errorf("TempDir : want error to be %v, got %v", avfs.NotImplemented, tmp)
+		tmpDir := vfs.TempDir()
+		if tmpDir != wantTmpDir {
+			t.Errorf("TempDir : want error to be %v, got %v", wantTmpDir, tmpDir)
 		}
 
 		return
 	}
 
-	var wantTmp string
-
-	switch vfs.OSType() {
-	case avfs.OsDarwin:
-		wantTmp, _ = filepath.EvalSymlinks(os.TempDir())
-	case avfs.OsWindows:
-		wantTmp = os.Getenv("TMP")
-	default:
-		wantTmp = avfs.TmpDir
-	}
-
-	gotTmp := vfs.TempDir()
-	if gotTmp != wantTmp {
-		t.Fatalf("TempDir : want temp dir to be %s, got %s", wantTmp, gotTmp)
+	tmpDir := vfs.TempDir()
+	if tmpDir != wantTmpDir {
+		t.Fatalf("TempDir : want temp dir to be %s, got %s", wantTmpDir, tmpDir)
 	}
 }
 

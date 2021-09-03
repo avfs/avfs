@@ -109,7 +109,7 @@ func TestBasePathFSFeatures(t *testing.T) {
 
 func TestBasepathFSOSType(t *testing.T) {
 	vfsBase := memfs.New(memfs.WithMainDirs())
-	vfs := basepathfs.New(vfsBase, avfs.TmpDir)
+	vfs := basepathfs.New(vfsBase, vfsBase.TempDir())
 
 	ost := vfs.OSType()
 	if ost != vfsBase.OSType() {

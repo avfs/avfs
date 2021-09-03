@@ -90,7 +90,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 		opt(sfs)
 	}
 
-	rootDir, err := vfs.MkdirTemp("", avfs.Avfs)
+	rootDir, err := vfs.MkdirTemp("", "avfs")
 	if err != nil {
 		tb.Fatalf("MkdirTemp %s : want error to be nil, got %s", rootDir, err)
 	}

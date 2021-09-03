@@ -30,6 +30,8 @@ import (
 
 // TestCopyFile tests avfs.CopyFile function.
 func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
+	const pattern = "CopyFile"
+
 	srcFs := sfs.VFSSetup()
 
 	if !srcFs.HasFeature(avfs.FeatBasicFs) {
@@ -57,7 +59,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	h := sha512.New()
 
 	t.Run("CopyFile_WithHashSum", func(t *testing.T) {
-		dstDir, err := dstFs.MkdirTemp("", avfs.Avfs)
+		dstDir, err := dstFs.MkdirTemp("", pattern)
 		if err != nil {
 			t.Fatalf("MkdirTemp : want error to be nil, got %v", err)
 		}
@@ -86,7 +88,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	})
 
 	t.Run("CopyFile", func(t *testing.T) {
-		dstDir, err := dstFs.MkdirTemp("", avfs.Avfs)
+		dstDir, err := dstFs.MkdirTemp("", pattern)
 		if err != nil {
 			t.Fatalf("MkdirTemp : want error to be nil, got %v", err)
 		}
@@ -136,7 +138,7 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
 	}
 
-	for _, dir := range avfs.BaseDirs {
+	for _, dir := range avfs.BaseDirs(vfs) {
 		info, err := vfs.Stat(dir.Path)
 		if err != nil {
 			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)

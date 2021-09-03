@@ -643,14 +643,18 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 		return
 	}
 
-	homeDir := vfs.Join(avfs.HomeDir, u.Name())
+	homeDir := vfs.Join(avfs.HomeDir(vfs), u.Name())
 
 	fst, err := vfs.Stat(homeDir)
 	if err != nil {
 		t.Errorf("Stat %s : want error to be nil, got %v", homeDir, err)
 	}
 
-	wantMode := fs.ModeDir | avfs.HomeDirPerm&^vfs.GetUMask()
+	if vfs.OSType() == avfs.OsWindows {
+		return
+	}
+
+	wantMode := fs.ModeDir | avfs.HomeDirPerm(vfs)&^vfs.GetUMask()
 	if fst.Mode() != wantMode {
 		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
 	}

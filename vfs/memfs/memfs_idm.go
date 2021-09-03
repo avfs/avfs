@@ -102,7 +102,7 @@ func (vfs *MemFS) User(name string) (avfs.UserReader, error) {
 	}
 
 	vfs.user = user
-	vfs.curDir = vfs.Join(avfs.HomeDir, user.Name())
+	vfs.curDir = vfs.Join(avfs.HomeDir(vfs), user.Name())
 
 	return user, nil
 }
@@ -132,7 +132,7 @@ func (vfs *MemFS) UserDel(name string) error {
 		return err
 	}
 
-	userDir := vfs.Join(avfs.HomeDir, name)
+	userDir := vfs.Join(avfs.HomeDir(vfs), name)
 
 	err = vfs.RemoveAll(userDir)
 	if err != nil {

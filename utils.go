@@ -232,7 +232,7 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 	const op = "createtemp"
 
 	if dir == "" {
-		dir = ut.TempDir()
+		dir = ut.TempDir(vfs)
 	}
 
 	prefix, suffix, err := ut.prefixAndSuffix(pattern)
@@ -527,7 +527,7 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
-		dir = ut.TempDir()
+		dir = ut.TempDir(vfs)
 	}
 
 	prefix, suffix, err := ut.prefixAndSuffix(pattern)
@@ -781,8 +781,12 @@ func (ut *Utils) Split(path string) (dir, file string) {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (ut *Utils) TempDir() string {
-	return TmpDir
+func (ut *Utils) TempDir(vfs VFS) string {
+	if vfs.OSType() != OsWindows {
+		return "/tmp"
+	}
+
+	return vfs.Join("C:\\Users", vfs.CurrentUser().Name(), "AppData\\Local\\Temp")
 }
 
 // ToSlash returns the result of replacing each separator character
@@ -904,9 +908,34 @@ func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum 
 	return hasher.Sum(nil), nil
 }
 
+// DirInfo contains information to create a directory.
+type DirInfo struct {
+	Path string
+	Perm fs.FileMode
+}
+
+// BaseDirs returns an array of directories always present in the file system.
+func BaseDirs(vfs VFS) []DirInfo {
+	switch vfs.OSType() {
+	case OsWindows:
+		return []DirInfo{
+			{Path: HomeDir(vfs), Perm: 777},
+			{Path: vfs.Join(HomeDir(vfs), "Default"), Perm: 777},
+			{Path: "C:\\Windows", Perm: 0o777},
+			{Path: "C:\\Windows\\Temp", Perm: 0o777},
+		}
+	default:
+		return []DirInfo{
+			{Path: HomeDir(vfs), Perm: HomeDirPerm(vfs)},
+			{Path: "/root", Perm: 0o700},
+			{Path: "/tmp", Perm: 0o777},
+		}
+	}
+}
+
 // CreateBaseDirs creates base directories on a file system.
 func CreateBaseDirs(vfs VFS, basePath string) error {
-	for _, dir := range BaseDirs {
+	for _, dir := range BaseDirs(vfs) {
 		path := vfs.Join(basePath, dir.Path)
 
 		err := vfs.Mkdir(path, dir.Perm)
@@ -914,20 +943,37 @@ func CreateBaseDirs(vfs VFS, basePath string) error {
 			return err
 		}
 
-		err = vfs.Chmod(path, dir.Perm)
-		if err != nil {
-			return err
+		if vfs.OSType() != OsWindows {
+			err = vfs.Chmod(path, dir.Perm)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
 	return nil
 }
 
+// HomeDir returns the home directory of the file system.
+func HomeDir(vfs VFS) string {
+	switch vfs.OSType() {
+	case OsWindows:
+		return "C:\\User"
+	default:
+		return "/home"
+	}
+}
+
+// HomeDirPerm return the default permission for home directories.
+func HomeDirPerm(vfs VFS) fs.FileMode {
+	return 0o755
+}
+
 // CreateHomeDir creates the home directory of a user.
 func CreateHomeDir(vfs VFS, u UserReader) (UserReader, error) {
-	userDir := vfs.Join(HomeDir, u.Name())
+	userDir := vfs.Join(HomeDir(vfs), u.Name())
 
-	err := vfs.Mkdir(userDir, HomeDirPerm)
+	err := vfs.Mkdir(userDir, HomeDirPerm(vfs))
 	if err != nil {
 		return nil, err
 	}
@@ -973,19 +1019,6 @@ func SegmentPath(pathSeparator uint8, path string, start int) (end int, isLast b
 	}
 
 	return len(path), true
-}
-
-// BaseDir is a directory always present in a file system.
-type BaseDir struct {
-	Path string
-	Perm fs.FileMode
-}
-
-// BaseDirs are the base directories present in a file system.
-var BaseDirs = []BaseDir{ //nolint:gochecknoglobals // Used by CreateBaseDirs and TestCreateBaseDirs.
-	{Path: HomeDir, Perm: 0o755},
-	{Path: RootDir, Perm: 0o700},
-	{Path: TmpDir, Perm: 0o777},
 }
 
 type statDirEntry struct {
