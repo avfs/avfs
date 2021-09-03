@@ -193,7 +193,6 @@ linters:
     - gofumpt
     #- goheader
     - goimports
-    - golint
     #- gomnd
     - goprintffuncname
     #- gosec
@@ -202,10 +201,8 @@ linters:
     #- ifshort
     - ineffassign
     - importas
-    - interfacer
     - lll
     - makezero
-    - maligned
     #- nestif
     - misspell
     - nakedret
