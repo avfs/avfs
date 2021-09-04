@@ -1102,7 +1102,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", newPath, wantName, info.Name())
 			}
 
-			if wantMode != info.Mode() {
+			if sfs.canTestPerm && wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", newPath, wantMode, info.Mode())
 			}
 		}

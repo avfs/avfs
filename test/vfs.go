@@ -238,7 +238,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) || vfs.OSType() == avfs.OsWindows {
+	if !sfs.canTestPerm {
 		err := vfs.Chown(testDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -679,7 +679,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) || vfs.OSType() == avfs.OsWindows {
+	if !sfs.canTestPerm {
 		err := vfs.Lchown(testDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -2393,7 +2393,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", newPath, wantName, info.Name())
 			}
 
-			if wantMode != info.Mode() {
+			if sfs.canTestPerm && wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", newPath, wantMode, info.Mode())
 			}
 		}
