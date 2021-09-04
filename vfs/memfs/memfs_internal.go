@@ -215,24 +215,6 @@ func (bn *baseNode) Lock() {
 	bn.mu.Lock()
 }
 
-// permMode returns the access mode of the node bn.
-func (bn *baseNode) permMode(u avfs.UserReader) avfs.PermMode {
-	if u.IsRoot() {
-		return avfs.PermRWX
-	}
-
-	mode := bn.mode
-
-	switch {
-	case bn.uid == u.Uid():
-		mode >>= 6
-	case bn.gid == u.Gid():
-		mode >>= 3
-	}
-
-	return avfs.PermMode(mode)
-}
-
 // setModTime sets the modification time of the node.
 func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) error {
 	if bn.uid != u.Uid() && !u.IsRoot() {
@@ -405,15 +387,6 @@ func (fn *fileNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
 // size returns the size of the file.
 func (fn *fileNode) size() int64 {
 	return int64(len(fn.data))
-}
-
-// Size returns the size of the file.
-func (fn *fileNode) Size() int64 {
-	fn.mu.RLock()
-	s := fn.size()
-	fn.mu.RUnlock()
-
-	return s
 }
 
 // truncate truncates the file.

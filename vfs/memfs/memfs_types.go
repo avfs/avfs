@@ -77,9 +77,6 @@ type node interface {
 	// Lock locks the node.
 	Lock()
 
-	// permMode returns de permission of the user u on the node bn.
-	permMode(u avfs.UserReader) avfs.PermMode
-
 	// setMode sets the permissions of the node.
 	setMode(mode fs.FileMode, u avfs.UserReader) error
 
