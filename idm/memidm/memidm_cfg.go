@@ -20,12 +20,12 @@ import "github.com/avfs/avfs"
 
 // New creates a new identity manager.
 func New() *MemIdm {
-	groupRoot := &Group{
+	groupRoot := &MemGroup{
 		name: avfs.UsrRoot,
 		gid:  0,
 	}
 
-	userRoot := &User{
+	userRoot := &MemUser{
 		name: avfs.UsrRoot,
 		uid:  0,
 		gid:  0,

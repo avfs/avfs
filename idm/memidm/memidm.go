@@ -33,7 +33,7 @@ func (idm *MemIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	idm.maxGid++
 	gid := idm.maxGid
 
-	g := &Group{name: name, gid: gid}
+	g := &MemGroup{name: name, gid: gid}
 	idm.groupsByName[name] = g
 	idm.groupsById[gid] = g
 
@@ -129,7 +129,7 @@ func (idm *MemIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	idm.maxUid++
 	uid := idm.maxUid
 
-	u := &User{
+	u := &MemUser{
 		name: name,
 		uid:  uid,
 		gid:  g.Gid(),
@@ -157,36 +157,36 @@ func (idm *MemIdm) UserDel(name string) error {
 	return nil
 }
 
-// User
+// MemUser
 
 // Name returns the user name.
-func (u *User) Name() string {
+func (u *MemUser) Name() string {
 	return u.name
 }
 
 // Gid returns the primary group ID of the user.
-func (u *User) Gid() int {
+func (u *MemUser) Gid() int {
 	return u.gid
 }
 
 // IsRoot returns true if the user has root privileges.
-func (u *User) IsRoot() bool {
+func (u *MemUser) IsRoot() bool {
 	return u.uid == 0 || u.gid == 0
 }
 
 // Uid returns the user ID.
-func (u *User) Uid() int {
+func (u *MemUser) Uid() int {
 	return u.uid
 }
 
-// Group
+// MemGroup
 
 // Gid returns the group ID.
-func (g *Group) Gid() int {
+func (g *MemGroup) Gid() int {
 	return g.gid
 }
 
 // Name returns the group name.
-func (g *Group) Name() string {
+func (g *MemGroup) Name() string {
 	return g.name
 }

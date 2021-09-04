@@ -39,26 +39,26 @@ type MemIdm struct {
 }
 
 // groupsByName is the map of groups by group name.
-type groupsByName map[string]*Group
+type groupsByName map[string]*MemGroup
 
 // groupsById is the map of the groups by group id.
-type groupsById map[int]*Group
+type groupsById map[int]*MemGroup
 
 // usersByName is the map of the users by user name.
-type usersByName map[string]*User
+type usersByName map[string]*MemUser
 
 // usersById is the map of the users by user id.
-type usersById map[int]*User
+type usersById map[int]*MemUser
 
-// User is the implementation of avfs.UserReader.
-type User struct {
+// MemUser is the implementation of avfs.UserReader.
+type MemUser struct {
 	name string
 	uid  int
 	gid  int
 }
 
-// Group is the implementation of avfs.GroupReader.
-type Group struct {
+// MemGroup is the implementation of avfs.GroupReader.
+type MemGroup struct {
 	name string
 	gid  int
 }
