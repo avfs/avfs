@@ -29,34 +29,34 @@ func (idm *OsIdm) CurrentUser() avfs.UserReader {
 // group
 
 // Gid returns the group ID.
-func (g *Group) Gid() int {
+func (g *OsGroup) Gid() int {
 	return g.gid
 }
 
 // Name returns the group name.
-func (g *Group) Name() string {
+func (g *OsGroup) Name() string {
 	return g.name
 }
 
 // user
 
 // Gid returns the primary group ID of the user.
-func (u *User) Gid() int {
+func (u *OsUser) Gid() int {
 	return u.gid
 }
 
 // IsRoot returns true if the user has root privileges.
-func (u *User) IsRoot() bool {
+func (u *OsUser) IsRoot() bool {
 	return u.uid == 0 || u.gid == 0
 }
 
 // Name returns the user name.
-func (u *User) Name() string {
+func (u *OsUser) Name() string {
 	return u.name
 }
 
 // Uid returns the user ID.
-func (u *User) Uid() int {
+func (u *OsUser) Uid() int {
 	return u.uid
 }
 

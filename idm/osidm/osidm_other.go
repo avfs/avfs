@@ -55,7 +55,7 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
-// User sets the current user of the file system to uid.
+// OsUser sets the current user of the file system to uid.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied

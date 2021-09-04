@@ -31,11 +31,11 @@ var (
 	// OsIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &osidm.OsIdm{}
 
-	// User implements avfs.UserReader interface.
-	_ avfs.UserReader = &osidm.User{}
+	// OsUser implements avfs.UserReader interface.
+	_ avfs.UserReader = &osidm.OsUser{}
 
-	// Group implements avfs.GroupReader interface.
-	_ avfs.GroupReader = &osidm.Group{}
+	// OsGroup implements avfs.GroupReader interface.
+	_ avfs.GroupReader = &osidm.OsGroup{}
 )
 
 // TestOsIdmAll run all tests.

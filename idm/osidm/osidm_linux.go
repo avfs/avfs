@@ -140,7 +140,7 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return lookupUserId(uid)
 }
 
-// User sets the current user of the file system to uid.
+// OsUser sets the current user of the file system to uid.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
 	const op = "user"
@@ -267,7 +267,7 @@ func (idm *OsIdm) UserDel(name string) error {
 	return nil
 }
 
-func currentUser() *User {
+func currentUser() *OsUser {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -283,13 +283,13 @@ func currentUser() *User {
 
 type compareFunc func(line []string, value string) bool
 
-func lookupGroup(name string) (*Group, error) {
+func lookupGroup(name string) (*OsGroup, error) {
 	return lookupGroupFunc(func(line []string, value string) bool { return line[0] == value },
 		name,
 		avfs.UnknownGroupError(name))
 }
 
-func lookupGroupId(gid int) (*Group, error) {
+func lookupGroupId(gid int) (*OsGroup, error) {
 	sGid := strconv.Itoa(gid)
 
 	return lookupGroupFunc(func(line []string, value string) bool { return line[2] == value },
@@ -297,7 +297,7 @@ func lookupGroupId(gid int) (*Group, error) {
 		avfs.UnknownGroupIdError(gid))
 }
 
-func lookupGroupFunc(compareFunc compareFunc, value string, notFoundErr error) (*Group, error) {
+func lookupGroupFunc(compareFunc compareFunc, value string, notFoundErr error) (*OsGroup, error) {
 	f, err := os.Open(groupFile)
 	if err != nil {
 		return nil, err
@@ -325,7 +325,7 @@ func lookupGroupFunc(compareFunc compareFunc, value string, notFoundErr error) (
 		if compareFunc(line, value) {
 			gid, _ := strconv.Atoi(line[2])
 
-			g := &Group{
+			g := &OsGroup{
 				name: line[0],
 				gid:  gid,
 			}
@@ -335,13 +335,13 @@ func lookupGroupFunc(compareFunc compareFunc, value string, notFoundErr error) (
 	}
 }
 
-func lookupUser(name string) (*User, error) {
+func lookupUser(name string) (*OsUser, error) {
 	return lookupUserFunc(func(line []string, value string) bool { return line[0] == value },
 		name,
 		avfs.UnknownUserError(name))
 }
 
-func lookupUserId(uid int) (*User, error) {
+func lookupUserId(uid int) (*OsUser, error) {
 	sUid := strconv.Itoa(uid)
 
 	return lookupUserFunc(func(line []string, value string) bool { return line[2] == value },
@@ -349,7 +349,7 @@ func lookupUserId(uid int) (*User, error) {
 		avfs.UnknownUserIdError(uid))
 }
 
-func lookupUserFunc(compareFunc compareFunc, value string, notFoundErr error) (*User, error) {
+func lookupUserFunc(compareFunc compareFunc, value string, notFoundErr error) (*OsUser, error) {
 	f, err := os.Open(userFile)
 	if err != nil {
 		return nil, err
@@ -378,7 +378,7 @@ func lookupUserFunc(compareFunc compareFunc, value string, notFoundErr error) (*
 			uid, _ := strconv.Atoi(line[2])
 			gid, _ := strconv.Atoi(line[3])
 
-			u := &User{
+			u := &OsUser{
 				name: line[0],
 				uid:  uid,
 				gid:  gid,

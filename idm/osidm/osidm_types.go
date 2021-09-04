@@ -24,14 +24,14 @@ type OsIdm struct {
 	feature  avfs.Feature
 }
 
-// Group is the implementation of avfs.GroupReader.
-type Group struct {
+// OsGroup is the implementation of avfs.GroupReader.
+type OsGroup struct {
 	name string
 	gid  int
 }
 
-// User is the implementation of avfs.UserReader.
-type User struct {
+// OsUser is the implementation of avfs.UserReader.
+type OsUser struct {
 	name string
 	uid  int
 	gid  int
