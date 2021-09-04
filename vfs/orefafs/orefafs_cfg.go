@@ -50,7 +50,7 @@ func New(opts ...Option) *OrefaFS {
 		_ = avfs.CreateBaseDirs(vfs, "")
 
 		vfs.umask = um
-		vfs.curDir = avfs.RootDir
+		vfs.curDir = string(avfs.PathSeparator)
 	}
 
 	return vfs

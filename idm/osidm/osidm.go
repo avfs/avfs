@@ -26,7 +26,7 @@ func (idm *OsIdm) CurrentUser() avfs.UserReader {
 	return currentUser()
 }
 
-// group
+// OsGroup
 
 // Gid returns the group ID.
 func (g *OsGroup) Gid() int {
@@ -38,7 +38,7 @@ func (g *OsGroup) Name() string {
 	return g.name
 }
 
-// user
+// OsUser
 
 // Gid returns the primary group ID of the user.
 func (u *OsUser) Gid() int {

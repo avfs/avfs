@@ -33,7 +33,6 @@ const (
 	DefaultDirPerm   = 0o777             // DefaultDirPerm is the default permission for directories.
 	DefaultFilePerm  = 0o666             // DefaultFilePerm is the default permission for files.
 	DefaultUmask     = fs.FileMode(0o22) // DefaultUmask is the default umask.
-	RootDir          = "/root"           // RootDir is the root directory.
 	UsrRoot          = "root"            // UsrRoot is the root user.
 	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
 
@@ -745,7 +744,7 @@ type UserReader interface {
 	// IsRoot returns true if the user has root privileges.
 	IsRoot() bool
 
-	// Name returns the user name.
+	// Name returns the username.
 	Name() string
 }
 

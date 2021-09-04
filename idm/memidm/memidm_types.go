@@ -44,7 +44,7 @@ type groupsByName map[string]*MemGroup
 // groupsById is the map of the groups by group id.
 type groupsById map[int]*MemGroup
 
-// usersByName is the map of the users by user name.
+// usersByName is the map of the users by username.
 type usersByName map[string]*MemUser
 
 // usersById is the map of the users by user id.

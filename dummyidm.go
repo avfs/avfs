@@ -128,7 +128,7 @@ func (idm *DummyIdm) UserDel(name string) error {
 	return ErrPermDenied
 }
 
-// Group
+// DummyGroup
 
 // Gid returns the Group ID.
 func (g *DummyGroup) Gid() int {
@@ -140,7 +140,7 @@ func (g *DummyGroup) Name() string {
 	return g.name
 }
 
-// User
+// DummyUser
 
 // Gid returns the primary Group ID of the User.
 func (u *DummyUser) Gid() int {

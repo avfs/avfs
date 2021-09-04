@@ -56,27 +56,21 @@ func New(opts ...Option) *MemFS {
 		vfs.utils = avfs.NewUtils(avfs.OsLinux)
 	}
 
-	if !vfs.HasFeature(avfs.FeatMainDirs) {
-		return vfs
-	}
+	if vfs.HasFeature(avfs.FeatMainDirs) {
+		u := vfs.user
+		um := ma.umask
 
-	um := ma.umask
-	ma.umask = 0
-
-	u := vfs.user
-	if !u.IsRoot() {
 		vfs.user = avfs.RootUser
+		ma.umask = 0
+
+		err := avfs.CreateBaseDirs(vfs, "")
+		if err != nil {
+			panic(err)
+		}
+
+		vfs.user = u
+		ma.umask = um
 	}
-
-	err := avfs.CreateBaseDirs(vfs, "")
-	if err != nil {
-		panic(err)
-	}
-
-	vfs.user = u
-	vfs.curDir = avfs.RootDir
-
-	ma.umask = um
 
 	return vfs
 }
