@@ -82,7 +82,7 @@ func main() {
 
 	// From this point all references of 'os', 'path/filepath'
 	// should be replaced by 'vfs'
-	rootDir, _ := vfs.MkdirTemp("", avfs.Avfs)
+	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	defer vfs.RemoveAll(rootDir)
 
 	aFilePath := vfs.Join(rootDir, "aFile.txt")
@@ -130,7 +130,7 @@ func main() {
 
 	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
-	rootDir, _ := vfs.MkdirTemp("", avfs.Avfs)
+	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	vfs.Chmod(rootDir, 0o777)
 
 	g, _ := vfs.GroupAdd(groupName)

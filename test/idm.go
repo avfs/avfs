@@ -643,7 +643,7 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 		return
 	}
 
-	homeDir := vfs.Join(avfs.HomeDir(vfs), u.Name())
+	homeDir := avfs.HomeDirUser(vfs, u.Name())
 
 	fst, err := vfs.Stat(homeDir)
 	if err != nil {

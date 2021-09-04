@@ -919,10 +919,10 @@ func BaseDirs(vfs VFS) []DirInfo {
 	switch vfs.OSType() {
 	case OsWindows:
 		return []DirInfo{
-			{Path: HomeDir(vfs), Perm: 777},
-			{Path: vfs.Join(HomeDir(vfs), "Default"), Perm: 777},
-			{Path: "C:\\Windows", Perm: 0o777},
-			{Path: "C:\\Windows\\Temp", Perm: 0o777},
+			{Path: HomeDir(vfs), Perm: DefaultDirPerm},
+			{Path: HomeDirUser(vfs, "Default"), Perm: DefaultDirPerm},
+			{Path: "C:\\Windows", Perm: DefaultDirPerm},
+			{Path: "C:\\Windows\\Temp", Perm: DefaultDirPerm},
 		}
 	default:
 		return []DirInfo{
@@ -964,6 +964,15 @@ func HomeDir(vfs VFS) string {
 	}
 }
 
+// HomeDirUser returns the home directory of the user.
+func HomeDirUser(vfs VFS, name string) string {
+	if vfs.OSType() == OsLinux && name == UsrRoot {
+		return "/root"
+	}
+
+	return vfs.Join(HomeDir(vfs), name)
+}
+
 // HomeDirPerm return the default permission for home directories.
 func HomeDirPerm(vfs VFS) fs.FileMode {
 	return 0o755
@@ -971,14 +980,20 @@ func HomeDirPerm(vfs VFS) fs.FileMode {
 
 // CreateHomeDir creates the home directory of a user.
 func CreateHomeDir(vfs VFS, u UserReader) (UserReader, error) {
-	userDir := vfs.Join(HomeDir(vfs), u.Name())
+	userDir := HomeDirUser(vfs, u.Name())
 
 	err := vfs.Mkdir(userDir, HomeDirPerm(vfs))
 	if err != nil {
 		return nil, err
 	}
 
-	err = vfs.Chown(userDir, u.Uid(), u.Gid())
+	switch vfs.OSType() {
+	case OsWindows:
+		err = vfs.MkdirAll(vfs.TempDir(), DefaultDirPerm)
+	default:
+		err = vfs.Chown(userDir, u.Uid(), u.Gid())
+	}
+
 	if err != nil {
 		return nil, err
 	}

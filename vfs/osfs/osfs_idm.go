@@ -104,9 +104,9 @@ func (vfs *OsFS) UserDel(name string) error {
 		return err
 	}
 
-	userDir := vfs.Join(avfs.HomeDir(vfs), name)
+	homeDir := avfs.HomeDirUser(vfs, name)
 
-	err = vfs.RemoveAll(userDir)
+	err = vfs.RemoveAll(homeDir)
 	if err != nil {
 		return err
 	}
