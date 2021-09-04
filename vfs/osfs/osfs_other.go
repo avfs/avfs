@@ -35,7 +35,7 @@ func (vfs *OsFS) Chroot(path string) error {
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	return info.Sys().(*OtherSysStat)
+	return &OtherSysStat{}
 }
 
 // OtherSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a non linux file system.
