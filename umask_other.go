@@ -27,11 +27,6 @@ import (
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask fs.FileMode) {
-	// if umask system call is not available set value to linux default.
-	if mask == 0 {
-		mask = DefaultUmask
-	}
-
 	um.mu.Lock()
 	um.mask = mask
 	um.mu.Unlock()
