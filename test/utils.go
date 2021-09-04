@@ -28,6 +28,10 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
+const (
+	defaultUmask = fs.FileMode(0o22) // defaultUmask is the default umask.
+)
+
 // TestCopyFile tests avfs.CopyFile function.
 func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	const pattern = "CopyFile"
@@ -546,12 +550,12 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 	umaskTest := umaskSet
 
 	if avfs.RunTimeOS() == avfs.OsWindows {
-		umaskTest = avfs.DefaultUmask
+		umaskTest = defaultUmask
 	}
 
 	umask := avfs.UMask.Get()
-	if umask != avfs.DefaultUmask {
-		t.Errorf("GetUMask : want OS umask %o, got %o", avfs.DefaultUmask, umask)
+	if umask != defaultUmask {
+		t.Errorf("GetUMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 
 	avfs.UMask.Set(umaskSet)
@@ -561,11 +565,11 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
-	avfs.UMask.Set(avfs.DefaultUmask)
+	avfs.UMask.Set(defaultUmask)
 
 	umask = avfs.UMask.Get()
-	if umask != avfs.DefaultUmask {
-		t.Errorf("GetUMask : want OS umask %o, got %o", avfs.DefaultUmask, umask)
+	if umask != defaultUmask {
+		t.Errorf("GetUMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 }
 

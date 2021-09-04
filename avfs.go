@@ -32,7 +32,6 @@ const (
 	PathSeparatorWin = '\\'              // PathSeparatorWin is defined as a forward slash for Windows systems.
 	DefaultDirPerm   = 0o777             // DefaultDirPerm is the default permission for directories.
 	DefaultFilePerm  = 0o666             // DefaultFilePerm is the default permission for files.
-	DefaultUmask     = fs.FileMode(0o22) // DefaultUmask is the default umask.
 	UsrRoot          = "root"            // UsrRoot is the root user.
 	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
 
