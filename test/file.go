@@ -1585,13 +1585,22 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 // TestFileWriteString tests File.WriteString function.
 func (sfs *SuiteFS) TestFileWriteString(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.WriteString("")
 		CheckPathError(t, err).Op("write").Path(avfs.NotImplemented).Err(avfs.ErrPermDenied)
+
+		return
+	}
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f := sfs.OpenedNonExistingFile(t, testDir)
+
+		_, err := f.WriteString("")
+		CheckPathError(t, err).Op("write").Path(f.Name()).Err(avfs.ErrPermDenied)
 
 		return
 	}

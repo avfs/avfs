@@ -34,10 +34,6 @@ func (f *RoFile) Chdir() error {
 func (f *RoFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
-	if f.baseFile.Name() == "" {
-		return fs.ErrInvalid
-	}
-
 	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
@@ -144,10 +140,6 @@ func (f *RoFile) Sync() error {
 func (f *RoFile) Truncate(size int64) error {
 	const op = "truncate"
 
-	if f.baseFile.Name() == "" {
-		return fs.ErrInvalid
-	}
-
 	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
@@ -157,10 +149,6 @@ func (f *RoFile) Truncate(size int64) error {
 func (f *RoFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
-	if f.baseFile.Name() == "" {
-		return 0, fs.ErrInvalid
-	}
-
 	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
 
@@ -169,10 +157,6 @@ func (f *RoFile) Write(b []byte) (n int, err error) {
 // WriteAt returns a non-nil error when n != len(b).
 func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
-
-	if f.baseFile.Name() == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
 }
