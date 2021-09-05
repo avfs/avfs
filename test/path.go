@@ -432,10 +432,10 @@ func (sfs *SuiteFS) TestIsAbs(t *testing.T, testDir string) {
 			sep   uint8
 			isAbs bool
 		}{
-			{sep: avfs.PathSeparator, isAbs: true},
-			{sep: '\\'},
-			{sep: '.'},
-			{sep: 'a'},
+			{sep: '/', isAbs: true},
+			{sep: '\\', isAbs: vfs.OSType() == avfs.OsWindows},
+			{sep: '.', isAbs: false},
+			{sep: 'a', isAbs: false},
 		}
 
 		for _, test := range isPathSepTests {
