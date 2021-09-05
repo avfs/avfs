@@ -15,10 +15,10 @@
 ##
 
 FROM golang:nanoserver AS base
-WORKDIR /gopath/src
+WORKDIR /go/src
 
 FROM base AS copyfiles
-COPY ./bin/avfs* /gopath/bin/
+COPY ./bin/avfs* /go/bin/
 COPY ./*.go ./
 COPY ./go.mod ./
 COPY ./idm ./idm
