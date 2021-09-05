@@ -1036,7 +1036,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 					t.Errorf("Lstat %s : want error to be nil, got %v", newPath, err)
 				}
 
-				CheckPathError(t, err).Op("stat").Path(newPath).Err(sl.WantErr)
+				CheckPathError(t, err).OpStat(vfs).Path(newPath).Err(sl.WantErr)
 
 				continue
 			}
@@ -1942,7 +1942,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 			}
 
 			_, err = vfs.Stat(newPath)
-			CheckPathError(t, err).Op("stat").Path(newPath).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).OpStat(vfs).Path(newPath).Err(avfs.ErrNoSuchFileOrDir)
 		}
 	})
 
@@ -2155,7 +2155,13 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		dstExistingDir := sfs.ExistingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingDir, dstExistingDir)
-		CheckLinkError(t, err).Op("rename").Old(srcExistingDir).New(dstExistingDir).Err(avfs.ErrFileExists)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckLinkError(t, err).Op("rename").Old(srcExistingDir).New(dstExistingDir).Err(avfs.ErrWinAccessDenied)
+		default:
+			CheckLinkError(t, err).Op("rename").Old(srcExistingDir).New(dstExistingDir).Err(avfs.ErrFileExists)
+		}
 	})
 
 	t.Run("RenameFileToExistingFile", func(t *testing.T) {
@@ -2168,7 +2174,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		}
 
 		_, err = vfs.Stat(srcExistingFile)
-		CheckPathError(t, err).Op("stat").Path(srcExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpStat(vfs).Path(srcExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 
 		info, err := vfs.Stat(dstExistingFile)
 		if err != nil {
@@ -2185,7 +2191,12 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		dstExistingDir := sfs.ExistingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingFile, dstExistingDir)
-		CheckLinkError(t, err).Op("rename").Old(srcExistingFile).New(dstExistingDir).Err(avfs.ErrFileExists)
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckLinkError(t, err).Op("rename").Old(srcExistingFile).New(dstExistingDir).Err(avfs.ErrWinAccessDenied)
+		default:
+			CheckLinkError(t, err).Op("rename").Old(srcExistingFile).New(dstExistingDir).Err(avfs.ErrFileExists)
+		}
 	})
 }
 
@@ -2295,7 +2306,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Stat(testDir)
-		CheckPathError(t, err).Op("stat").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).OpStat(vfs).Path(testDir).Err(avfs.ErrPermDenied)
 
 		return
 	}

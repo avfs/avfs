@@ -37,7 +37,7 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 	sIdm := &SuiteIdm{idm: idm}
 
 	defer func() {
-		t.Logf("Info Idm = %s, Can test = %t", sIdm.Type(), sIdm.canTest)
+		t.Logf("Info Idm = %s, can test permissions = %t", sIdm.Type(), sIdm.canTest)
 	}()
 
 	uc, ok := idm.(avfs.UserConnecter)

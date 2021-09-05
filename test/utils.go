@@ -46,7 +46,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 	rtParams := &avfs.RndTreeParams{
 		MinName: 32, MaxName: 32,
-		MinFiles: 512, MaxFiles: 512,
+		MinFiles: 32, MaxFiles: 32,
 		MinFileSize: 0, MaxFileSize: 100 * 1024,
 	}
 
@@ -251,7 +251,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		invalidPath := vfs.Join(existingFile, defaultFile)
 
 		ok, err := avfs.Exists(vfs, invalidPath)
-		CheckPathError(t, err).Op("stat").Path(invalidPath).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).OpStat(vfs).Path(invalidPath).Err(avfs.ErrNotADirectory)
 
 		if ok {
 			t.Error("Exists : want Exists to be false, got true")
@@ -297,7 +297,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, nonExistingFile)
-		CheckPathError(t, err).Op("stat").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpStat(vfs).Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 
 		if ok {
 			t.Error("IsDirNonExisting : want DirExists to be false, got true")

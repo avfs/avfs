@@ -987,7 +987,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.Stat()
-		CheckPathError(t, err).Op("stat").Path(avfs.NotImplemented).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).OpStat(vfs).Path(avfs.NotImplemented).Err(avfs.ErrPermDenied)
 
 		return
 	}
@@ -1134,7 +1134,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("GetFileType").Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		default:
-			CheckPathError(t, err).Op("stat").Path(fileName).ErrAsString(avfs.ErrFileClosing)
+			CheckPathError(t, err).OpStat(vfs).Path(fileName).ErrAsString(avfs.ErrFileClosing)
 		}
 	})
 
