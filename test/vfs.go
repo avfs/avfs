@@ -2547,7 +2547,15 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		err := vfs.Truncate(nonExistingFile, 0)
-		CheckPathError(t, err).Op("truncate").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			if err != nil {
+				t.Errorf("Truncate : want error to be nil, got %v", err)
+			}
+		default:
+			CheckPathError(t, err).Op("truncate").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		}
 	})
 
 	t.Run("TruncateOnDir", func(t *testing.T) {
