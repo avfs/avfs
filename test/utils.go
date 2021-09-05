@@ -72,7 +72,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
-			dstPath := srcFs.Join(dstDir, fileName)
+			dstPath := dstFs.Join(dstDir, fileName)
 
 			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
 			if err != nil {
@@ -99,7 +99,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
-			dstPath := srcFs.Join(dstDir, fileName)
+			dstPath := dstFs.Join(dstDir, fileName)
 
 			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
 			if err != nil {
