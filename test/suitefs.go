@@ -296,7 +296,12 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 		return
 	}
 
-	err := vfs.RemoveAll(testDir)
+	err := vfs.Chdir(sfs.rootDir)
+	if err != nil {
+		tb.Fatalf("Chdir %s : want error to be nil, got %v", sfs.rootDir, err)
+	}
+
+	err = vfs.RemoveAll(testDir)
 	if err == nil || !sfs.canTestPerm {
 		return
 	}
