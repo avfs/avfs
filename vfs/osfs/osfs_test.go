@@ -37,15 +37,10 @@ var (
 	_ avfs.File = &os.File{}
 )
 
-func initTest(tb testing.TB) *test.SuiteFS {
-	vfs := osfs.New(osfs.WithIdm(osidm.New()))
-	sfs := test.NewSuiteFS(tb, vfs)
-
-	return sfs
-}
-
 func TestOsFS(t *testing.T) {
-	sfs := initTest(t)
+	vfs := osfs.New(osfs.WithIdm(osidm.New()))
+
+	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
@@ -90,6 +85,8 @@ func TestOsFSConfig(t *testing.T) {
 }
 
 func BenchmarkOsFSAll(b *testing.B) {
-	sfs := initTest(b)
+	vfs := osfs.New(osfs.WithIdm(osidm.New()))
+
+	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)
 }
