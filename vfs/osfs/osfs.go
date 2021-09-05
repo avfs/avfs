@@ -81,6 +81,12 @@ func (vfs *OsFS) Chmod(name string, mode fs.FileMode) error {
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
 func (vfs *OsFS) Chown(name string, uid, gid int) error {
+	const op = "chown"
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	}
+
 	return os.Chown(name, uid, gid)
 }
 
@@ -231,6 +237,12 @@ func (vfs *OsFS) Join(elem ...string) string {
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
 func (vfs *OsFS) Lchown(name string, uid, gid int) error {
+	const op = "lchown"
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	}
+
 	return os.Lchown(name, uid, gid)
 }
 

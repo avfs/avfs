@@ -121,13 +121,13 @@ func (vfs *MemFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	}
+
 	_, child, _, _, _, err := vfs.searchNode(name, slmEval)
 	if err != avfs.ErrFileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
-	}
-
-	if vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.user.IsRoot() {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
 	child.Lock()
@@ -343,13 +343,13 @@ func (vfs *MemFS) Join(elem ...string) string {
 func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+	}
+
 	_, child, _, _, _, err := vfs.searchNode(name, slmLstat)
 	if err != avfs.ErrFileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
-	}
-
-	if vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.user.IsRoot() {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
 	child.Lock()

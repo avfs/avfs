@@ -141,6 +141,9 @@ const (
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
 
+	// FeatChownUser indicates that a non privileged user can use Chown.
+	FeatChownUser
+
 	// FeatMainDirs indicates that the main directories of the filesystem (/home, /root and /tmp) are present.
 	FeatMainDirs
 

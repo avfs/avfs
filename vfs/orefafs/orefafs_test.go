@@ -45,28 +45,10 @@ var (
 	_ avfs.SysStater = &orefafs.OrefaInfo{}
 )
 
-func initTest(tb testing.TB) *test.SuiteFS {
-	vfs := orefafs.New(orefafs.WithMainDirs())
-	sfs := test.NewSuiteFS(tb, vfs)
-
-	return sfs
-}
-
 func TestOrefaFS(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestAll(t)
-}
+	vfs := orefafs.New(orefafs.WithMainDirs())
 
-func TestOrefaFSNilPtrFile(t *testing.T) {
-	f := (*orefafs.OrefaFile)(nil)
-
-	test.FileNilPtr(t, f)
-}
-
-func TestOrefaFSConfig(t *testing.T) {
-	vfs := orefafs.New()
-
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatMainDirs
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
 	}
@@ -80,9 +62,32 @@ func TestOrefaFSConfig(t *testing.T) {
 	if ost != avfs.OsLinux {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
 	}
+
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestAll(t)
+}
+
+func TestOrefaFSWithChown(t *testing.T) {
+	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithChownUser())
+
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatChownUser | avfs.FeatHardlink | avfs.FeatMainDirs
+	if vfs.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
+	}
+
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestAll(t)
+}
+
+func TestOrefaFSNilPtrFile(t *testing.T) {
+	f := (*orefafs.OrefaFile)(nil)
+
+	test.FileNilPtr(t, f)
 }
 
 func BenchmarkOrefaFSAll(b *testing.B) {
-	sfs := initTest(b)
+	vfs := orefafs.New(orefafs.WithMainDirs())
+
+	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)
 }

@@ -89,3 +89,10 @@ func WithMainDirs() Option {
 		vfs.feature |= avfs.FeatMainDirs
 	}
 }
+
+// WithChownUser returns an option function.
+func WithChownUser() Option {
+	return func(vfs *OrefaFS) {
+		vfs.feature |= avfs.FeatChownUser
+	}
+}

@@ -238,7 +238,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !sfs.canTestPerm && !vfs.HasFeature(avfs.FeatChownUser) {
 		err := vfs.Chown(testDir, 0, 0)
 
 		switch vfs.OSType() {
@@ -679,7 +679,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !sfs.canTestPerm {
+	if !sfs.canTestPerm && !vfs.HasFeature(avfs.FeatChownUser) {
 		err := vfs.Lchown(testDir, 0, 0)
 
 		switch vfs.OSType() {
