@@ -101,8 +101,8 @@ func (sfs *SuiteFS) TestRaceFile(t *testing.T, testDir string) {
 		path := sfs.EmptyFile(t, testDir)
 
 		f, err := vfs.Open(path)
-		if err != nil {
-			t.Fatalf("Open %s : want error to be nil, got %v", path, err)
+		if !CheckNoError(t, "Open "+path, err) {
+			return
 		}
 
 		sfs.RaceFunc(t, "Close", RaceOneOk, f.Close)

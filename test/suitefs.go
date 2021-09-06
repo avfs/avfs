@@ -803,12 +803,25 @@ func (sfs *SuiteFS) SampleSymlinks(tb testing.TB, testDir string) []*Symlink {
 	return symlinks
 }
 
-// CheckInvalid checks if the error in fs.ErrInvalid.
-func CheckInvalid(tb testing.TB, funcName string, err error) {
+// CheckNoError checks if there is no error.
+func CheckNoError(tb testing.TB, name string, err error) bool {
+	tb.Helper()
+
+	if err != nil {
+		tb.Errorf("%s : want error to be nil, got %v", name, err)
+
+		return false
+	}
+
+	return true
+}
+
+// CheckInvalid checks if the error is fs.ErrInvalid.
+func CheckInvalid(tb testing.TB, name string, err error) {
 	tb.Helper()
 
 	if err != os.ErrInvalid {
-		tb.Errorf("%s : want error to be %v, got %v", funcName, fs.ErrInvalid, err)
+		tb.Errorf("%s : want error to be %v, got %v", name, fs.ErrInvalid, err)
 	}
 }
 

@@ -51,21 +51,21 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	}
 
 	rt, err := avfs.NewRndTree(srcFs, testDir, rtParams)
-	if err != nil {
-		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
+	if !CheckNoError(t, "NewRndTree", err) {
+		return
 	}
 
 	err = rt.CreateTree()
-	if err != nil {
-		t.Fatalf("CreateTree : want error to be nil, got %v", err)
+	if !CheckNoError(t, "CreateTree", err) {
+		return
 	}
 
 	h := sha512.New()
 
 	t.Run("CopyFile_WithHashSum", func(t *testing.T) {
 		dstDir, err := dstFs.MkdirTemp("", pattern)
-		if err != nil {
-			t.Fatalf("MkdirTemp : want error to be nil, got %v", err)
+		if !CheckNoError(t, "MkdirTemp", err) {
+			return
 		}
 
 		defer dstFs.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
@@ -81,9 +81,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 			}
 
 			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
-			if err != nil {
-				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", dstFs.Type(), dstPath, err)
-			}
+			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", dstFs.Type(), dstPath), err)
 
 			if !bytes.Equal(wantSum, gotSum) {
 				t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
@@ -93,34 +91,28 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 	t.Run("CopyFile", func(t *testing.T) {
 		dstDir, err := dstFs.MkdirTemp("", pattern)
-		if err != nil {
-			t.Fatalf("MkdirTemp : want error to be nil, got %v", err)
+		if !CheckNoError(t, "MkdirTemp "+pattern, err) {
+			return
 		}
 
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
 			dstPath := dstFs.Join(dstDir, fileName)
 
+			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcPath)
+
 			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
-			if err != nil {
-				t.Errorf("CopyFile (%s)%s, (%s)%s : want error to be nil, got %v",
-					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
-			}
+			CheckNoError(t, copyName, err)
 
 			if wantSum != nil {
-				t.Fatalf("CopyFile (%s)%s, (%s)%s) : want error to be nil, got %v",
-					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
+				t.Fatalf("%s : want hash sum to be nil, got %v", copyName, err)
 			}
 
 			wantSum, err = avfs.HashFile(srcFs, srcPath, h)
-			if err != nil {
-				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", srcFs.Type(), srcPath, err)
-			}
+			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", srcFs.Type(), srcPath), err)
 
 			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
-			if err != nil {
-				t.Errorf("HashFile (%s)%s : want error to be nil, got %v", dstFs.Type(), dstPath, err)
-			}
+			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", dstFs.Type(), dstPath), err)
 
 			if !bytes.Equal(wantSum, gotSum) {
 				t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
@@ -138,14 +130,14 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	}
 
 	err := avfs.CreateBaseDirs(vfs, testDir)
-	if err != nil {
-		t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
+	if !CheckNoError(t, "CreateBaseDirs", err) {
+		return
 	}
 
 	for _, dir := range avfs.BaseDirs(vfs) {
 		info, err := vfs.Stat(dir.Path)
-		if err != nil {
-			t.Fatalf("CreateBaseDirs : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Stat", err) {
+			continue
 		}
 
 		gotMode := info.Mode() & fs.ModePerm
@@ -165,9 +157,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 
 	t.Run("DirExistsDir", func(t *testing.T) {
 		ok, err := avfs.DirExists(vfs, testDir)
-		if err != nil {
-			t.Errorf("DirExists : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "DirExists "+testDir, err)
 
 		if !ok {
 			t.Error("DirExists : want DirExists to be true, got false")
@@ -178,9 +168,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
 		ok, err := avfs.DirExists(vfs, existingFile)
-		if err != nil {
-			t.Errorf("DirExists : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "DirExists "+testDir, err)
 
 		if ok {
 			t.Error("DirExists : want DirExists to be false, got true")
@@ -191,9 +179,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		ok, err := avfs.DirExists(vfs, nonExistingFile)
-		if err != nil {
-			t.Errorf("DirExists : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "DirExists "+nonExistingFile, err)
 
 		if ok {
 			t.Error("DirExists : want DirExists to be false, got true")
@@ -211,9 +197,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 
 	t.Run("ExistsDir", func(t *testing.T) {
 		ok, err := avfs.Exists(vfs, testDir)
-		if err != nil {
-			t.Errorf("Exists : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Exists "+testDir, err)
 
 		if !ok {
 			t.Error("Exists : want DirExists to be true, got false")
@@ -224,9 +208,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
 		ok, err := avfs.Exists(vfs, existingFile)
-		if err != nil {
-			t.Errorf("Exists : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "DirExists "+existingFile, err)
 
 		if !ok {
 			t.Error("Exists : want DirExists to be true, got false")
@@ -237,9 +219,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		ok, err := avfs.Exists(vfs, nonExistingFile)
-		if err != nil {
-			t.Errorf("Exists : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Exists "+nonExistingFile, err)
 
 		if ok {
 			t.Error("Exists : want Exists to be false, got true")
@@ -271,9 +251,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 		existingDir := sfs.ExistingDir(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, existingDir)
-		if err != nil {
-			t.Errorf("IsDir : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "IsDir "+existingDir, err)
 
 		if !ok {
 			t.Error("IsDir : want IsDir to be true, got false")
@@ -284,9 +262,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, existingFile)
-		if err != nil {
-			t.Errorf("IsDirFile : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "IsDir "+existingFile, err)
 
 		if ok {
 			t.Error("IsDirFile : want DirExists to be false, got true")
@@ -317,9 +293,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
 		ok, err := avfs.IsEmpty(vfs, existingFile)
-		if err != nil {
-			t.Errorf("IsEmpty : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "IsEmpty "+existingFile, err)
 
 		if !ok {
 			t.Error("IsEmpty : want IsEmpty to be true, got false")
@@ -330,9 +304,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 		emptyDir := sfs.ExistingDir(t, testDir)
 
 		ok, err := avfs.IsEmpty(vfs, emptyDir)
-		if err != nil {
-			t.Errorf("IsEmpty : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "IsEmpty "+emptyDir, err)
 
 		if !ok {
 			t.Error("IsEmpty : want IsEmpty to be true, got false")
@@ -343,9 +315,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 		sfs.ExistingDir(t, testDir)
 
 		ok, err := avfs.IsEmpty(vfs, testDir)
-		if err != nil {
-			t.Errorf("IsEmpty : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "IsEmpty "+testDir, err)
 
 		if ok {
 			t.Error("IsEmpty : want IsEmpty to be false, got true")
@@ -383,13 +353,13 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 	}
 
 	rt, err := avfs.NewRndTree(vfs, testDir, rtParams)
-	if err != nil {
-		t.Fatalf("NewRndTree : want error to be nil, got %v", err)
+	if !CheckNoError(t, "NewRndTree", err) {
+		return
 	}
 
 	err = rt.CreateTree()
-	if err != nil {
-		t.Fatalf("CreateTree : want error to be nil, got %v", err)
+	if !CheckNoError(t, "CreateTree", err) {
+		return
 	}
 
 	defer vfs.RemoveAll(testDir) //nolint:errcheck // Ignore errors.
@@ -398,23 +368,19 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 
 	for _, fileName := range rt.Files {
 		content, err := vfs.ReadFile(fileName)
-		if err != nil {
-			t.Fatalf("ReadFile %s : want error to be nil, got %v", fileName, err)
+		if !CheckNoError(t, "ReadFile", err) {
+			continue
 		}
 
 		h.Reset()
 
 		_, err = h.Write(content)
-		if err != nil {
-			t.Errorf("Write hash : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Write", err)
 
 		wantSum := h.Sum(nil)
 
 		gotSum, err := avfs.HashFile(vfs, fileName, h)
-		if err != nil {
-			t.Errorf("HashFile %s : want error to be nil, got %v", fileName, err)
-		}
+		CheckNoError(t, "HashFile", err)
 
 		if !bytes.Equal(wantSum, gotSum) {
 			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
@@ -454,14 +420,10 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 			sfs.CreateDir(t, path, avfs.DefaultDirPerm)
 
 			rt, err := avfs.NewRndTree(vfs, path, rtTest)
-			if err != nil {
-				t.Errorf("NewRndTree %d : want error to be nil, got %v", i, err)
-			}
+			CheckNoError(t, "NewRndTree", err)
 
 			err = rt.CreateTree()
-			if err != nil {
-				t.Errorf("CreateTree %d : want error to be nil, got %v", i, err)
-			}
+			CheckNoError(t, "CreateTree "+strconv.Itoa(i), err)
 
 			nbDirs := len(rt.Dirs)
 			if nbDirs < rtTest.MinDirs || nbDirs > rtTest.MaxDirs {

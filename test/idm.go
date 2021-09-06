@@ -88,9 +88,7 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 			}
 
 			g, err := idm.GroupAdd(groupName)
-			if err != nil {
-				t.Errorf("GroupAdd %s : want error to be nil, got %v", groupName, err)
-
+			if !CheckNoError(t, "GroupAdd "+groupName, err) {
 				continue
 			}
 
@@ -105,14 +103,10 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 			}
 
 			_, err = idm.LookupGroup(groupName)
-			if err != nil {
-				t.Errorf("LookupGroup %s : want error to be nil, got %v", groupName, err)
-			}
+			CheckNoError(t, "LookupGroup "+groupName, err)
 
 			_, err = idm.LookupGroupId(g.Gid())
-			if err != nil {
-				t.Errorf("LookupGroupId %s : want error to be nil, got %v", groupName, err)
-			}
+			CheckNoError(t, "LookupGroupId "+groupName, err)
 		}
 	})
 
@@ -133,14 +127,12 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
-			if err != nil {
-				t.Fatalf("LookupGroup %s : want error to be nil, got %v", groupName, err)
+			if !CheckNoError(t, "LookupGroup "+groupName, err) {
+				return
 			}
 
 			err = idm.GroupDel(groupName)
-			if err != nil {
-				t.Errorf("GroupDel %s : want error to be nil, got %v", groupName, err)
-			}
+			CheckNoError(t, "GroupDel "+groupName, err)
 
 			_, err = idm.LookupGroup(g.Name())
 			wantGroupErr := avfs.UnknownGroupError(groupName)
@@ -195,8 +187,8 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			groupName := ui.GroupName + suffix
 
 			g, err := idm.LookupGroup(groupName)
-			if err != nil {
-				t.Fatalf("LookupGroup %s : want error to be nil, got %v", groupName, err)
+			if !CheckNoError(t, "LookupGroup "+groupName, err) {
+				return
 			}
 
 			userName := ui.Name + suffix
@@ -208,9 +200,7 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			}
 
 			u, err := idm.UserAdd(userName, groupName)
-			if err != nil {
-				t.Errorf("UserAdd %s : want error to be nil, got %v", userName, err)
-			}
+			CheckNoError(t, "UserAdd "+userName, err)
 
 			if u == nil {
 				t.Errorf("UserAdd %s : want user to be not nil, got nil", userName)
@@ -237,14 +227,10 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			}
 
 			_, err = idm.LookupUser(userName)
-			if err != nil {
-				t.Errorf("LookupUser %s : want error to be nil, got %v", userName, err)
-			}
+			CheckNoError(t, "LookupUser "+userName, err)
 
 			_, err = idm.LookupUserId(u.Uid())
-			if err != nil {
-				t.Errorf("LookupUserId %s : want error to be nil, got %v", userName, err)
-			}
+			CheckNoError(t, "LookupUserId "+userName, err)
 
 			checkHomeDir(t, idm, u)
 		}
@@ -284,14 +270,12 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
-			if err != nil {
-				t.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
+			if !CheckNoError(t, "LookupGroup "+userName, err) {
+				return
 			}
 
 			err = idm.UserDel(userName)
-			if err != nil {
-				t.Errorf("UserDel %s : want error to be nil, got %v", userName, err)
-			}
+			CheckNoError(t, "UserDel "+userName, err)
 
 			_, err = idm.LookupUser(u.Name())
 			wantUserErr := avfs.UnknownUserError(userName)
@@ -349,9 +333,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
-			if err != nil {
-				t.Errorf("LookupGroup %s : want error to be nil, got %v", groupName, err)
-
+			if !CheckNoError(t, "LookupGroup "+groupName, err) {
 				continue
 			}
 
@@ -370,9 +352,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
-			if err != nil {
-				t.Errorf("LookupUser %s : want error to be nil, got %v", userName, err)
-
+			if !CheckNoError(t, "LookupUser "+userName, err) {
 				continue
 			}
 
@@ -441,8 +421,8 @@ func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 			userName := ui.Name + suffix
 
 			lu, err := idm.LookupUser(userName)
-			if err != nil {
-				t.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
+			if !CheckNoError(t, "LookupUser "+userName, err) {
+				continue
 			}
 
 			uid := lu.Uid()
@@ -451,9 +431,7 @@ func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 			// loop to test change with the same user
 			for i := 0; i < 2; i++ {
 				u, err := sIdm.uc.User(userName)
-				if err != nil {
-					t.Errorf("User %s : want error to be nil, got %v", userName, err)
-
+				if !CheckNoError(t, "User "+userName, err) {
 					continue
 				}
 
@@ -502,8 +480,8 @@ func (sIdm *SuiteIdm) TestUserDenied(t *testing.T) {
 	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
 
 	_, err := sIdm.uc.User(UsrTest)
-	if err != nil {
-		t.Fatalf("User: want error to be nil, got %v", err)
+	if !CheckNoError(t, "LookupUser "+UsrTest, err) {
+		return
 	}
 
 	for _, ui := range UserInfos() {
@@ -646,9 +624,7 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 	homeDir := avfs.HomeDirUser(vfs, u.Name())
 
 	fst, err := vfs.Stat(homeDir)
-	if err != nil {
-		t.Errorf("Stat %s : want error to be nil, got %v", homeDir, err)
-	}
+	CheckNoError(t, "Stat "+homeDir, err)
 
 	if vfs.OSType() == avfs.OsWindows {
 		return

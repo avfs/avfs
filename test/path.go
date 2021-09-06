@@ -36,9 +36,7 @@ func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Abs(testDir)
-		if err != nil {
-			t.Errorf("Name : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Abs "+testDir, err)
 
 		return
 	}
@@ -651,9 +649,7 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Glob("")
-		if err != nil {
-			t.Errorf("Glob : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Glob", err)
 
 		return
 	}
@@ -667,19 +663,19 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 	t.Run("GlobNormal", func(t *testing.T) {
 		pattern := testDir + "/*/*/[A-Z0-9]"
 		dirNames, err := vfs.Glob(pattern)
-		if err != nil {
-			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
-		} else {
-			wantDirs := 3
-			if sl > 0 {
-				wantDirs += 5
-			}
+		if !CheckNoError(t, "Glob "+pattern, err) {
+			return
+		}
 
-			if len(dirNames) != wantDirs {
-				t.Errorf("Glob %s : want dirs to be %d, got %d", pattern, wantDirs, len(dirNames))
-				for _, dirName := range dirNames {
-					t.Log(dirName)
-				}
+		wantDirs := 3
+		if sl > 0 {
+			wantDirs += 5
+		}
+
+		if len(dirNames) != wantDirs {
+			t.Errorf("Glob %s : want dirs to be %d, got %d", pattern, wantDirs, len(dirNames))
+			for _, dirName := range dirNames {
+				t.Log(dirName)
 			}
 		}
 	})
@@ -687,9 +683,7 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 	t.Run("GlobWithoutMeta", func(t *testing.T) {
 		pattern := testDir
 		dirNames, err := vfs.Glob(pattern)
-		if err != nil {
-			t.Errorf("Glob %s : want error to be nil, got %v", pattern, err)
-
+		if !CheckNoError(t, "Glob "+pattern, err) {
 			return
 		}
 
@@ -732,9 +726,7 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 		walkFunc := func(rootDir string, info fs.DirEntry, err error) error { return nil }
 
 		err := vfs.WalkDir(testDir, walkFunc)
-		if err != nil {
-			t.Errorf("User : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "WalkDir "+testDir, err)
 
 		return
 	}
@@ -744,8 +736,8 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 	symlinks := sfs.SampleSymlinks(t, testDir)
 
 	vfs = sfs.vfsTest
-	lnames := len(dirs) + len(files) + len(symlinks)
-	wantNames := make([]string, 0, lnames)
+	lNames := len(dirs) + len(files) + len(symlinks)
+	wantNames := make([]string, 0, lNames)
 
 	wantNames = append(wantNames, testDir)
 	for _, dir := range dirs {
@@ -771,9 +763,7 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 
 			return nil
 		})
-		if err != nil {
-			t.Errorf("Walk %s : want error to be nil, got %v", testDir, err)
-		}
+		CheckNoError(t, "WalkDir"+testDir, err)
 
 		if len(wantNames) != len(gotNames) {
 			t.Errorf("Walk %s : want %d files or dirs, got %d", testDir, len(wantNames), len(gotNames))
@@ -793,8 +783,6 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 		err := vfs.WalkDir(nonExistingFile, func(path string, info fs.DirEntry, err error) error {
 			return nil
 		})
-		if err != nil {
-			t.Errorf("Walk %s : want error to be nil, got %v", nonExistingFile, err)
-		}
+		CheckNoError(t, "WalkDir "+nonExistingFile, err)
 	})
 }

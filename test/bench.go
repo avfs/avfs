@@ -49,14 +49,12 @@ func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 		for n := 0; n < b.N; n++ {
 			fileName := files[n]
 			f, err := vfs.Create(fileName)
-			if err != nil {
-				b.Fatalf("Create %s, want error to be nil, got %v", fileName, err)
+			if !CheckNoError(b, "Create "+fileName, err) {
+				return
 			}
 
 			err = f.Close()
-			if err != nil {
-				b.Fatalf("Close %s, want error to be nil, got %v", fileName, err)
-			}
+			CheckNoError(b, "Close "+fileName, err)
 		}
 	})
 }
@@ -95,13 +93,13 @@ func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
 			MinDirs: b.N,
 			MaxDirs: b.N,
 		})
-		if err != nil {
-			b.Fatalf("RndTree %s, want error to be nil, got %v", testDir, err)
+		if !CheckNoError(b, "RndTree "+testDir, err) {
+			return
 		}
 
 		err = rt.CreateTree()
-		if err != nil {
-			b.Fatalf("CreateTree %s, want error to be nil, got %v", testDir, err)
+		if !CheckNoError(b, "CreateTree "+testDir, err) {
+			return
 		}
 
 		b.ReportAllocs()

@@ -56,21 +56,15 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, dir.Path)
 
 			f, err := vfs.Open(path)
-			if err != nil {
-				t.Errorf("Open %s : want error to be nil, got %v", path, err)
-			}
+			CheckNoError(t, "Open "+path, err)
 
 			defer f.Close()
 
 			err = f.Chdir()
-			if err != nil {
-				t.Errorf("Chdir %s : want error to be nil, got %v", path, err)
-			}
+			CheckNoError(t, "Chdir "+path, err)
 
 			curDir, err := vfs.Getwd()
-			if err != nil {
-				t.Errorf("Getwd %s : want error to be nil, got %v", path, err)
-			}
+			CheckNoError(t, "Getwd "+path, err)
 
 			if curDir != path {
 				t.Errorf("Getwd : want current directory to be %s, got %s", path, curDir)
@@ -187,9 +181,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 		uid, gid := u.Uid(), u.Gid()
 
 		err := f.Chown(uid, gid)
-		if err != nil {
-			t.Errorf("Chown %s : want error to be nil, got %v", fileName, err)
-		}
+		CheckNoError(t, "Chown "+fileName, err)
 	})
 
 	t.Run("FileChownClosed", func(t *testing.T) {
@@ -227,24 +219,22 @@ func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
 		vfs = sfs.vfsTest
 
 		openInfo, err := vfs.Stat(path)
-		if err != nil {
-			t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
+		if !CheckNoError(t, "Stat "+path, err) {
+			return
 		}
 
 		f, err := vfs.Open(path)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+path, err) {
+			return
 		}
 
 		err = f.Close()
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Close "+path, err) {
+			return
 		}
 
 		closeInfo, err := vfs.Stat(path)
-		if err != nil {
-			t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-		}
+		CheckNoError(t, "Stat "+path, err)
 
 		if !reflect.DeepEqual(openInfo, closeInfo) {
 			t.Errorf("Stat %s : open info != close info\n%v\n%v", path, openInfo, closeInfo)
@@ -274,19 +264,19 @@ func (sfs *SuiteFS) TestFileCloseWrite(t *testing.T, testDir string) {
 	path := sfs.ExistingFile(t, testDir, data)
 
 	openInfo, err := vfs.Stat(path)
-	if err != nil {
-		t.Fatalf("Stat %s : want error to be nil, got %v", path, err)
+	if !CheckNoError(t, "Stat "+path, err) {
+		return
 	}
 
 	t.Run("FileCloseWrite", func(t *testing.T) {
 		f, err := vfs.OpenFile(path, os.O_APPEND|os.O_WRONLY, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		n, err := f.Write(data)
-		if err != nil {
-			t.Fatalf("Write : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Write "+path, err) {
+			return
 		}
 
 		if n != len(data) {
@@ -294,14 +284,12 @@ func (sfs *SuiteFS) TestFileCloseWrite(t *testing.T, testDir string) {
 		}
 
 		err = f.Close()
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Close "+path, err) {
+			return
 		}
 
 		closeInfo, err := vfs.Stat(path)
-		if err != nil {
-			t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-		}
+		CheckNoError(t, "Stat "+path, err)
 
 		if reflect.DeepEqual(openInfo, closeInfo) {
 			t.Errorf("Stat %s : open info != close info\n%v\n%v", path, openInfo, closeInfo)
@@ -438,8 +426,8 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		const bufSize = 5
 
 		f, err := vfs.OpenFile(path, os.O_RDONLY, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("OpenFile : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -473,8 +461,8 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		const bufSize = 3
 
 		f, err := vfs.OpenFile(path, os.O_RDONLY, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("OpenFile : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -483,9 +471,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		rb := make([]byte, bufSize)
 		for i := len(data); i > 0; i -= bufSize {
 			n, err = f.ReadAt(rb, int64(i-bufSize))
-			if err != nil {
-				t.Errorf("ReadAt : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "ReadAt "+path, err)
 
 			if n != bufSize {
 				t.Errorf("ReadAt : want bytes read to be %d, got %d", bufSize, n)
@@ -507,8 +493,8 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 
 	t.Run("FileReadAfterEndOfFile", func(t *testing.T) {
 		f, err := vfs.Open(path)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -536,8 +522,8 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 
 	t.Run("FileReadOnDir", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
 		}
 
 		defer f.Close()
@@ -598,8 +584,8 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 	t.Run("FileReadDirN", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
-		if err != nil {
-			t.Fatalf("ReadDir : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
 		}
 
 		defer f.Close()
@@ -612,8 +598,8 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 				break
 			}
 
-			if err != nil {
-				t.Fatalf("ReadDir : want error to be nil, got %v", err)
+			if !CheckNoError(t, "ReadDir "+testDir, err) {
+				return
 			}
 
 			dirEntries = append(dirEntries, dirEntriesN...)
@@ -700,14 +686,12 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 
 	t.Run("FileReaddirnamesAll", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
-		if err != nil {
-			t.Fatalf("TestFileReaddirnames : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
 		}
 
 		names, err := f.Readdirnames(-1)
-		if err != nil {
-			t.Errorf("TestFileReaddirnames : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Readdirnames", err)
 
 		if wAll != len(names) {
 			t.Errorf("TestFileReaddirnames : want number of elements to be %d, got %d", wAll, len(names))
@@ -716,8 +700,8 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 
 	t.Run("FileReaddirnamesN", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
-		if err != nil {
-			t.Fatalf("TestFileReaddirnames : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
 		}
 
 		var names []string
@@ -728,8 +712,8 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 				break
 			}
 
-			if err != nil {
-				t.Fatalf("ReadDirNamesN : want error to be nil, got %v", err)
+			if !CheckNoError(t, "ReadDirNamesN ", err) {
+				return
 			}
 
 			names = append(names, namesN...)
@@ -742,8 +726,8 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 
 	t.Run("FileReaddirnamesExistingFile", func(t *testing.T) {
 		f, err := vfs.Open(existingFile)
-		if err != nil {
-			t.Fatalf("Create : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+existingFile, err) {
+			return
 		}
 
 		defer f.Close()
@@ -797,8 +781,8 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 	vfs = sfs.vfsTest
 
 	f, err := vfs.Open(path)
-	if err != nil {
-		t.Fatalf("Open : want error to be nil, got %v", err)
+	if !CheckNoError(t, "Open "+path, err) {
+		return
 	}
 
 	defer f.Close()
@@ -810,9 +794,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 	t.Run("TestFileSeek", func(t *testing.T) {
 		for i := 0; i < len(data); i++ {
 			pos, err = f.Seek(int64(i), io.SeekStart)
-			if err != nil {
-				t.Errorf("Seek : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Seek", err)
 
 			if int(pos) != i {
 				t.Errorf("Seek : want position to be %d, got %d", i, pos)
@@ -821,9 +803,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 
 		for i := 0; i < len(data); i++ {
 			pos, err = f.Seek(-int64(i), io.SeekEnd)
-			if err != nil {
-				t.Errorf("Seek : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Seek", err)
 
 			if int(pos) != len(data)-i {
 				t.Errorf("Seek : want position to be %d, got %d", i, pos)
@@ -831,15 +811,11 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		}
 
 		_, err = f.Seek(0, io.SeekEnd)
-		if err != nil {
-			t.Fatalf("Seek : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Seek", err)
 
 		for i := len(data) - 1; i >= 0; i-- {
 			pos, err = f.Seek(-1, io.SeekCurrent)
-			if err != nil {
-				t.Errorf("Seek : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Seek", err)
 
 			if int(pos) != i {
 				t.Errorf("Seek : want position to be %d, got %d", i, pos)
@@ -864,9 +840,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		wantPos := lenData * 2
 
 		pos, err = f.Seek(wantPos, io.SeekStart)
-		if err != nil {
-			t.Errorf("Seek : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Seek", err)
 
 		if pos != wantPos {
 			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
@@ -875,9 +849,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 
 	t.Run("FileSeekInvalidEnd", func(t *testing.T) {
 		pos, err = f.Seek(1, io.SeekEnd)
-		if err != nil {
-			t.Errorf("Seek : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Seek", err)
 
 		wantPos := lenData + 1
 		if pos != wantPos {
@@ -918,9 +890,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		}
 
 		pos, err = f.Seek(lenData, io.SeekCurrent)
-		if err != nil {
-			t.Errorf("Seek : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Seek", err)
 
 		if pos != lenData/2+lenData {
 			t.Errorf("Seek : want pos to be %d, got %d", wantPos, pos)
@@ -932,9 +902,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			if err != nil {
-				t.Errorf("Seek : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Seek", err)
 		default:
 			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrInvalidArgument)
 		}
@@ -946,8 +914,8 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 
 	t.Run("FileSeekOnDir", func(t *testing.T) {
 		f, err = vfs.Open(testDir)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -958,9 +926,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("seek").Path(testDir).Err(avfs.ErrWinInvalidHandle)
 		default:
-			if err != nil {
-				t.Errorf("Seek : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Seek", err)
 		}
 	})
 
@@ -1003,14 +969,10 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, dir.Path)
 
 			f, err := vfs.Open(path)
-			if err != nil {
-				t.Errorf("Open %s : want error to be nil, got %v", path, err)
-			}
+			CheckNoError(t, "Open "+path, err)
 
 			info, err := f.Stat()
-			if err != nil {
-				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-
+			if !CheckNoError(t, "Stat "+path, err) {
 				continue
 			}
 
@@ -1034,14 +996,10 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, file.Path)
 
 			f, err := vfs.Open(path)
-			if err != nil {
-				t.Errorf("Open %s : want error to be nil, got %v", path, err)
-			}
+			CheckNoError(t, "Open "+path, err)
 
 			info, err := f.Stat()
-			if err != nil {
-				t.Errorf("Stat %s : want error to be nil, got %v", path, err)
-
+			if !CheckNoError(t, "Stat "+path, err) {
 				continue
 			}
 
@@ -1075,14 +1033,10 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			oldPath := vfs.Join(testDir, sl.OldName)
 
 			f, err := vfs.Open(newPath)
-			if err != nil {
-				t.Errorf("Open %s : want error to be nil, got %v", newPath, err)
-			}
+			CheckNoError(t, "Open "+newPath, err)
 
 			info, err := f.Stat()
-			if err != nil {
-				t.Errorf("Stat %s : want error to be nil, got %v", newPath, err)
-
+			if !CheckNoError(t, "Stat "+newPath, err) {
 				continue
 			}
 
@@ -1202,22 +1156,18 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Errorf("OpenFile : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "OpenFile "+path, err)
 
 		defer f.Close()
 
 		b := make([]byte, len(data))
 		for i := len(data) - 1; i >= 0; i-- {
 			err = f.Truncate(int64(i))
-			if err != nil {
-				t.Errorf("Truncate : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Truncate "+path, err)
 
 			_, err = f.ReadAt(b, 0)
 			if err != io.EOF {
-				t.Errorf("Read : want error to be nil, got %v", err)
+				t.Errorf("Read : want error to be EOF, got %v", err)
 			}
 
 			if !bytes.Equal(data[:i], b[:i]) {
@@ -1228,9 +1178,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 
 	t.Run("FileTruncateOnDir", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
-		if err != nil {
-			t.Errorf("Truncate : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Truncate "+testDir, err)
 
 		defer f.Close()
 
@@ -1248,8 +1196,8 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("OpenFile : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -1267,21 +1215,17 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("OpenFile : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		newSize := len(data) * 2
 
 		err = f.Truncate(int64(newSize))
-		if err != nil {
-			t.Errorf("Truncate : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Truncate "+path, err)
 
 		info, err := f.Stat()
-		if err != nil {
-			t.Errorf("Stat : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Stat "+path, err)
 
 		if newSize != int(info.Size()) {
 			t.Errorf("Stat : want size to be %d, got %d", newSize, info.Size())
@@ -1290,8 +1234,8 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		f.Close()
 
 		gotContent, err := vfs.ReadFile(path)
-		if err != nil {
-			t.Fatalf("ReadFile : want error to be nil, got %v", err)
+		if !CheckNoError(t, "ReadFile "+path, err) {
+			return
 		}
 
 		wantAdded := bytes.Repeat([]byte{0}, len(data))
@@ -1350,8 +1294,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		path := vfs.Join(testDir, "TestFileWrite.txt")
 
 		f, err := vfs.Create(path)
-		if err != nil {
-			t.Fatalf("Create : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Create "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -1361,9 +1305,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 			var n int
 
 			n, err = f.Write(buf3)
-			if err != nil {
-				t.Errorf("Write : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "Write "+path, err)
 
 			if len(buf3) != n {
 				t.Errorf("Write : want bytes written to be %d, got %d", len(buf3), n)
@@ -1371,9 +1313,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 
 		rb, err := vfs.ReadFile(path)
-		if err != nil {
-			t.Fatalf("ReadFile : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "ReadFile "+path, err)
 
 		if !bytes.Equal(rb, data) {
 			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
@@ -1400,8 +1340,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		path := vfs.Join(testDir, "TestFileWriteAt.txt")
 
 		f, err := vfs.OpenFile(path, os.O_CREATE|os.O_RDWR, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("OpenFile : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -1409,9 +1349,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		for i := len(data); i > 0; i -= 3 {
 			var n int
 			n, err = f.WriteAt(data[i-3:i], int64(i-3))
-			if err != nil {
-				t.Errorf("WriteAt : want error to be nil, got %v", err)
-			}
+			CheckNoError(t, "WriteAt", err)
 
 			if n != 3 {
 				t.Errorf("WriteAt : want bytes written to be %d, got %d", 3, n)
@@ -1419,14 +1357,10 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 
 		err = f.Close()
-		if err != nil {
-			t.Errorf("Close : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Close "+path, err)
 
 		rb, err := vfs.ReadFile(path)
-		if err != nil {
-			t.Errorf("ReadFile : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "ReadFile "+path, err)
 
 		if !bytes.Equal(rb, data) {
 			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
@@ -1437,8 +1371,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -1455,8 +1389,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "OpenFile "+path, err) {
+			return
 		}
 
 		defer f.Close()
@@ -1464,9 +1398,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		off := int64(len(data) * 3)
 
 		n, err := f.WriteAt(data, off)
-		if err != nil {
-			t.Errorf("WriteAt : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "WriteAt "+path, err)
 
 		if n != len(data) {
 			t.Errorf("WriteAt : want bytes written to be %d, got %d", len(data), n)
@@ -1477,9 +1409,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		_ = copy(want[off:], data)
 
 		got, err := vfs.ReadFile(path)
-		if err != nil {
-			t.Errorf("ReadFile : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "ReadFile "+path, err)
 
 		if !bytes.Equal(want, got) {
 			t.Errorf("want : %s\ngot  : %s", want, got)
@@ -1490,9 +1420,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.Open(path)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Open "+path, err)
 
 		defer f.Close()
 
@@ -1511,9 +1439,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 
 		n, err = f.Read(b)
-		if err != nil {
-			t.Errorf("Read : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Read "+path, err)
 
 		if !bytes.Equal(data, b[:n]) {
 			t.Errorf("Read : want data to be %s, got %s", data, b[:n])
@@ -1534,7 +1460,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 		n, err = f.ReadAt(b, 0)
 		if err != io.EOF {
-			t.Errorf("ReadAt : want error to be nil, got %v", err)
+			t.Errorf("ReadAt : want error to be EOF, got %v", err)
 		}
 
 		if !bytes.Equal(data, b[:n]) {
@@ -1544,8 +1470,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 	t.Run("FileWriteOnDir", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
-		if err != nil {
-			t.Fatalf("Open : want error to be nil, got %v", err)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
 		}
 
 		defer f.Close()
@@ -1627,8 +1553,8 @@ func (sfs *SuiteFS) TestFileWriteTime(t *testing.T, testDir string) {
 	existingFile := vfs.Join(testDir, defaultFile)
 
 	f, err := vfs.Create(existingFile)
-	if err != nil {
-		t.Fatalf("Create : want error to be nil, got %v", err)
+	if !CheckNoError(t, "Create "+existingFile, err) {
+		return
 	}
 
 	// CompareTime tests if the modification time of the file has changed.
@@ -1638,12 +1564,12 @@ func (sfs *SuiteFS) TestFileWriteTime(t *testing.T, testDir string) {
 		info, err := f.Stat() //nolint:govet // Shadows previous declaration of err.
 		if err != nil {
 			if errors.Unwrap(err).Error() != avfs.ErrFileClosing.Error() {
-				t.Fatalf("Stat : want error to be nil, got %v", err)
+				t.Fatalf("Stat : want error to be %v, got %v", avfs.ErrFileClosing, err)
 			}
 
 			info, err = vfs.Stat(existingFile)
-			if err != nil {
-				t.Fatalf("Stat : want error to be nil, got %v", err)
+			if !CheckNoError(t, "Stat "+existingFile, err) {
+				return
 			}
 		}
 
@@ -1668,36 +1594,28 @@ func (sfs *SuiteFS) TestFileWriteTime(t *testing.T, testDir string) {
 
 	t.Run("TimeWrite", func(t *testing.T) {
 		_, err = f.Write(data)
-		if err != nil {
-			t.Fatalf("Write : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Write", err)
 
 		CompareTime(true)
 	})
 
 	t.Run("TimeWriteAt", func(t *testing.T) {
 		_, err = f.WriteAt(data, 5)
-		if err != nil {
-			t.Fatalf("WriteAt : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "WriteAt", err)
 
 		CompareTime(true)
 	})
 
 	t.Run("TimeTruncate", func(t *testing.T) {
 		err = f.Truncate(5)
-		if err != nil {
-			t.Fatalf("Truncate : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Truncate", err)
 
 		CompareTime(true)
 	})
 
 	t.Run("TimeClose", func(t *testing.T) {
 		err = f.Close()
-		if err != nil {
-			t.Fatalf("Close : want error to be nil, got %v", err)
-		}
+		CheckNoError(t, "Close", err)
 
 		CompareTime(false)
 	})

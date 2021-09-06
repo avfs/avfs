@@ -96,13 +96,9 @@ func (pt *PermTest) registerGob() {
 // Load loads a permissions test file.
 func (pt *PermTest) Load(t *testing.T) {
 	f, err := os.Open(pt.path)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			t.Fatalf("Open %s : want error to be nil, got %v", pt.path, err)
-		}
-
+	if os.IsNotExist(err) {
 		pt.create = true
-
+	} else if !CheckNoError(t, "Open "+pt.path, err) {
 		return
 	}
 
@@ -128,8 +124,8 @@ func (pt *PermTest) Save(t *testing.T) {
 	sfs.User(t, sfs.initUser.Name())
 
 	f, err := os.Create(pt.path)
-	if err != nil {
-		t.Fatalf("Create %s : want error to be nil, got %v", pt.path, err)
+	if !CheckNoError(t, "Create "+pt.path, err) {
+		return
 	}
 
 	defer f.Close()
