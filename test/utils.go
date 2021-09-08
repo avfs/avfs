@@ -73,12 +73,10 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
 			dstPath := dstFs.Join(dstDir, fileName)
+			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcPath)
 
 			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
-			if err != nil {
-				t.Errorf("CopyFile (%s)%s, (%s)%s : want error to be nil, got %v",
-					dstFs.Type(), dstPath, srcFs.Type(), srcPath, err)
-			}
+			CheckNoError(t, copyName, err)
 
 			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
 			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", dstFs.Type(), dstPath), err)
@@ -98,7 +96,6 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 		for _, srcPath := range rt.Files {
 			fileName := srcFs.Base(srcPath)
 			dstPath := dstFs.Join(dstDir, fileName)
-
 			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcPath)
 
 			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
