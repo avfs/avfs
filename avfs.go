@@ -189,23 +189,18 @@ const (
 // VFS is the virtual file system interface.
 // Any simulated or real file system should implement this interface.
 type VFS interface {
-	BasicVFS
-	ChDirer
-	ChOwner
 	ChRooter
 	IdentityMgr
-	HardLinker
 	Namer
 	Pather
-	SymLinker
 	ToSysStater
 	UMasker
 	UserConnecter
-}
 
-// BasicVFS is the basic virtual file system interface (no hard links, symbolic links, users, permissions or chroot).
-// Any simulated or real file system should implement this interface.
-type BasicVFS interface {
+	// Chdir changes the current working directory to the named directory.
+	// If there is an error, it will be of type *PathError.
+	Chdir(dir string) error
+
 	// Chmod changes the mode of the named file to mode.
 	// If the file is a symbolic link, it changes the mode of the link's target.
 	// If there is an error, it will be of type *PathError.
@@ -225,6 +220,15 @@ type BasicVFS interface {
 	// On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 	// and ModeTemporary are used.
 	Chmod(name string, mode fs.FileMode) error
+
+	// Chown changes the numeric uid and gid of the named file.
+	// If the file is a symbolic link, it changes the uid and gid of the link's target.
+	// A uid or gid of -1 means to not change that value.
+	// If there is an error, it will be of type *PathError.
+	//
+	// On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
+	// EPLAN9 error, wrapped in *PathError.
+	Chown(name string, uid, gid int) error
 
 	// Chtimes changes the access and modification times of the named
 	// file, similar to the Unix utime() or utimes() functions.
@@ -251,6 +255,19 @@ type BasicVFS interface {
 	// It is the caller's responsibility to remove the file when it is no longer needed.
 	CreateTemp(dir, pattern string) (File, error)
 
+	// EvalSymlinks returns the path name after the evaluation of any symbolic
+	// links.
+	// If path is relative the result will be relative to the current directory,
+	// unless one of the components is an absolute symbolic link.
+	// EvalSymlinks calls Clean on the result.
+	EvalSymlinks(path string) (string, error)
+
+	// Getwd returns a rooted path name corresponding to the
+	// current directory. If the current directory can be
+	// reached via multiple paths (due to symbolic links),
+	// Getwd may return any one of them.
+	Getwd() (dir string, err error)
+
 	// IsExist returns a boolean indicating whether the error is known to report
 	// that a file or directory already exists. It is satisfied by ErrExist as
 	// well as some syscall errors.
@@ -260,6 +277,24 @@ type BasicVFS interface {
 	// report that a file or directory does not exist. It is satisfied by
 	// ErrNotExist as well as some syscall errors.
 	IsNotExist(err error) bool
+
+	// Lchown changes the numeric uid and gid of the named file.
+	// If the file is a symbolic link, it changes the uid and gid of the link itself.
+	// If there is an error, it will be of type *PathError.
+	//
+	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
+	// in *PathError.
+	Lchown(name string, uid, gid int) error
+
+	// Link creates newname as a hard link to the oldname file.
+	// If there is an error, it will be of type *LinkError.
+	Link(oldname, newname string) error
+
+	// Lstat returns a FileInfo describing the named file.
+	// If the file is a symbolic link, the returned FileInfo
+	// describes the symbolic link. Lstat makes no attempt to follow the link.
+	// If there is an error, it will be of type *PathError.
+	Lstat(name string) (fs.FileInfo, error)
 
 	// Mkdir creates a new directory with the specified name and permission
 	// bits (before umask).
@@ -316,6 +351,10 @@ type BasicVFS interface {
 	// to be reported.
 	ReadFile(filename string) ([]byte, error)
 
+	// Readlink returns the destination of the named symbolic link.
+	// If there is an error, it will be of type *PathError.
+	Readlink(name string) (string, error)
+
 	// Remove removes the named file or (empty) directory.
 	// If there is an error, it will be of type *PathError.
 	Remove(name string) error
@@ -344,6 +383,10 @@ type BasicVFS interface {
 	// If there is an error, it will be of type *PathError.
 	Stat(name string) (fs.FileInfo, error)
 
+	// Symlink creates newname as a symbolic link to oldname.
+	// If there is an error, it will be of type *LinkError.
+	Symlink(oldname, newname string) error
+
 	// TempDir returns the default directory to use for temporary files.
 	//
 	// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
@@ -364,39 +407,6 @@ type BasicVFS interface {
 	// If the file does not exist, WriteFile creates it with permissions perm;
 	// otherwise WriteFile truncates it before writing.
 	WriteFile(filename string, data []byte, perm fs.FileMode) error
-}
-
-// ChDirer is the interface that wraps the Chdir and Getwd methods.
-type ChDirer interface {
-	// Chdir changes the current working directory to the named directory.
-	// If there is an error, it will be of type *PathError.
-	Chdir(dir string) error
-
-	// Getwd returns a rooted path name corresponding to the
-	// current directory. If the current directory can be
-	// reached via multiple paths (due to symbolic links),
-	// Getwd may return any one of them.
-	Getwd() (dir string, err error)
-}
-
-// ChOwner is the interface that wraps the Chown and Lchown methods.
-type ChOwner interface {
-	// Chown changes the numeric uid and gid of the named file.
-	// If the file is a symbolic link, it changes the uid and gid of the link's target.
-	// A uid or gid of -1 means to not change that value.
-	// If there is an error, it will be of type *PathError.
-	//
-	// On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
-	// EPLAN9 error, wrapped in *PathError.
-	Chown(name string, uid, gid int) error
-
-	// Lchown changes the numeric uid and gid of the named file.
-	// If the file is a symbolic link, it changes the uid and gid of the link itself.
-	// If there is an error, it will be of type *PathError.
-	//
-	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-	// in *PathError.
-	Lchown(name string, uid, gid int) error
 }
 
 // ChRooter is the interface that wraps the Chroot method.
@@ -421,13 +431,6 @@ type Featurer interface {
 
 	// HasFeature returns true if the file system or identity manager provides a given feature.
 	HasFeature(feature Feature) bool
-}
-
-// HardLinker is the interface that wraps the Link method.
-type HardLinker interface {
-	// Link creates newname as a hard link to the oldname file.
-	// If there is an error, it will be of type *LinkError.
-	Link(oldname, newname string) error
 }
 
 // Namer is the the interface that wraps the name method.
@@ -543,30 +546,6 @@ type Pather interface {
 	//
 	// WalkDir does not follow symbolic links.
 	WalkDir(root string, fn fs.WalkDirFunc) error
-}
-
-// SymLinker is the interface that groups functions related to symbolic links.
-type SymLinker interface {
-	// EvalSymlinks returns the path name after the evaluation of any symbolic
-	// links.
-	// If path is relative the result will be relative to the current directory,
-	// unless one of the components is an absolute symbolic link.
-	// EvalSymlinks calls Clean on the result.
-	EvalSymlinks(path string) (string, error)
-
-	// Lstat returns a FileInfo describing the named file.
-	// If the file is a symbolic link, the returned FileInfo
-	// describes the symbolic link. Lstat makes no attempt to follow the link.
-	// If there is an error, it will be of type *PathError.
-	Lstat(name string) (fs.FileInfo, error)
-
-	// Readlink returns the destination of the named symbolic link.
-	// If there is an error, it will be of type *PathError.
-	Readlink(name string) (string, error)
-
-	// Symlink creates newname as a symbolic link to oldname.
-	// If there is an error, it will be of type *LinkError.
-	Symlink(oldname, newname string) error
 }
 
 // Typer is the interface that wraps the Type method.
