@@ -586,21 +586,28 @@ type UMasker interface {
 
 // File represents a file in the file system.
 type File interface {
-	BasicFile
-	FileChDirer
-	FileChModer
-	FileChOwner
-	FileSyncer
-}
-
-// BasicFile represents a basic file in the file system.
-type BasicFile interface {
 	fs.File
 	fs.ReadDirFile
 	io.ReaderAt
 	io.StringWriter
 	io.WriterAt
 	io.WriteSeeker
+
+	// Chdir changes the current working directory to the file,
+	// which must be a directory.
+	// If there is an error, it will be of type *PathError.
+	Chdir() error
+
+	// Chmod changes the mode of the file to mode.
+	// If there is an error, it will be of type *PathError.
+	Chmod(mode fs.FileMode) error
+
+	// Chown changes the numeric uid and gid of the named file.
+	// If there is an error, it will be of type *PathError.
+	//
+	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
+	// in *PathError.
+	Chown(uid, gid int) error
 
 	// Fd returns the integer Unix file descriptor referencing the open file.
 	// The file descriptor is valid only until f.Close is called or f is garbage collected.
@@ -624,43 +631,15 @@ type BasicFile interface {
 	// a non-nil error.
 	Readdirnames(n int) (names []string, err error)
 
-	// Truncate changes the size of the file.
-	// It does not change the I/O offset.
-	// If there is an error, it will be of type *PathError.
-	Truncate(size int64) error
-}
-
-// FileChDirer is the interface that wraps the Chdir method of a File.
-type FileChDirer interface {
-	// Chdir changes the current working directory to the file,
-	// which must be a directory.
-	// If there is an error, it will be of type *PathError.
-	Chdir() error
-}
-
-// FileChModer is the interface that wraps the Chmod method of a File.
-type FileChModer interface {
-	// Chmod changes the mode of the file to mode.
-	// If there is an error, it will be of type *PathError.
-	Chmod(mode fs.FileMode) error
-}
-
-// FileChOwner is the interface that wraps the Chown method of a File.
-type FileChOwner interface {
-	// Chown changes the numeric uid and gid of the named file.
-	// If there is an error, it will be of type *PathError.
-	//
-	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-	// in *PathError.
-	Chown(uid, gid int) error
-}
-
-// FileSyncer is the interface that wraps the Sync method of a file.
-type FileSyncer interface {
 	// Sync commits the current contents of the file to stable storage.
 	// Typically, this means flushing the file system's in-memory copy
 	// of recently written data to disk.
 	Sync() error
+
+	// Truncate changes the size of the file.
+	// It does not change the I/O offset.
+	// If there is an error, it will be of type *PathError.
+	Truncate(size int64) error
 }
 
 // IdentityMgr interface manages identities (users and groups).
