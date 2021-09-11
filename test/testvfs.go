@@ -1564,7 +1564,7 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
 
-	existingFile := rndTree.Files[0]
+	existingFile := rndTree.Files[0].Name
 
 	t.Run("ReadDirAll", func(t *testing.T) {
 		dirEntries, err := vfs.ReadDir(testDir)

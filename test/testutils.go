@@ -21,6 +21,7 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"io/fs"
+	"math/rand"
 	"strconv"
 	"testing"
 
@@ -70,12 +71,12 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 
 		defer dstFs.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
 
-		for _, srcPath := range rt.Files {
-			fileName := srcFs.Base(srcPath)
+		for _, srcFile := range rt.Files {
+			fileName := srcFs.Base(srcFile.Name)
 			dstPath := dstFs.Join(dstDir, fileName)
-			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcPath)
+			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcFile.Name)
 
-			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, h)
+			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcFile.Name, h)
 			CheckNoError(t, copyName, err)
 
 			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
@@ -93,20 +94,20 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 			return
 		}
 
-		for _, srcPath := range rt.Files {
-			fileName := srcFs.Base(srcPath)
+		for _, srcFile := range rt.Files {
+			fileName := srcFs.Base(srcFile.Name)
 			dstPath := dstFs.Join(dstDir, fileName)
-			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcPath)
+			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcFile.Name)
 
-			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcPath, nil)
+			wantSum, err := avfs.CopyFile(dstFs, srcFs, dstPath, srcFile.Name, nil)
 			CheckNoError(t, copyName, err)
 
 			if wantSum != nil {
 				t.Fatalf("%s : want hash sum to be nil, got %v", copyName, err)
 			}
 
-			wantSum, err = avfs.HashFile(srcFs, srcPath, h)
-			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", srcFs.Type(), srcPath), err)
+			wantSum, err = avfs.HashFile(srcFs, srcFile.Name, h)
+			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", srcFs.Type(), srcFile.Name), err)
 
 			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
 			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", dstFs.Type(), dstPath), err)
@@ -363,8 +364,8 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 
 	h := sha512.New()
 
-	for _, fileName := range rt.Files {
-		content, err := vfs.ReadFile(fileName)
+	for _, file := range rt.Files {
+		content, err := vfs.ReadFile(file.Name)
 		if !CheckNoError(t, "ReadFile", err) {
 			continue
 		}
@@ -376,40 +377,44 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 
 		wantSum := h.Sum(nil)
 
-		gotSum, err := avfs.HashFile(vfs, fileName, h)
+		gotSum, err := avfs.HashFile(vfs, file.Name, h)
 		CheckNoError(t, "HashFile", err)
 
 		if !bytes.Equal(wantSum, gotSum) {
-			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
+			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", file.Name, wantSum, gotSum)
 		}
 	}
 }
 
 // TestRndTree tests avfs.RndTree function.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
+	const randSeed = 42
+
 	vfs := sfs.VFSSetup()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
+	rtTests := []*avfs.RndTreeParams{
+		{
+			MinName: 5, MaxName: 10,
+			MinDirs: 10, MaxDirs: 30,
+			MinFiles: 10, MaxFiles: 30,
+			MinFileSize: 0, MaxFileSize: 2048,
+			MinSymlinks: 10, MaxSymlinks: 30,
+		},
+		{
+			MinName: 3, MaxName: 3,
+			MinDirs: 3, MaxDirs: 3,
+			MinFiles: 3, MaxFiles: 3,
+			MinFileSize: 3, MaxFileSize: 3,
+			MinSymlinks: 3, MaxSymlinks: 3,
+		},
+	}
+
 	t.Run("RndTree", func(t *testing.T) {
-		rtTests := []*avfs.RndTreeParams{
-			{
-				MinName: 10, MaxName: 20,
-				MinDirs: 5, MaxDirs: 10,
-				MinFiles: 5, MaxFiles: 10,
-				MinFileSize: 5, MaxFileSize: 10,
-				MinSymlinks: 5, MaxSymlinks: 10,
-			},
-			{
-				MinName: 10, MaxName: 10,
-				MinDirs: 3, MaxDirs: 3,
-				MinFiles: 3, MaxFiles: 3,
-				MinFileSize: 3, MaxFileSize: 3,
-				MinSymlinks: 3, MaxSymlinks: 3,
-			},
-		}
+		rand.Seed(randSeed)
 
 		for i, rtTest := range rtTests {
 			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
@@ -420,7 +425,18 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 			CheckNoError(t, "NewRndTree", err)
 
 			err = rt.CreateTree()
-			CheckNoError(t, "CreateTree "+strconv.Itoa(i), err)
+			if !CheckNoError(t, "CreateTree "+strconv.Itoa(i), err) {
+				continue
+			}
+
+			err = rt.CreateDirs()
+			CheckNoError(t, "CreateDirs", err)
+
+			err = rt.CreateFiles()
+			CheckNoError(t, "CreateFiles", err)
+
+			err = rt.CreateSymlinks()
+			CheckNoError(t, "CreateSymlinks", err)
 
 			nbDirs := len(rt.Dirs)
 			if nbDirs < rtTest.MinDirs || nbDirs > rtTest.MaxDirs {
@@ -434,14 +450,34 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 					i, rtTest.MinFiles, rtTest.MaxFiles, nbFiles)
 			}
 
-			if !vfs.HasFeature(avfs.FeatSymlink) {
-				continue
+			if vfs.HasFeature(avfs.FeatSymlink) {
+				nbSymlinks := len(rt.SymLinks)
+				if nbSymlinks < rtTest.MinSymlinks || nbSymlinks > rtTest.MaxSymlinks {
+					t.Errorf("Dirs %d : want nb Dirs to be between %d and %d, got %d",
+						i, rtTest.MinSymlinks, rtTest.MaxSymlinks, nbSymlinks)
+				}
 			}
+		}
+	})
 
-			nbSymlinks := len(rt.SymLinks)
-			if nbSymlinks < rtTest.MinSymlinks || nbSymlinks > rtTest.MaxSymlinks {
-				t.Errorf("Dirs %d : want nb Dirs to be between %d and %d, got %d",
-					i, rtTest.MinSymlinks, rtTest.MaxSymlinks, nbSymlinks)
+	t.Run("RndTreeAlreadyCreated", func(t *testing.T) {
+		rand.Seed(randSeed)
+
+		for i, rtTest := range rtTests {
+			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
+
+			rt, err := avfs.NewRndTree(vfs, path, rtTest)
+			CheckNoError(t, "NewRndTree", err)
+
+			err = rt.CreateDirs()
+			CheckNoError(t, "CreateDirs", err)
+
+			err = rt.CreateFiles()
+			CheckNoError(t, "CreateFile", err)
+
+			if vfs.HasFeature(avfs.FeatSymlink) {
+				err = rt.CreateSymlinks()
+				CheckNoError(t, "CreateSymlinks", err)
 			}
 		}
 	})

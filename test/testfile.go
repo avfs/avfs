@@ -680,7 +680,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 
 	rndTree := sfs.RandomDir(t, testDir)
 	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
-	existingFile := rndTree.Files[0]
+	existingFile := rndTree.Files[0].Name
 
 	vfs = sfs.vfsTest
 
