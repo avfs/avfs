@@ -24,6 +24,7 @@ import (
 type OsFS struct {
 	idm     avfs.IdentityMgr
 	feature avfs.Feature
+	osType  avfs.OSType
 }
 
 // Option defines the option function used for initializing OsFS.

@@ -25,10 +25,10 @@ func New(opts ...Option) *OsFS {
 	vfs := &OsFS{
 		idm:     avfs.NotImplementedIdm,
 		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs,
+		osType:  avfs.RunTimeOS(),
 	}
 
-	os := avfs.RunTimeOS()
-	switch os {
+	switch vfs.osType {
 	case avfs.OsLinux:
 		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
 	case avfs.OsDarwin:
@@ -59,7 +59,7 @@ func (vfs *OsFS) Name() string {
 
 // OSType returns the operating system type of the file system.
 func (vfs *OsFS) OSType() avfs.OSType {
-	return avfs.RunTimeOS()
+	return vfs.osType
 }
 
 // Type returns the type of the fileSystem or Identity manager.
