@@ -25,7 +25,7 @@ func New(opts ...Option) *OsFS {
 	vfs := &OsFS{
 		idm:     avfs.NotImplementedIdm,
 		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs,
-		osType:  avfs.RunTimeOS(),
+		osType:  avfs.CurrentOSType(),
 	}
 
 	switch vfs.osType {

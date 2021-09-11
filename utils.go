@@ -1001,8 +1001,8 @@ func CreateHomeDir(vfs VFS, u UserReader) (UserReader, error) {
 	return u, nil
 }
 
-// RunTimeOS returns the current Operating System type.
-func RunTimeOS() OSType {
+// CurrentOSType returns the current Operating System type.
+func CurrentOSType() OSType {
 	switch runtime.GOOS {
 	case "linux":
 		return OsLinux

@@ -58,7 +58,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	vfs := vfsSetup
 
-	osType := avfs.RunTimeOS()
+	osType := avfs.CurrentOSType()
 	if osType != vfs.OSType() {
 		tb.Skipf("New : Current OSType = %s is different from %s OSType = %s, skipping tests",
 			osType, vfs.Type(), vfs.OSType())

@@ -49,7 +49,7 @@ func TestOsIdmAll(t *testing.T) {
 func TestOsIdmCfg(t *testing.T) {
 	var wantFeat avfs.Feature
 
-	switch avfs.RunTimeOS() {
+	switch avfs.CurrentOSType() {
 	case avfs.OsWindows:
 		wantFeat = 0
 	default:

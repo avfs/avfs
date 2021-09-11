@@ -122,7 +122,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || avfs.RunTimeOS() == avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
@@ -508,7 +508,7 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umaskTest := umaskSet
 
-	if avfs.RunTimeOS() == avfs.OsWindows {
+	if avfs.CurrentOSType() == avfs.OsWindows {
 		umaskTest = defaultUmask
 	}
 

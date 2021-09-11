@@ -22,7 +22,7 @@ import "github.com/avfs/avfs"
 func New() *OsIdm {
 	var feature avfs.Feature
 
-	switch avfs.RunTimeOS() {
+	switch avfs.CurrentOSType() {
 	case avfs.OsWindows:
 		feature = 0
 	default:
