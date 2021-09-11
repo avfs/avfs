@@ -57,13 +57,18 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	}
 
 	vfs := vfsSetup
-	initUser := vfs.CurrentUser()
 
+	osType := avfs.RunTimeOS()
+	if osType != vfs.OSType() {
+		tb.Skipf("New : Current OSType = %s is different from %s OSType = %s, skipping tests",
+			osType, vfs.Type(), vfs.OSType())
+	}
+
+	initUser := vfs.CurrentUser()
 	_, file, _, _ := runtime.Caller(0)
 	initDir := filepath.Dir(file)
 
-	canTestPerm := avfs.RunTimeOS() != avfs.OsWindows &&
-		vfs.OSType() != avfs.OsWindows &&
+	canTestPerm := vfs.OSType() != avfs.OsWindows &&
 		vfs.HasFeature(avfs.FeatBasicFs) &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) &&
 		initUser.IsRoot()
