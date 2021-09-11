@@ -22,10 +22,18 @@ import (
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
+	"github.com/avfs/avfs/vfs/orefafs"
 )
 
-func TestUtils(t *testing.T) {
+func TestUtilsMemFS(t *testing.T) {
 	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+
+	sfs := test.NewSuiteFS(t, vfs)
+	sfs.TestAll(t)
+}
+
+func TestUtilsOrefaFS(t *testing.T) {
+	vfs := orefafs.New(orefafs.WithMainDirs())
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
