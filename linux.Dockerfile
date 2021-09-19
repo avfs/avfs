@@ -15,10 +15,10 @@
 ##
 
 FROM golang:buster AS base
-WORKDIR /gopath/src
+WORKDIR /go/src
 
 FROM base AS copyfiles
-COPY ./bin/avfs /gopath/bin/
+COPY ./bin/avfs ../bin/
 COPY ./*.go ./
 COPY ./go.mod ./
 COPY ./idm ./idm
@@ -26,5 +26,4 @@ COPY ./test ./test
 COPY ./vfs ./vfs
 
 FROM copyfiles
-ENV PATH "/gopath/bin:$PATH"
 CMD avfs test
