@@ -1049,7 +1049,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 			curPath := testDir
 			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = avfs.SegmentPath(vfs.PathSeparator(), dir.Path, start)
+				end, isLast = avfs.SegmentUnixPath(dir.Path, start)
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
@@ -1181,7 +1181,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 			curPath := testDir
 			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = avfs.SegmentPath(vfs.PathSeparator(), dir.Path, start)
+				end, isLast = avfs.SegmentUnixPath(dir.Path, start)
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 

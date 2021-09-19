@@ -510,7 +510,7 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	}
 
 	for dn, isLast := parent, len(absPath) <= 1; !isLast; start = end + 1 {
-		end, isLast = avfs.SegmentPath(vfs.PathSeparator(), absPath, start)
+		end, isLast = avfs.SegmentUnixPath(absPath, start)
 
 		part := absPath[start:end]
 		if dn.child(part) != nil {

@@ -423,7 +423,7 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestReadDir,
 		sfs.TestReadFile,
 		sfs.TestRndTree,
-		sfs.TestSegmentPath,
+		sfs.TestSegmentUnixPath,
 		sfs.TestUmask,
 		sfs.TestWriteFile,
 	)

@@ -50,7 +50,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 
 	isLast := len(absPath) <= 1
 	for start, end = 1, 0; !isLast; start = end + 1 {
-		end, isLast = avfs.SegmentPath(vfs.PathSeparator(), absPath, start)
+		end, isLast = avfs.SegmentUnixPath(absPath, start)
 		name := absPath[start:end]
 
 		parent.mu.RLock()
