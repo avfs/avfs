@@ -233,7 +233,13 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		invalidPath := vfs.Join(existingFile, defaultFile)
 
 		ok, err := avfs.Exists(vfs, invalidPath)
-		CheckPathError(t, err).OpStat(vfs).Path(invalidPath).Err(avfs.ErrNotADirectory)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckNoError(t, "Stat "+invalidPath, err)
+		default:
+			CheckPathError(t, err).OpStat(vfs).Path(invalidPath).Err(avfs.ErrNotADirectory)
+		}
 
 		if ok {
 			t.Error("Exists : want Exists to be false, got true")
