@@ -786,7 +786,7 @@ func (ut *Utils) TempDir(vfs VFS) string {
 		return "/tmp"
 	}
 
-	return vfs.Join("C:\\Users", vfs.CurrentUser().Name(), "AppData\\Local\\Temp")
+	return vfs.Join("\\Users", vfs.CurrentUser().Name(), "AppData\\Local\\Temp")
 }
 
 // ToSlash returns the result of replacing each separator character
@@ -921,8 +921,8 @@ func BaseDirs(vfs VFS) []DirInfo {
 		return []DirInfo{
 			{Path: HomeDir(vfs), Perm: DefaultDirPerm},
 			{Path: HomeDirUser(vfs, "Default"), Perm: DefaultDirPerm},
-			{Path: "C:\\Windows", Perm: DefaultDirPerm},
-			{Path: "C:\\Windows\\Temp", Perm: DefaultDirPerm},
+			{Path: "\\Windows", Perm: DefaultDirPerm},
+			{Path: "\\Windows\\Temp", Perm: DefaultDirPerm},
 		}
 	default:
 		return []DirInfo{
@@ -958,7 +958,7 @@ func CreateBaseDirs(vfs VFS, basePath string) error {
 func HomeDir(vfs VFS) string {
 	switch vfs.OSType() {
 	case OsWindows:
-		return "C:\\User"
+		return "\\User"
 	default:
 		return "/home"
 	}

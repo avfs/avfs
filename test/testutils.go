@@ -135,8 +135,10 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	}
 
 	for _, dir := range avfs.BaseDirs(vfs) {
-		info, err := vfs.Stat(dir.Path)
-		if !CheckNoError(t, "Stat", err) {
+		path := vfs.Join(testDir, dir.Path)
+
+		info, err := vfs.Stat(path)
+		if !CheckNoError(t, "Stat "+path, err) {
 			continue
 		}
 
