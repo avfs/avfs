@@ -24,6 +24,7 @@ import (
 	"math/rand"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -387,6 +388,14 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 	}
 }
 
+func errp(e error) string {
+	if e == nil {
+		return "<nil>"
+	}
+
+	return e.Error()
+}
+
 func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 	ut := avfs.NewUtils(avfs.CurrentOSType())
 
@@ -454,9 +463,22 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 	}
 
 	for _, tt := range matchTests {
-		ok, err := ut.Match(tt.pattern, tt.s)
+		pattern := tt.pattern
+		s := tt.s
+
+		if ut.OSType() == avfs.OsWindows {
+			if strings.Contains(pattern, "\\") {
+				// no escape allowed on windows.
+				continue
+			}
+
+			pattern = ut.Clean(pattern)
+			s = ut.Clean(s)
+		}
+
+		ok, err := ut.Match(pattern, s)
 		if ok != tt.match || err != tt.err {
-			t.Errorf("Match(%#q, %#q) = %v, %v want %v, %v", tt.pattern, tt.s, ok, err, tt.match, tt.err)
+			t.Errorf("Match(%#q, %#q) = %v, %q want %v, %q", pattern, s, ok, errp(err), tt.match, errp(tt.err))
 		}
 	}
 }
