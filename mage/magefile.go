@@ -38,6 +38,7 @@ import (
 )
 
 const (
+	dockerGoSrc = "/go/src"
 	dockerImage = "avfs-docker"
 	gitCmd      = "git"
 	goCmd       = "go"
@@ -57,7 +58,6 @@ var (
 	coverTestPath     string
 	coverRacePath     string
 	testDataDir       string
-	dockerGoPath      string
 	dockerCoverDir    string
 	dockerTestDataDir string
 )
@@ -71,13 +71,13 @@ func init() {
 	coverRacePath = filepath.Join(coverDir, "cover_race.txt")
 	testDataDir = filepath.Join(appDir, "test/testdata")
 
+	var dockerVolume string
 	if runtime.GOOS == "windows" {
-		dockerGoPath = "c:"
+		dockerVolume = "c:"
 	}
 
-	dockerGoPath += "/gopath/src"
-	dockerCoverDir = dockerGoPath + "/coverage"
-	dockerTestDataDir = dockerGoPath + "/test/testdata"
+	dockerCoverDir = filepath.Join(dockerVolume, dockerGoSrc, "coverage")
+	dockerTestDataDir = filepath.Join(dockerVolume, dockerGoSrc, "test/testdata")
 
 	switch {
 	case isExecutable("docker"):
@@ -98,12 +98,11 @@ coverDir=%s
 coverTestPath=%s
 coverRacePath=%s
 testDataDir=%s
-dockerGoPath=%s
 dockerCoverDir=%s
 dockerTestDataDir=%s
 `,
 		appDir, coverDir, coverTestPath, coverRacePath,
-		testDataDir, dockerGoPath, dockerCoverDir, dockerTestDataDir)
+		testDataDir, dockerCoverDir, dockerTestDataDir)
 }
 
 // Build builds the project.
