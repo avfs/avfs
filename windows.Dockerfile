@@ -27,4 +27,5 @@ COPY ./test ./test
 COPY ./vfs ./vfs
 
 FROM copyfiles
+USER ContainerAdministrator
 CMD avfs test
