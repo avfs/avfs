@@ -24,15 +24,15 @@ import (
 func New(opts ...Option) *OsFS {
 	vfs := &OsFS{
 		idm:     avfs.NotImplementedIdm,
-		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs,
+		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs | avfs.FeatSymlink,
 		osType:  avfs.CurrentOSType(),
 	}
 
 	switch vfs.osType {
 	case avfs.OsLinux:
-		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink
 	case avfs.OsDarwin:
-		vfs.feature |= avfs.FeatHardlink | avfs.FeatSymlink
+		vfs.feature |= avfs.FeatHardlink
 	}
 
 	for _, opt := range opts {
