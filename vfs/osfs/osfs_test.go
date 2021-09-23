@@ -60,13 +60,13 @@ func TestOsFSNilPtrFile(t *testing.T) {
 func TestOsFSConfig(t *testing.T) {
 	vfs := osfs.New()
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs | avfs.FeatSymlink
 
 	switch vfs.OSType() {
 	case avfs.OsLinux:
-		wantFeatures |= avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+		wantFeatures |= avfs.FeatChroot | avfs.FeatHardlink
 	case avfs.OsDarwin:
-		wantFeatures |= avfs.FeatHardlink | avfs.FeatSymlink
+		wantFeatures |= avfs.FeatHardlink
 	}
 
 	if vfs.Features() != wantFeatures {
