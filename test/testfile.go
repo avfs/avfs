@@ -1025,10 +1025,6 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 	t.Run("FileStatSymlink", func(t *testing.T) {
 		for _, sl := range GetSampleSymlinksEval(vfs) {
-			if sl.WantErr != nil {
-				continue
-			}
-
 			newPath := vfs.Join(testDir, sl.NewName)
 			oldPath := vfs.Join(testDir, sl.OldName)
 
@@ -1040,18 +1036,12 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 				continue
 			}
 
-			var (
-				wantName string
-				wantMode fs.FileMode
-			)
-
+			wantName := vfs.Base(oldPath)
 			if sl.IsSymlink {
 				wantName = vfs.Base(newPath)
-			} else {
-				wantName = vfs.Base(oldPath)
 			}
 
-			wantMode = sl.Mode
+			wantMode := sl.Mode
 			if wantName != info.Name() {
 				t.Errorf("Stat %s : want name to be %s, got %s", newPath, wantName, info.Name())
 			}

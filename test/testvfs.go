@@ -559,7 +559,7 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.OSType() == avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
 
 		switch vfs.OSType() {
@@ -581,28 +581,16 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	t.Run("EvalSymlink", func(t *testing.T) {
 		symlinks := GetSampleSymlinksEval(vfs)
 		for _, sl := range symlinks {
-			wantOp := "lstat"
 			wantPath := vfs.Join(testDir, sl.OldName)
 			slPath := vfs.Join(testDir, sl.NewName)
 
 			gotPath, err := vfs.EvalSymlinks(slPath)
-			if sl.WantErr == nil && err == nil {
-				if wantPath != gotPath {
-					t.Errorf("EvalSymlinks %s : want Path to be %s, got %s", slPath, wantPath, gotPath)
-				}
-
+			if !CheckNoError(t, "EvalSymlinks", err) {
 				continue
 			}
 
-			e, ok := err.(*fs.PathError)
-			if !ok && sl.WantErr != err {
-				t.Errorf("EvalSymlinks %s : want error %v, got %v", slPath, sl.WantErr, err)
-			}
-
-			if wantOp != e.Op || wantPath != e.Path || sl.WantErr != e.Err {
-				t.Errorf("EvalSymlinks %s : error"+
-					"\nwant : Op: %s, Path: %s, Err: %v\ngot  : Op: %s, Path: %s, Err: %v",
-					sl.NewName, wantOp, wantPath, sl.WantErr, e.Op, e.Path, e.Err)
+			if wantPath != gotPath {
+				t.Errorf("EvalSymlinks %s : want Path to be %s, got %s", slPath, wantPath, gotPath)
 			}
 		}
 	})
@@ -956,30 +944,23 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 			oldPath := vfs.Join(testDir, sl.OldName)
 
 			info, err := vfs.Lstat(newPath)
-			if err != nil {
-				CheckPathError(t, err).OpStat(vfs).Path(newPath).Err(sl.WantErr)
-
+			if !CheckNoError(t, "Lstat", err) {
 				continue
 			}
 
-			var (
-				wantName string
-				wantMode fs.FileMode
-			)
+			wantName := vfs.Base(oldPath)
+			wantMode := sl.Mode
 
 			if sl.IsSymlink {
 				wantName = vfs.Base(newPath)
 				wantMode = fs.ModeSymlink | fs.ModePerm
-			} else {
-				wantName = vfs.Base(oldPath)
-				wantMode = sl.Mode
 			}
 
 			if wantName != info.Name() {
 				t.Errorf("Lstat %s : want name to be %s, got %s", newPath, wantName, info.Name())
 			}
 
-			if wantMode != info.Mode() {
+			if vfs.OSType() != avfs.OsWindows && wantMode != info.Mode() {
 				t.Errorf("Lstat %s : want mode to be %s, got %s", newPath, wantMode, info.Mode())
 			}
 		}
@@ -1710,7 +1691,13 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, dir.Path)
 
 			_, err := vfs.Readlink(path)
-			CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrInvalidArgument)
+
+			switch vfs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrWinNotReparsePoint)
+			default:
+				CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrInvalidArgument)
+			}
 		}
 	})
 
@@ -1719,7 +1706,13 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, file.Path)
 
 			_, err := vfs.Readlink(path)
-			CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrInvalidArgument)
+
+			switch vfs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrWinNotReparsePoint)
+			default:
+				CheckPathError(t, err).Op("readlink").Path(path).Err(avfs.ErrInvalidArgument)
+			}
 		}
 	})
 
@@ -2209,28 +2202,16 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 			oldPath := vfs.Join(testDir, sl.OldName)
 
 			info, err := vfs.Stat(newPath)
-			if err != nil {
-				if sl.WantErr == nil {
-					t.Errorf("Stat %s : want error to be nil, got %v", newPath, err)
-				}
-
-				CheckPathError(t, err).OpStat(vfs).Path(newPath).Err(sl.WantErr)
-
+			if !CheckNoError(t, "Stat "+newPath, err) {
 				continue
 			}
 
-			var (
-				wantName string
-				wantMode fs.FileMode
-			)
-
+			wantName := vfs.Base(oldPath)
 			if sl.IsSymlink {
 				wantName = vfs.Base(newPath)
-			} else {
-				wantName = vfs.Base(oldPath)
 			}
 
-			wantMode = sl.Mode
+			wantMode := sl.Mode
 			if wantName != info.Name() {
 				t.Errorf("Stat %s : want name to be %s, got %s", newPath, wantName, info.Name())
 			}

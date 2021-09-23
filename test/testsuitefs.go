@@ -758,12 +758,11 @@ func GetSampleSymlinks(vfs avfs.Featurer) []*Symlink {
 }
 
 // SymlinkEval contains the data to evaluate the sample symbolic links.
-type SymlinkEval struct { //nolint:govet // no fieldalignment for simple structs
-	NewName   string
-	OldName   string
-	WantErr   error
-	IsSymlink bool
-	Mode      fs.FileMode
+type SymlinkEval struct {
+	NewName   string      // Name of the symbolic link.
+	OldName   string      // Value of the symbolic link.
+	IsSymlink bool        //
+	Mode      fs.FileMode //
 }
 
 // GetSampleSymlinksEval return the sample symbolic links to evaluate.
@@ -773,17 +772,16 @@ func GetSampleSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 	}
 
 	sl := []*SymlinkEval{
-		{NewName: "/A/lroot/", OldName: "/", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o777},
-		{NewName: "/A/lroot/B", OldName: "/B", WantErr: nil, IsSymlink: false, Mode: fs.ModeDir | 0o755},
-		{NewName: "/C/lNonExist", OldName: "A/path", WantErr: avfs.ErrNoSuchFileOrDir, IsSymlink: true},
-		{NewName: "/", OldName: "/", WantErr: nil, IsSymlink: false, Mode: fs.ModeDir | 0o777},
-		{NewName: "/lC", OldName: "/C", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o750},
-		{NewName: "/B/1/lafile2.txt", OldName: "/A/afile2.txt", WantErr: nil, IsSymlink: true, Mode: 0o644},
-		{NewName: "/B/2/lf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
-		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
-		{NewName: "/C/lllf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
-		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", WantErr: nil, IsSymlink: true, Mode: fs.ModeDir | 0o755},
-		{NewName: "/C/lllf/3/3file1.txt", OldName: "/B/2/F/3/3file1.txt", WantErr: nil, IsSymlink: false, Mode: 0o640},
+		{NewName: "/A/lroot/", OldName: "/", IsSymlink: true, Mode: fs.ModeDir | 0o777},
+		{NewName: "/A/lroot/B", OldName: "/B", IsSymlink: false, Mode: fs.ModeDir | 0o755},
+		{NewName: "/", OldName: "/", IsSymlink: false, Mode: fs.ModeDir | 0o777},
+		{NewName: "/lC", OldName: "/C", IsSymlink: true, Mode: fs.ModeDir | 0o750},
+		{NewName: "/B/1/lafile2.txt", OldName: "/A/afile2.txt", IsSymlink: true, Mode: 0o644},
+		{NewName: "/B/2/lf", OldName: "/B/2/F", IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/C/lllf", OldName: "/B/2/F", IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/B/2/F/3/llf", OldName: "/B/2/F", IsSymlink: true, Mode: fs.ModeDir | 0o755},
+		{NewName: "/C/lllf/3/3file1.txt", OldName: "/B/2/F/3/3file1.txt", IsSymlink: false, Mode: 0o640},
 	}
 
 	return sl
@@ -943,6 +941,26 @@ func (cp *CheckPath) ErrAsString(wantErr error) *CheckPath {
 
 	err := cp.err
 	if err.Err.Error() != wantErr.Error() {
+		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	}
+
+	return cp
+}
+
+func (cp *CheckPath) ErrNoSuchFileOrDir(vfs avfs.VFS) *CheckPath {
+	cp.tb.Helper()
+
+	if cp.halt {
+		return cp
+	}
+
+	wantErr := avfs.ErrNoSuchFileOrDir
+	if vfs.OSType() == avfs.OsWindows {
+		wantErr = avfs.ErrWinPathNotFound
+	}
+
+	err := cp.err
+	if err.Err != wantErr {
 		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 	}
 
