@@ -42,6 +42,8 @@ func main() {
 	_, file, _, _ := runtime.Caller(0)
 	mageDir := filepath.Dir(file)
 
+	os.Setenv("CGO_ENABLED", "0")
+
 	if isExecutable("mage") {
 		log.Printf("mage binary already exists")
 	} else {
