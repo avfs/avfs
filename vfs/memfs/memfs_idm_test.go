@@ -44,10 +44,6 @@ func TestMemFsIdmWithMemIdm(t *testing.T) {
 
 func TestMemFsWithOsIdm(t *testing.T) {
 	idm := osidm.New()
-	if !idm.CurrentUser().IsRoot() {
-		t.Skip("OsIdm only works on when connected as root on a linux platform, skipping")
-	}
-
 	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm))
 
 	sIdm := test.NewSuiteIdm(t, vfs)

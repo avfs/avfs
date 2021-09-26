@@ -32,6 +32,7 @@ func New() *MemIdm {
 	}
 
 	idm := &MemIdm{
+		feature:      avfs.FeatIdentityMgr,
 		groupsByName: make(groupsByName),
 		groupsById:   make(groupsById),
 		usersByName:  make(usersByName),
@@ -60,5 +61,5 @@ func (idm *MemIdm) Features() avfs.Feature {
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (idm *MemIdm) HasFeature(feature avfs.Feature) bool {
-	return avfs.FeatIdentityMgr&feature == feature
+	return (idm.feature & feature) == feature
 }

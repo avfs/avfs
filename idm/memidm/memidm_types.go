@@ -18,6 +18,8 @@ package memidm
 
 import (
 	"sync"
+
+	"github.com/avfs/avfs"
 )
 
 const (
@@ -30,12 +32,15 @@ const (
 
 // MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
 type MemIdm struct {
-	groupsByName   groupsByName
-	groupsById     groupsById
-	usersByName    usersByName
-	usersById      usersById
-	maxGid, maxUid int
-	grpMu, usrMu   sync.RWMutex
+	groupsByName groupsByName // Groups map by Name.
+	groupsById   groupsById   // Groups map by Id.
+	usersByName  usersByName  // Users map by Name.
+	usersById    usersById    // Users map by Id.
+	feature      avfs.Feature // Idm features.
+	maxGid       int          // Current maximum Gid.
+	maxUid       int          // Current maximum Uid.
+	grpMu        sync.RWMutex // Groups mutex.
+	usrMu        sync.RWMutex // Users mutex.
 }
 
 // groupsByName is the map of groups by group name.
