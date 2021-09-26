@@ -405,7 +405,7 @@ func errp(e error) string {
 }
 
 func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
-	ut := avfs.NewUtils(avfs.CurrentOSType())
+	vfs := sfs.vfsTest
 
 	matchTests := []struct { //nolint:govet // no fieldalignment for simple structs
 		pattern, s string
@@ -474,17 +474,17 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 		pattern := tt.pattern
 		s := tt.s
 
-		if ut.OSType() == avfs.OsWindows {
+		if vfs.OSType() == avfs.OsWindows {
 			if strings.Contains(pattern, "\\") {
 				// no escape allowed on windows.
 				continue
 			}
 
-			pattern = ut.Clean(pattern)
-			s = ut.Clean(s)
+			pattern = vfs.Clean(pattern)
+			s = vfs.Clean(s)
 		}
 
-		ok, err := ut.Match(pattern, s)
+		ok, err := vfs.Match(pattern, s)
 		if ok != tt.match || err != tt.err {
 			t.Errorf("Match(%#q, %#q) = %v, %q want %v, %q", pattern, s, ok, errp(err), tt.match, errp(tt.err))
 		}
