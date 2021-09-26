@@ -189,13 +189,47 @@ const (
 // VFS is the virtual file system interface.
 // Any simulated or real file system should implement this interface.
 type VFS interface {
+	BaseVFS
 	ChRooter
+
+	// Open opens the named file for reading. If successful, methods on
+	// the returned file can be used for reading; the associated file
+	// descriptor has mode O_RDONLY.
+	// If there is an error, it will be of type *PathError.
+	Open(name string) (File, error)
+}
+
+// IOFS is the virtual file system interface implementing io/fs interfaces.
+type IOFS interface {
+	BaseVFS
+	fs.FS
+	fs.GlobFS
+	fs.ReadDirFS
+	fs.ReadFileFS
+	fs.StatFS
+	fs.SubFS
+}
+
+// BaseVFS regroups the common methods to VFS and IOFS.
+type BaseVFS interface {
 	IdentityMgr
 	Namer
-	Pather
 	ToSysStater
 	UMasker
 	UserConnecter
+
+	// Abs returns an absolute representation of path.
+	// If the path is not absolute it will be joined with the current
+	// working directory to turn it into an absolute path. The absolute
+	// path name for a given file is not guaranteed to be unique.
+	// Abs calls Clean on the result.
+	Abs(path string) (string, error)
+
+	// Base returns the last element of path.
+	// Trailing path separators are removed before extracting the last element.
+	// If the path is empty, Base returns ".".
+	// If the path consists entirely of separators, Base returns a single separator.
+	Base(path string) string
 
 	// Chdir changes the current working directory to the named directory.
 	// If there is an error, it will be of type *PathError.
@@ -238,6 +272,31 @@ type VFS interface {
 	// If there is an error, it will be of type *PathError.
 	Chtimes(name string, atime, mtime time.Time) error
 
+	// Clean returns the shortest path name equivalent to path
+	// by purely lexical processing. It applies the following rules
+	// iteratively until no further processing can be done:
+	//
+	//	1. Replace multiple Separator elements with a single one.
+	//	2. Eliminate each . path name element (the current directory).
+	//	3. Eliminate each inner .. path name element (the parent directory)
+	//	   along with the non-.. element that precedes it.
+	//	4. Eliminate .. elements that begin a rooted path:
+	//	   that is, replace "/.." by "/" at the beginning of a path,
+	//	   assuming Separator is '/'.
+	//
+	// The returned path ends in a slash only if it represents a root directory,
+	// such as "/" on Unix or `C:\` on Windows.
+	//
+	// Finally, any occurrences of slash are replaced by Separator.
+	//
+	// If the result of this process is an empty string, Clean
+	// returns the string ".".
+	//
+	// See also Rob Pike, ``Lexical File Names in Plan 9 or
+	// Getting Dot-Dot Right,''
+	// https://9p.io/sys/doc/lexnames.html
+	Clean(path string) string
+
 	// Create creates the named file with mode 0666 (before umask), truncating
 	// it if it already exists. If successful, methods on the returned
 	// File can be used for I/O; the associated file descriptor has mode
@@ -255,6 +314,14 @@ type VFS interface {
 	// It is the caller's responsibility to remove the file when it is no longer needed.
 	CreateTemp(dir, pattern string) (File, error)
 
+	// Dir returns all but the last element of path, typically the path's directory.
+	// After dropping the final element, Dir calls Clean on the path and trailing
+	// slashes are removed.
+	// If the path is empty, Dir returns ".".
+	// If the path consists entirely of separators, Dir returns a single separator.
+	// The returned path does not end in a separator unless it is the root directory.
+	Dir(path string) string
+
 	// EvalSymlinks returns the path name after the evaluation of any symbolic
 	// links.
 	// If path is relative the result will be relative to the current directory,
@@ -262,11 +329,29 @@ type VFS interface {
 	// EvalSymlinks calls Clean on the result.
 	EvalSymlinks(path string) (string, error)
 
+	// FromSlash returns the result of replacing each slash ('/') character
+	// in path with a separator character. Multiple slashes are replaced
+	// by multiple separators.
+	FromSlash(path string) string
+
 	// Getwd returns a rooted path name corresponding to the
 	// current directory. If the current directory can be
 	// reached via multiple paths (due to symbolic links),
 	// Getwd may return any one of them.
 	Getwd() (dir string, err error)
+
+	// Glob returns the names of all files matching pattern or nil
+	// if there is no matching file. The syntax of patterns is the same
+	// as in Match. The pattern may describe hierarchical names such as
+	// /usr/*/bin/ed (assuming the Separator is '/').
+	//
+	// Glob ignores file system errors such as I/O errors reading directories.
+	// The only possible returned error is ErrBadPattern, when pattern
+	// is malformed.
+	Glob(pattern string) (matches []string, err error)
+
+	// IsAbs reports whether the path is absolute.
+	IsAbs(path string) bool
 
 	// IsExist returns a boolean indicating whether the error is known to report
 	// that a file or directory already exists. It is satisfied by ErrExist as
@@ -277,6 +362,14 @@ type VFS interface {
 	// report that a file or directory does not exist. It is satisfied by
 	// ErrNotExist as well as some syscall errors.
 	IsNotExist(err error) bool
+
+	// IsPathSeparator reports whether c is a directory separator character.
+	IsPathSeparator(c uint8) bool
+
+	// Join joins any number of path elements into a single path, adding a
+	// separating slash if necessary. The result is Cleaned; in particular,
+	// all empty strings are ignored.
+	Join(elem ...string) string
 
 	// Lchown changes the numeric uid and gid of the named file.
 	// If the file is a symbolic link, it changes the uid and gid of the link itself.
@@ -346,12 +439,6 @@ type VFS interface {
 	// It is the caller's responsibility to remove the directory when it is no longer needed.
 	MkdirTemp(dir, pattern string) (string, error)
 
-	// Open opens the named file for reading. If successful, methods on
-	// the returned file can be used for reading; the associated file
-	// descriptor has mode O_RDONLY.
-	// If there is an error, it will be of type *PathError.
-	Open(name string) (File, error)
-
 	// OpenFile is the generalized open call; most users will use Open
 	// or Create instead. It opens the named file with specified flag
 	// (O_RDONLY etc.) and perm (before umask), if applicable. If successful,
@@ -382,6 +469,16 @@ type VFS interface {
 	// If there is an error, it will be of type *PathError.
 	Readlink(name string) (string, error)
 
+	// Rel returns a relative path that is lexically equivalent to targpath when
+	// joined to basepath with an intervening separator. That is,
+	// Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
+	// On success, the returned path will always be relative to basepath,
+	// even if basepath and targpath share no elements.
+	// An error is returned if targpath can't be made relative to basepath or if
+	// knowing the current working directory would be necessary to compute it.
+	// Rel calls Clean on the result.
+	Rel(basepath, targpath string) (string, error)
+
 	// Remove removes the named file or (empty) directory.
 	// If there is an error, it will be of type *PathError.
 	Remove(name string) error
@@ -410,6 +507,13 @@ type VFS interface {
 	// If there is an error, it will be of type *PathError.
 	Stat(name string) (fs.FileInfo, error)
 
+	// Split splits path immediately following the final Separator,
+	// separating it into a directory and file name component.
+	// If there is no Separator in path, Split returns an empty dir
+	// and file set to path.
+	// The returned values have the property that path = dir+file.
+	Split(path string) (dir, file string)
+
 	// Symlink creates newname as a symbolic link to oldname.
 	// If there is an error, it will be of type *LinkError.
 	Symlink(oldname, newname string) error
@@ -425,10 +529,28 @@ type VFS interface {
 	// permissions.
 	TempDir() string
 
+	// ToSlash returns the result of replacing each separator character
+	// in path with a slash ('/') character. Multiple separators are
+	// replaced by multiple slashes.
+	ToSlash(path string) string
+
 	// Truncate changes the size of the named file.
 	// If the file is a symbolic link, it changes the size of the link's target.
 	// If there is an error, it will be of type *PathError.
 	Truncate(name string, size int64) error
+
+	// WalkDir walks the file tree rooted at root, calling fn for each file or
+	// directory in the tree, including root.
+	//
+	// All errors that arise visiting files and directories are filtered by fn:
+	// see the fs.WalkDirFunc documentation for details.
+	//
+	// The files are walked in lexical order, which makes the output deterministic
+	// but requires WalkDir to read an entire directory into memory before proceeding
+	// to walk that directory.
+	//
+	// WalkDir does not follow symbolic links.
+	WalkDir(root string, fn fs.WalkDirFunc) error
 
 	// WriteFile writes data to a file named by filename.
 	// If the file does not exist, WriteFile creates it with permissions perm;
@@ -446,8 +568,7 @@ type ChRooter interface {
 
 // Cloner is the interface that wraps the Clone method.
 type Cloner interface {
-	// Clone returns a shallow copy of the current file system (see MemFs)
-	// or the file system itself if does not support this feature (FeatClonable).
+	// Clone returns a shallow copy of the current file system (see MemFs).
 	Clone() VFS
 }
 
@@ -463,116 +584,6 @@ type Featurer interface {
 // Namer is the the interface that wraps the name method.
 type Namer interface {
 	Name() string
-}
-
-// Pather is the interface that wraps all path related functions.
-type Pather interface {
-	// Abs returns an absolute representation of path.
-	// If the path is not absolute it will be joined with the current
-	// working directory to turn it into an absolute path. The absolute
-	// path name for a given file is not guaranteed to be unique.
-	// Abs calls Clean on the result.
-	Abs(path string) (string, error)
-
-	// Base returns the last element of path.
-	// Trailing path separators are removed before extracting the last element.
-	// If the path is empty, Base returns ".".
-	// If the path consists entirely of separators, Base returns a single separator.
-	Base(path string) string
-
-	// Clean returns the shortest path name equivalent to path
-	// by purely lexical processing. It applies the following rules
-	// iteratively until no further processing can be done:
-	//
-	//	1. Replace multiple Separator elements with a single one.
-	//	2. Eliminate each . path name element (the current directory).
-	//	3. Eliminate each inner .. path name element (the parent directory)
-	//	   along with the non-.. element that precedes it.
-	//	4. Eliminate .. elements that begin a rooted path:
-	//	   that is, replace "/.." by "/" at the beginning of a path,
-	//	   assuming Separator is '/'.
-	//
-	// The returned path ends in a slash only if it represents a root directory,
-	// such as "/" on Unix or `C:\` on Windows.
-	//
-	// Finally, any occurrences of slash are replaced by Separator.
-	//
-	// If the result of this process is an empty string, Clean
-	// returns the string ".".
-	//
-	// See also Rob Pike, ``Lexical File Names in Plan 9 or
-	// Getting Dot-Dot Right,''
-	// https://9p.io/sys/doc/lexnames.html
-	Clean(path string) string
-
-	// Dir returns all but the last element of path, typically the path's directory.
-	// After dropping the final element, Dir calls Clean on the path and trailing
-	// slashes are removed.
-	// If the path is empty, Dir returns ".".
-	// If the path consists entirely of separators, Dir returns a single separator.
-	// The returned path does not end in a separator unless it is the root directory.
-	Dir(path string) string
-
-	// FromSlash returns the result of replacing each slash ('/') character
-	// in path with a separator character. Multiple slashes are replaced
-	// by multiple separators.
-	FromSlash(path string) string
-
-	// Glob returns the names of all files matching pattern or nil
-	// if there is no matching file. The syntax of patterns is the same
-	// as in Match. The pattern may describe hierarchical names such as
-	// /usr/*/bin/ed (assuming the Separator is '/').
-	//
-	// Glob ignores file system errors such as I/O errors reading directories.
-	// The only possible returned error is ErrBadPattern, when pattern
-	// is malformed.
-	Glob(pattern string) (matches []string, err error)
-
-	// IsAbs reports whether the path is absolute.
-	IsAbs(path string) bool
-
-	// IsPathSeparator reports whether c is a directory separator character.
-	IsPathSeparator(c uint8) bool
-
-	// Join joins any number of path elements into a single path, adding a
-	// separating slash if necessary. The result is Cleaned; in particular,
-	// all empty strings are ignored.
-	Join(elem ...string) string
-
-	// Rel returns a relative path that is lexically equivalent to targpath when
-	// joined to basepath with an intervening separator. That is,
-	// Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-	// On success, the returned path will always be relative to basepath,
-	// even if basepath and targpath share no elements.
-	// An error is returned if targpath can't be made relative to basepath or if
-	// knowing the current working directory would be necessary to compute it.
-	// Rel calls Clean on the result.
-	Rel(basepath, targpath string) (string, error)
-
-	// Split splits path immediately following the final Separator,
-	// separating it into a directory and file name component.
-	// If there is no Separator in path, Split returns an empty dir
-	// and file set to path.
-	// The returned values have the property that path = dir+file.
-	Split(path string) (dir, file string)
-
-	// ToSlash returns the result of replacing each separator character
-	// in path with a slash ('/') character. Multiple separators are
-	// replaced by multiple slashes.
-	ToSlash(path string) string
-
-	// WalkDir walks the file tree rooted at root, calling fn for each file or
-	// directory in the tree, including root.
-	//
-	// All errors that arise visiting files and directories are filtered by fn:
-	// see the fs.WalkDirFunc documentation for details.
-	//
-	// The files are walked in lexical order, which makes the output deterministic
-	// but requires WalkDir to read an entire directory into memory before proceeding
-	// to walk that directory.
-	//
-	// WalkDir does not follow symbolic links.
-	WalkDir(root string, fn fs.WalkDirFunc) error
 }
 
 // Typer is the interface that wraps the Type method.
@@ -669,15 +680,15 @@ type GroupMgr interface {
 	GroupAdd(name string) (GroupReader, error)
 
 	// GroupDel deletes an existing group.
-	// If the group cannot be found, the returned error is of type UnknownGroupError.
+	// If the group is not found, the returned error is of type UnknownGroupError.
 	GroupDel(name string) error
 
 	// LookupGroup looks up a group by name.
-	// If the group cannot be found, the returned error is of type UnknownGroupError.
+	// If the group is not found, the returned error is of type UnknownGroupError.
 	LookupGroup(name string) (GroupReader, error)
 
 	// LookupGroupId looks up a group by groupid.
-	// If the group cannot be found, the returned error is of type UnknownGroupIdError.
+	// If the group is not found, the returned error is of type UnknownGroupIdError.
 	LookupGroupId(gid int) (GroupReader, error)
 }
 
@@ -695,7 +706,7 @@ type UserConnecter interface {
 	CurrentUser() UserReader
 
 	// User sets and returns the current user.
-	// If the user cannot be found, the returned error is of type UnknownUserError.
+	// If the user is not found, the returned error is of type UnknownUserError.
 	User(name string) (UserReader, error)
 }
 
