@@ -18,7 +18,6 @@ package test
 
 import (
 	"io/fs"
-	"math"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -57,12 +56,14 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 	suffix := "GroupAddDel" + sIdm.Type()
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		_, err := idm.GroupAdd("")
+		groupName := "AGroup" + suffix
+
+		_, err := idm.GroupAdd(groupName)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("GroupAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
-		err = idm.GroupDel("")
+		err = idm.GroupDel(groupName)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
@@ -160,12 +161,15 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 	suffix := "UserAddDel" + sIdm.Type()
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		_, err := idm.UserAdd("", "")
+		groupName := "InvalidGroup" + suffix
+		userName := "InvalidUser" + suffix
+
+		_, err := idm.UserAdd(userName, groupName)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("UserAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
-		err = idm.UserDel("")
+		err = idm.UserDel(userName)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
@@ -298,7 +302,9 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 	suffix := "Lookup" + sIdm.Type()
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		_, err := idm.LookupGroup("")
+		groupName := "InvalidGroup" + suffix
+
+		_, err := idm.LookupGroup(groupName)
 		if err != avfs.ErrPermDenied {
 			t.Errorf("LookupGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
@@ -381,8 +387,10 @@ func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 	suffix := "User" + sIdm.Type()
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		userName := "InvalidUser" + suffix
+
 		if uc, ok := idm.(avfs.UserConnecter); ok {
-			_, err := uc.User("")
+			_, err := uc.User(userName)
 			if err != avfs.ErrPermDenied {
 				t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
 			}
@@ -462,156 +470,6 @@ func (sIdm *SuiteIdm) TestUser(t *testing.T) {
 			}
 		}
 	})
-}
-
-// TestUserDenied tests if non root users are denied write access.
-func (sIdm *SuiteIdm) TestUserDenied(t *testing.T) {
-	suffix := "Denied" + sIdm.Type()
-	idm := sIdm.idm
-
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		return
-	}
-
-	if !sIdm.canTest || sIdm.uc == nil {
-		return
-	}
-
-	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
-
-	_, err := sIdm.uc.User(UsrTest)
-	if !CheckNoError(t, "LookupUser "+UsrTest, err) {
-		return
-	}
-
-	for _, ui := range UserInfos() {
-		// skip UsrTest : can't try to delete a user in an active process.
-		if ui.Name == UsrTest {
-			continue
-		}
-
-		name := ui.Name + suffix
-
-		_, err = idm.UserAdd(name, ui.GroupName)
-		if err != avfs.ErrPermDenied {
-			t.Errorf("UserAdd %s : want error to be %v, got %v", name, avfs.ErrPermDenied, err)
-		}
-
-		err = idm.UserDel(ui.Name)
-		if err != avfs.ErrPermDenied {
-			t.Errorf("UserDel %s : want error to be %v, got %v", name, avfs.ErrPermDenied, err)
-		}
-	}
-
-	for _, gi := range GroupInfos() {
-		name := gi.Name + suffix
-
-		_, err = idm.GroupAdd(name)
-		if err != avfs.ErrPermDenied {
-			t.Errorf("GroupAdd %s : want error to be %v, got %v", name, avfs.ErrPermDenied, err)
-		}
-	}
-
-	err = idm.GroupDel(grpEmpty)
-	if err != avfs.ErrPermDenied {
-		t.Errorf("GroupDel %s : want error to be %v, got %v", grpEmpty, avfs.ErrPermDenied, err)
-	}
-}
-
-// TestPermDenied tests if all functions of the identity manager return avfs.ErrPermDenied
-// when the identity manager can't be tested.
-func (sIdm *SuiteIdm) TestPermDenied(t *testing.T) {
-	idm := sIdm.idm
-
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		return
-	}
-
-	if sIdm.canTest {
-		return
-	}
-
-	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
-
-	const (
-		grpName = "grpDenied"
-		grpId   = math.MaxInt32
-		usrName = "usrDenied"
-		usrId   = math.MaxInt32
-	)
-
-	_, err := idm.GroupAdd(grpName)
-	if err != avfs.ErrPermDenied {
-		t.Errorf("GroupAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
-	}
-
-	err = idm.GroupDel(grpName)
-	if err != avfs.ErrPermDenied {
-		t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
-	}
-
-	_, err = idm.LookupGroup(grpName)
-	if idm.HasFeature(avfs.FeatIdentityMgr) {
-		if err != avfs.UnknownGroupError(grpName) {
-			t.Errorf("LookupGroupName : want error to be %v, got %v", avfs.UnknownGroupError(grpName), err)
-		}
-	} else {
-		if err != avfs.ErrPermDenied {
-			t.Errorf("LookupGroupName : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-	}
-
-	_, err = idm.LookupGroupId(grpId)
-	if idm.HasFeature(avfs.FeatIdentityMgr) {
-		if err != avfs.UnknownGroupIdError(grpId) {
-			t.Errorf("LookupGroupId : want error to be %v, got %v", avfs.UnknownGroupIdError(grpId), err)
-		}
-	} else {
-		if err != avfs.ErrPermDenied {
-			t.Errorf("LookupGroupId : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-	}
-
-	_, err = idm.LookupUser(usrName)
-	if idm.HasFeature(avfs.FeatIdentityMgr) {
-		if err != avfs.UnknownUserError(usrName) {
-			t.Errorf("LookupUser : want error to be %v, got %v", avfs.UnknownUserError(usrName), err)
-		}
-	} else {
-		if err != avfs.ErrPermDenied {
-			t.Errorf("LookupUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-	}
-
-	_, err = idm.LookupUserId(usrId)
-	if idm.HasFeature(avfs.FeatIdentityMgr) {
-		if err != avfs.UnknownUserIdError(usrId) {
-			t.Errorf("LookupUserId : want error to be %v, got %v", avfs.UnknownUserIdError(usrId), err)
-		}
-	} else {
-		if err != avfs.ErrPermDenied {
-			t.Errorf("LookupUserId : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
-	}
-
-	_, err = idm.UserAdd(usrName, grpName)
-	if err != avfs.ErrPermDenied {
-		t.Errorf("UserAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
-	}
-
-	err = idm.UserDel(usrName)
-	if err != avfs.ErrPermDenied {
-		t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
-	}
-
-	if sIdm.uc == nil {
-		return
-	}
-
-	_, err = sIdm.uc.User(usrName)
-	if err != avfs.ErrPermDenied {
-		t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
-	}
 }
 
 // checkHomeDir tests that the user home directory exists and has the correct permissions.

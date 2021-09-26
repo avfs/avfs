@@ -48,17 +48,12 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 		if u == nil {
 			return sIdm
 		}
-
-		if !u.IsRoot() {
-			return sIdm
-		}
 	}
 
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+	sIdm.canTest = idm.HasFeature(avfs.FeatIdentityMgr) && !idm.HasFeature(avfs.FeatReadOnlyIdm)
+	if !sIdm.canTest {
 		return sIdm
 	}
-
-	sIdm.canTest = true
 
 	sIdm.Groups = CreateGroups(t, idm, "")
 	sIdm.Users = CreateUsers(t, idm, "")
@@ -78,8 +73,6 @@ func (sIdm *SuiteIdm) TestAll(t *testing.T) {
 	sIdm.TestUserAddDel(t)
 	sIdm.TestLookup(t)
 	sIdm.TestUser(t)
-	sIdm.TestUserDenied(t)
-	sIdm.TestPermDenied(t)
 }
 
 // GroupInfo contains information to create a test group.

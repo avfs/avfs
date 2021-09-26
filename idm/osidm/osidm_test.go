@@ -38,7 +38,6 @@ var (
 	_ avfs.GroupReader = &osidm.OsGroup{}
 )
 
-// TestOsIdmAll run all tests.
 func TestOsIdmAll(t *testing.T) {
 	idm := osidm.New()
 
@@ -54,6 +53,9 @@ func TestOsIdmCfg(t *testing.T) {
 		wantFeat = 0
 	default:
 		wantFeat = avfs.FeatIdentityMgr
+		if !osidm.CurrentUser().IsRoot() {
+			wantFeat |= avfs.FeatReadOnlyIdm
+		}
 	}
 
 	idm := osidm.New()

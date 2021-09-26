@@ -27,12 +27,12 @@ func New() *OsIdm {
 		feature = 0
 	default:
 		feature = avfs.FeatIdentityMgr
+		if !currentUser().IsRoot() {
+			feature |= avfs.FeatReadOnlyIdm
+		}
 	}
 
-	return &OsIdm{
-		feature:  feature,
-		initUser: currentUser(),
-	}
+	return &OsIdm{feature: feature}
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -47,5 +47,5 @@ func (idm *OsIdm) Features() avfs.Feature {
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (idm *OsIdm) HasFeature(feature avfs.Feature) bool {
-	return idm.feature == feature
+	return (idm.feature & feature) == feature
 }

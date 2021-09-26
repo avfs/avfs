@@ -45,7 +45,7 @@ const (
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
-	if !idm.initUser.IsRoot() || !idm.CurrentUser().IsRoot() {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
 	}
 
@@ -78,7 +78,7 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 
 // GroupDel deletes an existing group.
 func (idm *OsIdm) GroupDel(name string) error {
-	if !idm.initUser.IsRoot() || !idm.CurrentUser().IsRoot() {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
 	}
 
@@ -140,12 +140,12 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return lookupUserId(uid)
 }
 
-// OsUser sets the current user of the file system to uid.
+// User sets the current user of the file system to uid.
 // If the current user has not root privileges avfs.errPermDenied is returned.
 func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
 	const op = "user"
 
-	if !idm.initUser.IsRoot() {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
 	}
 
@@ -206,7 +206,7 @@ func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
 
 // UserAdd adds a new user.
 func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	if !idm.initUser.IsRoot() || !idm.CurrentUser().IsRoot() {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
 	}
 
@@ -241,7 +241,7 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 
 // UserDel deletes an existing user.
 func (idm *OsIdm) UserDel(name string) error {
-	if !idm.initUser.IsRoot() || !idm.CurrentUser().IsRoot() {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
 	}
 

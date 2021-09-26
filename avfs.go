@@ -157,6 +157,9 @@ const (
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
 	FeatReadOnly
 
+	// FeatReadOnlyIdm indicates that the identity manager is a read only (see OsIdm).
+	FeatReadOnlyIdm
+
 	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS).
 	FeatRealFS
 
