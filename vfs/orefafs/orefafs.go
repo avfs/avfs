@@ -249,13 +249,6 @@ func (vfs *OrefaFS) FromSlash(path string) string {
 	return vfs.utils.FromSlash(path)
 }
 
-// GetUMask returns the file mode creation mask.
-func (vfs *OrefaFS) GetUMask() fs.FileMode {
-	u := atomic.LoadInt32(&vfs.umask)
-
-	return fs.FileMode(u)
-}
-
 // Getwd returns a rooted name link corresponding to the
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
@@ -864,6 +857,11 @@ func (vfs *OrefaFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return fs1.id == fs2.id
 }
 
+// SetUMask sets the file mode creation mask.
+func (vfs *OrefaFS) SetUMask(mask fs.FileMode) {
+	atomic.StoreInt32(&vfs.umask, int32(mask))
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -977,9 +975,11 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	return nil
 }
 
-// UMask sets the file mode creation mask.
-func (vfs *OrefaFS) UMask(mask fs.FileMode) {
-	atomic.StoreInt32(&vfs.umask, int32(mask))
+// UMask returns the file mode creation mask.
+func (vfs *OrefaFS) UMask() fs.FileMode {
+	u := atomic.LoadInt32(&vfs.umask)
+
+	return fs.FileMode(u)
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

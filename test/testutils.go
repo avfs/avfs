@@ -643,7 +643,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	})
 }
 
-// TestUMask tests UMask functions.
+// TestUMask tests Umask methods.
 func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 	const umaskSet = fs.FileMode(0o77)
 
@@ -655,21 +655,21 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umask := avfs.UMask.Get()
 	if umask != defaultUmask {
-		t.Errorf("GetUMask : want OS umask %o, got %o", defaultUmask, umask)
+		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 
 	avfs.UMask.Set(umaskSet)
 
 	umask = avfs.UMask.Get()
 	if umask != umaskTest {
-		t.Errorf("GetUMask : want test umask %o, got %o", umaskTest, umask)
+		t.Errorf("UMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
 	avfs.UMask.Set(defaultUmask)
 
 	umask = avfs.UMask.Get()
 	if umask != defaultUmask {
-		t.Errorf("GetUMask : want OS umask %o, got %o", defaultUmask, umask)
+		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 }
 

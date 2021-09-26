@@ -228,7 +228,7 @@ func (vfs *DummyFS) FromSlash(path string) string {
 }
 
 // GetUMask returns the file mode creation mask.
-func (vfs *DummyFS) GetUMask() fs.FileMode {
+func (vfs *DummyFS) UMask() fs.FileMode {
 	return 0o022
 }
 
@@ -538,7 +538,7 @@ func (vfs *DummyFS) Truncate(name string, size int64) error {
 }
 
 // UMask sets the file mode creation mask.
-func (vfs *DummyFS) UMask(mask fs.FileMode) {
+func (vfs *DummyFS) SetUMask(mask fs.FileMode) {
 	_ = mask
 }
 

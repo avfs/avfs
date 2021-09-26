@@ -594,11 +594,11 @@ type Typer interface {
 
 // UMasker is the interface that groups functions related to file mode creation mask.
 type UMasker interface {
-	// GetUMask returns the file mode creation mask.
-	GetUMask() fs.FileMode
+	// SetUMask sets the file mode creation mask.
+	SetUMask(mask fs.FileMode)
 
-	// UMask sets the file mode creation mask.
-	UMask(mask fs.FileMode)
+	// UMask returns the file mode creation mask.
+	UMask() fs.FileMode
 }
 
 // File represents a file in the file system.

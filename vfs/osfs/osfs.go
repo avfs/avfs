@@ -174,11 +174,6 @@ func (vfs *OsFS) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
-// GetUMask returns the file mode creation mask.
-func (vfs *OsFS) GetUMask() fs.FileMode {
-	return avfs.UMask.Get()
-}
-
 // Getwd returns a rooted path name corresponding to the
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
@@ -409,6 +404,11 @@ func (vfs *OsFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return os.SameFile(fi1, fi2)
 }
 
+// SetUMask sets the file mode creation mask.
+func (vfs *OsFS) SetUMask(mask fs.FileMode) {
+	avfs.UMask.Set(mask)
+}
+
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
@@ -457,9 +457,9 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 	return os.Truncate(name, size)
 }
 
-// UMask sets the file mode creation mask.
-func (vfs *OsFS) UMask(mask fs.FileMode) {
-	avfs.UMask.Set(mask)
+// UMask returns the file mode creation mask.
+func (vfs *OsFS) UMask() fs.FileMode {
+	return avfs.UMask.Get()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

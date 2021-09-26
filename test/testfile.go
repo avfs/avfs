@@ -980,7 +980,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.GetUMask()
+			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.UMask()
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode = fs.ModeDir | fs.ModePerm
 			}
@@ -1007,7 +1007,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := file.Mode &^ vfs.GetUMask()
+			wantMode := file.Mode &^ vfs.UMask()
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode = 0o666
 			}

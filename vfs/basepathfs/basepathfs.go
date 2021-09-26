@@ -189,11 +189,6 @@ func (vfs *BasePathFS) FromSlash(path string) string {
 	return vfs.utils.FromSlash(path)
 }
 
-// GetUMask returns the file mode creation mask.
-func (vfs *BasePathFS) GetUMask() fs.FileMode {
-	return vfs.baseFS.GetUMask()
-}
-
 // Getwd returns a rooted name link corresponding to the
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
@@ -458,6 +453,11 @@ func (vfs *BasePathFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return vfs.baseFS.SameFile(fi1, fi2)
 }
 
+// SetUMask sets the file mode creation mask.
+func (vfs *BasePathFS) SetUMask(mask fs.FileMode) {
+	vfs.baseFS.SetUMask(mask)
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -517,9 +517,9 @@ func (vfs *BasePathFS) Truncate(name string, size int64) error {
 	return vfs.restoreError(err)
 }
 
-// UMask sets the file mode creation mask.
-func (vfs *BasePathFS) UMask(mask fs.FileMode) {
-	vfs.baseFS.UMask(mask)
+// UMask returns the file mode creation mask.
+func (vfs *BasePathFS) UMask() fs.FileMode {
+	return vfs.baseFS.UMask()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

@@ -630,7 +630,7 @@ func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
 		return
 	}
 
-	wantMode := fs.ModeDir | avfs.HomeDirPerm(vfs)&^vfs.GetUMask()
+	wantMode := fs.ModeDir | avfs.HomeDirPerm(vfs)&^vfs.UMask()
 	if fst.Mode() != wantMode {
 		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
 	}

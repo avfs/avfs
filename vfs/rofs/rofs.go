@@ -185,11 +185,6 @@ func (vfs *RoFS) FromSlash(path string) string {
 	return vfs.baseFS.FromSlash(path)
 }
 
-// GetUMask returns the file mode creation mask.
-func (vfs *RoFS) GetUMask() fs.FileMode {
-	return vfs.baseFS.GetUMask()
-}
-
 // Getwd returns a rooted path name corresponding to the
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
@@ -440,6 +435,11 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return vfs.baseFS.SameFile(fi1, fi2)
 }
 
+// SetUMask sets the file mode creation mask.
+// Setting Umask is disabled for read only file systems.
+func (vfs *RoFS) SetUMask(mask fs.FileMode) {
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -497,8 +497,9 @@ func (vfs *RoFS) Truncate(name string, size int64) error {
 	return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
 
-// UMask is disabled in read only mode.
-func (vfs *RoFS) UMask(mask fs.FileMode) {
+// UMask returns the file mode creation mask.
+func (vfs *RoFS) UMask() fs.FileMode {
+	return vfs.baseFS.UMask()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

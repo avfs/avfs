@@ -274,13 +274,6 @@ func (vfs *MemFS) FromSlash(path string) string {
 	return vfs.utils.FromSlash(path)
 }
 
-// GetUMask returns the file mode creation mask.
-func (vfs *MemFS) GetUMask() fs.FileMode {
-	u := atomic.LoadInt32(&vfs.memAttrs.umask)
-
-	return fs.FileMode(u)
-}
-
 // Getwd returns a rooted name link corresponding to the
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
@@ -882,6 +875,11 @@ func (vfs *MemFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return fs1.id == fs2.id
 }
 
+// SetUMask sets the file mode creation mask.
+func (vfs *MemFS) SetUMask(mask fs.FileMode) {
+	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -984,9 +982,11 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 	return nil
 }
 
-// UMask sets the file mode creation mask.
-func (vfs *MemFS) UMask(mask fs.FileMode) {
-	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
+// UMask returns the file mode creation mask.
+func (vfs *MemFS) UMask() fs.FileMode {
+	u := atomic.LoadInt32(&vfs.memAttrs.umask)
+
+	return fs.FileMode(u)
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

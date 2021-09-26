@@ -898,7 +898,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 				t.Errorf("Lstat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.GetUMask()
+			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.UMask()
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode = fs.ModeDir | fs.ModePerm
 			}
@@ -922,7 +922,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 				t.Errorf("Lstat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := file.Mode &^ vfs.GetUMask()
+			wantMode := file.Mode &^ vfs.UMask()
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode = 0o666
 			}
@@ -1040,7 +1040,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 					return
 				}
 
-				wantMode &^= vfs.GetUMask()
+				wantMode &^= vfs.UMask()
 				if vfs.OSType() == avfs.OsWindows {
 					wantMode = fs.ModePerm
 				}
@@ -1172,7 +1172,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 					return
 				}
 
-				wantMode &^= vfs.GetUMask()
+				wantMode &^= vfs.UMask()
 				if vfs.OSType() == avfs.OsWindows {
 					wantMode = fs.ModePerm
 				}
@@ -2156,7 +2156,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.GetUMask()
+			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.UMask()
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode = fs.ModeDir | fs.ModePerm
 			}
@@ -2180,7 +2180,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
 			}
 
-			wantMode := file.Mode &^ vfs.GetUMask()
+			wantMode := file.Mode &^ vfs.UMask()
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode = 0o666
 			}
@@ -2408,33 +2408,33 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	})
 }
 
-// TestUmask tests UMask and GetUMask functions.
+// TestUmask tests SetUMask and UMask functions.
 func (sfs *SuiteFS) TestUmask(t *testing.T, testDir string) {
 	const umaskTest = 0o077
 
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		vfs.UMask(0)
+		vfs.SetUMask(0)
 
-		if um := vfs.GetUMask(); um <= 0 {
-			t.Errorf("GetUMask : want umask to be > 0, got %d", um)
+		if um := vfs.UMask(); um <= 0 {
+			t.Errorf("UMask : want umask to be > 0, got %d", um)
 		}
 
 		return
 	}
 
-	umaskStart := vfs.GetUMask()
-	vfs.UMask(umaskTest)
+	umaskStart := vfs.UMask()
+	vfs.SetUMask(umaskTest)
 
-	u := vfs.GetUMask()
+	u := vfs.UMask()
 	if u != umaskTest {
 		t.Errorf("umaskTest : want umask to be %o, got %o", umaskTest, u)
 	}
 
-	vfs.UMask(umaskStart)
+	vfs.SetUMask(umaskStart)
 
-	u = vfs.GetUMask()
+	u = vfs.UMask()
 	if u != umaskStart {
 		t.Errorf("umaskTest : want umask to be %o, got %o", umaskStart, u)
 	}
