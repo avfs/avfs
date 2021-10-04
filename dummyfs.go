@@ -199,6 +199,11 @@ func (vfs *DummyFS) CreateTemp(dir, pattern string) (File, error) {
 	return vfs.utils.CreateTemp(vfs, dir, pattern)
 }
 
+// CurrentUser returns the current User.
+func (vfs *DummyFS) CurrentUser() UserReader {
+	return NotImplementedUser
+}
+
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -227,11 +232,6 @@ func (vfs *DummyFS) FromSlash(path string) string {
 	return vfs.utils.FromSlash(path)
 }
 
-// GetUMask returns the file mode creation mask.
-func (vfs *DummyFS) UMask() fs.FileMode {
-	return 0o022
-}
-
 // Getwd returns a rooted path name corresponding to the
 // current directory. If the current directory can be
 // reached via multiple paths (due to symbolic links),
@@ -252,6 +252,12 @@ func (vfs *DummyFS) Getwd() (dir string, err error) {
 // is malformed.
 func (vfs *DummyFS) Glob(pattern string) (matches []string, err error) {
 	return vfs.utils.Glob(vfs, pattern)
+}
+
+// Idm returns the identity manager of the file system.
+// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+func (vfs *DummyFS) Idm() IdentityMgr {
+	return NotImplementedIdm
 }
 
 // IsAbs reports whether the path is absolute.
@@ -478,6 +484,10 @@ func (vfs *DummyFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return false
 }
 
+// SetUMask sets the file mode creation mask.
+func (vfs *DummyFS) SetUMask(mask fs.FileMode) {
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -537,9 +547,19 @@ func (vfs *DummyFS) Truncate(name string, size int64) error {
 	return &fs.PathError{Op: op, Path: name, Err: ErrPermDenied}
 }
 
-// UMask sets the file mode creation mask.
-func (vfs *DummyFS) SetUMask(mask fs.FileMode) {
-	_ = mask
+// UMask returns the file mode creation mask.
+func (vfs *DummyFS) UMask() fs.FileMode {
+	return 0o022
+}
+
+// User sets the current User.
+func (vfs *DummyFS) User(name string) (UserReader, error) {
+	return nil, ErrPermDenied
+}
+
+// Utils returns the file utils of the current file system.
+func (vfs *DummyFS) Utils() Utils {
+	return vfs.utils
 }
 
 // VolumeName returns leading volume name.
@@ -570,62 +590,6 @@ func (vfs *DummyFS) WalkDir(root string, fn fs.WalkDirFunc) error {
 // otherwise WriteFile truncates it before writing, without changing permissions.
 func (vfs *DummyFS) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	return vfs.utils.WriteFile(vfs, name, data, perm)
-}
-
-// DummyFS idm functions.
-
-// CurrentUser returns the current User.
-func (vfs *DummyFS) CurrentUser() UserReader {
-	return NotImplementedUser
-}
-
-// GroupAdd adds a new Group.
-func (vfs *DummyFS) GroupAdd(name string) (GroupReader, error) {
-	return nil, ErrPermDenied
-}
-
-// GroupDel deletes an existing Group.
-func (vfs *DummyFS) GroupDel(name string) error {
-	return ErrPermDenied
-}
-
-// LookupGroup looks up a Group by name. If the Group cannot be found, the
-// returned error is of type UnknownGroupError.
-func (vfs *DummyFS) LookupGroup(name string) (GroupReader, error) {
-	return nil, ErrPermDenied
-}
-
-// LookupGroupId looks up a Group by groupid. If the Group cannot be found, the
-// returned error is of type UnknownGroupIdError.
-func (vfs *DummyFS) LookupGroupId(gid int) (GroupReader, error) {
-	return nil, ErrPermDenied
-}
-
-// LookupUser looks up a User by username. If the User cannot be found, the
-// returned error is of type UnknownUserError.
-func (vfs *DummyFS) LookupUser(name string) (UserReader, error) {
-	return nil, ErrPermDenied
-}
-
-// LookupUserId looks up a User by userid. If the User cannot be found, the
-// returned error is of type UnknownUserIdError.
-func (vfs *DummyFS) LookupUserId(uid int) (UserReader, error) {
-	return nil, ErrPermDenied
-}
-
-// User sets the current User.
-func (vfs *DummyFS) User(name string) (UserReader, error) {
-	return nil, ErrPermDenied
-}
-
-// UserAdd adds a new User.
-func (vfs *DummyFS) UserAdd(name, groupName string) (UserReader, error) {
-	return nil, ErrPermDenied
-}
-
-// UserDel deletes an existing Group.
-func (vfs *DummyFS) UserDel(name string) error {
-	return ErrPermDenied
 }
 
 // DummyFile functions.

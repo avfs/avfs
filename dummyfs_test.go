@@ -60,10 +60,3 @@ func TestDummyFSConfig(t *testing.T) {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, vfs.OSType())
 	}
 }
-
-func TestDummyFSIdm(t *testing.T) {
-	vfs := avfs.NewDummyFS()
-
-	sIdm := test.NewSuiteIdm(t, vfs)
-	sIdm.TestAll(t)
-}
