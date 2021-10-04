@@ -21,6 +21,16 @@ package osidm
 
 import "github.com/avfs/avfs"
 
+// AdminGroup returns the administrator (root) group.
+func (idm *OsIdm) AdminGroup() avfs.GroupReader {
+	return idm.adminGroup
+}
+
+// AdminUser returns the administrator (root) user.
+func (idm *OsIdm) AdminUser() avfs.UserReader {
+	return idm.adminUser
+}
+
 // CurrentUser returns the current user.
 func (idm *OsIdm) CurrentUser() avfs.UserReader {
 	return currentUser()

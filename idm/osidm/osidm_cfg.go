@@ -20,11 +20,11 @@ import "github.com/avfs/avfs"
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
-	var feature avfs.Feature
+	feature := avfs.Feature(0)
 
-	switch avfs.CurrentOSType() {
+	ost := avfs.CurrentOSType()
+	switch ost {
 	case avfs.OsWindows:
-		feature = 0
 	default:
 		feature = avfs.FeatIdentityMgr
 		if !currentUser().IsRoot() {
@@ -32,7 +32,22 @@ func New() *OsIdm {
 		}
 	}
 
-	return &OsIdm{feature: feature}
+	ut := avfs.NewUtils(ost)
+
+	idm := &OsIdm{
+		adminGroup: &OsGroup{
+			name: ut.AdminGroupName(),
+			gid:  0,
+		},
+		adminUser: &OsUser{
+			name: ut.AdminUserName(),
+			uid:  0,
+			gid:  0,
+		},
+		feature: feature,
+	}
+
+	return idm
 }
 
 // Type returns the type of the fileSystem or Identity manager.
