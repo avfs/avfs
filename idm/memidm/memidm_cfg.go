@@ -16,35 +16,40 @@
 
 package memidm
 
-import "github.com/avfs/avfs"
+import (
+	"github.com/avfs/avfs"
+)
 
 // New creates a new identity manager.
-func New() *MemIdm {
-	groupRoot := &MemGroup{
-		name: avfs.UsrRoot,
-		gid:  0,
-	}
+func New(ost avfs.OSType) *MemIdm {
+	ut := avfs.NewUtils(ost)
 
-	userRoot := &MemUser{
-		name: avfs.UsrRoot,
-		uid:  0,
-		gid:  0,
-	}
+	adminGroupName := ut.AdminGroupName()
+	adminUserName := ut.AdminUserName()
 
 	idm := &MemIdm{
-		feature:      avfs.FeatIdentityMgr,
+		adminGroup: &MemGroup{
+			name: adminGroupName,
+			gid:  0,
+		},
+		adminUser: &MemUser{
+			name: adminUserName,
+			uid:  0,
+			gid:  0,
+		},
 		groupsByName: make(groupsByName),
 		groupsById:   make(groupsById),
 		usersByName:  make(usersByName),
 		usersById:    make(usersById),
+		feature:      avfs.FeatIdentityMgr,
 		maxGid:       minGid,
 		maxUid:       minUid,
 	}
 
-	idm.groupsById[0] = groupRoot
-	idm.groupsByName[avfs.UsrRoot] = groupRoot
-	idm.usersById[0] = userRoot
-	idm.usersByName[avfs.UsrRoot] = userRoot
+	idm.groupsById[0] = idm.adminGroup
+	idm.groupsByName[adminGroupName] = idm.adminGroup
+	idm.usersById[0] = idm.adminUser
+	idm.usersByName[adminUserName] = idm.adminUser
 
 	return idm
 }

@@ -32,6 +32,8 @@ const (
 
 // MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
 type MemIdm struct {
+	adminGroup   *MemGroup    // Administrator Group.
+	adminUser    *MemUser     // Administrator User.
 	groupsByName groupsByName // Groups map by Name.
 	groupsById   groupsById   // Groups map by Id.
 	usersByName  usersByName  // Users map by Name.

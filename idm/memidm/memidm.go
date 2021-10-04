@@ -21,6 +21,16 @@ import (
 	"github.com/avfs/avfs"
 )
 
+// AdminGroup returns the administrator (root) group.
+func (idm *MemIdm) AdminGroup() avfs.GroupReader {
+	return idm.adminGroup
+}
+
+// AdminUser returns the administrator (root) user.
+func (idm *MemIdm) AdminUser() avfs.UserReader {
+	return idm.adminUser
+}
+
 // GroupAdd adds a new group.
 func (idm *MemIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	idm.grpMu.Lock()
