@@ -32,7 +32,6 @@ const (
 	PathSeparatorWin = '\\'              // PathSeparatorWin is defined as a forward slash for Windows systems.
 	DefaultDirPerm   = 0o777             // DefaultDirPerm is the default permission for directories.
 	DefaultFilePerm  = 0o666             // DefaultFilePerm is the default permission for files.
-	UsrRoot          = "root"            // UsrRoot is the root user.
 	NotImplemented   = "not implemented" // NotImplemented is the return string of a non implemented feature.
 
 	// FileModeMask is the bitmask used for permissions.
@@ -215,11 +214,8 @@ type IOFS interface {
 
 // BaseVFS regroups the common methods to VFS and IOFS.
 type BaseVFS interface {
-	IdentityMgr
 	Namer
-	ToSysStater
 	UMasker
-	UserConnecter
 
 	// Abs returns an absolute representation of path.
 	// If the path is not absolute it will be joined with the current
@@ -317,6 +313,10 @@ type BaseVFS interface {
 	// It is the caller's responsibility to remove the file when it is no longer needed.
 	CreateTemp(dir, pattern string) (File, error)
 
+	// CurrentUser returns the current user.
+	// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+	CurrentUser() UserReader
+
 	// Dir returns all but the last element of path, typically the path's directory.
 	// After dropping the final element, Dir calls Clean on the path and trailing
 	// slashes are removed.
@@ -352,6 +352,10 @@ type BaseVFS interface {
 	// The only possible returned error is ErrBadPattern, when pattern
 	// is malformed.
 	Glob(pattern string) (matches []string, err error)
+
+	// Idm returns the identity manager of the file system.
+	// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+	Idm() IdentityMgr
 
 	// IsAbs reports whether the path is absolute.
 	IsAbs(path string) bool
@@ -537,10 +541,20 @@ type BaseVFS interface {
 	// replaced by multiple slashes.
 	ToSlash(path string) string
 
+	// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+	ToSysStat(info fs.FileInfo) SysStater
+
 	// Truncate changes the size of the named file.
 	// If the file is a symbolic link, it changes the size of the link's target.
 	// If there is an error, it will be of type *PathError.
 	Truncate(name string, size int64) error
+
+	// User sets and returns the current user.
+	// If the user is not found, the returned error is of type UnknownUserError.
+	User(name string) (UserReader, error)
+
+	// Utils returns the file utils of the current file system.
+	Utils() Utils
 
 	// WalkDir walks the file tree rooted at root, calling fn for each file or
 	// directory in the tree, including root.
@@ -584,7 +598,7 @@ type Featurer interface {
 	HasFeature(feature Feature) bool
 }
 
-// Namer is the the interface that wraps the name method.
+// Namer is the interface that wraps the Name method.
 type Namer interface {
 	Name() string
 }
@@ -665,19 +679,14 @@ type File interface {
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
 	Featurer
-	GroupMgr
-	UserMgr
 	Typer
-}
 
-// GroupIdentifier is the interface that wraps the Gid method.
-type GroupIdentifier interface {
-	// Gid returns the primary group id.
-	Gid() int
-}
+	// AdminGroup returns the administrator (root) group.
+	AdminGroup() GroupReader
 
-// GroupMgr interface manages groups.
-type GroupMgr interface {
+	// AdminUser returns the administrator (root) user.
+	AdminUser() UserReader
+
 	// GroupAdd adds a new group.
 	// If the group already exists, the returned error is of type AlreadyExistsGroupError.
 	GroupAdd(name string) (GroupReader, error)
@@ -693,40 +702,6 @@ type GroupMgr interface {
 	// LookupGroupId looks up a group by groupid.
 	// If the group is not found, the returned error is of type UnknownGroupIdError.
 	LookupGroupId(gid int) (GroupReader, error)
-}
-
-// GroupReader interface reads group information.
-type GroupReader interface {
-	GroupIdentifier
-
-	// Name returns the group name.
-	Name() string
-}
-
-// UserConnecter interface manages user connections.
-type UserConnecter interface {
-	// CurrentUser returns the current user.
-	CurrentUser() UserReader
-
-	// User sets and returns the current user.
-	// If the user is not found, the returned error is of type UnknownUserError.
-	User(name string) (UserReader, error)
-}
-
-// UserIdentifier is the interface that wraps the Uid method.
-type UserIdentifier interface {
-	// Uid returns the user id.
-	Uid() int
-}
-
-// UserMgr interface manages the users.
-type UserMgr interface {
-	// UserAdd adds a new user.
-	// If the user already exists, the returned error is of type AlreadyExistsUserError.
-	UserAdd(name, groupName string) (UserReader, error)
-
-	// UserDel deletes an existing user.
-	UserDel(name string) error
 
 	// LookupUser looks up a user by username.
 	// If the user cannot be found, the returned error is of type UnknownUserError.
@@ -735,27 +710,44 @@ type UserMgr interface {
 	// LookupUserId looks up a user by userid.
 	// If the user cannot be found, the returned error is of type UnknownUserIdError.
 	LookupUserId(uid int) (UserReader, error)
+
+	// UserAdd adds a new user.
+	// If the user already exists, the returned error is of type AlreadyExistsUserError.
+	UserAdd(name, groupName string) (UserReader, error)
+
+	// UserDel deletes an existing user.
+	UserDel(name string) error
+}
+
+// GroupIdentifier is the interface that wraps the Gid method.
+type GroupIdentifier interface {
+	// Gid returns the primary group id.
+	Gid() int
+}
+
+// GroupReader interface reads group information.
+type GroupReader interface {
+	GroupIdentifier
+	Namer
+}
+
+// UserIdentifier is the interface that wraps the Uid method.
+type UserIdentifier interface {
+	// Uid returns the user id.
+	Uid() int
 }
 
 // UserReader reads user information.
 type UserReader interface {
 	GroupIdentifier
 	UserIdentifier
+	Namer
 
 	// IsRoot returns true if the user has root privileges.
 	IsRoot() bool
-
-	// Name returns the username.
-	Name() string
 }
 
-// ToSysStater is the interface that wraps the ToSysStat method.
-type ToSysStater interface {
-	// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-	ToSysStat(info fs.FileInfo) SysStater
-}
-
-// SysStater is the interface returned by fs.FileInfo.Sys() on all file systems.
+// SysStater is the interface returned by ToSysStat on all file systems.
 type SysStater interface {
 	GroupIdentifier
 	UserIdentifier
