@@ -19,15 +19,14 @@ package avfs
 const maxInt = int(^uint(0) >> 1)
 
 var (
+	// NotImplementedGroup represents a not implemented group.
+	NotImplementedGroup = &DummyGroup{
+		name: NotImplemented,
+		gid:  maxInt,
+	}
+
 	// NotImplementedIdm is the default identity manager for all file systems.
 	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
-
-	// RootUser represents a root user.
-	RootUser = &DummyUser{ //nolint:gochecknoglobals // Used as root user for other file systems.
-		name: UsrRoot,
-		uid:  0,
-		gid:  0,
-	}
 
 	// NotImplementedUser represents a not implemented user.
 	NotImplementedUser = &DummyUser{ //nolint:gochecknoglobals // Used as not implemented user for other file systems.
@@ -71,6 +70,16 @@ func (idm *DummyIdm) Features() Feature {
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (idm *DummyIdm) HasFeature(feature Feature) bool {
 	return false
+}
+
+// AdminGroup returns the administrators (root) group.
+func (idm *DummyIdm) AdminGroup() GroupReader {
+	return NotImplementedGroup
+}
+
+// AdminUser returns the administrator (root) user.
+func (idm *DummyIdm) AdminUser() UserReader {
+	return NotImplementedUser
 }
 
 // CurrentUser returns the current user.
