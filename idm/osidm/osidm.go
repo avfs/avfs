@@ -31,11 +31,6 @@ func (idm *OsIdm) AdminUser() avfs.UserReader {
 	return idm.adminUser
 }
 
-// CurrentUser returns the current user.
-func (idm *OsIdm) CurrentUser() avfs.UserReader {
-	return currentUser()
-}
-
 // OsGroup
 
 // Gid returns the group ID.
@@ -68,9 +63,4 @@ func (u *OsUser) Name() string {
 // Uid returns the user ID.
 func (u *OsUser) Uid() int {
 	return u.uid
-}
-
-// CurrentUser returns the current user of the OS.
-func CurrentUser() avfs.UserReader {
-	return currentUser()
 }

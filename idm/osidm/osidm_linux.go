@@ -140,70 +140,6 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return lookupUserId(uid)
 }
 
-// User sets the current user of the file system to uid.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func (idm *OsIdm) User(name string) (avfs.UserReader, error) {
-	const op = "user"
-
-	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
-		return nil, avfs.ErrPermDenied
-	}
-
-	u, err := lookupUser(name)
-	if err != nil {
-		return nil, err
-	}
-
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	// If the current user is the target user there is nothing to do.
-	curUid := syscall.Geteuid()
-	if curUid == u.uid {
-		return u, nil
-	}
-
-	runtime.LockOSThread()
-
-	curGid := syscall.Getegid()
-
-	// If the current user is not root, root privileges must be restored
-	// before setting the new uid and gid.
-	if curGid != 0 {
-		runtime.LockOSThread()
-
-		if err := syscall.Setresgid(0, 0, 0); err != nil {
-			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
-		}
-	}
-
-	if curUid != 0 {
-		runtime.LockOSThread()
-
-		if err := syscall.Setresuid(0, 0, 0); err != nil {
-			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
-		}
-	}
-
-	if u.uid == 0 {
-		return u, nil
-	}
-
-	runtime.LockOSThread()
-
-	if err := syscall.Setresgid(u.gid, u.gid, 0); err != nil {
-		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, u.gid, err))
-	}
-
-	runtime.LockOSThread()
-
-	if err := syscall.Setresuid(u.uid, u.uid, 0); err != nil {
-		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, u.uid, err))
-	}
-
-	return u, nil
-}
-
 // UserAdd adds a new user.
 func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
@@ -267,7 +203,8 @@ func (idm *OsIdm) UserDel(name string) error {
 	return nil
 }
 
-func currentUser() *OsUser {
+// CurrentUser returns the current user of the OS.
+func CurrentUser() avfs.UserReader {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -279,6 +216,66 @@ func currentUser() *OsUser {
 	}
 
 	return user
+}
+
+// User sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func User(name string) (avfs.UserReader, error) {
+	const op = "user"
+
+	u, err := lookupUser(name)
+	if err != nil {
+		return nil, err
+	}
+
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	// If the current user is the target user there is nothing to do.
+	curUid := syscall.Geteuid()
+	if curUid == u.uid {
+		return u, nil
+	}
+
+	runtime.LockOSThread()
+
+	curGid := syscall.Getegid()
+
+	// If the current user is not root, root privileges must be restored
+	// before setting the new uid and gid.
+	if curGid != 0 {
+		runtime.LockOSThread()
+
+		if err := syscall.Setresgid(0, 0, 0); err != nil {
+			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
+		}
+	}
+
+	if curUid != 0 {
+		runtime.LockOSThread()
+
+		if err := syscall.Setresuid(0, 0, 0); err != nil {
+			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
+		}
+	}
+
+	if u.uid == 0 {
+		return u, nil
+	}
+
+	runtime.LockOSThread()
+
+	if err := syscall.Setresgid(u.gid, u.gid, 0); err != nil {
+		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, u.gid, err))
+	}
+
+	runtime.LockOSThread()
+
+	if err := syscall.Setresuid(u.uid, u.uid, 0); err != nil {
+		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, u.uid, err))
+	}
+
+	return u, nil
 }
 
 type compareFunc func(line []string, value string) bool
