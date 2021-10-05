@@ -419,6 +419,10 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) {
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return nil, avfs.ErrPermDenied
+	}
+
 	return osidm.SetUser(name)
 }
 
