@@ -34,6 +34,13 @@ var (
 		uid:  maxInt,
 		gid:  maxInt,
 	}
+
+	// AdminUser represents an administrator user.
+	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
+		name: OsUtils.AdminUserName(),
+		uid:  0,
+		gid:  0,
+	}
 )
 
 // DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.

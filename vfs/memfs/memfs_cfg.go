@@ -60,12 +60,12 @@ func New(opts ...Option) *MemFS {
 		u := vfs.user
 		um := ma.umask
 
-		vfs.user = ma.idm.AdminUser()
+		vfs.user = avfs.AdminUser
 		ma.umask = 0
 
 		err := vfs.utils.CreateBaseDirs(vfs, "")
 		if err != nil {
-			panic(err)
+			panic("CreateBaseDirs " + err.Error())
 		}
 
 		vfs.user = u

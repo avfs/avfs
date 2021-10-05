@@ -60,12 +60,6 @@ func TestMemFSWithNoIdm(t *testing.T) {
 	sfs.TestAll(t)
 }
 
-func TestMemFSOptionError(t *testing.T) {
-	test.CheckPanic(t, "PanicOnInvalidIdm", func() {
-		_ = memfs.New(memfs.WithIdm(avfs.NewDummyIdm()))
-	})
-}
-
 // TestMemFsOptionName tests MemFS initialization with or without option name (WithName()).
 func TestMemFSOptionName(t *testing.T) {
 	const wantName = "whatever"

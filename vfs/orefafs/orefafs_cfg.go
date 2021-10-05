@@ -42,7 +42,7 @@ func New(opts ...Option) *OrefaFS {
 		opt(vfs)
 	}
 
-	vfs.user = vfs.Idm().AdminUser()
+	vfs.user = avfs.AdminUser
 
 	if vfs.feature&avfs.FeatMainDirs != 0 {
 		um := vfs.umask
