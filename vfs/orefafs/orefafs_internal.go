@@ -69,6 +69,9 @@ func (vfs *OrefaFS) createFile(parent *node, absPath, fileName string, perm fs.F
 
 // createNode creates a new node (directory or file).
 func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.FileMode) *node {
+	parent.mu.Lock()
+	defer parent.mu.Unlock()
+
 	nd := &node{
 		id:    atomic.AddUint64(&vfs.lastId, 1),
 		mtime: time.Now().UnixNano(),
@@ -78,13 +81,9 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.F
 		nlink: 1,
 	}
 
-	parent.mu.Lock()
 	parent.addChild(fileName, nd)
-	parent.mu.Unlock()
 
-	vfs.mu.Lock()
 	vfs.nodes[absPath] = nd
-	vfs.mu.Unlock()
 
 	return nd
 }

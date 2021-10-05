@@ -434,10 +434,11 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 	absPath, _ := vfs.Abs(name)
 	dirName, fileName := vfs.split(absPath)
 
-	vfs.mu.RLock()
+	vfs.mu.Lock()
+	defer vfs.mu.Unlock()
+
 	_, childOk := vfs.nodes[absPath]
 	parent, parentOk := vfs.nodes[dirName]
-	vfs.mu.RUnlock()
 
 	if childOk {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
@@ -446,10 +447,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 	if !parentOk {
 		for !parentOk {
 			dirName, _ = vfs.split(dirName)
-
-			vfs.mu.RLock()
 			parent, parentOk = vfs.nodes[dirName]
-			vfs.mu.RUnlock()
 		}
 
 		if parent.mode.IsDir() {
@@ -480,10 +478,10 @@ func (vfs *OrefaFS) MkdirAll(path string, perm fs.FileMode) error {
 
 	absPath, _ := vfs.Abs(path)
 
-	vfs.mu.RLock()
-	child, childOk := vfs.nodes[absPath]
-	vfs.mu.RUnlock()
+	vfs.mu.Lock()
+	defer vfs.mu.Unlock()
 
+	child, childOk := vfs.nodes[absPath]
 	if childOk {
 		if child.mode.IsDir() {
 			return nil
@@ -500,10 +498,7 @@ func (vfs *OrefaFS) MkdirAll(path string, perm fs.FileMode) error {
 	dirName := absPath
 
 	for {
-		vfs.mu.RLock()
 		nd, ok := vfs.nodes[dirName]
-		vfs.mu.RUnlock()
-
 		if ok {
 			parent = nd
 			if !parent.mode.IsDir() {
@@ -573,8 +568,8 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 	dirName, fileName := vfs.split(absPath)
 
 	vfs.mu.RLock()
-	child, childOk := vfs.nodes[absPath]
 	parent, parentOk := vfs.nodes[dirName]
+	child, childOk := vfs.nodes[absPath]
 	vfs.mu.RUnlock()
 
 	if !childOk {
@@ -596,6 +591,15 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 
 		if pm&avfs.PermWrite == 0 {
 			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+		}
+
+		vfs.mu.Lock()
+		defer vfs.mu.Unlock()
+
+		// test for race conditions when opening file in exclusive mode.
+		_, childOk = vfs.nodes[absPath]
+		if childOk && flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
+			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
 		}
 
 		child = vfs.createFile(parent, absPath, fileName, perm)
@@ -682,10 +686,11 @@ func (vfs *OrefaFS) Remove(name string) error {
 	absPath, _ := vfs.Abs(name)
 	dirName, fileName := vfs.split(absPath)
 
-	vfs.mu.RLock()
+	vfs.mu.Lock()
+	defer vfs.mu.Unlock()
+
 	child, childOk := vfs.nodes[absPath]
 	parent, parentOk := vfs.nodes[dirName]
-	vfs.mu.RUnlock()
 
 	if !childOk || !parentOk {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
@@ -701,13 +706,10 @@ func (vfs *OrefaFS) Remove(name string) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrDirNotEmpty}
 	}
 
-	delete(parent.children, fileName)
-
 	child.remove()
 
-	vfs.mu.Lock()
+	delete(parent.children, fileName)
 	delete(vfs.nodes, absPath)
-	vfs.mu.Unlock()
 
 	return nil
 }
@@ -726,10 +728,11 @@ func (vfs *OrefaFS) RemoveAll(path string) error {
 	absPath, _ := vfs.Abs(path)
 	dirName, fileName := vfs.split(absPath)
 
-	vfs.mu.RLock()
+	vfs.mu.Lock()
+	defer vfs.mu.Unlock()
+
 	child, childOk := vfs.nodes[absPath]
 	parent, parentOk := vfs.nodes[dirName]
-	vfs.mu.RUnlock()
 
 	if !childOk || !parentOk {
 		return nil
@@ -739,15 +742,10 @@ func (vfs *OrefaFS) RemoveAll(path string) error {
 		vfs.removeAll(absPath, child)
 	}
 
-	vfs.mu.Lock()
-	delete(vfs.nodes, absPath)
-	vfs.mu.Unlock()
-
 	child.remove()
 
-	parent.mu.Lock()
 	delete(parent.children, fileName)
-	parent.mu.Unlock()
+	delete(vfs.nodes, absPath)
 
 	return nil
 }
@@ -761,11 +759,8 @@ func (vfs *OrefaFS) removeAll(absPath string, rootNode *node) {
 		}
 	}
 
-	vfs.mu.Lock()
-	delete(vfs.nodes, absPath)
-	vfs.mu.Unlock()
-
 	rootNode.remove()
+	delete(vfs.nodes, absPath)
 }
 
 // Rename renames (moves) oldpath to newpath.
