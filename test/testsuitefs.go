@@ -364,7 +364,6 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestRemoveAll,
 		sfs.TestRename,
 		sfs.TestSameFile,
-		sfs.TestSetUser,
 		sfs.TestStat,
 		sfs.TestSymlink,
 		sfs.TestTempDir,
@@ -397,7 +396,8 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestChroot,
 		sfs.TestLchown,
 		sfs.TestFileChmod,
-		sfs.TestFileChown)
+		sfs.TestFileChown,
+		sfs.TestSetUser)
 }
 
 // TestVFSUtils runs vfsutils package tests.
