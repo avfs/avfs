@@ -26,12 +26,11 @@ import (
 // New returns a new memory file system (OrefaFS).
 func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
-		currentUser: avfs.RootUser,
-		nodes:       make(nodes),
-		curDir:      string(avfs.PathSeparator),
-		feature:     avfs.FeatBasicFs | avfs.FeatHardlink,
-		umask:       int32(avfs.UMask.Get()),
-		utils:       avfs.NewUtils(avfs.OsLinux),
+		nodes:   make(nodes),
+		curDir:  string(avfs.PathSeparator),
+		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
+		umask:   int32(avfs.UMask.Get()),
+		utils:   avfs.OsUtils,
 	}
 
 	vfs.nodes[string(avfs.PathSeparator)] = &node{
@@ -43,11 +42,13 @@ func New(opts ...Option) *OrefaFS {
 		opt(vfs)
 	}
 
+	vfs.currentUser = vfs.Idm().AdminUser()
+
 	if vfs.feature&avfs.FeatMainDirs != 0 {
 		um := vfs.umask
 		vfs.umask = 0
 
-		_ = avfs.CreateBaseDirs(vfs, "")
+		_ = vfs.utils.CreateBaseDirs(vfs, "")
 
 		vfs.umask = um
 		vfs.curDir = string(avfs.PathSeparator)
@@ -87,6 +88,13 @@ func (vfs *OrefaFS) Type() string {
 func WithMainDirs() Option {
 	return func(vfs *OrefaFS) {
 		vfs.feature |= avfs.FeatMainDirs
+	}
+}
+
+// WithOSType returns a function setting the OS type of the file system.
+func WithOSType(ost avfs.OSType) Option {
+	return func(idm *OrefaFS) {
+		idm.utils = avfs.NewUtils(ost)
 	}
 }
 

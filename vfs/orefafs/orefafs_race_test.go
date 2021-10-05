@@ -26,7 +26,7 @@ import (
 	"github.com/avfs/avfs/vfs/orefafs"
 )
 
-func TestRacOrefaFs(t *testing.T) {
+func TestRaceOrefaFs(t *testing.T) {
 	vfs := orefafs.New(orefafs.WithMainDirs())
 
 	sfs := test.NewSuiteFS(t, vfs)
