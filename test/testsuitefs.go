@@ -71,7 +71,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	canTestPerm := vfs.OSType() != avfs.OsWindows &&
 		vfs.HasFeature(avfs.FeatBasicFs) &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) &&
-		initUser.IsRoot()
+		initUser.IsAdmin()
 
 	sfs := &SuiteFS{
 		vfsSetup:    vfs,

@@ -192,7 +192,7 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 
 // checkPermission checks if the current user has the desired permissions (perm) on the node.
 func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool {
-	if u.IsRoot() {
+	if u.IsAdmin() {
 		return true
 	}
 
@@ -217,7 +217,7 @@ func (bn *baseNode) Lock() {
 
 // setModTime sets the modification time of the node.
 func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) error {
-	if bn.uid != u.Uid() && !u.IsRoot() {
+	if bn.uid != u.Uid() && !u.IsAdmin() {
 		return avfs.ErrOpNotPermitted
 	}
 
@@ -325,7 +325,7 @@ func (dn *dirNode) dirNames() []string {
 
 // setMode sets the permissions of the directory node.
 func (dn *dirNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
-	if dn.uid != u.Uid() && !u.IsRoot() {
+	if dn.uid != u.Uid() && !u.IsAdmin() {
 		return avfs.ErrOpNotPermitted
 	}
 
@@ -374,7 +374,7 @@ func (fn *fileNode) fillStatFrom(name string) *MemInfo {
 
 // setMode sets the permissions of the file node.
 func (fn *fileNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
-	if fn.uid != u.Uid() && !u.IsRoot() {
+	if fn.uid != u.Uid() && !u.IsAdmin() {
 		return avfs.ErrPermDenied
 	}
 

@@ -27,7 +27,7 @@ func New() *OsIdm {
 	case avfs.OsWindows:
 	default:
 		feature = avfs.FeatIdentityMgr
-		if !User().IsRoot() {
+		if !User().IsAdmin() {
 			feature |= avfs.FeatReadOnlyIdm
 		}
 	}

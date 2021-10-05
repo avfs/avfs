@@ -741,8 +741,8 @@ type UserReader interface {
 	UserIdentifier
 	Namer
 
-	// IsRoot returns true if the user has root privileges.
-	IsRoot() bool
+	// IsAdmin returns true if the user has administrator (root) privileges.
+	IsAdmin() bool
 }
 
 // SysStater is the interface returned by ToSysStat on all file systems.

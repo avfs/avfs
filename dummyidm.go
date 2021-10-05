@@ -152,8 +152,8 @@ func (u *DummyUser) Gid() int {
 	return u.gid
 }
 
-// IsRoot returns true if the User has root privileges.
-func (u *DummyUser) IsRoot() bool {
+// IsAdmin returns true if the user has administrator (root) privileges.
+func (u *DummyUser) IsAdmin() bool {
 	return u.uid == 0 || u.gid == 0
 }
 

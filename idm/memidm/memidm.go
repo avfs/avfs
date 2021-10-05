@@ -179,8 +179,8 @@ func (u *MemUser) Gid() int {
 	return u.gid
 }
 
-// IsRoot returns true if the user has root privileges.
-func (u *MemUser) IsRoot() bool {
+// IsAdmin returns true if the user has administrator (root) privileges.
+func (u *MemUser) IsAdmin() bool {
 	return u.uid == 0 || u.gid == 0
 }
 

@@ -198,8 +198,8 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 				t.Errorf("UserAdd %s : want gid to be %d, got %d", userName, g.Gid(), u.Gid())
 			}
 
-			if u.IsRoot() {
-				t.Errorf("IsRoot %s : want IsRoot to be false, got true", userName)
+			if u.IsAdmin() {
+				t.Errorf("IsAdmin %s : want IsAdmin to be false, got true", userName)
 			}
 
 			_, err = idm.LookupUser(userName)
@@ -344,7 +344,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 				t.Errorf("LookupUser %s : want gid to be > 0, got %d", userName, u.Gid())
 			}
 
-			if (u.Uid() != 0 && u.Gid() != 0) && u.IsRoot() {
+			if (u.Uid() != 0 && u.Gid() != 0) && u.IsAdmin() {
 				t.Errorf("LookupUser %s : want isRoot to be false, got true", userName)
 			}
 		}

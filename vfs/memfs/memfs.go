@@ -121,7 +121,7 @@ func (vfs *MemFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsAdmin() {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -142,7 +142,7 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 func (vfs *MemFS) Chroot(path string) error {
 	const op = "chroot"
 
-	if !vfs.user.IsRoot() {
+	if !vfs.user.IsAdmin() {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -342,7 +342,7 @@ func (vfs *MemFS) Join(elem ...string) string {
 func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsRoot() {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsAdmin() {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
