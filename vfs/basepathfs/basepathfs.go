@@ -161,6 +161,12 @@ func (vfs *BasePathFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return vfs.utils.CreateTemp(vfs, dir, pattern)
 }
 
+// CurrentUser returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *BasePathFS) CurrentUser() avfs.UserReader {
+	return vfs.baseFS.CurrentUser()
+}
+
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -215,6 +221,12 @@ func (vfs *BasePathFS) Glob(pattern string) (matches []string, err error) {
 	}
 
 	return matches, err
+}
+
+// Idm returns the identity manager of the file system.
+// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+func (vfs *BasePathFS) Idm() avfs.IdentityMgr {
+	return vfs.baseFS.Idm()
 }
 
 // IsAbs reports whether the path is absolute.
@@ -520,6 +532,17 @@ func (vfs *BasePathFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *BasePathFS) UMask() fs.FileMode {
 	return vfs.baseFS.UMask()
+}
+
+// User sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *BasePathFS) User(name string) (avfs.UserReader, error) {
+	return vfs.baseFS.User(name)
+}
+
+// Utils returns the file utils of the current file system.
+func (vfs *BasePathFS) Utils() avfs.Utils {
+	return vfs.baseFS.Utils()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
