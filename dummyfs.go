@@ -199,11 +199,6 @@ func (vfs *DummyFS) CreateTemp(dir, pattern string) (File, error) {
 	return vfs.utils.CreateTemp(vfs, dir, pattern)
 }
 
-// CurrentUser returns the current User.
-func (vfs *DummyFS) User() UserReader {
-	return NotImplementedUser
-}
-
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -556,6 +551,12 @@ func (vfs *DummyFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *DummyFS) UMask() fs.FileMode {
 	return 0o022
+}
+
+// User returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *DummyFS) User() UserReader {
+	return NotImplementedUser
 }
 
 // Utils returns the file utils of the current file system.

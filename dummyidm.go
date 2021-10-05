@@ -89,11 +89,6 @@ func (idm *DummyIdm) AdminUser() UserReader {
 	return NotImplementedUser
 }
 
-// CurrentUser returns the current user.
-func (idm *DummyIdm) CurrentUser() UserReader {
-	return NotImplementedUser
-}
-
 // GroupAdd adds a new group.
 func (idm *DummyIdm) GroupAdd(name string) (GroupReader, error) {
 	return nil, ErrPermDenied
@@ -125,12 +120,6 @@ func (idm *DummyIdm) LookupUser(name string) (UserReader, error) {
 // LookupUserId looks up a user by userid.
 // If the user cannot be found, the returned error is of type UnknownUserIdError.
 func (idm *DummyIdm) LookupUserId(uid int) (UserReader, error) {
-	return nil, ErrPermDenied
-}
-
-// User sets the current user of the file system to uid.
-// If the current user has not root privileges errPermDenied is returned.
-func (idm *DummyIdm) User(name string) (UserReader, error) {
 	return nil, ErrPermDenied
 }
 
