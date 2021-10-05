@@ -871,6 +871,27 @@ func (ut *Utils) Rel(basepath, targpath string) (string, error) {
 	return targ[t0:], nil
 }
 
+// SegmentPath segments string key paths by separator (using avfs.PathSeparator).
+// For example with path = "/a/b/c" it will return in successive calls :
+//
+// "a", "/b/c"
+// "b", "/c"
+// "c", ""
+//
+// 	for start, end, isLast := 1, 0, len(path) <= 1; !isLast; start = end + 1 {
+//		end, isLast = avfs.SegmentUnixPath(path, start)
+//		fmt.Println(path[start:end], path[end:])
+//	}
+//
+func (ut *Utils) SegmentPath(path string, start int) (end int, isLast bool) {
+	pos := strings.IndexByte(path[start:], ut.pathSeparator)
+	if pos != -1 {
+		return start + pos, false
+	}
+
+	return len(path), true
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
