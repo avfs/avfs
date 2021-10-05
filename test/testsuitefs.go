@@ -79,7 +79,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 		initDir:     initDir,
 		initUser:    initUser,
 		rootDir:     vfs.TempDir(),
-		maxRace:     1000,
+		maxRace:     100,
 		canTestPerm: canTestPerm,
 	}
 
