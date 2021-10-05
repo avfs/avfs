@@ -25,15 +25,15 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	currentUser avfs.UserReader
-	nodes       nodes
-	curDir      string
-	name        string
-	feature     avfs.Feature
-	lastId      uint64
-	mu          sync.RWMutex
-	umask       int32
-	utils       avfs.Utils
+	user    avfs.UserReader
+	nodes   nodes
+	curDir  string
+	name    string
+	feature avfs.Feature
+	lastId  uint64
+	mu      sync.RWMutex
+	umask   int32
+	utils   avfs.Utils
 }
 
 // OrefaFile represents an open file descriptor.

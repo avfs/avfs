@@ -159,12 +159,6 @@ func (vfs *RoFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return &RoFile{}, &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 }
 
-// CurrentUser returns the current user.
-// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
-func (vfs *RoFS) CurrentUser() avfs.UserReader {
-	return avfs.NotImplementedUser
-}
-
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -518,6 +512,12 @@ func (vfs *RoFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *RoFS) UMask() fs.FileMode {
 	return vfs.baseFS.UMask()
+}
+
+// User returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *RoFS) User() avfs.UserReader {
+	return avfs.NotImplementedUser
 }
 
 // Utils returns the file utils of the current file system.

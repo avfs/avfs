@@ -215,7 +215,6 @@ File system methods <br> `avfs.FS`|Comments
 `Clone`| returns a shallow copy of the current file system (see MemFS) or the file system itself
 `Create`|equivalent to `os.Create`
 `CreateTemp`|equivalent to `os.CreateTemp`
-`CurrentUser`| returns the current user
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
 `FromSlash`|equivalent to `filepath.FromSlash`
@@ -223,6 +222,7 @@ File system methods <br> `avfs.FS`|Comments
 `Getwd`|equivalent to `os.Getwd`
 `Glob`|equivalent to `filepath.Glob`
 `HasFeature`|returns true if the file system or identity manager provides a given feature
+`Idm`|returns the identity manager of the file system
 `IsAbs`|equivalent to `filepath.IsAbs`
 `IsPathSeparator`|equivalent to `filepath.IsPathSeparator`
 `Join`|equivalent to `filepath.Join`
@@ -243,6 +243,8 @@ File system methods <br> `avfs.FS`|Comments
 `RemoveAll`|equivalent to `os.RemoveAll`
 `Rename`|equivalent to `os.Rename`
 `SameFile`|equivalent to `os.SameFile`
+`SetUMask`|sets the file mode creation mask
+`SetUser`|sets and returns the current user
 `Split`|equivalent to `filepath.Split`
 `Stat`|equivalent to `os.Stat`
 `Symlink`|equivalent to `os.Symlink`
@@ -250,7 +252,8 @@ File system methods <br> `avfs.FS`|Comments
 `ToSlash`|equivalent to `filepath.ToSlash`
 `ToSysStat`|takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater
 `Truncate`|equivalent to `os.Truncate`
-`User`| sets and returns the current user
+`UMask`|returns the file mode creation mask
+`User`| returns the current user
 `WalkDir`|equivalent to `filepath.WalkDir`
 `WriteFile`|equivalent to `os.WriteFile`
 

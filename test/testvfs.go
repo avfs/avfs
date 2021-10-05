@@ -556,11 +556,11 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 	})
 }
 
-// TestCurrentUser tests CurrentUser function.
-func (sfs *SuiteFS) TestCurrentUser(t *testing.T, testDir string) {
+// TestUser tests User function.
+func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	u := vfs.CurrentUser()
+	u := vfs.User()
 
 	name := u.Name()
 	if name == "" {
@@ -1405,7 +1405,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		CheckNoError(t, "Chmod", err)
 
 		if vfs.HasFeature(avfs.FeatIdentityMgr) {
-			u := vfs.CurrentUser()
+			u := vfs.User()
 			err = f.Chown(u.Uid(), u.Gid())
 			CheckNoError(t, "Chown", err)
 		}
@@ -1488,7 +1488,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		CheckNoError(t, "Chmod", err)
 
 		if vfs.HasFeature(avfs.FeatIdentityMgr) {
-			u := vfs.CurrentUser()
+			u := vfs.User()
 			err = f.Chown(u.Uid(), u.Gid())
 			CheckNoError(t, "Chown", err)
 		}
@@ -2321,9 +2321,9 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 		t.Errorf("Stat : want error be nil, got %v", err)
 	}
 
-	u := vfs.CurrentUser()
+	u := vfs.User()
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		u = sfs.vfsSetup.CurrentUser()
+		u = sfs.vfsSetup.User()
 	}
 
 	wantUid, wantGid := u.Uid(), u.Gid()
@@ -2464,8 +2464,8 @@ func (sfs *SuiteFS) TestUmask(t *testing.T, testDir string) {
 	}
 }
 
-// TestUser tests User and CurrentUser functions.
-func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
+// TestSetUser tests SetUser and User functions.
+func (sfs *SuiteFS) TestSetUser(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 	idm := vfs.Idm()
 
@@ -2534,7 +2534,7 @@ func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
 					t.Errorf("SetUser %s : want gid to be %d, got %d", userName, gid, u.Gid())
 				}
 
-				cu := vfs.CurrentUser()
+				cu := vfs.User()
 				if cu.Name() != userName {
 					t.Errorf("SetUser %s : want name to be %s, got %s", userName, userName, cu.Name())
 				}

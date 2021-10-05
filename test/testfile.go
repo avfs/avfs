@@ -177,7 +177,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	t.Run("FileChown", func(t *testing.T) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
-		u := vfs.CurrentUser()
+		u := vfs.User()
 		uid, gid := u.Uid(), u.Gid()
 
 		err := f.Chown(uid, gid)

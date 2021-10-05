@@ -31,7 +31,7 @@ const (
 
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
-	user     avfs.UserReader // User is the current user of the file system.
+	user     avfs.UserReader // user is the current user of the file system.
 	rootNode *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
 	curDir   string          // curDir is the current directory.

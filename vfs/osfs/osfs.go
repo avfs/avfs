@@ -149,12 +149,6 @@ func (vfs *OsFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return os.CreateTemp(dir, pattern)
 }
 
-// CurrentUser returns the current user.
-// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
-func (vfs *OsFS) CurrentUser() avfs.UserReader {
-	return osidm.CurrentUser()
-}
-
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -479,6 +473,12 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *OsFS) UMask() fs.FileMode {
 	return avfs.UMask.Get()
+}
+
+// User returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *OsFS) User() avfs.UserReader {
+	return osidm.CurrentUser()
 }
 
 // Utils returns the file utils of the current file system.

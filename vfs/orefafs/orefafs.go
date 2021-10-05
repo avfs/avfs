@@ -221,12 +221,6 @@ func (vfs *OrefaFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return vfs.utils.CreateTemp(vfs, dir, pattern)
 }
 
-// CurrentUser returns the current user.
-// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
-func (vfs *OrefaFS) CurrentUser() avfs.UserReader {
-	return vfs.currentUser
-}
-
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -998,6 +992,12 @@ func (vfs *OrefaFS) UMask() fs.FileMode {
 	u := atomic.LoadInt32(&vfs.umask)
 
 	return fs.FileMode(u)
+}
+
+// User returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *OrefaFS) User() avfs.UserReader {
+	return vfs.user
 }
 
 // Utils returns the file utils of the current file system.

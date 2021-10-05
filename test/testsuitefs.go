@@ -64,7 +64,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 			osType, vfs.Type(), vfs.OSType())
 	}
 
-	initUser := vfs.CurrentUser()
+	initUser := vfs.User()
 	_, file, _, _ := runtime.Caller(0)
 	initDir := filepath.Dir(file)
 
@@ -144,7 +144,7 @@ func WithVFSTest(vfsTest avfs.VFS) Option {
 func (sfs *SuiteFS) SetUser(tb testing.TB, userName string) avfs.UserReader {
 	vfs := sfs.vfsSetup
 
-	u := vfs.CurrentUser()
+	u := vfs.User()
 	if !sfs.canTestPerm || u.Name() == userName {
 		return u
 	}
@@ -351,7 +351,6 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestChdir,
 		sfs.TestChtimes,
 		sfs.TestCreate,
-		sfs.TestCurrentUser,
 		sfs.TestEvalSymlink,
 		sfs.TestLink,
 		sfs.TestLstat,
@@ -365,6 +364,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestRemoveAll,
 		sfs.TestRename,
 		sfs.TestSameFile,
+		sfs.TestSetUser,
 		sfs.TestStat,
 		sfs.TestSymlink,
 		sfs.TestTempDir,

@@ -901,7 +901,7 @@ func (ut *Utils) TempDir(vfs VFS) string {
 		return "/tmp"
 	}
 
-	return ut.Join("\\Users", vfs.CurrentUser().Name(), "AppData\\Local\\Temp")
+	return ut.Join("\\Users", vfs.User().Name(), "AppData\\Local\\Temp")
 }
 
 // ToSlash returns the result of replacing each separator character

@@ -150,7 +150,7 @@ const (
 	FeatHardlink
 
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
-	// (Chown(), SetUser(), CurrentUser(), ... functions).
+	// (Chown(), SetUser(), User(), ... functions).
 	FeatIdentityMgr
 
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
@@ -313,10 +313,6 @@ type BaseVFS interface {
 	// The caller can use the file's Name method to find the pathname of the file.
 	// It is the caller's responsibility to remove the file when it is no longer needed.
 	CreateTemp(dir, pattern string) (File, error)
-
-	// CurrentUser returns the current user.
-	// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
-	CurrentUser() UserReader
 
 	// Dir returns all but the last element of path, typically the path's directory.
 	// After dropping the final element, Dir calls Clean on the path and trailing
@@ -559,6 +555,10 @@ type BaseVFS interface {
 
 	// UMask returns the file mode creation mask.
 	UMask() fs.FileMode
+
+	// User returns the current user.
+	// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+	User() UserReader
 
 	// Utils returns the file utils of the current file system.
 	Utils() Utils

@@ -241,16 +241,6 @@ func (vfs *MemFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return vfs.utils.CreateTemp(vfs, dir, pattern)
 }
 
-// CurrentUser returns the current user.
-// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
-func (vfs *MemFS) CurrentUser() avfs.UserReader {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return avfs.NotImplementedUser
-	}
-
-	return vfs.user
-}
-
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -1025,6 +1015,16 @@ func (vfs *MemFS) UMask() fs.FileMode {
 	u := atomic.LoadInt32(&vfs.memAttrs.umask)
 
 	return fs.FileMode(u)
+}
+
+// User returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *MemFS) User() avfs.UserReader {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return avfs.NotImplementedUser
+	}
+
+	return vfs.user
 }
 
 // Utils returns the file utils of the current file system.

@@ -200,7 +200,7 @@ func (vfs *DummyFS) CreateTemp(dir, pattern string) (File, error) {
 }
 
 // CurrentUser returns the current User.
-func (vfs *DummyFS) CurrentUser() UserReader {
+func (vfs *DummyFS) User() UserReader {
 	return NotImplementedUser
 }
 
