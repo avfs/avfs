@@ -26,7 +26,6 @@ import (
 // SuiteIdm is a test suite for an identity manager.
 type SuiteIdm struct {
 	idm     avfs.IdentityMgr   // idm is the identity manager to be tested.
-	uc      avfs.UserConnecter // uc is the implementation of avfs.UserConnecter.
 	Groups  []avfs.GroupReader // Groups contains the test groups created with the identity manager.
 	Users   []avfs.UserReader  // Users contains the test users created with the identity manager.
 	canTest bool               // canTest is true when the identity manager can be tested.
@@ -39,16 +38,6 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 	defer func() {
 		t.Logf("Info Idm = %s, can test permissions = %t", sIdm.Type(), sIdm.canTest)
 	}()
-
-	uc, ok := idm.(avfs.UserConnecter)
-	if ok {
-		sIdm.uc = uc
-
-		u := uc.CurrentUser()
-		if u == nil {
-			return sIdm
-		}
-	}
 
 	sIdm.canTest = idm.HasFeature(avfs.FeatIdentityMgr) && !idm.HasFeature(avfs.FeatReadOnlyIdm)
 	if !sIdm.canTest {
@@ -68,11 +57,9 @@ func (sIdm *SuiteIdm) Type() string {
 
 // TestAll run all identity manager tests.
 func (sIdm *SuiteIdm) TestAll(t *testing.T) {
-	sIdm.TestCurrentUser(t)
 	sIdm.TestGroupAddDel(t)
 	sIdm.TestUserAddDel(t)
 	sIdm.TestLookup(t)
-	sIdm.TestUser(t)
 }
 
 // GroupInfo contains information to create a test group.

@@ -17,38 +17,10 @@
 package test
 
 import (
-	"io/fs"
 	"testing"
 
 	"github.com/avfs/avfs"
 )
-
-// TestCurrentUser tests CurrentUser function.
-func (sIdm *SuiteIdm) TestCurrentUser(t *testing.T) {
-	idm := sIdm.idm
-
-	uc, ok := idm.(avfs.UserConnecter)
-	if !ok {
-		return
-	}
-
-	u := uc.CurrentUser()
-
-	name := u.Name()
-	if name == "" {
-		t.Errorf("Name : want name to be not empty, got empty")
-	}
-
-	uid := u.Uid()
-	if uid < 0 {
-		t.Errorf("Uid : want uid to be >= 0, got %d", uid)
-	}
-
-	gid := u.Gid()
-	if uid < 0 {
-		t.Errorf("Uid : want gid to be >= 0, got %d", gid)
-	}
-}
 
 // TestGroupAddDel tests GroupAdd and GroupDel functions.
 func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
@@ -235,8 +207,6 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 
 			_, err = idm.LookupUserId(u.Uid())
 			CheckNoError(t, "LookupUserId "+userName, err)
-
-			checkHomeDir(t, idm, u)
 		}
 	})
 
@@ -379,124 +349,4 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 			}
 		}
 	})
-}
-
-// TestUser tests User and CurrentUser functions.
-func (sIdm *SuiteIdm) TestUser(t *testing.T) {
-	idm := sIdm.idm
-	suffix := "User" + sIdm.Type()
-
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		userName := "InvalidUser" + suffix
-
-		if uc, ok := idm.(avfs.UserConnecter); ok {
-			_, err := uc.User(userName)
-			if err != avfs.ErrPermDenied {
-				t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
-			}
-		}
-
-		return
-	}
-
-	if !sIdm.canTest || sIdm.uc == nil {
-		return
-	}
-
-	defer sIdm.uc.User(avfs.UsrRoot) //nolint:errcheck // Ignore errors.
-
-	CreateGroups(t, idm, suffix)
-	CreateUsers(t, idm, suffix)
-
-	t.Run("UserNotExists", func(t *testing.T) {
-		const userName = "notExistingUser"
-
-		wantErr := avfs.UnknownUserError(userName)
-
-		_, err := idm.LookupUser(userName)
-		if err != wantErr {
-			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
-		}
-
-		_, err = sIdm.uc.User(userName)
-		if err != wantErr {
-			t.Errorf("User %s : want error to be %v, got %v", userName, wantErr, err)
-		}
-	})
-
-	t.Run("UserExists", func(t *testing.T) {
-		for _, ui := range UserInfos() {
-			userName := ui.Name + suffix
-
-			lu, err := idm.LookupUser(userName)
-			if !CheckNoError(t, "LookupUser "+userName, err) {
-				continue
-			}
-
-			uid := lu.Uid()
-			gid := lu.Gid()
-
-			// loop to test change with the same user
-			for i := 0; i < 2; i++ {
-				u, err := sIdm.uc.User(userName)
-				if !CheckNoError(t, "User "+userName, err) {
-					continue
-				}
-
-				if u.Name() != userName {
-					t.Errorf("User %s : want name to be %s, got %s", userName, userName, u.Name())
-				}
-
-				if u.Uid() != uid {
-					t.Errorf("User %s : want uid to be %d, got %d", userName, uid, u.Uid())
-				}
-
-				if u.Gid() != gid {
-					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, u.Gid())
-				}
-
-				cu := sIdm.uc.CurrentUser()
-				if cu.Name() != userName {
-					t.Errorf("User %s : want name to be %s, got %s", userName, userName, cu.Name())
-				}
-
-				if cu.Uid() != uid {
-					t.Errorf("User %s : want uid to be %d, got %d", userName, uid, cu.Uid())
-				}
-
-				if cu.Gid() != gid {
-					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, cu.Gid())
-				}
-			}
-		}
-	})
-}
-
-// checkHomeDir tests that the user home directory exists and has the correct permissions.
-func checkHomeDir(t *testing.T, idm avfs.IdentityMgr, u avfs.UserReader) {
-	vfs, ok := idm.(avfs.VFS)
-	if !ok || vfs.OSType() == avfs.OsWindows {
-		return
-	}
-
-	homeDir := avfs.HomeDirUser(vfs, u.Name())
-
-	fst, err := vfs.Stat(homeDir)
-	CheckNoError(t, "Stat "+homeDir, err)
-
-	if vfs.OSType() == avfs.OsWindows {
-		return
-	}
-
-	wantMode := fs.ModeDir | avfs.HomeDirPerm(vfs)&^vfs.UMask()
-	if fst.Mode() != wantMode {
-		t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
-	}
-
-	sst := vfs.ToSysStat(fst)
-
-	uid, gid := sst.Uid(), sst.Gid()
-	if uid != u.Uid() || gid != u.Gid() {
-		t.Errorf("Stat %s : want uid=%d, gid=%d, got uid=%d, gid=%d", homeDir, u.Uid(), u.Gid(), uid, gid)
-	}
 }
