@@ -53,7 +53,7 @@ func TestOsIdmCfg(t *testing.T) {
 		wantFeat = 0
 	default:
 		wantFeat = avfs.FeatIdentityMgr
-		if !osidm.CurrentUser().IsRoot() {
+		if !osidm.User().IsRoot() {
 			wantFeat |= avfs.FeatReadOnlyIdm
 		}
 	}

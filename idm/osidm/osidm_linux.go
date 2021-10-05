@@ -203,24 +203,9 @@ func (idm *OsIdm) UserDel(name string) error {
 	return nil
 }
 
-// CurrentUser returns the current user of the OS.
-func CurrentUser() avfs.UserReader {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	uid := syscall.Geteuid()
-
-	user, err := lookupUserId(uid)
-	if err != nil {
-		return nil
-	}
-
-	return user
-}
-
-// User sets and returns the current user.
+// SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
-func User(name string) (avfs.UserReader, error) {
+func SetUser(name string) (avfs.UserReader, error) {
 	const op = "user"
 
 	u, err := lookupUser(name)
@@ -276,6 +261,21 @@ func User(name string) (avfs.UserReader, error) {
 	}
 
 	return u, nil
+}
+
+// User returns the current user of the OS.
+func User() avfs.UserReader {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	uid := syscall.Geteuid()
+
+	user, err := lookupUserId(uid)
+	if err != nil {
+		return nil
+	}
+
+	return user
 }
 
 type compareFunc func(line []string, value string) bool

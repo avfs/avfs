@@ -419,7 +419,7 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) {
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
-	return osidm.User(name)
+	return osidm.SetUser(name)
 }
 
 // Stat returns a FileInfo describing the named file.
@@ -478,7 +478,7 @@ func (vfs *OsFS) UMask() fs.FileMode {
 // User returns the current user.
 // if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
 func (vfs *OsFS) User() avfs.UserReader {
-	return osidm.CurrentUser()
+	return osidm.User()
 }
 
 // Utils returns the file utils of the current file system.

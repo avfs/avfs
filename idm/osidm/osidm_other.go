@@ -65,13 +65,13 @@ func (idm *OsIdm) UserDel(name string) error {
 	return avfs.ErrPermDenied
 }
 
-// CurrentUser returns the current user of the OS.
-func CurrentUser() avfs.UserReader {
-	return avfs.NotImplementedUser
+// SetUser sets the current user of the file system to uid.
+// If the current user has not root privileges avfs.errPermDenied is returned.
+func SetUser(name string) (avfs.UserReader, error) {
+	return nil, avfs.ErrPermDenied
 }
 
-// User sets the current user of the file system to uid.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func User(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+// User returns the current user of the OS.
+func User() avfs.UserReader {
+	return avfs.NotImplementedUser
 }
