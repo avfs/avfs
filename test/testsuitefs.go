@@ -140,8 +140,8 @@ func WithVFSTest(vfsTest avfs.VFS) Option {
 	}
 }
 
-// User sets the test user to userName.
-func (sfs *SuiteFS) User(tb testing.TB, userName string) avfs.UserReader {
+// SetUser sets the test user to userName.
+func (sfs *SuiteFS) SetUser(tb testing.TB, userName string) avfs.UserReader {
 	vfs := sfs.vfsSetup
 
 	u := vfs.CurrentUser()
@@ -149,9 +149,9 @@ func (sfs *SuiteFS) User(tb testing.TB, userName string) avfs.UserReader {
 		return u
 	}
 
-	u, err := vfs.User(userName)
+	u, err := vfs.SetUser(userName)
 	if err != nil {
-		tb.Fatalf("User %s : want error to be nil, got %s", userName, err)
+		tb.Fatalf("SetUser %s : want error to be nil, got %s", userName, err)
 	}
 
 	return u
@@ -175,7 +175,7 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTe
 	vfs := sfs.vfsSetup
 
 	defer func() {
-		sfs.User(t, sfs.initUser.Name())
+		sfs.SetUser(t, sfs.initUser.Name())
 
 		err := os.Chdir(sfs.initDir)
 		if err != nil {
@@ -184,7 +184,7 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTe
 	}()
 
 	for _, tf := range testFuncs {
-		sfs.User(t, userName)
+		sfs.SetUser(t, userName)
 
 		funcName := functionName(tf)
 		testDir := vfs.Join(sfs.rootDir, funcName)
@@ -208,7 +208,7 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Suite
 	vfs := sfs.vfsSetup
 
 	defer func() {
-		sfs.User(b, sfs.initUser.Name())
+		sfs.SetUser(b, sfs.initUser.Name())
 
 		err := os.Chdir(sfs.initDir)
 		if err != nil {
@@ -217,7 +217,7 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Suite
 	}()
 
 	for _, bf := range benchFuncs {
-		sfs.User(b, userName)
+		sfs.SetUser(b, userName)
 
 		funcName := functionName(bf)
 		testDir := vfs.Join(sfs.rootDir, funcName)
@@ -315,7 +315,7 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 
 	// Cleanup permissions for RemoveAll()
 	// as the user who started the tests.
-	sfs.User(tb, sfs.initUser.Name())
+	sfs.SetUser(tb, sfs.initUser.Name())
 
 	err = vfs.WalkDir(testDir, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {

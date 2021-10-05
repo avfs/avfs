@@ -488,6 +488,12 @@ func (vfs *DummyFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 func (vfs *DummyFS) SetUMask(mask fs.FileMode) {
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *DummyFS) SetUser(name string) (UserReader, error) {
+	return nil, ErrPermDenied
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -550,11 +556,6 @@ func (vfs *DummyFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *DummyFS) UMask() fs.FileMode {
 	return 0o022
-}
-
-// User sets the current User.
-func (vfs *DummyFS) User(name string) (UserReader, error) {
-	return nil, ErrPermDenied
 }
 
 // Utils returns the file utils of the current file system.

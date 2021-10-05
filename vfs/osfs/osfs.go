@@ -422,6 +422,12 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) {
 	avfs.UMask.Set(mask)
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
+	return osidm.User(name)
+}
+
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
@@ -473,12 +479,6 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *OsFS) UMask() fs.FileMode {
 	return avfs.UMask.Get()
-}
-
-// User sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *OsFS) User(name string) (avfs.UserReader, error) {
-	return osidm.User(name)
 }
 
 // Utils returns the file utils of the current file system.

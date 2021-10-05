@@ -452,6 +452,12 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 func (vfs *RoFS) SetUMask(mask fs.FileMode) {
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *RoFS) SetUser(name string) (avfs.UserReader, error) {
+	return vfs.baseFS.SetUser(name)
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -512,12 +518,6 @@ func (vfs *RoFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *RoFS) UMask() fs.FileMode {
 	return vfs.baseFS.UMask()
-}
-
-// User sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *RoFS) User(name string) (avfs.UserReader, error) {
-	return vfs.baseFS.User(name)
 }
 
 // Utils returns the file utils of the current file system.

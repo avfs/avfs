@@ -874,6 +874,12 @@ func (vfs *OrefaFS) SetUMask(mask fs.FileMode) {
 	atomic.StoreInt32(&vfs.umask, int32(mask))
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *OrefaFS) SetUser(name string) (avfs.UserReader, error) {
+	return nil, avfs.ErrPermDenied
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -992,12 +998,6 @@ func (vfs *OrefaFS) UMask() fs.FileMode {
 	u := atomic.LoadInt32(&vfs.umask)
 
 	return fs.FileMode(u)
-}
-
-// User sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *OrefaFS) User(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
 }
 
 // Utils returns the file utils of the current file system.

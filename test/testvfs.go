@@ -2474,15 +2474,15 @@ func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
 		userName := "InvalidUser" + suffix
 
-		_, err := vfs.User(userName)
+		_, err := vfs.SetUser(userName)
 		if err != avfs.ErrPermDenied {
-			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("SetUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		return
 	}
 
-	defer vfs.User(idm.AdminUser().Name()) //nolint:errcheck // Ignore errors.
+	defer vfs.SetUser(idm.AdminUser().Name()) //nolint:errcheck // Ignore errors.
 
 	CreateGroups(t, idm, suffix)
 	CreateUsers(t, idm, suffix)
@@ -2497,9 +2497,9 @@ func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
 			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
 		}
 
-		_, err = vfs.User(userName)
+		_, err = vfs.SetUser(userName)
 		if err != wantErr {
-			t.Errorf("User %s : want error to be %v, got %v", userName, wantErr, err)
+			t.Errorf("SetUser %s : want error to be %v, got %v", userName, wantErr, err)
 		}
 	})
 
@@ -2517,34 +2517,34 @@ func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
 
 			// loop to test change with the same user
 			for i := 0; i < 2; i++ {
-				u, err := vfs.User(userName)
-				if !CheckNoError(t, "User "+userName, err) {
+				u, err := vfs.SetUser(userName)
+				if !CheckNoError(t, "SetUser "+userName, err) {
 					continue
 				}
 
 				if u.Name() != userName {
-					t.Errorf("User %s : want name to be %s, got %s", userName, userName, u.Name())
+					t.Errorf("SetUser %s : want name to be %s, got %s", userName, userName, u.Name())
 				}
 
 				if u.Uid() != uid {
-					t.Errorf("User %s : want uid to be %d, got %d", userName, uid, u.Uid())
+					t.Errorf("SetUser %s : want uid to be %d, got %d", userName, uid, u.Uid())
 				}
 
 				if u.Gid() != gid {
-					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, u.Gid())
+					t.Errorf("SetUser %s : want gid to be %d, got %d", userName, gid, u.Gid())
 				}
 
 				cu := vfs.CurrentUser()
 				if cu.Name() != userName {
-					t.Errorf("User %s : want name to be %s, got %s", userName, userName, cu.Name())
+					t.Errorf("SetUser %s : want name to be %s, got %s", userName, userName, cu.Name())
 				}
 
 				if cu.Uid() != uid {
-					t.Errorf("User %s : want uid to be %d, got %d", userName, uid, cu.Uid())
+					t.Errorf("SetUser %s : want uid to be %d, got %d", userName, uid, cu.Uid())
 				}
 
 				if cu.Gid() != gid {
-					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, cu.Gid())
+					t.Errorf("SetUser %s : want gid to be %d, got %d", userName, gid, cu.Gid())
 				}
 			}
 		}

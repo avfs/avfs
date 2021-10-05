@@ -150,7 +150,7 @@ const (
 	FeatHardlink
 
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
-	// (Chown(), User(), CurrentUser(), ... functions).
+	// (Chown(), SetUser(), CurrentUser(), ... functions).
 	FeatIdentityMgr
 
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
@@ -514,6 +514,10 @@ type BaseVFS interface {
 	// SetUMask sets the file mode creation mask.
 	SetUMask(mask fs.FileMode)
 
+	// SetUser sets and returns the current user.
+	// If the user is not found, the returned error is of type UnknownUserError.
+	SetUser(name string) (UserReader, error)
+
 	// Stat returns a FileInfo describing the named file.
 	// If there is an error, it will be of type *PathError.
 	Stat(name string) (fs.FileInfo, error)
@@ -555,10 +559,6 @@ type BaseVFS interface {
 
 	// UMask returns the file mode creation mask.
 	UMask() fs.FileMode
-
-	// User sets and returns the current user.
-	// If the user is not found, the returned error is of type UnknownUserError.
-	User(name string) (UserReader, error)
 
 	// Utils returns the file utils of the current file system.
 	Utils() Utils

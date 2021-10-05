@@ -896,6 +896,28 @@ func (vfs *MemFS) SetUMask(mask fs.FileMode) {
 	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *MemFS) SetUser(name string) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return nil, avfs.ErrPermDenied
+	}
+
+	if vfs.user.Name() == name {
+		return vfs.user, nil
+	}
+
+	user, err := vfs.memAttrs.idm.LookupUser(name)
+	if err != nil {
+		return nil, err
+	}
+
+	vfs.user = user
+	vfs.curDir = vfs.utils.HomeDirUser(user.Name())
+
+	return user, nil
+}
+
 // Split splits path immediately following the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
@@ -1003,28 +1025,6 @@ func (vfs *MemFS) UMask() fs.FileMode {
 	u := atomic.LoadInt32(&vfs.memAttrs.umask)
 
 	return fs.FileMode(u)
-}
-
-// User sets the current user of the file system.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func (vfs *MemFS) User(name string) (avfs.UserReader, error) {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return nil, avfs.ErrPermDenied
-	}
-
-	if vfs.user.Name() == name {
-		return vfs.user, nil
-	}
-
-	user, err := vfs.memAttrs.idm.LookupUser(name)
-	if err != nil {
-		return nil, err
-	}
-
-	vfs.user = user
-	vfs.curDir = vfs.utils.HomeDirUser(user.Name())
-
-	return user, nil
 }
 
 // Utils returns the file utils of the current file system.

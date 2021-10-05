@@ -74,7 +74,7 @@ func (pt *PermTest) CreateDirs(t *testing.T) {
 	sfs := pt.sfs
 	vfs := sfs.vfsSetup
 
-	sfs.User(t, UsrTest)
+	sfs.SetUser(t, UsrTest)
 
 	for _, ui := range UserInfos() {
 		usrDir := vfs.Join(pt.permDir, ui.Name)
@@ -121,7 +121,7 @@ func (pt *PermTest) Save(t *testing.T) {
 	}
 
 	sfs := pt.sfs
-	sfs.User(t, sfs.initUser.Name())
+	sfs.SetUser(t, sfs.initUser.Name())
 
 	f, err := os.Create(pt.path)
 	if !CheckNoError(t, "Create "+pt.path, err) {
@@ -183,7 +183,7 @@ func (pt *PermTest) Test(t *testing.T, permFunc PermFunc) {
 	pt.CreateDirs(t)
 
 	for _, ui := range UserInfos() {
-		u := sfs.User(t, ui.Name)
+		u := sfs.SetUser(t, ui.Name)
 		for m := fs.FileMode(0); m <= 0o777; m++ {
 			usrMode := fmt.Sprintf("%s/%s", u.Name(), m)
 			permDir := vfs.Join(pt.permDir, usrMode)
