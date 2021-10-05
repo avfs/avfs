@@ -564,14 +564,6 @@ func (vfs *DummyFS) Utils() Utils {
 	return vfs.utils
 }
 
-// VolumeName returns leading volume name.
-// Given "C:\foo\bar" it returns "C:" on Windows.
-// Given "\\host\share\foo" it returns "\\host\share".
-// On other platforms it returns "".
-func (vfs *DummyFS) VolumeName(path string) string {
-	return vfs.utils.VolumeName(path)
-}
-
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
