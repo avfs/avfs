@@ -31,7 +31,7 @@ provides several features :
 This package can be installed with the go get command :
 
 ```
-go get github.com/avfs/avfs@latest
+go install github.com/avfs/avfs@latest
 ```
 
 It is only tested with Go version >= 1.16
@@ -194,7 +194,7 @@ are currently available :
 File system |Comments
 ------------|--------
 [BasePathFS](vfs/basepathfs)|file system that restricts all operations to a given path within a file system
-[DummyFS](vfs/dummyfs)|Non implemented file system to be used as model
+[DummyFS](dummyfs)|Non implemented file system to be used as model
 [MemFS](vfs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
 [OrefaFS](vfs/orefafs)|Afero like in memory file system
 [OsFS](vfs/osfs)|Operating system native file system
@@ -215,6 +215,7 @@ File system methods <br> `avfs.FS`|Comments
 `Clone`| returns a shallow copy of the current file system (see MemFS) or the file system itself
 `Create`|equivalent to `os.Create`
 `CreateTemp`|equivalent to `os.CreateTemp`
+`CurrentUser`| returns the current user
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
 `FromSlash`|equivalent to `filepath.FromSlash`
@@ -247,8 +248,9 @@ File system methods <br> `avfs.FS`|Comments
 `Symlink`|equivalent to `os.Symlink`
 `TempDir`|equivalent to `os.TempDir`
 `ToSlash`|equivalent to `filepath.ToSlash`
-`ToSysStat`|takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+`ToSysStat`|takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater
 `Truncate`|equivalent to `os.Truncate`
+`User`| sets and returns the current user
 `WalkDir`|equivalent to `filepath.WalkDir`
 `WriteFile`|equivalent to `os.WriteFile`
 
@@ -284,7 +286,7 @@ where all functions returns `avfs.ErrPermDenied`.
 
 Identity Manager |Comments
 -----------------|--------
-[DummyIdm](idm/dummyidm)|dummy identity manager where all functions are not implemented
+[DummyIdm](dummyidm)|dummy identity manager where all functions are not implemented
 [MemIdm](idm/memidm)|In memory identity manager
 [OsIdm](idm/osidm)|Identity manager using os functions
 [SQLiteIdm](https://github.com/avfs/sqliteidm)|Identity manager backed by a SQLite database
@@ -299,11 +301,3 @@ Identity Manager methods <br>`avfs.FS` <br> `avfs.IdentityMgr`|Comments
 `LookupUserId`| looks up a user by userid
 `UserAdd`| adds a new user
 `UserDel`| deletes an existing user
-
-All the file systems and some Identity managers (see OsFS) provide an additional
-interface `UserConnecter`
-
-UserConnecter methods <br>`avfs.FS` |Comments
-------------------------------------|--------
-`CurrentUser`| returns the current user
-`User`| sets and returns the current user

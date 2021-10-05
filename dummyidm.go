@@ -20,7 +20,7 @@ const maxInt = int(^uint(0) >> 1)
 
 var (
 	// NotImplementedGroup represents a not implemented group.
-	NotImplementedGroup = &DummyGroup{
+	NotImplementedGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
 		name: NotImplemented,
 		gid:  maxInt,
 	}

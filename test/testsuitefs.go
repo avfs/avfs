@@ -119,8 +119,10 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	sfs.rootDir = rootDir
 
 	if canTestPerm {
-		sfs.Groups = CreateGroups(tb, vfsSetup, "")
-		sfs.Users = CreateUsers(tb, vfsSetup, "")
+		idm := vfsSetup.Idm()
+
+		sfs.Groups = CreateGroups(tb, idm, "")
+		sfs.Users = CreateUsers(tb, idm, "")
 	}
 
 	return sfs
@@ -341,12 +343,15 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 
 // TestVFS runs all file system tests.
 func (sfs *SuiteFS) TestVFS(t *testing.T) {
+	adminUser := sfs.vfsSetup.Idm().AdminUser()
+
 	sfs.RunTests(t, UsrTest,
 		// VFS tests
 		sfs.TestClone,
 		sfs.TestChdir,
 		sfs.TestChtimes,
 		sfs.TestCreate,
+		sfs.TestCurrentUser,
 		sfs.TestEvalSymlink,
 		sfs.TestLink,
 		sfs.TestLstat,
@@ -365,6 +370,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestTempDir,
 		sfs.TestToSysStat,
 		sfs.TestTruncate,
+		sfs.TestUser,
 		sfs.TestWriteString,
 
 		// File tests
@@ -385,7 +391,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestFileWriteTime)
 
 	// Tests to be run as root
-	sfs.RunTests(t, avfs.UsrRoot,
+	sfs.RunTests(t, adminUser.Name(),
 		sfs.TestChmod,
 		sfs.TestChown,
 		sfs.TestChroot,

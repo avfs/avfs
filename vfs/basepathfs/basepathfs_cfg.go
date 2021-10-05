@@ -48,7 +48,7 @@ func New(baseFs avfs.VFS, basePath string) *BasePathFS {
 	}
 
 	if baseFs.HasFeature(avfs.FeatMainDirs) {
-		err = avfs.CreateBaseDirs(vfs.baseFS, vfs.basePath)
+		err = vfs.utils.CreateBaseDirs(vfs.baseFS, vfs.basePath)
 		if err != nil {
 			panic(err)
 		}

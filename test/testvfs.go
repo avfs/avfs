@@ -218,6 +218,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 // TestChown tests Chown function.
 func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
+	idm := vfs.Idm()
 
 	if !sfs.canTestPerm && !vfs.HasFeature(avfs.FeatChownUser) {
 		err := vfs.Chown(testDir, 0, 0)
@@ -264,7 +265,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		for _, ui := range uis {
 			wantName := ui.Name
 
-			u, err := vfs.LookupUser(wantName)
+			u, err := idm.LookupUser(wantName)
 			if !CheckNoError(t, "LookupUser "+wantName, err) {
 				return
 			}
@@ -295,7 +296,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		for _, ui := range uis {
 			wantName := ui.Name
 
-			u, err := vfs.LookupUser(wantName)
+			u, err := idm.LookupUser(wantName)
 			if !CheckNoError(t, "LookupUser "+wantName, err) {
 				return
 			}
@@ -555,6 +556,28 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 	})
 }
 
+// TestCurrentUser tests CurrentUser function.
+func (sfs *SuiteFS) TestCurrentUser(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	u := vfs.CurrentUser()
+
+	name := u.Name()
+	if name == "" {
+		t.Errorf("Name : want name to be not empty, got empty")
+	}
+
+	uid := u.Uid()
+	if uid < 0 {
+		t.Errorf("Uid : want uid to be >= 0, got %d", uid)
+	}
+
+	gid := u.Gid()
+	if uid < 0 {
+		t.Errorf("Uid : want gid to be >= 0, got %d", gid)
+	}
+}
+
 // TestEvalSymlink tests EvalSymlink function.
 func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
@@ -619,6 +642,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 // TestLchown tests Lchown function.
 func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
+	idm := vfs.Idm()
 
 	if !sfs.canTestPerm && !vfs.HasFeature(avfs.FeatChownUser) {
 		err := vfs.Lchown(testDir, 0, 0)
@@ -666,7 +690,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		for _, ui := range uis {
 			wantName := ui.Name
 
-			u, err := vfs.LookupUser(wantName)
+			u, err := idm.LookupUser(wantName)
 			if !CheckNoError(t, "LookupUser "+wantName, err) {
 				return
 			}
@@ -697,7 +721,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		for _, ui := range uis {
 			wantName := ui.Name
 
-			u, err := vfs.LookupUser(wantName)
+			u, err := idm.LookupUser(wantName)
 			if !CheckNoError(t, "LookupUser "+wantName, err) {
 				return
 			}
@@ -728,7 +752,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		for _, ui := range uis {
 			wantName := ui.Name
 
-			u, err := vfs.LookupUser(wantName)
+			u, err := idm.LookupUser(wantName)
 			if !CheckNoError(t, "LookupUser "+wantName, err) {
 				return
 			}
@@ -2438,6 +2462,93 @@ func (sfs *SuiteFS) TestUmask(t *testing.T, testDir string) {
 	if u != umaskStart {
 		t.Errorf("umaskTest : want umask to be %o, got %o", umaskStart, u)
 	}
+}
+
+// TestUser tests User and CurrentUser functions.
+func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	idm := vfs.Idm()
+
+	suffix := "User" + vfs.Type()
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		userName := "InvalidUser" + suffix
+
+		_, err := vfs.User(userName)
+		if err != avfs.ErrPermDenied {
+			t.Errorf("User : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	defer vfs.User(idm.AdminUser().Name()) //nolint:errcheck // Ignore errors.
+
+	CreateGroups(t, idm, suffix)
+	CreateUsers(t, idm, suffix)
+
+	t.Run("UserNotExists", func(t *testing.T) {
+		const userName = "notExistingUser"
+
+		wantErr := avfs.UnknownUserError(userName)
+
+		_, err := idm.LookupUser(userName)
+		if err != wantErr {
+			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
+		}
+
+		_, err = vfs.User(userName)
+		if err != wantErr {
+			t.Errorf("User %s : want error to be %v, got %v", userName, wantErr, err)
+		}
+	})
+
+	t.Run("UserExists", func(t *testing.T) {
+		for _, ui := range UserInfos() {
+			userName := ui.Name + suffix
+
+			lu, err := idm.LookupUser(userName)
+			if !CheckNoError(t, "LookupUser "+userName, err) {
+				continue
+			}
+
+			uid := lu.Uid()
+			gid := lu.Gid()
+
+			// loop to test change with the same user
+			for i := 0; i < 2; i++ {
+				u, err := vfs.User(userName)
+				if !CheckNoError(t, "User "+userName, err) {
+					continue
+				}
+
+				if u.Name() != userName {
+					t.Errorf("User %s : want name to be %s, got %s", userName, userName, u.Name())
+				}
+
+				if u.Uid() != uid {
+					t.Errorf("User %s : want uid to be %d, got %d", userName, uid, u.Uid())
+				}
+
+				if u.Gid() != gid {
+					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, u.Gid())
+				}
+
+				cu := vfs.CurrentUser()
+				if cu.Name() != userName {
+					t.Errorf("User %s : want name to be %s, got %s", userName, userName, cu.Name())
+				}
+
+				if cu.Uid() != uid {
+					t.Errorf("User %s : want uid to be %d, got %d", userName, uid, cu.Uid())
+				}
+
+				if cu.Gid() != gid {
+					t.Errorf("User %s : want gid to be %d, got %d", userName, gid, cu.Gid())
+				}
+			}
+		}
+	})
 }
 
 // TestWriteFile tests WriteFile function.

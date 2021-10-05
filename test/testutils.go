@@ -124,17 +124,18 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 // TestCreateBaseDirs tests avfs.CreateBaseDirs function.
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
+	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
-	err := avfs.CreateBaseDirs(vfs, testDir)
+	err := ut.CreateBaseDirs(vfs, testDir)
 	if !CheckNoError(t, "CreateBaseDirs", err) {
 		return
 	}
 
-	for _, dir := range avfs.BaseDirs(vfs) {
+	for _, dir := range ut.BaseDirs() {
 		path := vfs.Join(testDir, dir.Path)
 
 		info, err := vfs.Stat(path)
@@ -145,6 +146,40 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 		gotMode := info.Mode() & fs.ModePerm
 		if gotMode != dir.Perm {
 			t.Errorf("CreateBaseDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
+		}
+	}
+}
+
+// TestCreateHomeDir tests that the user home directory exists and has the correct permissions.
+func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
+	vfs := sfs.vfsSetup
+	ut := vfs.Utils()
+
+	for _, ui := range UserInfos() {
+		u, err := vfs.Idm().LookupUser(ui.Name)
+		if err != nil {
+			t.Fatalf("")
+		}
+
+		homeDir := ut.HomeDirUser(u.Name())
+
+		fst, err := vfs.Stat(homeDir)
+		CheckNoError(t, "Stat "+homeDir, err)
+
+		if vfs.OSType() == avfs.OsWindows {
+			return
+		}
+
+		wantMode := fs.ModeDir | ut.HomeDirPerm()&^vfs.UMask()
+		if fst.Mode() != wantMode {
+			t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
+		}
+
+		sst := vfs.ToSysStat(fst)
+
+		uid, gid := sst.Uid(), sst.Gid()
+		if uid != u.Uid() || gid != u.Gid() {
+			t.Errorf("Stat %s : want uid=%d, gid=%d, got uid=%d, gid=%d", homeDir, u.Uid(), u.Gid(), uid, gid)
 		}
 	}
 }
