@@ -72,6 +72,26 @@ func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
 	return ut.Join(wd, path), nil
 }
 
+// AdminUserName returns the name of the administrator of the file system.
+func (ut *Utils) AdminUserName() string {
+	switch ut.osType {
+	case OsWindows:
+		return "ContainerAdministrator"
+	default:
+		return "root"
+	}
+}
+
+// AdminGroupName returns the name of the administrator group of the file system.
+func (ut *Utils) AdminGroupName() string {
+	switch ut.osType {
+	case OsWindows:
+		return "Administrators"
+	default:
+		return "root"
+	}
+}
+
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
@@ -105,6 +125,31 @@ func (ut *Utils) Base(path string) string {
 	}
 
 	return path
+}
+
+// DirInfo contains information to create a directory.
+type DirInfo struct {
+	Path string
+	Perm fs.FileMode
+}
+
+// BaseDirs returns an array of directories always present in the file system.
+func (ut *Utils) BaseDirs() []DirInfo {
+	switch ut.osType {
+	case OsWindows:
+		return []DirInfo{
+			{Path: ut.HomeDir(), Perm: DefaultDirPerm},
+			{Path: ut.HomeDirUser("Default"), Perm: DefaultDirPerm},
+			{Path: "\\Windows", Perm: DefaultDirPerm},
+			{Path: "\\Windows\\Temp", Perm: DefaultDirPerm},
+		}
+	default:
+		return []DirInfo{
+			{Path: ut.HomeDir(), Perm: ut.HomeDirPerm()},
+			{Path: "/root", Perm: 0o700},
+			{Path: "/tmp", Perm: 0o777},
+		}
+	}
 }
 
 // Clean returns the shortest path name equivalent to path
@@ -218,6 +263,50 @@ func (ut *Utils) Clean(path string) string {
 // If there is an error, it will be of type *PathError.
 func (ut *Utils) Create(vfs VFS, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
+}
+
+// CreateBaseDirs creates base directories on a file system.
+func (ut *Utils) CreateBaseDirs(vfs VFS, basePath string) error {
+	for _, dir := range ut.BaseDirs() {
+		path := ut.Join(basePath, dir.Path)
+
+		err := vfs.Mkdir(path, dir.Perm)
+		if err != nil {
+			return err
+		}
+
+		if ut.osType != OsWindows {
+			err = vfs.Chmod(path, dir.Perm)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// CreateHomeDir creates the home directory of a user.
+func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) error {
+	userDir := ut.HomeDirUser(u.Name())
+
+	err := vfs.Mkdir(userDir, ut.HomeDirPerm())
+	if err != nil {
+		return err
+	}
+
+	switch ut.osType {
+	case OsWindows:
+		err = vfs.MkdirAll(vfs.TempDir(), DefaultDirPerm)
+	default:
+		err = vfs.Chown(userDir, u.Uid(), u.Gid())
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -338,7 +427,7 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 		return []string{pattern}, nil
 	}
 
-	dir, file := vfs.Split(pattern)
+	dir, file := ut.Split(pattern)
 	volumeLen := 0
 
 	if ut.osType == OsWindows {
@@ -371,6 +460,30 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 	}
 
 	return //nolint:nakedret // Adapted from standard library.
+}
+
+// HomeDir returns the home directory of the file system.
+func (ut *Utils) HomeDir() string {
+	switch ut.osType {
+	case OsWindows:
+		return "\\User"
+	default:
+		return "/home"
+	}
+}
+
+// HomeDirUser returns the home directory of the user.
+func (ut *Utils) HomeDirUser(name string) string {
+	if ut.osType == OsLinux && name == ut.AdminUserName() {
+		return "/root"
+	}
+
+	return ut.Join(ut.HomeDir(), name)
+}
+
+// HomeDirPerm return the default permission for home directories.
+func (ut *Utils) HomeDirPerm() fs.FileMode {
+	return 0o755
 }
 
 // IsAbs reports whether the path is absolute.
@@ -782,11 +895,11 @@ func (ut *Utils) Split(path string) (dir, file string) {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (ut *Utils) TempDir(vfs VFS) string {
-	if vfs.OSType() != OsWindows {
+	if ut.osType != OsWindows {
 		return "/tmp"
 	}
 
-	return vfs.Join("\\Users", vfs.CurrentUser().Name(), "AppData\\Local\\Temp")
+	return ut.Join("\\Users", vfs.CurrentUser().Name(), "AppData\\Local\\Temp")
 }
 
 // ToSlash returns the result of replacing each separator character
@@ -906,99 +1019,6 @@ func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum 
 	}
 
 	return hasher.Sum(nil), nil
-}
-
-// DirInfo contains information to create a directory.
-type DirInfo struct {
-	Path string
-	Perm fs.FileMode
-}
-
-// BaseDirs returns an array of directories always present in the file system.
-func BaseDirs(vfs VFS) []DirInfo {
-	switch vfs.OSType() {
-	case OsWindows:
-		return []DirInfo{
-			{Path: HomeDir(vfs), Perm: DefaultDirPerm},
-			{Path: HomeDirUser(vfs, "Default"), Perm: DefaultDirPerm},
-			{Path: "\\Windows", Perm: DefaultDirPerm},
-			{Path: "\\Windows\\Temp", Perm: DefaultDirPerm},
-		}
-	default:
-		return []DirInfo{
-			{Path: HomeDir(vfs), Perm: HomeDirPerm(vfs)},
-			{Path: "/root", Perm: 0o700},
-			{Path: "/tmp", Perm: 0o777},
-		}
-	}
-}
-
-// CreateBaseDirs creates base directories on a file system.
-func CreateBaseDirs(vfs VFS, basePath string) error {
-	for _, dir := range BaseDirs(vfs) {
-		path := vfs.Join(basePath, dir.Path)
-
-		err := vfs.Mkdir(path, dir.Perm)
-		if err != nil {
-			return err
-		}
-
-		if vfs.OSType() != OsWindows {
-			err = vfs.Chmod(path, dir.Perm)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// HomeDir returns the home directory of the file system.
-func HomeDir(vfs VFS) string {
-	switch vfs.OSType() {
-	case OsWindows:
-		return "\\User"
-	default:
-		return "/home"
-	}
-}
-
-// HomeDirUser returns the home directory of the user.
-func HomeDirUser(vfs VFS, name string) string {
-	if vfs.OSType() == OsLinux && name == UsrRoot {
-		return "/root"
-	}
-
-	return vfs.Join(HomeDir(vfs), name)
-}
-
-// HomeDirPerm return the default permission for home directories.
-func HomeDirPerm(vfs VFS) fs.FileMode {
-	return 0o755
-}
-
-// CreateHomeDir creates the home directory of a user.
-func CreateHomeDir(vfs VFS, u UserReader) (UserReader, error) {
-	userDir := HomeDirUser(vfs, u.Name())
-
-	err := vfs.Mkdir(userDir, HomeDirPerm(vfs))
-	if err != nil {
-		return nil, err
-	}
-
-	switch vfs.OSType() {
-	case OsWindows:
-		err = vfs.MkdirAll(vfs.TempDir(), DefaultDirPerm)
-	default:
-		err = vfs.Chown(userDir, u.Uid(), u.Gid())
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	return u, nil
 }
 
 // CurrentOSType returns the current Operating System type.
