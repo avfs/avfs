@@ -27,31 +27,39 @@ import (
 func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
 		nodes:   make(nodes),
-		curDir:  string(avfs.PathSeparator),
 		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
 		umask:   int32(avfs.UMask.Get()),
 		utils:   avfs.OsUtils,
-	}
-
-	vfs.nodes[string(avfs.PathSeparator)] = &node{
-		mtime: time.Now().UnixNano(),
-		mode:  fs.ModeDir | 0o755,
 	}
 
 	for _, opt := range opts {
 		opt(vfs)
 	}
 
+	volumeName := ""
+	if vfs.utils.OSType() == avfs.OsWindows {
+		volumeName = "C:"
+	}
+
+	rootNode := &node{
+		mtime: time.Now().UnixNano(),
+		mode:  fs.ModeDir | 0o755,
+	}
+
+	vfs.nodes[volumeName] = rootNode
 	vfs.user = avfs.AdminUser
+	vfs.curDir = volumeName
 
 	if vfs.feature&avfs.FeatMainDirs != 0 {
 		um := vfs.umask
 		vfs.umask = 0
 
-		_ = vfs.utils.CreateBaseDirs(vfs, "")
+		err := vfs.utils.CreateBaseDirs(vfs, volumeName)
+		if err != nil {
+			panic("CreateBaseDirs " + err.Error())
+		}
 
 		vfs.umask = um
-		vfs.curDir = string(avfs.PathSeparator)
 	}
 
 	return vfs

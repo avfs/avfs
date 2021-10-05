@@ -141,7 +141,7 @@ func (ut *Utils) BaseDirs() []DirInfo {
 	case OsWindows:
 		return []DirInfo{
 			{Path: ut.HomeDir(), Perm: DefaultDirPerm},
-			{Path: ut.HomeDirUser("Default"), Perm: DefaultDirPerm},
+			{Path: ut.Join(ut.HomeDirUser(ut.AdminUserName()), "AppData\\Local\\Temp"), Perm: DefaultDirPerm},
 			{Path: "\\Windows", Perm: DefaultDirPerm},
 			{Path: "\\Windows\\Temp", Perm: DefaultDirPerm},
 		}
@@ -272,7 +272,7 @@ func (ut *Utils) CreateBaseDirs(vfs VFS, basePath string) error {
 	for _, dir := range ut.BaseDirs() {
 		path := ut.Join(basePath, dir.Path)
 
-		err := vfs.Mkdir(path, dir.Perm)
+		err := vfs.MkdirAll(path, dir.Perm)
 		if err != nil {
 			return err
 		}
@@ -901,7 +901,7 @@ func (ut *Utils) TempDir(vfs VFS) string {
 		return "/tmp"
 	}
 
-	return ut.Join("\\Users", vfs.User().Name(), "AppData\\Local\\Temp")
+	return ut.Join("C:\\Users", vfs.User().Name(), "AppData\\Local\\Temp")
 }
 
 // ToSlash returns the result of replacing each separator character
