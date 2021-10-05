@@ -39,6 +39,7 @@ type MemIdm struct {
 	usersByName  usersByName  // Users map by Name.
 	usersById    usersById    // Users map by Id.
 	feature      avfs.Feature // Idm features.
+	utils        avfs.Utils   // Utils regroups common functions used by emulated file systems.
 	maxGid       int          // Current maximum Gid.
 	maxUid       int          // Current maximum Uid.
 	grpMu        sync.RWMutex // Groups mutex.
@@ -69,3 +70,6 @@ type MemGroup struct {
 	name string
 	gid  int
 }
+
+// Option defines the option function used for initializing OsFS.
+type Option func(idm *MemIdm)

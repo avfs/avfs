@@ -21,22 +21,8 @@ import (
 )
 
 // New creates a new identity manager.
-func New(ost avfs.OSType) *MemIdm {
-	ut := avfs.NewUtils(ost)
-
-	adminGroupName := ut.AdminGroupName()
-	adminUserName := ut.AdminUserName()
-
+func New(opts ...Option) *MemIdm {
 	idm := &MemIdm{
-		adminGroup: &MemGroup{
-			name: adminGroupName,
-			gid:  0,
-		},
-		adminUser: &MemUser{
-			name: adminUserName,
-			uid:  0,
-			gid:  0,
-		},
 		groupsByName: make(groupsByName),
 		groupsById:   make(groupsById),
 		usersByName:  make(usersByName),
@@ -44,6 +30,25 @@ func New(ost avfs.OSType) *MemIdm {
 		feature:      avfs.FeatIdentityMgr,
 		maxGid:       minGid,
 		maxUid:       minUid,
+		utils:        avfs.OsUtils,
+	}
+
+	for _, opt := range opts {
+		opt(idm)
+	}
+
+	adminGroupName := idm.utils.AdminGroupName()
+	adminUserName := idm.utils.AdminUserName()
+
+	idm.adminGroup = &MemGroup{
+		name: adminGroupName,
+		gid:  0,
+	}
+
+	idm.adminUser = &MemUser{
+		name: adminUserName,
+		uid:  0,
+		gid:  0,
 	}
 
 	idm.groupsById[0] = idm.adminGroup
@@ -54,7 +59,7 @@ func New(ost avfs.OSType) *MemIdm {
 	return idm
 }
 
-// Type returns the type of the fileSystem or Identity manager.
+// Type returns the type of the Identity manager.
 func (idm *MemIdm) Type() string {
 	return "MemIdm"
 }
@@ -67,4 +72,13 @@ func (idm *MemIdm) Features() avfs.Feature {
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (idm *MemIdm) HasFeature(feature avfs.Feature) bool {
 	return (idm.feature & feature) == feature
+}
+
+// Options
+
+// WithOSType returns a function setting the OS type of the file system.
+func WithOSType(ost avfs.OSType) Option {
+	return func(idm *MemIdm) {
+		idm.utils = avfs.NewUtils(ost)
+	}
 }
