@@ -159,6 +159,12 @@ func (vfs *RoFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return &RoFile{}, &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
 }
 
+// CurrentUser returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *RoFS) CurrentUser() avfs.UserReader {
+	return avfs.NotImplementedUser
+}
+
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -203,6 +209,12 @@ func (vfs *RoFS) Getwd() (dir string, err error) {
 // is malformed.
 func (vfs *RoFS) Glob(pattern string) (matches []string, err error) {
 	return vfs.baseFS.Glob(pattern)
+}
+
+// Idm returns the identity manager of the file system.
+// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+func (vfs *RoFS) Idm() avfs.IdentityMgr {
+	return avfs.NotImplementedIdm
 }
 
 // IsAbs reports whether the path is absolute.
@@ -500,6 +512,17 @@ func (vfs *RoFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *RoFS) UMask() fs.FileMode {
 	return vfs.baseFS.UMask()
+}
+
+// User sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *RoFS) User(name string) (avfs.UserReader, error) {
+	return vfs.baseFS.User(name)
+}
+
+// Utils returns the file utils of the current file system.
+func (vfs *RoFS) Utils() avfs.Utils {
+	return vfs.baseFS.Utils()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
