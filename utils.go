@@ -526,7 +526,7 @@ func (ut *Utils) IsNotExist(err error) bool {
 // IsPathSeparator reports whether c is a directory separator character.
 func (ut *Utils) IsPathSeparator(c uint8) bool {
 	if ut.osType != OsWindows {
-		return '/' == c
+		return c == '/'
 	}
 
 	return c == '\\' || c == '/'
