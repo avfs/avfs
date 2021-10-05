@@ -28,7 +28,7 @@ import (
 	"strings"
 )
 
-// Utils are somme common functions used by emulated file system implementation.
+// Utils regroups common functions used by emulated file systems.
 //
 // Most of these functions are extracted and adapted from Go standard library
 // to be used indifferently on Unix or Windows system.
@@ -39,6 +39,8 @@ type Utils struct {
 	// pathSeparator is the OS-specific path separator.
 	pathSeparator uint8
 }
+
+var OsUtils = NewUtils(CurrentOSType()) //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 func NewUtils(osType OSType) Utils {
 	sep := PathSeparator
