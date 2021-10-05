@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/osidm"
 )
 
 // file system functions.
@@ -148,6 +149,12 @@ func (vfs *OsFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return os.CreateTemp(dir, pattern)
 }
 
+// CurrentUser returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *OsFS) CurrentUser() avfs.UserReader {
+	return osidm.CurrentUser()
+}
+
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -192,6 +199,12 @@ func (vfs *OsFS) Getwd() (dir string, err error) {
 // is malformed.
 func (vfs *OsFS) Glob(pattern string) (matches []string, err error) {
 	return filepath.Glob(pattern)
+}
+
+// Idm returns the identity manager of the file system.
+// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+func (vfs *OsFS) Idm() avfs.IdentityMgr {
+	return vfs.idm
 }
 
 // IsAbs reports whether the path is absolute.
@@ -460,6 +473,17 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 // UMask returns the file mode creation mask.
 func (vfs *OsFS) UMask() fs.FileMode {
 	return avfs.UMask.Get()
+}
+
+// User sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *OsFS) User(name string) (avfs.UserReader, error) {
+	return osidm.User(name)
+}
+
+// Utils returns the file utils of the current file system.
+func (vfs *OsFS) Utils() avfs.Utils {
+	return avfs.OsUtils
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

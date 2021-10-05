@@ -16,9 +16,7 @@
 
 package osfs
 
-import (
-	"github.com/avfs/avfs"
-)
+import "github.com/avfs/avfs"
 
 // OsFS represents the file system.
 type OsFS struct {
