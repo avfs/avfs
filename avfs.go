@@ -214,8 +214,9 @@ type IOFS interface {
 
 // BaseVFS regroups the common methods to VFS and IOFS.
 type BaseVFS interface {
+	Featurer
 	Namer
-	UMasker
+	Typer
 
 	// Abs returns an absolute representation of path.
 	// If the path is not absolute it will be joined with the current
@@ -510,6 +511,9 @@ type BaseVFS interface {
 	// It returns false in other cases.
 	SameFile(fi1, fi2 fs.FileInfo) bool
 
+	// SetUMask sets the file mode creation mask.
+	SetUMask(mask fs.FileMode)
+
 	// Stat returns a FileInfo describing the named file.
 	// If there is an error, it will be of type *PathError.
 	Stat(name string) (fs.FileInfo, error)
@@ -548,6 +552,9 @@ type BaseVFS interface {
 	// If the file is a symbolic link, it changes the size of the link's target.
 	// If there is an error, it will be of type *PathError.
 	Truncate(name string, size int64) error
+
+	// UMask returns the file mode creation mask.
+	UMask() fs.FileMode
 
 	// User sets and returns the current user.
 	// If the user is not found, the returned error is of type UnknownUserError.
@@ -607,15 +614,6 @@ type Namer interface {
 type Typer interface {
 	// Type returns the type of the fileSystem or Identity manager.
 	Type() string
-}
-
-// UMasker is the interface that groups functions related to file mode creation mask.
-type UMasker interface {
-	// SetUMask sets the file mode creation mask.
-	SetUMask(mask fs.FileMode)
-
-	// UMask returns the file mode creation mask.
-	UMask() fs.FileMode
 }
 
 // File represents a file in the file system.
