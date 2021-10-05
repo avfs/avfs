@@ -1058,27 +1058,6 @@ func CurrentOSType() OSType {
 	}
 }
 
-// SegmentUnixPath segments string key paths by separator (using avfs.PathSeparator).
-// For example with path = "/a/b/c" it will return in successive calls :
-//
-// "a", "/b/c"
-// "b", "/c"
-// "c", ""
-//
-// 	for start, end, isLast := 1, 0, len(path) <= 1; !isLast; start = end + 1 {
-//		end, isLast = avfs.SegmentUnixPath(path, start)
-//		fmt.Println(path[start:end], path[end:])
-//	}
-//
-func SegmentUnixPath(path string, start int) (end int, isLast bool) {
-	pos := strings.IndexRune(path[start:], PathSeparator)
-	if pos != -1 {
-		return start + pos, false
-	}
-
-	return len(path), true
-}
-
 type statDirEntry struct {
 	info fs.FileInfo
 }

@@ -710,6 +710,9 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 // TestSegmentUnixPath tests avfs.SegmentUnixPath function.
 func (sfs *SuiteFS) TestSegmentUnixPath(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	ut := vfs.Utils()
+
 	cases := []struct {
 		path string
 		want []string
@@ -724,7 +727,7 @@ func (sfs *SuiteFS) TestSegmentUnixPath(t *testing.T, testDir string) {
 
 	for _, c := range cases {
 		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
-			end, isLast = avfs.SegmentUnixPath(c.path, start)
+			end, isLast = ut.SegmentPath(c.path, start)
 			got := c.path[start:end]
 
 			if i > len(c.want) {

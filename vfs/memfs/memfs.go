@@ -508,8 +508,9 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
 	}
 
+	ut := vfs.utils
 	for dn, isLast := parent, len(absPath) <= 1; !isLast; start = end + 1 {
-		end, isLast = avfs.SegmentUnixPath(absPath, start)
+		end, isLast = ut.SegmentPath(absPath, start)
 
 		part := absPath[start:end]
 		if dn.child(part) != nil {

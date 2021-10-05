@@ -1008,6 +1008,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 // TestMkdir tests Mkdir function.
 func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
+	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(testDir, avfs.DefaultDirPerm)
@@ -1054,7 +1055,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 			curPath := testDir
 			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = avfs.SegmentUnixPath(dir.Path, start)
+				end, isLast = ut.SegmentPath(dir.Path, start)
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
@@ -1139,6 +1140,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 // TestMkdirAll tests MkdirAll function.
 func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
+	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
@@ -1186,7 +1188,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 			curPath := testDir
 			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = avfs.SegmentUnixPath(dir.Path, start)
+				end, isLast = ut.SegmentPath(dir.Path, start)
 				part := dir.Path[start:end]
 				wantMode := dir.WantModes[i]
 
