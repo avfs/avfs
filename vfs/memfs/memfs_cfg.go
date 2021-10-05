@@ -60,10 +60,10 @@ func New(opts ...Option) *MemFS {
 		u := vfs.user
 		um := ma.umask
 
-		vfs.user = avfs.RootUser
+		vfs.user = ma.idm.AdminUser()
 		ma.umask = 0
 
-		err := avfs.CreateBaseDirs(vfs, "")
+		err := vfs.utils.CreateBaseDirs(vfs, "")
 		if err != nil {
 			panic(err)
 		}
@@ -112,14 +112,9 @@ func WithMainDirs() Option {
 // WithIdm returns an option function which sets the identity manager.
 func WithIdm(idm avfs.IdentityMgr) Option {
 	return func(vfs *MemFS) {
-		u, err := idm.LookupUser(avfs.UsrRoot)
-		if err != nil {
-			panic(err)
-		}
-
 		vfs.memAttrs.idm = idm
 		vfs.memAttrs.feature |= idm.Features()
-		vfs.user = u
+		vfs.user = idm.AdminUser()
 	}
 }
 

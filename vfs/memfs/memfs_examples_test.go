@@ -63,7 +63,7 @@ func ExampleWithIdm() {
 func ExampleMemFS_Clone() {
 	vfsSrc := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
-	_, err := vfsSrc.UserAdd(test.UsrTest, "root")
+	_, err := vfsSrc.Idm().UserAdd(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("UserAdd : want error to be nil, got %v", err)
 	}
@@ -86,7 +86,7 @@ func ExampleMemFS_Clone() {
 func ExampleMemFS_User() {
 	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
 
-	_, err := vfs.UserAdd(test.UsrTest, "root")
+	_, err := vfs.Idm().UserAdd(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("UserAdd : want error to be nil, got %v", err)
 	}
@@ -103,20 +103,4 @@ func ExampleMemFS_User() {
 	// Output:
 	// root
 	// UsrTest
-}
-
-func ExampleMemFS_UserAdd() {
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
-
-	u, err := vfs.UserAdd(test.UsrTest, "root")
-	if err != nil {
-		log.Fatalf("UserAdd : want error to be nil, got %v", err)
-	}
-
-	fmt.Println(u.Name())
-	fmt.Println(u.Gid())
-
-	// Output:
-	// UsrTest
-	// 0
 }

@@ -241,6 +241,16 @@ func (vfs *MemFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return vfs.utils.CreateTemp(vfs, dir, pattern)
 }
 
+// CurrentUser returns the current user.
+// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+func (vfs *MemFS) CurrentUser() avfs.UserReader {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return avfs.NotImplementedUser
+	}
+
+	return vfs.user
+}
+
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -294,6 +304,12 @@ func (vfs *MemFS) Getwd() (dir string, err error) {
 // is malformed.
 func (vfs *MemFS) Glob(pattern string) (matches []string, err error) {
 	return vfs.utils.Glob(vfs, pattern)
+}
+
+// Idm returns the identity manager of the file system.
+// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+func (vfs *MemFS) Idm() avfs.IdentityMgr {
+	return vfs.memAttrs.idm
 }
 
 // IsAbs reports whether the path is absolute.
@@ -987,6 +1003,33 @@ func (vfs *MemFS) UMask() fs.FileMode {
 	u := atomic.LoadInt32(&vfs.memAttrs.umask)
 
 	return fs.FileMode(u)
+}
+
+// User sets the current user of the file system.
+// If the current user has not root privileges avfs.errPermDenied is returned.
+func (vfs *MemFS) User(name string) (avfs.UserReader, error) {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return nil, avfs.ErrPermDenied
+	}
+
+	if vfs.user.Name() == name {
+		return vfs.user, nil
+	}
+
+	user, err := vfs.memAttrs.idm.LookupUser(name)
+	if err != nil {
+		return nil, err
+	}
+
+	vfs.user = user
+	vfs.curDir = vfs.utils.HomeDirUser(user.Name())
+
+	return user, nil
+}
+
+// Utils returns the file utils of the current file system.
+func (vfs *MemFS) Utils() avfs.Utils {
+	return vfs.utils
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
