@@ -45,7 +45,6 @@ func New(opts ...Option) *MemFS {
 			},
 		},
 		memAttrs: ma,
-		curDir:   string(avfs.PathSeparator),
 	}
 
 	for _, opt := range opts {
@@ -68,8 +67,9 @@ func New(opts ...Option) *MemFS {
 			panic("CreateBaseDirs " + err.Error())
 		}
 
-		vfs.user = u
 		ma.umask = um
+		vfs.user = u
+		vfs.curDir = vfs.utils.HomeDirUser(u.Name())
 	}
 
 	return vfs

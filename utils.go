@@ -43,17 +43,15 @@ type Utils struct {
 var OsUtils = NewUtils(CurrentOSType()) //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 func NewUtils(osType OSType) Utils {
-	sep := PathSeparator
+	sep := '/'
 	if osType == OsWindows {
-		sep = PathSeparatorWin
+		sep = '\\'
 	}
 
-	vu := Utils{
+	return Utils{
 		osType:        osType,
 		pathSeparator: uint8(sep),
 	}
-
-	return vu
 }
 
 // Abs returns an absolute representation of path.
@@ -528,7 +526,7 @@ func (ut *Utils) IsNotExist(err error) bool {
 // IsPathSeparator reports whether c is a directory separator character.
 func (ut *Utils) IsPathSeparator(c uint8) bool {
 	if ut.osType != OsWindows {
-		return PathSeparator == c
+		return '/' == c
 	}
 
 	return c == '\\' || c == '/'

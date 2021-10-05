@@ -1180,7 +1180,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 				t.Errorf("stat '%s' : want path to be %s, got %s", path, name, fi.Name())
 			}
 
-			want := strings.Count(dir.Path, string(avfs.PathSeparator))
+			want := strings.Count(dir.Path, string(vfs.PathSeparator()))
 			got := len(dir.WantModes)
 			if want != got {
 				t.Fatalf("stat %s : want %d directories modes, got %d", path, want, got)

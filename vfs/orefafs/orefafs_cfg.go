@@ -36,9 +36,9 @@ func New(opts ...Option) *OrefaFS {
 		opt(vfs)
 	}
 
-	volumeName := ""
+	volumeName := string(avfs.PathSeparator)
 	if vfs.utils.OSType() == avfs.OsWindows {
-		volumeName = "C:"
+		volumeName = "C:\\"
 	}
 
 	rootNode := &node{

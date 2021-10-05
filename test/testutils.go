@@ -708,8 +708,8 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 	}
 }
 
-// TestSegmentUnixPath tests avfs.SegmentUnixPath function.
-func (sfs *SuiteFS) TestSegmentUnixPath(t *testing.T, testDir string) {
+// TestSegmenPath tests avfs.SegmentUnixPath function.
+func (sfs *SuiteFS) TestSegmenPath(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 	ut := vfs.Utils()
 
