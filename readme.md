@@ -177,13 +177,6 @@ Don't be fooled by the coverage percentages, everything is a work in progress.
 All the file systems pass the common test suite, but you should not use this in
 a production environment at this time.
 
-## Diagram
-
-The interface diagram below represents the main interfaces, methods and
-relations between them :
-
-<img src="avfs_diagram.svg" alt="Avfs diagram" style="max-width:100%;">
-
 ## File systems
 
 All file systems implement at least `avfs.FS` and `avfs.File` interfaces. By
