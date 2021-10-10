@@ -427,6 +427,7 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestIsEmpty,
 		sfs.TestHashFile,
 		sfs.TestMkdirTemp,
+		sfs.TestPathIterator,
 		sfs.TestReadDir,
 		sfs.TestReadFile,
 		sfs.TestRndTree,

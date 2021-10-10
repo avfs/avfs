@@ -968,6 +968,15 @@ func (ut *Utils) WalkDir(vfs VFS, root string, fn fs.WalkDirFunc) error {
 	return err
 }
 
+type statDirEntry struct {
+	info fs.FileInfo
+}
+
+func (d *statDirEntry) Name() string               { return d.info.Name() }
+func (d *statDirEntry) IsDir() bool                { return d.info.IsDir() }
+func (d *statDirEntry) Type() fs.FileMode          { return d.info.Mode().Type() }
+func (d *statDirEntry) Info() (fs.FileInfo, error) { return d.info, nil }
+
 // WriteFile writes data to the named file, creating it if necessary.
 // If the file does not exist, WriteFile creates it with permissions perm (before umask);
 // otherwise WriteFile truncates it before writing, without changing permissions.
@@ -1056,11 +1065,136 @@ func CurrentOSType() OSType {
 	}
 }
 
-type statDirEntry struct {
-	info fs.FileInfo
+// PathIterator iterates through an absolute path.
+// it returns each part of the path in successive calls to Next.
+//
+//  ut := avfs.NewUtils(avfs.OsWindows)
+//	pi := ut.NewPathIterator(path)
+// 	for pi.Next() {
+//		fmt.Println(pi.Part())
+//	}
+//
+// The path below shows the different results of the PathIterator methods
+// when thirdPart is the current Part :
+//
+// /firstPart/secondPart/thirdPart/fourthPart/fifthPart
+//                      |- Part --|
+//					  Start      End
+// |------- Left -------|         |------ Right ------|
+// |----- LeftPart ---------------|
+//                      |----------- RightPart -------|
+//
+type PathIterator struct {
+	path  string
+	start int
+	end   int
+	ut    Utils
 }
 
-func (d *statDirEntry) Name() string               { return d.info.Name() }
-func (d *statDirEntry) IsDir() bool                { return d.info.IsDir() }
-func (d *statDirEntry) Type() fs.FileMode          { return d.info.Mode().Type() }
-func (d *statDirEntry) Info() (fs.FileInfo, error) { return d.info, nil }
+// NewPathIterator creates a new path iterator from an absolute path.
+func (ut *Utils) NewPathIterator(path string) *PathIterator {
+	pi := PathIterator{
+		path: path,
+		ut:   *ut,
+	}
+
+	pi.Reset()
+
+	return &pi
+}
+
+// End returns the end position of the current Part.
+func (pi *PathIterator) End() int {
+	return pi.end
+}
+
+// IsLast returns true if the current Part is the last one.
+func (pi *PathIterator) IsLast() bool {
+	return pi.end == len(pi.path)
+}
+
+// Left returns the left path of the current Part.
+func (pi *PathIterator) Left() string {
+	return pi.path[:pi.start]
+}
+
+// LeftPart returns the left path and current Part.
+func (pi *PathIterator) LeftPart() string {
+	return pi.path[:pi.end]
+}
+
+// Next iterates through the next Part of the path.
+// It returns false if there's no more parts.
+func (pi *PathIterator) Next() bool {
+	pi.start = pi.end + 1
+	if pi.start > len(pi.path) {
+		return false
+	}
+
+	pos := strings.IndexByte(pi.path[pi.start:], pi.ut.pathSeparator)
+	if pos == -1 {
+		pi.end = len(pi.path)
+	} else {
+		pi.end = pi.start + pos
+	}
+
+	return true
+}
+
+// Part returns the current Part.
+func (pi *PathIterator) Part() string {
+	return pi.path[pi.start:pi.end]
+}
+
+// Path returns the path to iterate.
+func (pi *PathIterator) Path() string {
+	return pi.path
+}
+
+// Reset resets the iterator.
+func (pi *PathIterator) Reset() {
+	switch pi.ut.osType {
+	case OsWindows:
+		pi.end = -1
+	default:
+		pi.end = 0
+	}
+}
+
+// Right returns the right path of the current Part.
+func (pi *PathIterator) Right() string {
+	return pi.path[pi.end:]
+}
+
+// RightPart returns the right path and the current Part.
+func (pi *PathIterator) RightPart() string {
+	return pi.path[pi.start:]
+}
+
+// Start returns the start position of the current Part.
+func (pi *PathIterator) Start() int {
+	return pi.start
+}
+
+// ReplacePart replaces the current Part of the path with the new path.
+// if the path iterator has been reset it returns true.
+// It can be used in symbolic link replacement.
+func (pi *PathIterator) ReplacePart(newPath string) bool {
+	ut := pi.ut
+	oldPath := pi.path[:]
+
+	if ut.IsAbs(newPath) {
+		pi.path = ut.Join(newPath, oldPath[pi.end:])
+	} else {
+		pi.path = ut.Join(oldPath[:pi.start], newPath, oldPath[pi.end:])
+	}
+
+	// If the old path before the current part is different, the iterator must be reset.
+	if pi.path[:pi.start] != oldPath[:pi.start] {
+		pi.Reset()
+
+		return true
+	}
+
+	return false
+}

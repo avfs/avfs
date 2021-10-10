@@ -526,6 +526,144 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 	}
 }
 
+func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
+	utLinux := avfs.NewUtils(avfs.OsLinux)
+	utWindows := avfs.NewUtils(avfs.OsWindows)
+
+	t.Run("PathIterator", func(t *testing.T) {
+		cases := []struct {
+			path   string
+			parts  []string
+			osType avfs.OSType
+		}{
+			{path: "C:\\", parts: []string{"C:", ""}, osType: avfs.OsWindows},
+			{path: "C:\\Users", parts: []string{"C:", "Users"}, osType: avfs.OsWindows},
+			{path: "c:\\नमस्ते\\दुनिया", parts: []string{"c:", "नमस्ते", "दुनिया"}, osType: avfs.OsWindows},
+
+			{path: "/", parts: []string{""}, osType: avfs.OsLinux},
+			{path: "/a", parts: []string{"a"}, osType: avfs.OsLinux},
+			{path: "/b/c/d", parts: []string{"b", "c", "d"}, osType: avfs.OsLinux},
+			{path: "/नमस्ते/दुनिया", parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsLinux},
+		}
+
+		for _, c := range cases {
+			var ut avfs.Utils
+
+			switch c.osType {
+			case avfs.OsLinux:
+				ut = utLinux
+			case avfs.OsWindows:
+				ut = utWindows
+			}
+
+			pi := ut.NewPathIterator(c.path)
+			i := 0
+
+			for ; pi.Next(); i++ {
+				if pi.Part() != c.parts[i] {
+					t.Errorf("%s : want part %d to be %s, got %s", c.path, i, c.parts[i], pi.Part())
+				}
+
+				wantLeft := pi.Path()[:pi.Start()]
+				if pi.Left() != wantLeft {
+					t.Errorf("%s : want left %d to be %s, got %s", c.path, i, wantLeft, pi.Left())
+				}
+
+				wantLeftPart := pi.Path()[:pi.End()]
+				if pi.LeftPart() != wantLeftPart {
+					t.Errorf("%s : want left %d to be %s, got %s", c.path, i, wantLeftPart, pi.LeftPart())
+				}
+
+				wantRight := pi.Path()[pi.End():]
+				if pi.Right() != wantRight {
+					t.Errorf("%s : want right %d to be %s, got %s", c.path, i, wantRight, pi.Right())
+				}
+
+				wantRightPart := pi.Path()[pi.Start():]
+				if pi.RightPart() != wantRightPart {
+					t.Errorf("%s : want right %d to be %s, got %s", c.path, i, wantRightPart, pi.RightPart())
+				}
+
+				wantIsLast := i == (len(c.parts) - 1)
+				if pi.IsLast() != wantIsLast {
+					t.Errorf("%s : want IsLast %d to be %t, got %t", c.path, i, wantIsLast, pi.IsLast())
+				}
+			}
+
+			if len(c.parts) != i {
+				t.Errorf("%s : want %d parts, got %d", c.path, len(c.parts), i)
+			}
+		}
+	})
+
+	t.Run("ReplacePart", func(t *testing.T) {
+		cases := []struct {
+			path    string
+			part    string
+			newPart string
+			newPath string
+			reset   bool
+			osType  avfs.OSType
+		}{
+			{
+				path: "c:\\path", part: "path", newPart: "../../..",
+				newPath: "c:\\", reset: false, osType: avfs.OsWindows,
+			},
+			{
+				path: "c:\\an\\absolute\\path", part: "absolute", newPart: "c:\\just\\another",
+				newPath: "c:\\just\\another\\path", reset: true, osType: avfs.OsWindows,
+			},
+			{
+				path: "c:\\a\\random\\path", part: "random", newPart: "very\\long",
+				newPath: "c:\\a\\very\\long\\path", reset: false, osType: avfs.OsWindows,
+			},
+			{
+				path: "/path", part: "path", newPart: "../../..",
+				newPath: "/", reset: false, osType: avfs.OsLinux,
+			},
+			{
+				path: "/a/relative/path", part: "relative", newPart: "../../..",
+				newPath: "/path", reset: true, osType: avfs.OsLinux,
+			},
+			{
+				path: "/an/absolute/path", part: "random", newPart: "/just/another",
+				newPath: "/just/another/path", reset: true, osType: avfs.OsLinux,
+			},
+			{
+				path: "/a/relative/path", part: "relative", newPart: "very/long",
+				newPath: "/a/very/long/path", reset: false, osType: avfs.OsLinux,
+			},
+		}
+
+		for _, c := range cases {
+			var ut avfs.Utils
+
+			switch c.osType {
+			case avfs.OsLinux:
+				ut = utLinux
+			case avfs.OsWindows:
+				ut = utWindows
+			}
+
+			pi := ut.NewPathIterator(c.path)
+			for pi.Next() {
+				if pi.Part() == c.part {
+					reset := pi.ReplacePart(c.newPart)
+					if pi.Path() != c.newPath {
+						t.Errorf("%s : want new path to be %s, got %s", c.path, c.newPath, pi.Path())
+					}
+
+					if reset != c.reset {
+						t.Errorf("%s : want Reset to be %t, got %t", c.path, c.reset, reset)
+					}
+
+					break
+				}
+			}
+		}
+	})
+}
+
 // TestRndTree tests avfs.RndTree function.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	const randSeed = 42
