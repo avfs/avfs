@@ -1102,11 +1102,11 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 			parts  []string
 			osType avfs.OSType
 		}{
-			{path: "C:\\", parts: []string{"C:", ""}, osType: avfs.OsWindows},
-			{path: "C:\\Users", parts: []string{"C:", "Users"}, osType: avfs.OsWindows},
-			{path: "c:\\नमस्ते\\दुनिया", parts: []string{"c:", "नमस्ते", "दुनिया"}, osType: avfs.OsWindows},
+			{path: "C:\\", parts: nil, osType: avfs.OsWindows},
+			{path: "C:\\Users", parts: []string{"Users"}, osType: avfs.OsWindows},
+			{path: "c:\\नमस्ते\\दुनिया", parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsWindows},
 
-			{path: "/", parts: []string{""}, osType: avfs.OsLinux},
+			{path: "/", parts: nil, osType: avfs.OsLinux},
 			{path: "/a", parts: []string{"a"}, osType: avfs.OsLinux},
 			{path: "/b/c/d", parts: []string{"b", "c", "d"}, osType: avfs.OsLinux},
 			{path: "/नमस्ते/दुनिया", parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsLinux},
@@ -1124,6 +1124,7 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 
 			pi := ut.NewPathIterator(c.path)
 			i := 0
+			gotPath := pi.VolumeName() + string(ut.PathSeparator())
 
 			for ; pi.Next(); i++ {
 				if pi.Part() != c.parts[i] {
@@ -1154,10 +1155,12 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 				if pi.IsLast() != wantIsLast {
 					t.Errorf("%s : want IsLast %d to be %t, got %t", c.path, i, wantIsLast, pi.IsLast())
 				}
+
+				gotPath = ut.Join(gotPath, pi.Part())
 			}
 
-			if len(c.parts) != i {
-				t.Errorf("%s : want %d parts, got %d", c.path, len(c.parts), i)
+			if gotPath != pi.Path() {
+				t.Errorf("%s : want path to be %s, got %s", c.path, c.path, gotPath)
 			}
 		}
 	})

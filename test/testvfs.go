@@ -1092,7 +1092,6 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	t.Run("MkdirOnNonExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := vfs.Join(testDir, dir.Path, "can't", "create", "this")
-
 			err := vfs.Mkdir(path, avfs.DefaultDirPerm)
 
 			switch vfs.OSType() {

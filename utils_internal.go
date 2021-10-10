@@ -53,7 +53,7 @@ func (ut *Utils) cleanGlobPath(path string) string {
 
 // cleanGlobPathWindows is windows version of cleanGlobPath.
 func (ut *Utils) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
-	vollen := ut.volumeNameLen(path)
+	vollen := ut.VolumeNameLen(path)
 
 	switch {
 	case path == "":
@@ -205,7 +205,7 @@ func (ut *Utils) joinNonEmpty(elem []string) string {
 
 // isUNC reports whether path is a UNC path.
 func (ut *Utils) isUNC(path string) bool {
-	return ut.volumeNameLen(path) > 2
+	return ut.VolumeNameLen(path) > 2
 }
 
 func (ut *Utils) joinPath(dir, name string) string {
@@ -441,54 +441,6 @@ func (ut *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err err
 
 func (ut *Utils) reseed() uint32 {
 	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
-}
-
-// volumeNameLen returns length of the leading volume name on Windows.
-// It returns 0 elsewhere.
-func (ut *Utils) volumeNameLen(path string) int {
-	if ut.osType != OsWindows {
-		return 0
-	}
-
-	if len(path) < 2 {
-		return 0
-	}
-
-	// with drive letter
-	c := path[0]
-	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') { //nolint:gocritic // Adapted from standard library.
-		return 2
-	}
-
-	// is it UNC? https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
-	if l := len(path); l >= 5 && isSlash(path[0]) && isSlash(path[1]) &&
-		!isSlash(path[2]) && path[2] != '.' {
-		// first, leading `\\` and next shouldn't be `\`. its server name.
-		for n := 3; n < l-1; n++ {
-			// second, next '\' shouldn't be repeated.
-			if isSlash(path[n]) {
-				n++
-				// third, following something characters. its share name.
-				if !isSlash(path[n]) {
-					if path[n] == '.' {
-						break
-					}
-
-					for ; n < l; n++ {
-						if isSlash(path[n]) {
-							break
-						}
-					}
-
-					return n
-				}
-
-				break
-			}
-		}
-	}
-
-	return 0
 }
 
 // walkDir recursively descends path, calling walkDirFn.

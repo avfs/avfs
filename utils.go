@@ -177,7 +177,7 @@ func (ut *Utils) BaseDirs() []DirInfo {
 // https://9p.io/sys/doc/lexnames.html
 func (ut *Utils) Clean(path string) string {
 	originalPath := path
-	volLen := ut.volumeNameLen(path)
+	volLen := ut.VolumeNameLen(path)
 
 	path = path[volLen:]
 	if path == "" {
@@ -496,7 +496,7 @@ func (ut *Utils) IsAbs(path string) bool {
 		return true
 	}
 
-	l := ut.volumeNameLen(path)
+	l := ut.VolumeNameLen(path)
 	if l == 0 {
 		return false
 	}
@@ -792,7 +792,7 @@ func (ut *Utils) Rel(basepath, targpath string) (string, error) {
 
 	if base == "." {
 		base = ""
-	} else if base == "" && ut.volumeNameLen(baseVol) > 2 /* isUNC */ {
+	} else if base == "" && ut.VolumeNameLen(baseVol) > 2 /* isUNC */ {
 		// Treat any targetpath matching `\\host\share` basepath as absolute path.
 		base = string(ut.pathSeparator)
 	}
@@ -939,7 +939,55 @@ func (ut *Utils) ToSlash(path string) string {
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
 func (ut *Utils) VolumeName(path string) string {
-	return path[:ut.volumeNameLen(path)]
+	return path[:ut.VolumeNameLen(path)]
+}
+
+// VolumeNameLen returns length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func (ut *Utils) VolumeNameLen(path string) int {
+	if ut.osType != OsWindows {
+		return 0
+	}
+
+	if len(path) < 2 {
+		return 0
+	}
+
+	// with drive letter
+	c := path[0]
+	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') { //nolint:gocritic // Adapted from standard library.
+		return 2
+	}
+
+	// is it UNC? https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
+	if l := len(path); l >= 5 && isSlash(path[0]) && isSlash(path[1]) &&
+		!isSlash(path[2]) && path[2] != '.' {
+		// first, leading `\\` and next shouldn't be `\`. its server name.
+		for n := 3; n < l-1; n++ {
+			// second, next '\' shouldn't be repeated.
+			if isSlash(path[n]) {
+				n++
+				// third, following something characters. its share name.
+				if !isSlash(path[n]) {
+					if path[n] == '.' {
+						break
+					}
+
+					for ; n < l; n++ {
+						if isSlash(path[n]) {
+							break
+						}
+					}
+
+					return n
+				}
+
+				break
+			}
+		}
+	}
+
+	return 0
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
@@ -1067,6 +1115,8 @@ func CurrentOSType() OSType {
 
 // PathIterator iterates through an absolute path.
 // it returns each part of the path in successive calls to Next.
+// The volume name (for Windows) is not considered as part of the path
+// it is returned by VolumeName.
 //
 //  ut := avfs.NewUtils(avfs.OsWindows)
 //	pi := ut.NewPathIterator(path)
@@ -1085,17 +1135,19 @@ func CurrentOSType() OSType {
 //                      |----------- RightPart -------|
 //
 type PathIterator struct {
-	path  string
-	start int
-	end   int
-	ut    Utils
+	path          string
+	start         int
+	end           int
+	volumeNameLen int
+	ut            Utils
 }
 
 // NewPathIterator creates a new path iterator from an absolute path.
 func (ut *Utils) NewPathIterator(path string) *PathIterator {
 	pi := PathIterator{
-		path: path,
-		ut:   *ut,
+		path:          path,
+		volumeNameLen: ut.VolumeNameLen(path),
+		ut:            *ut,
 	}
 
 	pi.Reset()
@@ -1127,7 +1179,7 @@ func (pi *PathIterator) LeftPart() string {
 // It returns false if there's no more parts.
 func (pi *PathIterator) Next() bool {
 	pi.start = pi.end + 1
-	if pi.start > len(pi.path) {
+	if pi.start >= len(pi.path) {
 		return false
 	}
 
@@ -1151,31 +1203,6 @@ func (pi *PathIterator) Path() string {
 	return pi.path
 }
 
-// Reset resets the iterator.
-func (pi *PathIterator) Reset() {
-	switch pi.ut.osType {
-	case OsWindows:
-		pi.end = -1
-	default:
-		pi.end = 0
-	}
-}
-
-// Right returns the right path of the current Part.
-func (pi *PathIterator) Right() string {
-	return pi.path[pi.end:]
-}
-
-// RightPart returns the right path and the current Part.
-func (pi *PathIterator) RightPart() string {
-	return pi.path[pi.start:]
-}
-
-// Start returns the start position of the current Part.
-func (pi *PathIterator) Start() int {
-	return pi.start
-}
-
 // ReplacePart replaces the current Part of the path with the new path.
 // if the path iterator has been reset it returns true.
 // It can be used in symbolic link replacement.
@@ -1197,4 +1224,35 @@ func (pi *PathIterator) ReplacePart(newPath string) bool {
 	}
 
 	return false
+}
+
+// Reset resets the iterator.
+func (pi *PathIterator) Reset() {
+	pi.end = pi.volumeNameLen
+}
+
+// Right returns the right path of the current Part.
+func (pi *PathIterator) Right() string {
+	return pi.path[pi.end:]
+}
+
+// RightPart returns the right path and the current Part.
+func (pi *PathIterator) RightPart() string {
+	return pi.path[pi.start:]
+}
+
+// Start returns the start position of the current Part.
+func (pi *PathIterator) Start() int {
+	return pi.start
+}
+
+// VolumeName returns leading volume name.
+func (pi *PathIterator) VolumeName() string {
+	return pi.path[:pi.volumeNameLen]
+}
+
+// VolumeNameLen returns length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func (pi *PathIterator) VolumeNameLen() int {
+	return pi.volumeNameLen
 }
