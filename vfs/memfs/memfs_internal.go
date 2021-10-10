@@ -40,19 +40,24 @@ import (
 //  ErrPermDenied when the current user doesn't have permissions on one of the nodes on the path
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
-func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // consider to simplify the function
-	parent *dirNode, child node, absPath string, start, end int, err error) {
-	absPath, _ = vfs.Abs(path)
-	rootNode := vfs.rootNode
-	parent = rootNode
+func (vfs *MemFS) searchNode(path string, slMode slMode) (
+	parent *dirNode, child node, pi *avfs.PathIterator, err error) {
 	slCount := 0
 	slResolved := false
 	ut := vfs.utils
 
-	isLast := len(absPath) <= 1
-	for start, end = 1, 0; !isLast; start = end + 1 {
-		end, isLast = ut.SegmentPath(absPath, start)
-		name := absPath[start:end]
+	absPath, _ := vfs.Abs(path)
+	pi = ut.NewPathIterator(absPath)
+
+	rootNode := vfs.rootNode
+	if pi.VolumeNameLen() > 0 {
+		rootNode = vfs.volumes[pi.VolumeName()]
+	}
+
+	parent = rootNode
+
+	for pi.Next() {
+		name := pi.Part()
 
 		parent.mu.RLock()
 		child = parent.child(name)
@@ -66,7 +71,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 
 		switch c := child.(type) {
 		case *dirNode:
-			if isLast {
+			if pi.IsLast() {
 				err = avfs.ErrFileExists
 
 				return
@@ -86,7 +91,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 
 		case *fileNode:
 			// File permissions are checked by the calling function.
-			if isLast {
+			if pi.IsLast() {
 				err = avfs.ErrFileExists
 
 				return
@@ -105,7 +110,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 				return
 			}
 
-			if isLast {
+			if pi.IsLast() {
 				if slMode == slmLstat {
 					err = avfs.ErrFileExists
 
@@ -117,26 +122,19 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) ( //nolint:gocritic // 
 				if slMode == slmStat && !slResolved {
 					slResolved = true
 
-					defer func(ap string, s, e int) {
-						absPath, start, end = ap, s, e
-					}(absPath, start, end)
+					defer func(pip *avfs.PathIterator) {
+						pi = pip
+					}(pi)
 				}
 			}
 
-			link := c.link
-			if vfs.IsAbs(link) {
-				absPath = vfs.Join(link, absPath[end:])
-			} else {
-				absPath = vfs.Join(absPath[:start], link, absPath[end:])
+			if pi.ReplacePart(c.link) {
+				parent = rootNode
 			}
-
-			parent = rootNode
-			end = 0
-			isLast = len(absPath) <= 1
 		}
 	}
 
-	return parent, parent, absPath, 1, 1, avfs.ErrFileExists
+	return parent, parent, pi, avfs.ErrFileExists
 }
 
 // createDir creates a new directory.

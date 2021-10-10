@@ -69,7 +69,7 @@ func TestSearchNode(t *testing.T) {
 	lloop1 := vfs.createSymlink(rn, "loop1", "/loop2")
 	vfs.createSymlink(rn, "loop2", "/loop1")
 
-	tests := []struct { //nolint:govet // no fieldalignment for test structs
+	cases := []struct { //nolint:govet // no fieldalignment for test structs
 		path        string
 		parent      *dirNode
 		child       node
@@ -93,6 +93,14 @@ func TestSearchNode(t *testing.T) {
 		{path: "/a/afile2", parent: da, child: fa2, first: "afile2", rest: "", err: avfs.ErrFileExists},
 		{path: "/a/afile3", parent: da, child: fa3, first: "afile3", rest: "", err: avfs.ErrFileExists},
 
+		// Non existing
+		{path: "/z", parent: rn, first: "z", rest: "", err: avfs.ErrNoSuchFileOrDir},
+		{path: "/a/az", parent: da, first: "az", rest: "", err: avfs.ErrNoSuchFileOrDir},
+		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: avfs.ErrNoSuchFileOrDir},
+		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: avfs.ErrNoSuchFileOrDir},
+		{path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist", err: avfs.ErrNoSuchFileOrDir},
+		{path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir", err: avfs.ErrNotADirectory},
+
 		// Symlinks
 		{path: "/lroot", parent: rn, child: rn, first: "", rest: "", err: avfs.ErrFileExists},
 		{path: "/lroot/a", parent: rn, child: da, first: "a", rest: "", err: avfs.ErrFileExists},
@@ -100,46 +108,31 @@ func TestSearchNode(t *testing.T) {
 		{path: "/b/b1/b1B/lb1/b1A", parent: db1, child: db1a, first: "b1A", rest: "", err: avfs.ErrFileExists},
 		{path: "/c/lafile3", parent: da, child: fa3, first: "afile3", rest: "", err: avfs.ErrFileExists},
 		{path: "/loop1", parent: rn, child: lloop1, first: "loop1", rest: "", err: avfs.ErrTooManySymlinks},
-
-		// Non existing
-		{path: "/z", parent: rn, first: "z", rest: "", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/a/az", parent: da, first: "az", rest: "", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: avfs.ErrNoSuchFileOrDir},
-		{
-			path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist",
-			err: avfs.ErrNoSuchFileOrDir,
-		},
-		{
-			path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir",
-			err: avfs.ErrNotADirectory,
-		},
 	}
 
-	for _, test := range tests {
-		parent, child, absPath, start, end, err := vfs.searchNode(test.path, slmEval)
+	for _, c := range cases {
+		parent, child, pi, err := vfs.searchNode(c.path, slmEval)
+		first := pi.Part()
+		rest := pi.Right()
 
-		first := absPath[start:end]
-		rest := absPath[end:]
-
-		if test.err != err {
-			t.Errorf("%s : want error to be %v, got %v", test.path, test.err, err)
+		if c.err != err {
+			t.Errorf("%s : want error to be %v, got %v", c.path, c.err, err)
 		}
 
-		if test.parent != parent {
-			t.Errorf("%s : want parent to be %v, got %v", test.path, test.parent, parent)
+		if c.parent != parent {
+			t.Errorf("%s : want parent to be %v, got %v", c.path, c.parent, parent)
 		}
 
-		if test.child != child {
-			t.Errorf("%s : want child to be %v, got %v", test.path, test.child, child)
+		if c.child != child {
+			t.Errorf("%s : want child to be %v, got %v", c.path, c.child, child)
 		}
 
-		if test.first != first {
-			t.Errorf("%s : want first to be %s, got %s", test.path, test.first, first)
+		if c.first != first {
+			t.Errorf("%s : want first to be %s, got %s", c.path, c.first, first)
 		}
 
-		if test.rest != rest {
-			t.Errorf("%s : want rest to be %s, got %s", test.path, test.rest, rest)
+		if c.rest != rest {
+			t.Errorf("%s : want rest to be %s, got %s", c.path, c.rest, rest)
 		}
 	}
 }
