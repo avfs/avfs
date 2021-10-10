@@ -14,7 +14,7 @@
 ##	limitations under the License.
 ##
 
-FROM golang:buster AS base
+FROM golang:bullseye AS base
 WORKDIR /go/src
 
 FROM base AS copyfiles
