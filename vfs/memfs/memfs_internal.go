@@ -126,13 +126,14 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 				}
 
 				// if the last part of the path is a symbolic link
-				// Stat should return the link and not the resolved path.
+				// Stat should return the initial path of the symbolic link
+				// and the parent and child nodes of the resolved symbolic link.
 				if slMode == slmStat && !slResolved {
 					slResolved = true
 
-					defer func(pip *avfs.PathIterator) {
-						pi = pip
-					}(pi)
+					defer func(piSymLink avfs.PathIterator) {
+						pi = &piSymLink
+					}(*pi)
 				}
 			}
 
