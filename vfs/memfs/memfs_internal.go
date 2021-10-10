@@ -49,12 +49,20 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	absPath, _ := vfs.Abs(path)
 	pi = ut.NewPathIterator(absPath)
 
-	rootNode := vfs.rootNode
+	volNode := vfs.rootNode
+
 	if pi.VolumeNameLen() > 0 {
-		rootNode = vfs.volumes[pi.VolumeName()]
+		n, ok := vfs.volumes[pi.VolumeName()]
+		if !ok {
+			err = avfs.ErrNoSuchFileOrDir
+
+			return
+		}
+
+		volNode = n
 	}
 
-	parent = rootNode
+	parent = volNode
 
 	for pi.Next() {
 		name := pi.Part()
@@ -129,7 +137,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			}
 
 			if pi.ReplacePart(c.link) {
-				parent = rootNode
+				parent = volNode
 			}
 		}
 	}

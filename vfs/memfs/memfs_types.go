@@ -33,7 +33,6 @@ const (
 var (
 	ErrVolumeAlreadyExists = errors.New("volume already exists")
 	ErrVolumeNameInvalid   = errors.New("invalid volume name")
-	ErrVolumeNotFound      = errors.New("volume not found")
 	ErrVolumeWindows       = errors.New("volumes are available on Windows only")
 )
 
