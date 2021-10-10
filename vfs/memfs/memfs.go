@@ -450,7 +450,7 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	}
 
 	parent, _, pi, err := vfs.searchNode(name, slmEval)
-	if err != avfs.ErrNoSuchFileOrDir || parent == nil {
+	if err != avfs.ErrNoSuchFileOrDir || !pi.IsLast() || parent == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
