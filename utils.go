@@ -1180,6 +1180,8 @@ func (pi *PathIterator) LeftPart() string {
 func (pi *PathIterator) Next() bool {
 	pi.start = pi.end + 1
 	if pi.start >= len(pi.path) {
+		pi.end = pi.start
+
 		return false
 	}
 
@@ -1217,11 +1219,14 @@ func (pi *PathIterator) ReplacePart(newPath string) bool {
 	}
 
 	// If the old path before the current part is different, the iterator must be reset.
-	if len(pi.path) < pi.start || pi.path[:pi.start] != oldPath[:pi.start] {
+	if pi.start >= len(pi.path) || pi.path[:pi.start] != oldPath[:pi.start] {
 		pi.Reset()
 
 		return true
 	}
+
+	// restart from the part before the symbolic link part.
+	pi.end = pi.start - 1
 
 	return false
 }
