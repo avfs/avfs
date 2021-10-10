@@ -1054,12 +1054,12 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 			}
 
 			curPath := testDir
-			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = ut.SegmentPath(dir.Path, start)
-				part := dir.Path[start:end]
+
+			pi := ut.NewPathIterator(dir.Path)
+			for i := 0; pi.Next(); i++ {
 				wantMode := dir.WantModes[i]
 
-				curPath = vfs.Join(curPath, part)
+				curPath = vfs.Join(curPath, pi.Part())
 				info, err := vfs.Stat(curPath)
 				if !CheckNoError(t, "Stat "+curPath, err) {
 					return
@@ -1186,12 +1186,12 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 			}
 
 			curPath := testDir
-			for start, end, i, isLast := 1, 0, 0, false; !isLast; start, i = end+1, i+1 {
-				end, isLast = ut.SegmentPath(dir.Path, start)
-				part := dir.Path[start:end]
+
+			pi := ut.NewPathIterator(dir.Path)
+			for i := 0; pi.Next(); i++ {
 				wantMode := dir.WantModes[i]
 
-				curPath = vfs.Join(curPath, part)
+				curPath = vfs.Join(curPath, pi.Part())
 				info, err := vfs.Stat(curPath)
 				if !CheckNoError(t, "Stat "+curPath, err) {
 					return

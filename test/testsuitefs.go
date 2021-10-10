@@ -431,7 +431,6 @@ func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
 		sfs.TestReadDir,
 		sfs.TestReadFile,
 		sfs.TestRndTree,
-		sfs.TestSegmenPath,
 		sfs.TestUmask,
 		sfs.TestWriteFile,
 	)

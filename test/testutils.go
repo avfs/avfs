@@ -1547,41 +1547,6 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 	}
 }
 
-// TestSegmenPath tests avfs.SegmentUnixPath function.
-func (sfs *SuiteFS) TestSegmenPath(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
-	ut := vfs.Utils()
-
-	cases := []struct {
-		path string
-		want []string
-	}{
-		{path: "", want: []string{""}},
-		{path: "/", want: []string{"", ""}},
-		{path: "//", want: []string{"", "", ""}},
-		{path: "/a", want: []string{"", "a"}},
-		{path: "/b/c/d", want: []string{"", "b", "c", "d"}},
-		{path: "/नमस्ते/दुनिया", want: []string{"", "नमस्ते", "दुनिया"}},
-	}
-
-	for _, c := range cases {
-		for start, end, i, isLast := 0, 0, 0, false; !isLast; start, i = end+1, i+1 {
-			end, isLast = ut.SegmentPath(c.path, start)
-			got := c.path[start:end]
-
-			if i > len(c.want) {
-				t.Errorf("%s : want %d parts, got only %d", c.path, i, len(c.want))
-
-				break
-			}
-
-			if got != c.want[i] {
-				t.Errorf("%s : want part %d to be %s, got %s", c.path, i, c.want[i], got)
-			}
-		}
-	}
-}
-
 // TestWalkDir tests WalkDir function.
 func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
