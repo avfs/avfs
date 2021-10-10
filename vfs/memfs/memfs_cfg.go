@@ -55,6 +55,15 @@ func New(opts ...Option) *MemFS {
 		vfs.utils = avfs.NewUtils(avfs.OsLinux)
 	}
 
+	volumeName := ""
+
+	ut := vfs.utils
+	if ut.OSType() == avfs.OsWindows {
+		vfs.volumes = make(volumes)
+		volumeName = "C:"
+		vfs.volumes[volumeName] = vfs.rootNode
+	}
+
 	if vfs.HasFeature(avfs.FeatMainDirs) {
 		u := vfs.user
 		um := ma.umask
@@ -62,17 +71,49 @@ func New(opts ...Option) *MemFS {
 		vfs.user = avfs.AdminUser
 		ma.umask = 0
 
-		err := vfs.utils.CreateBaseDirs(vfs, "")
+		err := ut.CreateBaseDirs(vfs, volumeName)
 		if err != nil {
 			panic("CreateBaseDirs " + err.Error())
 		}
 
 		ma.umask = um
 		vfs.user = u
-		vfs.curDir = vfs.utils.HomeDirUser(u.Name())
+		vfs.curDir = ut.HomeDirUser(u.Name())
 	}
 
 	return vfs
+}
+
+// VolumeAdd adds a new volume.
+func (vfs *MemFS) VolumeAdd(path string) error {
+	const op = "volume_add"
+
+	ut := vfs.utils
+
+	if ut.OSType() != avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeWindows}
+	}
+
+	vol := ut.VolumeName(path)
+	if vol == "" {
+		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeNameInvalid}
+	}
+
+	_, ok := vfs.volumes[vol]
+	if ok {
+		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeAlreadyExists}
+	}
+
+	vfs.volumes[vol] = &dirNode{
+		baseNode: baseNode{
+			mtime: time.Now().UnixNano(),
+			mode:  fs.ModeDir | 0o755,
+			uid:   0,
+			gid:   0,
+		},
+	}
+
+	return nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.

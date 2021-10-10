@@ -17,6 +17,7 @@
 package memfs
 
 import (
+	"errors"
 	"io/fs"
 	"sync"
 	"time"
@@ -29,11 +30,19 @@ const (
 	slCountMax = 64
 )
 
+var (
+	ErrVolumeAlreadyExists = errors.New("volume already exists")
+	ErrVolumeNameInvalid   = errors.New("invalid volume name")
+	ErrVolumeNotFound      = errors.New("volume not found")
+	ErrVolumeWindows       = errors.New("volumes are available on Windows only")
+)
+
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
 	user     avfs.UserReader // user is the current user of the file system.
 	rootNode *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
+	volumes  volumes         // volumes contains the volume names for Windows.
 	curDir   string          // curDir is the current directory.
 	utils    avfs.Utils      // utils are somme common functions used by emulated file system implementation.
 }
@@ -92,6 +101,9 @@ type node interface {
 	// Unlock unlocks the node.
 	Unlock()
 }
+
+// volumes are the volumes names for Windows.
+type volumes map[string]*dirNode
 
 // dirNode is the structure for a directory.
 type dirNode struct {
