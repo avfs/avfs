@@ -1091,6 +1091,7 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 	}
 }
 
+// TestPathIterator tests PathIterator methods.
 func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 	utLinux := avfs.NewUtils(avfs.OsLinux)
 	utWindows := avfs.NewUtils(avfs.OsWindows)
@@ -1171,7 +1172,7 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 			osType  avfs.OSType
 		}{
 			{
-				path: "c:\\path", part: "path", newPart: "../../..",
+				path: "c:\\path", part: "path", newPart: "..\\..\\..",
 				newPath: "c:\\", reset: false, osType: avfs.OsWindows,
 			},
 			{
@@ -1181,6 +1182,10 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 			{
 				path: "c:\\a\\random\\path", part: "random", newPart: "very\\long",
 				newPath: "c:\\a\\very\\long\\path", reset: false, osType: avfs.OsWindows,
+			},
+			{
+				path: "/a/very/very/long/path", part: "long", newPart: "/a",
+				newPath: "/a/path", reset: true, osType: avfs.OsLinux,
 			},
 			{
 				path: "/path", part: "path", newPart: "../../..",
@@ -1315,7 +1320,7 @@ func (sfs *SuiteFS) TestRel(t *testing.T, testDir string) {
 	}
 }
 
-// TestRndTree tests avfs.RndTree function.
+// TestRndTree tests RndTree methods.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	const randSeed = 42
 

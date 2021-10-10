@@ -1181,7 +1181,7 @@ func (pi *PathIterator) Start() int {
 // It can be used in symbolic link replacement.
 func (pi *PathIterator) ReplacePart(newPath string) bool {
 	ut := pi.ut
-	oldPath := pi.path[:]
+	oldPath := pi.path
 
 	if ut.IsAbs(newPath) {
 		pi.path = ut.Join(newPath, oldPath[pi.end:])
@@ -1190,7 +1190,7 @@ func (pi *PathIterator) ReplacePart(newPath string) bool {
 	}
 
 	// If the old path before the current part is different, the iterator must be reset.
-	if pi.path[:pi.start] != oldPath[:pi.start] {
+	if len(pi.path) < pi.start || pi.path[:pi.start] != oldPath[:pi.start] {
 		pi.Reset()
 
 		return true
