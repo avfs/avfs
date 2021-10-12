@@ -23,7 +23,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 )
@@ -39,8 +38,6 @@ type Utils struct {
 	// pathSeparator is the OS-specific path separator.
 	pathSeparator uint8
 }
-
-var OsUtils = NewUtils(CurrentOSType()) //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 func NewUtils(osType OSType) Utils {
 	sep := '/'
@@ -1076,20 +1073,6 @@ func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum 
 	}
 
 	return hasher.Sum(nil), nil
-}
-
-// CurrentOSType returns the current Operating System type.
-func CurrentOSType() OSType {
-	switch runtime.GOOS {
-	case "linux":
-		return OsLinux
-	case "darwin":
-		return OsDarwin
-	case "windows":
-		return OsWindows
-	default:
-		return OsUnknown
-	}
 }
 
 // PathIterator iterates through an absolute path.

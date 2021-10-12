@@ -31,7 +31,7 @@ func New(opts ...Option) *MemFS {
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
-		umask: int32(avfs.UMask.Get()),
+		umask: int32(avfs.Cfg.UMask()),
 	}
 
 	vfs := &MemFS{

@@ -345,7 +345,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 			}
 
 			if (u.Uid() != 0 && u.Gid() != 0) && u.IsAdmin() {
-				t.Errorf("LookupUser %s : want isRoot to be false, got true", userName)
+				t.Errorf("LookupUser %s : want IsAdmin to be false, got true", userName)
 			}
 		}
 	})

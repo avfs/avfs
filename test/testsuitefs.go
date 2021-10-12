@@ -58,7 +58,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	vfs := vfsSetup
 
-	osType := avfs.CurrentOSType()
+	osType := avfs.Cfg.OSType()
 	if osType != vfs.OSType() {
 		tb.Skipf("New : Current OSType = %s is different from %s OSType = %s, skipping tests",
 			osType, vfs.Type(), vfs.OSType())
@@ -632,7 +632,7 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *avfs.RndTree {
 }
 
 // Dir contains the sample directories.
-type Dir struct { //nolint:govet // no fieldalignment for simple structs
+type Dir struct { //nolint:govet // no fieldalignment for test structs.
 	Path      string
 	Mode      fs.FileMode
 	WantModes []fs.FileMode
@@ -694,7 +694,7 @@ func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
 }
 
 // File contains the sample files.
-type File struct { //nolint:govet // no fieldalignment for simple structs
+type File struct { //nolint:govet // no fieldalignment for test structs.
 	Path    string
 	Mode    fs.FileMode
 	Content []byte

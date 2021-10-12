@@ -37,7 +37,7 @@ var (
 
 	// AdminUser represents an administrator user.
 	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
-		name: OsUtils.AdminUserName(),
+		name: Cfg.osUtils.AdminUserName(),
 		uid:  0,
 		gid:  0,
 	}

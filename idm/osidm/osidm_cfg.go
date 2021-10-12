@@ -22,7 +22,7 @@ import "github.com/avfs/avfs"
 func New() *OsIdm {
 	feature := avfs.Feature(0)
 
-	ost := avfs.CurrentOSType()
+	ost := avfs.Cfg.OSType()
 	switch ost {
 	case avfs.OsWindows:
 	default:

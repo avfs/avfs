@@ -19,23 +19,13 @@ package avfs
 import (
 	"io"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
-	"sync"
-	"time"
 	"unicode/utf8"
-)
 
-var (
-	// Random number state.
-	// We generate random temporary file names so that there's a good
-	// chance the file doesn't exist yet - keeps the number of tries in
-	// CreateTemp to a minimum.
-	randno uint32     //nolint:gochecknoglobals // Used by nextRandom().
-	randmu sync.Mutex //nolint:gochecknoglobals // Used by nextRandom().
+	"github.com/valyala/fastrand"
 )
 
 // cleanGlobPath prepares path for glob matching.
@@ -350,6 +340,12 @@ func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 	return s, true, nil
 }
 
+func (ut *Utils) nextRandom() string {
+	r := fastrand.Uint32()
+
+	return strconv.Itoa(int(1e9 + r%1e9))[1:]
+}
+
 // scanChunk gets the next segment of pattern, which is a non-star string
 // possibly preceded by a star.
 func (ut *Utils) scanChunk(pattern string) (star bool, chunk, rest string) {
@@ -386,39 +382,14 @@ Scan:
 	return star, pattern[0:i], pattern[i:]
 }
 
-// bufSize is the size of each buffer used to copy files.
-const bufSize = 32 * 1024
-
-// bufPool is the buffer pool used to copy files.
-var bufPool = &sync.Pool{New: func() interface{} { //nolint:gochecknoglobals // BufPool must be global.
-	buf := make([]byte, bufSize)
-
-	return &buf
-}}
-
 // copyBufPool copies a source reader to a writer using a buffer from the buffer pool.
 func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //nolint:unparam // written is never used.
-	buf := bufPool.Get().(*[]byte) //nolint:errcheck,forcetypeassert // Get() always returns a pointer to a byte slice.
-	defer bufPool.Put(buf)
+	buf := Cfg.bufPool.Get().(*[]byte) //nolint:errcheck,forcetypeassert // Get() always returns a pointer to a byte slice.
+	defer Cfg.bufPool.Put(buf)
 
 	written, err = io.CopyBuffer(dst, src, *buf)
 
 	return
-}
-
-func (ut *Utils) nextRandom() string {
-	randmu.Lock()
-
-	r := randno
-	if r == 0 {
-		r = ut.reseed()
-	}
-
-	r = r*1664525 + 1013904223 // constants from Numerical Recipes
-	randno = r
-	randmu.Unlock()
-
-	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
@@ -437,10 +408,6 @@ func (ut *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err err
 	}
 
 	return prefix, suffix, nil
-}
-
-func (ut *Utils) reseed() uint32 {
-	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
 }
 
 // walkDir recursively descends path, calling walkDirFn.

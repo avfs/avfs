@@ -29,9 +29,6 @@ type UMaskType struct {
 	mask fs.FileMode
 }
 
-// UMask is the global variable containing the file mode creation mask.
-var UMask UMaskType //nolint:gochecknoglobals // Used by UMaskType Get and Set.
-
 // Get returns the file mode creation mask.
 func (um *UMaskType) Get() fs.FileMode {
 	um.once.Do(func() {

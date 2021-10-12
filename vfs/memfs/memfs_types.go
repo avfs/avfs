@@ -41,7 +41,7 @@ type MemFS struct {
 	user     avfs.UserReader // user is the current user of the file system.
 	rootNode *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
-	volumes  volumes         // volumes contains the volume names for Windows.
+	volumes  volumes         // volumes contains the volume names (for Windows only).
 	curDir   string          // curDir is the current directory.
 	utils    avfs.Utils      // utils are somme common functions used by emulated file system implementation.
 }

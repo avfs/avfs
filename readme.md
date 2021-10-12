@@ -18,8 +18,8 @@ provides several features :
 
 - a set of **constants**, **interfaces** and **types** for all file systems
 - a **test suite** for all file systems (emulated or real)
-- a very basic **identity manager** allows testing of user related functions (
-  Chown, Lchown) and file system permissions
+- a very basic **identity manager** allows testing of user related functions
+(Chown, Lchown) and file system permissions
 - all file systems support user file creation mode mask (**Umask**)
 - **symbolic links**, **hard links** and **chroot** are fully supported for some
   file systems (MemFS, OsFS)
@@ -28,7 +28,7 @@ provides several features :
 
 ## Installation
 
-This package can be installed with the go get command :
+This package can be installed with the go install command :
 
 ```
 go install github.com/avfs/avfs@latest
@@ -128,12 +128,13 @@ func main() {
 		groupName = "test_users"
 	)
 
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	idm := memidm.New()
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm))
 
 	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	vfs.Chmod(rootDir, 0o777)
 
-	g, _ := vfs.GroupAdd(groupName)
+	g, _ := idm.GroupAdd(groupName)
 
 	var wg sync.WaitGroup
 	wg.Add(maxUsers)
@@ -143,7 +144,7 @@ func main() {
 			defer wg.Done()
 
 			userName := fmt.Sprintf("user_%08d", i)
-			vfs.UserAdd(userName, g.Name())
+			idm.UserAdd(userName, g.Name())
 
 			fsU := vfs.Clone()
 			fsU.User(userName)
@@ -162,7 +163,7 @@ func main() {
 		info, _ := entry.Info()
 		sst := vfs.ToSysStat(info)
 
-		u, _ := vfs.LookupUserId(sst.Uid())
+		u, _ := idm.LookupUserId(sst.Uid())
 
 		log.Println("dir :", info.Name(),
 			", mode :", info.Mode(),
@@ -173,9 +174,7 @@ func main() {
 
 ## Status
 
-Don't be fooled by the coverage percentages, everything is a work in progress.
-All the file systems pass the common test suite, but you should not use this in
-a production environment at this time.
+Not ready for Windows.
 
 ## File systems
 
@@ -187,7 +186,7 @@ are currently available :
 File system |Comments
 ------------|--------
 [BasePathFS](vfs/basepathfs)|file system that restricts all operations to a given path within a file system
-[DummyFS](dummyfs)|Non implemented file system to be used as model
+[DummyFS](dummyfs.go)|Non implemented file system to be used as model
 [MemFS](vfs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
 [OrefaFS](vfs/orefafs)|Afero like in memory file system
 [OsFS](vfs/osfs)|Operating system native file system
@@ -282,7 +281,7 @@ where all functions returns `avfs.ErrPermDenied`.
 
 Identity Manager |Comments
 -----------------|--------
-[DummyIdm](dummyidm)|dummy identity manager where all functions are not implemented
+[DummyIdm](dummyidm.go)|dummy identity manager where all functions are not implemented
 [MemIdm](idm/memidm)|In memory identity manager
 [OsIdm](idm/osidm)|Identity manager using os functions
 [SQLiteIdm](https://github.com/avfs/sqliteidm)|Identity manager backed by a SQLite database

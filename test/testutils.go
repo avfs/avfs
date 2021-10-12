@@ -930,7 +930,7 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestJoin(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	type joinTest struct { //nolint:govet // no fieldalignment for simple structs
+	type joinTest struct { //nolint:govet // no fieldalignment for test structs
 		elem []string
 		path string
 	}
@@ -1007,7 +1007,7 @@ func errp(e error) string {
 func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	matchTests := []struct { //nolint:govet // no fieldalignment for simple structs
+	matchTests := []struct { //nolint:govet // no fieldalignment for test structs
 		pattern, s string
 		match      bool
 		err        error
@@ -1523,25 +1523,27 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umaskTest := umaskSet
 
-	if avfs.CurrentOSType() == avfs.OsWindows {
+	if avfs.Cfg.OSType() == avfs.OsWindows {
 		umaskTest = defaultUmask
 	}
 
-	umask := avfs.UMask.Get()
+	var um avfs.UMaskType
+
+	umask := um.Get()
 	if umask != defaultUmask {
 		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 
-	avfs.UMask.Set(umaskSet)
+	um.Set(umaskSet)
 
-	umask = avfs.UMask.Get()
+	umask = um.Get()
 	if umask != umaskTest {
 		t.Errorf("UMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
-	avfs.UMask.Set(defaultUmask)
+	um.Set(defaultUmask)
 
-	umask = avfs.UMask.Get()
+	umask = um.Get()
 	if umask != defaultUmask {
 		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}

@@ -28,8 +28,8 @@ func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
 		nodes:   make(nodes),
 		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
-		umask:   int32(avfs.UMask.Get()),
-		utils:   avfs.OsUtils,
+		umask:   int32(avfs.Cfg.UMask()),
+		utils:   avfs.Cfg.Utils(),
 	}
 
 	for _, opt := range opts {

@@ -59,7 +59,7 @@ func TestOrefaFS(t *testing.T) {
 	}
 
 	ost := vfs.OSType()
-	if ost != avfs.CurrentOSType() {
+	if ost != avfs.Cfg.OSType() {
 		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
 	}
 
