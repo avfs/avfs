@@ -463,7 +463,7 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 func (ut *Utils) HomeDir() string {
 	switch ut.osType {
 	case OsWindows:
-		return "\\User"
+		return "\\Users"
 	default:
 		return "/home"
 	}

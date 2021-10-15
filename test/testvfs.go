@@ -1065,10 +1065,11 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 					return
 				}
 
-				wantMode &^= vfs.UMask()
 				if vfs.OSType() == avfs.OsWindows {
-					wantMode = fs.ModePerm
+					continue
 				}
+
+				wantMode &^= vfs.UMask()
 
 				mode := info.Mode() & fs.ModePerm
 				if wantMode != mode {
@@ -1174,12 +1175,12 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 				t.Errorf("stat '%s' : want time to be %s, got %s", path, time.Now(), fi.ModTime())
 			}
 
-			name := vfs.Base(dir.Path)
+			name := vfs.Base(vfs.FromSlash(dir.Path))
 			if fi.Name() != name {
 				t.Errorf("stat '%s' : want path to be %s, got %s", path, name, fi.Name())
 			}
 
-			want := strings.Count(dir.Path, string(vfs.PathSeparator()))
+			want := strings.Count(vfs.FromSlash(dir.Path), string(vfs.PathSeparator()))
 			got := len(dir.WantModes)
 			if want != got {
 				t.Fatalf("stat %s : want %d directories modes, got %d", path, want, got)
