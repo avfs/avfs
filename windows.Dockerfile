@@ -21,6 +21,7 @@ FROM base AS copyfiles
 COPY ./bin/avfs* /go/bin/
 COPY ./*.go ./
 COPY ./go.mod ./
+COPY ./go.sum ./
 COPY ./idm ./idm
 COPY ./mage ./mage
 COPY ./test ./test
