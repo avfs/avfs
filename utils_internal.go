@@ -341,9 +341,9 @@ func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 }
 
 func (ut *Utils) nextRandom() string {
-	r := fastrand.Uint32()
+	r := uint64(fastrand.Uint32n(1e9))
 
-	return strconv.Itoa(int(1e9 + r%1e9))[1:]
+	return strconv.FormatUint(r, 10)[1:]
 }
 
 // scanChunk gets the next segment of pattern, which is a non-star string
