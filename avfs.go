@@ -31,7 +31,7 @@ const (
 	PathSeparator   = '/'               // PathSeparator is defined as a forward slash for all unix systems.
 	DefaultDirPerm  = 0o777             // DefaultDirPerm is the default permission for directories.
 	DefaultFilePerm = 0o666             // DefaultFilePerm is the default permission for files.
-	NotImplemented  = "not implemented" // NotImplemented is the return string of a non implemented feature.
+	NotImplemented  = "not implemented" // NotImplemented is the return string of a non-implemented feature.
 
 	// FileModeMask is the bitmask used for permissions.
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
@@ -41,16 +41,16 @@ const (
 // Most of the errors below can be found there :
 // https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
 const (
-	ErrBadFileDesc     = syscall.EBADF     // Bad file descriptor.
-	ErrDirNotEmpty     = syscall.ENOTEMPTY // Directory not empty.
-	ErrFileExists      = syscall.EEXIST    // File exists.
-	ErrInvalidArgument = syscall.EINVAL    // invalid argument
-	ErrIsADirectory    = syscall.EISDIR    // File Is a directory.
-	ErrNoSuchFileOrDir = syscall.ENOENT    // No such file or directory.
-	ErrNotADirectory   = syscall.ENOTDIR   // Not a directory.
-	ErrOpNotPermitted  = syscall.EPERM     // Operation not permitted.
-	ErrPermDenied      = syscall.EACCES    // Permission denied.
-	ErrTooManySymlinks = syscall.ELOOP     // Too many levels of symbolic links.
+	ErrBadFileDesc     = syscall.Errno(0x9)  // Bad file descriptor.
+	ErrDirNotEmpty     = syscall.Errno(0x27) // Directory not empty.
+	ErrFileExists      = syscall.Errno(0x11) // File exists.
+	ErrInvalidArgument = syscall.Errno(0x16) // invalid argument
+	ErrIsADirectory    = syscall.Errno(0x15) // File Is a directory.
+	ErrNoSuchFileOrDir = syscall.Errno(0x2)  // No such file or directory.
+	ErrNotADirectory   = syscall.Errno(0x14) // Not a directory.
+	ErrOpNotPermitted  = syscall.Errno(0x1)  // Operation not permitted.
+	ErrPermDenied      = syscall.Errno(0xd)  // Permission denied.
+	ErrTooManySymlinks = syscall.Errno(0x28) // Too many levels of symbolic links.
 )
 
 // Errors on windows operating systems only.
