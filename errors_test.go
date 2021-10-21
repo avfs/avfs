@@ -27,7 +27,7 @@ import (
 	"github.com/avfs/avfs"
 )
 
-func TestAvfsErrors(t *testing.T) {
+func TestErrors(t *testing.T) {
 	groupName := "groupName"
 	aegErr := avfs.AlreadyExistsGroupError(groupName)
 

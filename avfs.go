@@ -18,12 +18,8 @@
 package avfs
 
 import (
-	"errors"
 	"io"
 	"io/fs"
-	"reflect"
-	"strconv"
-	"syscall"
 	"time"
 )
 
@@ -36,96 +32,6 @@ const (
 	// FileModeMask is the bitmask used for permissions.
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
-
-// Errors on linux and Windows operating systems.
-// Most of the errors below can be found there :
-// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
-const (
-	ErrBadFileDesc     = syscall.Errno(0x9)  // Bad file descriptor.
-	ErrDirNotEmpty     = syscall.Errno(0x27) // Directory not empty.
-	ErrFileExists      = syscall.Errno(0x11) // File exists.
-	ErrInvalidArgument = syscall.Errno(0x16) // invalid argument
-	ErrIsADirectory    = syscall.Errno(0x15) // File Is a directory.
-	ErrNoSuchFileOrDir = syscall.Errno(0x2)  // No such file or directory.
-	ErrNotADirectory   = syscall.Errno(0x14) // Not a directory.
-	ErrOpNotPermitted  = syscall.Errno(0x1)  // Operation not permitted.
-	ErrPermDenied      = syscall.Errno(0xd)  // Permission denied.
-	ErrTooManySymlinks = syscall.Errno(0x28) // Too many levels of symbolic links.
-)
-
-// Errors on windows operating systems only.
-const (
-	ErrWinAccessDenied     = syscall.Errno(0x5)        // Access is denied.
-	ErrWinDirNameInvalid   = syscall.Errno(0x10B)      // The directory name is invalid.
-	ErrWinDirNotEmpty      = syscall.Errno(145)        // The directory is not empty.
-	ErrWinFileExists       = syscall.Errno(80)         // The file exists.
-	ErrWinNegativeSeek     = syscall.Errno(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
-	ErrWinNotReparsePoint  = syscall.Errno(4390)       // The file or directory is not a reparse point.
-	ErrWinInvalidHandle    = syscall.Errno(0x6)        // The handle is invalid.
-	ErrWinNotSupported     = syscall.Errno(0x20000082) // Not supported by windows.
-	ErrWinPathNotFound     = syscall.Errno(0x3)        // The system cannot find the path specified.
-	ErrWinPrivilegeNotHeld = syscall.Errno(1314)       // A required privilege is not held by the client.
-)
-
-var (
-	// ErrNegativeOffset is the Error negative offset.
-	ErrNegativeOffset = errors.New("negative offset")
-
-	// ErrFileClosing is returned when a file descriptor is used after it has been closed.
-	ErrFileClosing = errors.New("use of closed file")
-
-	// ErrPatternHasSeparator is returned when a bad pattern is used in CreateTemp or MkdirTemp.
-	ErrPatternHasSeparator = errors.New("pattern contains path separator")
-)
-
-// AlreadyExistsGroupError is returned when the group name already exists.
-type AlreadyExistsGroupError string
-
-func (e AlreadyExistsGroupError) Error() string {
-	return "group: group " + string(e) + " already exists"
-}
-
-// AlreadyExistsUserError is returned when the user name already exists.
-type AlreadyExistsUserError string
-
-func (e AlreadyExistsUserError) Error() string {
-	return "user: user " + string(e) + " already exists"
-}
-
-// UnknownError is returned when there is an unknown error.
-type UnknownError string
-
-func (e UnknownError) Error() string {
-	return "unknown error " + reflect.TypeOf(e).String() + " : '" + string(e) + "'"
-}
-
-// UnknownGroupError is returned by LookupGroup when a group cannot be found.
-type UnknownGroupError string
-
-func (e UnknownGroupError) Error() string {
-	return "group: unknown group " + string(e)
-}
-
-// UnknownGroupIdError is returned by LookupGroupId when a group cannot be found.
-type UnknownGroupIdError int
-
-func (e UnknownGroupIdError) Error() string {
-	return "group: unknown groupid " + strconv.Itoa(int(e))
-}
-
-// UnknownUserError is returned by Lookup when a user cannot be found.
-type UnknownUserError string
-
-func (e UnknownUserError) Error() string {
-	return "user: unknown user " + string(e)
-}
-
-// UnknownUserIdError is returned by LookupUserId when a user cannot be found.
-type UnknownUserIdError int
-
-func (e UnknownUserIdError) Error() string {
-	return "user: unknown userid " + strconv.Itoa(int(e))
-}
 
 // Feature defines the list of features available on a file system.
 type Feature uint64
