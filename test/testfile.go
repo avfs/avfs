@@ -513,7 +513,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		}
 
 		n, err = f.ReadAt(b, -1)
-		CheckPathError(t, err).Op("readat").Path(path).ErrAsString(avfs.ErrNegativeOffset)
+		CheckPathError(t, err).Op("readat").Path(path).Err(avfs.ErrNegativeOffset)
 
 		if n != 0 {
 			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
@@ -653,7 +653,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
 		default:
-			CheckPathError(t, err).Op("readdirent").Path(fileName).ErrAsString(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("readdirent").Path(fileName).Err(avfs.ErrFileClosing)
 		}
 	})
 
@@ -750,7 +750,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckPathError(t, err).Op("readdir").Path(fileName).Err(avfs.ErrWinPathNotFound)
 		default:
-			CheckPathError(t, err).Op("readdirent").Path(fileName).ErrAsString(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("readdirent").Path(fileName).Err(avfs.ErrFileClosing)
 		}
 	})
 
@@ -1076,9 +1076,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 		switch vfs.OSType() {
 		case avfs.OsWindows:
-			CheckPathError(t, err).Op("GetFileType").Path(fileName).ErrAsString(avfs.ErrFileClosing)
+			CheckPathError(t, err).Op("GetFileType").Path(fileName).Err(avfs.ErrFileClosing)
 		default:
-			CheckPathError(t, err).OpStat(vfs).Path(fileName).ErrAsString(avfs.ErrFileClosing)
+			CheckPathError(t, err).OpStat(vfs).Path(fileName).Err(avfs.ErrFileClosing)
 		}
 	})
 
@@ -1368,7 +1368,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		defer f.Close()
 
 		n, err := f.WriteAt(data, -1)
-		CheckPathError(t, err).Op("writeat").Path(path).ErrAsString(avfs.ErrNegativeOffset)
+		CheckPathError(t, err).Op("writeat").Path(path).Err(avfs.ErrNegativeOffset)
 
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)

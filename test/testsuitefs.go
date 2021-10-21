@@ -931,22 +931,7 @@ func (cp *CheckPath) Err(wantErr error) *CheckPath {
 	}
 
 	err := cp.err
-	if err.Err != wantErr {
-		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
-	}
-
-	return cp
-}
-
-func (cp *CheckPath) ErrAsString(wantErr error) *CheckPath {
-	cp.tb.Helper()
-
-	if cp.halt {
-		return cp
-	}
-
-	err := cp.err
-	if err.Err.Error() != wantErr.Error() {
+	if err.Err != wantErr && err.Err.Error() != wantErr.Error() {
 		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 	}
 
@@ -1053,7 +1038,7 @@ func (cl *CheckLink) Err(wantErr error) *CheckLink {
 	}
 
 	err := cl.err
-	if err.Err != wantErr {
+	if err.Err != wantErr && err.Err.Error() != wantErr.Error() {
 		cl.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 	}
 

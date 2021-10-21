@@ -545,7 +545,7 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 		badPattern := vfs.TempDir()
 
 		_, err := vfs.CreateTemp("", badPattern)
-		CheckPathError(t, err).Op("createtemp").Path(badPattern).ErrAsString(avfs.ErrPatternHasSeparator)
+		CheckPathError(t, err).Op("createtemp").Path(badPattern).Err(avfs.ErrPatternHasSeparator)
 	})
 
 	t.Run("CreateTempOnFile", func(t *testing.T) {
@@ -1275,7 +1275,7 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 		badPattern := vfs.TempDir()
 
 		_, err := vfs.MkdirTemp("", badPattern)
-		CheckPathError(t, err).Op("mkdirtemp").Path(badPattern).ErrAsString(avfs.ErrPatternHasSeparator)
+		CheckPathError(t, err).Op("mkdirtemp").Path(badPattern).Err(avfs.ErrPatternHasSeparator)
 	})
 
 	t.Run("MkdirTempOnFile", func(t *testing.T) {
