@@ -85,13 +85,67 @@ func (e UnknownUserIdError) Error() string {
 // Errno replaces syscall.Errno for all OSes.
 type Errno uint64 //nolint:errname // the type name `Errno` should conform to the `XxxError` format.
 
-func (e Errno) Error() string {
-	s, ok := errText[e]
+func (en Errno) Error() string {
+	s, ok := errText[en]
 	if ok {
 		return s
 	}
 
-	return "errno " + strconv.Itoa(int(e))
+	return "errno " + strconv.Itoa(int(en))
+}
+
+type errnoOSType struct {
+	En  Errno
+	Ost OSType
+}
+
+// errTransMap stores translations of Linux errors to other operating system errors.
+var errTransMap = map[errnoOSType]Errno{
+	{En: ErrNoSuchFileOrDir, Ost: OsWindows}: ErrWinPathNotFound,
+}
+
+// ErrTranslate translates Linux errors to other operating systems errors.
+func ErrTranslate(err error, ost OSType) error {
+	if ost == OsLinux {
+		return err
+	}
+
+	en, ok := err.(Errno)
+	if !ok {
+		return err
+	}
+
+	et, ok := errTransMap[errnoOSType{En: en, Ost: ost}]
+	if ok {
+		return et
+	}
+
+	return err
+}
+
+type opOSType struct {
+	Op  string
+	Ost OSType
+}
+
+// opTransMap stores translations of Linux operations to other operating system operations.
+var opTransMap = map[opOSType]string{ //nolint:gochecknoglobals // opTransMap is a global variable
+	{Op: "lstat", Ost: OsWindows}: "CreateFile",
+	{Op: "stat", Ost: OsWindows}:  "CreateFile",
+}
+
+// OpTranslate translates linux operation strings to other OS operation strings.
+func OpTranslate(op string, ost OSType) string {
+	if ost == OsLinux {
+		return op
+	}
+
+	opt, ok := opTransMap[opOSType{Op: op, Ost: ost}]
+	if ok {
+		return opt
+	}
+
+	return op
 }
 
 const (

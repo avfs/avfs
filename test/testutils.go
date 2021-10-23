@@ -596,7 +596,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckNoError(t, "Stat "+invalidPath, err)
 		default:
-			CheckPathError(t, err).OpStat(vfs).Path(invalidPath).Err(avfs.ErrNotADirectory)
+			CheckPathError(t, err).OpStat().Path(invalidPath).Err(avfs.ErrNotADirectory)
 		}
 
 		if ok {
@@ -811,7 +811,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, nonExistingFile)
-		CheckPathError(t, err).OpStat(vfs).Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpStat().Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 
 		if ok {
 			t.Error("IsDirNonExisting : want DirExists to be false, got true")

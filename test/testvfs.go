@@ -994,14 +994,14 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		_, err := vfs.Lstat(nonExistingFile)
-		CheckPathError(t, err).OpLstat(vfs).Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpLstat().Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("LStatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(testDir, files[0].Path, "subDirOnFile")
 
 		_, err := vfs.Lstat(subDirOnFile)
-		CheckPathError(t, err).OpLstat(vfs).Path(subDirOnFile).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).OpLstat().Path(subDirOnFile).Err(avfs.ErrNotADirectory)
 	})
 }
 
@@ -1093,26 +1093,15 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	t.Run("MkdirOnNonExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			path := vfs.Join(testDir, dir.Path, "can't", "create", "this")
-			err := vfs.Mkdir(path, avfs.DefaultDirPerm)
 
-			switch vfs.OSType() {
-			case avfs.OsWindows:
-				CheckPathError(t, err).Op("mkdir").Path(path).Err(avfs.ErrWinPathNotFound)
-			default:
-				CheckPathError(t, err).Op("mkdir").Path(path).Err(avfs.ErrNoSuchFileOrDir)
-			}
+			err := vfs.Mkdir(path, avfs.DefaultDirPerm)
+			CheckPathError(t, err).Op("mkdir").Path(path).Err(avfs.ErrNoSuchFileOrDir)
 		}
 	})
 
 	t.Run("MkdirEmptyName", func(t *testing.T) {
 		err := vfs.Mkdir("", avfs.DefaultFilePerm)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("mkdir").Path("").Err(avfs.ErrWinPathNotFound)
-		default:
-			CheckPathError(t, err).Op("mkdir").Path("").Err(avfs.ErrNoSuchFileOrDir)
-		}
+		CheckPathError(t, err).Op("mkdir").Path("").Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("MkdirOnFile", func(t *testing.T) {
@@ -1342,6 +1331,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
 		fileName := sfs.NonExistingFile(t, testDir)
+
 		_, err := vfs.Open(fileName)
 		CheckPathError(t, err).Op("open").Path(fileName).Err(avfs.ErrNoSuchFileOrDir)
 	})
@@ -1544,14 +1534,9 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 
 	t.Run("OpenFileNonExistingPath", func(t *testing.T) {
 		nonExistingPath := vfs.Join(testDir, "non/existing/path")
-		_, err := vfs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
 
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("open").Path(nonExistingPath).Err(avfs.ErrWinPathNotFound)
-		default:
-			CheckPathError(t, err).Op("open").Path(nonExistingPath).Err(avfs.ErrNoSuchFileOrDir)
-		}
+		_, err := vfs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
+		CheckPathError(t, err).Op("open").Path(nonExistingPath).Err(avfs.ErrNoSuchFileOrDir)
 	})
 }
 
@@ -1778,7 +1763,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 			CheckNoError(t, "Remove", err)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat(vfs).Path(path).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).OpStat().Path(path).Err(avfs.ErrNoSuchFileOrDir)
 		}
 	})
 
@@ -1804,7 +1789,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 				CheckNoError(t, "Remove "+path, err)
 
 				_, err = vfs.Stat(path)
-				CheckPathError(t, err).OpStat(vfs).Path(path).Err(avfs.ErrNoSuchFileOrDir)
+				CheckPathError(t, err).OpStat().Path(path).Err(avfs.ErrNoSuchFileOrDir)
 
 				continue
 			}
@@ -1824,7 +1809,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 			CheckNoError(t, "Remove "+newPath, err)
 
 			_, err = vfs.Stat(newPath)
-			CheckPathError(t, err).OpStat(vfs).Path(newPath).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).OpStat().Path(newPath).Err(avfs.ErrNoSuchFileOrDir)
 		}
 	})
 
@@ -1881,25 +1866,25 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 			path := vfs.Join(baseDir, dir.Path)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat(vfs).Path(path).Err(wantErr)
+			CheckPathError(t, err).OpStat().Path(path).Err(wantErr)
 		}
 
 		for _, file := range files {
 			path := vfs.Join(baseDir, file.Path)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat(vfs).Path(path).Err(wantErr)
+			CheckPathError(t, err).OpStat().Path(path).Err(wantErr)
 		}
 
 		for _, sl := range symlinks {
 			path := vfs.Join(baseDir, sl.NewName)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat(vfs).Path(path).Err(wantErr)
+			CheckPathError(t, err).OpStat().Path(path).Err(wantErr)
 		}
 
 		_, err = vfs.Stat(baseDir)
-		CheckPathError(t, err).OpStat(vfs).Path(baseDir).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpStat().Path(baseDir).Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("RemoveAllOneFile", func(t *testing.T) {
@@ -1974,7 +1959,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 			CheckNoError(t, "Rename", err)
 
 			_, err = vfs.Stat(oldPath)
-			CheckPathError(t, err).OpStat(vfs).Path(oldPath).Err(avfs.ErrNoSuchFileOrDir)
+			CheckPathError(t, err).OpStat().Path(oldPath).Err(avfs.ErrNoSuchFileOrDir)
 
 			_, err = vfs.Stat(newPath)
 			CheckNoError(t, "Stat "+newPath, err)
@@ -1998,7 +1983,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 			case oldPath == newPath:
 				CheckNoError(t, "Stat "+oldPath, err)
 			default:
-				CheckPathError(t, err).OpStat(vfs).Path(oldPath).Err(avfs.ErrNoSuchFileOrDir)
+				CheckPathError(t, err).OpStat().Path(oldPath).Err(avfs.ErrNoSuchFileOrDir)
 			}
 
 			_, err = vfs.Stat(newPath)
@@ -2036,7 +2021,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		CheckNoError(t, "Rename "+srcExistingFile+" "+dstExistingFile, err)
 
 		_, err = vfs.Stat(srcExistingFile)
-		CheckPathError(t, err).OpStat(vfs).Path(srcExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpStat().Path(srcExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 
 		info, err := vfs.Stat(dstExistingFile)
 		CheckNoError(t, "Stat "+dstExistingFile, err)
@@ -2160,7 +2145,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Stat(testDir)
-		CheckPathError(t, err).OpStat(vfs).Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).OpStat().Path(testDir).Err(avfs.ErrPermDenied)
 
 		return
 	}
@@ -2252,14 +2237,14 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		_, err := vfs.Stat(nonExistingFile)
-		CheckPathError(t, err).OpStat(vfs).Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).OpStat().Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
 	})
 
 	t.Run("StatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(testDir, files[0].Path, "subDirOnFile")
 
 		_, err := vfs.Stat(subDirOnFile)
-		CheckPathError(t, err).OpStat(vfs).Path(subDirOnFile).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).OpStat().Path(subDirOnFile).Err(avfs.ErrNotADirectory)
 	})
 }
 

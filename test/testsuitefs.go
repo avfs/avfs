@@ -892,6 +892,8 @@ func (cp *checkPathError) Op(wantOp string) *checkPathError {
 	}
 
 	err := cp.err
+
+	wantOp = avfs.OpTranslate(wantOp, avfs.Cfg.OSType())
 	if err.Op != wantOp {
 		cp.tb.Errorf("want Op to be %s, got %s", wantOp, err.Op)
 	}
@@ -900,23 +902,13 @@ func (cp *checkPathError) Op(wantOp string) *checkPathError {
 }
 
 // OpLstat checks if the current fs.PathError Op is a Lstat Op.
-func (cp *checkPathError) OpLstat(vfs avfs.VFS) *checkPathError {
-	op := "lstat"
-	if vfs.OSType() == avfs.OsWindows {
-		op = "CreateFile"
-	}
-
-	return cp.Op(op)
+func (cp *checkPathError) OpLstat() *checkPathError {
+	return cp.Op("lstat")
 }
 
 // OpStat checks if the current fs.PathError Op is a Stat Op.
-func (cp *checkPathError) OpStat(vfs avfs.VFS) *checkPathError {
-	op := "stat"
-	if vfs.OSType() == avfs.OsWindows {
-		op = "CreateFile"
-	}
-
-	return cp.Op(op)
+func (cp *checkPathError) OpStat() *checkPathError {
+	return cp.Op("stat")
 }
 
 // Path checks the path of the current fs.PathError.
@@ -944,6 +936,8 @@ func (cp *checkPathError) Err(wantErr error) *checkPathError {
 	}
 
 	err := cp.err
+	wantErr = avfs.ErrTranslate(wantErr, avfs.Cfg.OSType())
+
 	if err.Err == wantErr || err.Err.Error() == wantErr.Error() {
 		return cp
 	}
