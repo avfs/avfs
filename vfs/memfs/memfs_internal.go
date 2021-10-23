@@ -52,14 +52,14 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	volNode := vfs.rootNode
 
 	if pi.VolumeNameLen() > 0 {
-		n, ok := vfs.volumes[pi.VolumeName()]
+		nd, ok := vfs.volumes[pi.VolumeName()]
 		if !ok {
 			err = avfs.ErrNoSuchFileOrDir
 
 			return
 		}
 
-		volNode = n
+		volNode = nd
 	}
 
 	parent = volNode
@@ -301,8 +301,8 @@ func (dn *dirNode) dirEntries() []fs.DirEntry {
 	entries := make([]fs.DirEntry, l)
 	i := 0
 
-	for name, node := range dn.children {
-		entries[i] = node.fillStatFrom(name)
+	for name, nd := range dn.children {
+		entries[i] = nd.fillStatFrom(name)
 		i++
 	}
 

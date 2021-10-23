@@ -45,14 +45,11 @@ func New(opts ...Option) *MemFS {
 			},
 		},
 		memAttrs: ma,
+		utils:    avfs.Cfg.Utils(),
 	}
 
 	for _, opt := range opts {
 		opt(vfs)
-	}
-
-	if vfs.utils.OSType() == avfs.OsUnknown {
-		vfs.utils = avfs.NewUtils(avfs.OsLinux)
 	}
 
 	volumeName := ""

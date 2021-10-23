@@ -82,53 +82,63 @@ func (e UnknownUserIdError) Error() string {
 	return "user: unknown userid " + strconv.Itoa(int(e))
 }
 
-// Error replaces syscall.Errno
-type Error uint64
+// Errno replaces syscall.Errno for all OSes.
+type Errno uint64 //nolint:errname // the type name `Errno` should conform to the `XxxError` format.
 
-func (e Error) Error() string {
-	s, ok := Errors[e]
+func (e Errno) Error() string {
+	s, ok := errText[e]
 	if ok {
 		return s
 	}
 
-	return ""
+	return "errno " + strconv.Itoa(int(e))
 }
 
 const (
-	// Errors on linux operating systems.
+	// Errors on Linux operating systems.
 	// Most of the errors below can be found there :
 	// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
-	linuxError = uint64(OsLinux) >> 32
+	linuxError = Errno(OsLinux) << 32
 
-	ErrBadFileDesc     = Error(linuxError + 0x9)  // bad file descriptor.
-	ErrDirNotEmpty     = Error(linuxError + 0x27) // Directory not empty.
-	ErrFileExists      = Error(linuxError + 0x11) // File exists.
-	ErrInvalidArgument = Error(linuxError + 0x16) // invalid argument
-	ErrIsADirectory    = Error(linuxError + 0x15) // File Is a directory.
-	ErrNoSuchFileOrDir = Error(linuxError + 0x2)  // No such file or directory.
-	ErrNotADirectory   = Error(linuxError + 0x14) // Not a directory.
-	ErrOpNotPermitted  = Error(linuxError + 0x1)  // operation not permitted.
-	ErrPermDenied      = Error(linuxError + 0xd)  // Permission denied.
-	ErrTooManySymlinks = Error(linuxError + 0x28) // Too many levels of symbolic links.
+	ErrBadFileDesc     = linuxError + errEBADF     // bad file descriptor.
+	ErrDirNotEmpty     = linuxError + errENOTEMPTY // Directory not empty.
+	ErrFileExists      = linuxError + errEEXIST    // File exists.
+	ErrInvalidArgument = linuxError + errEINVAL    // invalid argument
+	ErrIsADirectory    = linuxError + errEISDIR    // File Is a directory.
+	ErrNoSuchFileOrDir = linuxError + errENOENT    // No such file or directory.
+	ErrNotADirectory   = linuxError + errENOTDIR   // Not a directory.
+	ErrOpNotPermitted  = linuxError + errEPERM     // operation not permitted.
+	ErrPermDenied      = linuxError + errEACCES    // Permission denied.
+	ErrTooManySymlinks = linuxError + errELOOP     // Too many levels of symbolic links.
 
-	// Errors on Windows operating systems only.
-	windowsError = uint64(OsWindows) >> 32
+	errEACCES    = Errno(0xd)
+	errEBADF     = Errno(0x9)
+	errEEXIST    = Errno(0x11)
+	errEINVAL    = Errno(0x16)
+	errEISDIR    = Errno(0x15)
+	errENOENT    = Errno(0x2)
+	errELOOP     = Errno(0x28)
+	errENOTDIR   = Errno(0x14)
+	errENOTEMPTY = Errno(0x27)
+	errEPERM     = Errno(0x1)
 
-	ErrWinAccessDenied     = Error(windowsError + 0x5)        // Access is denied.
-	ErrWinDirNameInvalid   = Error(windowsError + 0x10B)      // The directory name is invalid.
-	ErrWinDirNotEmpty      = Error(windowsError + 145)        // The directory is not empty.
-	ErrWinFileExists       = Error(windowsError + 80)         // The file exists.
-	ErrWinNegativeSeek     = Error(windowsError + 0x83)       // An attempt was made to move the file pointer before the beginning of the file.
-	ErrWinNotReparsePoint  = Error(windowsError + 4390)       // The file or directory is not a reparse point.
-	ErrWinInvalidHandle    = Error(windowsError + 0x6)        // The handle is invalid.
-	ErrWinNotSupported     = Error(windowsError + 0x20000082) // Not supported by windows.
-	ErrWinPathNotFound     = Error(windowsError + 0x3)        // The system cannot find the path specified.
-	ErrWinPrivilegeNotHeld = Error(windowsError + 1314)       // A required privilege is not held by the client.
+	// Errors on Windows operating systems.
+	windowsError = Errno(OsWindows) << 32
+
+	ErrWinAccessDenied     = windowsError + 0x5        // Access is denied.
+	ErrWinDirNameInvalid   = windowsError + 0x10B      // The directory name is invalid.
+	ErrWinDirNotEmpty      = windowsError + 145        // The directory is not empty.
+	ErrWinFileExists       = windowsError + 80         // The file exists.
+	ErrWinNegativeSeek     = windowsError + 0x83       // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinNotReparsePoint  = windowsError + 4390       // The file or directory is not a reparse point.
+	ErrWinInvalidHandle    = windowsError + 0x6        // The handle is invalid.
+	ErrWinNotSupported     = windowsError + 0x20000082 // Not supported by windows.
+	ErrWinPathNotFound     = windowsError + 0x3        // The system cannot find the path specified.
+	ErrWinPrivilegeNotHeld = windowsError + 1314       // A required privilege is not held by the client.
 )
 
-type ErrorText map[Error]string
-
-var Errors = ErrorText{
+// errText translates an OS error number to text for all OSes.
+var errText = map[Errno]string{
 	ErrBadFileDesc:         "bad file descriptor",
 	ErrDirNotEmpty:         "directory not empty",
 	ErrFileExists:          "file exists",

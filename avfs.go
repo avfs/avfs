@@ -77,10 +77,10 @@ type OSType uint8
 //go:generate stringer -type OSType -linecomment -output avfs_ostype.go
 
 const (
-	OsUnknown OSType = iota // Unknown
-	OsDarwin                // Darwin
-	OsLinux                 // Linux
+	OsLinux   OSType = iota // Linux
 	OsWindows               // Windows
+	OsDarwin                // Darwin
+	OsUnknown               // Unknown
 )
 
 // PermMode defines the permissions to check for CheckPermission() function.
