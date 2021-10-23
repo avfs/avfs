@@ -854,37 +854,40 @@ func CheckPanic(tb testing.TB, funcName string, f func()) {
 	f()
 }
 
-type CheckPath struct {
-	tb   testing.TB
-	err  *fs.PathError
-	halt bool
+// checkPathError stores the current fs.PathError test data.
+type checkPathError struct {
+	tb       testing.TB
+	err      *fs.PathError
+	foundErr bool
 }
 
-func CheckPathError(tb testing.TB, err error) *CheckPath {
+// CheckPathError checks if err is a fs.PathError.
+func CheckPathError(tb testing.TB, err error) *checkPathError { //nolint:revive // No need to export checkPathError to use it.
 	tb.Helper()
 
-	halt := false
+	foundErr := false
 
 	if err == nil {
-		halt = true
+		foundErr = true
 
 		tb.Error("want error to be not nil")
 	}
 
 	e, ok := err.(*fs.PathError)
 	if !ok {
-		halt = true
+		foundErr = true
 
 		tb.Errorf("want error type to be *fs.PathError, got %v : %v", reflect.TypeOf(err), err)
 	}
 
-	return &CheckPath{tb: tb, err: e, halt: halt}
+	return &checkPathError{tb: tb, err: e, foundErr: foundErr}
 }
 
-func (cp *CheckPath) Op(wantOp string) *CheckPath {
+// Op checks if wantOp is equal to the current fs.PathError Op.
+func (cp *checkPathError) Op(wantOp string) *checkPathError {
 	cp.tb.Helper()
 
-	if cp.halt {
+	if cp.foundErr {
 		return cp
 	}
 
@@ -896,7 +899,8 @@ func (cp *CheckPath) Op(wantOp string) *CheckPath {
 	return cp
 }
 
-func (cp *CheckPath) OpLstat(vfs avfs.VFS) *CheckPath {
+// OpLstat checks if the current fs.PathError Op is a Lstat Op.
+func (cp *checkPathError) OpLstat(vfs avfs.VFS) *checkPathError {
 	op := "lstat"
 	if vfs.OSType() == avfs.OsWindows {
 		op = "CreateFile"
@@ -905,7 +909,8 @@ func (cp *CheckPath) OpLstat(vfs avfs.VFS) *CheckPath {
 	return cp.Op(op)
 }
 
-func (cp *CheckPath) OpStat(vfs avfs.VFS) *CheckPath {
+// OpStat checks if the current fs.PathError Op is a Stat Op.
+func (cp *checkPathError) OpStat(vfs avfs.VFS) *checkPathError {
 	op := "stat"
 	if vfs.OSType() == avfs.OsWindows {
 		op = "CreateFile"
@@ -914,10 +919,11 @@ func (cp *CheckPath) OpStat(vfs avfs.VFS) *CheckPath {
 	return cp.Op(op)
 }
 
-func (cp *CheckPath) Path(wantPath string) *CheckPath {
+// Path checks the path of the current fs.PathError.
+func (cp *checkPathError) Path(wantPath string) *checkPathError {
 	cp.tb.Helper()
 
-	if cp.halt {
+	if cp.foundErr {
 		return cp
 	}
 
@@ -929,72 +935,58 @@ func (cp *CheckPath) Path(wantPath string) *CheckPath {
 	return cp
 }
 
-func (cp *CheckPath) Err(wantErr error) *CheckPath {
+// Err checks the error of current fs.PathError.
+func (cp *checkPathError) Err(wantErr error) *checkPathError {
 	cp.tb.Helper()
 
-	if cp.halt {
+	if cp.foundErr {
 		return cp
 	}
 
 	err := cp.err
-	if err.Err != wantErr && err.Err.Error() != wantErr.Error() {
-		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
-	}
-
-	return cp
-}
-
-func (cp *CheckPath) ErrNoSuchFileOrDir(vfs avfs.VFS) *CheckPath {
-	cp.tb.Helper()
-
-	if cp.halt {
+	if err.Err == wantErr || err.Err.Error() == wantErr.Error() {
 		return cp
 	}
 
-	wantErr := avfs.ErrNoSuchFileOrDir
-	if vfs.OSType() == avfs.OsWindows {
-		wantErr = avfs.ErrWinPathNotFound
-	}
-
-	err := cp.err
-	if err.Err != wantErr {
-		cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
-	}
+	cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 
 	return cp
 }
 
-type CheckLink struct {
-	tb   testing.TB
-	err  *os.LinkError
-	halt bool
+// checkLinkError stores the current os.LinkError test data.
+type checkLinkError struct {
+	tb       testing.TB
+	err      *os.LinkError
+	foundErr bool
 }
 
-func CheckLinkError(tb testing.TB, err error) *CheckLink {
+// CheckLinkError checks if err is a os.LinkError.
+func CheckLinkError(tb testing.TB, err error) *checkLinkError { //nolint:revive // No need to export checkLinkError to use it.
 	tb.Helper()
 
-	halt := false
+	foundErr := false
 
 	if err == nil {
-		halt = true
+		foundErr = true
 
 		tb.Error("want error to be not nil")
 	}
 
 	e, ok := err.(*os.LinkError)
 	if !ok {
-		halt = true
+		foundErr = true
 
-		tb.Errorf("want error type to be *fs.LinkError, got %v : %v", reflect.TypeOf(err), err)
+		tb.Errorf("want error type to be *os.LinkError, got %v : %v", reflect.TypeOf(err), err)
 	}
 
-	return &CheckLink{tb: tb, err: e, halt: halt}
+	return &checkLinkError{tb: tb, err: e, foundErr: foundErr}
 }
 
-func (cl *CheckLink) Op(wantOp string) *CheckLink {
+// Op checks if wantOp is equal to the current os.LinkError Op.
+func (cl *checkLinkError) Op(wantOp string) *checkLinkError {
 	cl.tb.Helper()
 
-	if cl.halt {
+	if cl.foundErr {
 		return cl
 	}
 
@@ -1006,10 +998,11 @@ func (cl *CheckLink) Op(wantOp string) *CheckLink {
 	return cl
 }
 
-func (cl *CheckLink) Old(wantOld string) *CheckLink {
+// Old checks the old path of the current os.LinkError.
+func (cl *checkLinkError) Old(wantOld string) *checkLinkError {
 	cl.tb.Helper()
 
-	if cl.halt {
+	if cl.foundErr {
 		return cl
 	}
 
@@ -1021,10 +1014,11 @@ func (cl *CheckLink) Old(wantOld string) *CheckLink {
 	return cl
 }
 
-func (cl *CheckLink) New(wantNew string) *CheckLink {
+// New checks the new path of the current os.LinkError.
+func (cl *checkLinkError) New(wantNew string) *checkLinkError {
 	cl.tb.Helper()
 
-	if cl.halt {
+	if cl.foundErr {
 		return cl
 	}
 
@@ -1036,17 +1030,20 @@ func (cl *CheckLink) New(wantNew string) *CheckLink {
 	return cl
 }
 
-func (cl *CheckLink) Err(wantErr error) *CheckLink {
+// Err checks the error of current os.LinkError.
+func (cl *checkLinkError) Err(wantErr error) *checkLinkError {
 	cl.tb.Helper()
 
-	if cl.halt {
+	if cl.foundErr {
 		return cl
 	}
 
 	err := cl.err
-	if err.Err != wantErr && err.Err.Error() != wantErr.Error() {
-		cl.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	if err.Err == wantErr || err.Err.Error() == wantErr.Error() {
+		return cl
 	}
+
+	cl.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 
 	return cl
 }
