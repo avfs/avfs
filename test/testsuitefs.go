@@ -186,13 +186,13 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTe
 	for _, tf := range testFuncs {
 		sfs.SetUser(t, userName)
 
-		funcName := functionName(tf)
-		testDir := vfs.Join(sfs.rootDir, funcName)
+		fn := funcName(tf)
+		testDir := vfs.Join(sfs.rootDir, fn)
 
 		sfs.CreateDir(t, testDir, 0o777)
 		sfs.ChangeDir(t, testDir)
 
-		t.Run(funcName, func(t *testing.T) {
+		t.Run(fn, func(t *testing.T) {
 			tf(t, testDir)
 		})
 
@@ -200,11 +200,11 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTe
 	}
 }
 
-// SuiteBenchFunc is a bench function to be used by RunBenchs.
+// SuiteBenchFunc is a bench function to be used by RunBenches.
 type SuiteBenchFunc func(b *testing.B, testDir string)
 
-// RunBenchs runs all benchmark functions benchFuncs specified as user userName.
-func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...SuiteBenchFunc) {
+// RunBenches runs all benchmark functions benchFuncs specified as user userName.
+func (sfs *SuiteFS) RunBenches(b *testing.B, userName string, benchFuncs ...SuiteBenchFunc) {
 	vfs := sfs.vfsSetup
 
 	defer func() {
@@ -219,13 +219,13 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Suite
 	for _, bf := range benchFuncs {
 		sfs.SetUser(b, userName)
 
-		funcName := functionName(bf)
-		testDir := vfs.Join(sfs.rootDir, funcName)
+		fn := funcName(bf)
+		testDir := vfs.Join(sfs.rootDir, fn)
 
 		sfs.CreateDir(b, testDir, 0o777)
 		sfs.ChangeDir(b, testDir)
 
-		b.Run(funcName, func(b *testing.B) {
+		b.Run(fn, func(b *testing.B) {
 			bf(b, testDir)
 		})
 
@@ -233,31 +233,37 @@ func (sfs *SuiteFS) RunBenchs(b *testing.B, userName string, benchFuncs ...Suite
 	}
 }
 
-// functionName return the name of a function or an empty string if not available.
-func functionName(i interface{}) string {
-	pc := reflect.ValueOf(i).Pointer()
+// funcName returns the name of a function or a method.
+// It returns an empty string if not available.
+func funcName(i interface{}) string {
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Func {
+		return ""
+	}
+
+	pc := v.Pointer()
 	if pc == 0 {
 		return ""
 	}
 
-	fn := runtime.FuncForPC(pc)
-	if fn == nil {
+	fpc := runtime.FuncForPC(pc)
+	if fpc == nil {
 		return ""
 	}
 
-	name := fn.Name()
+	fn := fpc.Name()
 
-	start := strings.LastIndex(name, ".") + 1
-	if start == -1 {
-		return name
-	}
-
-	end := strings.LastIndex(name, "-")
+	end := strings.LastIndex(fn, "-")
 	if end == -1 {
-		return name[start:]
+		end = len(fn)
 	}
 
-	return name[start:end]
+	start := strings.LastIndex(fn[:end], ".")
+	if start == -1 {
+		return fn[:end]
+	}
+
+	return fn[start+1 : end]
 }
 
 // CreateDir creates a directory for the tests.

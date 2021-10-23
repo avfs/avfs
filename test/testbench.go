@@ -25,7 +25,7 @@ import (
 )
 
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
-	sfs.RunBenchs(b, UsrTest,
+	sfs.RunBenches(b, UsrTest,
 		sfs.BenchCreate,
 		sfs.BenchMkdir,
 		sfs.BenchRemove)
