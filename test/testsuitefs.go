@@ -883,19 +883,31 @@ func CheckPathError(tb testing.TB, err error) *checkPathError { //nolint:revive 
 	return &checkPathError{tb: tb, err: e, foundErr: foundErr}
 }
 
-// Op checks if wantOp is equal to the current fs.PathError Op.
-func (cp *checkPathError) Op(wantOp string) *checkPathError {
+// Op checks if op is equal to the current fs.PathError Op for one of the osTypes.
+func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError {
 	cp.tb.Helper()
 
 	if cp.foundErr {
 		return cp
 	}
 
-	err := cp.err
+	canTest := len(osTypes) == 0
 
-	wantOp = avfs.OpTranslate(wantOp, avfs.Cfg.OSType())
-	if err.Op != wantOp {
-		cp.tb.Errorf("want Op to be %s, got %s", wantOp, err.Op)
+	for _, ost := range osTypes {
+		if ost == avfs.Cfg.OSType() {
+			canTest = true
+		}
+	}
+
+	if !canTest {
+		return cp
+	}
+
+	op = avfs.OpTranslate(op, avfs.Cfg.OSType())
+
+	err := cp.err
+	if err.Op != op {
+		cp.tb.Errorf("want Op to be %s, got %s", op, err.Op)
 	}
 
 	return cp
@@ -903,16 +915,20 @@ func (cp *checkPathError) Op(wantOp string) *checkPathError {
 
 // OpLstat checks if the current fs.PathError Op is a Lstat Op.
 func (cp *checkPathError) OpLstat() *checkPathError {
+	cp.tb.Helper()
+
 	return cp.Op("lstat")
 }
 
 // OpStat checks if the current fs.PathError Op is a Stat Op.
 func (cp *checkPathError) OpStat() *checkPathError {
+	cp.tb.Helper()
+
 	return cp.Op("stat")
 }
 
 // Path checks the path of the current fs.PathError.
-func (cp *checkPathError) Path(wantPath string) *checkPathError {
+func (cp *checkPathError) Path(path string) *checkPathError {
 	cp.tb.Helper()
 
 	if cp.foundErr {
@@ -920,18 +936,30 @@ func (cp *checkPathError) Path(wantPath string) *checkPathError {
 	}
 
 	err := cp.err
-	if err.Path != wantPath {
-		cp.tb.Errorf("want Path to be %s, got %s", wantPath, err.Path)
+	if err.Path != path {
+		cp.tb.Errorf("want Path to be %s, got %s", path, err.Path)
 	}
 
 	return cp
 }
 
 // Err checks the error of current fs.PathError.
-func (cp *checkPathError) Err(wantErr error) *checkPathError {
+func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathError {
 	cp.tb.Helper()
 
 	if cp.foundErr {
+		return cp
+	}
+
+	canTest := len(osTypes) == 0
+
+	for _, ost := range osTypes {
+		if ost == avfs.Cfg.OSType() {
+			canTest = true
+		}
+	}
+
+	if !canTest {
 		return cp
 	}
 
@@ -977,10 +1005,22 @@ func CheckLinkError(tb testing.TB, err error) *checkLinkError { //nolint:revive 
 }
 
 // Op checks if wantOp is equal to the current os.LinkError Op.
-func (cl *checkLinkError) Op(wantOp string) *checkLinkError {
+func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkError {
 	cl.tb.Helper()
 
 	if cl.foundErr {
+		return cl
+	}
+
+	canTest := len(osTypes) == 0
+
+	for _, ost := range osTypes {
+		if ost == avfs.Cfg.OSType() {
+			canTest = true
+		}
+	}
+
+	if !canTest {
 		return cl
 	}
 
@@ -1025,10 +1065,22 @@ func (cl *checkLinkError) New(wantNew string) *checkLinkError {
 }
 
 // Err checks the error of current os.LinkError.
-func (cl *checkLinkError) Err(wantErr error) *checkLinkError {
+func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkError {
 	cl.tb.Helper()
 
 	if cl.foundErr {
+		return cl
+	}
+
+	canTest := len(osTypes) == 0
+
+	for _, ost := range osTypes {
+		if ost == avfs.Cfg.OSType() {
+			canTest = true
+		}
+	}
+
+	if !canTest {
 		return cl
 	}
 

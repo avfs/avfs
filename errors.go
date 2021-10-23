@@ -102,6 +102,7 @@ type errnoOSType struct {
 // errTransMap stores translations of Linux errors to other operating system errors.
 var errTransMap = map[errnoOSType]Errno{
 	{En: ErrNoSuchFileOrDir, Ost: OsWindows}: ErrWinPathNotFound,
+	{En: ErrFileExists, Ost: OsWindows}:      ErrWinFileExists,
 }
 
 // ErrTranslate translates Linux errors to other operating systems errors.
