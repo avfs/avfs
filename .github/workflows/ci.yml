@@ -32,13 +32,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-
       - name: Install Go
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
 
       - name: Install mage & avfs binaries
         run: go run mage/build.go
