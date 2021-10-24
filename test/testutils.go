@@ -1105,9 +1105,9 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 			parts  []string
 			osType avfs.OSType
 		}{
-			{path: "C:\\", parts: nil, osType: avfs.OsWindows},
-			{path: "C:\\Users", parts: []string{"Users"}, osType: avfs.OsWindows},
-			{path: "c:\\नमस्ते\\दुनिया", parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsWindows},
+			{path: `C:\`, parts: nil, osType: avfs.OsWindows},
+			{path: `C:\Users`, parts: []string{"Users"}, osType: avfs.OsWindows},
+			{path: `c:\नमस्ते\दुनिया`, parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsWindows},
 
 			{path: "/", parts: nil, osType: avfs.OsLinux},
 			{path: "/a", parts: []string{"a"}, osType: avfs.OsLinux},

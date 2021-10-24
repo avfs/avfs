@@ -136,9 +136,9 @@ func (ut *Utils) BaseDirs() []DirInfo {
 	case OsWindows:
 		return []DirInfo{
 			{Path: ut.HomeDir(), Perm: DefaultDirPerm},
-			{Path: ut.Join(ut.HomeDirUser(ut.AdminUserName()), "AppData\\Local\\Temp"), Perm: DefaultDirPerm},
-			{Path: "\\Windows", Perm: DefaultDirPerm},
-			{Path: "\\Windows\\Temp", Perm: DefaultDirPerm},
+			{Path: ut.Join(ut.HomeDirUser(ut.AdminUserName()), `AppData\Local\Temp`), Perm: DefaultDirPerm},
+			{Path: `\Windows`, Perm: DefaultDirPerm},
+			{Path: `\Windows\Temp`, Perm: DefaultDirPerm},
 		}
 	default:
 		return []DirInfo{
@@ -463,7 +463,7 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 func (ut *Utils) HomeDir() string {
 	switch ut.osType {
 	case OsWindows:
-		return "\\Users"
+		return `\Users`
 	default:
 		return "/home"
 	}
@@ -896,7 +896,7 @@ func (ut *Utils) TempDir(vfs VFS) string {
 		return "/tmp"
 	}
 
-	return ut.Join("C:\\Users", vfs.User().Name(), "AppData\\Local\\Temp")
+	return ut.Join(`C:\Users`, vfs.User().Name(), `AppData\Local\Temp`)
 }
 
 // ToSlash returns the result of replacing each separator character
