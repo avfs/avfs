@@ -964,8 +964,6 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 	}
 
 	err := cp.err
-	wantErr = avfs.ErrTranslate(wantErr, avfs.Cfg.OSType())
-
 	if err.Err == wantErr || err.Err.Error() == wantErr.Error() {
 		return cp
 	}

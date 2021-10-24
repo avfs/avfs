@@ -94,36 +94,6 @@ func (en Errno) Error() string {
 	return "errno " + strconv.Itoa(int(en))
 }
 
-type errnoOSType struct {
-	En  Errno
-	Ost OSType
-}
-
-// errTransMap stores translations of Linux errors to other operating system errors.
-var errTransMap = map[errnoOSType]Errno{
-	{En: ErrNoSuchFileOrDir, Ost: OsWindows}: ErrWinPathNotFound,
-	{En: ErrFileExists, Ost: OsWindows}:      ErrWinFileExists,
-}
-
-// ErrTranslate translates Linux errors to other operating systems errors.
-func ErrTranslate(err error, ost OSType) error {
-	if ost == OsLinux {
-		return err
-	}
-
-	en, ok := err.(Errno)
-	if !ok {
-		return err
-	}
-
-	et, ok := errTransMap[errnoOSType{En: en, Ost: ost}]
-	if ok {
-		return et
-	}
-
-	return err
-}
-
 type opOSType struct {
 	Op  string
 	Ost OSType
@@ -184,10 +154,11 @@ const (
 	ErrWinDirNameInvalid   = windowsError + 0x10B      // The directory name is invalid.
 	ErrWinDirNotEmpty      = windowsError + 145        // The directory is not empty.
 	ErrWinFileExists       = windowsError + 80         // The file exists.
+	ErrWinFileNotFound     = windowsError + 0x2        // The system cannot find the file specified.
 	ErrWinNegativeSeek     = windowsError + 0x83       // An attempt was made to move the file pointer before the beginning of the file.
 	ErrWinNotReparsePoint  = windowsError + 4390       // The file or directory is not a reparse point.
 	ErrWinInvalidHandle    = windowsError + 0x6        // The handle is invalid.
-	ErrWinNotSupported     = windowsError + 0x20000082 // Not supported by windows.
+	ErrWinNotSupported     = windowsError + 0x20000082 // not supported by windows
 	ErrWinPathNotFound     = windowsError + 0x3        // The system cannot find the path specified.
 	ErrWinPrivilegeNotHeld = windowsError + 1314       // A required privilege is not held by the client.
 )
@@ -208,10 +179,11 @@ var errText = map[Errno]string{
 	ErrWinDirNameInvalid:   "The directory name is invalid.",
 	ErrWinDirNotEmpty:      "The directory is not empty.",
 	ErrWinFileExists:       "The file exists.",
+	ErrWinFileNotFound:     "The system cannot find the file specified.",
 	ErrWinNegativeSeek:     "An attempt was made to move the file pointer before the beginning of the file.",
 	ErrWinNotReparsePoint:  "The file or directory is not a reparse point.",
 	ErrWinInvalidHandle:    "The handle is invalid.",
-	ErrWinNotSupported:     "Not supported by windows.",
+	ErrWinNotSupported:     "not supported by windows",
 	ErrWinPathNotFound:     "The system cannot find the path specified.",
 	ErrWinPrivilegeNotHeld: "A required privilege is not held by the client.",
 }
