@@ -1282,7 +1282,7 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 		_, err := vfs.MkdirTemp(existingFile, "")
 		CheckPathError(t, err).Op("mkdir").
 			Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinPathNotFound, avfs.OsLinux)
+			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 	})
 }
 
