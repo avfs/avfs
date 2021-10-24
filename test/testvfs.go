@@ -1500,7 +1500,9 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		existingDir := sfs.ExistingDir(t, testDir)
 
 		f, err := vfs.OpenFile(existingDir, os.O_WRONLY, avfs.DefaultFilePerm)
-		CheckPathError(t, err).Op("open").Path(existingDir).Err(avfs.ErrIsADirectory)
+		CheckPathError(t, err).Op("open").Path(existingDir).
+			Err(avfs.ErrIsADirectory, avfs.OsLinux).
+			Err(avfs.ErrWinIsADirectory, avfs.OsWindows)
 
 		if !reflect.ValueOf(f).IsNil() {
 			t.Errorf("OpenFile : want file to be nil, got %v", f)
@@ -2370,9 +2372,9 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 
 	t.Run("TruncateOnDir", func(t *testing.T) {
 		err := vfs.Truncate(testDir, 0)
-		CheckPathError(t, err).Path(testDir).Err(avfs.ErrIsADirectory).
-			Op("truncate", avfs.OsLinux).
-			Op("open", avfs.OsWindows)
+		CheckPathError(t, err).Path(testDir).
+			Op("truncate", avfs.OsLinux).Err(avfs.ErrIsADirectory, avfs.OsLinux).
+			Op("open", avfs.OsWindows).Err(avfs.ErrWinIsADirectory, avfs.OsWindows)
 	})
 
 	t.Run("TruncateSizeNegative", func(t *testing.T) {
