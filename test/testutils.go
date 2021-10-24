@@ -1248,61 +1248,63 @@ func (sfs *SuiteFS) TestRel(t *testing.T, testDir string) {
 		root, path, want string
 	}
 
-	var relTests []*relTest
+	relTests := []*relTest{
+		{root: "a/b", path: "a/b", want: "."},
+		{root: "a/b/.", path: "a/b", want: "."},
+		{root: "a/b", path: "a/b/.", want: "."},
+		{root: "./a/b", path: "a/b", want: "."},
+		{root: "a/b", path: "./a/b", want: "."},
+		{root: "ab/cd", path: "ab/cde", want: "../cde"},
+		{root: "ab/cd", path: "ab/c", want: "../c"},
+		{root: "a/b", path: "a/b/c/d", want: "c/d"},
+		{root: "a/b", path: "a/b/../c", want: "../c"},
+		{root: "a/b/../c", path: "a/b", want: "../b"},
+		{root: "a/b/c", path: "a/c/d", want: "../../c/d"},
+		{root: "a/b", path: "c/d", want: "../../c/d"},
+		{root: "a/b/c/d", path: "a/b", want: "../.."},
+		{root: "a/b/c/d", path: "a/b/", want: "../.."},
+		{root: "a/b/c/d/", path: "a/b", want: "../.."},
+		{root: "a/b/c/d/", path: "a/b/", want: "../.."},
+		{root: "../../a/b", path: "../../a/b/c/d", want: "c/d"},
+		{root: "/a/b", path: "/a/b", want: "."},
+		{root: "/a/b/.", path: "/a/b", want: "."},
+		{root: "/a/b", path: "/a/b/.", want: "."},
+		{root: "/ab/cd", path: "/ab/cde", want: "../cde"},
+		{root: "/ab/cd", path: "/ab/c", want: "../c"},
+		{root: "/a/b", path: "/a/b/c/d", want: "c/d"},
+		{root: "/a/b", path: "/a/b/../c", want: "../c"},
+		{root: "/a/b/../c", path: "/a/b", want: "../b"},
+		{root: "/a/b/c", path: "/a/c/d", want: "../../c/d"},
+		{root: "/a/b", path: "/c/d", want: "../../c/d"},
+		{root: "/a/b/c/d", path: "/a/b", want: "../.."},
+		{root: "/a/b/c/d", path: "/a/b/", want: "../.."},
+		{root: "/a/b/c/d/", path: "/a/b", want: "../.."},
+		{root: "/a/b/c/d/", path: "/a/b/", want: "../.."},
+		{root: "/../../a/b", path: "/../../a/b/c/d", want: "c/d"},
+		{root: ".", path: "a/b", want: "a/b"},
+		{root: ".", path: "..", want: ".."},
 
-	switch vfs.OSType() {
-	case avfs.OsWindows:
-		relTests = []*relTest{
-			{root: `C:a\b\c`, path: `C:a/b/d`, want: `..\d`},
-			{root: `C:\`, path: `D:\`, want: `err`},
-			{root: `C:`, path: `D:`, want: `err`},
-			{root: `C:\Projects`, path: `c:\projects\src`, want: `src`},
-			{root: `C:\Projects`, path: `c:\projects`, want: `.`},
-			{root: `C:\Projects\a\..`, path: `c:\projects`, want: `.`},
-		}
-	default:
-		relTests = []*relTest{
-			{root: "a/b", path: "a/b", want: "."},
-			{root: "a/b/.", path: "a/b", want: "."},
-			{root: "a/b", path: "a/b/.", want: "."},
-			{root: "./a/b", path: "a/b", want: "."},
-			{root: "a/b", path: "./a/b", want: "."},
-			{root: "ab/cd", path: "ab/cde", want: "../cde"},
-			{root: "ab/cd", path: "ab/c", want: "../c"},
-			{root: "a/b", path: "a/b/c/d", want: "c/d"},
-			{root: "a/b", path: "a/b/../c", want: "../c"},
-			{root: "a/b/../c", path: "a/b", want: "../b"},
-			{root: "a/b/c", path: "a/c/d", want: "../../c/d"},
-			{root: "a/b", path: "c/d", want: "../../c/d"},
-			{root: "a/b/c/d", path: "a/b", want: "../.."},
-			{root: "a/b/c/d", path: "a/b/", want: "../.."},
-			{root: "a/b/c/d/", path: "a/b", want: "../.."},
-			{root: "a/b/c/d/", path: "a/b/", want: "../.."},
-			{root: "../../a/b", path: "../../a/b/c/d", want: "c/d"},
-			{root: "/a/b", path: "/a/b", want: "."},
-			{root: "/a/b/.", path: "/a/b", want: "."},
-			{root: "/a/b", path: "/a/b/.", want: "."},
-			{root: "/ab/cd", path: "/ab/cde", want: "../cde"},
-			{root: "/ab/cd", path: "/ab/c", want: "../c"},
-			{root: "/a/b", path: "/a/b/c/d", want: "c/d"},
-			{root: "/a/b", path: "/a/b/../c", want: "../c"},
-			{root: "/a/b/../c", path: "/a/b", want: "../b"},
-			{root: "/a/b/c", path: "/a/c/d", want: "../../c/d"},
-			{root: "/a/b", path: "/c/d", want: "../../c/d"},
-			{root: "/a/b/c/d", path: "/a/b", want: "../.."},
-			{root: "/a/b/c/d", path: "/a/b/", want: "../.."},
-			{root: "/a/b/c/d/", path: "/a/b", want: "../.."},
-			{root: "/a/b/c/d/", path: "/a/b/", want: "../.."},
-			{root: "/../../a/b", path: "/../../a/b/c/d", want: "c/d"},
-			{root: ".", path: "a/b", want: "a/b"},
-			{root: ".", path: "..", want: ".."},
+		// can't do purely lexically
+		{root: "..", path: ".", want: "err"},
+		{root: "..", path: "a", want: "err"},
+		{root: "../..", path: "..", want: "err"},
+		{root: "a", path: "/a", want: "err"},
+		{root: "/a", path: "a", want: "err"},
+	}
 
-			// can't do purely lexically
-			{root: "..", path: ".", want: "err"},
-			{root: "..", path: "a", want: "err"},
-			{root: "../..", path: "..", want: "err"},
-			{root: "a", path: "/a", want: "err"},
-			{root: "/a", path: "a", want: "err"},
+	relTestsWin := []*relTest{
+		{root: `C:a\b\c`, path: `C:a/b/d`, want: `..\d`},
+		{root: `C:\`, path: `D:\`, want: `err`},
+		{root: `C:`, path: `D:`, want: `err`},
+		{root: `C:\Projects`, path: `c:\projects\src`, want: `src`},
+		{root: `C:\Projects`, path: `c:\projects`, want: `.`},
+		{root: `C:\Projects\a\..`, path: `c:\projects`, want: `.`},
+	}
+
+	if vfs.OSType() == avfs.OsWindows {
+		relTests = append(relTests, relTestsWin...)
+		for i := range relTests {
+			relTests[i].want = filepath.FromSlash(relTests[i].want)
 		}
 	}
 

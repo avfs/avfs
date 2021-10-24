@@ -449,7 +449,7 @@ func isSlash(c uint8) bool {
 }
 
 func sameWord(a, b string) bool {
-	return a == b
+	return strings.EqualFold(a, b)
 }
 
 // A lazybuf is a lazily constructed path buffer.
