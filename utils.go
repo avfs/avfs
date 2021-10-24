@@ -896,6 +896,10 @@ func (ut *Utils) TempDir(vfs VFS) string {
 		return "/tmp"
 	}
 
+	if !vfs.HasFeature(FeatIdentityMgr) {
+		return `C:\Windows\Temp`
+	}
+
 	return ut.Join(`C:\Users`, vfs.User().Name(), `AppData\Local\Temp`)
 }
 
