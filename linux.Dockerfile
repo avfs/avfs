@@ -15,8 +15,8 @@
 ##
 
 FROM golang:bullseye AS base
-WORKDIR /go/src
 USER root
+WORKDIR /go/src
 
 FROM base AS avfs
 COPY mage mage
@@ -32,7 +32,7 @@ RUN go mod download
 RUN go build ./...
 
 FROM base AS copyfiles
-COPY --from=avfs /go/bin/avfs* /go/bin
+COPY --from=avfs /go/bin /go/bin
 COPY --from=modules /go/pkg /go/pkg
 COPY ./go.mod ./go.sum ./
 COPY *.go ./

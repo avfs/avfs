@@ -14,19 +14,31 @@
 ##	limitations under the License.
 ##
 
-FROM golang:nanoserver AS base
+FROM golang:windowsservercore AS base
+USER ContainerAdministrator
 WORKDIR /go/src
 
+FROM base AS avfs
+COPY mage mage
+RUN go run mage/build.go
+
+FROM base AS modules
+COPY go.mod go.sum ./
+RUN go mod download
+
+# This should fail xith error go: warning: "./..." matched no packages
+# each time the modules are changed, but it avoids downloading
+# modules for each build.
+RUN go build ./...
+
 FROM base AS copyfiles
-COPY ./bin/avfs* /go/bin/
-COPY ./*.go ./
-COPY ./go.mod ./
-COPY ./go.sum ./
-COPY ./idm ./idm
-COPY ./mage ./mage
-COPY ./test ./test
-COPY ./vfs ./vfs
+COPY --from=avfs /go/bin /go/bin
+COPY --from=modules /go/pkg /go/pkg
+COPY ./go.mod ./go.sum ./
+COPY *.go ./
+COPY idm idm
+COPY test test
+COPY vfs vfs
 
 FROM copyfiles
-USER ContainerAdministrator
 CMD avfs test
