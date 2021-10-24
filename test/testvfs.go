@@ -409,10 +409,12 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
 
 		err := vfs.Chroot(existingFile)
-		CheckPathError(t, err).Op("chroot").Path(existingFile).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).Op("chroot").Path(existingFile).
+			Err(avfs.ErrNotADirectory, avfs.OsLinux)
 
 		err = vfs.Chroot(nonExistingFile)
-		CheckPathError(t, err).Op("chroot").Path(nonExistingFile).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).Op("chroot").Path(nonExistingFile).
+			Err(avfs.ErrNotADirectory, avfs.OsLinux)
 	})
 }
 

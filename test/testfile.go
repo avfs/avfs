@@ -873,7 +873,8 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckNoError(t, "Seek", err)
 		default:
-			CheckPathError(t, err).Op("seek").Path(f.Name()).Err(avfs.ErrInvalidArgument)
+			CheckPathError(t, err).Op("seek").Path(f.Name()).
+				Err(avfs.ErrInvalidArgument, avfs.OsLinux)
 		}
 
 		if pos != 0 {

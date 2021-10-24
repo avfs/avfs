@@ -596,7 +596,8 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			CheckNoError(t, "Stat "+invalidPath, err)
 		default:
-			CheckPathError(t, err).OpStat().Path(invalidPath).Err(avfs.ErrNotADirectory)
+			CheckPathError(t, err).OpStat().Path(invalidPath).
+				Err(avfs.ErrNotADirectory, avfs.OsLinux)
 		}
 
 		if ok {
