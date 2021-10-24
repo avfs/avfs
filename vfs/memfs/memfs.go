@@ -20,6 +20,7 @@
 package memfs
 
 import (
+	"errors"
 	"io/fs"
 	"os"
 	"sync/atomic"
@@ -309,7 +310,7 @@ func (vfs *MemFS) IsAbs(path string) bool {
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
 func (vfs *MemFS) IsExist(err error) bool {
-	return vfs.utils.IsExist(err)
+	return errors.Unwrap(err) == vfs.err.FileExists
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
