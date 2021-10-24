@@ -77,37 +77,37 @@ func TestSearchNode(t *testing.T) {
 		err         error
 	}{
 		// Existing directories
-		{path: "/", parent: rn, child: rn, first: "", rest: "", err: avfs.ErrFileExists},
-		{path: "/a", parent: rn, child: da, first: "a", rest: "", err: avfs.ErrFileExists},
-		{path: "/b", parent: rn, child: db, first: "b", rest: "", err: avfs.ErrFileExists},
-		{path: "/c", parent: rn, child: dc, first: "c", rest: "", err: avfs.ErrFileExists},
-		{path: "/a/a1", parent: da, child: da1, first: "a1", rest: "", err: avfs.ErrFileExists},
-		{path: "/a/a2", parent: da, child: da2, first: "a2", rest: "", err: avfs.ErrFileExists},
-		{path: "/b/b1", parent: db, child: db1, first: "b1", rest: "", err: avfs.ErrFileExists},
-		{path: "/b/b1/b1A", parent: db1, child: db1a, first: "b1A", rest: "", err: avfs.ErrFileExists},
-		{path: "/b/b1/b1B", parent: db1, child: db1b, first: "b1B", rest: "", err: avfs.ErrFileExists},
+		{path: "/", parent: rn, child: rn, first: "", rest: "", err: vfs.err.FileExists},
+		{path: "/a", parent: rn, child: da, first: "a", rest: "", err: vfs.err.FileExists},
+		{path: "/b", parent: rn, child: db, first: "b", rest: "", err: vfs.err.FileExists},
+		{path: "/c", parent: rn, child: dc, first: "c", rest: "", err: vfs.err.FileExists},
+		{path: "/a/a1", parent: da, child: da1, first: "a1", rest: "", err: vfs.err.FileExists},
+		{path: "/a/a2", parent: da, child: da2, first: "a2", rest: "", err: vfs.err.FileExists},
+		{path: "/b/b1", parent: db, child: db1, first: "b1", rest: "", err: vfs.err.FileExists},
+		{path: "/b/b1/b1A", parent: db1, child: db1a, first: "b1A", rest: "", err: vfs.err.FileExists},
+		{path: "/b/b1/b1B", parent: db1, child: db1b, first: "b1B", rest: "", err: vfs.err.FileExists},
 
 		// Existing files
-		{path: "/file1", parent: rn, child: f1, first: "file1", rest: "", err: avfs.ErrFileExists},
-		{path: "/a/afile1", parent: da, child: fa1, first: "afile1", rest: "", err: avfs.ErrFileExists},
-		{path: "/a/afile2", parent: da, child: fa2, first: "afile2", rest: "", err: avfs.ErrFileExists},
-		{path: "/a/afile3", parent: da, child: fa3, first: "afile3", rest: "", err: avfs.ErrFileExists},
+		{path: "/file1", parent: rn, child: f1, first: "file1", rest: "", err: vfs.err.FileExists},
+		{path: "/a/afile1", parent: da, child: fa1, first: "afile1", rest: "", err: vfs.err.FileExists},
+		{path: "/a/afile2", parent: da, child: fa2, first: "afile2", rest: "", err: vfs.err.FileExists},
+		{path: "/a/afile3", parent: da, child: fa3, first: "afile3", rest: "", err: vfs.err.FileExists},
 
 		// Non existing
-		{path: "/z", parent: rn, first: "z", rest: "", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/a/az", parent: da, first: "az", rest: "", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist", err: avfs.ErrNoSuchFileOrDir},
-		{path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir", err: avfs.ErrNotADirectory},
+		{path: "/z", parent: rn, first: "z", rest: "", err: vfs.err.NoSuchFileOrDir},
+		{path: "/a/az", parent: da, first: "az", rest: "", err: vfs.err.NoSuchFileOrDir},
+		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: vfs.err.NoSuchFileOrDir},
+		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: vfs.err.NoSuchFileOrDir},
+		{path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist", err: vfs.err.NoSuchFileOrDir},
+		{path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir", err: vfs.err.NotADirectory},
 
 		// Symlinks
-		{path: "/lroot", parent: rn, child: rn, first: "", rest: "", err: avfs.ErrFileExists},
-		{path: "/lroot/a", parent: rn, child: da, first: "a", rest: "", err: avfs.ErrFileExists},
-		{path: "/la/a1", parent: da, child: da1, first: "a1", rest: "", err: avfs.ErrFileExists},
-		{path: "/b/b1/b1B/lb1/b1A", parent: db1, child: db1a, first: "b1A", rest: "", err: avfs.ErrFileExists},
-		{path: "/c/lafile3", parent: da, child: fa3, first: "afile3", rest: "", err: avfs.ErrFileExists},
-		{path: "/loop1", parent: rn, child: lloop1, first: "loop1", rest: "", err: avfs.ErrTooManySymlinks},
+		{path: "/lroot", parent: rn, child: rn, first: "", rest: "", err: vfs.err.FileExists},
+		{path: "/lroot/a", parent: rn, child: da, first: "a", rest: "", err: vfs.err.FileExists},
+		{path: "/la/a1", parent: da, child: da1, first: "a1", rest: "", err: vfs.err.FileExists},
+		{path: "/b/b1/b1B/lb1/b1A", parent: db1, child: db1a, first: "b1A", rest: "", err: vfs.err.FileExists},
+		{path: "/c/lafile3", parent: da, child: fa3, first: "afile3", rest: "", err: vfs.err.FileExists},
+		{path: "/loop1", parent: rn, child: lloop1, first: "loop1", rest: "", err: vfs.err.TooManySymlinks},
 	}
 
 	for _, c := range cases {

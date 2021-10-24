@@ -53,20 +53,20 @@ func (vfs *MemFS) Chdir(dir string) error {
 	const op = "chdir"
 
 	_, child, pi, err := vfs.searchNode(dir, slmLstat)
-	if err != avfs.ErrFileExists {
+	if err != vfs.err.FileExists {
 		return &fs.PathError{Op: op, Path: dir, Err: err}
 	}
 
 	c, ok := child.(*dirNode)
 	if !ok {
-		return &fs.PathError{Op: op, Path: dir, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
 	}
 
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	if !c.checkPermission(avfs.PermLookup, vfs.user) {
-		return &fs.PathError{Op: op, Path: dir, Err: avfs.ErrPermDenied}
+		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
 	}
 
 	vfs.curDir = pi.Path()
@@ -96,16 +96,15 @@ func (vfs *MemFS) Chmod(name string, mode fs.FileMode) error {
 	const op = "chmod"
 
 	_, child, _, err := vfs.searchNode(name, slmEval)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	child.Lock()
 	defer child.Unlock()
 
-	err = child.setMode(mode, vfs.user)
-	if err != nil {
-		return &fs.PathError{Op: op, Path: name, Err: err}
+	if !child.setMode(mode, vfs.user) {
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	return nil
@@ -122,11 +121,11 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsAdmin() {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	_, child, _, err := vfs.searchNode(name, slmEval)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -143,17 +142,17 @@ func (vfs *MemFS) Chroot(path string) error {
 	const op = "chroot"
 
 	if !vfs.user.IsAdmin() {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: path, Err: vfs.err.OpNotPermitted}
 	}
 
 	_, child, _, err := vfs.searchNode(path, slmEval)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
 	c, ok := child.(*dirNode)
 	if !ok {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
 	}
 
 	vfs.rootNode = c
@@ -171,16 +170,15 @@ func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
 	_, child, _, err := vfs.searchNode(name, slmLstat)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	child.Lock()
 	defer child.Unlock()
 
-	err = child.setModTime(mtime, vfs.user)
-	if err != nil {
-		return &fs.PathError{Op: op, Path: name, Err: err}
+	if !child.setModTime(mtime, vfs.user) {
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	return nil
@@ -260,8 +258,8 @@ func (vfs *MemFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
 	_, _, pi, err := vfs.searchNode(path, slmEval)
-	if err != avfs.ErrFileExists {
-		return "", &fs.PathError{Op: op, Path: pi.LeftPart(), Err: avfs.ErrNoSuchFileOrDir}
+	if err != vfs.err.FileExists {
+		return "", &fs.PathError{Op: op, Path: pi.LeftPart(), Err: vfs.err.NoSuchFileOrDir}
 	}
 
 	return pi.Path(), nil
@@ -343,11 +341,11 @@ func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsAdmin() {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	_, child, _, err := vfs.searchNode(name, slmLstat)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -364,12 +362,12 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	const op = "link"
 
 	_, oChild, _, oerr := vfs.searchNode(oldname, slmLstat)
-	if oerr != avfs.ErrFileExists || oChild == nil {
+	if oerr != vfs.err.FileExists || oChild == nil {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: oerr}
 	}
 
 	nParent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
-	if nParent == nil || nerr != avfs.ErrNoSuchFileOrDir {
+	if nParent == nil || nerr != vfs.err.NoSuchFileOrDir {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
@@ -377,12 +375,12 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	defer nParent.mu.Unlock()
 
 	if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
 	}
 
 	c, ok := oChild.(*fileNode)
 	if !ok {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
 	}
 
 	c.mu.Lock()
@@ -401,7 +399,7 @@ func (vfs *MemFS) Lstat(path string) (fs.FileInfo, error) {
 	const op = "lstat"
 
 	_, child, pi, err := vfs.searchNode(path, slmLstat)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return nil, &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
@@ -446,11 +444,11 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFileOrDir}
 	}
 
 	parent, _, pi, err := vfs.searchNode(name, slmEval)
-	if err != avfs.ErrNoSuchFileOrDir || !pi.IsLast() || parent == nil {
+	if err != vfs.err.NoSuchFileOrDir || !pi.IsLast() || parent == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -458,12 +456,12 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	defer parent.mu.Unlock()
 
 	if !parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user) {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 	}
 
 	part := pi.Part()
 	if parent.child(part) != nil {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 	}
 
 	_ = vfs.createDir(parent, part, perm)
@@ -482,19 +480,19 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	const op = "mkdir"
 
 	parent, child, pi, err := vfs.searchNode(path, slmEval)
-	if err == avfs.ErrFileExists {
+	if err == vfs.err.FileExists {
 		if _, ok := child.(*dirNode); !ok {
-			return &fs.PathError{Op: op, Path: path, Err: avfs.ErrNotADirectory}
+			return &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
 		}
 
 		return nil
 	}
 
-	if parent == nil || err == avfs.ErrNotADirectory {
+	if parent == nil || err == vfs.err.NotADirectory {
 		return &fs.PathError{Op: op, Path: pi.LeftPart(), Err: err}
 	}
 
-	if err != avfs.ErrNoSuchFileOrDir {
+	if err != vfs.err.NoSuchFileOrDir {
 		return &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
@@ -502,7 +500,7 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	defer parent.mu.Unlock()
 
 	if !parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user) {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+		return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 	}
 
 	dn := parent
@@ -565,11 +563,11 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 	}
 
 	parent, child, pi, err := vfs.searchNode(name, slmEval)
-	if err != avfs.ErrFileExists && err != avfs.ErrNoSuchFileOrDir {
+	if err != vfs.err.FileExists && err != vfs.err.NoSuchFileOrDir {
 		return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if err == avfs.ErrNoSuchFileOrDir {
+	if err == vfs.err.NoSuchFileOrDir {
 		if !pi.IsLast() || parent == nil {
 			return nil, &fs.PathError{Op: op, Path: name, Err: err}
 		}
@@ -582,7 +580,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		defer parent.mu.Unlock()
 
 		if f.permMode&avfs.PermWrite == 0 || !parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user) {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 		part := pi.Part()
@@ -602,11 +600,11 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		defer c.mu.Unlock()
 
 		if !c.checkPermission(f.permMode, vfs.user) {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 		if flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 		}
 
 		if flag&os.O_TRUNC != 0 {
@@ -622,11 +620,11 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		defer c.mu.Unlock()
 
 		if f.permMode&avfs.PermWrite != 0 {
-			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
+			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 		}
 
 		if !c.checkPermission(f.permMode, vfs.user) {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 	default:
@@ -666,13 +664,13 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
 	_, child, _, err := vfs.searchNode(name, slmLstat)
-	if err != avfs.ErrFileExists {
+	if err != vfs.err.FileExists {
 		return "", &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	sl, ok := child.(*symlinkNode)
 	if !ok {
-		return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrInvalidArgument}
+		return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
 	}
 
 	return sl.link, nil
@@ -696,7 +694,7 @@ func (vfs *MemFS) Remove(name string) error {
 	const op = "remove"
 
 	parent, child, pi, err := vfs.searchNode(name, slmLstat)
-	if err != avfs.ErrFileExists || parent == nil || child == nil {
+	if err != vfs.err.FileExists || parent == nil || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -704,7 +702,7 @@ func (vfs *MemFS) Remove(name string) error {
 	defer parent.mu.Unlock()
 
 	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 	}
 
 	child.Lock()
@@ -712,13 +710,13 @@ func (vfs *MemFS) Remove(name string) error {
 
 	if c, ok := child.(*dirNode); ok {
 		if len(c.children) != 0 {
-			return &fs.PathError{Op: op, Path: name, Err: avfs.ErrDirNotEmpty}
+			return &fs.PathError{Op: op, Path: name, Err: vfs.err.DirNotEmpty}
 		}
 	}
 
 	part := pi.Part()
 	if parent.child(part) == nil {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFileOrDir}
 	}
 
 	parent.removeChild(part)
@@ -745,7 +743,7 @@ func (vfs *MemFS) RemoveAll(path string) error {
 		return nil
 	}
 
-	if err != avfs.ErrFileExists {
+	if err != vfs.err.FileExists {
 		return &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
@@ -754,7 +752,7 @@ func (vfs *MemFS) RemoveAll(path string) error {
 
 	ok := parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
 	if !ok {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+		return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 	}
 
 	defer child.delete()
@@ -762,7 +760,7 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	if c, ok := child.(*dirNode); ok {
 		err := vfs.removeAll(c)
 		if err != nil {
-			return &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+			return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 		}
 	}
 
@@ -777,7 +775,7 @@ func (vfs *MemFS) removeAll(dn *dirNode) error {
 
 	ok := dn.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
 	if !ok {
-		return avfs.ErrPermDenied
+		return vfs.err.PermDenied
 	}
 
 	for _, child := range dn.children {
@@ -802,12 +800,12 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	const op = "rename"
 
 	oParent, oChild, oPI, oErr := vfs.searchNode(oldpath, slmLstat)
-	if oErr != avfs.ErrFileExists || oParent == nil {
+	if oErr != vfs.err.FileExists || oParent == nil {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: oErr}
 	}
 
 	nParent, nChild, nPI, nErr := vfs.searchNode(newpath, slmLstat)
-	if !(nErr == avfs.ErrFileExists || nErr == avfs.ErrNoSuchFileOrDir) || nParent == nil {
+	if !(nErr == vfs.err.FileExists || nErr == vfs.err.NoSuchFileOrDir) || nParent == nil {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 	}
 
@@ -820,11 +818,11 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	}
 
 	if !oParent.checkPermission(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrPermDenied}
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 	}
 
 	if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrPermDenied}
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 	}
 
 	if oPI.Path() == nPI.Path() {
@@ -833,7 +831,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 
 	switch oChild.(type) {
 	case *dirNode:
-		if nErr != avfs.ErrNoSuchFileOrDir {
+		if nErr != vfs.err.NoSuchFileOrDir {
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 		}
 
@@ -846,10 +844,10 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 		case *fileNode:
 			nc.delete()
 		default:
-			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrFileExists}
+			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.FileExists}
 		}
 	default:
-		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: avfs.ErrPermDenied}
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 	}
 
 	nParent.addChild(nPI.Part(), oChild)
@@ -880,14 +878,14 @@ func (vfs *MemFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 
 // SetUMask sets the file mode creation mask.
 func (vfs *MemFS) SetUMask(mask fs.FileMode) {
-	atomic.StoreInt32(&vfs.memAttrs.umask, int32(mask))
+	atomic.StoreInt32(&vfs.umask, int32(mask))
 }
 
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *MemFS) SetUser(name string) (avfs.UserReader, error) {
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return nil, avfs.ErrPermDenied
+		return nil, vfs.err.PermDenied
 	}
 
 	if vfs.user.Name() == name {
@@ -920,7 +918,7 @@ func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
 	const op = "stat"
 
 	_, child, pi, err := vfs.searchNode(path, slmStat)
-	if err != avfs.ErrFileExists || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return nil, &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
@@ -935,7 +933,7 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
 	parent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
-	if nerr != avfs.ErrNoSuchFileOrDir || parent == nil {
+	if nerr != vfs.err.NoSuchFileOrDir || parent == nil {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
@@ -943,7 +941,7 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	defer parent.mu.Unlock()
 
 	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 	}
 
 	link := vfs.Clean(oldname)
@@ -985,17 +983,17 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 	const op = "truncate"
 
 	parent, child, _, err := vfs.searchNode(name, slmEval)
-	if err != avfs.ErrFileExists || parent == nil {
+	if err != vfs.err.FileExists || parent == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	c, ok := child.(*fileNode)
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 	}
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
 	}
 
 	c.mu.Lock()
@@ -1007,7 +1005,7 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 
 // UMask returns the file mode creation mask.
 func (vfs *MemFS) UMask() fs.FileMode {
-	u := atomic.LoadInt32(&vfs.memAttrs.umask)
+	u := atomic.LoadInt32(&vfs.umask)
 
 	return fs.FileMode(u)
 }

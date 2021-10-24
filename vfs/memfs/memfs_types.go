@@ -43,6 +43,8 @@ type MemFS struct {
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
 	volumes  volumes         // volumes contains the volume names (for Windows only).
 	curDir   string          // curDir is the current directory.
+	err      memErrors       // err regroups the errors returned by MemFS functions.
+	umask    int32           // umask is the user file creation mode mask.
 	utils    avfs.Utils      // utils are somme common functions used by emulated file system implementation.
 }
 
@@ -52,7 +54,21 @@ type memAttrs struct {
 	name    string           // name is the name of the file system.
 	feature avfs.Feature     // feature defines the list of features available on this file system.
 	lastId  uint64           // lastId is the last unique id used to identify files uniquely.
-	umask   int32            // umask is the user file creation mode mask.
+}
+
+// memErrors regroups the errors returned by MemFS functions.
+// They are changed depending on the OS emulated.
+type memErrors struct {
+	BadFileDesc     avfs.Errno // bad file descriptor.
+	DirNotEmpty     avfs.Errno // Directory not empty.
+	FileExists      avfs.Errno // File exists.
+	InvalidArgument avfs.Errno // invalid argument
+	IsADirectory    avfs.Errno // File Is a directory.
+	NoSuchFileOrDir avfs.Errno // No such file or directory.
+	NotADirectory   avfs.Errno // Not a directory.
+	OpNotPermitted  avfs.Errno // operation not permitted.
+	PermDenied      avfs.Errno // Permission denied.
+	TooManySymlinks avfs.Errno // Too many levels of symbolic links.
 }
 
 // MemFile represents an open file descriptor.
@@ -86,10 +102,10 @@ type node interface {
 	Lock()
 
 	// setMode sets the permissions of the node.
-	setMode(mode fs.FileMode, u avfs.UserReader) error
+	setMode(mode fs.FileMode, u avfs.UserReader) bool
 
 	// setModTime sets the modification time of the node.
-	setModTime(mtime time.Time, u avfs.UserReader) error
+	setModTime(mtime time.Time, u avfs.UserReader) bool
 
 	// setOwner sets the owner of the node.
 	setOwner(uid, gid int)

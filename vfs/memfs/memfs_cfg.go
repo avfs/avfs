@@ -31,7 +31,6 @@ func New(opts ...Option) *MemFS {
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
-		umask: int32(avfs.Cfg.UMask()),
 	}
 
 	vfs := &MemFS{
@@ -45,6 +44,7 @@ func New(opts ...Option) *MemFS {
 			},
 		},
 		memAttrs: ma,
+		umask:    int32(avfs.Cfg.UMask()),
 		utils:    avfs.Cfg.Utils(),
 	}
 
@@ -55,6 +55,8 @@ func New(opts ...Option) *MemFS {
 	volumeName := ""
 
 	ut := vfs.utils
+	vfs.setErrors(ut.OSType())
+
 	if ut.OSType() == avfs.OsWindows {
 		vfs.volumes = make(volumes)
 		volumeName = "C:"
@@ -63,17 +65,17 @@ func New(opts ...Option) *MemFS {
 
 	if vfs.HasFeature(avfs.FeatMainDirs) {
 		u := vfs.user
-		um := ma.umask
+		um := vfs.umask
 
 		vfs.user = avfs.AdminUser
-		ma.umask = 0
+		vfs.umask = 0
 
 		err := ut.CreateBaseDirs(vfs, volumeName)
 		if err != nil {
 			panic("CreateBaseDirs " + err.Error())
 		}
 
-		ma.umask = um
+		vfs.umask = um
 		vfs.user = u
 		vfs.curDir = ut.HomeDirUser(u.Name())
 	}
@@ -167,5 +169,33 @@ func WithName(name string) Option {
 func WithOS(osType avfs.OSType) Option {
 	return func(vfs *MemFS) {
 		vfs.utils = avfs.NewUtils(osType)
+	}
+}
+
+// setErrors set MemFS errors depending on the operating system.
+func (vfs *MemFS) setErrors(ost avfs.OSType) {
+	switch ost {
+	case avfs.OsWindows:
+		vfs.err.BadFileDesc = avfs.ErrWinAccessDenied
+		vfs.err.DirNotEmpty = avfs.ErrWinDirNotEmpty
+		vfs.err.FileExists = avfs.ErrWinFileExists
+		vfs.err.InvalidArgument = avfs.ErrInvalidArgument // TODO Windows
+		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
+		vfs.err.NoSuchFileOrDir = avfs.ErrWinFileNotFound
+		vfs.err.NotADirectory = avfs.ErrWinPathNotFound
+		vfs.err.OpNotPermitted = avfs.ErrWinNotSupported
+		vfs.err.PermDenied = avfs.ErrPermDenied           // TODO Windows
+		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks // TODO Windows
+	default:
+		vfs.err.BadFileDesc = avfs.ErrBadFileDesc
+		vfs.err.DirNotEmpty = avfs.ErrDirNotEmpty
+		vfs.err.FileExists = avfs.ErrFileExists
+		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
+		vfs.err.IsADirectory = avfs.ErrIsADirectory
+		vfs.err.NoSuchFileOrDir = avfs.ErrNoSuchFileOrDir
+		vfs.err.NotADirectory = avfs.ErrNotADirectory
+		vfs.err.OpNotPermitted = avfs.ErrOpNotPermitted
+		vfs.err.PermDenied = avfs.ErrPermDenied
+		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
 	}
 }

@@ -54,7 +54,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	if pi.VolumeNameLen() > 0 {
 		nd, ok := vfs.volumes[pi.VolumeName()]
 		if !ok {
-			err = avfs.ErrNoSuchFileOrDir
+			err = vfs.err.NoSuchFileOrDir
 
 			return
 		}
@@ -72,7 +72,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		parent.mu.RUnlock()
 
 		if child == nil {
-			err = avfs.ErrNoSuchFileOrDir
+			err = vfs.err.NoSuchFileOrDir
 
 			return
 		}
@@ -80,7 +80,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		switch c := child.(type) {
 		case *dirNode:
 			if pi.IsLast() {
-				err = avfs.ErrFileExists
+				err = vfs.err.FileExists
 
 				return
 			}
@@ -90,7 +90,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			c.mu.RUnlock()
 
 			if !ok {
-				err = avfs.ErrPermDenied
+				err = vfs.err.PermDenied
 
 				return
 			}
@@ -100,12 +100,12 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		case *fileNode:
 			// File permissions are checked by the calling function.
 			if pi.IsLast() {
-				err = avfs.ErrFileExists
+				err = vfs.err.FileExists
 
 				return
 			}
 
-			err = avfs.ErrNotADirectory
+			err = vfs.err.NotADirectory
 
 			return
 
@@ -113,14 +113,14 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			// Symlinks mode is always 0o777, no need to check permissions.
 			slCount++
 			if slCount > slCountMax {
-				err = avfs.ErrTooManySymlinks
+				err = vfs.err.TooManySymlinks
 
 				return
 			}
 
 			if pi.IsLast() {
 				if slMode == slmLstat {
-					err = avfs.ErrFileExists
+					err = vfs.err.FileExists
 
 					return
 				}
@@ -143,7 +143,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		}
 	}
 
-	return parent, parent, pi, avfs.ErrFileExists
+	return parent, parent, pi, vfs.err.FileExists
 }
 
 // createDir creates a new directory.
@@ -151,7 +151,7 @@ func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dir
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  fs.ModeDir | (perm & avfs.FileModeMask &^ fs.FileMode(vfs.memAttrs.umask)),
+			mode:  fs.ModeDir | (perm & avfs.FileModeMask &^ fs.FileMode(vfs.umask)),
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
@@ -168,7 +168,7 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fi
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  perm & avfs.FileModeMask &^ fs.FileMode(vfs.memAttrs.umask),
+			mode:  perm & avfs.FileModeMask &^ fs.FileMode(vfs.umask),
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
@@ -224,14 +224,14 @@ func (bn *baseNode) Lock() {
 }
 
 // setModTime sets the modification time of the node.
-func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) error {
+func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) bool {
 	if bn.uid != u.Uid() && !u.IsAdmin() {
-		return avfs.ErrOpNotPermitted
+		return false
 	}
 
 	bn.mtime = mtime.UnixNano()
 
-	return nil
+	return true
 }
 
 // setOwner sets the owner of the node.
@@ -332,15 +332,15 @@ func (dn *dirNode) dirNames() []string {
 }
 
 // setMode sets the permissions of the directory node.
-func (dn *dirNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
+func (dn *dirNode) setMode(mode fs.FileMode, u avfs.UserReader) bool {
 	if dn.uid != u.Uid() && !u.IsAdmin() {
-		return avfs.ErrOpNotPermitted
+		return false
 	}
 
 	dn.mode &^= avfs.FileModeMask
 	dn.mode |= mode & avfs.FileModeMask
 
-	return nil
+	return true
 }
 
 // size returns the size of the dirNode : number of children.
@@ -381,15 +381,15 @@ func (fn *fileNode) fillStatFrom(name string) *MemInfo {
 }
 
 // setMode sets the permissions of the file node.
-func (fn *fileNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
+func (fn *fileNode) setMode(mode fs.FileMode, u avfs.UserReader) bool {
 	if fn.uid != u.Uid() && !u.IsAdmin() {
-		return avfs.ErrPermDenied
+		return false
 	}
 
 	fn.mode &^= avfs.FileModeMask
 	fn.mode |= mode & avfs.FileModeMask
 
-	return nil
+	return true
 }
 
 // size returns the size of the file.
@@ -442,8 +442,8 @@ func (sn *symlinkNode) fillStatFrom(name string) *MemInfo {
 }
 
 // setMode sets the permissions of the symlink node.
-func (sn *symlinkNode) setMode(mode fs.FileMode, u avfs.UserReader) error {
-	return avfs.ErrOpNotPermitted
+func (sn *symlinkNode) setMode(mode fs.FileMode, u avfs.UserReader) bool {
+	return false
 }
 
 func (sn *symlinkNode) size() int64 {

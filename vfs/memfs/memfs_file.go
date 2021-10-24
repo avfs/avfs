@@ -48,7 +48,7 @@ func (f *MemFile) Chdir() error {
 
 	_, ok := f.nd.(*dirNode)
 	if !ok {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.NotADirectory}
 	}
 
 	f.memFS.curDir = f.name
@@ -81,9 +81,8 @@ func (f *MemFile) Chmod(mode fs.FileMode) error {
 	nd.Lock()
 	defer nd.Unlock()
 
-	err := nd.setMode(mode, f.memFS.user)
-	if err != nil {
-		return &fs.PathError{Op: op, Path: f.name, Err: err}
+	if !nd.setMode(mode, f.memFS.user) {
+		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.PermDenied}
 	}
 
 	return nil
@@ -118,7 +117,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 	defer nd.Unlock()
 
 	if !nd.checkPermission(avfs.PermWrite, f.memFS.user) {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.OpNotPermitted}
 	}
 
 	nd.setOwner(uid, gid)
@@ -197,11 +196,11 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.IsADirectory}
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.BadFileDesc}
 	}
 
 	nd.mu.RLock()
@@ -241,7 +240,7 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.IsADirectory}
 	}
 
 	if off < 0 {
@@ -249,7 +248,7 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.BadFileDesc}
 	}
 
 	nd.mu.RLock()
@@ -297,7 +296,7 @@ func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.NotADirectory}
 	}
 
 	if n <= 0 || f.dirEntries == nil {
@@ -366,7 +365,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.NotADirectory}
 	}
 
 	if n <= 0 || f.dirNames == nil {
@@ -438,24 +437,24 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 	switch whence {
 	case io.SeekStart:
 		if offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
 		}
 
 		f.at = offset
 	case io.SeekCurrent:
 		if f.at+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
 		}
 
 		f.at += offset
 	case io.SeekEnd:
 		if size+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
 		}
 
 		f.at = size + offset
 	default:
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
 	}
 
 	return f.at, nil
@@ -529,7 +528,7 @@ func (f *MemFile) Truncate(size int64) error {
 	}
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
 	}
 
 	if f.nd == nil {
@@ -538,7 +537,7 @@ func (f *MemFile) Truncate(size int64) error {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
 	}
 
 	nd.mu.Lock()
@@ -574,7 +573,7 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.BadFileDesc}
 	}
 
 	nd.mu.Lock()
@@ -621,7 +620,7 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.BadFileDesc}
 	}
 
 	nd.mu.Lock()
