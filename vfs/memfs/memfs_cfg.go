@@ -182,7 +182,7 @@ func (vfs *MemFS) setErrors(ost avfs.OSType) {
 		vfs.err.InvalidArgument = avfs.ErrInvalidArgument // TODO Windows
 		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
 		vfs.err.NoSuchFileOrDir = avfs.ErrWinFileNotFound
-		vfs.err.NotADirectory = avfs.ErrWinPathNotFound
+		vfs.err.NotADirectory = avfs.ErrWinDirNameInvalid
 		vfs.err.OpNotPermitted = avfs.ErrWinNotSupported
 		vfs.err.PermDenied = avfs.ErrPermDenied           // TODO Windows
 		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks // TODO Windows
