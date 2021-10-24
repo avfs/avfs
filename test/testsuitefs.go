@@ -903,8 +903,6 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 		return cp
 	}
 
-	op = avfs.OpTranslate(op, avfs.Cfg.OSType())
-
 	err := cp.err
 	if err.Op != op {
 		cp.tb.Errorf("want Op to be %s, got %s", op, err.Op)
@@ -917,7 +915,7 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 func (cp *checkPathError) OpStat() *checkPathError {
 	cp.tb.Helper()
 
-	return cp.Op("stat")
+	return cp.Op("stat", avfs.OsLinux).Op("CreateFile", avfs.OsWindows)
 }
 
 // Path checks the path of the current fs.PathError.

@@ -96,31 +96,6 @@ func (en Errno) Error() string {
 	return "errno " + strconv.Itoa(int(en))
 }
 
-type opOSType struct {
-	Op  string
-	Ost OSType
-}
-
-// opTransMap stores translations of Linux operations to other operating system operations.
-var opTransMap = map[opOSType]string{ //nolint:gochecknoglobals // opTransMap is a global variable
-	{Op: "lstat", Ost: OsWindows}: "CreateFile",
-	{Op: "stat", Ost: OsWindows}:  "CreateFile",
-}
-
-// OpTranslate translates linux operation strings to other OS operation strings.
-func OpTranslate(op string, ost OSType) string {
-	if ost == OsLinux {
-		return op
-	}
-
-	opt, ok := opTransMap[opOSType{Op: op, Ost: ost}]
-	if ok {
-		return opt
-	}
-
-	return op
-}
-
 const (
 	// Errors on Linux operating systems.
 	// Most of the errors below can be found there :
