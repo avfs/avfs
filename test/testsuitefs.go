@@ -913,13 +913,6 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 	return cp
 }
 
-// OpLstat checks if the current fs.PathError Op is a Lstat Op.
-func (cp *checkPathError) OpLstat() *checkPathError {
-	cp.tb.Helper()
-
-	return cp.Op("lstat")
-}
-
 // OpStat checks if the current fs.PathError Op is a Stat Op.
 func (cp *checkPathError) OpStat() *checkPathError {
 	cp.tb.Helper()

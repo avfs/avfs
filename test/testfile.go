@@ -629,9 +629,9 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 		defer f.Close()
 
 		_, err := f.ReadDir(-1)
-		CheckPathError(t, err).Path(fileName).Err(avfs.ErrNotADirectory).
-			Op("readdirent", avfs.OsLinux).
-			Op("readdir", avfs.OsWindows)
+		CheckPathError(t, err).Path(fileName).
+			Op("readdirent", avfs.OsLinux).Err(avfs.ErrNotADirectory, avfs.OsLinux).
+			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 	})
 
 	t.Run("FileReadDirClosed", func(t *testing.T) {
@@ -719,9 +719,9 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 		defer f.Close()
 
 		_, err = f.Readdirnames(-1)
-		CheckPathError(t, err).Path(f.Name()).Err(avfs.ErrNotADirectory).
-			Op("readdirent", avfs.OsLinux).
-			Op("readdir", avfs.OsWindows)
+		CheckPathError(t, err).Path(f.Name()).
+			Op("readdirent", avfs.OsLinux).Err(avfs.ErrNotADirectory, avfs.OsLinux).
+			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 	})
 
 	t.Run("FileReaddirnamesClosed", func(t *testing.T) {
@@ -1032,7 +1032,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		path := vfs.Join(testDir, files[0].Path, defaultNonExisting)
 
 		f, err := vfs.Open(path)
-		CheckPathError(t, err).Op("open").Path(path).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).Op("open").Path(path).
+			Err(avfs.ErrNotADirectory, avfs.OsLinux).
+			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 
 		_, err = f.Stat()
 		CheckInvalid(t, "Stat", err)
@@ -1156,7 +1158,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		err = f.Truncate(-1)
 		CheckPathError(t, err).Op("truncate").Path(path).
 			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			Err(avfs.ErrWinNegativeSeek, avfs.OsWindows)
 	})
 
 	t.Run("FileTruncateSizeBiggerFileSize", func(t *testing.T) {
