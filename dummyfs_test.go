@@ -48,7 +48,7 @@ func TestDummyFS(t *testing.T) {
 func TestDummyFSConfig(t *testing.T) {
 	vfs := avfs.NewDummyFS()
 
-	if vfs.HasFeature(avfs.Feature(math.MaxUint64)) {
+	if vfs.HasFeature(avfs.Features(math.MaxUint64)) {
 		t.Error("HasFeature : want HasFeature(whatever) to be false, got true")
 	}
 

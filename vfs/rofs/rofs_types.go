@@ -20,8 +20,8 @@ import "github.com/avfs/avfs"
 
 // RoFS Represents the file system.
 type RoFS struct {
-	baseFS  avfs.VFS
-	feature avfs.Feature
+	baseFS   avfs.VFS
+	features avfs.Features
 }
 
 // RoFile represents an open file descriptor.

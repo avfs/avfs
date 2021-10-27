@@ -26,10 +26,10 @@ import (
 // New returns a new memory file system (OrefaFS).
 func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
-		nodes:   make(nodes),
-		feature: avfs.FeatBasicFs | avfs.FeatHardlink,
-		umask:   int32(avfs.Cfg.UMask()),
-		utils:   avfs.Cfg.Utils(),
+		nodes:    make(nodes),
+		features: avfs.FeatBasicFs | avfs.FeatHardlink,
+		umask:    int32(avfs.Cfg.UMask()),
+		utils:    avfs.Cfg.Utils(),
 	}
 
 	for _, opt := range opts {
@@ -50,7 +50,7 @@ func New(opts ...Option) *OrefaFS {
 	vfs.user = avfs.AdminUser
 	vfs.curDir = volumeName
 
-	if vfs.feature&avfs.FeatMainDirs != 0 {
+	if vfs.features&avfs.FeatMainDirs != 0 {
 		um := vfs.umask
 		vfs.umask = 0
 
@@ -66,13 +66,13 @@ func New(opts ...Option) *OrefaFS {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *OrefaFS) Features() avfs.Feature {
-	return vfs.feature
+func (vfs *OrefaFS) Features() avfs.Features {
+	return vfs.features
 }
 
-// HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *OrefaFS) HasFeature(feature avfs.Feature) bool {
-	return vfs.feature&feature == feature
+// HasFeature returns true if the file system or identity manager provides a given features.
+func (vfs *OrefaFS) HasFeature(feature avfs.Features) bool {
+	return vfs.features&feature == feature
 }
 
 // Name returns the name of the fileSystem.
@@ -95,7 +95,7 @@ func (vfs *OrefaFS) Type() string {
 // WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
 func WithMainDirs() Option {
 	return func(vfs *OrefaFS) {
-		vfs.feature |= avfs.FeatMainDirs
+		vfs.features |= avfs.FeatMainDirs
 	}
 }
 
@@ -109,6 +109,6 @@ func WithOSType(ost avfs.OSType) Option {
 // WithChownUser returns an option function.
 func WithChownUser() Option {
 	return func(vfs *OrefaFS) {
-		vfs.feature |= avfs.FeatChownUser
+		vfs.features |= avfs.FeatChownUser
 	}
 }

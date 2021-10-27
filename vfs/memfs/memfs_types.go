@@ -50,10 +50,10 @@ type MemFS struct {
 
 // memAttrs represents the file system attributes for MemFS.
 type memAttrs struct {
-	idm     avfs.IdentityMgr // idm is the identity manager of the file system.
-	name    string           // name is the name of the file system.
-	feature avfs.Feature     // feature defines the list of features available on this file system.
-	lastId  uint64           // lastId is the last unique id used to identify files uniquely.
+	idm      avfs.IdentityMgr // idm is the identity manager of the file system.
+	name     string           // name is the name of the file system.
+	features avfs.Features    // features defines the list of features available on this file system.
+	lastId   uint64           // lastId is the last unique id used to identify files uniquely.
 }
 
 // memErrors regroups the errors returned by MemFS functions.

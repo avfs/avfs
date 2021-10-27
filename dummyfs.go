@@ -43,12 +43,12 @@ func NewDummyFS() *DummyFS {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *DummyFS) Features() Feature {
+func (vfs *DummyFS) Features() Features {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *DummyFS) HasFeature(feature Feature) bool {
+func (vfs *DummyFS) HasFeature(feature Features) bool {
 	return false
 }
 

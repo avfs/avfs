@@ -32,18 +32,18 @@ const (
 
 // MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
 type MemIdm struct {
-	adminGroup   *MemGroup    // Administrator Group.
-	adminUser    *MemUser     // Administrator User.
-	groupsByName groupsByName // Groups map by Name.
-	groupsById   groupsById   // Groups map by Id.
-	usersByName  usersByName  // Users map by Name.
-	usersById    usersById    // Users map by Id.
-	feature      avfs.Feature // Idm features.
-	utils        avfs.Utils   // Utils regroups common functions used by emulated file systems.
-	maxGid       int          // Current maximum Gid.
-	maxUid       int          // Current maximum Uid.
-	grpMu        sync.RWMutex // Groups mutex.
-	usrMu        sync.RWMutex // Users mutex.
+	adminGroup   *MemGroup     // Administrator Group.
+	adminUser    *MemUser      // Administrator User.
+	groupsByName groupsByName  // Groups map by Name.
+	groupsById   groupsById    // Groups map by Id.
+	usersByName  usersByName   // Users map by Name.
+	usersById    usersById     // Users map by Id.
+	feature      avfs.Features // Idm features.
+	utils        avfs.Utils    // Utils regroups common functions used by emulated file systems.
+	maxGid       int           // Current maximum Gid.
+	maxUid       int           // Current maximum Uid.
+	grpMu        sync.RWMutex  // Groups mutex.
+	usrMu        sync.RWMutex  // Users mutex.
 }
 
 // groupsByName is the map of groups by group name.

@@ -20,9 +20,9 @@ import "github.com/avfs/avfs"
 
 // OsFS represents the file system.
 type OsFS struct {
-	idm     avfs.IdentityMgr
-	feature avfs.Feature
-	osType  avfs.OSType
+	idm      avfs.IdentityMgr
+	features avfs.Features
+	osType   avfs.OSType
 }
 
 // Option defines the option function used for initializing OsFS.

@@ -65,12 +65,12 @@ func (idm *MemIdm) Type() string {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (idm *MemIdm) Features() avfs.Feature {
+func (idm *MemIdm) Features() avfs.Features {
 	return avfs.FeatIdentityMgr
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (idm *MemIdm) HasFeature(feature avfs.Feature) bool {
+func (idm *MemIdm) HasFeature(feature avfs.Features) bool {
 	return (idm.feature & feature) == feature
 }
 

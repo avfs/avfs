@@ -20,7 +20,7 @@ import "github.com/avfs/avfs"
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
-	feature := avfs.Feature(0)
+	feature := avfs.Features(0)
 
 	ost := avfs.Cfg.OSType()
 	switch ost {
@@ -56,11 +56,11 @@ func (idm *OsIdm) Type() string {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (idm *OsIdm) Features() avfs.Feature {
+func (idm *OsIdm) Features() avfs.Features {
 	return idm.feature
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (idm *OsIdm) HasFeature(feature avfs.Feature) bool {
+func (idm *OsIdm) HasFeature(feature avfs.Features) bool {
 	return (idm.feature & feature) == feature
 }

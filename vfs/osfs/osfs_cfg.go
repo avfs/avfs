@@ -23,16 +23,16 @@ import (
 // New returns a new OsFS file system.
 func New(opts ...Option) *OsFS {
 	vfs := &OsFS{
-		idm:     avfs.NotImplementedIdm,
-		feature: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs | avfs.FeatSymlink,
-		osType:  avfs.Cfg.OSType(),
+		idm:      avfs.NotImplementedIdm,
+		features: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs | avfs.FeatSymlink,
+		osType:   avfs.Cfg.OSType(),
 	}
 
 	switch vfs.osType {
 	case avfs.OsLinux:
-		vfs.feature |= avfs.FeatChroot | avfs.FeatHardlink
+		vfs.features |= avfs.FeatChroot | avfs.FeatHardlink
 	case avfs.OsDarwin:
-		vfs.feature |= avfs.FeatHardlink
+		vfs.features |= avfs.FeatHardlink
 	}
 
 	for _, opt := range opts {
@@ -43,13 +43,13 @@ func New(opts ...Option) *OsFS {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *OsFS) Features() avfs.Feature {
-	return vfs.feature
+func (vfs *OsFS) Features() avfs.Features {
+	return vfs.features
 }
 
-// HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *OsFS) HasFeature(feature avfs.Feature) bool {
-	return vfs.feature&feature == feature
+// HasFeature returns true if the file system or identity manager provides a given features.
+func (vfs *OsFS) HasFeature(feature avfs.Features) bool {
+	return vfs.features&feature == feature
 }
 
 // Name returns the name of the fileSystem.
@@ -73,6 +73,6 @@ func (vfs *OsFS) Type() string {
 func WithIdm(idm avfs.IdentityMgr) Option {
 	return func(vfs *OsFS) {
 		vfs.idm = idm
-		vfs.feature |= idm.Features()
+		vfs.features |= idm.Features()
 	}
 }

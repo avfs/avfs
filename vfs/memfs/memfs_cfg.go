@@ -27,7 +27,7 @@ import (
 func New(opts ...Option) *MemFS {
 	ma := &memAttrs{
 		idm: avfs.NotImplementedIdm,
-		feature: avfs.FeatBasicFs |
+		features: avfs.FeatBasicFs |
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
 			avfs.FeatSymlink,
@@ -116,13 +116,13 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (vfs *MemFS) Features() avfs.Feature {
-	return vfs.memAttrs.feature
+func (vfs *MemFS) Features() avfs.Features {
+	return vfs.memAttrs.features
 }
 
-// HasFeature returns true if the file system or identity manager provides a given feature.
-func (vfs *MemFS) HasFeature(feature avfs.Feature) bool {
-	return vfs.memAttrs.feature&feature == feature
+// HasFeature returns true if the file system or identity manager provides a given features.
+func (vfs *MemFS) HasFeature(feature avfs.Features) bool {
+	return vfs.memAttrs.features&feature == feature
 }
 
 // Name returns the name of the fileSystem.
@@ -145,7 +145,7 @@ func (vfs *MemFS) Type() string {
 // WithMainDirs returns an option function to create main directories.
 func WithMainDirs() Option {
 	return func(vfs *MemFS) {
-		vfs.memAttrs.feature |= avfs.FeatMainDirs
+		vfs.memAttrs.features |= avfs.FeatMainDirs
 	}
 }
 
@@ -153,7 +153,7 @@ func WithMainDirs() Option {
 func WithIdm(idm avfs.IdentityMgr) Option {
 	return func(vfs *MemFS) {
 		vfs.memAttrs.idm = idm
-		vfs.memAttrs.feature |= idm.Features()
+		vfs.memAttrs.features |= idm.Features()
 		vfs.user = idm.AdminUser()
 	}
 }

@@ -70,12 +70,12 @@ func (idm *DummyIdm) Type() string {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (idm *DummyIdm) Features() Feature {
+func (idm *DummyIdm) Features() Features {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (idm *DummyIdm) HasFeature(feature Feature) bool {
+func (idm *DummyIdm) HasFeature(feature Features) bool {
 	return false
 }
 

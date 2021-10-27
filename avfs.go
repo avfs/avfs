@@ -33,14 +33,14 @@ const (
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
 
-// Feature defines the list of features available on a file system.
-type Feature uint64
+// Features defines the set of features available on a file system.
+type Features uint64
 
-//go:generate stringer -type Feature -trimprefix Feat -bitmask -output avfs_feature.go
+//go:generate stringer -type Features -trimprefix Feat -bitmask -output avfs_features.go
 
 const (
 	// FeatBasicFs indicates that the file system implements all basic functions.
-	FeatBasicFs Feature = 1 << iota
+	FeatBasicFs Features = 1 << iota
 
 	// FeatChroot indicates that the file system supports Chroot.
 	FeatChroot
@@ -501,13 +501,13 @@ type Cloner interface {
 	Clone() VFS
 }
 
-// Featurer is the interface that wraps the Feature method.
+// Featurer is the interface that wraps the Features and HasFeature methods.
 type Featurer interface {
 	// Features returns the set of features provided by the file system or identity manager.
-	Features() Feature
+	Features() Features
 
 	// HasFeature returns true if the file system or identity manager provides a given feature.
-	HasFeature(feature Feature) bool
+	HasFeature(feature Features) bool
 }
 
 // Namer is the interface that wraps the Name method.
