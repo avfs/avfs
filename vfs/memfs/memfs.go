@@ -461,7 +461,7 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	}
 
 	part := pi.Part()
-	if parent.child(part) != nil {
+	if parent.children[part] != nil {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 	}
 
@@ -508,7 +508,7 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 
 	for {
 		part := pi.Part()
-		if dn.child(part) != nil {
+		if dn.children[part] != nil {
 			break
 		}
 
@@ -586,7 +586,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 
 		part := pi.Part()
 
-		child = parent.child(part)
+		child = parent.children[part]
 		if child == nil {
 			child = vfs.createFile(parent, part, perm)
 			f.nd = child
@@ -716,7 +716,7 @@ func (vfs *MemFS) Remove(name string) error {
 	}
 
 	part := pi.Part()
-	if parent.child(part) == nil {
+	if parent.children[part] == nil {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFileOrDir}
 	}
 

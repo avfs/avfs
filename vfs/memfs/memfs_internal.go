@@ -68,7 +68,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		name := pi.Part()
 
 		parent.mu.RLock()
-		child = parent.child(name)
+		child = parent.children[name]
 		parent.mu.RUnlock()
 
 		if child == nil {
@@ -259,12 +259,6 @@ func (dn *dirNode) addChild(name string, child node) {
 // removeChild removes the child from the parent dirNode.
 func (dn *dirNode) removeChild(name string) {
 	delete(dn.children, name)
-}
-
-// child returns the child node named name from the parent node dn.
-// it returns nil if the child is not found or if there is no children.
-func (dn *dirNode) child(name string) node {
-	return dn.children[name]
 }
 
 // delete removes all information from the node.
