@@ -37,7 +37,8 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: golangci-lint
+      - name: golangci-lint on linux
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: golangci/golangci-lint-action@v2
 
       - name: Install mage & avfs binaries
