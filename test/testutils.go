@@ -1178,16 +1178,16 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 			osType  avfs.OSType
 		}{
 			{
-				path: "c:\\path", part: "path", newPart: "..\\..\\..",
-				newPath: "c:\\", reset: true, osType: avfs.OsWindows,
+				path: `c:\path`, part: `path`, newPart: `..\..\..`,
+				newPath: `c:\`, reset: true, osType: avfs.OsWindows,
 			},
 			{
-				path: "c:\\an\\absolute\\path", part: "absolute", newPart: "c:\\just\\another",
-				newPath: "c:\\just\\another\\path", reset: true, osType: avfs.OsWindows,
+				path: `c:\an\absolute\path`, part: `absolute`, newPart: `c:\just\another`,
+				newPath: `c:\just\another\path`, reset: true, osType: avfs.OsWindows,
 			},
 			{
-				path: "c:\\a\\random\\path", part: "random", newPart: "very\\long",
-				newPath: "c:\\a\\very\\long\\path", reset: false, osType: avfs.OsWindows,
+				path: `c:\a\random\path`, part: `random`, newPart: `very\long`,
+				newPath: `c:\a\very\long\path`, reset: false, osType: avfs.OsWindows,
 			},
 			{
 				path: "/a/very/very/long/path", part: "long", newPart: "/a",
