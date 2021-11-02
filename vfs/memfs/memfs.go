@@ -882,7 +882,7 @@ func (vfs *MemFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 
 // SetUMask sets the file mode creation mask.
 func (vfs *MemFS) SetUMask(mask fs.FileMode) {
-	atomic.StoreInt32(&vfs.umask, int32(mask))
+	atomic.StoreUint32((*uint32)(&vfs.umask), uint32(mask))
 }
 
 // SetUser sets and returns the current user.
@@ -1012,7 +1012,7 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 
 // UMask returns the file mode creation mask.
 func (vfs *MemFS) UMask() fs.FileMode {
-	u := atomic.LoadInt32(&vfs.umask)
+	u := atomic.LoadUint32((*uint32)(&vfs.umask))
 
 	return fs.FileMode(u)
 }

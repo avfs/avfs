@@ -151,7 +151,7 @@ func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dir
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  fs.ModeDir | (perm & avfs.FileModeMask &^ fs.FileMode(vfs.umask)),
+			mode:  vfs.memAttrs.dirMode | (perm & avfs.FileModeMask &^ vfs.umask),
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},
@@ -168,7 +168,7 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fi
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  perm & avfs.FileModeMask &^ fs.FileMode(vfs.umask),
+			mode:  vfs.memAttrs.fileMode | (perm & avfs.FileModeMask &^ vfs.umask),
 			uid:   vfs.user.Uid(),
 			gid:   vfs.user.Gid(),
 		},

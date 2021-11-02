@@ -26,7 +26,9 @@ import (
 // New returns a new memory file system (MemFS).
 func New(opts ...Option) *MemFS {
 	ma := &memAttrs{
-		idm: avfs.NotImplementedIdm,
+		idm:      avfs.NotImplementedIdm,
+		dirMode:  fs.ModeDir,
+		fileMode: 0,
 		features: avfs.FeatBasicFs |
 			avfs.FeatChroot |
 			avfs.FeatHardlink |
@@ -38,13 +40,11 @@ func New(opts ...Option) *MemFS {
 		rootNode: &dirNode{
 			baseNode: baseNode{
 				mtime: time.Now().UnixNano(),
-				mode:  fs.ModeDir | 0o755,
 				uid:   0,
 				gid:   0,
 			},
 		},
 		memAttrs: ma,
-		umask:    int32(avfs.Cfg.UMask()),
 		utils:    avfs.Cfg.Utils(),
 	}
 
@@ -55,13 +55,19 @@ func New(opts ...Option) *MemFS {
 	volumeName := ""
 
 	ut := vfs.utils
-	vfs.setErrors(ut.OSType())
-
 	if ut.OSType() == avfs.OsWindows {
+		ma.dirMode |= avfs.DefaultDirPerm
+		ma.fileMode |= avfs.DefaultFilePerm
+
 		vfs.volumes = make(volumes)
 		volumeName = "C:"
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
+
+	vfs.umask = avfs.Cfg.UMask()
+	vfs.rootNode.mode = ma.dirMode &^ vfs.umask
+
+	vfs.setErrors(ut.OSType())
 
 	if vfs.HasFeature(avfs.FeatMainDirs) {
 		u := vfs.user

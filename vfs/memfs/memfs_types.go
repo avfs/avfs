@@ -44,7 +44,7 @@ type MemFS struct {
 	volumes  volumes         // volumes contains the volume names (for Windows only).
 	curDir   string          // curDir is the current directory.
 	err      memErrors       // err regroups the errors returned by MemFS functions.
-	umask    int32           // umask is the user file creation mode mask.
+	umask    fs.FileMode     // umask is the user file creation mode mask.
 	utils    avfs.Utils      // utils are somme common functions used by emulated file system implementation.
 }
 
@@ -54,6 +54,8 @@ type memAttrs struct {
 	name     string           // name is the name of the file system.
 	features avfs.Features    // features defines the list of features available on this file system.
 	lastId   uint64           // lastId is the last unique id used to identify files uniquely.
+	dirMode  fs.FileMode      // dirMode is the default fs.FileMode for a directory.
+	fileMode fs.FileMode      // fileMode is de default fs.FileMode for a file.
 }
 
 // memErrors regroups the errors returned by MemFS functions.
