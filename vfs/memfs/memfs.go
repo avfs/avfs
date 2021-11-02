@@ -397,7 +397,10 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Lstat(path string) (fs.FileInfo, error) {
-	const op = "lstat"
+	op := "lstat"
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+	}
 
 	_, child, pi, err := vfs.searchNode(path, slmLstat)
 	if err != vfs.err.FileExists || child == nil {
@@ -916,7 +919,10 @@ func (vfs *MemFS) Split(path string) (dir, file string) {
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
-	const op = "stat"
+	op := "stat"
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+	}
 
 	_, child, pi, err := vfs.searchNode(path, slmStat)
 	if err != vfs.err.FileExists || child == nil {
