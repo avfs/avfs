@@ -839,7 +839,9 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 			newPath := vfs.Join(pathLinks, vfs.Base(file.Path))
 
 			err := vfs.Link(oldPath, newPath)
-			CheckLinkError(t, err).Op("link").Old(oldPath).New(newPath).Err(avfs.ErrFileExists)
+			CheckLinkError(t, err).Op("link").Old(oldPath).New(newPath).
+				Err(avfs.ErrFileExists, avfs.OsLinux).
+				Err(avfs.ErrWinCantCreateFile, avfs.OsWindows)
 		}
 	})
 
@@ -866,7 +868,9 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 			newPath := vfs.Join(testDir, defaultDir)
 
 			err := vfs.Link(oldPath, newPath)
-			CheckLinkError(t, err).Op("link").Old(oldPath).New(newPath).Err(avfs.ErrOpNotPermitted)
+			CheckLinkError(t, err).Op("link").Old(oldPath).New(newPath).
+				Err(avfs.ErrOpNotPermitted, avfs.OsLinux).
+				Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 		}
 	})
 
@@ -876,7 +880,9 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 			NewInvalidPath := vfs.Join(pathLinks, defaultFile)
 
 			err := vfs.Link(InvalidPath, NewInvalidPath)
-			CheckLinkError(t, err).Op("link").Old(InvalidPath).New(NewInvalidPath).Err(avfs.ErrNoSuchFileOrDir)
+			CheckLinkError(t, err).Op("link").Old(InvalidPath).New(NewInvalidPath).
+				Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+				Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 		}
 	})
 
@@ -1657,13 +1663,9 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.Readlink(testDir)
 
-		wantErr := avfs.ErrPermDenied
-
-		if vfs.OSType() == avfs.OsWindows {
-			wantErr = avfs.ErrWinNotReparsePoint
-		}
-
-		CheckPathError(t, err).Op("readlink").Path(testDir).Err(wantErr)
+		CheckPathError(t, err).Op("readlink").Path(testDir).
+			Err(avfs.ErrPermDenied, avfs.OsLinux).
+			Err(avfs.ErrWinNotReparsePoint, avfs.OsWindows)
 
 		return
 	}
@@ -1755,12 +1757,6 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveDir", func(t *testing.T) {
-		wantDirErr := avfs.ErrDirNotEmpty
-
-		if vfs.OSType() == avfs.OsWindows {
-			wantDirErr = avfs.ErrWinDirNotEmpty
-		}
-
 		for _, dir := range dirs {
 			path := vfs.Join(testDir, dir.Path)
 
@@ -1783,7 +1779,9 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 				continue
 			}
 
-			CheckPathError(t, err).Op("remove").Path(path).Err(wantDirErr)
+			CheckPathError(t, err).Op("remove").Path(path).
+				Err(avfs.ErrDirNotEmpty, avfs.OsLinux).
+				Err(avfs.ErrWinDirNotEmpty, avfs.OsWindows)
 
 			_, err = vfs.Stat(path)
 			CheckNoError(t, "Stat "+path, err)
@@ -1849,31 +1847,31 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 			return
 		}
 
-		wantErr := avfs.ErrNoSuchFileOrDir
-
-		if vfs.OSType() == avfs.OsWindows {
-			wantErr = avfs.ErrWinPathNotFound
-		}
-
 		for _, dir := range dirs {
 			path := vfs.Join(baseDir, dir.Path)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat().Path(path).Err(wantErr)
+			CheckPathError(t, err).OpStat().Path(path).
+				Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+				Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 		}
 
 		for _, file := range files {
 			path := vfs.Join(baseDir, file.Path)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat().Path(path).Err(wantErr)
+			CheckPathError(t, err).OpStat().Path(path).
+				Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+				Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 		}
 
 		for _, sl := range symlinks {
 			path := vfs.Join(baseDir, sl.NewName)
 
 			_, err = vfs.Stat(path)
-			CheckPathError(t, err).OpStat().Path(path).Err(wantErr)
+			CheckPathError(t, err).OpStat().Path(path).
+				Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+				Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 		}
 
 		_, err = vfs.Stat(baseDir)
@@ -2255,13 +2253,9 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Symlink(testDir, testDir)
-		wantErr := avfs.ErrPermDenied
-
-		if vfs.OSType() == avfs.OsWindows {
-			wantErr = avfs.ErrWinPrivilegeNotHeld
-		}
-
-		CheckLinkError(t, err).Op("symlink").Old(testDir).New(testDir).Err(wantErr)
+		CheckLinkError(t, err).Op("symlink").Old(testDir).New(testDir).
+			Err(avfs.ErrPermDenied, avfs.OsLinux).
+			Err(avfs.ErrWinPrivilegeNotHeld, avfs.OsWindows)
 
 		return
 	}

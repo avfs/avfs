@@ -126,6 +126,7 @@ const (
 	// Errors on Windows operating systems.
 
 	ErrWinAccessDenied     = Errno(5)          // Access is denied.
+	ErrWinCantCreateFile   = Errno(0x182)      // Cannot create a file when that file already exists.
 	ErrWinDirNameInvalid   = Errno(0x10B)      // The directory name is invalid.
 	ErrWinDirNotEmpty      = Errno(145)        // The directory is not empty.
 	ErrWinFileExists       = Errno(80)         // The file exists.
@@ -156,6 +157,7 @@ var errText = map[Errno]string{
 	ErrTooManySymlinks + linuxError: "too many levels of symbolic links",
 
 	ErrWinAccessDenied + windowsError:     "Access is denied.",
+	ErrWinCantCreateFile + windowsError:   "Cannot create a file when that file already exists.",
 	ErrWinDirNameInvalid + windowsError:   "The directory name is invalid.",
 	ErrWinDirNotEmpty + windowsError:      "The directory is not empty.",
 	ErrWinFileExists + windowsError:       "The file exists.",

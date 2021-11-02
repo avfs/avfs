@@ -34,10 +34,6 @@ import (
 func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
-	if vfs.OSType() == avfs.OsWindows {
-		return
-	}
-
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
@@ -61,7 +57,14 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 			defer f.Close()
 
 			err = f.Chdir()
-			CheckNoError(t, "Chdir "+path, err)
+			switch vfs.OSType() {
+			case avfs.OsWindows:
+				CheckPathError(t, err).Op("chdir").Path(path).Err(avfs.ErrWinNotSupported)
+
+				continue
+			default:
+				CheckNoError(t, "Chdir "+path, err)
+			}
 
 			curDir, err := vfs.Getwd()
 			CheckNoError(t, "Getwd "+path, err)
@@ -77,7 +80,9 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 		defer f.Close()
 
 		err := f.Chdir()
-		CheckPathError(t, err).Op("chdir").Path(fileName).Err(avfs.ErrNotADirectory)
+		CheckPathError(t, err).Op("chdir").Path(fileName).
+			Err(avfs.ErrNotADirectory, avfs.OsLinux).
+			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
 	})
 
 	t.Run("FileChdirClosed", func(t *testing.T) {
@@ -91,23 +96,13 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Chdir()
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("chdir").Path(defaultFile).Err(avfs.ErrWinNotSupported)
-		default:
-			CheckInvalid(t, "Chdir", err)
-		}
+		CheckInvalid(t, "Chdir", err)
 	})
 }
 
 // TestFileChmod tests File.Chmod function.
 func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-
-	if vfs.OSType() == avfs.OsWindows {
-		return
-	}
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
@@ -138,23 +133,13 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		err := f.Chmod(0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("chmod").Path(defaultFile).Err(avfs.ErrWinNotSupported)
-		default:
-			CheckInvalid(t, "Chmod", err)
-		}
+		CheckInvalid(t, "Chmod", err)
 	})
 }
 
 // TestFileChown tests File.Chown function.
 func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-
-	if vfs.OSType() == avfs.OsWindows {
-		return
-	}
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
@@ -181,7 +166,13 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 		uid, gid := u.Uid(), u.Gid()
 
 		err := f.Chown(uid, gid)
-		CheckNoError(t, "Chown "+fileName, err)
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			CheckPathError(t, err).Op("chown").Path(f.Name()).Err(avfs.ErrWinNotSupported, avfs.OsWindows)
+		default:
+			CheckNoError(t, "Chown "+fileName, err)
+		}
 	})
 
 	t.Run("FileChownClosed", func(t *testing.T) {
