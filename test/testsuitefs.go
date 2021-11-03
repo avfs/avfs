@@ -836,7 +836,7 @@ func CheckNoError(tb testing.TB, name string, err error) bool {
 func CheckInvalid(tb testing.TB, name string, err error) {
 	tb.Helper()
 
-	if err != os.ErrInvalid {
+	if err != fs.ErrInvalid {
 		tb.Errorf("%s : want error to be %v, got %v", name, fs.ErrInvalid, err)
 	}
 }
@@ -870,7 +870,7 @@ func CheckPathError(tb testing.TB, err error) *checkPathError { //nolint:revive 
 	if err == nil {
 		foundErr = true
 
-		tb.Error("want error to be not nil")
+		tb.Error("want error to be not nil, got nil")
 	}
 
 	e, ok := err.(*fs.PathError)

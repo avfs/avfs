@@ -82,35 +82,45 @@ func (e UnknownUserIdError) Error() string {
 	return "user: unknown userid " + strconv.Itoa(int(e))
 }
 
+const (
+	errorShift   = 32
+	linuxError   = Errno(OsLinux) << errorShift
+	windowsError = Errno(OsWindows) << errorShift
+)
+
 // Errno replaces syscall.Errno for all OSes.
 type Errno uint64 //nolint:errname // the type name `Errno` should conform to the `XxxError` format.
 
 func (en Errno) Error() string {
-	i := en + Errno(Cfg.OSType())<<32
+	return en.Err(Cfg.OSType())
+}
+
+func (en Errno) Err(ost OSType) string {
+	i := en + Errno(ost)<<errorShift
 
 	s, ok := errText[i]
 	if ok {
 		return s
 	}
 
-	return "errno " + strconv.Itoa(int(en))
+	return "errno " + strconv.FormatUint(uint64(en), 10)
 }
 
 const (
-	// Errors on Linux operating systems.
+	// Errors for Linux operating systems.
 	// Most of the errors below can be found there :
 	// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
 
-	ErrBadFileDesc     = errEBADF     // bad file descriptor.
-	ErrDirNotEmpty     = errENOTEMPTY // Directory not empty.
-	ErrFileExists      = errEEXIST    // File exists.
+	ErrBadFileDesc     = errEBADF     // bad file descriptor
+	ErrDirNotEmpty     = errENOTEMPTY // directory not empty
+	ErrFileExists      = errEEXIST    // file exists
 	ErrInvalidArgument = errEINVAL    // invalid argument
-	ErrIsADirectory    = errEISDIR    // File Is a directory.
-	ErrNoSuchFileOrDir = errENOENT    // No such file or directory.
-	ErrNotADirectory   = errENOTDIR   // Not a directory.
-	ErrOpNotPermitted  = errEPERM     // operation not permitted.
-	ErrPermDenied      = errEACCES    // Permission denied.
-	ErrTooManySymlinks = errELOOP     // Too many levels of symbolic links.
+	ErrIsADirectory    = errEISDIR    // is a directory
+	ErrNoSuchFileOrDir = errENOENT    // no such file or directory
+	ErrNotADirectory   = errENOTDIR   // not a directory
+	ErrOpNotPermitted  = errEPERM     // operation not permitted
+	ErrPermDenied      = errEACCES    // permission denied
+	ErrTooManySymlinks = errELOOP     // too many levels of symbolic links
 
 	errEACCES    = Errno(0xd)
 	errEBADF     = Errno(0x9)
@@ -123,7 +133,7 @@ const (
 	errENOTEMPTY = Errno(0x27)
 	errEPERM     = Errno(0x1)
 
-	// Errors on Windows operating systems.
+	// Errors for Windows operating systems.
 
 	ErrWinAccessDenied     = Errno(5)          // Access is denied.
 	ErrWinCantCreateFile   = Errno(0x182)      // Cannot create a file when that file already exists.
@@ -138,24 +148,20 @@ const (
 	ErrWinNotSupported     = Errno(0x20000082) // not supported by windows
 	ErrWinPathNotFound     = Errno(3)          // The system cannot find the path specified.
 	ErrWinPrivilegeNotHeld = Errno(1314)       // A required privilege is not held by the client.
-
-	linuxError   = Errno(OsLinux) << 32
-	windowsError = Errno(OsWindows) << 32
 )
 
 // errText translates an OS error number to text for all OSes.
 var errText = map[Errno]string{
-	ErrBadFileDesc + linuxError:     "bad file descriptor",
-	ErrDirNotEmpty + linuxError:     "directory not empty",
-	ErrFileExists + linuxError:      "file exists",
-	ErrInvalidArgument + linuxError: "invalid argument",
-	ErrIsADirectory + linuxError:    "is a directory",
-	ErrNoSuchFileOrDir + linuxError: "no such file or directory",
-	ErrNotADirectory + linuxError:   "not a directory",
-	ErrOpNotPermitted + linuxError:  "operation not permitted",
-	ErrPermDenied + linuxError:      "permission denied",
-	ErrTooManySymlinks + linuxError: "too many levels of symbolic links",
-
+	ErrBadFileDesc + linuxError:           "bad file descriptor",
+	ErrDirNotEmpty + linuxError:           "directory not empty",
+	ErrFileExists + linuxError:            "file exists",
+	ErrInvalidArgument + linuxError:       "invalid argument",
+	ErrIsADirectory + linuxError:          "is a directory",
+	ErrNoSuchFileOrDir + linuxError:       "no such file or directory",
+	ErrNotADirectory + linuxError:         "not a directory",
+	ErrOpNotPermitted + linuxError:        "operation not permitted",
+	ErrPermDenied + linuxError:            "permission denied",
+	ErrTooManySymlinks + linuxError:       "too many levels of symbolic links",
 	ErrWinAccessDenied + windowsError:     "Access is denied.",
 	ErrWinCantCreateFile + windowsError:   "Cannot create a file when that file already exists.",
 	ErrWinDirNameInvalid + windowsError:   "The directory name is invalid.",
