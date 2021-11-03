@@ -28,13 +28,13 @@ import (
 )
 
 var (
-	// avfs.DummyFS struct implements avfs.VFS interface.
+	// Tests that avfs.DummyFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &avfs.DummyFS{}
 
-	// avfs.DummyFile struct implements avfs.File interface.
+	// Tests that avfs.DummyFile struct implements avfs.File interface.
 	_ avfs.File = &avfs.DummyFile{}
 
-	// avfs.DummySysStat struct implements avfs.SysStater interface.
+	// Tests that avfs.DummySysStat struct implements avfs.SysStater interface.
 	_ avfs.SysStater = &avfs.DummySysStat{}
 )
 

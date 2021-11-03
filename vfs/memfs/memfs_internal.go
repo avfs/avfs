@@ -344,9 +344,8 @@ func (dn *dirNode) size() int64 {
 
 // fileNode
 
-// delete removes all information from the node.
-// decrementing the reference counter of the fileNode.
-// if there is no more references, the data is deleted.
+// delete removes all information from the node, decrements the reference counter of the fileNode.
+// If there is no more references, the data is deleted.
 func (fn *fileNode) delete() {
 	fn.nlink--
 	if fn.nlink == 0 {

@@ -55,7 +55,6 @@ const (
 	FeatHardlink
 
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
-	// (Chown(), SetUser(), User(), ... functions).
 	FeatIdentityMgr
 
 	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).

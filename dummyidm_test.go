@@ -27,13 +27,13 @@ import (
 )
 
 var (
-	// avfs.DummyIdm implements avfs.IdentityMgr interface.
+	// Tests that avfs.DummyIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &avfs.DummyIdm{}
 
-	// avfs.DummyUser struct implements avfs.UserReader interface.
+	// Tests that avfs.DummyUser struct implements avfs.UserReader interface.
 	_ avfs.UserReader = &avfs.DummyUser{}
 
-	// avfs.DummyGroup struct implements avfs.GroupReader interface.
+	// Tests that avfs.DummyGroup struct implements avfs.GroupReader interface.
 	_ avfs.GroupReader = &avfs.DummyGroup{}
 )
 

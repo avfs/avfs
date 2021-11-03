@@ -162,7 +162,9 @@ linters:
   disable-all: true
   enable:
     - asciicheck
+    - bidichk
     - bodyclose
+    - contextcheck
     #- cyclop
     - deadcode
     - depguard
@@ -173,6 +175,7 @@ linters:
     - errname
     #- errorlint
     #- exhaustive
+    #- exhaustivestruct
     - exportloopref
     - forbidigo
     - forcetypeassert
@@ -199,14 +202,19 @@ linters:
     #- ifshort
     - ineffassign
     - importas
+    #- interfacer
+    #- ireturn
     - lll
     - makezero
+    #- maligned
     #- nestif
     - misspell
     - nakedret
     #- nilerr
     - nlreturn
     #- nestif
+    #- nilerr
+    - nilnil
     - noctx
     - nolintlint
     #- paralleltest
@@ -221,6 +229,7 @@ linters:
     - structcheck
     - stylecheck
     - tagliatelle
+    - tenv
     - testpackage
     #- thelper
     - tparallel
@@ -229,8 +238,9 @@ linters:
     - unparam
     - unused
     - varcheck
+    #- varnamelen
     - vet
-    #- wastedassign
+    - wastedassign
     - whitespace
     #- wrapcheck
     - wsl
@@ -250,5 +260,8 @@ issues:
       linters:
         - godox
     - text: "appendAssign: append result not assigned to the same slice"
+      linters:
+        - gocritic
+    - text: "preferStringWriter"
       linters:
         - gocritic

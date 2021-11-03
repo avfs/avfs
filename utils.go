@@ -935,7 +935,7 @@ func (ut *Utils) VolumeNameLen(path string) int {
 
 	// with drive letter
 	c := path[0]
-	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') { //nolint:gocritic // Adapted from standard library.
+	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') {
 		return 2
 	}
 
@@ -1080,7 +1080,7 @@ func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum 
 }
 
 // PathIterator iterates through an absolute path.
-// it returns each part of the path in successive calls to Next.
+// It returns each part of the path in successive calls to Next.
 // The volume name (for Windows) is not considered as part of the path
 // it is returned by VolumeName.
 //
@@ -1172,7 +1172,7 @@ func (pi *PathIterator) Path() string {
 }
 
 // ReplacePart replaces the current Part of the path with the new path.
-// if the path iterator has been reset it returns true.
+// If the path iterator has been reset it returns true.
 // It can be used in symbolic link replacement.
 func (pi *PathIterator) ReplacePart(newPath string) bool {
 	ut := pi.ut

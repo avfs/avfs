@@ -30,10 +30,10 @@ import (
 )
 
 var (
-	// rofs.RoFS struct implements avfs.VFS interface.
+	// Tests that rofs.RoFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &rofs.RoFS{}
 
-	// rofs.RoFile struct implements avfs.File interface.
+	// Tests that rofs.RoFile struct implements avfs.File interface.
 	_ avfs.File = &rofs.RoFile{}
 )
 

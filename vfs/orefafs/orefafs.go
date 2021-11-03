@@ -272,7 +272,7 @@ func (vfs *OrefaFS) Glob(pattern string) (matches []string, err error) {
 }
 
 // Idm returns the identity manager of the file system.
-// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+// If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *OrefaFS) Idm() avfs.IdentityMgr {
 	return avfs.NotImplementedIdm
 }
@@ -990,7 +990,7 @@ func (vfs *OrefaFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+// If the file system does not have a current user, the user avfs.NotImplementedUser is returned.
 func (vfs *OrefaFS) User() avfs.UserReader {
 	return vfs.user
 }

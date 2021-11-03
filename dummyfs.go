@@ -250,7 +250,7 @@ func (vfs *DummyFS) Glob(pattern string) (matches []string, err error) {
 }
 
 // Idm returns the identity manager of the file system.
-// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+// If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *DummyFS) Idm() IdentityMgr {
 	return NotImplementedIdm
 }
@@ -554,7 +554,7 @@ func (vfs *DummyFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+// If the file system does not have a current user, the user avfs.NotImplementedUser is returned.
 func (vfs *DummyFS) User() UserReader {
 	return NotImplementedUser
 }

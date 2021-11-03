@@ -27,16 +27,16 @@ import (
 )
 
 var (
-	// dirNode struct implements node interface.
+	// Tests that dirNode struct implements node interface.
 	_ node = &dirNode{}
 
-	// fileNode struct implements node interface.
+	// Tests that fileNode struct implements node interface.
 	_ node = &fileNode{}
 
-	// symlinkNode struct implements node interface.
+	// Tests that symlinkNode struct implements node interface.
 	_ node = &symlinkNode{}
 
-	// MemInfo struct implements fs.FileInfo interface.
+	// Tests that MemInfo struct implements fs.FileInfo interface.
 	_ fs.FileInfo = &MemInfo{}
 )
 

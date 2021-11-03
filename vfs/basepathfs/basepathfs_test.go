@@ -30,10 +30,10 @@ import (
 )
 
 var (
-	// basepathfs.BasePathFS struct implements avfs.VFS interface.
+	// Tests that basepathfs.BasePathFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &basepathfs.BasePathFS{}
 
-	// basepathfs.BasePathFile struct implements avfs.File interface.
+	// Tests that basepathfs.BasePathFile struct implements avfs.File interface.
 	_ avfs.File = &basepathfs.BasePathFile{}
 )
 
