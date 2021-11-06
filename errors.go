@@ -82,97 +82,64 @@ func (e UnknownUserIdError) Error() string {
 	return "user: unknown userid " + strconv.Itoa(int(e))
 }
 
+// LinuxError replaces syscall.Errno for Linux operating systems.
+type LinuxError uint32
+
+//go:generate stringer -type LinuxError -linecomment -output errors_forlinux.go
+
+// Errors for Linux operating systems.
+// Most of the errors below can be found there :
+// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
 const (
-	errorShift   = 32
-	linuxError   = Errno(OsLinux) << errorShift
-	windowsError = Errno(OsWindows) << errorShift
+	ErrBadFileDesc     LinuxError = errEBADF     // bad file descriptor
+	ErrDirNotEmpty     LinuxError = errENOTEMPTY // directory not empty
+	ErrFileExists      LinuxError = errEEXIST    // file exists
+	ErrInvalidArgument LinuxError = errEINVAL    // invalid argument
+	ErrIsADirectory    LinuxError = errEISDIR    // is a directory
+	ErrNoSuchFileOrDir LinuxError = errENOENT    // no such file or directory
+	ErrNotADirectory   LinuxError = errENOTDIR   // not a directory
+	ErrOpNotPermitted  LinuxError = errEPERM     // operation not permitted
+	ErrPermDenied      LinuxError = errEACCES    // permission denied
+	ErrTooManySymlinks LinuxError = errELOOP     // too many levels of symbolic links
+
+	errEACCES    = 0xd
+	errEBADF     = 0x9
+	errEEXIST    = 0x11
+	errEINVAL    = 0x16
+	errEISDIR    = 0x15
+	errENOENT    = 0x2
+	errELOOP     = 0x28
+	errENOTDIR   = 0x14
+	errENOTEMPTY = 0x27
+	errEPERM     = 0x1
 )
 
-// Errno replaces syscall.Errno for all OSes.
-type Errno uint64 //nolint:errname // the type name `Errno` should conform to the `XxxError` format.
-
-func (en Errno) Error() string {
-	return en.Err(Cfg.OSType())
+func (i LinuxError) Error() string {
+	return i.String()
 }
 
-func (en Errno) Err(ost OSType) string {
-	i := en + Errno(ost)<<errorShift
+// WindowsError replaces syscall.Errno for Windows operating systems.
+type WindowsError uint32
 
-	s, ok := errText[i]
-	if ok {
-		return s
-	}
+//go:generate stringer -type WindowsError -linecomment -output errors_forwindows.go
 
-	return "errno " + strconv.FormatUint(uint64(en), 10)
-}
-
+// Errors for Windows operating systems.
 const (
-	// Errors for Linux operating systems.
-	// Most of the errors below can be found there :
-	// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
-
-	ErrBadFileDesc     = errEBADF     // bad file descriptor
-	ErrDirNotEmpty     = errENOTEMPTY // directory not empty
-	ErrFileExists      = errEEXIST    // file exists
-	ErrInvalidArgument = errEINVAL    // invalid argument
-	ErrIsADirectory    = errEISDIR    // is a directory
-	ErrNoSuchFileOrDir = errENOENT    // no such file or directory
-	ErrNotADirectory   = errENOTDIR   // not a directory
-	ErrOpNotPermitted  = errEPERM     // operation not permitted
-	ErrPermDenied      = errEACCES    // permission denied
-	ErrTooManySymlinks = errELOOP     // too many levels of symbolic links
-
-	errEACCES    = Errno(0xd)
-	errEBADF     = Errno(0x9)
-	errEEXIST    = Errno(0x11)
-	errEINVAL    = Errno(0x16)
-	errEISDIR    = Errno(0x15)
-	errENOENT    = Errno(0x2)
-	errELOOP     = Errno(0x28)
-	errENOTDIR   = Errno(0x14)
-	errENOTEMPTY = Errno(0x27)
-	errEPERM     = Errno(0x1)
-
-	// Errors for Windows operating systems.
-
-	ErrWinAccessDenied     = Errno(5)          // Access is denied.
-	ErrWinCantCreateFile   = Errno(0x182)      // Cannot create a file when that file already exists.
-	ErrWinDirNameInvalid   = Errno(0x10B)      // The directory name is invalid.
-	ErrWinDirNotEmpty      = Errno(145)        // The directory is not empty.
-	ErrWinFileExists       = Errno(80)         // The file exists.
-	ErrWinFileNotFound     = Errno(2)          // The system cannot find the file specified.
-	ErrWinIsADirectory     = Errno(21)         // is a directory
-	ErrWinNegativeSeek     = Errno(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
-	ErrWinNotReparsePoint  = Errno(4390)       // The file or directory is not a reparse point.
-	ErrWinInvalidHandle    = Errno(6)          // The handle is invalid.
-	ErrWinNotSupported     = Errno(0x20000082) // not supported by windows
-	ErrWinPathNotFound     = Errno(3)          // The system cannot find the path specified.
-	ErrWinPrivilegeNotHeld = Errno(1314)       // A required privilege is not held by the client.
+	ErrWinAccessDenied     = WindowsError(5)          // Access is denied.
+	ErrWinCantCreateFile   = WindowsError(0x182)      // Cannot create a file when that file already exists.
+	ErrWinDirNameInvalid   = WindowsError(0x10B)      // The directory name is invalid.
+	ErrWinDirNotEmpty      = WindowsError(145)        // The directory is not empty.
+	ErrWinFileExists       = WindowsError(80)         // The file exists.
+	ErrWinFileNotFound     = WindowsError(2)          // The system cannot find the file specified.
+	ErrWinIsADirectory     = WindowsError(21)         // is a directory
+	ErrWinNegativeSeek     = WindowsError(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinNotReparsePoint  = WindowsError(4390)       // The file or directory is not a reparse point.
+	ErrWinInvalidHandle    = WindowsError(6)          // The handle is invalid.
+	ErrWinNotSupported     = WindowsError(0x20000082) // not supported by windows
+	ErrWinPathNotFound     = WindowsError(3)          // The system cannot find the path specified.
+	ErrWinPrivilegeNotHeld = WindowsError(1314)       // A required privilege is not held by the client.
 )
 
-// errText translates an OS error number to text for all OSes.
-var errText = map[Errno]string{
-	ErrBadFileDesc + linuxError:           "bad file descriptor",
-	ErrDirNotEmpty + linuxError:           "directory not empty",
-	ErrFileExists + linuxError:            "file exists",
-	ErrInvalidArgument + linuxError:       "invalid argument",
-	ErrIsADirectory + linuxError:          "is a directory",
-	ErrNoSuchFileOrDir + linuxError:       "no such file or directory",
-	ErrNotADirectory + linuxError:         "not a directory",
-	ErrOpNotPermitted + linuxError:        "operation not permitted",
-	ErrPermDenied + linuxError:            "permission denied",
-	ErrTooManySymlinks + linuxError:       "too many levels of symbolic links",
-	ErrWinAccessDenied + windowsError:     "Access is denied.",
-	ErrWinCantCreateFile + windowsError:   "Cannot create a file when that file already exists.",
-	ErrWinDirNameInvalid + windowsError:   "The directory name is invalid.",
-	ErrWinDirNotEmpty + windowsError:      "The directory is not empty.",
-	ErrWinFileExists + windowsError:       "The file exists.",
-	ErrWinFileNotFound + windowsError:     "The system cannot find the file specified.",
-	ErrWinIsADirectory + windowsError:     "is a directory",
-	ErrWinNegativeSeek + windowsError:     "An attempt was made to move the file pointer before the beginning of the file.",
-	ErrWinNotReparsePoint + windowsError:  "The file or directory is not a reparse point.",
-	ErrWinInvalidHandle + windowsError:    "The handle is invalid.",
-	ErrWinNotSupported + windowsError:     "not supported by windows",
-	ErrWinPathNotFound + windowsError:     "The system cannot find the path specified.",
-	ErrWinPrivilegeNotHeld + windowsError: "A required privilege is not held by the client.",
+func (i WindowsError) Error() string {
+	return i.String()
 }

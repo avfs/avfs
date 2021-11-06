@@ -61,16 +61,16 @@ type memAttrs struct {
 // memErrors regroups the errors returned by MemFS functions.
 // They are changed depending on the OS emulated.
 type memErrors struct {
-	BadFileDesc     avfs.Errno // bad file descriptor.
-	DirNotEmpty     avfs.Errno // Directory not empty.
-	FileExists      avfs.Errno // File exists.
-	InvalidArgument avfs.Errno // invalid argument
-	IsADirectory    avfs.Errno // File Is a directory.
-	NoSuchFileOrDir avfs.Errno // No such file or directory.
-	NotADirectory   avfs.Errno // Not a directory.
-	OpNotPermitted  avfs.Errno // operation not permitted.
-	PermDenied      avfs.Errno // Permission denied.
-	TooManySymlinks avfs.Errno // Too many levels of symbolic links.
+	BadFileDesc     error // bad file descriptor.
+	DirNotEmpty     error // Directory not empty.
+	FileExists      error // File exists.
+	InvalidArgument error // invalid argument
+	IsADirectory    error // File Is a directory.
+	NoSuchFileOrDir error // No such file or directory.
+	NotADirectory   error // Not a directory.
+	OpNotPermitted  error // operation not permitted.
+	PermDenied      error // Permission denied.
+	TooManySymlinks error // Too many levels of symbolic links.
 }
 
 // MemFile represents an open file descriptor.
