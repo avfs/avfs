@@ -920,6 +920,15 @@ func (cp *checkPathError) OpStat() *checkPathError {
 		Op("CreateFile", avfs.OsWindows)
 }
 
+// OpLstat checks if the current fs.PathError Op is a Lstat Op.
+func (cp *checkPathError) OpLstat() *checkPathError {
+	cp.tb.Helper()
+
+	return cp.
+		Op("lstat", avfs.OsLinux).
+		Op("CreateFile", avfs.OsWindows)
+}
+
 // Path checks the path of the current fs.PathError.
 func (cp *checkPathError) Path(path string) *checkPathError {
 	cp.tb.Helper()

@@ -585,7 +585,7 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
-		CheckPathError(t, err).Op("lstat").Path(testDir).ErrPermDenied()
+		CheckPathError(t, err).OpLstat().Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -890,7 +890,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Lstat(testDir)
-		CheckPathError(t, err).Op("lstat").Path(testDir).ErrPermDenied()
+		CheckPathError(t, err).OpLstat().Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -986,18 +986,18 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		_, err := vfs.Lstat(nonExistingFile)
-		CheckPathError(t, err).Path(nonExistingFile).
-			Op("lstat", avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
-			Op("CreateFile", avfs.OsWindows).Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
+		CheckPathError(t, err).OpLstat().Path(nonExistingFile).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
 	})
 
 	t.Run("LStatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(testDir, files[0].Path, "subDirOnFile")
 
 		_, err := vfs.Lstat(subDirOnFile)
-		CheckPathError(t, err).Path(subDirOnFile).
-			Op("lstat", avfs.OsLinux).Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Op("CreateFile", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+		CheckPathError(t, err).OpLstat().Path(subDirOnFile).
+			Err(avfs.ErrNotADirectory, avfs.OsLinux).
+			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 	})
 }
 
@@ -2436,9 +2436,14 @@ func (sfs *SuiteFS) TestSetUser(t *testing.T, testDir string) {
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
 		userName := "InvalidUser" + suffix
 
+		wantErr := error(avfs.ErrPermDenied)
+		if vfs.OSType() == avfs.OsWindows {
+			wantErr = avfs.ErrWinAccessDenied
+		}
+
 		_, err := vfs.SetUser(userName)
-		if err != avfs.ErrPermDenied {
-			t.Errorf("SetUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		if err != wantErr {
+			t.Errorf("SetUser : want error to be %v, got %v", wantErr, err)
 		}
 
 		return
