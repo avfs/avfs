@@ -26,6 +26,7 @@ import (
 type DummyFS struct {
 	errPermDenied error
 	opStat        string
+	opLstat       string
 	utils         Utils
 }
 
@@ -45,11 +46,13 @@ func NewDummyFS() *DummyFS {
 		utils:         NewUtils(Cfg.OSType()),
 		errPermDenied: ErrPermDenied,
 		opStat:        "stat",
+		opLstat:       "lstat",
 	}
 
 	if vfs.OSType() == OsWindows {
 		vfs.errPermDenied = ErrWinAccessDenied
 		vfs.opStat = "CreateFile"
+		vfs.opLstat = vfs.opStat
 	}
 
 	return vfs
@@ -141,7 +144,7 @@ func (vfs *DummyFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *DummyFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	err := vfs.errPermDenied
+	err := error(ErrOpNotPermitted)
 	if vfs.OSType() == OsWindows {
 		err = ErrWinNotSupported
 	}
@@ -214,10 +217,7 @@ func (vfs *DummyFS) Create(name string) (File, error) {
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func (vfs *DummyFS) CreateTemp(dir, pattern string) (File, error) {
-	op := "open"
-	if vfs.OSType() == OsWindows {
-		op = "createtemp"
-	}
+	const op = "createtemp"
 
 	return &DummyFile{}, &os.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
 }
@@ -238,7 +238,7 @@ func (vfs *DummyFS) Dir(path string) string {
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
 func (vfs *DummyFS) EvalSymlinks(path string) (string, error) {
-	return "", &fs.PathError{Op: vfs.opStat, Path: path, Err: vfs.errPermDenied}
+	return "", &fs.PathError{Op: vfs.opLstat, Path: path, Err: vfs.errPermDenied}
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
@@ -337,12 +337,7 @@ func (vfs *DummyFS) Link(oldname, newname string) error {
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
 func (vfs *DummyFS) Lstat(name string) (fs.FileInfo, error) {
-	op := "lstat"
-	if vfs.OSType() == OsWindows {
-		op = "CreateFile"
-	}
-
-	return nil, &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
+	return nil, &fs.PathError{Op: vfs.opLstat, Path: name, Err: vfs.errPermDenied}
 }
 
 // Match reports whether name matches the shell file name pattern.
@@ -404,10 +399,7 @@ func (vfs *DummyFS) MkdirAll(path string, perm fs.FileMode) error {
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func (vfs *DummyFS) MkdirTemp(dir, pattern string) (string, error) {
-	op := "mkdir"
-	if vfs.OSType() == OsWindows {
-		op = "mkdirtemp"
-	}
+	const op = "mkdirtemp"
 
 	return "", &os.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
 }
