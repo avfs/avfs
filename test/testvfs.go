@@ -891,7 +891,9 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
 		err := vfs.Link(nonExistingFile, existingFile)
-		CheckLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
 	})
 }
 
