@@ -915,7 +915,9 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 func (cp *checkPathError) OpStat() *checkPathError {
 	cp.tb.Helper()
 
-	return cp.Op("stat", avfs.OsLinux).Op("CreateFile", avfs.OsWindows)
+	return cp.
+		Op("stat", avfs.OsLinux).
+		Op("CreateFile", avfs.OsWindows)
 }
 
 // Path checks the path of the current fs.PathError.
@@ -962,6 +964,15 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 	cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 
 	return cp
+}
+
+// ErrPermDenied checks if the current fs.PathError is a permission denied error.
+func (cp *checkPathError) ErrPermDenied() *checkPathError {
+	cp.tb.Helper()
+
+	return cp.
+		Err(avfs.ErrPermDenied, avfs.OsLinux).
+		Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 }
 
 // checkLinkError stores the current os.LinkError test data.
@@ -1081,4 +1092,13 @@ func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkE
 	cl.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
 
 	return cl
+}
+
+// ErrPermDenied checks if the current os.LinkError is a permission denied error.
+func (cl *checkLinkError) ErrPermDenied() *checkLinkError {
+	cl.tb.Helper()
+
+	return cl.
+		Err(avfs.ErrPermDenied, avfs.OsLinux).
+		Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 }

@@ -35,10 +35,10 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		err := vfs.Chdir(testDir)
-		CheckPathError(t, err).Op("chdir").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("chdir").Path(testDir).ErrPermDenied()
 
 		_, err = vfs.Getwd()
-		CheckPathError(t, err).Op("getwd").Path("").Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("getwd").Path("").ErrPermDenied()
 
 		return
 	}
@@ -130,7 +130,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chmod(testDir, avfs.DefaultDirPerm)
-		CheckPathError(t, err).Op("chmod").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("chmod").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -424,7 +424,7 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chtimes(testDir, time.Now(), time.Now())
-		CheckPathError(t, err).Op("chtimes").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("chtimes").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -493,7 +493,7 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.Create(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -523,9 +523,7 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.CreateTemp(testDir, "")
-		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("CreateTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
+		CheckPathError(t, err).Op("createtemp").ErrPermDenied()
 
 		return
 	}
@@ -587,15 +585,7 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			if err != avfs.ErrWinAccessDenied {
-				t.Errorf("want error to be %v, got %v", avfs.ErrWinAccessDenied, err)
-			}
-		default:
-			CheckPathError(t, err).Op("lstat").Path(testDir).Err(avfs.ErrPermDenied)
-		}
+		CheckPathError(t, err).Op("lstat").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -804,10 +794,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatHardlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Link(testDir, testDir)
-
-		CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).
-			Err(avfs.ErrPermDenied, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+		CheckLinkError(t, err).Op("link").Old(testDir).New(testDir).ErrPermDenied()
 
 		return
 	}
@@ -903,7 +890,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Lstat(testDir)
-		CheckPathError(t, err).Op("lstat").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("lstat").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1021,7 +1008,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(testDir, avfs.DefaultDirPerm)
-		CheckPathError(t, err).Op("mkdir").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("mkdir").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1148,7 +1135,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
-		CheckPathError(t, err).Op("mkdir").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("mkdir").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1260,9 +1247,7 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.MkdirTemp(testDir, "")
-		if err.(*fs.PathError).Err != avfs.ErrPermDenied {
-			t.Errorf("MkdirTemp : want error to be %v, got %v", avfs.ErrPermDenied, err)
-		}
+		CheckPathError(t, err).Op("mkdirtemp").ErrPermDenied()
 
 		return
 	}
@@ -1311,7 +1296,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Open(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1366,7 +1351,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.OpenFile(testDir, os.O_WRONLY, avfs.DefaultFilePerm)
-		CheckPathError(t, err).Op("open").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1549,7 +1534,7 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.ReadDir(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1625,7 +1610,7 @@ func (sfs *SuiteFS) TestReadFile(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.ReadFile(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1730,7 +1715,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Remove(testDir)
-		CheckPathError(t, err).Op("remove").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("remove").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1833,7 +1818,7 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.RemoveAll(testDir)
-		CheckPathError(t, err).Op("removeall").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("removeall").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -1936,7 +1921,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Rename(testDir, testDir)
-		CheckLinkError(t, err).Op("rename").Old(testDir).New(testDir).Err(avfs.ErrPermDenied)
+		CheckLinkError(t, err).Op("rename").Old(testDir).New(testDir).ErrPermDenied()
 
 		return
 	}
@@ -2142,7 +2127,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Stat(testDir)
-		CheckPathError(t, err).OpStat().Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).OpStat().Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -2332,7 +2317,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Truncate(testDir, 0)
-		CheckPathError(t, err).Op("truncate").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("truncate").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -2534,7 +2519,7 @@ func (sfs *SuiteFS) TestWriteFile(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.WriteFile(testDir, []byte{0}, avfs.DefaultFilePerm)
-		CheckPathError(t, err).Op("open").Path(testDir).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
 		return
 	}
@@ -2573,22 +2558,22 @@ func (sfs *SuiteFS) TestWriteOnReadOnly(t *testing.T, testDir string) {
 		}
 
 		err = f.Chmod(0o777)
-		CheckPathError(t, err).Op("chmod").Path(f.Name()).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("chmod").Path(f.Name()).ErrPermDenied()
 
 		err = f.Chown(0, 0)
-		CheckPathError(t, err).Op("chown").Path(f.Name()).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("chown").Path(f.Name()).ErrPermDenied()
 
 		err = f.Truncate(0)
-		CheckPathError(t, err).Op("truncate").Path(f.Name()).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("truncate").Path(f.Name()).ErrPermDenied()
 
 		_, err = f.Write([]byte{})
-		CheckPathError(t, err).Op("write").Path(f.Name()).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied()
 
 		_, err = f.WriteAt([]byte{}, 0)
-		CheckPathError(t, err).Op("write").Path(f.Name()).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied()
 
 		_, err = f.WriteString("")
-		CheckPathError(t, err).Op("write").Path(f.Name()).Err(avfs.ErrPermDenied)
+		CheckPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied()
 	})
 }
 
