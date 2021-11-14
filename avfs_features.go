@@ -41,7 +41,7 @@ func (i Features) String() string {
 	}
 	sb := make([]byte, 0, len(_Features_name)/2)
 	sb = append(sb, []byte("Features(")...)
-	for mask := Features(1); mask <= i; mask <<= 1 {
+	for mask := Features(1); mask > 0 && mask <= i; mask <<= 1 {
 		val := i & mask
 		if val == 0 {
 			continue

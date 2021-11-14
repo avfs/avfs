@@ -741,7 +741,7 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	}
 
 	parent, child, pi, err := vfs.searchNode(path, slmLstat)
-	if vfs.IsNotExist(err) {
+	if vfs.isNotExist(err) {
 		return nil
 	}
 
@@ -807,7 +807,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	}
 
 	nParent, nChild, nPI, nErr := vfs.searchNode(newpath, slmLstat)
-	if nErr != vfs.err.FileExists || vfs.isNotExist(nErr) {
+	if nErr != vfs.err.FileExists && !vfs.isNotExist(nErr) {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 	}
 
