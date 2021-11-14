@@ -584,8 +584,22 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 	}
 
 	nd, ok := f.nd.(*fileNode)
-	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.BadFileDesc}
+	if !ok {
+		err = avfs.ErrBadFileDesc
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+	}
+
+	if f.permMode&avfs.PermWrite == 0 {
+		err = avfs.ErrBadFileDesc
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAccessDenied
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	nd.mu.Lock()
@@ -631,8 +645,22 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 	}
 
 	nd, ok := f.nd.(*fileNode)
-	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.BadFileDesc}
+	if !ok {
+		err = avfs.ErrBadFileDesc
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+	}
+
+	if f.permMode&avfs.PermWrite == 0 {
+		err = avfs.ErrBadFileDesc
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAccessDenied
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	nd.mu.Lock()
