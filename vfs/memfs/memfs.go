@@ -317,7 +317,9 @@ func (vfs *MemFS) IsExist(err error) bool {
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
 func (vfs *MemFS) IsNotExist(err error) bool {
-	return vfs.utils.IsNotExist(err)
+	err = errors.Unwrap(err)
+
+	return vfs.isNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
@@ -368,7 +370,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	}
 
 	nParent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
-	if nParent == nil || nerr != vfs.err.NoSuchFileOrDir {
+	if !vfs.isNotExist(nerr) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
@@ -452,7 +454,7 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	}
 
 	parent, _, pi, err := vfs.searchNode(name, slmEval)
-	if err != vfs.err.NoSuchFileOrDir || !pi.IsLast() || parent == nil {
+	if !vfs.isNotExist(err) || !pi.IsLast() {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -492,11 +494,11 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 		return nil
 	}
 
-	if parent == nil || err == vfs.err.NotADirectory {
+	if err == vfs.err.NotADirectory {
 		return &fs.PathError{Op: op, Path: pi.LeftPart(), Err: err}
 	}
 
-	if err != vfs.err.NoSuchFileOrDir {
+	if !vfs.isNotExist(err) {
 		return &fs.PathError{Op: op, Path: path, Err: err}
 	}
 
@@ -567,15 +569,11 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 	}
 
 	parent, child, pi, err := vfs.searchNode(name, slmEval)
-	if err != vfs.err.FileExists && err != vfs.err.NoSuchFileOrDir {
+	if err != vfs.err.FileExists && !vfs.isNotExist(err) || !pi.IsLast() {
 		return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
-	if err == vfs.err.NoSuchFileOrDir {
-		if !pi.IsLast() || parent == nil {
-			return nil, &fs.PathError{Op: op, Path: name, Err: err}
-		}
-
+	if vfs.isNotExist(err) {
 		if flag&os.O_CREATE == 0 {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: err}
 		}
@@ -698,7 +696,7 @@ func (vfs *MemFS) Remove(name string) error {
 	const op = "remove"
 
 	parent, child, pi, err := vfs.searchNode(name, slmLstat)
-	if err != vfs.err.FileExists || parent == nil || child == nil {
+	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
@@ -743,7 +741,7 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	}
 
 	parent, child, pi, err := vfs.searchNode(path, slmLstat)
-	if vfs.IsNotExist(err) || parent == nil {
+	if vfs.IsNotExist(err) {
 		return nil
 	}
 
@@ -804,12 +802,12 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	const op = "rename"
 
 	oParent, oChild, oPI, oErr := vfs.searchNode(oldpath, slmLstat)
-	if oErr != vfs.err.FileExists || oParent == nil {
+	if oErr != vfs.err.FileExists {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: oErr}
 	}
 
 	nParent, nChild, nPI, nErr := vfs.searchNode(newpath, slmLstat)
-	if !(nErr == vfs.err.FileExists || nErr == vfs.err.NoSuchFileOrDir) || nParent == nil {
+	if nErr != vfs.err.FileExists || vfs.isNotExist(nErr) {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 	}
 
@@ -835,7 +833,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 
 	switch oChild.(type) {
 	case *dirNode:
-		if nErr != vfs.err.NoSuchFileOrDir {
+		if !vfs.isNotExist(nErr) {
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 		}
 
@@ -940,7 +938,7 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
 	parent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
-	if nerr != vfs.err.NoSuchFileOrDir || parent == nil {
+	if !vfs.isNotExist(nerr) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
@@ -989,8 +987,8 @@ func (vfs *MemFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 func (vfs *MemFS) Truncate(name string, size int64) error {
 	const op = "truncate"
 
-	parent, child, _, err := vfs.searchNode(name, slmEval)
-	if err != vfs.err.FileExists || parent == nil {
+	_, child, _, err := vfs.searchNode(name, slmEval)
+	if err != vfs.err.FileExists {
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 

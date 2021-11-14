@@ -198,6 +198,11 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 	return child
 }
 
+// isNotExist is IsNotExist without unwrapping.
+func (vfs *MemFS) isNotExist(err error) bool {
+	return err == vfs.err.NoSuchFileOrDir
+}
+
 // checkPermission checks if the current user has the desired permissions (perm) on the node.
 func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool {
 	if u.IsAdmin() {
