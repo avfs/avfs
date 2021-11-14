@@ -129,7 +129,7 @@ func Fmt() error {
 		}
 	}
 
-	return sh.RunV(goFumptCmd, "-l", "-s", "-w", "-extra", ".")
+	return sh.RunV(goFumptCmd, "-l", "-w", "-extra", ".")
 }
 
 // Lint runs golangci-lint (on Windows it must be run from a bash shell like git bash).
