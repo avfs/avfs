@@ -60,7 +60,12 @@ func (vfs *MemFS) Chdir(dir string) error {
 
 	c, ok := child.(*dirNode)
 	if !ok {
-		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
+		err = vfs.err.NotADirectory
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinDirNameInvalid
+		}
+
+		return &fs.PathError{Op: op, Path: dir, Err: err}
 	}
 
 	c.mu.RLock()
