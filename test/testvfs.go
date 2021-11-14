@@ -347,7 +347,9 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 
 	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
 		err := vfs.Chroot(testDir)
-		CheckPathError(t, err).Op("chroot").Path(testDir).Err(avfs.ErrOpNotPermitted)
+		CheckPathError(t, err).Op("chroot").Path(testDir).
+			Err(avfs.ErrOpNotPermitted, avfs.OsLinux).
+			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
 
 		return
 	}

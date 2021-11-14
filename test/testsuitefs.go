@@ -970,7 +970,7 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 		return cp
 	}
 
-	cp.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	cp.tb.Errorf("%s : want error to be %v, got %v", err.Path, wantErr, err.Err)
 
 	return cp
 }

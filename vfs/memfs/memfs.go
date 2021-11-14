@@ -151,7 +151,7 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 func (vfs *MemFS) Chroot(path string) error {
 	const op = "chroot"
 
-	if !vfs.user.IsAdmin() {
+	if !vfs.HasFeature(avfs.FeatChroot) || !vfs.user.IsAdmin() {
 		return &fs.PathError{Op: op, Path: path, Err: vfs.err.OpNotPermitted}
 	}
 

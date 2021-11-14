@@ -50,6 +50,7 @@ func New(opts ...Option) *MemFS {
 
 	ut := vfs.utils
 	if ut.OSType() == avfs.OsWindows {
+		ma.features ^= avfs.FeatChroot
 		ma.dirMode |= avfs.DefaultDirPerm
 		ma.fileMode |= avfs.DefaultFilePerm
 
