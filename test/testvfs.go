@@ -324,7 +324,9 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		err := vfs.Chown(nonExistingFile, 0, 0)
-		CheckPathError(t, err).Op("chown").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).Op("chown").Path(nonExistingFile).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
 	})
 
 	t.Run("ChownPerm", func(t *testing.T) {
@@ -777,7 +779,9 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		nonExistingFile := sfs.NonExistingFile(t, testDir)
 
 		err := vfs.Lchown(nonExistingFile, 0, 0)
-		CheckPathError(t, err).Op("lchown").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
+		CheckPathError(t, err).Op("lchown").Path(nonExistingFile).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
 	})
 
 	t.Run("LchownPerm", func(t *testing.T) {
@@ -1619,30 +1623,30 @@ func (sfs *SuiteFS) TestReadFile(t *testing.T, testDir string) {
 		return
 	}
 
-	data := []byte("AAABBBCCCDDD")
-	path := vfs.Join(testDir, "TestReadFile.txt")
+	vfs = sfs.vfsTest
 
 	t.Run("ReadFile", func(t *testing.T) {
+		data := []byte("AAABBBCCCDDD")
+		path := sfs.ExistingFile(t, testDir, data)
+
 		rb, err := vfs.ReadFile(path)
-		if err == nil {
-			t.Errorf("ReadFile : want error to be %v, got nil", avfs.ErrNoSuchFileOrDir)
-		}
-
-		if len(rb) != 0 {
-			t.Errorf("ReadFile : want read bytes to be 0, got %d", len(rb))
-		}
-
-		vfs = sfs.vfsSetup
-
-		path = sfs.ExistingFile(t, testDir, data)
-
-		vfs = sfs.vfsTest
-
-		rb, err = vfs.ReadFile(path)
 		CheckNoError(t, "ReadFile", err)
 
 		if !bytes.Equal(rb, data) {
 			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
+		}
+	})
+
+	t.Run("ReadFileNotExisting", func(t *testing.T) {
+		path := sfs.NonExistingFile(t, testDir)
+
+		rb, err := vfs.ReadFile(path)
+		CheckPathError(t, err).Op("open").Path(path).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
+
+		if len(rb) != 0 {
+			t.Errorf("ReadFile : want read bytes to be 0, got %d", len(rb))
 		}
 	})
 }
