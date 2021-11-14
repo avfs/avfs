@@ -985,15 +985,23 @@ func (vfs *MemFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Truncate(name string, size int64) error {
-	const op = "truncate"
+	op := "truncate"
 
 	_, child, _, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists {
-		return &fs.PathError{Op: op, Path: name, Err: err}
+		if vfs.OSType() != avfs.OsWindows {
+			return &fs.PathError{Op: op, Path: name, Err: err}
+		}
+
+		return nil
 	}
 
 	c, ok := child.(*fileNode)
 	if !ok {
+		if vfs.OSType() == avfs.OsWindows {
+			op = "open"
+		}
+
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 	}
 
