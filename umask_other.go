@@ -28,6 +28,11 @@ import (
 // so its value is cached and protected by a mutex.
 func (um *UMaskType) Set(mask fs.FileMode) {
 	um.mu.Lock()
-	um.mask = mask
+	if um.mask == 0 && mask == 0 {
+		um.mask = 0o111
+	} else {
+		um.mask = mask
+	}
+
 	um.mu.Unlock()
 }
