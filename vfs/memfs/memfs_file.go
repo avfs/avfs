@@ -46,6 +46,10 @@ func (f *MemFile) Chdir() error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
+	if f.memFS.OSType() == avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinNotSupported}
+	}
+
 	_, ok := f.nd.(*dirNode)
 	if !ok {
 		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.NotADirectory}
