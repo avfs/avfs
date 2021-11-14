@@ -61,7 +61,7 @@ func New(opts ...Option) *MemFS {
 	vfs.umask = avfs.Cfg.UMask()
 	vfs.rootNode.mode = ma.dirMode &^ vfs.umask
 
-	vfs.setErrors(ut.OSType())
+	vfs.setErrors()
 
 	if vfs.HasFeature(avfs.FeatMainDirs) {
 		u := vfs.user
@@ -178,19 +178,19 @@ func WithOS(osType avfs.OSType) Option {
 }
 
 // setErrors set MemFS errors depending on the operating system.
-func (vfs *MemFS) setErrors(ost avfs.OSType) {
-	switch ost {
+func (vfs *MemFS) setErrors() {
+	switch vfs.OSType() {
 	case avfs.OsWindows:
 		vfs.err.BadFileDesc = avfs.ErrWinAccessDenied
 		vfs.err.DirNotEmpty = avfs.ErrWinDirNotEmpty
 		vfs.err.FileExists = avfs.ErrWinFileExists
-		vfs.err.InvalidArgument = avfs.ErrInvalidArgument // TODO Windows
+		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
 		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
 		vfs.err.NoSuchFileOrDir = avfs.ErrWinPathNotFound
 		vfs.err.NotADirectory = avfs.ErrWinDirNameInvalid
 		vfs.err.OpNotPermitted = avfs.ErrWinNotSupported
-		vfs.err.PermDenied = avfs.ErrPermDenied           // TODO Windows
-		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks // TODO Windows
+		vfs.err.PermDenied = avfs.ErrWinAccessDenied
+		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
 	default:
 		vfs.err.BadFileDesc = avfs.ErrBadFileDesc
 		vfs.err.DirNotEmpty = avfs.ErrDirNotEmpty
