@@ -185,7 +185,7 @@ func (vfs *MemFS) setErrors() {
 		vfs.err.BadFileDesc = avfs.ErrWinAccessDenied
 		vfs.err.DirNotEmpty = avfs.ErrWinDirNotEmpty
 		vfs.err.FileExists = avfs.ErrWinFileExists
-		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
+		vfs.err.InvalidArgument = avfs.ErrWinNegativeSeek
 		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
 		vfs.err.NoSuchDir = avfs.ErrWinPathNotFound
 		vfs.err.NoSuchFile = avfs.ErrWinFileNotFound

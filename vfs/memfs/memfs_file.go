@@ -20,6 +20,7 @@ import (
 	"io"
 	"io/fs"
 	"math"
+	"os"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -443,7 +444,11 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, nil
+		if f.memFS.OSType() != avfs.OsWindows {
+			return 0, nil
+		}
+
+		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrWinInvalidHandle}
 	}
 
 	nd.mu.RLock()
@@ -470,7 +475,11 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 		f.at = size + offset
 	default:
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
+		if f.memFS.OSType() != avfs.OsWindows {
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
+		}
+
+		return 0, nil
 	}
 
 	return f.at, nil
