@@ -486,20 +486,15 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	const op = "mkdir"
 
 	parent, child, pi, err := vfs.searchNode(path, slmEval)
-	if err == vfs.err.FileExists {
-		if _, ok := child.(*dirNode); !ok {
-			return &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
+	switch child.(type) {
+	case *dirNode:
+		if err != vfs.err.FileExists {
+			return &fs.PathError{Op: op, Path: path, Err: err}
 		}
 
 		return nil
-	}
-
-	if err == vfs.err.NotADirectory {
-		return &fs.PathError{Op: op, Path: pi.LeftPart(), Err: err}
-	}
-
-	if !vfs.isNotExist(err) {
-		return &fs.PathError{Op: op, Path: path, Err: err}
+	case *fileNode:
+		return &fs.PathError{Op: op, Path: pi.LeftPart(), Err: vfs.err.NotADirectory}
 	}
 
 	parent.mu.Lock()
