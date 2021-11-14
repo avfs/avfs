@@ -363,8 +363,6 @@ func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 // directory, Readdirnames returns the names read until that point and
 // a non-nil error.
 func (f *MemFile) Readdirnames(n int) (names []string, err error) {
-	const op = "readdirent"
-
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -376,8 +374,18 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 		return nil, fs.ErrInvalid
 	}
 
+	op := "readdirent"
+	if f.memFS.OSType() == avfs.OsWindows {
+		op = "readdir"
+	}
+
 	if f.nd == nil {
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		err := avfs.ErrFileClosing
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinPathNotFound
+		}
+
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	nd, ok := f.nd.(*dirNode)
