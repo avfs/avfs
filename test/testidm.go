@@ -22,6 +22,47 @@ import (
 	"github.com/avfs/avfs"
 )
 
+// TestAdmin tests AdminGroup and AdminUser.
+func (sIdm *SuiteIdm) TestAdmin(t *testing.T) {
+	idm := sIdm.idm
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		ag := idm.AdminGroup()
+		if ag.Name() != avfs.NotImplementedGroup.Name() {
+			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.NotImplementedGroup.Name(), ag.Name())
+		}
+
+		if ag.Gid() != avfs.NotImplementedGroup.Gid() {
+			t.Errorf("AdminGroup : want Gid to be %d, got %d", avfs.NotImplementedGroup.Gid(), ag.Gid())
+		}
+
+		au := idm.AdminUser()
+		if au.Name() != avfs.NotImplementedUser.Name() {
+			t.Errorf("AdminUser : want name to be %s, got %s", avfs.NotImplementedUser.Name(), au.Name())
+		}
+
+		if au.Uid() != avfs.NotImplementedUser.Uid() {
+			t.Errorf("AdminUser : want Uid to be %d, got %d", avfs.NotImplementedUser.Uid(), au.Uid())
+		}
+
+		return
+	}
+
+	if !sIdm.canTest {
+		return
+	}
+
+	ag := idm.AdminGroup()
+	if ag.Name() != sIdm.utils.AdminGroupName() {
+		t.Errorf("AdminGroup : want name to be %s, got %s", sIdm.utils.AdminGroupName(), ag.Name())
+	}
+
+	au := idm.AdminUser()
+	if au.Name() != sIdm.utils.AdminUserName() {
+		t.Errorf("AdminUser : want name to be %s, got %s", sIdm.utils.AdminUserName(), au.Name())
+	}
+}
+
 // TestGroupAddDel tests GroupAdd and GroupDel functions.
 func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 	idm := sIdm.idm
