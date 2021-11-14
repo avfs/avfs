@@ -84,7 +84,7 @@ func (vfs *OsFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *OsFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.osType != avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.utils.OSType() != avfs.OsWindows {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -241,7 +241,7 @@ func (vfs *OsFS) Join(elem ...string) string {
 func (vfs *OsFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.osType != avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.utils.OSType() != avfs.OsWindows {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -420,7 +420,7 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) {
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return nil, avfs.ErrPermDenied
+		return nil, vfs.err.PermDenied
 	}
 
 	return osidm.SetUser(name)
