@@ -66,7 +66,8 @@ type memErrors struct {
 	FileExists      error // File exists.
 	InvalidArgument error // invalid argument
 	IsADirectory    error // File Is a directory.
-	NoSuchFileOrDir error // No such file or directory.
+	NoSuchDir       error // No such directory.
+	NoSuchFile      error // No such file.
 	NotADirectory   error // Not a directory.
 	OpNotPermitted  error // operation not permitted.
 	PermDenied      error // Permission denied.

@@ -186,8 +186,9 @@ func (vfs *MemFS) setErrors() {
 		vfs.err.FileExists = avfs.ErrWinFileExists
 		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
 		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
-		vfs.err.NoSuchFileOrDir = avfs.ErrWinPathNotFound
-		vfs.err.NotADirectory = avfs.ErrWinDirNameInvalid
+		vfs.err.NoSuchDir = avfs.ErrWinPathNotFound
+		vfs.err.NoSuchFile = avfs.ErrWinFileNotFound
+		vfs.err.NotADirectory = avfs.ErrWinPathNotFound
 		vfs.err.OpNotPermitted = avfs.ErrWinNotSupported
 		vfs.err.PermDenied = avfs.ErrWinAccessDenied
 		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
@@ -197,7 +198,8 @@ func (vfs *MemFS) setErrors() {
 		vfs.err.FileExists = avfs.ErrFileExists
 		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
 		vfs.err.IsADirectory = avfs.ErrIsADirectory
-		vfs.err.NoSuchFileOrDir = avfs.ErrNoSuchFileOrDir
+		vfs.err.NoSuchDir = avfs.ErrNoSuchFileOrDir
+		vfs.err.NoSuchFile = avfs.ErrNoSuchFileOrDir
 		vfs.err.NotADirectory = avfs.ErrNotADirectory
 		vfs.err.OpNotPermitted = avfs.ErrOpNotPermitted
 		vfs.err.PermDenied = avfs.ErrPermDenied

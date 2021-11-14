@@ -54,7 +54,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	if pi.VolumeNameLen() > 0 {
 		nd, ok := vfs.volumes[pi.VolumeName()]
 		if !ok {
-			err = vfs.err.NoSuchFileOrDir
+			err = vfs.err.NoSuchDir
 
 			return
 		}
@@ -72,7 +72,10 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		parent.mu.RUnlock()
 
 		if child == nil {
-			err = vfs.err.NoSuchFileOrDir
+			err = vfs.err.NoSuchDir
+			if pi.IsLast() {
+				err = vfs.err.NoSuchFile
+			}
 
 			return
 		}
@@ -200,7 +203,7 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 
 // isNotExist is IsNotExist without unwrapping.
 func (vfs *MemFS) isNotExist(err error) bool {
-	return err == vfs.err.NoSuchFileOrDir
+	return err == vfs.err.NoSuchDir || err == vfs.err.NoSuchFile
 }
 
 // checkPermission checks if the current user has the desired permissions (perm) on the node.

@@ -260,7 +260,7 @@ func (vfs *MemFS) EvalSymlinks(path string) (string, error) {
 
 	_, _, pi, err := vfs.searchNode(path, slmEval)
 	if err != vfs.err.FileExists {
-		return "", &fs.PathError{Op: op, Path: pi.LeftPart(), Err: vfs.err.NoSuchFileOrDir}
+		return "", &fs.PathError{Op: op, Path: pi.LeftPart(), Err: err}
 	}
 
 	return pi.Path(), nil
@@ -450,7 +450,7 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	parent, _, pi, err := vfs.searchNode(name, slmEval)
@@ -713,7 +713,7 @@ func (vfs *MemFS) Remove(name string) error {
 
 	part := pi.Part()
 	if parent.children[part] == nil {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
 	}
 
 	parent.removeChild(part)

@@ -94,11 +94,11 @@ func TestSearchNode(t *testing.T) {
 		{path: "/a/afile3", parent: da, child: fa3, first: "afile3", rest: "", err: vfs.err.FileExists},
 
 		// Non existing
-		{path: "/z", parent: rn, first: "z", rest: "", err: vfs.err.NoSuchFileOrDir},
-		{path: "/a/az", parent: da, first: "az", rest: "", err: vfs.err.NoSuchFileOrDir},
-		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: vfs.err.NoSuchFileOrDir},
-		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: vfs.err.NoSuchFileOrDir},
-		{path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist", err: vfs.err.NoSuchFileOrDir},
+		{path: "/z", parent: rn, first: "z", rest: "", err: vfs.err.NoSuchFile},
+		{path: "/a/az", parent: da, first: "az", rest: "", err: vfs.err.NoSuchFile},
+		{path: "/b/b1/b1z", parent: db1, first: "b1z", err: vfs.err.NoSuchFile},
+		{path: "/b/b1/b1A/b1Az", parent: db1a, first: "b1Az", err: vfs.err.NoSuchFile},
+		{path: "/b/b1/b1A/b1Az/not/exist", parent: db1a, first: "b1Az", rest: "/not/exist", err: vfs.err.NoSuchDir},
 		{path: "/a/afile1/not/a/dir", parent: da, child: fa1, first: "afile1", rest: "/not/a/dir", err: vfs.err.NotADirectory},
 
 		// Symlinks
