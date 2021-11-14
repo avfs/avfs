@@ -36,14 +36,8 @@ func New(opts ...Option) *MemFS {
 	}
 
 	vfs := &MemFS{
-		user: avfs.NotImplementedUser,
-		rootNode: &dirNode{
-			baseNode: baseNode{
-				mtime: time.Now().UnixNano(),
-				uid:   0,
-				gid:   0,
-			},
-		},
+		user:     avfs.NotImplementedUser,
+		rootNode: createRootNode(),
 		memAttrs: ma,
 		utils:    avfs.Cfg.Utils(),
 	}
@@ -109,7 +103,14 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeAlreadyExists}
 	}
 
-	vfs.volumes[vol] = &dirNode{
+	vfs.volumes[vol] = createRootNode()
+
+	return nil
+}
+
+// createRootNode creates a root node for a file system.
+func createRootNode() *dirNode {
+	return &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
 			mode:  fs.ModeDir | 0o755,
@@ -117,8 +118,6 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 			gid:   0,
 		},
 	}
-
-	return nil
 }
 
 // Features returns the set of features provided by the file system or identity manager.
