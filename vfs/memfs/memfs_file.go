@@ -479,8 +479,6 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
 func (f *MemFile) Stat() (fs.FileInfo, error) {
-	const op = "stat"
-
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -490,6 +488,11 @@ func (f *MemFile) Stat() (fs.FileInfo, error) {
 
 	if f.name == "" {
 		return nil, fs.ErrInvalid
+	}
+
+	op := "stat"
+	if f.memFS.OSType() == avfs.OsWindows {
+		op = "GetFileType"
 	}
 
 	if f.nd == nil {
