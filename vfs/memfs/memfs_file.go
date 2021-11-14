@@ -281,8 +281,6 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 // If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
 // When it succeeds, it returns a nil error (not io.EOF).
 func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
-	const op = "readdirent"
-
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -294,8 +292,18 @@ func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 		return nil, fs.ErrInvalid
 	}
 
+	op := "readdirent"
+	if f.memFS.OSType() == avfs.OsWindows {
+		op = "readdir"
+	}
+
 	if f.nd == nil {
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		err := avfs.ErrFileClosing
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinPathNotFound
+		}
+
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	nd, ok := f.nd.(*dirNode)
