@@ -62,12 +62,12 @@ func TestSearchNode(t *testing.T) {
 	fa3 := vfs.createFile(da, "afile3", avfs.DefaultFilePerm)
 
 	// Symlinks
-	vfs.createSymlink(rn, "lroot", "/")
-	vfs.createSymlink(rn, "la", "/a")
-	vfs.createSymlink(db1b, "lb1", "/b/b1")
-	vfs.createSymlink(dc, "lafile3", "../a/afile3")
-	lloop1 := vfs.createSymlink(rn, "loop1", "/loop2")
-	vfs.createSymlink(rn, "loop2", "/loop1")
+	vfs.createSymlink(rn, "lroot", absPath(vfs, "/"))
+	vfs.createSymlink(rn, "la", absPath(vfs, "/a"))
+	vfs.createSymlink(db1b, "lb1", absPath(vfs, "/b/b1"))
+	vfs.createSymlink(dc, "lafile3", absPath(vfs, "../a/afile3"))
+	lloop1 := vfs.createSymlink(rn, "loop1", absPath(vfs, "/loop2"))
+	vfs.createSymlink(rn, "loop2", absPath(vfs, "/loop1"))
 
 	cases := []struct { //nolint:govet // no fieldalignment for test structs
 		path        string
@@ -111,28 +111,43 @@ func TestSearchNode(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		parent, child, pi, err := vfs.searchNode(c.path, slmEval)
+		path := absPath(vfs, c.path)
+		wantRest := vfs.FromSlash(c.rest)
+
+		parent, child, pi, err := vfs.searchNode(path, slmEval)
 		first := pi.Part()
 		rest := pi.Right()
 
 		if c.err != err {
-			t.Errorf("%s : want error to be %v, got %v", c.path, c.err, err)
+			t.Errorf("%s : want error to be %v, got %v", path, c.err, err)
 		}
 
 		if c.parent != parent {
-			t.Errorf("%s : want parent to be %v, got %v", c.path, c.parent, parent)
+			t.Errorf("%s : want parent to be %v, got %v", path, c.parent, parent)
 		}
 
 		if c.child != child {
-			t.Errorf("%s : want child to be %v, got %v", c.path, c.child, child)
+			t.Errorf("%s : want child to be %v, got %v", path, c.child, child)
 		}
 
 		if c.first != first {
-			t.Errorf("%s : want first to be %s, got %s", c.path, c.first, first)
+			t.Errorf("%s : want first to be %s, got %s", path, c.first, first)
 		}
 
-		if c.rest != rest {
-			t.Errorf("%s : want rest to be %s, got %s", c.path, c.rest, rest)
+		if wantRest != rest {
+			t.Errorf("%s : want rest to be %s, got %s", path, wantRest, rest)
 		}
 	}
+}
+
+func absPath(vfs avfs.VFS, path string) string {
+	if vfs.OSType() != avfs.OsWindows {
+		return path
+	}
+
+	if path[0] == avfs.PathSeparator {
+		return vfs.Join("C:", path)
+	}
+
+	return vfs.FromSlash(path)
 }
