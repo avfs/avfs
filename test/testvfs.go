@@ -619,9 +619,9 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 // TestTempDir tests TempDir function.
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
+	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		ut := vfs.Utils()
 		wantTmpDir := ut.TempDir(vfs)
 		tmpDir := vfs.TempDir()
 
@@ -632,7 +632,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 		return
 	}
 
-	wantTmpDir := os.TempDir()
+	wantTmpDir := ut.TempDir(vfs)
 	tmpDir := vfs.TempDir()
 
 	if tmpDir != wantTmpDir {
