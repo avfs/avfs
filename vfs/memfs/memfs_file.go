@@ -115,6 +115,10 @@ func (f *MemFile) Chown(uid, gid int) error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
+	if f.memFS.OSType() == avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinNotSupported}
+	}
+
 	nd := f.nd
 
 	nd.Lock()
