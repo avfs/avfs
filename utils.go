@@ -381,6 +381,19 @@ func (ut *Utils) FromSlash(path string) string {
 	return strings.ReplaceAll(path, "/", string(ut.pathSeparator))
 }
 
+// FromUnixPath returns valid path from a unix path.
+func (ut *Utils) FromUnixPath(volumeName, path string) string {
+	if ut.OSType() != OsWindows {
+		return path
+	}
+
+	if path[0] == PathSeparator {
+		return ut.Join("C:", path)
+	}
+
+	return ut.FromSlash(path)
+}
+
 // HashFile hashes a file and returns the hash sum.
 func HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
 	f, err := vfs.Open(name)

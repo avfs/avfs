@@ -92,6 +92,8 @@ type Option func(*MemFS)
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {
+	sync.Locker
+
 	// checkPermission returns true if the current user has the desired permissions (perm) on the node.
 	checkPermission(perm avfs.PermMode, u avfs.UserReader) bool
 
@@ -100,9 +102,6 @@ type node interface {
 
 	// fillStatFrom returns a *MemInfo (implementation of fs.FileInfo) from a node named name.
 	fillStatFrom(name string) *MemInfo
-
-	// Lock locks the node.
-	Lock()
 
 	// setMode sets the permissions of the node.
 	setMode(mode fs.FileMode, u avfs.UserReader) bool
@@ -115,9 +114,6 @@ type node interface {
 
 	// size returns the size of the node.
 	size() int64
-
-	// Unlock unlocks the node.
-	Unlock()
 }
 
 // volumes are the volumes names for Windows.
