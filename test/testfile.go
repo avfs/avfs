@@ -1200,6 +1200,20 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		err := f.Truncate(0)
 		CheckPathError(t, err).Op("truncate").Path(fileName).Err(fs.ErrClosed)
 	})
+
+	t.Run("FileTruncateReadOnly", func(t *testing.T) {
+		path := sfs.ExistingFile(t, testDir, data)
+
+		f, err := vfs.Open(path)
+		CheckNoError(t, "Open "+path, err)
+
+		defer f.Close()
+
+		err = f.Truncate(0)
+		CheckPathError(t, err).Op("truncate").Path(path).
+			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
+			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+	})
 }
 
 // TestFileWrite tests File.Write and File.WriteAt functions.
@@ -1358,7 +1372,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("FileReadOnly", func(t *testing.T) {
+	t.Run("FileWriteReadOnly", func(t *testing.T) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.Open(path)
