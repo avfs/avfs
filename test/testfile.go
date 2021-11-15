@@ -1235,7 +1235,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 	})
 }
 
-// TestFileWrite tests File.Write and File.WriteAt functions.
+// TestFileWrite tests File.Write function.
 func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
@@ -1245,9 +1245,6 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		_, err := f.Write([]byte{})
 		CheckPathError(t, err).Op("write").Path(avfs.NotImplemented).ErrPermDenied()
 
-		_, err = f.WriteAt([]byte{}, 0)
-		CheckPathError(t, err).Op("write").Path(avfs.NotImplemented).ErrPermDenied()
-
 		return
 	}
 
@@ -1255,9 +1252,6 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
 		_, err := f.Write([]byte{})
-		CheckPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
-
-		_, err = f.WriteAt([]byte{}, 0)
 		CheckPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
 
 		return
@@ -1303,13 +1297,85 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		CheckInvalid(t, "Write", err)
 	})
 
-	t.Run("FileWriteAtNonExisting", func(t *testing.T) {
-		f := sfs.OpenedNonExistingFile(t, testDir)
-		buf := make([]byte, 0)
+	t.Run("FileWriteReadOnly", func(t *testing.T) {
+		path := sfs.ExistingFile(t, testDir, data)
 
-		_, err := f.WriteAt(buf, 0)
-		CheckInvalid(t, "WriteAt", err)
+		f, err := vfs.Open(path)
+		CheckNoError(t, "Open "+path, err)
+
+		defer f.Close()
+
+		b := make([]byte, len(data)*2)
+		n, err := f.Write(b)
+		CheckPathError(t, err).Op("write").Path(path).
+			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
+			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+
+		if n != 0 {
+			t.Errorf("Write : want bytes written to be 0, got %d", n)
+		}
+
+		n, err = f.Read(b)
+		CheckNoError(t, "Read "+path, err)
+
+		if !bytes.Equal(data, b[:n]) {
+			t.Errorf("Read : want data to be %s, got %s", data, b[:n])
+		}
 	})
+
+	t.Run("FileWriteOnDir", func(t *testing.T) {
+		f, err := vfs.Open(testDir)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
+		}
+
+		defer f.Close()
+
+		b := make([]byte, 1)
+
+		_, err = f.Write(b)
+		CheckPathError(t, err).Op("write").Path(testDir).
+			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
+			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+
+		_, err = f.WriteAt(b, 0)
+		CheckPathError(t, err).Op("write").Path(testDir).
+			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
+			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+	})
+
+	t.Run("FileWriteClosed", func(t *testing.T) {
+		b := make([]byte, 1)
+
+		f, fileName := sfs.ClosedFile(t, testDir)
+		_, err := f.Write(b)
+		CheckPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
+	})
+}
+
+// TestFileWriteAt tests File.WriteAt function.
+func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f := sfs.OpenedNonExistingFile(t, testDir)
+
+		_, err := f.WriteAt([]byte{}, 0)
+		CheckPathError(t, err).Op("write").Path(avfs.NotImplemented).ErrPermDenied()
+
+		return
+	}
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		_, err := f.WriteAt([]byte{}, 0)
+		CheckPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
+
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
 
 	t.Run("FileWriteAt", func(t *testing.T) {
 		path := vfs.Join(testDir, "TestFileWriteAt.txt")
@@ -1342,7 +1408,15 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("FileWriteNegativeOffset", func(t *testing.T) {
+	t.Run("FileWriteAtNonExisting", func(t *testing.T) {
+		f := sfs.OpenedNonExistingFile(t, testDir)
+		buf := make([]byte, 0)
+
+		_, err := f.WriteAt(buf, 0)
+		CheckInvalid(t, "WriteAt", err)
+	})
+
+	t.Run("FileWriteAtNegativeOffset", func(t *testing.T) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
@@ -1391,7 +1465,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("FileWriteReadOnly", func(t *testing.T) {
+	t.Run("FileWriteAtReadOnly", func(t *testing.T) {
 		path := sfs.ExistingFile(t, testDir, data)
 
 		f, err := vfs.Open(path)
@@ -1400,23 +1474,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		defer f.Close()
 
 		b := make([]byte, len(data)*2)
-		n, err := f.Write(b)
-		CheckPathError(t, err).Op("write").Path(path).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 
-		if n != 0 {
-			t.Errorf("Write : want bytes written to be 0, got %d", n)
-		}
-
-		n, err = f.Read(b)
-		CheckNoError(t, "Read "+path, err)
-
-		if !bytes.Equal(data, b[:n]) {
-			t.Errorf("Read : want data to be %s, got %s", data, b[:n])
-		}
-
-		n, err = f.WriteAt(b, 0)
+		n, err := f.WriteAt(b, 0)
 		CheckPathError(t, err).Op("write").Path(path).
 			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
 			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
@@ -1435,7 +1494,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("FileWriteOnDir", func(t *testing.T) {
+	t.Run("FileWriteAtOnDir", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
@@ -1445,25 +1504,18 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 		b := make([]byte, 1)
 
-		_, err = f.Write(b)
-		CheckPathError(t, err).Op("write").Path(testDir).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
-
 		_, err = f.WriteAt(b, 0)
 		CheckPathError(t, err).Op("write").Path(testDir).
 			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
 			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
 	})
 
-	t.Run("FileWriteClosed", func(t *testing.T) {
+	t.Run("FileWriteAtClosed", func(t *testing.T) {
 		b := make([]byte, 1)
 
 		f, fileName := sfs.ClosedFile(t, testDir)
-		_, err := f.Write(b)
-		CheckPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
 
-		_, err = f.WriteAt(b, 0)
+		_, err := f.WriteAt(b, 0)
 		CheckPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
 	})
 }

@@ -393,6 +393,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestFileSync,
 		sfs.TestFileTruncate,
 		sfs.TestFileWrite,
+		sfs.TestFileWriteAt,
 		sfs.TestFileWriteString,
 		sfs.TestFileWriteTime)
 
