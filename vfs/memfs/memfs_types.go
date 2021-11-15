@@ -77,7 +77,7 @@ type memErrors struct {
 // MemFile represents an open file descriptor.
 type MemFile struct {
 	nd         node          // nd is node of the file.
-	memFS      *MemFS        // memFS is the memory file system of the file.
+	vfs        *MemFS        // vfs is the memory file system of the file.
 	name       string        // name is the name of the file.
 	dirEntries []fs.DirEntry // dirEntries stores the file information returned by ReadDir function.
 	dirNames   []string      // dirNames stores the names of the file returned by Readdirnames function.

@@ -564,10 +564,7 @@ func (vfs *MemFS) Open(name string) (avfs.File, error) {
 func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	const op = "open"
 
-	f := &MemFile{
-		memFS: vfs,
-		name:  name,
-	}
+	f := &MemFile{vfs: vfs, name: name}
 
 	if flag == os.O_RDONLY || flag&os.O_RDWR != 0 {
 		f.permMode = avfs.PermRead
