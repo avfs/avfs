@@ -848,6 +848,10 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	switch oChild.(type) {
 	case *dirNode:
 		if !vfs.isNotExist(nErr) {
+			if vfs.OSType() == avfs.OsWindows {
+				nErr = avfs.ErrWinAccessDenied
+			}
+
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
 		}
 
@@ -860,7 +864,12 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 		case *fileNode:
 			nc.delete()
 		default:
-			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.FileExists}
+			err := error(avfs.ErrFileExists)
+			if vfs.OSType() == avfs.OsWindows {
+				err = avfs.ErrWinAccessDenied
+			}
+
+			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: err}
 		}
 	default:
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}

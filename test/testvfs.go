@@ -2000,7 +2000,6 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 		dstExistingDir := sfs.ExistingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingDir, dstExistingDir)
-
 		CheckLinkError(t, err).Op("rename").Old(srcExistingDir).New(dstExistingDir).
 			Err(avfs.ErrFileExists, avfs.OsLinux).
 			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
