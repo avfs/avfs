@@ -205,7 +205,12 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.IsADirectory}
+		err = avfs.ErrIsADirectory
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
@@ -249,7 +254,12 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.IsADirectory}
+		err = avfs.ErrIsADirectory
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	if off < 0 {
