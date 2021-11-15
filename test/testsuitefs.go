@@ -403,7 +403,9 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestLchown,
 		sfs.TestFileChmod,
 		sfs.TestFileChown,
-		sfs.TestSetUser)
+		sfs.TestSetUser,
+		sfs.TestWriteOnReadOnlyFS,
+	)
 }
 
 // TestVFSUtils runs vfsutils package tests.

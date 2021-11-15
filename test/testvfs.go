@@ -2555,14 +2555,16 @@ func (sfs *SuiteFS) TestWriteFile(t *testing.T, testDir string) {
 	})
 }
 
-// TestWriteOnReadOnly tests all write functions of a read only file system.
-func (sfs *SuiteFS) TestWriteOnReadOnly(t *testing.T, testDir string) {
+// TestWriteOnReadOnlyFS tests all write functions of a read only file system.
+func (sfs *SuiteFS) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	existingFile := sfs.EmptyFile(t, testDir)
 
 	if !vfs.HasFeature(avfs.FeatReadOnly) {
-		t.Errorf("HasFeature : want read only file system")
+		t.Logf("%s is not read only file system : skipping tests", vfs.Type())
+
+		return
 	}
 
 	t.Run("ReadOnlyFile", func(t *testing.T) {
