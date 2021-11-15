@@ -592,7 +592,7 @@ func (f *MemFile) Truncate(size int64) error {
 	}
 
 	if f.permMode&avfs.PermWrite == 0 {
-		err := error(avfs.ErrBadFileDesc)
+		err := error(avfs.ErrInvalidArgument)
 		if f.vfs.OSType() == avfs.OsWindows {
 			err = avfs.ErrWinAccessDenied
 		}
