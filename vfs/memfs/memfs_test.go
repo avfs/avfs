@@ -86,14 +86,22 @@ func TestMemFSNilPtrFile(t *testing.T) {
 func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink
+	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatSymlink
+	if vfs.OSType() == avfs.OsLinux {
+		wantFeatures |= avfs.FeatChroot
+	}
+
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
 
 	vfs = memfs.New(memfs.WithIdm(memidm.New()))
 
-	wantFeatures = avfs.FeatBasicFs | avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSymlink
+	wantFeatures = avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSymlink
+	if vfs.OSType() == avfs.OsLinux {
+		wantFeatures |= avfs.FeatChroot
+	}
+
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
