@@ -392,7 +392,7 @@ func FileNilPtr(t *testing.T, f avfs.File) {
 	CheckInvalid(t, "WriteString", err)
 }
 
-// TestFileRead tests File.Read and File.ReadAt functions.
+// TestFileRead tests File.Read function.
 func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
@@ -400,9 +400,6 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		f := sfs.OpenedNonExistingFile(t, testDir)
 
 		_, err := f.Read([]byte{})
-		CheckPathError(t, err).Op("read").Path(avfs.NotImplemented).ErrPermDenied()
-
-		_, err = f.ReadAt([]byte{}, 0)
 		CheckPathError(t, err).Op("read").Path(avfs.NotImplemented).ErrPermDenied()
 
 		return
@@ -448,6 +445,50 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		CheckInvalid(t, "Read", err)
 	})
 
+	t.Run("FileReadOnDir", func(t *testing.T) {
+		f, err := vfs.Open(testDir)
+		if !CheckNoError(t, "Open "+testDir, err) {
+			return
+		}
+
+		defer f.Close()
+
+		b := make([]byte, 1)
+
+		_, err = f.Read(b)
+		CheckPathError(t, err).Op("read").Path(testDir).
+			Err(avfs.ErrIsADirectory, avfs.OsLinux).
+			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+	})
+
+	t.Run("FileReadClosed", func(t *testing.T) {
+		f, fileName := sfs.ClosedFile(t, testDir)
+
+		b := make([]byte, 1)
+
+		_, err := f.Read(b)
+		CheckPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
+	})
+}
+
+// TestFileReadAt tests File.ReadAt function.
+func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
+	vfs := sfs.vfsSetup
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		f := sfs.OpenedNonExistingFile(t, testDir)
+
+		_, err := f.ReadAt([]byte{}, 0)
+		CheckPathError(t, err).Op("read").Path(avfs.NotImplemented).ErrPermDenied()
+
+		return
+	}
+
+	data := []byte("AAABBBCCCDDD")
+	path := sfs.ExistingFile(t, testDir, data)
+
+	vfs = sfs.vfsTest
+
 	t.Run("FileReadAt", func(t *testing.T) {
 		const bufSize = 3
 
@@ -482,7 +523,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		CheckInvalid(t, "ReadAt", err)
 	})
 
-	t.Run("FileReadAfterEndOfFile", func(t *testing.T) {
+	t.Run("FileReadAtAfterEndOfFile", func(t *testing.T) {
 		f, err := vfs.Open(path)
 		if !CheckNoError(t, "Open "+path, err) {
 			return
@@ -511,7 +552,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("FileReadOnDir", func(t *testing.T) {
+	t.Run("FileReadAtOnDir", func(t *testing.T) {
 		f, err := vfs.Open(testDir)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
@@ -521,26 +562,18 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 
 		b := make([]byte, 1)
 
-		_, err = f.Read(b)
-		CheckPathError(t, err).Op("read").Path(testDir).
-			Err(avfs.ErrIsADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
-
 		_, err = f.ReadAt(b, 0)
 		CheckPathError(t, err).Op("read").Path(testDir).
 			Err(avfs.ErrIsADirectory, avfs.OsLinux).
 			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
 	})
 
-	t.Run("FileReadClosed", func(t *testing.T) {
+	t.Run("FileReadAtClosed", func(t *testing.T) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		b := make([]byte, 1)
 
-		_, err := f.Read(b)
-		CheckPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
-
-		_, err = f.ReadAt(b, 0)
+		_, err := f.ReadAt(b, 0)
 		CheckPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
 	})
 }

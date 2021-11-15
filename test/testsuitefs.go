@@ -385,6 +385,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestFileFd,
 		sfs.TestFileName,
 		sfs.TestFileRead,
+		sfs.TestFileReadAt,
 		sfs.TestFileReadDir,
 		sfs.TestFileReaddirnames,
 		sfs.TestFileSeek,
