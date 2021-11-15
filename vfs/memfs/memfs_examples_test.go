@@ -28,7 +28,7 @@ import (
 )
 
 func ExampleNew() {
-	vfs := memfs.New(memfs.WithOS(avfs.OsLinux))
+	vfs := memfs.New(memfs.WithOSType(avfs.OsLinux))
 
 	tmpDir := vfs.TempDir()
 
@@ -41,7 +41,7 @@ func ExampleNew() {
 }
 
 func ExampleWithMainDirs() {
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithOS(avfs.OsLinux))
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithOSType(avfs.OsLinux))
 
 	info, err := vfs.Stat(vfs.TempDir())
 	if err != nil {
@@ -55,7 +55,7 @@ func ExampleWithMainDirs() {
 
 func ExampleWithIdm() {
 	idm := memidm.New(memidm.WithOSType(avfs.OsLinux))
-	vfs := memfs.New(memfs.WithIdm(idm), memfs.WithMainDirs(), memfs.WithOS(avfs.OsLinux))
+	vfs := memfs.New(memfs.WithIdm(idm), memfs.WithMainDirs(), memfs.WithOSType(avfs.OsLinux))
 
 	fmt.Println(vfs.User().Name())
 
@@ -64,7 +64,7 @@ func ExampleWithIdm() {
 
 func ExampleMemFS_Clone() {
 	idm := memidm.New(memidm.WithOSType(avfs.OsLinux))
-	vfsSrc := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm), memfs.WithOS(avfs.OsLinux))
+	vfsSrc := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm), memfs.WithOSType(avfs.OsLinux))
 
 	_, err := vfsSrc.Idm().UserAdd(test.UsrTest, "root")
 	if err != nil {
@@ -88,7 +88,7 @@ func ExampleMemFS_Clone() {
 
 func ExampleMemFS_SetUser() {
 	idm := memidm.New(memidm.WithOSType(avfs.OsLinux))
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm), memfs.WithOS(avfs.OsLinux))
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm), memfs.WithOSType(avfs.OsLinux))
 
 	_, err := vfs.Idm().UserAdd(test.UsrTest, idm.AdminGroup().Name())
 	if err != nil {

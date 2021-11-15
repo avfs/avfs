@@ -171,8 +171,8 @@ func WithName(name string) Option {
 	}
 }
 
-// WithOS returns an option function which sets the OS type.
-func WithOS(osType avfs.OSType) Option {
+// WithOSType returns an option function which sets the OS type.
+func WithOSType(osType avfs.OSType) Option {
 	return func(vfs *MemFS) {
 		vfs.utils = avfs.NewUtils(osType)
 	}
