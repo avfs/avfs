@@ -46,21 +46,11 @@ var (
 )
 
 func TestOrefaFS(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithMainDirs())
+	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithOSType(avfs.OsLinux))
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatMainDirs
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
-	}
-
-	name := vfs.Name()
-	if name != "" {
-		t.Errorf("Name : want name to be empty, got %v", name)
-	}
-
-	ost := vfs.OSType()
-	if ost != avfs.Cfg.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, ost)
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
@@ -68,7 +58,7 @@ func TestOrefaFS(t *testing.T) {
 }
 
 func TestOrefaFSWithChown(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithChownUser())
+	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithChownUser(), orefafs.WithOSType(avfs.OsLinux))
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatChownUser | avfs.FeatHardlink | avfs.FeatMainDirs
 	if vfs.Features() != wantFeatures {
