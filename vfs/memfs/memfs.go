@@ -681,7 +681,12 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 
 	sl, ok := child.(*symlinkNode)
 	if !ok {
-		return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
+		err = avfs.ErrInvalidArgument
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinNotReparsePoint
+		}
+
+		return "", &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	return sl.link, nil
