@@ -376,6 +376,10 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 
 	nParent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
 	if !vfs.isNotExist(nerr) {
+		if vfs.OSType() == avfs.OsWindows {
+			nerr = avfs.ErrWinCantCreateFile
+		}
+
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
 	}
 
@@ -388,7 +392,12 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 
 	c, ok := oChild.(*fileNode)
 	if !ok {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
+		err := error(avfs.ErrOpNotPermitted)
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAccessDenied
+		}
+
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
 	}
 
 	c.mu.Lock()
