@@ -1406,7 +1406,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		err = f.Chmod(0o777)
 		CheckNoError(t, "Chmod", err)
 
-		if vfs.HasFeature(avfs.FeatIdentityMgr) {
+		if vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.OSType() != avfs.OsWindows {
 			u := vfs.User()
 			err = f.Chown(u.Uid(), u.Gid())
 			CheckNoError(t, "Chown", err)
@@ -1481,7 +1481,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		err = f.Chmod(0o777)
 		CheckNoError(t, "Chmod", err)
 
-		if vfs.HasFeature(avfs.FeatIdentityMgr) {
+		if vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.OSType() != avfs.OsWindows {
 			u := vfs.User()
 			err = f.Chown(u.Uid(), u.Gid())
 			CheckNoError(t, "Chown", err)
