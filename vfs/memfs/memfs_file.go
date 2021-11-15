@@ -572,8 +572,22 @@ func (f *MemFile) Truncate(size int64) error {
 	}
 
 	nd, ok := f.nd.(*fileNode)
-	if !ok || f.permMode&avfs.PermWrite == 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: f.memFS.err.InvalidArgument}
+	if !ok {
+		err := error(avfs.ErrInvalidArgument)
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return &fs.PathError{Op: op, Path: f.name, Err: err}
+	}
+
+	if f.permMode&avfs.PermWrite == 0 {
+		err := error(avfs.ErrBadFileDesc)
+		if f.memFS.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAccessDenied
+		}
+
+		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	nd.mu.Lock()
