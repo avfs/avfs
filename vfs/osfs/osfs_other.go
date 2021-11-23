@@ -30,7 +30,7 @@ import (
 func (vfs *OsFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinNotSupported}
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
