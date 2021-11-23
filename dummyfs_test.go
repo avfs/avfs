@@ -56,7 +56,7 @@ func TestDummyFSConfig(t *testing.T) {
 		t.Errorf("Features : want Features to be 0, got %d", vfs.Features())
 	}
 
-	if vfs.OSType() != avfs.OsLinux {
-		t.Errorf("OSType : want os type to be %v, got %v", avfs.OsLinux, vfs.OSType())
+	if vfs.OSType() != avfs.Cfg.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.Cfg.OSType(), vfs.OSType())
 	}
 }

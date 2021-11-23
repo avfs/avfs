@@ -144,12 +144,7 @@ func (vfs *DummyFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *DummyFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	err := error(ErrOpNotPermitted)
-	if vfs.OSType() == OsWindows {
-		err = ErrWinNotSupported
-	}
-
-	return &fs.PathError{Op: op, Path: name, Err: err}
+	return &fs.PathError{Op: op, Path: name, Err: vfs.errNotSupported()}
 }
 
 // Chroot changes the root to that specified in path.
@@ -157,7 +152,7 @@ func (vfs *DummyFS) Chown(name string, uid, gid int) error {
 func (vfs *DummyFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &fs.PathError{Op: op, Path: path, Err: ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: path, Err: vfs.errNotSupported()}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -316,12 +311,7 @@ func (vfs *DummyFS) Join(elem ...string) string {
 func (vfs *DummyFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	err := error(ErrOpNotPermitted)
-	if vfs.OSType() == OsWindows {
-		err = ErrWinNotSupported
-	}
-
-	return &fs.PathError{Op: op, Path: name, Err: err}
+	return &fs.PathError{Op: op, Path: name, Err: vfs.errNotSupported()}
 }
 
 // Link creates newname as a hard link to the oldname file.
@@ -781,6 +771,15 @@ func (f *DummyFile) WriteAt(b []byte, off int64) (n int, err error) {
 // a slice of bytes.
 func (f *DummyFile) WriteString(s string) (n int, err error) {
 	return f.Write([]byte(s))
+}
+
+func (vfs *DummyFS) errNotSupported() error {
+	switch vfs.OSType() {
+	case OsWindows:
+		return ErrWinNotSupported
+	default:
+		return ErrOpNotPermitted
+	}
 }
 
 // Gid returns the group id.
