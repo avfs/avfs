@@ -27,7 +27,7 @@ type Config struct {
 	bufPool *sync.Pool // bufPool is the buffer pool used to copy files.
 	bufSize int        // bufSize is the size of each buffer used to copy files.
 	umask   UMaskType  // UMask is the file mode creation mask.
-	osUtils Utils      // osUtils .
+	utils   Utils      // Utils regroups common functions used by emulated file systems.
 }
 
 var Cfg = NewConfig() //nolint:gochecknoglobals // Cfg is the global configuration.
@@ -48,7 +48,7 @@ func NewConfig() *Config {
 
 	cfg := Config{
 		bufSize: 32 * 1024,
-		osUtils: NewUtils(osType),
+		utils:   NewUtils(osType),
 	}
 
 	cfg.umask.Get()
@@ -63,11 +63,11 @@ func NewConfig() *Config {
 
 // OSType returns the current Operating System type.
 func (cfg *Config) OSType() OSType {
-	return cfg.osUtils.osType
+	return cfg.utils.osType
 }
 
 func (cfg *Config) Utils() Utils {
-	return cfg.osUtils
+	return cfg.utils
 }
 
 func (cfg *Config) UMask() fs.FileMode {
@@ -76,4 +76,8 @@ func (cfg *Config) UMask() fs.FileMode {
 
 func (cfg *Config) UMaskSet(mask fs.FileMode) {
 	cfg.umask.Set(mask)
+}
+
+func (cfg *Config) User() UserReader {
+	return AdminUser
 }

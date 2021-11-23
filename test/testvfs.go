@@ -632,7 +632,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 		return
 	}
 
-	wantTmpDir := ut.TempDir(vfs)
+	wantTmpDir := os.TempDir()
 	tmpDir := vfs.TempDir()
 
 	if tmpDir != wantTmpDir {

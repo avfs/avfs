@@ -19,7 +19,11 @@
 
 package osidm
 
-import "github.com/avfs/avfs"
+import (
+	"os/user"
+
+	"github.com/avfs/avfs"
+)
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
@@ -73,5 +77,18 @@ func SetUser(name string) (avfs.UserReader, error) {
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	return avfs.NotImplementedUser
+	const maxInt = int(^uint(0) >> 1)
+
+	cu, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+
+	u := &OsUser{
+		name: cu.Name,
+		uid:  maxInt,
+		gid:  maxInt,
+	}
+
+	return u
 }
