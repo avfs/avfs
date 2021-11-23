@@ -2562,8 +2562,7 @@ func (sfs *SuiteFS) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
 	existingFile := sfs.EmptyFile(t, testDir)
 
 	if !vfs.HasFeature(avfs.FeatReadOnly) {
-		t.Logf("%s is not read only file system : skipping tests", vfs.Type())
-
+		// Skip tests if the file system is not read only
 		return
 	}
 
