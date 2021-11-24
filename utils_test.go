@@ -22,6 +22,7 @@ package avfs_test
 import (
 	"testing"
 
+	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
@@ -36,7 +37,7 @@ func TestUtilsMemFS(t *testing.T) {
 }
 
 func TestUtilsOrefaFS(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithMainDirs())
+	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithOSType(avfs.OsLinux))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
