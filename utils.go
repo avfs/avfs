@@ -131,20 +131,22 @@ type DirInfo struct {
 }
 
 // BaseDirs returns an array of directories always present in the file system.
-func (ut *Utils) BaseDirs() []DirInfo {
+func (ut *Utils) BaseDirs(basePath string) []DirInfo {
+	const volumeNameLen = 2
+
 	switch ut.osType {
 	case OsWindows:
 		return []DirInfo{
-			{Path: ut.HomeDir(), Perm: DefaultDirPerm},
-			{Path: ut.Join(ut.HomeDirUser(ut.AdminUserName()), `AppData\Local\Temp`), Perm: DefaultDirPerm},
-			{Path: `\Windows`, Perm: DefaultDirPerm},
-			{Path: `\Windows\Temp`, Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.HomeDir()[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.TempDir(ut.AdminUserName())[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.TempDir(DefaultUser.Name())[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, `\Windows`), Perm: DefaultDirPerm},
 		}
 	default:
 		return []DirInfo{
-			{Path: ut.HomeDir(), Perm: ut.HomeDirPerm()},
-			{Path: "/root", Perm: 0o700},
-			{Path: "/tmp", Perm: 0o777},
+			{Path: ut.Join(basePath, ut.HomeDir()), Perm: ut.HomeDirPerm()},
+			{Path: ut.Join(basePath, "/root"), Perm: 0o700},
+			{Path: ut.Join(basePath, "/tmp"), Perm: 0o777},
 		}
 	}
 }
@@ -264,16 +266,15 @@ func (ut *Utils) Create(vfs VFS, name string) (File, error) {
 
 // CreateBaseDirs creates base directories on a file system.
 func (ut *Utils) CreateBaseDirs(vfs VFS, basePath string) error {
-	for _, dir := range ut.BaseDirs() {
-		path := ut.Join(basePath, dir.Path)
-
-		err := vfs.MkdirAll(path, dir.Perm)
+	dirs := ut.BaseDirs(basePath)
+	for _, dir := range dirs {
+		err := vfs.MkdirAll(dir.Path, dir.Perm)
 		if err != nil {
 			return err
 		}
 
 		if ut.osType != OsWindows {
-			err = vfs.Chmod(path, dir.Perm)
+			err = vfs.Chmod(dir.Path, dir.Perm)
 			if err != nil {
 				return err
 			}
@@ -318,7 +319,7 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 	const op = "createtemp"
 
 	if dir == "" {
-		dir = ut.TempDir(vfs)
+		dir = ut.TempDir(vfs.User().Name())
 	}
 
 	prefix, suffix, err := ut.prefixAndSuffix(pattern)
@@ -476,7 +477,7 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 func (ut *Utils) HomeDir() string {
 	switch ut.osType {
 	case OsWindows:
-		return `\Users`
+		return `C:\Users`
 	default:
 		return "/home"
 	}
@@ -650,7 +651,7 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
-		dir = ut.TempDir(vfs)
+		dir = ut.TempDir(vfs.User().Name())
 	}
 
 	prefix, suffix, err := ut.prefixAndSuffix(pattern)
@@ -904,16 +905,12 @@ func (ut *Utils) Split(path string) (dir, file string) {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (ut *Utils) TempDir(vfs VFS) string {
+func (ut *Utils) TempDir(userName string) string {
 	if ut.osType != OsWindows {
 		return "/tmp"
 	}
 
-	if !vfs.HasFeature(FeatIdentityMgr) {
-		return `C:\Windows\Temp`
-	}
-
-	return ut.Join(`C:\Users`, vfs.User().Name(), `AppData\Local\Temp`)
+	return ut.Join(`C:\Users`, userName, `AppData\Local\Temp`)
 }
 
 // ToSlash returns the result of replacing each separator character

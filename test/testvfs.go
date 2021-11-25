@@ -620,11 +620,11 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 	ut := vfs.Utils()
+	userName := vfs.User().Name()
+	wantTmpDir := ut.TempDir(userName)
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		wantTmpDir := ut.TempDir(vfs)
 		tmpDir := vfs.TempDir()
-
 		if tmpDir != wantTmpDir {
 			t.Errorf("TempDir : want error to be %v, got %v", wantTmpDir, tmpDir)
 		}
@@ -632,9 +632,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 		return
 	}
 
-	wantTmpDir := os.TempDir()
 	tmpDir := vfs.TempDir()
-
 	if tmpDir != wantTmpDir {
 		t.Fatalf("TempDir : want temp dir to be %s, got %s", wantTmpDir, tmpDir)
 	}
