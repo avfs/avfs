@@ -34,7 +34,10 @@ type SuiteIdm struct {
 
 // NewSuiteIdm returns a new test suite for an identity manager.
 func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
-	sIdm := &SuiteIdm{idm: idm}
+	sIdm := &SuiteIdm{
+		idm:   idm,
+		utils: avfs.Cfg.Utils(),
+	}
 
 	defer func() {
 		t.Logf("Info Idm = %s, can test permissions = %t", sIdm.Type(), sIdm.canTest)

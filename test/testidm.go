@@ -52,15 +52,17 @@ func (sIdm *SuiteIdm) TestAdmin(t *testing.T) {
 		return
 	}
 
-	ag := idm.AdminGroup()
-	if ag.Name() != sIdm.utils.AdminGroupName() {
-		t.Errorf("AdminGroup : want name to be %s, got %s", sIdm.utils.AdminGroupName(), ag.Name())
-	}
+	t.Run("Admin", func(t *testing.T) {
+		ag := idm.AdminGroup()
+		if ag.Name() != sIdm.utils.AdminGroupName() {
+			t.Errorf("AdminGroup : want name to be %s, got %s", sIdm.utils.AdminGroupName(), ag.Name())
+		}
 
-	au := idm.AdminUser()
-	if au.Name() != sIdm.utils.AdminUserName() {
-		t.Errorf("AdminUser : want name to be %s, got %s", sIdm.utils.AdminUserName(), au.Name())
-	}
+		au := idm.AdminUser()
+		if au.Name() != sIdm.utils.AdminUserName() {
+			t.Errorf("AdminUser : want name to be %s, got %s", sIdm.utils.AdminUserName(), au.Name())
+		}
+	})
 }
 
 // TestGroupAddDel tests GroupAdd and GroupDel functions.
