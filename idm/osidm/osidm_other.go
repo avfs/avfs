@@ -77,18 +77,12 @@ func SetUser(name string) (avfs.UserReader, error) {
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	const maxInt = int(^uint(0) >> 1)
-
 	cu, err := user.Current()
 	if err != nil {
 		panic(err)
 	}
 
-	u := &OsUser{
-		name: cu.Name,
-		uid:  maxInt,
-		gid:  maxInt,
-	}
+	u := &OsUser{name: cu.Name, uid: avfs.MaxInt, gid: avfs.MaxInt}
 
 	return u
 }

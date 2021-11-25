@@ -20,31 +20,33 @@ import "github.com/avfs/avfs"
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
-	feature := avfs.Features(0)
+	var (
+		features   avfs.Features
+		adminGroup *OsGroup
+		adminUser  *OsUser
+	)
 
 	ost := avfs.Cfg.OSType()
+	ut := avfs.NewUtils(ost)
+
 	switch ost {
 	case avfs.OsWindows:
+		adminGroup = &OsGroup{name: ut.DefaultGroupName(), gid: avfs.DefaultGroup.Gid()}
+		adminUser = &OsUser{name: ut.DefaultUserName(), uid: avfs.DefaultUser.Uid(), gid: avfs.DefaultUser.Gid()}
 	default:
-		feature = avfs.FeatIdentityMgr
+		adminGroup = &OsGroup{name: ut.AdminGroupName(), gid: 0}
+		adminUser = &OsUser{name: ut.AdminUserName(), uid: 0, gid: 0}
+
+		features = avfs.FeatIdentityMgr
 		if !User().IsAdmin() {
-			feature |= avfs.FeatReadOnlyIdm
+			features |= avfs.FeatReadOnlyIdm
 		}
 	}
 
-	ut := avfs.NewUtils(ost)
-
 	idm := &OsIdm{
-		adminGroup: &OsGroup{
-			name: ut.AdminGroupName(),
-			gid:  0,
-		},
-		adminUser: &OsUser{
-			name: ut.AdminUserName(),
-			uid:  0,
-			gid:  0,
-		},
-		feature: feature,
+		adminGroup: adminGroup,
+		adminUser:  adminUser,
+		features:   features,
 	}
 
 	return idm
@@ -57,10 +59,10 @@ func (idm *OsIdm) Type() string {
 
 // Features returns the set of features provided by the file system or identity manager.
 func (idm *OsIdm) Features() avfs.Features {
-	return idm.feature
+	return idm.features
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
 func (idm *OsIdm) HasFeature(feature avfs.Features) bool {
-	return (idm.feature & feature) == feature
+	return (idm.features & feature) == feature
 }

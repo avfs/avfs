@@ -22,7 +22,7 @@ import "github.com/avfs/avfs"
 type OsIdm struct {
 	adminGroup *OsGroup      // Administrator group.
 	adminUser  *OsUser       // Administrator user.
-	feature    avfs.Features // Idm features.
+	features   avfs.Features // Idm features.
 }
 
 // OsGroup is the implementation of avfs.GroupReader.
