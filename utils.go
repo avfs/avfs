@@ -69,21 +69,21 @@ func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
 	return ut.Join(wd, path), nil
 }
 
-// AdminUserName returns the name of the administrator of the file system.
-func (ut *Utils) AdminUserName() string {
-	switch ut.osType {
-	case OsWindows:
-		return "ContainerAdministrator"
-	default:
-		return "root"
-	}
-}
-
 // AdminGroupName returns the name of the administrator group of the file system.
 func (ut *Utils) AdminGroupName() string {
 	switch ut.osType {
 	case OsWindows:
 		return "Administrators"
+	default:
+		return "root"
+	}
+}
+
+// AdminUserName returns the name of the administrator of the file system.
+func (ut *Utils) AdminUserName() string {
+	switch ut.osType {
+	case OsWindows:
+		return "ContainerAdministrator"
 	default:
 		return "root"
 	}
@@ -295,7 +295,7 @@ func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) error {
 
 	switch ut.osType {
 	case OsWindows:
-		err = vfs.MkdirAll(vfs.TempDir(), DefaultDirPerm)
+		err = vfs.MkdirAll(ut.TempDir(u.Name()), DefaultDirPerm)
 	default:
 		err = vfs.Chown(userDir, u.Uid(), u.Gid())
 	}
@@ -345,6 +345,26 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 		}
 
 		return f, err
+	}
+}
+
+// DefaultGroupName returns the name of the default users group of the file system.
+func (ut *Utils) DefaultGroupName() string {
+	switch ut.osType {
+	case OsWindows:
+		return "Users"
+	default:
+		return "users"
+	}
+}
+
+// DefaultUserName returns the name of the default username of the file system.
+func (ut *Utils) DefaultUserName() string {
+	switch ut.osType {
+	case OsWindows:
+		return "Default"
+	default:
+		return "user"
 	}
 }
 
