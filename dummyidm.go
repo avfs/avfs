@@ -16,8 +16,6 @@
 
 package avfs
 
-const maxInt = int(^uint(0) >> 1)
-
 var (
 	// AdminUser represents an administrator user.
 	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
@@ -28,15 +26,15 @@ var (
 
 	// DefaultGroup represents the default group.
 	DefaultGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
-		name: "DefaultGroup",
-		gid:  maxInt,
+		name: Cfg.utils.DefaultGroupName(),
+		gid:  MaxInt,
 	}
 
 	// DefaultUser represents the default user.
 	DefaultUser = &DummyUser{ //nolint:gochecknoglobals // Used as default user for other file systems.
-		name: "Default",
-		uid:  maxInt,
-		gid:  maxInt,
+		name: Cfg.utils.DefaultUserName(),
+		uid:  MaxInt,
+		gid:  MaxInt,
 	}
 
 	// NotImplementedIdm is the default identity manager for all file systems.
