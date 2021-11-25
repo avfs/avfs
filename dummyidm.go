@@ -19,28 +19,28 @@ package avfs
 const maxInt = int(^uint(0) >> 1)
 
 var (
-	// NotImplementedGroup represents a not implemented group.
-	NotImplementedGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
-		name: NotImplemented,
-		gid:  maxInt,
-	}
-
-	// NotImplementedIdm is the default identity manager for all file systems.
-	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
-
-	// NotImplementedUser represents a not implemented user.
-	NotImplementedUser = &DummyUser{ //nolint:gochecknoglobals // Used as not implemented user for other file systems.
-		name: NotImplemented,
-		uid:  maxInt,
-		gid:  maxInt,
-	}
-
 	// AdminUser represents an administrator user.
 	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
 		name: Cfg.utils.AdminUserName(),
 		uid:  0,
 		gid:  0,
 	}
+
+	// DefaultGroup represents the default group.
+	DefaultGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
+		name: "DefaultGroup",
+		gid:  maxInt,
+	}
+
+	// DefaultUser represents the default user.
+	DefaultUser = &DummyUser{ //nolint:gochecknoglobals // Used as default user for other file systems.
+		name: "Default",
+		uid:  maxInt,
+		gid:  maxInt,
+	}
+
+	// NotImplementedIdm is the default identity manager for all file systems.
+	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
 )
 
 // DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
@@ -81,12 +81,12 @@ func (idm *DummyIdm) HasFeature(feature Features) bool {
 
 // AdminGroup returns the administrators (root) group.
 func (idm *DummyIdm) AdminGroup() GroupReader {
-	return NotImplementedGroup
+	return DefaultGroup
 }
 
 // AdminUser returns the administrator (root) user.
 func (idm *DummyIdm) AdminUser() UserReader {
-	return NotImplementedUser
+	return DefaultUser
 }
 
 // GroupAdd adds a new group.

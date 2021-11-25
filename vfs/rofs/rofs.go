@@ -515,9 +515,9 @@ func (vfs *RoFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// If the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+// If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *RoFS) User() avfs.UserReader {
-	return avfs.NotImplementedUser
+	return avfs.DefaultUser
 }
 
 // Utils returns the file utils of the current file system.

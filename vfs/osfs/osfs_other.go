@@ -43,12 +43,12 @@ type OtherSysStat struct{}
 
 // Gid returns the group id.
 func (sst *OtherSysStat) Gid() int {
-	return avfs.NotImplementedUser.Gid()
+	return avfs.DefaultUser.Gid()
 }
 
 // Uid returns the user id.
 func (sst *OtherSysStat) Uid() int {
-	return avfs.NotImplementedUser.Uid()
+	return avfs.DefaultUser.Uid()
 }
 
 // Nlink returns the number of hard links.

@@ -461,7 +461,7 @@ type BaseVFS interface {
 	UMask() fs.FileMode
 
 	// User returns the current user.
-	// if the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+	// if the file system does not have a current user, the user avfs.DefaultUser is returned.
 	User() UserReader
 
 	// Utils returns the file utils of the current file system.

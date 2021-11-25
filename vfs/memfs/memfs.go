@@ -986,7 +986,7 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfs *MemFS) TempDir() string {
-	return vfs.utils.TempDir(vfs)
+	return vfs.utils.TempDir(vfs.user.Name())
 }
 
 // ToSlash returns the result of replacing each separator character
@@ -1044,12 +1044,8 @@ func (vfs *MemFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// If the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+// If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *MemFS) User() avfs.UserReader {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return avfs.NotImplementedUser
-	}
-
 	return vfs.user
 }
 

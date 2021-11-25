@@ -480,7 +480,7 @@ func (vfs *OsFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// If the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+// If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *OsFS) User() avfs.UserReader {
 	return osidm.User()
 }

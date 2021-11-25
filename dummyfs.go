@@ -548,7 +548,7 @@ func (vfs *DummyFS) Symlink(oldname, newname string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfs *DummyFS) TempDir() string {
-	return vfs.utils.TempDir(vfs)
+	return vfs.utils.TempDir(vfs.User().Name())
 }
 
 // ToSlash returns the result of replacing each separator character
@@ -578,9 +578,9 @@ func (vfs *DummyFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// If the file system does not have a current user, the user avfs.NotImplementedUser is returned.
+// If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *DummyFS) User() UserReader {
-	return NotImplementedUser
+	return DefaultUser
 }
 
 // Utils returns the file utils of the current file system.
@@ -784,12 +784,12 @@ func (vfs *DummyFS) errNotSupported() error {
 
 // Gid returns the group id.
 func (sst *DummySysStat) Gid() int {
-	return NotImplementedUser.Gid()
+	return DefaultUser.Gid()
 }
 
 // Uid returns the user id.
 func (sst *DummySysStat) Uid() int {
-	return NotImplementedUser.Uid()
+	return DefaultUser.Uid()
 }
 
 // Nlink returns the number of hard links.

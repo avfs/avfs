@@ -28,21 +28,21 @@ func (sIdm *SuiteIdm) TestAdmin(t *testing.T) {
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
 		ag := idm.AdminGroup()
-		if ag.Name() != avfs.NotImplementedGroup.Name() {
-			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.NotImplementedGroup.Name(), ag.Name())
+		if ag.Name() != avfs.DefaultGroup.Name() {
+			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.DefaultGroup.Name(), ag.Name())
 		}
 
-		if ag.Gid() != avfs.NotImplementedGroup.Gid() {
-			t.Errorf("AdminGroup : want Gid to be %d, got %d", avfs.NotImplementedGroup.Gid(), ag.Gid())
+		if ag.Gid() != avfs.DefaultGroup.Gid() {
+			t.Errorf("AdminGroup : want Gid to be %d, got %d", avfs.DefaultGroup.Gid(), ag.Gid())
 		}
 
 		au := idm.AdminUser()
-		if au.Name() != avfs.NotImplementedUser.Name() {
-			t.Errorf("AdminUser : want name to be %s, got %s", avfs.NotImplementedUser.Name(), au.Name())
+		if au.Name() != avfs.DefaultUser.Name() {
+			t.Errorf("AdminUser : want name to be %s, got %s", avfs.DefaultUser.Name(), au.Name())
 		}
 
-		if au.Uid() != avfs.NotImplementedUser.Uid() {
-			t.Errorf("AdminUser : want Uid to be %d, got %d", avfs.NotImplementedUser.Uid(), au.Uid())
+		if au.Uid() != avfs.DefaultUser.Uid() {
+			t.Errorf("AdminUser : want Uid to be %d, got %d", avfs.DefaultUser.Uid(), au.Uid())
 		}
 
 		return
