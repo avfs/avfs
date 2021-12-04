@@ -28,94 +28,176 @@ import (
 // TestRace tests data race conditions.
 func (sfs *SuiteFS) TestRace(t *testing.T) {
 	sfs.RunTests(t, UsrTest,
-		sfs.TestRaceDir,
-		sfs.TestRaceFile,
-		sfs.TestRaceMkdirRemoveAll)
+		sfs.RaceCreate,
+		sfs.RaceCreateTemp,
+		sfs.RaceFileClose,
+		sfs.RaceMkdir,
+		sfs.RaceMkdirAll,
+		sfs.RaceMkdirTemp,
+		sfs.RaceOpen,
+		sfs.RaceOpenFile,
+		sfs.RaceOpenFileExcl,
+		sfs.RaceRemove,
+		sfs.RaceRemoveAll,
+
+		sfs.RaceMkdirRemoveAll)
 }
 
-// TestRaceDir tests data race conditions for some directory functions.
-func (sfs *SuiteFS) TestRaceDir(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+// RaceCreate tests data race conditions for Create.
+func (sfs *SuiteFS) RaceCreate(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
 
-	path := vfs.Join(testDir, "mkdDirNew")
+	sfs.RaceFunc(t, RaceAllOk, func() error {
+		newFile := vfs.Join(testDir, defaultFile)
 
-	sfs.RaceFunc(t, "Mkdir", RaceOneOk, func() error {
+		f, err := vfs.Create(newFile)
+		if err == nil {
+			defer f.Close()
+		}
+
+		return err
+	})
+}
+
+// RaceCreateTemp tests data race conditions for CreateTemp.
+func (sfs *SuiteFS) RaceCreateTemp(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	var fileNames sync.Map
+
+	sfs.RaceFunc(t, RaceAllOk, func() error {
+		fileName, err := vfs.CreateTemp(testDir, "avfs")
+
+		_, exists := fileNames.LoadOrStore(fileName, nil)
+		if exists {
+			t.Errorf("file %s already exists", fileName)
+		}
+
+		return err
+	})
+}
+
+// RaceMkdir tests data race conditions for Mkdir.
+func (sfs *SuiteFS) RaceMkdir(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	path := vfs.Join(testDir, defaultDir)
+
+	sfs.RaceFunc(t, RaceOneOk, func() error {
 		return vfs.Mkdir(path, avfs.DefaultDirPerm)
 	})
+}
 
-	sfs.RaceFunc(t, "Remove", RaceOneOk, func() error {
-		return vfs.Remove(path)
-	})
+// RaceMkdirAll tests data race conditions for MkdirAll.
+func (sfs *SuiteFS) RaceMkdirAll(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	path := vfs.Join(testDir, defaultDir)
 
-	sfs.RaceFunc(t, "MkdirAll", RaceAllOk, func() error {
+	sfs.RaceFunc(t, RaceAllOk, func() error {
 		return vfs.MkdirAll(path, avfs.DefaultDirPerm)
 	})
+}
 
-	sfs.RaceFunc(t, "RemoveAll", RaceAllOk, func() error {
+// RaceMkdirTemp tests data race conditions for MkdirTemp.
+func (sfs *SuiteFS) RaceMkdirTemp(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	var dirs sync.Map
+
+	sfs.RaceFunc(t, RaceAllOk, func() error {
+		dir, err := vfs.MkdirTemp(testDir, "avfs")
+
+		_, exists := dirs.LoadOrStore(dir, nil)
+		if exists {
+			t.Errorf("directory %s already exists", dir)
+		}
+
+		return err
+	})
+}
+
+// RaceOpen tests data race conditions for Open.
+func (sfs *SuiteFS) RaceOpen(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	roFile := sfs.EmptyFile(t, testDir)
+
+	sfs.RaceFunc(t, RaceAllOk, func() error {
+		f, err := vfs.Open(roFile)
+		if err == nil {
+			defer f.Close()
+		}
+
+		return err
+	})
+}
+
+// RaceOpenFile tests data race conditions for OpenFile.
+func (sfs *SuiteFS) RaceOpenFile(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	newFile := vfs.Join(testDir, defaultFile)
+
+	sfs.RaceFunc(t, RaceAllOk, func() error {
+		f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE, avfs.DefaultFilePerm)
+		if err == nil {
+			defer f.Close()
+		}
+
+		return err
+	})
+}
+
+// RaceOpenFileExcl tests data race conditions for OpenFile with O_EXCL flag.
+func (sfs *SuiteFS) RaceOpenFileExcl(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	newFile := vfs.Join(testDir, defaultFile)
+
+	sfs.RaceFunc(t, RaceOneOk, func() error {
+		f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
+		if err == nil {
+			defer f.Close()
+		}
+
+		return err
+	})
+}
+
+// RaceRemove tests data race conditions for Remove.
+func (sfs *SuiteFS) RaceRemove(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	path := vfs.Join(testDir, defaultDir)
+
+	sfs.CreateDir(t, path, avfs.DefaultDirPerm)
+
+	sfs.RaceFunc(t, RaceOneOk, func() error {
+		return vfs.Remove(path)
+	})
+}
+
+// RaceRemoveAll tests data race conditions for RemoveAll.
+func (sfs *SuiteFS) RaceRemoveAll(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	path := vfs.Join(testDir, defaultDir)
+
+	sfs.CreateDir(t, path, avfs.DefaultDirPerm)
+
+	sfs.RaceFunc(t, RaceAllOk, func() error {
 		return vfs.RemoveAll(path)
 	})
 }
 
-// TestRaceFile tests data race conditions for some file functions.
-func (sfs *SuiteFS) TestRaceFile(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+// RaceFileClose tests data race conditions for File.Close.
+func (sfs *SuiteFS) RaceFileClose(t *testing.T, testDir string) {
+	f, _ := sfs.OpenedEmptyFile(t, testDir)
 
-	t.Run("RaceCreate", func(t *testing.T) {
-		sfs.RaceFunc(t, "Create", RaceAllOk, func() error {
-			newFile := vfs.Join(testDir, "newFile")
-			f, err := vfs.Create(newFile)
-			if err == nil {
-				defer f.Close()
-			}
-
-			return err
-		})
-	})
-
-	t.Run("RaceOpenExcl", func(t *testing.T) {
-		sfs.RaceFunc(t, "Open Excl", RaceOneOk, func() error {
-			newFile := vfs.Join(testDir, "newFileExcl")
-			f, err := vfs.OpenFile(newFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, avfs.DefaultFilePerm)
-			if err == nil {
-				defer f.Close()
-			}
-
-			return err
-		})
-	})
-
-	t.Run("RaceOpenReadOnly", func(t *testing.T) {
-		roFile := sfs.EmptyFile(t, testDir)
-
-		sfs.RaceFunc(t, "Open Read Only", RaceAllOk, func() error {
-			f, err := vfs.Open(roFile)
-			if err == nil {
-				defer f.Close()
-			}
-
-			return err
-		})
-	})
-
-	t.Run("RaceFileClose", func(t *testing.T) {
-		path := sfs.EmptyFile(t, testDir)
-
-		f, err := vfs.Open(path)
-		if !CheckNoError(t, "Open "+path, err) {
-			return
-		}
-
-		sfs.RaceFunc(t, "Close", RaceOneOk, f.Close)
-	})
+	sfs.RaceFunc(t, RaceOneOk, f.Close)
 }
 
-// TestRaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
-func (sfs *SuiteFS) TestRaceMkdirRemoveAll(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+// RaceMkdirRemoveAll test data race conditions for MkdirAll and RemoveAll.
+func (sfs *SuiteFS) RaceMkdirRemoveAll(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
 
 	path := vfs.Join(testDir, "new/path/to/test")
 
-	sfs.RaceFunc(t, "Complex", RaceUndefined, func() error {
+	sfs.RaceFunc(t, RaceUndefined, func() error {
 		return vfs.MkdirAll(path, avfs.DefaultDirPerm)
 	}, func() error {
 		return vfs.RemoveAll(path)
@@ -141,7 +223,7 @@ const (
 
 // RaceFunc tests data race conditions by running simultaneously all testFuncs in SuiteFS.maxRace goroutines
 // and expecting a result rr.
-func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs ...func() error) {
+func (sfs *SuiteFS) RaceFunc(t *testing.T, rr RaceResult, testFuncs ...func() error) {
 	var (
 		wgSetup    sync.WaitGroup
 		wgTeardown sync.WaitGroup
@@ -152,67 +234,65 @@ func (sfs *SuiteFS) RaceFunc(t *testing.T, name string, rr RaceResult, testFuncs
 		gotErr     uint32
 	)
 
-	t.Run("Race_"+name, func(t *testing.T) {
-		maxGo := sfs.maxRace * len(testFuncs)
+	maxGo := sfs.maxRace * len(testFuncs)
 
-		wgSetup.Add(maxGo)
-		wgTeardown.Add(maxGo)
+	wgSetup.Add(maxGo)
+	wgTeardown.Add(maxGo)
 
-		starter.Lock()
+	starter.Lock()
 
-		for i := 0; i < sfs.maxRace; i++ {
-			for _, testFunc := range testFuncs {
-				go func(f func() error) {
-					defer func() {
-						starter.RUnlock()
-						wgTeardown.Done()
-					}()
+	for i := 0; i < sfs.maxRace; i++ {
+		for _, testFunc := range testFuncs {
+			go func(f func() error) {
+				defer func() {
+					starter.RUnlock()
+					wgTeardown.Done()
+				}()
 
-					wgSetup.Done()
-					starter.RLock()
+				wgSetup.Done()
+				starter.RLock()
 
-					err := f()
-					if err != nil {
-						atomic.AddUint32(&gotErr, 1)
+				err := f()
+				if err != nil {
+					atomic.AddUint32(&gotErr, 1)
 
-						return
-					}
+					return
+				}
 
-					atomic.AddUint32(&gotOk, 1)
-				}(testFunc)
-			}
+				atomic.AddUint32(&gotOk, 1)
+			}(testFunc)
 		}
+	}
 
-		// All goroutines wait for the Starter lock.
-		wgSetup.Wait()
+	// All goroutines wait for the Starter lock.
+	wgSetup.Wait()
 
-		// All goroutines execute the testFuncs.
-		starter.Unlock()
+	// All goroutines execute the testFuncs.
+	starter.Unlock()
 
-		// Wait for all goroutines to stop.
-		wgTeardown.Wait()
+	// Wait for all goroutines to stop.
+	wgTeardown.Wait()
 
-		switch rr {
-		case RaceNoneOk:
-			wantOk = 0
-		case RaceOneOk:
-			wantOk = 1
-		case RaceAllOk:
-			wantOk = uint32(maxGo)
-		case RaceUndefined:
-			t.Logf("Race %s : ok = %d, error = %d", name, gotOk, gotErr)
+	switch rr {
+	case RaceNoneOk:
+		wantOk = 0
+	case RaceOneOk:
+		wantOk = 1
+	case RaceAllOk:
+		wantOk = uint32(maxGo)
+	case RaceUndefined:
+		t.Logf("ok = %d, error = %d", gotOk, gotErr)
 
-			return
-		}
+		return
+	}
 
-		wantErr = uint32(maxGo) - wantOk
+	wantErr = uint32(maxGo) - wantOk
 
-		if gotOk != wantOk {
-			t.Errorf("Race %s : want number of responses without error to be %d, got %d ", name, wantOk, gotOk)
-		}
+	if gotOk != wantOk {
+		t.Errorf("want number of responses without error to be %d, got %d ", wantOk, gotOk)
+	}
 
-		if gotErr != wantErr {
-			t.Errorf("Race %s : want number of responses with errors to be %d, got %d", name, wantErr, gotErr)
-		}
-	})
+	if gotErr != wantErr {
+		t.Errorf("want number of responses with errors to be %d, got %d", wantErr, gotErr)
+	}
 }
