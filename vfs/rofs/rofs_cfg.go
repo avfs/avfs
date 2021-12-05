@@ -20,10 +20,19 @@ import "github.com/avfs/avfs"
 
 // New creates a new readonly file system (RoFS) from a base file system.
 func New(baseFS avfs.VFS) *RoFS {
-	return &RoFS{
-		baseFS:   baseFS,
-		features: baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly,
+	vfs := &RoFS{
+		baseFS:            baseFS,
+		features:          baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly,
+		errOpNotPermitted: avfs.ErrOpNotPermitted,
+		errPermDenied:     avfs.ErrPermDenied,
 	}
+
+	if baseFS.OSType() == avfs.OsWindows {
+		vfs.errOpNotPermitted = avfs.ErrWinNotSupported
+		vfs.errPermDenied = avfs.ErrWinAccessDenied
+	}
+
+	return vfs
 }
 
 // Features returns the set of features provided by the file system or identity manager.

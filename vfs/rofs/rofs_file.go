@@ -18,8 +18,6 @@ package rofs
 
 import (
 	"io/fs"
-
-	"github.com/avfs/avfs"
 )
 
 // Chdir changes the current working directory to the file,
@@ -34,7 +32,7 @@ func (f *RoFile) Chdir() error {
 func (f *RoFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
-	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -45,7 +43,7 @@ func (f *RoFile) Chmod(mode fs.FileMode) error {
 func (f *RoFile) Chown(uid, gid int) error {
 	const op = "chown"
 
-	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
 }
 
 // Close closes the RoFile, rendering it unusable for I/O.
@@ -140,7 +138,7 @@ func (f *RoFile) Sync() error {
 func (f *RoFile) Truncate(size int64) error {
 	const op = "truncate"
 
-	return &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
 }
 
 // Write writes len(b) bytes to the RoFile.
@@ -149,7 +147,7 @@ func (f *RoFile) Truncate(size int64) error {
 func (f *RoFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
-	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
 }
 
 // WriteAt writes len(b) bytes to the File starting at byte offset off.
@@ -158,7 +156,7 @@ func (f *RoFile) Write(b []byte) (n int, err error) {
 func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
-	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: avfs.ErrPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
 }
 
 // WriteString is like Write, but writes the contents of string s rather than

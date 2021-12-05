@@ -20,11 +20,14 @@ import "github.com/avfs/avfs"
 
 // RoFS Represents the file system.
 type RoFS struct {
-	baseFS   avfs.VFS
-	features avfs.Features
+	baseFS            avfs.VFS
+	errPermDenied     error
+	errOpNotPermitted error
+	features          avfs.Features
 }
 
 // RoFile represents an open file descriptor.
 type RoFile struct {
 	baseFile avfs.File
+	vfs      *RoFS
 }
