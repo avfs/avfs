@@ -14,31 +14,19 @@
 ##	limitations under the License.
 ##
 
-FROM golang:bullseye AS base
-USER root
+ARG image
+ARG user
+
+FROM $image AS base
+USER $user
 WORKDIR /go/src
 
 FROM base AS avfs
 COPY mage mage
 RUN go run mage/build.go
 
-FROM base AS modules
-COPY go.mod go.sum ./
-RUN go mod download
-
-# This should fail xith error go: warning: "./..." matched no packages
-# each time the modules are changed, but it avoids downloading
-# modules for each build.
-RUN go build ./...
-
-FROM base AS copyfiles
+FROM base
 COPY --from=avfs /go/bin /go/bin
-COPY --from=modules /go/pkg /go/pkg
-COPY ./go.mod ./go.sum ./
-COPY *.go ./
-COPY idm idm
-COPY test test
-COPY vfs vfs
+ADD tmp/avfs.tar ./
 
-FROM copyfiles
 CMD avfs test

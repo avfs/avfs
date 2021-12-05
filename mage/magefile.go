@@ -54,11 +54,11 @@ const (
 var (
 	appDir            string
 	dockerCmd         string
-	coverDir          string
+	tmpDir            string
 	coverTestPath     string
 	coverRacePath     string
 	testDataDir       string
-	dockerCoverDir    string
+	dockerTmpDir      string
 	dockerTestDataDir string
 )
 
@@ -66,9 +66,9 @@ func init() {
 	appDir, _ = os.Getwd()
 	appDir = strings.TrimSuffix(appDir, "mage")
 
-	coverDir = filepath.Join(appDir, "coverage")
-	coverTestPath = filepath.Join(coverDir, "cover_test.txt")
-	coverRacePath = filepath.Join(coverDir, "cover_race.txt")
+	tmpDir = filepath.Join(appDir, "tmp")
+	coverTestPath = filepath.Join(tmpDir, "cover_test.txt")
+	coverRacePath = filepath.Join(tmpDir, "cover_race.txt")
 	testDataDir = filepath.Join(appDir, "test/testdata")
 
 	var dockerVolume string
@@ -76,7 +76,7 @@ func init() {
 		dockerVolume = "c:"
 	}
 
-	dockerCoverDir = filepath.Join(dockerVolume, dockerGoSrc, "coverage")
+	dockerTmpDir = filepath.Join(dockerVolume, dockerGoSrc, "tmp")
 	dockerTestDataDir = filepath.Join(dockerVolume, dockerGoSrc, "test/testdata")
 
 	switch {
@@ -89,20 +89,35 @@ func init() {
 	}
 }
 
+// tmpInit creates the temporary directory.
+func tmpInit() error {
+	_, err := os.Stat(tmpDir)
+	if err == nil {
+		return nil
+	}
+
+	err = os.MkdirAll(tmpDir, 0o755)
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod(tmpDir, 0o777)
+}
+
 // Env returns the go environment variables.
 func Env() {
 	sh.RunV(goCmd, "env")
 	fmt.Printf(`
 appDir=%s
-coverDir=%s
+tmpDir=%s
 coverTestPath=%s
 coverRacePath=%s
 testDataDir=%s
-dockerCoverDir=%s
+dockerTmpDir=%s
 dockerTestDataDir=%s
 `,
-		appDir, coverDir, coverTestPath, coverRacePath,
-		testDataDir, dockerCoverDir, dockerTestDataDir)
+		appDir, tmpDir, coverTestPath, coverRacePath,
+		testDataDir, dockerTmpDir, dockerTestDataDir)
 }
 
 // Build builds the project.
@@ -151,7 +166,9 @@ func Lint() error {
 
 		defer os.Remove(script)
 
-		err = sh.RunV("sh", script, "-b", build.Default.GOPATH+"/bin", version)
+		binDir := filepath.Join(build.Default.GOPATH, "bin")
+
+		err = sh.RunV("sh", script, "-b", binDir, version)
 		if err != nil {
 			return err
 		}
@@ -160,8 +177,8 @@ func Lint() error {
 	return sh.RunV(golangCiCmd, "run", "-v")
 }
 
-// Cover opens a web browser with the latest coverage file.
-func Cover() error {
+// CoverResult opens a web browser with the latest coverage file.
+func CoverResult() error {
 	if isCI() {
 		return nil
 	}
@@ -171,12 +188,9 @@ func Cover() error {
 
 // Test runs tests with coverage.
 func Test() error {
-	err := coverInit()
-	if err != nil {
-		return err
-	}
+	mg.Deps(tmpInit)
 
-	err = sh.RunV(goCmd, "test",
+	err := sh.RunV(goCmd, "test",
 		"-run=.",
 		"-race", "-v",
 		"-covermode=atomic",
@@ -186,15 +200,12 @@ func Test() error {
 		return err
 	}
 
-	return Cover()
+	return CoverResult()
 }
 
 // Race runs data race tests.
 func Race() error {
-	err := coverInit()
-	if err != nil {
-		return err
-	}
+	mg.Deps(tmpInit)
 
 	return sh.RunV(goCmd, "test",
 		"-tags=datarace",
@@ -218,16 +229,41 @@ func Bench() error {
 
 // DockerBuild builds docker image for AVFS.
 func DockerBuild() error {
+	mg.Deps(tmpInit)
+
 	if dockerCmd == "" {
 		return fmt.Errorf("can't find docker or podman in the current path")
 	}
 
-	dockerFile := runtime.GOOS + ".Dockerfile"
+	var (
+		image string
+		user  string
+	)
+
+	err := sh.RunV("tar",
+		"-cf", "tmp/avfs.tar",
+		"--exclude-vcs",
+		"--exclude-ignore='.gitignore'",
+		".")
+	if err != nil {
+		return err
+	}
+
+	switch runtime.GOOS {
+	case "windows":
+		image = "golang:windowsservercore"
+		user = "ContainerAdministrator"
+	case "linux":
+		image = "golang:bullseye"
+		user = "root"
+	}
 
 	return sh.RunV(dockerCmd,
-		"build", ".",
-		"-f", dockerFile,
-		"-t", dockerImage)
+		"build",
+		"-t", dockerImage,
+		"--build-arg", "image="+image,
+		"--build-arg", "user="+user,
+		".")
 }
 
 // DockerTerm opens a shell as root in the docker image for AVFS.
@@ -242,21 +278,16 @@ func DockerTerm() error {
 	return dockerTest(shell)
 }
 
-// DockerTest runs tests in the docker image and displays the coverage.
+// DockerTest runs tests in the docker image and displays the coverage result.
 func DockerTest() error {
 	mg.Deps(DockerBuild)
 
-	err := coverInit()
+	err := dockerTest()
 	if err != nil {
 		return err
 	}
 
-	err = dockerTest()
-	if err != nil {
-		return err
-	}
-
-	return Cover()
+	return CoverResult()
 }
 
 // DockerPrune removes unused data from Docker.
@@ -271,12 +302,12 @@ func dockerTest(args ...string) error {
 		termOptions = "-i"
 	}
 
-	coverMount := coverDir + ":" + dockerCoverDir
+	tmpMount := tmpDir + ":" + dockerTmpDir
 	testDataMount := testDataDir + ":" + dockerTestDataDir
 	cmdArgs := []string{
 		"run",
 		termOptions,
-		"-v", coverMount,
+		"-v", tmpMount,
 		"-v", testDataMount,
 		dockerImage,
 	}
@@ -284,21 +315,6 @@ func dockerTest(args ...string) error {
 	cmdArgs = append(cmdArgs, args...)
 
 	return sh.RunV(dockerCmd, cmdArgs...)
-}
-
-// coverInit resets the coverage file.
-func coverInit() error {
-	_, err := os.Stat(coverDir)
-	if err == nil {
-		return nil
-	}
-
-	err = os.MkdirAll(coverDir, 0o755)
-	if err != nil {
-		return err
-	}
-
-	return os.Chmod(coverDir, 0o777)
 }
 
 // isExecutable checks if name is an executable in the current path.
