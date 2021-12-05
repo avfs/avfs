@@ -21,11 +21,8 @@ import (
 	"io/fs"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 	"unicode/utf8"
-
-	"github.com/valyala/fastrand"
 )
 
 // cleanGlobPath prepares path for glob matching.
@@ -341,9 +338,7 @@ func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 }
 
 func (ut *Utils) nextRandom() string {
-	r := uint64(fastrand.Uint32n(1e9))
-
-	return strconv.FormatUint(r, 10)[1:]
+	return uitoa(uint(fastrand()))
 }
 
 // scanChunk gets the next segment of pattern, which is a non-star string
