@@ -203,6 +203,14 @@ func (ut *Utils) joinPath(dir, name string) string {
 	return dir + string(ut.pathSeparator) + name
 }
 
+func (ut *Utils) sameWord(a, b string) bool {
+	if ut.osType != OsWindows {
+		return a == b
+	}
+
+	return strings.EqualFold(a, b)
+}
+
 // reservedNames lists reserved Windows names. Search for PRN in
 // https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file
 // for details.
@@ -337,10 +345,6 @@ func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 	return s, true, nil
 }
 
-func (ut *Utils) nextRandom() string {
-	return uitoa(uint(fastrand()))
-}
-
 // scanChunk gets the next segment of pattern, which is a non-star string
 // possibly preceded by a star.
 func (ut *Utils) scanChunk(pattern string) (star bool, chunk, rest string) {
@@ -441,10 +445,6 @@ func (ut *Utils) walkDir(vfs VFS, path string, d fs.DirEntry, walkDirFn fs.WalkD
 
 func isSlash(c uint8) bool {
 	return c == '\\' || c == '/'
-}
-
-func sameWord(a, b string) bool {
-	return strings.EqualFold(a, b)
 }
 
 // A lazybuf is a lazily constructed path buffer.

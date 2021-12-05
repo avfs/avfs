@@ -332,7 +332,7 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 	try := 0
 
 	for {
-		name := prefix + ut.nextRandom() + suffix
+		name := prefix + nextRandom() + suffix
 
 		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
 		if ut.IsExist(err) {
@@ -683,7 +683,7 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 	try := 0
 
 	for {
-		name := prefix + ut.nextRandom() + suffix
+		name := prefix + nextRandom() + suffix
 
 		err := vfs.Mkdir(name, 0o700)
 		if err == nil {
@@ -814,7 +814,7 @@ func (ut *Utils) Rel(basepath, targpath string) (string, error) {
 	base := ut.Clean(basepath)
 	targ := ut.Clean(targpath)
 
-	if sameWord(targ, base) {
+	if ut.sameWord(targ, base) {
 		return ".", nil
 	}
 
@@ -832,7 +832,7 @@ func (ut *Utils) Rel(basepath, targpath string) (string, error) {
 	baseSlashed := len(base) > 0 && base[0] == ut.pathSeparator
 	targSlashed := len(targ) > 0 && targ[0] == ut.pathSeparator
 
-	if baseSlashed != targSlashed || !sameWord(baseVol, targVol) {
+	if baseSlashed != targSlashed || !ut.sameWord(baseVol, targVol) {
 		return "", errors.New("Rel: can't make " + targpath + " relative to " + basepath)
 	}
 
@@ -851,7 +851,7 @@ func (ut *Utils) Rel(basepath, targpath string) (string, error) {
 			ti++
 		}
 
-		if !sameWord(targ[t0:ti], base[b0:bi]) {
+		if !ut.sameWord(targ[t0:ti], base[b0:bi]) {
 			break
 		}
 

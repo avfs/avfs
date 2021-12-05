@@ -18,8 +18,5 @@ package avfs
 
 import _ "unsafe" // for go:linkname only.
 
-//go:linkname fastrand runtime.fastrand
-func fastrand() uint32
-
-//go:linkname uitoa internal/itoa.Uitoa
-func uitoa(val uint) string
+//go:linkname nextRandom os.nextRandom
+func nextRandom() string
