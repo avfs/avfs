@@ -20,7 +20,6 @@ import (
 	"io"
 	"io/fs"
 	"math"
-	"os"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -466,7 +465,7 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 			return 0, nil
 		}
 
-		return 0, &os.PathError{Op: op, Path: f.name, Err: avfs.ErrWinInvalidHandle}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinInvalidHandle}
 	}
 
 	nd.mu.RLock()

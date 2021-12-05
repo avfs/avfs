@@ -214,7 +214,7 @@ func (vfs *DummyFS) Create(name string) (File, error) {
 func (vfs *DummyFS) CreateTemp(dir, pattern string) (File, error) {
 	const op = "createtemp"
 
-	return &DummyFile{}, &os.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
+	return &DummyFile{}, &fs.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -391,7 +391,7 @@ func (vfs *DummyFS) MkdirAll(path string, perm fs.FileMode) error {
 func (vfs *DummyFS) MkdirTemp(dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
-	return "", &os.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
+	return "", &fs.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
 }
 
 // Open opens the named file for reading. If successful, methods on

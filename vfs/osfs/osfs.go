@@ -85,7 +85,7 @@ func (vfs *OsFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.utils.OSType() != avfs.OsWindows {
-		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
 	return os.Chown(name, uid, gid)
