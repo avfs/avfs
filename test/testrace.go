@@ -27,6 +27,14 @@ import (
 
 // TestRace tests data race conditions.
 func (sfs *SuiteFS) TestRace(t *testing.T) {
+	vfs := sfs.vfsTest
+
+	osType := avfs.Cfg.OSType()
+	if osType != vfs.OSType() {
+		t.Skipf("TestRace : Current OSType = %s is different from %s OSType = %s, skipping race tests",
+			osType, vfs.Type(), vfs.OSType())
+	}
+
 	sfs.RunTests(t, UsrTest,
 		sfs.RaceCreate,
 		sfs.RaceCreateTemp,
