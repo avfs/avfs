@@ -1088,7 +1088,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, dir.Path)
 
 			err := vfs.Mkdir(path, dir.Mode)
-			if !vfs.IsExist(err) {
+			if !ut.IsExist(err) {
 				t.Errorf("mkdir %s : want IsExist(err) to be true, got error %v", path, err)
 			}
 		}

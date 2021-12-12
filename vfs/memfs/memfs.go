@@ -20,7 +20,6 @@
 package memfs
 
 import (
-	"errors"
 	"io/fs"
 	"os"
 	"sync/atomic"
@@ -309,22 +308,6 @@ func (vfs *MemFS) Idm() avfs.IdentityMgr {
 // IsAbs reports whether the path is absolute.
 func (vfs *MemFS) IsAbs(path string) bool {
 	return vfs.utils.IsAbs(path)
-}
-
-// IsExist returns a boolean indicating whether the error is known to report
-// that a file or directory already exists. It is satisfied by ErrExist as
-// well as some syscall errors.
-func (vfs *MemFS) IsExist(err error) bool {
-	return errors.Unwrap(err) == vfs.err.FileExists
-}
-
-// IsNotExist returns a boolean indicating whether the error is known to
-// report that a file or directory does not exist. It is satisfied by
-// ErrNotExist as well as some syscall errors.
-func (vfs *MemFS) IsNotExist(err error) bool {
-	err = errors.Unwrap(err)
-
-	return vfs.isNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.

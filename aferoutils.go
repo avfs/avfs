@@ -25,7 +25,8 @@ func DirExists(vfs VFS, path string) (bool, error) {
 		return true, nil
 	}
 
-	if vfs.IsNotExist(err) {
+	ut := vfs.Utils()
+	if ut.IsNotExist(err) {
 		return false, nil
 	}
 
@@ -39,7 +40,8 @@ func Exists(vfs VFS, path string) (bool, error) {
 		return true, nil
 	}
 
-	if vfs.IsNotExist(err) {
+	ut := vfs.Utils()
+	if ut.IsNotExist(err) {
 		return false, nil
 	}
 

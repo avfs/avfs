@@ -216,20 +216,6 @@ func (vfs *RoFS) IsAbs(path string) bool {
 	return vfs.baseFS.IsAbs(path)
 }
 
-// IsExist returns a boolean indicating whether the error is known to report
-// that a file or directory already exists. It is satisfied by ErrExist as
-// well as some syscall errors.
-func (vfs *RoFS) IsExist(err error) bool {
-	return vfs.baseFS.IsExist(err)
-}
-
-// IsNotExist returns a boolean indicating whether the error is known to
-// report that a file or directory does not exist. It is satisfied by
-// ErrNotExist as well as some syscall errors.
-func (vfs *RoFS) IsNotExist(err error) bool {
-	return vfs.baseFS.IsNotExist(err)
-}
-
 // IsPathSeparator reports whether c is a directory separator character.
 func (vfs *RoFS) IsPathSeparator(c uint8) bool {
 	return vfs.baseFS.IsPathSeparator(c)

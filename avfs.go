@@ -262,16 +262,6 @@ type BaseVFS interface {
 	// IsAbs reports whether the path is absolute.
 	IsAbs(path string) bool
 
-	// IsExist returns a boolean indicating whether the error is known to report
-	// that a file or directory already exists. It is satisfied by ErrExist as
-	// well as some syscall errors.
-	IsExist(err error) bool
-
-	// IsNotExist returns a boolean indicating whether the error is known to
-	// report that a file or directory does not exist. It is satisfied by
-	// ErrNotExist as well as some syscall errors.
-	IsNotExist(err error) bool
-
 	// IsPathSeparator reports whether c is a directory separator character.
 	IsPathSeparator(c uint8) bool
 

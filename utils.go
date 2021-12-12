@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"syscall"
 )
 
 // Utils regroups common functions used by emulated file systems.
@@ -544,14 +545,34 @@ func (ut *Utils) IsAbs(path string) bool {
 // that a file or directory already exists. It is satisfied by ErrExist as
 // well as some syscall errors.
 func (ut *Utils) IsExist(err error) bool {
-	return errors.Is(err, ErrFileExists)
+	err = errors.Unwrap(err)
+	switch e := err.(type) {
+	case syscall.Errno:
+		return os.IsExist(err)
+	case LinuxError:
+		return e == ErrFileExists
+	case WindowsError:
+		return e == ErrWinFileExists
+	default:
+		return false
+	}
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
 // report that a file or directory does not exist. It is satisfied by
 // ErrNotExist as well as some syscall errors.
 func (ut *Utils) IsNotExist(err error) bool {
-	return errors.Is(err, ErrNoSuchFileOrDir)
+	err = errors.Unwrap(err)
+	switch e := err.(type) {
+	case syscall.Errno:
+		return os.IsNotExist(err)
+	case LinuxError:
+		return e == ErrNoSuchFileOrDir
+	case WindowsError:
+		return e == ErrWinPathNotFound || e == ErrWinFileNotFound
+	default:
+		return false
+	}
 }
 
 // IsPathSeparator reports whether c is a directory separator character.

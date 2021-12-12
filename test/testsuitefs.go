@@ -474,10 +474,11 @@ func (sfs *SuiteFS) EmptyFile(tb testing.TB, testDir string) string {
 	const emptyFile = "emptyFile"
 
 	vfs := sfs.vfsSetup
+	ut := vfs.Utils()
 	fileName := vfs.Join(testDir, emptyFile)
 
 	_, err := vfs.Stat(fileName)
-	if vfs.IsNotExist(err) {
+	if ut.IsNotExist(err) {
 		f, err := vfs.Create(fileName)
 		if err != nil {
 			tb.Fatalf("Create %s : want error to be nil, got %v", fileName, err)
@@ -497,6 +498,8 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
+	ut := vfs.Utils()
+
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return vfs.Join(testDir, defaultDir)
 	}
@@ -507,7 +510,7 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	}
 
 	_, err = vfs.Stat(dirName)
-	if vfs.IsNotExist(err) {
+	if ut.IsNotExist(err) {
 		tb.Fatalf("Stat %s : want error to be nil, got %v", dirName, err)
 	}
 
@@ -548,6 +551,7 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
+	ut := vfs.Utils()
 
 	fileName := vfs.Join(testDir, defaultNonExisting)
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -555,7 +559,7 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	}
 
 	_, err := vfs.Stat(fileName)
-	if !vfs.IsNotExist(err) {
+	if !ut.IsNotExist(err) {
 		tb.Fatalf("Stat : want error to be %v, got %v", avfs.ErrNoSuchFileOrDir, err)
 	}
 
@@ -598,11 +602,11 @@ func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs
 	tb.Helper()
 
 	fileName := sfs.NonExistingFile(tb, testDir)
-
 	vfs := sfs.vfsTest
+	ut := vfs.Utils()
 
 	f, err := vfs.Open(fileName)
-	if vfs.HasFeature(avfs.FeatBasicFs) && (err == nil || vfs.IsExist(err)) {
+	if vfs.HasFeature(avfs.FeatBasicFs) && (err == nil || ut.IsExist(err)) {
 		tb.Fatalf("Open %s : want non existing file, got %v", fileName, err)
 	}
 
