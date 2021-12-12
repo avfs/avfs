@@ -20,7 +20,7 @@
 package osidm
 
 import (
-	"os/user"
+	"os"
 
 	"github.com/avfs/avfs"
 )
@@ -77,12 +77,8 @@ func SetUser(name string) (avfs.UserReader, error) {
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	cu, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-
-	u := &OsUser{name: cu.Name, uid: avfs.MaxInt, gid: avfs.MaxInt}
+	userName := os.Getenv("USERNAME")
+	u := &OsUser{name: userName, uid: avfs.MaxInt, gid: avfs.MaxInt}
 
 	return u
 }

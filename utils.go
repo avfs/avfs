@@ -951,7 +951,9 @@ func (ut *Utils) TempDir(userName string) string {
 		return "/tmp"
 	}
 
-	return ut.Join(`C:\Users`, userName, `AppData\Local\Temp`)
+	dir := ut.Join(`C:\Users`, userName, `AppData\Local\Temp`)
+
+	return ShortPathName(dir)
 }
 
 // ToSlash returns the result of replacing each separator character
