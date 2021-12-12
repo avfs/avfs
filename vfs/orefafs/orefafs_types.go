@@ -38,7 +38,7 @@ type OrefaFS struct {
 
 // OrefaFile represents an open file descriptor.
 type OrefaFile struct {
-	orFS       *OrefaFS
+	vfs        *OrefaFS
 	nd         *node
 	name       string
 	dirEntries []fs.DirEntry

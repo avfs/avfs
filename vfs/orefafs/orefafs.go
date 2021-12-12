@@ -626,7 +626,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 	}
 
 	f := &OrefaFile{
-		orFS:     vfs,
+		vfs:      vfs,
 		nd:       child,
 		permMode: pm,
 		name:     name,
