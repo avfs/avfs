@@ -70,22 +70,20 @@ func TestBasePathFS(t *testing.T) {
 // TestBasePathFsOptions tests BasePathFS configuration options.
 func TestBasePathFSOptions(t *testing.T) {
 	ut := avfs.Cfg.Utils()
-	nonExistingDir := ut.FromUnixPath(volumeName, "/non/existing/dir")
-	existingFile := ut.FromUnixPath(volumeName, "/tmp/existingFile")
-
 	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	nonExistingDir := ut.FromUnixPath(volumeName, "/non/existing/dir")
+
+	test.CheckPanic(t, "", func() {
+		_ = basepathfs.New(vfs, nonExistingDir)
+	})
+
+	existingFile := vfs.Join(vfs.TempDir(), "existing")
 
 	err := vfs.WriteFile(existingFile, []byte{}, avfs.DefaultFilePerm)
 	if err != nil {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	// test.CheckPathError(t, err).Op("basepath").Path(nonExistingDir).Err(avfs.ErrNoSuchFileOrDir)
-	test.CheckPanic(t, "", func() {
-		_ = basepathfs.New(vfs, nonExistingDir)
-	})
-
-	// test.CheckPathError(t, err).Op("basepath").Path(existingFile).Err(avfs.ErrNotADirectory)
 	test.CheckPanic(t, "", func() {
 		_ = basepathfs.New(vfs, existingFile)
 	})

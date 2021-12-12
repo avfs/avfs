@@ -98,6 +98,10 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 func (vfs *BasePathFS) Chroot(path string) error {
 	const op = "chroot"
 
+	if vfs.OSType() == avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinNotSupported}
+	}
+
 	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
 }
 
@@ -177,9 +181,15 @@ func (vfs *BasePathFS) Dir(path string) string {
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
 func (vfs *BasePathFS) EvalSymlinks(path string) (string, error) {
-	const op = "lstat"
+	op := "lstat"
+	err := error(avfs.ErrPermDenied)
 
-	return "", &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+		err = avfs.ErrWinAccessDenied
+	}
+
+	return "", &fs.PathError{Op: op, Path: path, Err: err}
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
@@ -304,7 +314,12 @@ func (vfs *BasePathFS) Match(pattern, name string) (matched bool, err error) {
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Mkdir(name string, perm fs.FileMode) error {
 	if name == "" {
-		return &fs.PathError{Op: "mkdir", Path: "", Err: avfs.ErrNoSuchFileOrDir}
+		err := error(avfs.ErrNoSuchFileOrDir)
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinPathNotFound
+		}
+
+		return &fs.PathError{Op: "mkdir", Path: "", Err: err}
 	}
 
 	err := vfs.baseFS.Mkdir(vfs.toBasePath(name), perm)
@@ -387,6 +402,10 @@ func (vfs *BasePathFS) ReadFile(filename string) ([]byte, error) {
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Readlink(name string) (string, error) {
 	const op = "readlink"
+
+	if vfs.OSType() == avfs.OsWindows {
+		return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrWinNotReparsePoint}
+	}
 
 	return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
 }
@@ -477,6 +496,10 @@ func (vfs *BasePathFS) Stat(path string) (fs.FileInfo, error) {
 // If there is an error, it will be of type *LinkError.
 func (vfs *BasePathFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
+
+	if vfs.OSType() == avfs.OsWindows {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrWinPrivilegeNotHeld}
+	}
 
 	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
 }
