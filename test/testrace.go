@@ -175,7 +175,7 @@ func (sfs *SuiteFS) RaceRemove(t *testing.T, testDir string) {
 
 	sfs.CreateDir(t, path, avfs.DefaultDirPerm)
 
-	sfs.RaceFunc(t, RaceOneOk, func() error {
+	sfs.RaceFunc(t, RaceUndefined, func() error {
 		return vfs.Remove(path)
 	})
 }
