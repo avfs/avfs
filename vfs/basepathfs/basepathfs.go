@@ -371,7 +371,7 @@ func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.F
 	}
 
 	bf := &BasePathFile{
-		bpFS:     vfs,
+		vfs:      vfs,
 		baseFile: f,
 	}
 

@@ -26,7 +26,7 @@ import (
 func (f *BasePathFile) Chdir() error {
 	err := f.baseFile.Chdir()
 
-	return f.bpFS.restoreError(err)
+	return f.vfs.restoreError(err)
 }
 
 // Chmod changes the mode of the file to mode.
@@ -34,7 +34,7 @@ func (f *BasePathFile) Chdir() error {
 func (f *BasePathFile) Chmod(mode fs.FileMode) error {
 	err := f.baseFile.Chmod(mode)
 
-	return f.bpFS.restoreError(err)
+	return f.vfs.restoreError(err)
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -45,7 +45,7 @@ func (f *BasePathFile) Chmod(mode fs.FileMode) error {
 func (f *BasePathFile) Chown(uid, gid int) error {
 	err := f.baseFile.Chown(uid, gid)
 
-	return f.bpFS.restoreError(err)
+	return f.vfs.restoreError(err)
 }
 
 // Close closes the File, rendering it unusable for I/O.
@@ -54,7 +54,7 @@ func (f *BasePathFile) Chown(uid, gid int) error {
 func (f *BasePathFile) Close() error {
 	err := f.baseFile.Close()
 
-	return f.bpFS.restoreError(err)
+	return f.vfs.restoreError(err)
 }
 
 // Fd returns the integer Unix file descriptor referencing the open file.
@@ -66,7 +66,7 @@ func (f *BasePathFile) Fd() uintptr {
 
 // Name returns the link of the file as presented to Open.
 func (f *BasePathFile) Name() string {
-	return f.bpFS.fromBasePath(f.baseFile.Name())
+	return f.vfs.fromBasePath(f.baseFile.Name())
 }
 
 // Read reads up to len(b) bytes from the MemFile.
@@ -75,7 +75,7 @@ func (f *BasePathFile) Name() string {
 func (f *BasePathFile) Read(b []byte) (n int, err error) {
 	n, err = f.baseFile.Read(b)
 
-	return n, f.bpFS.restoreError(err)
+	return n, f.vfs.restoreError(err)
 }
 
 // ReadAt reads len(b) bytes from the File starting at byte offset off.
@@ -85,7 +85,7 @@ func (f *BasePathFile) Read(b []byte) (n int, err error) {
 func (f *BasePathFile) ReadAt(b []byte, off int64) (n int, err error) {
 	n, err = f.baseFile.ReadAt(b, off)
 
-	return n, f.bpFS.restoreError(err)
+	return n, f.vfs.restoreError(err)
 }
 
 // ReadDir reads the contents of the directory associated with the file f
@@ -101,7 +101,7 @@ func (f *BasePathFile) ReadAt(b []byte, off int64) (n int, err error) {
 func (f *BasePathFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	de, err := f.baseFile.ReadDir(n)
 
-	return de, f.bpFS.restoreError(err)
+	return de, f.vfs.restoreError(err)
 }
 
 // Readdirnames reads and returns a slice of names from the directory f.
@@ -119,7 +119,7 @@ func (f *BasePathFile) ReadDir(n int) ([]fs.DirEntry, error) {
 func (f *BasePathFile) Readdirnames(n int) (names []string, err error) {
 	names, err = f.baseFile.Readdirnames(n)
 
-	return names, f.bpFS.restoreError(err)
+	return names, f.vfs.restoreError(err)
 }
 
 // Seek sets the offset for the next Read or Write on file to offset, interpreted
@@ -130,7 +130,7 @@ func (f *BasePathFile) Readdirnames(n int) (names []string, err error) {
 func (f *BasePathFile) Seek(offset int64, whence int) (ret int64, err error) {
 	ret, err = f.baseFile.Seek(offset, whence)
 
-	return ret, f.bpFS.restoreError(err)
+	return ret, f.vfs.restoreError(err)
 }
 
 // Stat returns the FileInfo structure describing file.
@@ -138,7 +138,7 @@ func (f *BasePathFile) Seek(offset int64, whence int) (ret int64, err error) {
 func (f *BasePathFile) Stat() (fs.FileInfo, error) {
 	info, err := f.baseFile.Stat()
 
-	return info, f.bpFS.restoreError(err)
+	return info, f.vfs.restoreError(err)
 }
 
 // Sync commits the current contents of the file to stable storage.
@@ -147,7 +147,7 @@ func (f *BasePathFile) Stat() (fs.FileInfo, error) {
 func (f *BasePathFile) Sync() error {
 	err := f.baseFile.Sync()
 
-	return f.bpFS.restoreError(err)
+	return f.vfs.restoreError(err)
 }
 
 // Truncate changes the size of the file.
@@ -156,7 +156,7 @@ func (f *BasePathFile) Sync() error {
 func (f *BasePathFile) Truncate(size int64) error {
 	err := f.baseFile.Truncate(size)
 
-	return f.bpFS.restoreError(err)
+	return f.vfs.restoreError(err)
 }
 
 // Write writes len(b) bytes to the File.
@@ -165,7 +165,7 @@ func (f *BasePathFile) Truncate(size int64) error {
 func (f *BasePathFile) Write(b []byte) (n int, err error) {
 	n, err = f.baseFile.Write(b)
 
-	return n, f.bpFS.restoreError(err)
+	return n, f.vfs.restoreError(err)
 }
 
 // WriteAt writes len(b) bytes to the File starting at byte offset off.
@@ -174,7 +174,7 @@ func (f *BasePathFile) Write(b []byte) (n int, err error) {
 func (f *BasePathFile) WriteAt(b []byte, off int64) (n int, err error) {
 	n, err = f.baseFile.WriteAt(b, off)
 
-	return n, f.bpFS.restoreError(err)
+	return n, f.vfs.restoreError(err)
 }
 
 // WriteString is like Write, but writes the contents of string s rather than
