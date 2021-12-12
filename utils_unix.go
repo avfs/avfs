@@ -14,8 +14,8 @@
 //  limitations under the License.
 //
 
-//go:build linux
-// +build linux
+//go:build !windows
+// +build !windows
 
 package avfs
 
