@@ -23,6 +23,7 @@ import (
 	"sort"
 	"strings"
 	"unicode/utf8"
+	_ "unsafe" // nolint:gci // for go:linkname only.
 )
 
 // cleanGlobPath prepares path for glob matching.
@@ -344,6 +345,10 @@ func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 
 	return s, true, nil
 }
+
+// nextRandom is used in Utils.CreateTemp and Utils.MkdirTemp.
+//go:linkname nextRandom os.nextRandom
+func nextRandom() string
 
 // scanChunk gets the next segment of pattern, which is a non-star string
 // possibly preceded by a star.
