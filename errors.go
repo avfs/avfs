@@ -126,7 +126,7 @@ type WindowsError uint32
 // Errors for Windows operating systems.
 const (
 	ErrWinAccessDenied     = WindowsError(5)          // Access is denied.
-	ErrWinCantCreateFile   = WindowsError(0x182)      // Cannot create a file when that file already exists.
+	ErrWinAlreadyExists    = WindowsError(183)        // Cannot create a file when that file already exists.
 	ErrWinDirNameInvalid   = WindowsError(0x10B)      // The directory name is invalid.
 	ErrWinDirNotEmpty      = WindowsError(145)        // The directory is not empty.
 	ErrWinFileExists       = WindowsError(80)         // The file exists.

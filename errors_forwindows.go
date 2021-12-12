@@ -9,7 +9,7 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[ErrWinAccessDenied-5]
-	_ = x[ErrWinCantCreateFile-386]
+	_ = x[ErrWinAlreadyExists-183]
 	_ = x[ErrWinDirNameInvalid-267]
 	_ = x[ErrWinDirNotEmpty-145]
 	_ = x[ErrWinFileExists-80]
@@ -23,7 +23,7 @@ func _() {
 	_ = x[ErrWinPrivilegeNotHeld-1314]
 }
 
-const _WindowsError_name = "The system cannot find the file specified.The system cannot find the path specified.Access is denied.The handle is invalid.is a directoryThe file exists.An attempt was made to move the file pointer before the beginning of the file.The directory is not empty.The directory name is invalid.Cannot create a file when that file already exists.A required privilege is not held by the client.The file or directory is not a reparse point.not supported by windows"
+const _WindowsError_name = "The system cannot find the file specified.The system cannot find the path specified.Access is denied.The handle is invalid.is a directoryThe file exists.An attempt was made to move the file pointer before the beginning of the file.The directory is not empty.Cannot create a file when that file already exists.The directory name is invalid.A required privilege is not held by the client.The file or directory is not a reparse point.not supported by windows"
 
 var _WindowsError_map = map[WindowsError]string{
 	2:         _WindowsError_name[0:42],
@@ -34,8 +34,8 @@ var _WindowsError_map = map[WindowsError]string{
 	80:        _WindowsError_name[137:153],
 	131:       _WindowsError_name[153:231],
 	145:       _WindowsError_name[231:258],
-	267:       _WindowsError_name[258:288],
-	386:       _WindowsError_name[288:339],
+	183:       _WindowsError_name[258:309],
+	267:       _WindowsError_name[309:339],
 	1314:      _WindowsError_name[339:386],
 	4390:      _WindowsError_name[386:431],
 	536871042: _WindowsError_name[431:455],

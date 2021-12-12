@@ -377,7 +377,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	nParent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
 	if !vfs.isNotExist(nerr) {
 		if vfs.OSType() == avfs.OsWindows {
-			nerr = avfs.ErrWinCantCreateFile
+			nerr = avfs.ErrWinAlreadyExists
 		}
 
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
