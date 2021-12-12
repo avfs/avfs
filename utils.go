@@ -721,7 +721,7 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 		}
 
 		if ut.IsNotExist(err) {
-			_, err = vfs.Stat(dir)
+			_, err := vfs.Stat(dir) // nolint:govet // declaration of "err" shadows declaration
 			if ut.IsNotExist(err) {
 				return "", err
 			}
