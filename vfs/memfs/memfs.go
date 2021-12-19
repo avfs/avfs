@@ -1080,7 +1080,7 @@ func (vfs *MemFS) VolumeDelete(path string) error {
 	}
 
 	_, ok := vfs.volumes[vol]
-	if ok {
+	if !ok {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
 	}
 
