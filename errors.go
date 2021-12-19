@@ -118,6 +118,8 @@ func (i LinuxError) Error() string {
 	return i.String()
 }
 
+const CustomError = 2 << 30
+
 // WindowsError replaces syscall.Errno for Windows operating systems.
 type WindowsError uint32
 
@@ -125,19 +127,22 @@ type WindowsError uint32
 
 // Errors for Windows operating systems.
 const (
-	ErrWinAccessDenied     = WindowsError(5)          // Access is denied.
-	ErrWinAlreadyExists    = WindowsError(183)        // Cannot create a file when that file already exists.
-	ErrWinDirNameInvalid   = WindowsError(0x10B)      // The directory name is invalid.
-	ErrWinDirNotEmpty      = WindowsError(145)        // The directory is not empty.
-	ErrWinFileExists       = WindowsError(80)         // The file exists.
-	ErrWinFileNotFound     = WindowsError(2)          // The system cannot find the file specified.
-	ErrWinIsADirectory     = WindowsError(21)         // is a directory
-	ErrWinNegativeSeek     = WindowsError(0x83)       // An attempt was made to move the file pointer before the beginning of the file.
-	ErrWinNotReparsePoint  = WindowsError(4390)       // The file or directory is not a reparse point.
-	ErrWinInvalidHandle    = WindowsError(6)          // The handle is invalid.
-	ErrWinNotSupported     = WindowsError(0x20000082) // not supported by windows
-	ErrWinPathNotFound     = WindowsError(3)          // The system cannot find the path specified.
-	ErrWinPrivilegeNotHeld = WindowsError(1314)       // A required privilege is not held by the client.
+	ErrWinAccessDenied        = WindowsError(5)               // Access is denied.
+	ErrWinAlreadyExists       = WindowsError(183)             // Cannot create a file when that file already exists.
+	ErrWinDirNameInvalid      = WindowsError(0x10B)           // The directory name is invalid.
+	ErrWinDirNotEmpty         = WindowsError(145)             // The directory is not empty.
+	ErrWinFileExists          = WindowsError(80)              // The file exists.
+	ErrWinFileNotFound        = WindowsError(2)               // The system cannot find the file specified.
+	ErrWinIsADirectory        = WindowsError(21)              // is a directory
+	ErrWinNegativeSeek        = WindowsError(0x83)            // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinNotReparsePoint     = WindowsError(4390)            // The file or directory is not a reparse point.
+	ErrWinInvalidHandle       = WindowsError(6)               // The handle is invalid.
+	ErrWinNotSupported        = WindowsError(0x20000082)      // not supported by windows
+	ErrWinPathNotFound        = WindowsError(3)               // The system cannot find the path specified.
+	ErrWinPrivilegeNotHeld    = WindowsError(1314)            // A required privilege is not held by the client.
+	ErrWinVolumeAlreadyExists = WindowsError(CustomError + 1) // Volume already exists.
+	ErrWinVolumeNameInvalid   = WindowsError(CustomError + 2) // Volume name is invalid.
+	ErrWinVolumeWindows       = WindowsError(CustomError + 3) // Volumes are available for Windows only.
 )
 
 func (i WindowsError) Error() string {

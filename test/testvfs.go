@@ -2525,6 +2525,56 @@ func (sfs *SuiteFS) TestSetUser(t *testing.T, testDir string) {
 	})
 }
 
+// TestVolume tests VolumeAdd, VolumeDelete and VolumeList functions.
+func (sfs *SuiteFS) TestVolume(t *testing.T, testDir string) {
+	const testVolume = "Z:"
+
+	vfs := sfs.vfsTest
+
+	vm, ok := vfs.(avfs.VolumeManager)
+	if !ok {
+		return
+	}
+
+	if vfs.OSType() != avfs.OsWindows {
+		vl := vm.VolumeList()
+		if vl != nil {
+			t.Errorf("Want volume list to be empty got %v", vl)
+		}
+
+		err := vm.VolumeAdd(testVolume)
+		CheckPathError(t, err).Op("VolumeAdd").Path(testVolume).Err(avfs.ErrWinVolumeWindows)
+
+		err = vm.VolumeDelete(testVolume)
+		CheckPathError(t, err).Op("VolumeDelete").Path(testVolume).Err(avfs.ErrWinVolumeWindows)
+
+		return
+	}
+
+	t.Run("VolumeManage", func(t *testing.T) {
+		vl := vm.VolumeList()
+		if len(vl) != 1 {
+			t.Errorf("VolumeList : want 1 volume, got %d = %v", len(vl), vl)
+		}
+
+		err := vm.VolumeAdd(testVolume)
+		CheckNoError(t, "VolumeAdd "+testVolume, err)
+
+		vl = vm.VolumeList()
+		if len(vl) != 2 {
+			t.Errorf("VolumeList : want 2 volumes, got %d = %v", len(vl), vl)
+		}
+
+		err = vm.VolumeDelete(testVolume)
+		CheckNoError(t, "VolumeDelete "+testVolume, err)
+
+		vl = vm.VolumeList()
+		if len(vl) != 1 {
+			t.Errorf("VolumeList : want 1 volume, got %d = %v", len(vl), vl)
+		}
+	})
+}
+
 // TestWriteFile tests WriteFile function.
 func (sfs *SuiteFS) TestWriteFile(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest

@@ -406,6 +406,7 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestFileChmod,
 		sfs.TestFileChown,
 		sfs.TestSetUser,
+		sfs.TestVolume,
 		sfs.TestWriteOnReadOnlyFS,
 	)
 }
