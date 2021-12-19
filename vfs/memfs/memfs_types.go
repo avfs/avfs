@@ -17,7 +17,6 @@
 package memfs
 
 import (
-	"errors"
 	"io/fs"
 	"sync"
 	"time"
@@ -28,12 +27,6 @@ import (
 const (
 	// Maximum number of symlinks in a path.
 	slCountMax = 64
-)
-
-var (
-	ErrVolumeAlreadyExists = errors.New("volume already exists")
-	ErrVolumeNameInvalid   = errors.New("invalid volume name")
-	ErrVolumeWindows       = errors.New("volumes are available on Windows only")
 )
 
 // MemFS implements a memory file system using the avfs.VFS interface.

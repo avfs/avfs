@@ -149,6 +149,18 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	return parent, parent, pi, vfs.err.FileExists
 }
 
+// createRootNode creates a root node for a file system.
+func createRootNode() *dirNode {
+	return &dirNode{
+		baseNode: baseNode{
+			mtime: time.Now().UnixNano(),
+			mode:  fs.ModeDir | 0o755,
+			uid:   0,
+			gid:   0,
+		},
+	}
+}
+
 // createDir creates a new directory.
 func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dirNode {
 	child := &dirNode{

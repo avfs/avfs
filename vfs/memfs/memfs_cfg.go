@@ -18,7 +18,6 @@ package memfs
 
 import (
 	"io/fs"
-	"time"
 
 	"github.com/avfs/avfs"
 )
@@ -84,40 +83,33 @@ func New(opts ...Option) *MemFS {
 	return vfs
 }
 
-// VolumeAdd adds a new volume.
-func (vfs *MemFS) VolumeAdd(path string) error {
-	const op = "volume_add"
-
-	ut := vfs.utils
-
-	if ut.OSType() != avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeWindows}
-	}
-
-	vol := ut.VolumeName(path)
-	if vol == "" {
-		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeNameInvalid}
-	}
-
-	_, ok := vfs.volumes[vol]
-	if ok {
-		return &fs.PathError{Op: op, Path: path, Err: ErrVolumeAlreadyExists}
-	}
-
-	vfs.volumes[vol] = createRootNode()
-
-	return nil
-}
-
-// createRootNode creates a root node for a file system.
-func createRootNode() *dirNode {
-	return &dirNode{
-		baseNode: baseNode{
-			mtime: time.Now().UnixNano(),
-			mode:  fs.ModeDir | 0o755,
-			uid:   0,
-			gid:   0,
-		},
+// setErrors set MemFS errors depending on the operating system.
+func (vfs *MemFS) setErrors() {
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		vfs.err.BadFileDesc = avfs.ErrWinAccessDenied
+		vfs.err.DirNotEmpty = avfs.ErrWinDirNotEmpty
+		vfs.err.FileExists = avfs.ErrWinFileExists
+		vfs.err.InvalidArgument = avfs.ErrWinNegativeSeek
+		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
+		vfs.err.NoSuchDir = avfs.ErrWinPathNotFound
+		vfs.err.NoSuchFile = avfs.ErrWinFileNotFound
+		vfs.err.NotADirectory = avfs.ErrWinPathNotFound
+		vfs.err.OpNotPermitted = avfs.ErrWinNotSupported
+		vfs.err.PermDenied = avfs.ErrWinAccessDenied
+		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
+	default:
+		vfs.err.BadFileDesc = avfs.ErrBadFileDesc
+		vfs.err.DirNotEmpty = avfs.ErrDirNotEmpty
+		vfs.err.FileExists = avfs.ErrFileExists
+		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
+		vfs.err.IsADirectory = avfs.ErrIsADirectory
+		vfs.err.NoSuchDir = avfs.ErrNoSuchFileOrDir
+		vfs.err.NoSuchFile = avfs.ErrNoSuchFileOrDir
+		vfs.err.NotADirectory = avfs.ErrNotADirectory
+		vfs.err.OpNotPermitted = avfs.ErrOpNotPermitted
+		vfs.err.PermDenied = avfs.ErrPermDenied
+		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
 	}
 }
 
@@ -175,35 +167,5 @@ func WithName(name string) Option {
 func WithOSType(osType avfs.OSType) Option {
 	return func(vfs *MemFS) {
 		vfs.utils = avfs.NewUtils(osType)
-	}
-}
-
-// setErrors set MemFS errors depending on the operating system.
-func (vfs *MemFS) setErrors() {
-	switch vfs.OSType() {
-	case avfs.OsWindows:
-		vfs.err.BadFileDesc = avfs.ErrWinAccessDenied
-		vfs.err.DirNotEmpty = avfs.ErrWinDirNotEmpty
-		vfs.err.FileExists = avfs.ErrWinFileExists
-		vfs.err.InvalidArgument = avfs.ErrWinNegativeSeek
-		vfs.err.IsADirectory = avfs.ErrWinIsADirectory
-		vfs.err.NoSuchDir = avfs.ErrWinPathNotFound
-		vfs.err.NoSuchFile = avfs.ErrWinFileNotFound
-		vfs.err.NotADirectory = avfs.ErrWinPathNotFound
-		vfs.err.OpNotPermitted = avfs.ErrWinNotSupported
-		vfs.err.PermDenied = avfs.ErrWinAccessDenied
-		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
-	default:
-		vfs.err.BadFileDesc = avfs.ErrBadFileDesc
-		vfs.err.DirNotEmpty = avfs.ErrDirNotEmpty
-		vfs.err.FileExists = avfs.ErrFileExists
-		vfs.err.InvalidArgument = avfs.ErrInvalidArgument
-		vfs.err.IsADirectory = avfs.ErrIsADirectory
-		vfs.err.NoSuchDir = avfs.ErrNoSuchFileOrDir
-		vfs.err.NoSuchFile = avfs.ErrNoSuchFileOrDir
-		vfs.err.NotADirectory = avfs.ErrNotADirectory
-		vfs.err.OpNotPermitted = avfs.ErrOpNotPermitted
-		vfs.err.PermDenied = avfs.ErrPermDenied
-		vfs.err.TooManySymlinks = avfs.ErrTooManySymlinks
 	}
 }

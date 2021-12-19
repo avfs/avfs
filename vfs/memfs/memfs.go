@@ -1037,6 +1037,78 @@ func (vfs *MemFS) Utils() avfs.Utils {
 	return vfs.utils
 }
 
+// VolumeAdd adds a new volume to a Windows file system.
+// If there is an error, it will be of type *PathError.
+func (vfs *MemFS) VolumeAdd(path string) error {
+	const op = "VolumeAdd"
+
+	ut := vfs.utils
+
+	if ut.OSType() != avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
+	}
+
+	vol := ut.VolumeName(path)
+	if vol == "" {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+	}
+
+	_, ok := vfs.volumes[vol]
+	if ok {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeAlreadyExists}
+	}
+
+	vfs.volumes[vol] = createRootNode()
+
+	return nil
+}
+
+// VolumeDelete deletes an existing volume and all its files from a Windows file system.
+// If there is an error, it will be of type *PathError.
+func (vfs *MemFS) VolumeDelete(path string) error {
+	const op = "VolumeDelete"
+
+	ut := vfs.utils
+
+	if ut.OSType() != avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
+	}
+
+	vol := ut.VolumeName(path)
+	if vol == "" {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+	}
+
+	_, ok := vfs.volumes[vol]
+	if ok {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+	}
+
+	err := vfs.RemoveAll(vol)
+	if err != nil {
+		return err
+	}
+
+	delete(vfs.volumes, vol)
+
+	return nil
+}
+
+// VolumeList returns the volumes of the file system.
+func (vfs *MemFS) VolumeList() []string {
+	var l []string // nolint:prealloc // Consider preallocating `l`
+
+	if vfs.OSType() != avfs.OsWindows {
+		return l
+	}
+
+	for v := range vfs.volumes {
+		l = append(l, v)
+	}
+
+	return l
+}
+
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
