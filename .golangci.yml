@@ -1,28 +1,18 @@
 run:
   timeout: 1m
-  tests: true
   max-same-issues: 0
-
-  # default is true. Enables skipping of directories:
-  #   vendor$, third_party$, testdata$, examples$, Godeps$, builtin$
-  skip-dirs-use-default: true
 
 # all available settings of specific linters
 linters-settings:
   dogsled:
     # checks assignments with too many blank identifiers; default is 2
     max-blank-identifiers: 4
-  dupl:
-    threshold: 150
   errcheck:
     check-type-assertions: true
     check-blank: false
   funlen:
     lines: 60
     statements: 40
-  gocognit:
-    # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    min-complexity: 10
   goconst:
     min-len: 3
     min-occurrences: 3
@@ -42,9 +32,6 @@ linters-settings:
       - octalLiteral
       - whyNoLint
       - wrapperFunc
-  gocyclo:
-    # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    min-complexity: 15
   godot:
     # comments to be checked: `declarations`, `toplevel`, or `all`
     scope: declarations
@@ -60,9 +47,6 @@ linters-settings:
   gofmt:
     # simplify code: gofmt with `-s` option, true by default
     simplify: true
-  golint:
-    # minimal confidence for issues, default is 0.8
-    min-confidence: 0.8
   govet:
     # report about shadowed variables
     check-shadowing: true
@@ -107,12 +91,6 @@ linters-settings:
     require-explanation: true
     # Enable to require nolint directives to mention the specific linter being suppressed. Default is false.
     require-specific: true
-  rowserrcheck:
-    packages:
-      - github.com/jmoiron/sqlx
-  testpackage:
-    # regexp pattern to skip files
-    skip-regexp: (export|internal)_test\.go
   unparam:
     # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
     # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
@@ -194,6 +172,7 @@ linters:
     - gofumpt
     #- goheader
     - goimports
+    #- golint
     #- gomnd
     - goprintffuncname
     #- gosec
@@ -222,7 +201,7 @@ linters:
     - predeclared
     - promlinter
     - revive
-    - rowserrcheck
+    #- rowserrcheck
     #- scopelint
     - sqlclosecheck
     - staticcheck
@@ -250,7 +229,6 @@ issues:
   exclude-rules:
     - text: ".*id.* should be .*ID.*"
       linters:
-        - golint
         - revive
         - stylecheck
     - text: "exported: exported const"
