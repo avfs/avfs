@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-// Package basepathfs restricts all operations to a given path within an file system.
+// Package basepathfs restricts all operations to a given path within a file system.
 package basepathfs
 
 import (
