@@ -36,9 +36,10 @@ func New(opts ...Option) *OrefaFS {
 		opt(vfs)
 	}
 
-	volumeName := string(avfs.PathSeparator)
+	var volumeName string
+
 	if vfs.utils.OSType() == avfs.OsWindows {
-		volumeName = `C:\`
+		volumeName = `C:`
 	}
 
 	rootNode := &node{
@@ -92,6 +93,13 @@ func (vfs *OrefaFS) Type() string {
 
 // Options
 
+// WithChownUser returns an option function.
+func WithChownUser() Option {
+	return func(vfs *OrefaFS) {
+		vfs.features |= avfs.FeatChownUser
+	}
+}
+
 // WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
 func WithMainDirs() Option {
 	return func(vfs *OrefaFS) {
@@ -103,12 +111,5 @@ func WithMainDirs() Option {
 func WithOSType(ost avfs.OSType) Option {
 	return func(idm *OrefaFS) {
 		idm.utils = avfs.NewUtils(ost)
-	}
-}
-
-// WithChownUser returns an option function.
-func WithChownUser() Option {
-	return func(vfs *OrefaFS) {
-		vfs.features |= avfs.FeatChownUser
 	}
 }

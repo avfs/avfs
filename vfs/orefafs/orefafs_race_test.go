@@ -22,19 +22,11 @@ package orefafs_test
 import (
 	"testing"
 
-	"github.com/avfs/avfs"
-
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/orefafs"
 )
 
 func TestRaceOrefaFs(t *testing.T) {
-	osType := avfs.Cfg.OSType()
-	if osType == avfs.OsWindows {
-		t.Skipf("New : Current OSType = %s is different from OrefaFS OSType = %s, skipping tests",
-			osType, avfs.OsLinux)
-	}
-
 	vfs := orefafs.New(orefafs.WithMainDirs())
 
 	sfs := test.NewSuiteFS(t, vfs)

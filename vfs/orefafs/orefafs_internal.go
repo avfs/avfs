@@ -26,19 +26,17 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// split splits path immediately following the final Separator,
+// splitPath splits path immediately following the final Separator,
 // separating it into a directory and file name component.
-// If there is no Separator in path, split returns an empty dir
+// If there is no Separator in path, splitPath returns an empty dir
 // and file set to path.
-// The returned values have the property that path = dir+file.
-func (vfs *OrefaFS) split(path string) (dir, file string) {
-	i := len(path) - 1
-	for i >= 0 && !vfs.IsPathSeparator(path[i]) {
-		i--
-	}
+// The returned values have the property that path = dir + PathSeparator + file.
+func (vfs *OrefaFS) splitPath(path string) (dir, file string) {
+	l := vfs.utils.VolumeNameLen(path)
 
-	if i == 0 {
-		return path[:1], path[1:]
+	i := len(path) - 1
+	for i >= l && !vfs.IsPathSeparator(path[i]) {
+		i--
 	}
 
 	return path[:i], path[i+1:]

@@ -332,7 +332,7 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	oAbsPath, _ := vfs.Abs(oldname)
 	nAbsPath, _ := vfs.Abs(newname)
 
-	nDirName, nFileName := vfs.split(nAbsPath)
+	nDirName, nFileName := vfs.splitPath(nAbsPath)
 
 	vfs.mu.RLock()
 	oChild, oChildOk := vfs.nodes[oAbsPath]
@@ -418,7 +418,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 	}
 
 	absPath, _ := vfs.Abs(name)
-	dirName, fileName := vfs.split(absPath)
+	dirName, fileName := vfs.splitPath(absPath)
 
 	vfs.mu.Lock()
 	defer vfs.mu.Unlock()
@@ -432,7 +432,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 
 	if !parentOk {
 		for !parentOk {
-			dirName, _ = vfs.split(dirName)
+			dirName, _ = vfs.splitPath(dirName)
 			parent, parentOk = vfs.nodes[dirName]
 		}
 
@@ -496,11 +496,11 @@ func (vfs *OrefaFS) MkdirAll(path string, perm fs.FileMode) error {
 
 		ds = append(ds, dirName)
 
-		dirName, _ = vfs.split(dirName)
+		dirName, _ = vfs.splitPath(dirName)
 	}
 
 	for _, absPath := range ds {
-		_, fileName := vfs.split(absPath)
+		_, fileName := vfs.splitPath(absPath)
 
 		parent = vfs.createDir(parent, absPath, fileName, perm)
 	}
@@ -551,7 +551,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 	}
 
 	absPath, _ := vfs.Abs(name)
-	dirName, fileName := vfs.split(absPath)
+	dirName, fileName := vfs.splitPath(absPath)
 
 	vfs.mu.RLock()
 	parent, parentOk := vfs.nodes[dirName]
@@ -670,7 +670,7 @@ func (vfs *OrefaFS) Remove(name string) error {
 	const op = "remove"
 
 	absPath, _ := vfs.Abs(name)
-	dirName, fileName := vfs.split(absPath)
+	dirName, fileName := vfs.splitPath(absPath)
 
 	vfs.mu.Lock()
 	defer vfs.mu.Unlock()
@@ -712,7 +712,7 @@ func (vfs *OrefaFS) RemoveAll(path string) error {
 	}
 
 	absPath, _ := vfs.Abs(path)
-	dirName, fileName := vfs.split(absPath)
+	dirName, fileName := vfs.splitPath(absPath)
 
 	vfs.mu.Lock()
 	defer vfs.mu.Unlock()
@@ -763,8 +763,8 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 		return nil
 	}
 
-	oDirName, oFileName := vfs.split(oAbsPath)
-	nDirName, nFileName := vfs.split(nAbsPath)
+	oDirName, oFileName := vfs.splitPath(oAbsPath)
+	nDirName, nFileName := vfs.splitPath(nAbsPath)
 
 	vfs.mu.RLock()
 	oChild, oChildOk := vfs.nodes[oAbsPath]
@@ -875,7 +875,7 @@ func (vfs *OrefaFS) Stat(path string) (fs.FileInfo, error) {
 // stat is the internal function used by Stat and Lstat.
 func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 	absPath, _ := vfs.Abs(path)
-	dirName, fileName := vfs.split(absPath)
+	dirName, fileName := vfs.splitPath(absPath)
 
 	vfs.mu.RLock()
 	child, childOk := vfs.nodes[absPath]
@@ -895,7 +895,7 @@ func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 				return nil, &fs.PathError{Op: op, Path: path, Err: avfs.ErrNotADirectory}
 			}
 
-			dirName, _ = vfs.split(dirName)
+			dirName, _ = vfs.splitPath(dirName)
 		}
 	}
 
