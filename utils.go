@@ -409,7 +409,7 @@ func (ut *Utils) FromUnixPath(volumeName, path string) string {
 		return path
 	}
 
-	if path[0] == PathSeparator {
+	if path[0] == '/' {
 		return ut.Join(volumeName, path)
 	}
 

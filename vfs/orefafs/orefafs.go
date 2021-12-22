@@ -783,7 +783,7 @@ func (vfs *OrefaFS) RemoveAll(path string) error {
 func (vfs *OrefaFS) removeAll(absPath string, rootNode *node) {
 	if rootNode.mode.IsDir() {
 		for fileName, nd := range rootNode.children {
-			path := absPath + string(avfs.PathSeparator) + fileName
+			path := absPath + string(vfs.PathSeparator()) + fileName
 
 			vfs.removeAll(path, nd)
 		}
@@ -845,7 +845,7 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	delete(vfs.nodes, oAbsPath)
 
 	if oChild.mode.IsDir() {
-		oRoot := oAbsPath + string(avfs.PathSeparator)
+		oRoot := oAbsPath + string(vfs.PathSeparator())
 
 		for absPath, node := range vfs.nodes {
 			if strings.HasPrefix(absPath, oRoot) {
