@@ -1337,11 +1337,6 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		CheckPathError(t, err).Op("write").Path(testDir).
 			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
 			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
-
-		_, err = f.WriteAt(b, 0)
-		CheckPathError(t, err).Op("write").Path(testDir).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
 	})
 
 	t.Run("FileWriteClosed", func(t *testing.T) {
