@@ -25,16 +25,18 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	nodes    nodes
-	err      avfs.VFSErrors
-	user     avfs.UserReader
-	curDir   string
-	name     string
-	features avfs.Features
-	lastId   uint64
-	mu       sync.RWMutex
-	umask    int32
-	utils    avfs.Utils
+	nodes    nodes           // nodes is the map of nodes (files or directories) where the key is the absolute path.
+	err      avfs.VFSErrors  // err regroups the errors depending on the OS emulated.
+	user     avfs.UserReader // user is the current user of the file system.
+	curDir   string          // curDir is the current directory.
+	name     string          // name is the name of the file system.
+	features avfs.Features   // features defines the list of features available for this file system.
+	lastId   uint64          // lastId is the last unique id used to identify files uniquely.
+	mu       sync.RWMutex    // mu is the RWMutex used to access nodes.
+	umask    fs.FileMode     // umask is the user file creation mode mask.
+	dirMode  fs.FileMode     // dirMode is the default fs.FileMode for a directory.
+	fileMode fs.FileMode     // fileMode is de default fs.FileMode for a file.
+	utils    avfs.Utils      // utils regroups common functions used by emulated file systems.
 }
 
 // OrefaFile represents an open file descriptor.
@@ -53,10 +55,10 @@ type OrefaFile struct {
 // Option defines the option function used for initializing OrefaFS.
 type Option func(*OrefaFS)
 
-// nodes is the map of nodes (files or directory) where the key is the absolute path.
+// nodes is the map of nodes (files or directories) where the key is the absolute path.
 type nodes map[string]*node
 
-// children is the map of children (files or directory) of a directory where the key is the relative path.
+// children is the map of children (files or directories) of a directory where the key is the relative path.
 type children nodes
 
 // node is the common structure of directories and files.

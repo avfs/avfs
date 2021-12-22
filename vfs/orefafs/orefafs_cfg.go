@@ -18,7 +18,6 @@ package orefafs
 
 import (
 	"io/fs"
-	"time"
 
 	"github.com/avfs/avfs"
 )
@@ -28,7 +27,9 @@ func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
 		nodes:    make(nodes),
 		features: avfs.FeatBasicFs | avfs.FeatHardlink,
-		umask:    int32(avfs.Cfg.UMask()),
+		umask:    avfs.Cfg.UMask(),
+		dirMode:  fs.ModeDir,
+		fileMode: 0,
 		utils:    avfs.Cfg.Utils(),
 	}
 
@@ -40,29 +41,32 @@ func New(opts ...Option) *OrefaFS {
 
 	if vfs.utils.OSType() == avfs.OsWindows {
 		volumeName = `C:`
+		vfs.dirMode |= avfs.DefaultDirPerm
+		vfs.fileMode |= avfs.DefaultFilePerm
 	}
 
-	rootNode := &node{
-		mtime: time.Now().UnixNano(),
-		mode:  fs.ModeDir | 0o755,
-	}
-
-	vfs.nodes[volumeName] = rootNode
+	ut := vfs.utils
+	vfs.nodes[volumeName] = createRootNode()
 	vfs.user = avfs.AdminUser
 	vfs.curDir = volumeName
 
 	vfs.err.OSType(vfs.OSType())
 
-	if vfs.features&avfs.FeatMainDirs != 0 {
+	if vfs.HasFeature(avfs.FeatMainDirs) {
+		u := vfs.user
 		um := vfs.umask
+
+		vfs.user = avfs.AdminUser
 		vfs.umask = 0
 
-		err := vfs.utils.CreateBaseDirs(vfs, volumeName)
+		err := ut.CreateBaseDirs(vfs, volumeName)
 		if err != nil {
 			panic("CreateBaseDirs " + err.Error())
 		}
 
 		vfs.umask = um
+		vfs.user = u
+		vfs.curDir = ut.HomeDirUser(u.Name())
 	}
 
 	return vfs

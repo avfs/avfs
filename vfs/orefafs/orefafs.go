@@ -62,7 +62,12 @@ func (vfs *OrefaFS) Chdir(dir string) error {
 	}
 
 	if !nd.mode.IsDir() {
-		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
+		err := vfs.err.NotADirectory
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinDirNameInvalid
+		}
+
+		return &fs.PathError{Op: op, Path: dir, Err: err}
 	}
 
 	vfs.curDir = absPath
@@ -237,7 +242,10 @@ func (vfs *OrefaFS) Dir(path string) string {
 // unless one of the components is an absolute symbolic link.
 // EvalSymlinks calls Clean on the result.
 func (vfs *OrefaFS) EvalSymlinks(path string) (string, error) {
-	const op = "lstat"
+	op := "lstat"
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+	}
 
 	return "", &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 }
@@ -340,7 +348,24 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	nParent, nParentOk := vfs.nodes[nDirName]
 	vfs.mu.RUnlock()
 
-	if !oChildOk || !nParentOk {
+	if !oChildOk {
+		err := vfs.err.NoSuchFile
+		if vfs.OSType() == avfs.OsWindows {
+			oDirName, _ := vfs.splitPath(oAbsPath)
+
+			vfs.mu.RLock()
+			_, oParentOk := vfs.nodes[oDirName]
+			vfs.mu.RUnlock()
+
+			if !oParentOk {
+				err = vfs.err.NoSuchDir
+			}
+		}
+
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+	}
+
+	if !nParentOk {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
 	}
 
@@ -351,11 +376,21 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	defer nParent.mu.Unlock()
 
 	if oChild.mode.IsDir() {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
+		err := error(avfs.ErrOpNotPermitted)
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAccessDenied
+		}
+
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
 	}
 
 	if nChildOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.FileExists}
+		err := vfs.err.FileExists
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAlreadyExists
+		}
+
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
 	}
 
 	vfs.mu.Lock()
@@ -373,7 +408,10 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Lstat(name string) (fs.FileInfo, error) {
-	const op = "lstat"
+	op := "lstat"
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+	}
 
 	return vfs.stat(name, op)
 }
@@ -414,7 +452,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -437,7 +475,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 		}
 
 		if parent.mode.IsDir() {
-			return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+			return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
 		}
 
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
@@ -560,7 +598,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 
 	if !childOk {
 		if !parentOk {
-			return nil, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+			return nil, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
 		}
 
 		if flag&os.O_CREATE == 0 {
@@ -649,7 +687,12 @@ func (vfs *OrefaFS) ReadFile(name string) ([]byte, error) {
 func (vfs *OrefaFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
+	err := error(avfs.ErrPermDenied)
+	if vfs.OSType() == avfs.OsWindows {
+		err = avfs.ErrWinNotReparsePoint
+	}
+
+	return "", &fs.PathError{Op: op, Path: name, Err: err}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -846,7 +889,7 @@ func (vfs *OrefaFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 
 // SetUMask sets the file mode creation mask.
 func (vfs *OrefaFS) SetUMask(mask fs.FileMode) {
-	atomic.StoreInt32(&vfs.umask, int32(mask))
+	atomic.StoreUint32((*uint32)(&vfs.umask), uint32(mask))
 }
 
 // SetUser sets and returns the current user.
@@ -867,7 +910,10 @@ func (vfs *OrefaFS) Split(path string) (dir, file string) {
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Stat(path string) (fs.FileInfo, error) {
-	const op = "stat"
+	op := "stat"
+	if vfs.OSType() == avfs.OsWindows {
+		op = "CreateFile"
+	}
 
 	return vfs.stat(path, op)
 }
@@ -909,7 +955,12 @@ func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 func (vfs *OrefaFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
+	err := error(avfs.ErrPermDenied)
+	if vfs.OSType() == avfs.OsWindows {
+		err = avfs.ErrWinPrivilegeNotHeld
+	}
+
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
 }
 
 // TempDir returns the default directory to use for temporary files.
@@ -941,7 +992,7 @@ func (vfs *OrefaFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Truncate(name string, size int64) error {
-	const op = "truncate"
+	op := "truncate"
 
 	absPath, _ := vfs.Abs(name)
 
@@ -950,10 +1001,18 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	vfs.mu.RUnlock()
 
 	if !childOk {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+		if vfs.OSType() != avfs.OsWindows {
+			return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+		}
+
+		return nil
 	}
 
 	if child.mode.IsDir() {
+		if vfs.OSType() == avfs.OsWindows {
+			op = "open"
+		}
+
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 	}
 
@@ -970,7 +1029,7 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 
 // UMask returns the file mode creation mask.
 func (vfs *OrefaFS) UMask() fs.FileMode {
-	u := atomic.LoadInt32(&vfs.umask)
+	u := atomic.LoadUint32((*uint32)(&vfs.umask))
 
 	return fs.FileMode(u)
 }
