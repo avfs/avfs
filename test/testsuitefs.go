@@ -343,39 +343,48 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 
 // TestAll runs all tests.
 func (sfs *SuiteFS) TestAll(t *testing.T) {
-	sfs.TestVFS(t)
-	sfs.TestVFSUtils(t)
-}
-
-// TestVFS runs all file system tests.
-func (sfs *SuiteFS) TestVFS(t *testing.T) {
-	adminUser := sfs.vfsSetup.Idm().AdminUser()
-
 	sfs.RunTests(t, UsrTest,
 		// VFS tests
+		sfs.TestAbs,
+		sfs.TestBase,
+		sfs.TestClean,
+		sfs.TestDir,
 		sfs.TestClone,
 		sfs.TestChdir,
 		sfs.TestChtimes,
 		sfs.TestCreate,
+		sfs.TestCreateTemp,
 		sfs.TestEvalSymlink,
+		sfs.TestFromToSlash,
+		sfs.TestGlob,
+		sfs.TestIsAbs,
+		sfs.TestJoin,
 		sfs.TestLink,
 		sfs.TestLstat,
+		sfs.TestMatch,
 		sfs.TestMkdir,
+		sfs.TestMkdirTemp,
 		sfs.TestMkdirAll,
 		sfs.TestName,
 		sfs.TestOpen,
 		sfs.TestOpenFileWrite,
+		sfs.TestReadDir,
+		sfs.TestReadFile,
 		sfs.TestReadlink,
+		sfs.TestRel,
 		sfs.TestRemove,
 		sfs.TestRemoveAll,
 		sfs.TestRename,
 		sfs.TestSameFile,
+		sfs.TestSplit,
 		sfs.TestStat,
 		sfs.TestSymlink,
 		sfs.TestTempDir,
 		sfs.TestToSysStat,
 		sfs.TestTruncate,
 		sfs.TestUser,
+		sfs.TestWalkDir,
+		sfs.TestWriteFile,
 		sfs.TestWriteString,
 
 		// File tests
@@ -395,9 +404,23 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestFileWrite,
 		sfs.TestFileWriteAt,
 		sfs.TestFileWriteString,
-		sfs.TestFileWriteTime)
+		sfs.TestFileWriteTime,
+
+		// other functions
+		sfs.TestCopyFile,
+		sfs.TestCreateBaseDirs,
+		sfs.TestDirExists,
+		sfs.TestExists,
+		sfs.TestIsDir,
+		sfs.TestIsEmpty,
+		sfs.TestHashFile,
+		sfs.TestPathIterator,
+		sfs.TestRndTree,
+		sfs.TestUmask,
+	)
 
 	// Tests to be run as root
+	adminUser := sfs.vfsSetup.Idm().AdminUser()
 	sfs.RunTests(t, adminUser.Name(),
 		sfs.TestChmod,
 		sfs.TestChown,
@@ -408,42 +431,6 @@ func (sfs *SuiteFS) TestVFS(t *testing.T) {
 		sfs.TestSetUser,
 		sfs.TestVolume,
 		sfs.TestWriteOnReadOnlyFS,
-	)
-}
-
-// TestVFSUtils runs vfsutils package tests.
-func (sfs *SuiteFS) TestVFSUtils(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		// Path tests
-		sfs.TestAbs,
-		sfs.TestBase,
-		sfs.TestClean,
-		sfs.TestDir,
-		sfs.TestFromToSlash,
-		sfs.TestGlob,
-		sfs.TestIsAbs,
-		sfs.TestJoin,
-		sfs.TestMatch,
-		sfs.TestRel,
-		sfs.TestSplit,
-		sfs.TestWalkDir,
-
-		// other functions
-		sfs.TestCopyFile,
-		sfs.TestCreateBaseDirs,
-		sfs.TestCreateTemp,
-		sfs.TestDirExists,
-		sfs.TestExists,
-		sfs.TestIsDir,
-		sfs.TestIsEmpty,
-		sfs.TestHashFile,
-		sfs.TestMkdirTemp,
-		sfs.TestPathIterator,
-		sfs.TestReadDir,
-		sfs.TestReadFile,
-		sfs.TestRndTree,
-		sfs.TestUmask,
-		sfs.TestWriteFile,
 	)
 }
 
