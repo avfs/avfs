@@ -148,3 +148,48 @@ const (
 func (i WindowsError) Error() string {
 	return i.String()
 }
+
+// VFSErrors regroups the errors depending on the OS emulated.
+type VFSErrors struct {
+	BadFileDesc     error // bad file descriptor.
+	DirNotEmpty     error // Directory not empty.
+	FileExists      error // File exists.
+	InvalidArgument error // invalid argument
+	IsADirectory    error // File Is a directory.
+	NoSuchDir       error // No such directory.
+	NoSuchFile      error // No such file.
+	NotADirectory   error // Not a directory.
+	OpNotPermitted  error // operation not permitted.
+	PermDenied      error // Permission denied.
+	TooManySymlinks error // Too many levels of symbolic links.
+}
+
+// OSType sets errors depending on the operating system.
+func (ve *VFSErrors) OSType(ost OSType) {
+	switch ost {
+	case OsWindows:
+		ve.BadFileDesc = ErrWinAccessDenied
+		ve.DirNotEmpty = ErrWinDirNotEmpty
+		ve.FileExists = ErrWinFileExists
+		ve.InvalidArgument = ErrWinNegativeSeek
+		ve.IsADirectory = ErrWinIsADirectory
+		ve.NoSuchDir = ErrWinPathNotFound
+		ve.NoSuchFile = ErrWinFileNotFound
+		ve.NotADirectory = ErrWinPathNotFound
+		ve.OpNotPermitted = ErrWinNotSupported
+		ve.PermDenied = ErrWinAccessDenied
+		ve.TooManySymlinks = ErrTooManySymlinks
+	default:
+		ve.BadFileDesc = ErrBadFileDesc
+		ve.DirNotEmpty = ErrDirNotEmpty
+		ve.FileExists = ErrFileExists
+		ve.InvalidArgument = ErrInvalidArgument
+		ve.IsADirectory = ErrIsADirectory
+		ve.NoSuchDir = ErrNoSuchFileOrDir
+		ve.NoSuchFile = ErrNoSuchFileOrDir
+		ve.NotADirectory = ErrNotADirectory
+		ve.OpNotPermitted = ErrOpNotPermitted
+		ve.PermDenied = ErrPermDenied
+		ve.TooManySymlinks = ErrTooManySymlinks
+	}
+}

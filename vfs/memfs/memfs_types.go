@@ -34,7 +34,7 @@ type MemFS struct {
 	user     avfs.UserReader // user is the current user of the file system.
 	rootNode *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
-	err      memErrors       // err regroups the errors returned by MemFS functions.
+	err      avfs.VFSErrors  // err regroups errors returned by MemFS functions.
 	volumes  volumes         // volumes contains the volume names (for Windows only).
 	curDir   string          // curDir is the current directory.
 	umask    fs.FileMode     // umask is the user file creation mode mask.
@@ -49,22 +49,6 @@ type memAttrs struct {
 	lastId   uint64           // lastId is the last unique id used to identify files uniquely.
 	dirMode  fs.FileMode      // dirMode is the default fs.FileMode for a directory.
 	fileMode fs.FileMode      // fileMode is de default fs.FileMode for a file.
-}
-
-// memErrors regroups the errors returned by MemFS functions.
-// They are changed depending on the OS emulated.
-type memErrors struct {
-	BadFileDesc     error // bad file descriptor.
-	DirNotEmpty     error // Directory not empty.
-	FileExists      error // File exists.
-	InvalidArgument error // invalid argument
-	IsADirectory    error // File Is a directory.
-	NoSuchDir       error // No such directory.
-	NoSuchFile      error // No such file.
-	NotADirectory   error // Not a directory.
-	OpNotPermitted  error // operation not permitted.
-	PermDenied      error // Permission denied.
-	TooManySymlinks error // Too many levels of symbolic links.
 }
 
 // MemFile represents an open file descriptor.
