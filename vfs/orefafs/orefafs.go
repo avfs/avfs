@@ -58,11 +58,11 @@ func (vfs *OrefaFS) Chdir(dir string) error {
 	vfs.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: dir, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.NoSuchFile}
 	}
 
 	if !nd.mode.IsDir() {
-		return &fs.PathError{Op: op, Path: dir, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
 	}
 
 	vfs.curDir = absPath
@@ -98,7 +98,7 @@ func (vfs *OrefaFS) Chmod(name string, mode fs.FileMode) error {
 	vfs.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	nd.mu.Lock()
@@ -119,7 +119,7 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	if !vfs.HasFeature(avfs.FeatChownUser) {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -129,7 +129,7 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	vfs.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	nd.mu.Lock()
@@ -144,7 +144,7 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 func (vfs *OrefaFS) Chroot(path string) error {
 	const op = "chroot"
 
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
+	return &fs.PathError{Op: op, Path: path, Err: vfs.err.OpNotPermitted}
 }
 
 // Chtimes changes the access and modification times of the named
@@ -163,7 +163,7 @@ func (vfs *OrefaFS) Chtimes(name string, atime, mtime time.Time) error {
 	vfs.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	nd.mu.Lock()
@@ -239,7 +239,7 @@ func (vfs *OrefaFS) Dir(path string) string {
 func (vfs *OrefaFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
-	return "", &fs.PathError{Op: op, Path: path, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
@@ -304,7 +304,7 @@ func (vfs *OrefaFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
 	if !vfs.HasFeature(avfs.FeatChownUser) {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -314,7 +314,7 @@ func (vfs *OrefaFS) Lchown(name string, uid, gid int) error {
 	vfs.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	nd.mu.Lock()
@@ -341,7 +341,7 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	vfs.mu.RUnlock()
 
 	if !oChildOk || !nParentOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNoSuchFileOrDir}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
 	}
 
 	oChild.mu.Lock()
@@ -351,11 +351,11 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	defer nParent.mu.Unlock()
 
 	if oChild.mode.IsDir() {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrOpNotPermitted}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
 	}
 
 	if nChildOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.FileExists}
 	}
 
 	vfs.mu.Lock()
@@ -414,7 +414,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 	const op = "mkdir"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -427,7 +427,7 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 	parent, parentOk := vfs.nodes[dirName]
 
 	if childOk {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 	}
 
 	if !parentOk {
@@ -437,14 +437,14 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 		}
 
 		if parent.mode.IsDir() {
-			return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+			return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 		}
 
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 	}
 
 	if !parent.mode.IsDir() {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 	}
 
 	vfs.createDir(parent, absPath, fileName, perm)
@@ -473,7 +473,7 @@ func (vfs *OrefaFS) MkdirAll(path string, perm fs.FileMode) error {
 			return nil
 		}
 
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
 	}
 
 	var (
@@ -488,7 +488,7 @@ func (vfs *OrefaFS) MkdirAll(path string, perm fs.FileMode) error {
 		if ok {
 			parent = nd
 			if !parent.mode.IsDir() {
-				return &fs.PathError{Op: op, Path: dirName, Err: avfs.ErrNotADirectory}
+				return &fs.PathError{Op: op, Path: dirName, Err: vfs.err.NotADirectory}
 			}
 
 			break
@@ -560,23 +560,23 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 
 	if !childOk {
 		if !parentOk {
-			return nil, &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+			return nil, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 		}
 
 		if flag&os.O_CREATE == 0 {
 			if !parent.mode.IsDir() {
-				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
+				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 			}
 
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 		}
 
 		if !parent.mode.IsDir() {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrNotADirectory}
+			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 		}
 
 		if pm&avfs.PermWrite == 0 {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 		vfs.mu.Lock()
@@ -585,18 +585,18 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 		// test for race conditions when opening file in exclusive mode.
 		_, childOk = vfs.nodes[absPath]
 		if childOk && flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 		}
 
 		child = vfs.createFile(parent, absPath, fileName, perm)
 	} else {
 		if child.mode.IsDir() {
 			if pm&avfs.PermWrite != 0 {
-				return nilFile, &fs.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
+				return nilFile, &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 			}
 		} else {
 			if flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
-				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: avfs.ErrFileExists}
+				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 			}
 
 			if flag&os.O_TRUNC != 0 {
@@ -649,7 +649,7 @@ func (vfs *OrefaFS) ReadFile(name string) ([]byte, error) {
 func (vfs *OrefaFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -679,7 +679,7 @@ func (vfs *OrefaFS) Remove(name string) error {
 	parent, parentOk := vfs.nodes[dirName]
 
 	if !childOk || !parentOk {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	parent.mu.Lock()
@@ -689,7 +689,7 @@ func (vfs *OrefaFS) Remove(name string) error {
 	defer child.mu.Unlock()
 
 	if child.mode.IsDir() && len(child.children) != 0 {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrDirNotEmpty}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.DirNotEmpty}
 	}
 
 	child.remove()
@@ -774,15 +774,15 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	vfs.mu.RUnlock()
 
 	if !oChildOk || !oParentOk || !nParentOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrNoSuchFileOrDir}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
 	}
 
 	if oChild.mode.IsDir() && nChildOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.FileExists}
 	}
 
 	if !oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir() {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrFileExists}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.FileExists}
 	}
 
 	nParent.mu.Lock()
@@ -852,7 +852,7 @@ func (vfs *OrefaFS) SetUMask(mask fs.FileMode) {
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OrefaFS) SetUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+	return nil, vfs.err.PermDenied
 }
 
 // Split splits path immediately following the final Separator,
@@ -889,10 +889,10 @@ func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 
 			if parentOk {
 				if parent.mode.IsDir() {
-					return nil, &fs.PathError{Op: op, Path: path, Err: avfs.ErrNoSuchFileOrDir}
+					return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NoSuchFile}
 				}
 
-				return nil, &fs.PathError{Op: op, Path: path, Err: avfs.ErrNotADirectory}
+				return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
 			}
 
 			dirName, _ = vfs.splitPath(dirName)
@@ -909,7 +909,7 @@ func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 func (vfs *OrefaFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 }
 
 // TempDir returns the default directory to use for temporary files.
@@ -950,15 +950,15 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	vfs.mu.RUnlock()
 
 	if !childOk {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	if child.mode.IsDir() {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrIsADirectory}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 	}
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
 	}
 
 	child.mu.Lock()

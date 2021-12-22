@@ -51,6 +51,8 @@ func New(opts ...Option) *OrefaFS {
 	vfs.user = avfs.AdminUser
 	vfs.curDir = volumeName
 
+	vfs.err.OSType(vfs.OSType())
+
 	if vfs.features&avfs.FeatMainDirs != 0 {
 		um := vfs.umask
 		vfs.umask = 0

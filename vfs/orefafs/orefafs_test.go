@@ -46,7 +46,7 @@ var (
 )
 
 func TestOrefaFS(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithOSType(avfs.OsLinux))
+	vfs := orefafs.New(orefafs.WithMainDirs())
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatMainDirs
 	if vfs.Features() != wantFeatures {
@@ -58,7 +58,7 @@ func TestOrefaFS(t *testing.T) {
 }
 
 func TestOrefaFSWithChown(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithChownUser(), orefafs.WithOSType(avfs.OsLinux))
+	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithChownUser())
 
 	wantFeatures := avfs.FeatBasicFs | avfs.FeatChownUser | avfs.FeatHardlink | avfs.FeatMainDirs
 	if vfs.Features() != wantFeatures {

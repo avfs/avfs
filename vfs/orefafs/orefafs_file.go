@@ -47,7 +47,7 @@ func (f *OrefaFile) Chdir() error {
 	}
 
 	if !f.nd.mode.IsDir() {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
 	}
 
 	f.vfs.curDir = f.name
@@ -176,13 +176,13 @@ func (f *OrefaFile) Read(b []byte) (n int, err error) {
 	if nd.mode.IsDir() {
 		f.mu.RUnlock()
 
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.IsADirectory}
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
 		f.mu.RUnlock()
 
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	f.mu.RUnlock()
@@ -226,7 +226,7 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrIsADirectory}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.IsADirectory}
 	}
 
 	if off < 0 {
@@ -234,7 +234,7 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 	}
 
 	if f.permMode&avfs.PermRead == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	nd.mu.RLock()
@@ -287,7 +287,7 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	if !nd.mode.IsDir() {
 		f.mu.RUnlock()
 
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
 	}
 
 	f.mu.RUnlock()
@@ -366,7 +366,7 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	if !nd.mode.IsDir() {
 		f.mu.RUnlock()
 
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrNotADirectory}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
 	}
 
 	f.mu.RUnlock()
@@ -443,24 +443,24 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 	switch whence {
 	case io.SeekStart:
 		if offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 		}
 
 		f.at = offset
 	case io.SeekCurrent:
 		if f.at+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 		}
 
 		f.at += offset
 	case io.SeekEnd:
 		if size+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 		}
 
 		f.at = size + offset
 	default:
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 	}
 
 	return f.at, nil
@@ -539,11 +539,11 @@ func (f *OrefaFile) Truncate(size int64) error {
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 	}
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 	}
 
 	nd.mu.Lock()
@@ -579,7 +579,7 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	nd.mu.Lock()
@@ -626,7 +626,7 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() || f.permMode&avfs.PermWrite == 0 {
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrBadFileDesc}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	nd.mu.Lock()
