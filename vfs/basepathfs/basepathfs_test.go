@@ -29,8 +29,6 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
-const volumeName = "C:"
-
 var (
 	// Tests that basepathfs.BasePathFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &basepathfs.BasePathFS{}
@@ -41,7 +39,7 @@ var (
 
 func initFS(tb testing.TB) *basepathfs.BasePathFS {
 	ut := avfs.Cfg.Utils()
-	basePath := ut.FromUnixPath(volumeName, "/base/path")
+	basePath := ut.FromUnixPath(avfs.DefaultVolume, "/base/path")
 
 	baseFs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
 
@@ -71,7 +69,7 @@ func TestBasePathFS(t *testing.T) {
 func TestBasePathFSOptions(t *testing.T) {
 	ut := avfs.Cfg.Utils()
 	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
-	nonExistingDir := ut.FromUnixPath(volumeName, "/non/existing/dir")
+	nonExistingDir := ut.FromUnixPath(avfs.DefaultVolume, "/non/existing/dir")
 
 	test.CheckPanic(t, "", func() {
 		_ = basepathfs.New(vfs, nonExistingDir)

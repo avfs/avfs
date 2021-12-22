@@ -1018,7 +1018,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatSymlink", func(t *testing.T) {
-		for _, sl := range GetSampleSymlinksEval(vfs) {
+		for _, sl := range sfs.GetSampleSymlinksEval(vfs) {
 			newPath := vfs.Join(testDir, sl.NewName)
 			oldPath := vfs.Join(testDir, sl.OldName)
 

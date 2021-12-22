@@ -40,7 +40,7 @@ func New(opts ...Option) *OrefaFS {
 	var volumeName string
 
 	if vfs.utils.OSType() == avfs.OsWindows {
-		volumeName = `C:`
+		volumeName = avfs.DefaultVolume
 		vfs.dirMode |= avfs.DefaultDirPerm
 		vfs.fileMode |= avfs.DefaultFilePerm
 	}

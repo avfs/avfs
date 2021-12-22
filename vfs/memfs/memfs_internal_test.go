@@ -41,8 +41,6 @@ var (
 )
 
 func TestSearchNode(t *testing.T) {
-	const volumeName = "C:"
-
 	vfs := New()
 	ut := vfs.utils
 	rn := vfs.rootNode
@@ -64,12 +62,12 @@ func TestSearchNode(t *testing.T) {
 	fa3 := vfs.createFile(da, "afile3", avfs.DefaultFilePerm)
 
 	// Symlinks
-	vfs.createSymlink(rn, "lroot", ut.FromUnixPath(volumeName, "/"))
-	vfs.createSymlink(rn, "la", ut.FromUnixPath(volumeName, "/a"))
-	vfs.createSymlink(db1b, "lb1", ut.FromUnixPath(volumeName, "/b/b1"))
-	vfs.createSymlink(dc, "lafile3", ut.FromUnixPath(volumeName, "../a/afile3"))
-	lloop1 := vfs.createSymlink(rn, "loop1", ut.FromUnixPath(volumeName, "/loop2"))
-	vfs.createSymlink(rn, "loop2", ut.FromUnixPath(volumeName, "/loop1"))
+	vfs.createSymlink(rn, "lroot", ut.FromUnixPath(avfs.DefaultVolume, "/"))
+	vfs.createSymlink(rn, "la", ut.FromUnixPath(avfs.DefaultVolume, "/a"))
+	vfs.createSymlink(db1b, "lb1", ut.FromUnixPath(avfs.DefaultVolume, "/b/b1"))
+	vfs.createSymlink(dc, "lafile3", ut.FromUnixPath(avfs.DefaultVolume, "../a/afile3"))
+	lloop1 := vfs.createSymlink(rn, "loop1", ut.FromUnixPath(avfs.DefaultVolume, "/loop2"))
+	vfs.createSymlink(rn, "loop2", ut.FromUnixPath(avfs.DefaultVolume, "/loop1"))
 
 	cases := []struct { //nolint:govet // no fieldalignment for test structs
 		path        string
@@ -113,7 +111,7 @@ func TestSearchNode(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		path := ut.FromUnixPath(volumeName, c.path)
+		path := ut.FromUnixPath(avfs.DefaultVolume, c.path)
 		wantRest := vfs.FromSlash(c.rest)
 
 		parent, child, pi, err := vfs.searchNode(path, slmEval)

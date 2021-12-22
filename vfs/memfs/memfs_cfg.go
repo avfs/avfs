@@ -54,7 +54,7 @@ func New(opts ...Option) *MemFS {
 		ma.fileMode |= avfs.DefaultFilePerm
 
 		vfs.volumes = make(volumes)
-		volumeName = "C:"
+		volumeName = avfs.DefaultVolume
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
 

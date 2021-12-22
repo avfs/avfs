@@ -27,6 +27,7 @@ const (
 	PathSeparator   = '/'                // PathSeparator is defined as a forward slash for all unix systems.
 	DefaultDirPerm  = fs.FileMode(0o777) // DefaultDirPerm is the default permission for directories.
 	DefaultFilePerm = fs.FileMode(0o666) // DefaultFilePerm is the default permission for files.
+	DefaultVolume   = "C:"               // DefaultVolume is the default volume name for Windows.
 	MaxInt          = int(^uint(0) >> 1)
 	NotImplemented  = "not implemented" // NotImplemented is the return string of a non-implemented feature.
 

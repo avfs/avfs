@@ -350,6 +350,7 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 
 	if !oChildOk {
 		err := vfs.err.NoSuchFile
+
 		if vfs.OSType() == avfs.OsWindows {
 			oDirName, _ := vfs.splitPath(oAbsPath)
 

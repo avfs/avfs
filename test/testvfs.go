@@ -599,7 +599,7 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 	_ = sfs.SampleSymlinks(t, testDir)
 
 	t.Run("EvalSymlink", func(t *testing.T) {
-		symlinks := GetSampleSymlinksEval(vfs)
+		symlinks := sfs.GetSampleSymlinksEval(vfs)
 		for _, sl := range symlinks {
 			wantPath := vfs.Join(testDir, sl.OldName)
 			slPath := vfs.Join(testDir, sl.NewName)
@@ -963,7 +963,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 	})
 
 	t.Run("LstatSymlink", func(t *testing.T) {
-		for _, sl := range GetSampleSymlinksEval(vfs) {
+		for _, sl := range sfs.GetSampleSymlinksEval(vfs) {
 			newPath := vfs.Join(testDir, sl.NewName)
 			oldPath := vfs.Join(testDir, sl.OldName)
 
@@ -1021,7 +1021,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := GetSampleDirs()
+	dirs := sfs.GetSampleDirs()
 
 	t.Run("Mkdir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -1149,7 +1149,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 	}
 
 	existingFile := sfs.EmptyFile(t, testDir)
-	dirs := GetSampleDirsAll()
+	dirs := sfs.GetSampleDirsAll()
 
 	t.Run("MkdirAll", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -2197,7 +2197,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("StatSymlink", func(t *testing.T) {
-		for _, sl := range GetSampleSymlinksEval(vfs) {
+		for _, sl := range sfs.GetSampleSymlinksEval(vfs) {
 			newPath := vfs.Join(testDir, sl.NewName)
 			oldPath := vfs.Join(testDir, sl.OldName)
 
@@ -2258,7 +2258,7 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 	_ = sfs.SampleFiles(t, testDir)
 
 	t.Run("Symlink", func(t *testing.T) {
-		symlinks := GetSampleSymlinks(vfs)
+		symlinks := sfs.GetSampleSymlinks(vfs)
 		for _, sl := range symlinks {
 			oldPath := vfs.Join(testDir, sl.OldName)
 			newPath := vfs.Join(testDir, sl.NewName)

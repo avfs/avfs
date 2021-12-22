@@ -641,7 +641,7 @@ type Dir struct { //nolint:govet // no fieldalignment for test structs.
 }
 
 // GetSampleDirs returns the sample directories used by Mkdir function.
-func GetSampleDirs() []*Dir {
+func (sfs *SuiteFS) GetSampleDirs() []*Dir {
 	dirs := []*Dir{
 		{Path: "/A", Mode: 0o777, WantModes: []fs.FileMode{0o777}},
 		{Path: "/B", Mode: 0o755, WantModes: []fs.FileMode{0o755}},
@@ -657,15 +657,29 @@ func GetSampleDirs() []*Dir {
 		{Path: "/C/5", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
 	}
 
+	ut := sfs.vfsTest.Utils()
+	if ut.OSType() == avfs.OsWindows {
+		for i, dir := range dirs {
+			dirs[i].Path = ut.FromUnixPath(avfs.DefaultVolume, dir.Path)
+		}
+	}
+
 	return dirs
 }
 
 // GetSampleDirsAll returns the sample directories used by MkdirAll function.
-func GetSampleDirsAll() []*Dir {
+func (sfs *SuiteFS) GetSampleDirsAll() []*Dir {
 	dirs := []*Dir{
 		{Path: "/H/6", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
 		{Path: "/H/6/I/7", Mode: 0o755, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755}},
 		{Path: "/H/6/I/7/J/8", Mode: 0o777, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755, 0o777, 0o777}},
+	}
+
+	ut := sfs.vfsTest.Utils()
+	if ut.OSType() == avfs.OsWindows {
+		for i, dir := range dirs {
+			dirs[i].Path = ut.FromUnixPath(avfs.DefaultVolume, dir.Path)
+		}
 	}
 
 	return dirs
@@ -682,7 +696,7 @@ func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
 		tb.Fatalf("MkdirAll %s : want error to be nil, got %v", testDir, err)
 	}
 
-	dirs := GetSampleDirs()
+	dirs := sfs.GetSampleDirs()
 	for _, dir := range dirs {
 		path := vfs.Join(testDir, dir.Path)
 
@@ -703,7 +717,7 @@ type File struct { //nolint:govet // no fieldalignment for test structs.
 }
 
 // GetSampleFiles returns the sample files.
-func GetSampleFiles() []*File {
+func (sfs *SuiteFS) GetSampleFiles() []*File {
 	files := []*File{
 		{Path: "/file.txt", Mode: avfs.DefaultFilePerm, Content: []byte("file")},
 		{Path: "/A/afile1.txt", Mode: 0o777, Content: []byte("afile1")},
@@ -717,6 +731,13 @@ func GetSampleFiles() []*File {
 		{Path: "/C/cfile.txt", Mode: avfs.DefaultFilePerm, Content: []byte("cfile")},
 	}
 
+	ut := sfs.vfsTest.Utils()
+	if ut.OSType() == avfs.OsWindows {
+		for i, file := range files {
+			files[i].Path = ut.FromUnixPath(avfs.DefaultVolume, file.Path)
+		}
+	}
+
 	return files
 }
 
@@ -726,7 +747,7 @@ func (sfs *SuiteFS) SampleFiles(tb testing.TB, testDir string) []*File {
 
 	vfs := sfs.vfsSetup
 
-	files := GetSampleFiles()
+	files := sfs.GetSampleFiles()
 	for _, file := range files {
 		path := vfs.Join(testDir, file.Path)
 
@@ -746,12 +767,12 @@ type Symlink struct {
 }
 
 // GetSampleSymlinks returns the sample symbolic links.
-func GetSampleSymlinks(vfs avfs.Featurer) []*Symlink {
+func (sfs *SuiteFS) GetSampleSymlinks(vfs avfs.Featurer) []*Symlink {
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
 	}
 
-	symlinks := []*Symlink{
+	sls := []*Symlink{
 		{NewName: "/A/lroot", OldName: "/"},
 		{NewName: "/lC", OldName: "/C"},
 		{NewName: "/B/1/lafile2.txt", OldName: "/A/afile2.txt"},
@@ -762,7 +783,15 @@ func GetSampleSymlinks(vfs avfs.Featurer) []*Symlink {
 		{NewName: "/C/lNonExist", OldName: "/A/path/to/a/non/existing/file"},
 	}
 
-	return symlinks
+	ut := sfs.vfsTest.Utils()
+	if ut.OSType() == avfs.OsWindows {
+		for i, sl := range sls {
+			sls[i].NewName = ut.FromUnixPath(avfs.DefaultVolume, sl.NewName)
+			sls[i].OldName = ut.FromUnixPath(avfs.DefaultVolume, sl.OldName)
+		}
+	}
+
+	return sls
 }
 
 // SymlinkEval contains the data to evaluate the sample symbolic links.
@@ -774,12 +803,12 @@ type SymlinkEval struct {
 }
 
 // GetSampleSymlinksEval return the sample symbolic links to evaluate.
-func GetSampleSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
+func (sfs *SuiteFS) GetSampleSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
 	}
 
-	sl := []*SymlinkEval{
+	sles := []*SymlinkEval{
 		{NewName: "/A/lroot/", OldName: "/", IsSymlink: true, Mode: fs.ModeDir | 0o777},
 		{NewName: "/A/lroot/B", OldName: "/B", IsSymlink: false, Mode: fs.ModeDir | 0o755},
 		{NewName: "/", OldName: "/", IsSymlink: false, Mode: fs.ModeDir | 0o777},
@@ -792,7 +821,15 @@ func GetSampleSymlinksEval(vfs avfs.Featurer) []*SymlinkEval {
 		{NewName: "/C/lllf/3/3file1.txt", OldName: "/B/2/F/3/3file1.txt", IsSymlink: false, Mode: 0o640},
 	}
 
-	return sl
+	ut := sfs.vfsTest.Utils()
+	if ut.OSType() == avfs.OsWindows {
+		for i, sle := range sles {
+			sles[i].NewName = ut.FromUnixPath(avfs.DefaultVolume, sle.NewName)
+			sles[i].OldName = ut.FromUnixPath(avfs.DefaultVolume, sle.OldName)
+		}
+	}
+
+	return sles
 }
 
 // SampleSymlinks creates the sample symbolic links.
@@ -801,7 +838,7 @@ func (sfs *SuiteFS) SampleSymlinks(tb testing.TB, testDir string) []*Symlink {
 
 	vfs := sfs.vfsSetup
 
-	symlinks := GetSampleSymlinks(vfs)
+	symlinks := sfs.GetSampleSymlinks(vfs)
 	for _, sl := range symlinks {
 		oldPath := vfs.Join(testDir, sl.OldName)
 		newPath := vfs.Join(testDir, sl.NewName)
