@@ -49,28 +49,26 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 
 	t.Run("FileChdir", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := vfs.Join(testDir, dir.Path)
-
-			f, err := vfs.Open(path)
-			CheckNoError(t, "Open "+path, err)
+			f, err := vfs.Open(dir.Path)
+			CheckNoError(t, "Open "+dir.Path, err)
 
 			defer f.Close()
 
 			err = f.Chdir()
 			switch vfs.OSType() {
 			case avfs.OsWindows:
-				CheckPathError(t, err).Op("chdir").Path(path).Err(avfs.ErrWinNotSupported)
+				CheckPathError(t, err).Op("chdir").Path(dir.Path).Err(avfs.ErrWinNotSupported)
 
 				continue
 			default:
-				CheckNoError(t, "Chdir "+path, err)
+				CheckNoError(t, "Chdir "+dir.Path, err)
 			}
 
 			curDir, err := vfs.Getwd()
-			CheckNoError(t, "Getwd "+path, err)
+			CheckNoError(t, "Getwd "+dir.Path, err)
 
-			if curDir != path {
-				t.Errorf("Getwd : want current directory to be %s, got %s", path, curDir)
+			if curDir != dir.Path {
+				t.Errorf("Getwd : want current directory to be %s, got %s", dir.Path, curDir)
 			}
 		}
 	})
@@ -960,18 +958,16 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 	t.Run("FileStatDir", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := vfs.Join(testDir, dir.Path)
-
-			f, err := vfs.Open(path)
-			CheckNoError(t, "Open "+path, err)
+			f, err := vfs.Open(dir.Path)
+			CheckNoError(t, "Open "+dir.Path, err)
 
 			info, err := f.Stat()
-			if !CheckNoError(t, "Stat "+path, err) {
+			if !CheckNoError(t, "Stat "+dir.Path, err) {
 				continue
 			}
 
-			if vfs.Base(path) != info.Name() {
-				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
+			if vfs.Base(dir.Path) != info.Name() {
+				t.Errorf("Stat %s : want name to be %s, got %s", dir.Path, vfs.Base(dir.Path), info.Name())
 			}
 
 			wantMode := (dir.Mode | fs.ModeDir) &^ vfs.UMask()
@@ -980,25 +976,23 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			}
 
 			if wantMode != info.Mode() {
-				t.Errorf("Stat %s : want mode to be %s, got %s", path, wantMode, info.Mode())
+				t.Errorf("Stat %s : want mode to be %s, got %s", dir.Path, wantMode, info.Mode())
 			}
 		}
 	})
 
 	t.Run("FileStatFile", func(t *testing.T) {
 		for _, file := range files {
-			path := vfs.Join(testDir, file.Path)
-
-			f, err := vfs.Open(path)
-			CheckNoError(t, "Open "+path, err)
+			f, err := vfs.Open(file.Path)
+			CheckNoError(t, "Open "+file.Path, err)
 
 			info, err := f.Stat()
-			if !CheckNoError(t, "Stat "+path, err) {
+			if !CheckNoError(t, "Stat "+file.Path, err) {
 				continue
 			}
 
-			if info.Name() != vfs.Base(path) {
-				t.Errorf("Stat %s : want name to be %s, got %s", path, vfs.Base(path), info.Name())
+			if info.Name() != vfs.Base(file.Path) {
+				t.Errorf("Stat %s : want name to be %s, got %s", file.Path, vfs.Base(file.Path), info.Name())
 			}
 
 			wantMode := file.Mode &^ vfs.UMask()
@@ -1007,41 +1001,38 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			}
 
 			if wantMode != info.Mode() {
-				t.Errorf("Stat %s : want mode to be %s, got %s", path, wantMode, info.Mode())
+				t.Errorf("Stat %s : want mode to be %s, got %s", file.Path, wantMode, info.Mode())
 			}
 
 			wantSize := int64(len(file.Content))
 			if wantSize != info.Size() {
-				t.Errorf("Lstat %s : want size to be %d, got %d", path, wantSize, info.Size())
+				t.Errorf("Lstat %s : want size to be %d, got %d", file.Path, wantSize, info.Size())
 			}
 		}
 	})
 
 	t.Run("FileStatSymlink", func(t *testing.T) {
-		for _, sl := range sfs.GetSampleSymlinksEval(vfs) {
-			newPath := vfs.Join(testDir, sl.NewName)
-			oldPath := vfs.Join(testDir, sl.OldName)
-
-			f, err := vfs.Open(newPath)
-			CheckNoError(t, "Open "+newPath, err)
+		for _, sl := range sfs.GetSampleSymlinksEval(testDir) {
+			f, err := vfs.Open(sl.NewPath)
+			CheckNoError(t, "Open "+sl.NewPath, err)
 
 			info, err := f.Stat()
-			if !CheckNoError(t, "Stat "+newPath, err) {
+			if !CheckNoError(t, "Stat "+sl.NewPath, err) {
 				continue
 			}
 
-			wantName := vfs.Base(oldPath)
+			wantName := vfs.Base(sl.OldPath)
 			if sl.IsSymlink {
-				wantName = vfs.Base(newPath)
+				wantName = vfs.Base(sl.NewPath)
 			}
 
 			wantMode := sl.Mode
 			if wantName != info.Name() {
-				t.Errorf("Stat %s : want name to be %s, got %s", newPath, wantName, info.Name())
+				t.Errorf("Stat %s : want name to be %s, got %s", sl.NewPath, wantName, info.Name())
 			}
 
 			if sfs.canTestPerm && wantMode != info.Mode() {
-				t.Errorf("Stat %s : want mode to be %s, got %s", newPath, wantMode, info.Mode())
+				t.Errorf("Stat %s : want mode to be %s, got %s", sl.NewPath, wantMode, info.Mode())
 			}
 		}
 	})
@@ -1054,7 +1045,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatSubDirOnFile", func(t *testing.T) {
-		path := vfs.Join(testDir, files[0].Path, defaultNonExisting)
+		path := vfs.Join(files[0].Path, defaultNonExisting)
 
 		f, err := vfs.Open(path)
 		CheckPathError(t, err).Op("open").Path(path).

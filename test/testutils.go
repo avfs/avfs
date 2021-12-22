@@ -1575,16 +1575,16 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 
 	wantNames = append(wantNames, testDir)
 	for _, dir := range dirs {
-		wantNames = append(wantNames, vfs.Join(testDir, dir.Path))
+		wantNames = append(wantNames, dir.Path)
 	}
 
 	for _, file := range files {
-		wantNames = append(wantNames, vfs.Join(testDir, file.Path))
+		wantNames = append(wantNames, file.Path)
 	}
 
 	if vfs.HasFeature(avfs.FeatSymlink) {
 		for _, sl := range symlinks {
-			wantNames = append(wantNames, vfs.Join(testDir, sl.NewName))
+			wantNames = append(wantNames, sl.NewPath)
 		}
 	}
 
