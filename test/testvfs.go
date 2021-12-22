@@ -84,7 +84,7 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 
 	t.Run("ChdirNonExisting", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := vfs.Join(testDir, dir.Path, defaultNonExisting)
+			path := vfs.Join(dir.Path, defaultNonExisting)
 
 			oldPath, err := vfs.Getwd()
 			CheckNoError(t, "Getwd", err)
@@ -853,7 +853,7 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 	t.Run("LinkErrorFile", func(t *testing.T) {
 		for _, file := range files {
-			InvalidPath := vfs.Join(testDir, file.Path, defaultNonExisting)
+			InvalidPath := vfs.Join(file.Path, defaultNonExisting)
 			NewInvalidPath := vfs.Join(pathLinks, defaultFile)
 
 			err := vfs.Link(InvalidPath, NewInvalidPath)
@@ -1076,7 +1076,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 	t.Run("MkdirOnNonExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := vfs.Join(testDir, dir.Path, "can't", "create", "this")
+			path := vfs.Join(dir.Path, "can't", "create", "this")
 
 			err := vfs.Mkdir(path, avfs.DefaultDirPerm)
 			CheckPathError(t, err).Op("mkdir").Path(path).
@@ -1193,10 +1193,8 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 	t.Run("MkdirAllExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
-			path := vfs.Join(testDir, dir.Path)
-
-			err := vfs.MkdirAll(path, dir.Mode)
-			CheckNoError(t, "MkdirAll "+path, err)
+			err := vfs.MkdirAll(dir.Path, dir.Mode)
+			CheckNoError(t, "MkdirAll "+dir.Path, err)
 		}
 	})
 
