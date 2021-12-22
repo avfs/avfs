@@ -929,21 +929,19 @@ func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 	vfs.mu.RUnlock()
 
 	if !childOk {
-		for {
-			vfs.mu.RLock()
-			parent, parentOk := vfs.nodes[dirName]
-			vfs.mu.RUnlock()
+		vfs.mu.RLock()
+		parent, parentOk := vfs.nodes[dirName]
+		vfs.mu.RUnlock()
 
-			if parentOk {
-				if parent.mode.IsDir() {
-					return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NoSuchFile}
-				}
-
-				return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
-			}
-
-			dirName, _ = vfs.splitPath(dirName)
+		if !parentOk {
+			return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NoSuchDir}
 		}
+
+		if parent.mode.IsDir() {
+			return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NoSuchFile}
+		}
+
+		return nil, &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
 	}
 
 	fst := child.fillStatFrom(fileName)
