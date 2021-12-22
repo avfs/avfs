@@ -34,18 +34,18 @@ type MemFS struct {
 	user     avfs.UserReader // user is the current user of the file system.
 	rootNode *dirNode        // rootNode represent the root directory of the file system.
 	memAttrs *memAttrs       // memAttrs represents the file system attributes.
-	err      avfs.VFSErrors  // err regroups errors returned by MemFS functions.
+	err      avfs.VFSErrors  // err regroups the errors depending on the OS emulated.
 	volumes  volumes         // volumes contains the volume names (for Windows only).
 	curDir   string          // curDir is the current directory.
 	umask    fs.FileMode     // umask is the user file creation mode mask.
-	utils    avfs.Utils      // utils are somme common functions used by emulated file system implementation.
+	utils    avfs.Utils      // utils regroups common functions used by emulated file systems.
 }
 
 // memAttrs represents the file system attributes for MemFS.
 type memAttrs struct {
 	idm      avfs.IdentityMgr // idm is the identity manager of the file system.
 	name     string           // name is the name of the file system.
-	features avfs.Features    // features defines the list of features available on this file system.
+	features avfs.Features    // features defines the list of features available for this file system.
 	lastId   uint64           // lastId is the last unique id used to identify files uniquely.
 	dirMode  fs.FileMode      // dirMode is the default fs.FileMode for a directory.
 	fileMode fs.FileMode      // fileMode is de default fs.FileMode for a file.
