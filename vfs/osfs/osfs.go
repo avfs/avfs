@@ -94,7 +94,7 @@ func (vfs *OsFS) Chown(name string, uid, gid int) error {
 // Chtimes changes the access and modification times of the named
 // file, similar to the Unix utime() or utimes() functions.
 //
-// The underlying file system may truncate or round the values to a
+// The underlying filesystem may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Chtimes(name string, atime, mtime time.Time) error {
@@ -128,10 +128,10 @@ func (vfs *OsFS) Clean(path string) string {
 	return filepath.Clean(path)
 }
 
-// Create creates the named file with mode 0666 (before umask), truncating
-// it if it already exists. If successful, methods on the returned
-// OsFile can be used for I/O; the associated file descriptor has mode
-// O_RDWR.
+// Create creates or truncates the named file. If the file already exists,
+// it is truncated. If the file does not exist, it is created with mode 0666
+// (before umask). If successful, methods on the returned File can
+// be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Create(name string) (avfs.File, error) {
 	return os.Create(name)
@@ -211,9 +211,13 @@ func (vfs *OsFS) IsPathSeparator(c uint8) bool {
 	return os.IsPathSeparator(c)
 }
 
-// Join joins any number of path elements into a single path, adding a
-// separating slash if necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
+// Join joins any number of path elements into a single path,
+// separating them with an OS specific Separator. Empty elements
+// are ignored. The result is Cleaned. However, if the argument
+// list is empty or all its elements are empty, Join returns
+// an empty string.
+// On Windows, the result will only be a UNC path if the first
+// non-empty element is a UNC path.
 func (vfs *OsFS) Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
@@ -318,7 +322,7 @@ func (vfs *OsFS) Open(name string) (avfs.File, error) {
 // or Create instead. It opens the named file with specified flag
 // (O_RDONLY etc.). If the file does not exist, and the O_CREATE flag
 // is passed, it is created with mode perm (before umask). If successful,
-// methods on the returned OsFile can be used for I/O.
+// methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	return os.OpenFile(name, flag, perm)
@@ -338,10 +342,10 @@ func (vfs *OsFS) ReadDir(name string) ([]fs.DirEntry, error) {
 	return os.ReadDir(name)
 }
 
-// ReadFile reads the file named by filename and returns the contents.
-// A successful call returns err == nil, not err == EOF. Because ReadFile
-// reads the whole file, it does not treat an EOF from Read as an error
-// to be reported.
+// ReadFile reads the named file and returns the contents.
+// A successful call returns err == nil, not err == EOF.
+// Because ReadFile reads the whole file, it does not treat an EOF from Read
+// as an error to be reported.
 func (vfs *OsFS) ReadFile(filename string) ([]byte, error) {
 	return os.ReadFile(filename)
 }
@@ -364,7 +368,7 @@ func (vfs *OsFS) Rel(basepath, targpath string) (string, error) {
 	return filepath.Rel(basepath, targpath)
 }
 
-// Remove removes the named file or (empty) directory.
+// Remove removes the named file or directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Remove(name string) error {
 	return os.Remove(name)
@@ -383,8 +387,8 @@ func (vfs *OsFS) RemoveAll(path string) error {
 // If newpath already exists and is not a directory, Rename replaces it.
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
-func (vfs *OsFS) Rename(oldname, newname string) error {
-	return os.Rename(oldname, newname)
+func (vfs *OsFS) Rename(oldpath, newpath string) error {
+	return os.Rename(oldpath, newpath)
 }
 
 // SameFile reports whether fi1 and fi2 describe the same file.
@@ -428,6 +432,8 @@ func (vfs *OsFS) Split(path string) (dir, file string) {
 }
 
 // Symlink creates newname as a symbolic link to oldname.
+// On Windows, a symlink to a non-existent oldname creates a file symlink;
+// if oldname is later created as a directory the symlink will not work.
 // If there is an error, it will be of type *LinkError.
 func (vfs *OsFS) Symlink(oldname, newname string) error {
 	return os.Symlink(oldname, newname)
@@ -455,7 +461,6 @@ func (vfs *OsFS) ToSlash(path string) string {
 
 // Truncate changes the size of the named file.
 // If the file is a symbolic link, it changes the size of the link's target.
-// If there is an error, it will be of type *PathError.
 func (vfs *OsFS) Truncate(name string, size int64) error {
 	return os.Truncate(name, size)
 }
@@ -491,9 +496,9 @@ func (vfs *OsFS) WalkDir(root string, fn fs.WalkDirFunc) error {
 	return filepath.WalkDir(root, fn)
 }
 
-// WriteFile writes data to a file named by filename.
-// If the file does not exist, WriteFile creates it with permissions perm;
-// otherwise WriteFile truncates it before writing.
+// WriteFile writes data to the named file, creating it if necessary.
+// If the file does not exist, WriteFile creates it with permissions perm (before umask);
+// otherwise WriteFile truncates it before writing, without changing permissions.
 func (vfs *OsFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
 	return os.WriteFile(filename, data, perm)
 }

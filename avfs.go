@@ -392,7 +392,7 @@ type BaseVFS interface {
 	// If newpath already exists and is not a directory, Rename replaces it.
 	// OS-specific restrictions may apply when oldpath and newpath are in different directories.
 	// If there is an error, it will be of type *LinkError.
-	Rename(oldname, newname string) error
+	Rename(oldpath, newpath string) error
 
 	// SameFile reports whether fi1 and fi2 describe the same file.
 	// For example, on Unix this means that the device and inode fields
