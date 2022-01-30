@@ -337,9 +337,12 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 
 // TestChroot tests Chroot function.
 func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+	if !sfs.canTestPerm {
+		return
+	}
 
-	if !sfs.canTestPerm || !vfs.HasFeature(avfs.FeatChroot) {
+	vfs := sfs.vfsTest
+	if !vfs.HasFeature(avfs.FeatChroot) {
 		err := vfs.Chroot(testDir)
 		CheckPathError(t, err).Op("chroot").Path(testDir).
 			Err(avfs.ErrOpNotPermitted, avfs.OsLinux).
