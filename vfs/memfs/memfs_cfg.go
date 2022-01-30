@@ -36,9 +36,8 @@ func New(opts ...Option) *MemFS {
 
 	vfs := &MemFS{
 		user:     avfs.DefaultUser,
-		curDir:   "/",
-		rootNode: createRootNode(),
 		memAttrs: ma,
+		umask:    avfs.Cfg.UMask(),
 		utils:    avfs.Cfg.Utils(),
 	}
 
@@ -46,21 +45,20 @@ func New(opts ...Option) *MemFS {
 		opt(vfs)
 	}
 
+	vfs.rootNode = vfs.createRootNode()
+	ut := vfs.utils
+	vfs.curDir = ut.RootPath()
 	volumeName := ""
 
-	ut := vfs.utils
 	if ut.OSType() == avfs.OsWindows {
 		ma.features ^= avfs.FeatChroot
 		ma.dirMode |= avfs.DefaultDirPerm
 		ma.fileMode |= avfs.DefaultFilePerm
 
-		vfs.volumes = make(volumes)
 		volumeName = avfs.DefaultVolume
+		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
-
-	vfs.umask = avfs.Cfg.UMask()
-	vfs.rootNode.mode = ma.dirMode &^ vfs.umask
 
 	vfs.err.OSType(vfs.OSType())
 
@@ -138,5 +136,12 @@ func WithName(name string) Option {
 func WithOSType(osType avfs.OSType) Option {
 	return func(vfs *MemFS) {
 		vfs.utils = avfs.NewUtils(osType)
+	}
+}
+
+// WithUser returns an option function which sets the default user.
+func WithUser(user avfs.UserReader) Option {
+	return func(vfs *MemFS) {
+		vfs.user = user
 	}
 }

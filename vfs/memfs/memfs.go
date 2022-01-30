@@ -1058,7 +1058,7 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeAlreadyExists}
 	}
 
-	vfs.volumes[vol] = createRootNode()
+	vfs.volumes[vol] = vfs.createRootNode()
 
 	return nil
 }

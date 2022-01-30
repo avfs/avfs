@@ -60,6 +60,36 @@ func TestMemFSWithNoIdm(t *testing.T) {
 	sfs.TestAll(t)
 }
 
+func TestMemFSOptionUser(t *testing.T) {
+	idm := memidm.New()
+
+	groupName := "aGroup"
+	_, err := idm.GroupAdd(groupName)
+	test.CheckNoError(t, "GroupAdd "+groupName, err)
+
+	userName := "aUser"
+	u, err := idm.UserAdd(userName, groupName)
+	test.CheckNoError(t, "UserAdd "+userName, err)
+
+	vfs := memfs.New(memfs.WithUser(u))
+
+	dir := "test"
+	err = vfs.Mkdir(dir, avfs.DefaultDirPerm)
+	test.CheckNoError(t, "Mkdir "+dir, err)
+
+	info, err := vfs.Stat(dir)
+	test.CheckNoError(t, "Stat "+dir, err)
+
+	sst := vfs.ToSysStat(info)
+	if sst.Uid() != u.Uid() {
+		t.Errorf("want Uid to be %d, got %d", u.Uid(), sst.Uid())
+	}
+
+	if sst.Gid() != u.Gid() {
+		t.Errorf("want Uid to be %d, got %d", u.Gid(), sst.Gid())
+	}
+}
+
 // TestMemFsOptionName tests MemFS initialization with or without option name (WithName()).
 func TestMemFSOptionName(t *testing.T) {
 	const wantName = "whatever"
