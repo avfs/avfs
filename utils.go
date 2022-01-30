@@ -499,7 +499,7 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 func (ut *Utils) HomeDir() string {
 	switch ut.osType {
 	case OsWindows:
-		return `C:\Users`
+		return DefaultVolume + `\Users`
 	default:
 		return "/home"
 	}
@@ -509,7 +509,7 @@ func (ut *Utils) HomeDir() string {
 // If the file system does not have an identity manager, the root directory is returned.
 func (ut *Utils) HomeDirUser(vfs VFS, u UserReader) string {
 	if !vfs.HasFeature(FeatIdentityMgr) {
-		return "/"
+		return ut.FromUnixPath(DefaultVolume, "/")
 	}
 
 	name := u.Name()
@@ -958,7 +958,7 @@ func (ut *Utils) TempDir(userName string) string {
 		return "/tmp"
 	}
 
-	dir := ut.Join(`C:\Users`, userName, `AppData\Local\Temp`)
+	dir := ut.Join(DefaultVolume, `Users`, userName, `AppData\Local\Temp`)
 
 	return ShortPathName(dir)
 }

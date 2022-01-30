@@ -21,12 +21,12 @@ an abstraction layer to emulate the behavior of a file system that provides seve
 (Chown, Lchown) and file system permissions
 
 Additionally, some file systems support :
-- user file creation mode mask (**Umask**) (MemFS, OrefaFS),
-- **chroot** (MemFS),
-- **hard links** (MemFS, OrefaFS),
-- **symbolic links** (MemFS), 
+- user file creation mode mask (**Umask**) (MemFS, OrefaFS)
+- **chroot** (MemFS)
+- **hard links** (MemFS, OrefaFS)
+- **symbolic links** (MemFS)
 - **multiple users concurrently** (MemFS)
-- **Windows** and **Linux** operating systems emulation (MemFS, OreafaFS)
+- **Linux** and **Windows** emulation regardless of host operating system (MemFS, OrefaFS)
 
 ## Installation
 
@@ -176,7 +176,7 @@ func main() {
 
 ## Status
 
-Not ready for Windows.
+Almost ready for Windows.
 
 ## File systems
 
