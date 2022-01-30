@@ -36,7 +36,7 @@ const (
 
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
-	vfsSetup    avfs.VFS           // vfsSetup is the file system used to setup the tests (generally with read/write access).
+	vfsSetup    avfs.VFS           // vfsSetup is the file system used to set up the tests (generally with read/write access).
 	vfsTest     avfs.VFS           // vfsTest is the file system used to run the tests.
 	initDir     string             // initDir is the initial directory of the tests.
 	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
@@ -162,7 +162,7 @@ func (sfs *SuiteFS) VFSTest() avfs.VFS {
 	return sfs.vfsTest
 }
 
-// VFSSetup returns the file system used to setup the tests.
+// VFSSetup returns the file system used to set up the tests.
 func (sfs *SuiteFS) VFSSetup() avfs.VFS {
 	return sfs.vfsSetup
 }
@@ -534,7 +534,7 @@ func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) 
 	return fileName
 }
 
-// NonExistingFile returns the name of a non existing file.
+// NonExistingFile returns the name of a non-existing file.
 func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	tb.Helper()
 
@@ -585,7 +585,7 @@ func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (fd avfs.File
 	return f, fileName
 }
 
-// OpenedNonExistingFile returns a non existing avfs.File and its file name.
+// OpenedNonExistingFile returns a non-existing avfs.File and its file name.
 func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs.File) {
 	tb.Helper()
 

@@ -115,7 +115,7 @@ type UserInfo struct {
 const (
 	UsrTest = "UsrTest" // UsrTest is used to test user access rights.
 	UsrGrp  = "UsrGrp"  // UsrGrp is a member of the group GrpTest used to test default group access rights.
-	UsrOth  = "UsrOth"  // UsrOth is a member of the group GrpOth used to test non members access rights.
+	UsrOth  = "UsrOth"  // UsrOth is a member of the group GrpOth used to test non-members access rights.
 )
 
 // UserInfos returns a UserInfo slice describing the test users.

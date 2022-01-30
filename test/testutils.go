@@ -684,7 +684,7 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 	})
 
 	t.Run("GlobWithoutMetaNonExisting", func(t *testing.T) {
-		pattern := testDir + "/NonExisiting"
+		pattern := vfs.Join(testDir, "/NonExisting")
 		dirNames, err := vfs.Glob(pattern)
 		if dirNames != nil || err != nil {
 			t.Errorf("Glob %s : want error and result to be nil, got %s, %v", pattern, dirNames, err)
@@ -1077,7 +1077,7 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 
 		if vfs.OSType() == avfs.OsWindows {
 			if strings.Contains(pattern, "\\") {
-				// no escape allowed on windows.
+				// no escape allowed on Windows.
 				continue
 			}
 
