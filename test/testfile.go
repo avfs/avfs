@@ -52,8 +52,6 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 			f, err := vfs.Open(dir.Path)
 			CheckNoError(t, "Open "+dir.Path, err)
 
-			defer f.Close()
-
 			err = f.Chdir()
 			switch vfs.OSType() {
 			case avfs.OsWindows:
@@ -70,6 +68,8 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 			if curDir != dir.Path {
 				t.Errorf("Getwd : want current directory to be %s, got %s", dir.Path, curDir)
 			}
+
+			f.Close()
 		}
 	})
 

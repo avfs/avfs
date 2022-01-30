@@ -142,14 +142,17 @@ linters:
     - asciicheck
     - bidichk
     - bodyclose
+    - containedctx
     - contextcheck
     #- cyclop
     - deadcode
+    - decorder
     - depguard
     - dogsled
     - durationcheck
     #- dupl
     - errcheck
+    - errchkjson
     - errname
     #- errorlint
     #- exhaustive
@@ -174,10 +177,13 @@ linters:
     - goimports
     #- golint
     #- gomnd
+    - gomoddirectives
+    - gomodguard
     - goprintffuncname
     #- gosec
     - gosimple
     - govet
+    - grouper
     #- ifshort
     - ineffassign
     - importas

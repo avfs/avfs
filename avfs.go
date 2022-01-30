@@ -647,7 +647,7 @@ type SysStater interface {
 	Nlink() uint64
 }
 
-// VolumeManager is the interface that manage volumes on Windows file systems.
+// VolumeManager is the interface that manage volumes for Windows file systems.
 type VolumeManager interface {
 	// VolumeAdd adds a new volume to a Windows file system.
 	// If there is an error, it will be of type *PathError.

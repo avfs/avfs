@@ -36,6 +36,7 @@ func New(opts ...Option) *MemFS {
 
 	vfs := &MemFS{
 		user:     avfs.DefaultUser,
+		curDir:   "/",
 		rootNode: createRootNode(),
 		memAttrs: ma,
 		utils:    avfs.Cfg.Utils(),

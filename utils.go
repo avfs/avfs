@@ -506,7 +506,7 @@ func (ut *Utils) HomeDir() string {
 
 // HomeDirUser returns the home directory of the user.
 func (ut *Utils) HomeDirUser(name string) string {
-	if ut.osType == OsLinux && name == ut.AdminUserName() {
+	if ut.osType != OsWindows && name == ut.AdminUserName() {
 		return "/root"
 	}
 
