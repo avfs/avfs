@@ -1518,6 +1518,21 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 }
 
+// TestPathSeparator tests PathSeparator function.
+func (sfs *SuiteFS) TestPathSeparator(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+
+	wantSep := uint8('/')
+	if vfs.OSType() == avfs.OsWindows {
+		wantSep = '\\'
+	}
+
+	sep := vfs.PathSeparator()
+	if sep != wantSep {
+		t.Errorf("want separator to be %s, got %s", string(wantSep), string(sep))
+	}
+}
+
 // TestReadDir tests ReadDir function.
 func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest

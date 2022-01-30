@@ -368,6 +368,7 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestName,
 		sfs.TestOpen,
 		sfs.TestOpenFileWrite,
+		sfs.TestPathSeparator,
 		sfs.TestReadDir,
 		sfs.TestReadFile,
 		sfs.TestReadlink,
