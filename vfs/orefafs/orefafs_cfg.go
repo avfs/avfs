@@ -66,7 +66,7 @@ func New(opts ...Option) *OrefaFS {
 
 		vfs.umask = um
 		vfs.user = u
-		vfs.curDir = ut.HomeDirUser(u.Name())
+		vfs.curDir = ut.HomeDirUser(vfs, u)
 	}
 
 	return vfs

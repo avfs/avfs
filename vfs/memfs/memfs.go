@@ -897,15 +897,15 @@ func (vfs *MemFS) SetUser(name string) (avfs.UserReader, error) {
 		return vfs.user, nil
 	}
 
-	user, err := vfs.memAttrs.idm.LookupUser(name)
+	u, err := vfs.memAttrs.idm.LookupUser(name)
 	if err != nil {
 		return nil, err
 	}
 
-	vfs.user = user
-	vfs.curDir = vfs.utils.HomeDirUser(user.Name())
+	vfs.user = u
+	vfs.curDir = vfs.utils.HomeDirUser(vfs, u)
 
-	return user, nil
+	return u, nil
 }
 
 // Split splits path immediately following the final Separator,

@@ -285,13 +285,14 @@ func (ut *Utils) CreateBaseDirs(vfs VFS, basePath string) error {
 	return nil
 }
 
-// CreateHomeDir creates the home directory of a user.
-func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) error {
-	userDir := ut.HomeDirUser(u.Name())
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) (string, error) {
+	userDir := ut.HomeDirUser(vfs, u)
 
 	err := vfs.Mkdir(userDir, ut.HomeDirPerm())
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	switch ut.osType {
@@ -302,10 +303,10 @@ func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) error {
 	}
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return userDir, nil
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -505,7 +506,13 @@ func (ut *Utils) HomeDir() string {
 }
 
 // HomeDirUser returns the home directory of the user.
-func (ut *Utils) HomeDirUser(name string) string {
+// If the file system does not have an identity manager, the root directory is returned.
+func (ut *Utils) HomeDirUser(vfs VFS, u UserReader) string {
+	if !vfs.HasFeature(FeatIdentityMgr) {
+		return "/"
+	}
+
+	name := u.Name()
 	if ut.osType != OsWindows && name == ut.AdminUserName() {
 		return "/root"
 	}

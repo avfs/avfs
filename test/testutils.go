@@ -430,6 +430,10 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 // TestCreateHomeDir tests that the user home directory exists and has the correct permissions.
 func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
+
 	ut := vfs.Utils()
 
 	for _, ui := range UserInfos() {
@@ -438,10 +442,15 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
 			t.Fatalf("")
 		}
 
-		homeDir := ut.HomeDirUser(u.Name())
+		homeDir, err := ut.CreateHomeDir(vfs, u)
+		if !CheckNoError(t, "CreateHomeDir "+ui.Name, err) {
+			continue
+		}
 
 		fst, err := vfs.Stat(homeDir)
-		CheckNoError(t, "Stat "+homeDir, err)
+		if !CheckNoError(t, "Stat "+homeDir, err) {
+			continue
+		}
 
 		if vfs.OSType() == avfs.OsWindows {
 			return
