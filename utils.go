@@ -958,7 +958,7 @@ func (ut *Utils) TempDir(userName string) string {
 		return "/tmp"
 	}
 
-	dir := ut.Join(DefaultVolume, `Users`, userName, `AppData\Local\Temp`)
+	dir := ut.Join(DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`)
 
 	return ShortPathName(dir)
 }
