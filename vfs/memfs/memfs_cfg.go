@@ -47,7 +47,6 @@ func New(opts ...Option) *MemFS {
 
 	vfs.rootNode = vfs.createRootNode()
 	ut := vfs.utils
-	vfs.curDir = ut.RootPath()
 	volumeName := ""
 
 	if ut.OSType() == avfs.OsWindows {
@@ -56,8 +55,11 @@ func New(opts ...Option) *MemFS {
 		ma.fileMode |= avfs.DefaultFilePerm
 
 		volumeName = avfs.DefaultVolume
+		vfs.curDir = volumeName + string(ut.PathSeparator())
 		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
+	} else {
+		vfs.curDir = "/"
 	}
 
 	vfs.err.OSType(vfs.OSType())
