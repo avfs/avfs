@@ -13,18 +13,20 @@ Another Virtual File System for Go
 
 **AVFS** is a virtual file system abstraction, inspired mostly
 by [Afero](http://github.com/spf13/afero) and Go standard library. It provides
-an abstraction layer to emulate the behavior of a **Linux file system** and
-provides several features :
-
+an abstraction layer to emulate the behavior of a file system that provides several features :
 - a set of **constants**, **interfaces** and **types** for all file systems
 - a **test suite** for all file systems (emulated or real)
+- each file system has its **own package**
 - a very basic **identity manager** allows testing of user related functions
 (Chown, Lchown) and file system permissions
-- all file systems support user file creation mode mask (**Umask**)
-- **symbolic links**, **hard links** and **chroot** are fully supported for some
-  file systems (MemFS, OsFS)
-- some file systems support **multiple users concurrently**  (MemFS)
-- each file system has its **own package**
+
+Additionally, some file systems support :
+- user file creation mode mask (**Umask**) (MemFS, OrefaFS),
+- **chroot** (MemFS),
+- **hard links** (MemFS, OrefaFS),
+- **symbolic links** (MemFS), 
+- **multiple users concurrently** (MemFS)
+- **Windows** and **Linux** operating systems emulation (MemFS, OreafaFS)
 
 ## Installation
 
@@ -34,7 +36,7 @@ This package can be installed with the go install command :
 go install github.com/avfs/avfs@latest
 ```
 
-It is only tested with Go version >= 1.16
+It is only tested with Go version >= 1.17
 
 ## Getting started
 
@@ -146,11 +148,11 @@ func main() {
 			userName := fmt.Sprintf("user_%08d", i)
 			idm.UserAdd(userName, g.Name())
 
-			fsU := vfs.Clone()
-			fsU.User(userName)
+			vfsU := vfs.Clone()
+			vfsU.SetUser(userName)
 
-			path := fsU.Join(rootDir, userName)
-			fsU.Mkdir(path, avfs.DefaultDirPerm)
+			path := vfsU.Join(rootDir, userName)
+			vfsU.Mkdir(path, avfs.DefaultDirPerm)
 		}(i)
 	}
 
@@ -178,10 +180,11 @@ Not ready for Windows.
 
 ## File systems
 
-All file systems implement at least `avfs.FS` and `avfs.File` interfaces. By
-default, each file system supported methods are the most commonly used from
-packages `os` and `path/filepath`. All methods have identical names as their functions counterparts. The following file systems
-are currently available :
+All file systems implement at least `avfs.FS` and `avfs.File` interfaces. 
+By default, each file system supported methods are the most commonly used from
+packages `os` and `path/filepath`. All methods have identical names as their 
+functions counterparts.
+The following file systems are currently available :
 
 File system |Comments
 ------------|--------
@@ -204,13 +207,13 @@ File system methods <br> `avfs.FS`|Comments
 `Chroot`|equivalent to `syscall.Chroot`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
-`Clone`| returns a shallow copy of the current file system (see MemFS) or the file system itself
+`Clone`|returns a shallow copy of the current file system (see MemFS) or the file system itself
 `Create`|equivalent to `os.Create`
 `CreateTemp`|equivalent to `os.CreateTemp`
 `Dir`|equivalent to `filepath.Dir`
 `EvalSymlinks`|equivalent to `filepath.EvalSymlinks`
 `FromSlash`|equivalent to `filepath.FromSlash`
-`Features`| returns the set of features provided by the file system or identity manager
+`Features`|returns the set of features provided by the file system or identity manager
 `Getwd`|equivalent to `os.Getwd`
 `Glob`|equivalent to `filepath.Glob`
 `HasFeature`|returns true if the file system or identity manager provides a given feature
@@ -221,12 +224,14 @@ File system methods <br> `avfs.FS`|Comments
 `Lchown`|equivalent to `os.Lchown`
 `Link`|equivalent to `os.Link`
 `Lstat`|equivalent to `os.Lstat`
+`Match`|equivalent to `filepath.Match`
 `Mkdir`|equivalent to `os.Mkdir`
 `MkdirAll`|equivalent to `os.MkdirAll`
 `MkdirTemp`|equivalent to `os.MkdirTemp`
 `Open`|equivalent to `os.Open`
 `OpenFile`|equivalent to `os.OpenFile`
 `OSType`|returns the operating system type of the file system
+`PathSeparator`|equivalent to `os.PathSeparator`
 `ReadDir`|equivalent to `os.ReadDir`
 `ReadFile`|equivalent to `os.ReadFile`
 `Readlink`|equivalent to `os.Readlink`
@@ -245,7 +250,8 @@ File system methods <br> `avfs.FS`|Comments
 `ToSysStat`|takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater
 `Truncate`|equivalent to `os.Truncate`
 `UMask`|returns the file mode creation mask
-`User`| returns the current user
+`User`|returns the current user
+`Utils`|returns the file utils of the current file system
 `WalkDir`|equivalent to `filepath.WalkDir`
 `WriteFile`|equivalent to `os.WriteFile`
 
@@ -272,8 +278,7 @@ File methods <br> `avfs.File`|Comments
 
 Identity managers allow users and groups management. The ones implemented
 in `avfs` are just here to allow testing of functions related to users (Chown,
-Lchown)
-and access rights, so they just allow one default group per user.
+Lchown) and access rights, so they just allow one default group per user.
 
 All file systems supporting identity manager implement by default the identity
 manager `DummyIdm`
@@ -288,6 +293,8 @@ Identity Manager |Comments
 
 Identity Manager methods <br>`avfs.FS` <br> `avfs.IdentityMgr`|Comments
 --------------------------------------------------------------|--------
+`AdminGroup`|returns the administrator (root) group
+`AdminUser`|returns the administrator (root) user
 `GroupAdd`| adds a new group
 `GroupDel`| deletes an existing group
 `LookupGroup`| looks up a group by name
