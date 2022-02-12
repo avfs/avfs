@@ -808,17 +808,17 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	oParent.mu.Lock()
 	defer oParent.mu.Unlock()
 
-	if nParent != oParent {
-		nParent.mu.Lock()
-		defer nParent.mu.Unlock()
-	}
-
 	if !oParent.checkPermission(avfs.PermWrite, vfs.user) {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 	}
 
-	if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
+	if nParent != oParent {
+		nParent.mu.Lock()
+		defer nParent.mu.Unlock()
+
+		if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
+			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
+		}
 	}
 
 	if oPI.Path() == nPI.Path() {
