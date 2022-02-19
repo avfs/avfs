@@ -821,18 +821,21 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
 	}
 
-	if oChild.mode.IsDir() && nChildOk {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.FileExists}
-	}
+	if (oChild.mode.IsDir() && nChildOk) || (!oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir()) {
+		err := vfs.err.FileExists
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinAccessDenied
+		}
 
-	if !oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir() {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.FileExists}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
 	}
 
 	nParent.mu.Lock()
+	defer nParent.mu.Unlock()
 
 	if nParent != oParent {
 		oParent.mu.Lock()
+		defer oParent.mu.Unlock()
 	}
 
 	nParent.children[nFileName] = oChild
@@ -840,6 +843,7 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	delete(oParent.children, oFileName)
 
 	vfs.mu.Lock()
+	defer vfs.mu.Unlock()
 
 	vfs.nodes[nAbsPath] = oChild
 	delete(vfs.nodes, oAbsPath)
@@ -856,14 +860,6 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 			}
 		}
 	}
-
-	vfs.mu.Unlock()
-
-	if nParent != oParent {
-		oParent.mu.Unlock()
-	}
-
-	nParent.mu.Unlock()
 
 	return nil
 }
