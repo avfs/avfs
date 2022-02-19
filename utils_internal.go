@@ -22,7 +22,7 @@ import (
 	"sort"
 	"strings"
 	"unicode/utf8"
-	_ "unsafe" // nolint:gci // for go:linkname only.
+	_ "unsafe" // for go:linkname only.
 )
 
 // cleanGlobPath prepares path for glob matching.
