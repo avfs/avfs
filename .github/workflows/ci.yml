@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [1.17.x]
+        go: [1.17.x, 1.18.x]
         os: [ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
@@ -30,16 +30,16 @@ jobs:
             go-${{ matrix.go }}-${{ runner.os }}
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
 
       - name: golangci-lint on linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
 
       - name: Install mage & avfs binaries
         run: go run mage/build.go
