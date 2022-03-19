@@ -41,7 +41,8 @@ import (
 //  ErrNotADirectory when a file node is found while the path segmentation is not finished
 //  ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
 func (vfs *MemFS) searchNode(path string, slMode slMode) (
-	parent *dirNode, child node, pi *avfs.PathIterator, err error) {
+	parent *dirNode, child node, pi *avfs.PathIterator, err error,
+) {
 	slCount := 0
 	slResolved := false
 	ut := vfs.utils
