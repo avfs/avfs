@@ -18,7 +18,6 @@ package avfs
 
 import (
 	"errors"
-	"hash"
 	"io"
 	"io/fs"
 	"os"
@@ -415,27 +414,6 @@ func (ut *Utils) FromUnixPath(volumeName, path string) string {
 	}
 
 	return ut.FromSlash(path)
-}
-
-// HashFile hashes a file and returns the hash sum.
-func HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
-	f, err := vfs.Open(name)
-	if err != nil {
-		return nil, err
-	}
-
-	defer f.Close()
-
-	hasher.Reset()
-
-	_, err = copyBufPool(hasher, f)
-	if err != nil {
-		return nil, err
-	}
-
-	sum = hasher.Sum(nil)
-
-	return sum, nil
 }
 
 // Glob returns the names of all files matching pattern or nil
