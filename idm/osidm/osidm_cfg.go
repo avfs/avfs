@@ -38,7 +38,7 @@ func New() *OsIdm {
 		adminUser = &OsUser{name: ut.AdminUserName(), uid: 0, gid: 0}
 
 		features = avfs.FeatIdentityMgr
-		if !User().IsAdmin() {
+		if !avfs.Cfg.User().IsAdmin() {
 			features |= avfs.FeatReadOnlyIdm
 		}
 	}

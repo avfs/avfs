@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/osidm"
 )
 
 // file system functions.
@@ -413,7 +412,7 @@ func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
 		return nil, vfs.err.PermDenied
 	}
 
-	return osidm.SetUser(name)
+	return SetUser(name)
 }
 
 // Stat returns a FileInfo describing the named file.
@@ -473,7 +472,7 @@ func (vfs *OsFS) UMask() fs.FileMode {
 // User returns the current user.
 // If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *OsFS) User() avfs.UserReader {
-	return osidm.User()
+	return User()
 }
 
 // Utils returns the file utils of the current file system.

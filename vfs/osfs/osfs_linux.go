@@ -20,10 +20,13 @@
 package osfs
 
 import (
+	"fmt"
 	"io/fs"
+	"runtime"
 	"syscall"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/osidm"
 )
 
 // Chroot changes the root to that specified in path.
@@ -43,9 +46,84 @@ func (vfs *OsFS) Chroot(path string) error {
 	return nil
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func SetUser(name string) (avfs.UserReader, error) {
+	const op = "user"
+
+	u, err := osidm.LookupUser(name)
+	if err != nil {
+		return nil, err
+	}
+
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	// If the current user is the target user there is nothing to do.
+	curUid := syscall.Geteuid()
+	if curUid == u.Uid() {
+		return u, nil
+	}
+
+	runtime.LockOSThread()
+
+	curGid := syscall.Getegid()
+
+	// If the current user is not root, root privileges must be restored
+	// before setting the new uid and gid.
+	if curGid != 0 {
+		runtime.LockOSThread()
+
+		if err := syscall.Setresgid(0, 0, 0); err != nil {
+			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
+		}
+	}
+
+	if curUid != 0 {
+		runtime.LockOSThread()
+
+		if err := syscall.Setresuid(0, 0, 0); err != nil {
+			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
+		}
+	}
+
+	if u.Uid() == 0 {
+		return u, nil
+	}
+
+	runtime.LockOSThread()
+
+	if err := syscall.Setresgid(u.Gid(), u.Gid(), 0); err != nil {
+		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, u.Gid(), err))
+	}
+
+	runtime.LockOSThread()
+
+	if err := syscall.Setresuid(u.Uid(), u.Uid(), 0); err != nil {
+		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, u.Uid(), err))
+	}
+
+	return u, nil
+}
+
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 	return &LinuxSysStat{Sys: info.Sys().(*syscall.Stat_t)} // nolint:forcetypeassert // type assertion must be checked
+}
+
+// User returns the current user of the OS.
+func User() avfs.UserReader {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	uid := syscall.Geteuid()
+
+	user, err := osidm.LookupUserId(uid)
+	if err != nil {
+		return nil
+	}
+
+	return user
 }
 
 // LinuxSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Linux file system.
