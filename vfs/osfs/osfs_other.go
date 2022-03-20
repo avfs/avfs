@@ -33,25 +33,41 @@ func (vfs *OsFS) Chroot(path string) error {
 	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinNotSupported}
 }
 
-// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	return &OtherSysStat{}
+// SetUser sets the current user of the file system to uid.
+// If the current user has not root privileges avfs.errPermDenied is returned.
+func SetUser(name string) (avfs.UserReader, error) {
+	return nil, avfs.ErrPermDenied
 }
 
-// OtherSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a non linux file system.
-type OtherSysStat struct{}
+// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
+func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
+	u := avfs.Cfg.User()
+
+	return &WindowsSysStat{gid: u.Gid(), uid: u.Gid()}
+}
+
+// User returns the current user of the OS.
+func User() avfs.UserReader {
+	return avfs.Cfg.User()
+}
+
+// WindowsSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Windows file system.
+type WindowsSysStat struct {
+	gid int
+	uid int
+}
 
 // Gid returns the group id.
-func (sst *OtherSysStat) Gid() int {
-	return avfs.DefaultUser.Gid()
+func (wss *WindowsSysStat) Gid() int {
+	return wss.gid
 }
 
 // Uid returns the user id.
-func (sst *OtherSysStat) Uid() int {
-	return avfs.DefaultUser.Uid()
+func (wss *WindowsSysStat) Uid() int {
+	return wss.uid
 }
 
 // Nlink returns the number of hard links.
-func (sst *OtherSysStat) Nlink() uint64 {
+func (wss *WindowsSysStat) Nlink() uint64 {
 	return 1
 }

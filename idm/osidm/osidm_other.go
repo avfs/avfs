@@ -19,11 +19,7 @@
 
 package osidm
 
-import (
-	"os"
-
-	"github.com/avfs/avfs"
-)
+import "github.com/avfs/avfs"
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
@@ -67,18 +63,4 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 // UserDel deletes an existing user.
 func (idm *OsIdm) UserDel(name string) error {
 	return avfs.ErrPermDenied
-}
-
-// SetUser sets the current user of the file system to uid.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func SetUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
-}
-
-// User returns the current user of the OS.
-func User() avfs.UserReader {
-	userName := os.Getenv("USERNAME")
-	u := &OsUser{name: userName, uid: avfs.MaxInt, gid: avfs.MaxInt}
-
-	return u
 }
