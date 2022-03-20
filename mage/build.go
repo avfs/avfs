@@ -15,7 +15,6 @@
 //
 
 //go:build ignore
-// +build ignore
 
 // Download, build and install Mage and Avfs binaries in $GOPATH/bin.
 // Use "go run build.go" to install Mage.

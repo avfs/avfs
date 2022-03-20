@@ -15,7 +15,6 @@
 //
 
 //go:build mage
-// +build mage
 
 // avfs is the build script for AVFS.
 package main

@@ -15,7 +15,6 @@
 //
 
 //go:build datarace
-// +build datarace
 
 package memfs_test
 
