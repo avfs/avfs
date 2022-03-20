@@ -30,14 +30,15 @@ import (
 func (um *UMaskType) Set(mask fs.FileMode) {
 	um.mu.Lock()
 
-	u := syscall.Umask(int(mask))
-
-	if mask == 0 {
-		syscall.Umask(u)
-		um.mask = fs.FileMode(u)
-	} else {
-		um.mask = mask
+	m := syscall.Umask(int(mask))
+	if mask != 0 {
+		m = syscall.Umask(0)
 	}
+
+	um.mask = fs.FileMode(m)
+
+	// restore mask after read.
+	syscall.Umask(m)
 
 	um.mu.Unlock()
 }
