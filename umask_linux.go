@@ -23,21 +23,21 @@ import (
 	"syscall"
 )
 
-// Set sets the file mode creation mask.
+// SetUMask sets the file mode creation mask.
 // Umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
-func (um *UMaskType) Set(mask fs.FileMode) {
-	um.mu.Lock()
+func SetUMask(mask fs.FileMode) {
+	umLock.Lock()
 
 	m := syscall.Umask(int(mask))
 	if mask != 0 {
 		m = syscall.Umask(0)
 	}
 
-	um.mask = fs.FileMode(m)
+	umask = fs.FileMode(m)
 
 	// restore mask after read.
 	syscall.Umask(m)
 
-	um.mu.Unlock()
+	umLock.Unlock()
 }

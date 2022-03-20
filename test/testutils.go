@@ -1535,27 +1535,25 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umaskTest := umaskSet
 
-	if avfs.Cfg.OSType() == avfs.OsWindows {
+	if avfs.OSUtils.OSType() == avfs.OsWindows {
 		umaskTest = defaultUmask
 	}
 
-	var um avfs.UMaskType
-
-	umask := um.Get()
+	umask := avfs.UMask()
 	if umask != defaultUmask {
 		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 
-	um.Set(umaskSet)
+	avfs.SetUMask(umaskSet)
 
-	umask = um.Get()
+	umask = avfs.UMask()
 	if umask != umaskTest {
 		t.Errorf("UMask : want test umask %o, got %o", umaskTest, umask)
 	}
 
-	um.Set(defaultUmask)
+	avfs.SetUMask(defaultUmask)
 
-	umask = um.Get()
+	umask = avfs.UMask()
 	if umask != defaultUmask {
 		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}

@@ -22,16 +22,17 @@ import (
 	"io/fs"
 )
 
-// Set sets the file mode creation mask.
+// SetUMask sets the file mode creation mask.
 // umask must be set to 0 using umask(2) system call to be read,
 // so its value is cached and protected by a mutex.
-func (um *UMaskType) Set(mask fs.FileMode) {
-	um.mu.Lock()
-	if um.mask == 0 && mask == 0 {
-		um.mask = 0o111
+func SetUMask(mask fs.FileMode) {
+	umLock.Lock()
+
+	if umask == 0 && mask == 0 {
+		umask = 0o111
 	} else {
-		um.mask = mask
+		umask = mask
 	}
 
-	um.mu.Unlock()
+	umLock.Unlock()
 }

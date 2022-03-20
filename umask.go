@@ -21,23 +21,20 @@ import (
 	"sync"
 )
 
-// UMaskType is the file mode creation mask.
-// It must be set to be read, so it must be protected with a mutex.
-type UMaskType struct {
-	once sync.Once
-	mu   sync.RWMutex
-	mask fs.FileMode
+var (
+	umask  fs.FileMode  //nolint:gochecknoglobals // Used by UMask and SetUMask.
+	umLock sync.RWMutex //nolint:gochecknoglobals // Used by UMask and SetUMask.
+)
+
+func init() { //nolint:gochecknoinits // To initialize umask.
+	SetUMask(0)
 }
 
-// Get returns the file mode creation mask.
-func (um *UMaskType) Get() fs.FileMode {
-	um.once.Do(func() {
-		um.Set(0)
-	})
+// UMask returns the file mode creation mask.
+func UMask() fs.FileMode {
+	umLock.RLock()
+	um := umask
+	umLock.RUnlock()
 
-	um.mu.RLock()
-	u := um.mask
-	um.mu.RUnlock()
-
-	return u
+	return um
 }

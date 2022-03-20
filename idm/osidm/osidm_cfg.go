@@ -26,10 +26,8 @@ func New() *OsIdm {
 		adminUser  *OsUser
 	)
 
-	ost := avfs.Cfg.OSType()
-	ut := avfs.NewUtils(ost)
-
-	switch ost {
+	ut := avfs.OSUtils
+	switch ut.OSType() {
 	case avfs.OsWindows:
 		adminGroup = &OsGroup{name: ut.DefaultGroupName(), gid: avfs.DefaultGroup.Gid()}
 		adminUser = &OsUser{name: ut.DefaultUserName(), uid: avfs.DefaultUser.Uid(), gid: avfs.DefaultUser.Gid()}
@@ -38,7 +36,7 @@ func New() *OsIdm {
 		adminUser = &OsUser{name: ut.AdminUserName(), uid: 0, gid: 0}
 
 		features = avfs.FeatIdentityMgr
-		if !avfs.Cfg.User().IsAdmin() {
+		if !avfs.CurrentUser.IsAdmin() {
 			features |= avfs.FeatReadOnlyIdm
 		}
 	}

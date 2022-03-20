@@ -402,7 +402,7 @@ func (vfs *OsFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 
 // SetUMask sets the file mode creation mask.
 func (vfs *OsFS) SetUMask(mask fs.FileMode) {
-	avfs.Cfg.UMaskSet(mask)
+	avfs.SetUMask(mask)
 }
 
 // SetUser sets and returns the current user.
@@ -466,7 +466,7 @@ func (vfs *OsFS) Truncate(name string, size int64) error {
 
 // UMask returns the file mode creation mask.
 func (vfs *OsFS) UMask() fs.FileMode {
-	return avfs.Cfg.UMask()
+	return avfs.UMask()
 }
 
 // User returns the current user.
@@ -477,7 +477,7 @@ func (vfs *OsFS) User() avfs.UserReader {
 
 // Utils returns the file utils of the current file system.
 func (vfs *OsFS) Utils() avfs.Utils {
-	return avfs.Cfg.Utils()
+	return avfs.OSUtils
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

@@ -37,8 +37,8 @@ func New(opts ...Option) *MemFS {
 	vfs := &MemFS{
 		user:     avfs.DefaultUser,
 		memAttrs: ma,
-		umask:    avfs.Cfg.UMask(),
-		utils:    avfs.Cfg.Utils(),
+		umask:    avfs.UMask(),
+		utils:    avfs.OSUtils,
 	}
 
 	for _, opt := range opts {

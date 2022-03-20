@@ -30,7 +30,7 @@ func New(opts ...Option) *MemIdm {
 		feature:      avfs.FeatIdentityMgr,
 		maxGid:       minGid,
 		maxUid:       minUid,
-		utils:        avfs.Cfg.Utils(),
+		utils:        avfs.OSUtils,
 	}
 
 	for _, opt := range opts {

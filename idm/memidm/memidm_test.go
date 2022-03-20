@@ -46,7 +46,7 @@ func TestMemIdmAll(t *testing.T) {
 
 // TestMemIdmAllOSType run all tests with the current OS.
 func TestMemIdmAllOSType(t *testing.T) {
-	idm := memidm.New(memidm.WithOSType(avfs.Cfg.OSType()))
+	idm := memidm.New(memidm.WithOSType(avfs.OSUtils.OSType()))
 	sIdm := test.NewSuiteIdm(t, idm)
 	sIdm.TestAll(t)
 }

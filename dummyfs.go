@@ -43,7 +43,7 @@ type DummySysStat struct{}
 // NewDummyFS creates a new NewDummyFS file system.
 func NewDummyFS() *DummyFS {
 	vfs := &DummyFS{
-		utils:         NewUtils(Cfg.OSType()),
+		utils:         OSUtils,
 		errPermDenied: ErrPermDenied,
 		opStat:        "stat",
 		opLstat:       "lstat",

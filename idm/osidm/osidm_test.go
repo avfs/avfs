@@ -47,12 +47,12 @@ func TestOsIdmAll(t *testing.T) {
 func TestOsIdmCfg(t *testing.T) {
 	var wantFeat avfs.Features
 
-	switch avfs.Cfg.OSType() {
+	switch avfs.OSUtils.OSType() {
 	case avfs.OsWindows:
 		wantFeat = 0
 	default:
 		wantFeat = avfs.FeatIdentityMgr
-		if !avfs.Cfg.User().IsAdmin() {
+		if !avfs.CurrentUser.IsAdmin() {
 			wantFeat |= avfs.FeatReadOnlyIdm
 		}
 	}

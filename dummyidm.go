@@ -16,25 +16,34 @@
 
 package avfs
 
+import "os"
+
 var (
 	// AdminUser represents an administrator user.
 	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
-		name: Cfg.utils.AdminUserName(),
+		name: OSUtils.AdminUserName(),
 		uid:  0,
 		gid:  0,
 	}
 
 	// DefaultGroup represents the default group.
 	DefaultGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
-		name: Cfg.utils.DefaultGroupName(),
+		name: OSUtils.DefaultGroupName(),
 		gid:  MaxInt,
 	}
 
 	// DefaultUser represents the default user.
 	DefaultUser = &DummyUser{ //nolint:gochecknoglobals // Used as default user for other file systems.
-		name: Cfg.utils.DefaultUserName(),
+		name: OSUtils.DefaultUserName(),
 		uid:  MaxInt,
 		gid:  MaxInt,
+	}
+
+	// CurrentUser represents the current user of the file system.
+	CurrentUser = &DummyUser{ //nolint:gochecknoglobals // Used as current user for other file systems.
+		name: os.Getenv("USERNAME"),
+		uid:  0,
+		gid:  0,
 	}
 
 	// NotImplementedIdm is the default identity manager for all file systems.

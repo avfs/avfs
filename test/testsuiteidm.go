@@ -36,7 +36,7 @@ type SuiteIdm struct {
 func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 	sIdm := &SuiteIdm{
 		idm:   idm,
-		utils: avfs.Cfg.Utils(),
+		utils: avfs.OSUtils,
 	}
 
 	defer func() {

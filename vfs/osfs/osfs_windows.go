@@ -40,14 +40,14 @@ func SetUser(name string) (avfs.UserReader, error) {
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	u := avfs.Cfg.User()
+	u := avfs.CurrentUser
 
 	return &WindowsSysStat{gid: u.Gid(), uid: u.Gid()}
 }
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	return avfs.Cfg.User()
+	return avfs.CurrentUser
 }
 
 // WindowsSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Windows file system.

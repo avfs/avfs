@@ -27,6 +27,9 @@ import (
 	"syscall"
 )
 
+// OSUtils is the default utilities structure for the current operating system.
+var OSUtils = NewUtils(currentOSType()) //nolint:gochecknoglobals // Utils for the current operating system.
+
 // Utils regroups common functions used by emulated file systems.
 //
 // Most of these functions are extracted and adapted from Go standard library

@@ -58,7 +58,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	vfs := vfsSetup
 
-	osType := avfs.Cfg.OSType()
+	osType := avfs.OSUtils.OSType()
 	if osType != vfs.OSType() {
 		tb.Skipf("New : Current OSType = %s is different from %s OSType = %s, skipping tests",
 			osType, vfs.Type(), vfs.OSType())
@@ -916,7 +916,7 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.Cfg.OSType() {
+		if ost == avfs.OSUtils.OSType() {
 			canTest = true
 		}
 	}
@@ -978,7 +978,7 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.Cfg.OSType() {
+		if ost == avfs.OSUtils.OSType() {
 			canTest = true
 		}
 	}
@@ -1046,7 +1046,7 @@ func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkEr
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.Cfg.OSType() {
+		if ost == avfs.OSUtils.OSType() {
 			canTest = true
 		}
 	}
@@ -1106,7 +1106,7 @@ func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkE
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.Cfg.OSType() {
+		if ost == avfs.OSUtils.OSType() {
 			canTest = true
 		}
 	}
