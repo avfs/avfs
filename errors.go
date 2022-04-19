@@ -149,8 +149,8 @@ func (i WindowsError) Error() string {
 	return i.String()
 }
 
-// VFSErrors regroups the errors depending on the OS emulated.
-type VFSErrors struct {
+// Errors regroups errors depending on the OS emulated.
+type Errors struct {
 	BadFileDesc     error // bad file descriptor.
 	DirNotEmpty     error // Directory not empty.
 	FileExists      error // File exists.
@@ -165,7 +165,7 @@ type VFSErrors struct {
 }
 
 // OSType sets errors depending on the operating system.
-func (ve *VFSErrors) OSType(ost OSType) {
+func (ve *Errors) OSType(ost OSType) {
 	switch ost {
 	case OsWindows:
 		ve.BadFileDesc = ErrWinAccessDenied

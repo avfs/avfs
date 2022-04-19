@@ -26,7 +26,7 @@ import (
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
 	nodes    nodes           // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	err      avfs.VFSErrors  // err regroups the errors depending on the OS emulated.
+	err      avfs.Errors     // err regroups errors depending on the OS emulated.
 	user     avfs.UserReader // user is the current user of the file system.
 	curDir   string          // curDir is the current directory.
 	name     string          // name is the name of the file system.
