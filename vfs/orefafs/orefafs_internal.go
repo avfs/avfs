@@ -26,22 +26,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// splitPath splits path immediately following the final Separator,
-// separating it into a directory and file name component.
-// If there is no Separator in path, splitPath returns an empty dir
-// and file set to path.
-// The returned values have the property that path = dir + PathSeparator + file.
-func (vfs *OrefaFS) splitPath(path string) (dir, file string) {
-	l := vfs.utils.VolumeNameLen(path)
-
-	i := len(path) - 1
-	for i >= l && !vfs.IsPathSeparator(path[i]) {
-		i--
-	}
-
-	return path[:i], path[i+1:]
-}
-
 // addChild adds a child to a node.
 func (nd *node) addChild(name string, child *node) {
 	if nd.children == nil {

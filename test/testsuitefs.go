@@ -378,6 +378,7 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestRename,
 		sfs.TestSameFile,
 		sfs.TestSplit,
+		sfs.TestSplitAbs,
 		sfs.TestStat,
 		sfs.TestSymlink,
 		sfs.TestTempDir,

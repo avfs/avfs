@@ -925,6 +925,22 @@ func (ut *Utils) Split(path string) (dir, file string) {
 	return path[:i+1], path[i+1:]
 }
 
+// SplitAbs splits an absolute path immediately preceding the final Separator,
+// separating it into a directory and file name component.
+// If there is no Separator in path, splitPath returns an empty dir
+// and file set to path.
+// The returned values have the property that path = dir + PathSeparator + file.
+func (ut *Utils) SplitAbs(path string) (dir, file string) {
+	l := ut.VolumeNameLen(path)
+
+	i := len(path) - 1
+	for i >= l && !ut.IsPathSeparator(path[i]) {
+		i--
+	}
+
+	return path[:i], path[i+1:]
+}
+
 // TempDir returns the default directory to use for temporary files.
 //
 // On Unix systems, it returns $TMPDIR if non-empty, else /tmp.

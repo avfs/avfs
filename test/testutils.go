@@ -1529,6 +1529,42 @@ func (sfs *SuiteFS) TestSplit(t *testing.T, testDir string) {
 	}
 }
 
+// TestSplitAbs tests SplitAbs function.
+func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
+	vfs := sfs.vfsTest
+	ut := vfs.Utils()
+
+	cases := []struct {
+		path string
+		dir  string
+		file string
+		ost  avfs.OSType
+	}{
+		{ost: avfs.OsLinux, path: "/", dir: "", file: ""},
+		{ost: avfs.OsLinux, path: "/home", dir: "", file: "home"},
+		{ost: avfs.OsLinux, path: "/home/user", dir: "/home", file: "user"},
+		{ost: avfs.OsLinux, path: "/usr/lib/xorg", dir: "/usr/lib", file: "xorg"},
+		{ost: avfs.OsWindows, path: `C:\`, dir: `C:`, file: ""},
+		{ost: avfs.OsWindows, path: `C:\Users`, dir: `C:`, file: "Users"},
+		{ost: avfs.OsWindows, path: `C:\Users\Default`, dir: `C:\Users`, file: "Default"},
+	}
+
+	for _, c := range cases {
+		if c.ost != vfs.OSType() {
+			continue
+		}
+
+		dir, file := ut.SplitAbs(c.path)
+		if c.dir != dir {
+			t.Errorf("splitPath %s : want dir to be %s, got %s", c.path, c.dir, dir)
+		}
+
+		if c.file != file {
+			t.Errorf("splitPath %s : want file to be %s, got %s", c.path, c.file, file)
+		}
+	}
+}
+
 // TestUMask tests Umask methods.
 func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 	const umaskSet = fs.FileMode(0o77)
