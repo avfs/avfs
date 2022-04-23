@@ -50,7 +50,7 @@ func New(opts ...Option) *OrefaFS {
 	vfs.user = avfs.AdminUser
 	vfs.curDir = volumeName
 
-	vfs.err.OSType(vfs.OSType())
+	vfs.err.SetOSType(vfs.OSType())
 
 	if vfs.HasFeature(avfs.FeatMainDirs) {
 		u := vfs.user

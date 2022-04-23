@@ -164,8 +164,8 @@ type Errors struct {
 	TooManySymlinks error // Too many levels of symbolic links.
 }
 
-// OSType sets errors depending on the operating system.
-func (ve *Errors) OSType(ost OSType) {
+// SetOSType sets errors depending on the operating system.
+func (ve *Errors) SetOSType(ost OSType) {
 	switch ost {
 	case OsWindows:
 		ve.BadFileDesc = ErrWinAccessDenied

@@ -62,7 +62,7 @@ func New(opts ...Option) *MemFS {
 		vfs.curDir = "/"
 	}
 
-	vfs.err.OSType(vfs.OSType())
+	vfs.err.SetOSType(vfs.OSType())
 
 	if vfs.HasFeature(avfs.FeatMainDirs) {
 		u := vfs.user
