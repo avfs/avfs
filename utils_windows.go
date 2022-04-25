@@ -19,6 +19,8 @@
 package avfs
 
 import (
+	"io/fs"
+	"sync/atomic"
 	"syscall"
 )
 
@@ -44,4 +46,19 @@ func ShortPathName(path string) string {
 
 		b = make([]uint16, n)
 	}
+}
+
+// umask is the file mode creation mask.
+var umask fs.FileMode = 0o111 //nolint:gochecknoglobals // Used by UMask and SetUMask.
+
+// SetUMask sets the file mode creation mask.
+func SetUMask(mask fs.FileMode) {
+	atomic.StoreUint32((*uint32)(&umask), uint32(mask))
+}
+
+// UMask returns the file mode creation mask.
+func UMask() fs.FileMode {
+	um := atomic.LoadUint32((*uint32)(&umask))
+
+	return fs.FileMode(um)
 }
