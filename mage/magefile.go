@@ -257,6 +257,8 @@ func DockerBuild() error {
 		user = "root"
 	}
 
+	fmt.Printf("image = %s\nuser = %s\n", image, user)
+
 	return sh.RunV(dockerCmd,
 		"build",
 		"-t", dockerImage,
