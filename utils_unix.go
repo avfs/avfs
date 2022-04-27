@@ -1,5 +1,5 @@
 //
-//  Copyright 2021 The AVFS authors
+//  Copyright 2022 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
 //  limitations under the License.
 //
 
-//go:build linux
+//go:build !linux && !windows
 
 package avfs
 
 import (
 	"io/fs"
-	"sync"
 	"sync/atomic"
-	"syscall"
 )
 
 // ShortPathName Retrieves the short path form of the specified path (Windows only).
@@ -30,36 +28,13 @@ func ShortPathName(path string) string {
 	return path
 }
 
-var (
-	// umask is the file mode creation mask.
-	umask fs.FileMode //nolint:gochecknoglobals // Used by UMask and SetUMask.
-
-	// umLock lock access to the umask.
-	umLock sync.RWMutex //nolint:gochecknoglobals // Used by UMask and SetUMask.
-)
-
-func init() { //nolint:gochecknoinits // To initialize umask.
-	umLock.Lock()
-
-	m := syscall.Umask(0) // read mask.
-	syscall.Umask(m)      // restore mask after read.
-	umask = fs.FileMode(m)
-
-	umLock.Unlock()
-}
+// umask is the file mode creation mask.
+var umask fs.FileMode = 0o022 //nolint:gochecknoglobals // Used by UMask and SetUMask.
 
 // SetUMask sets the file mode creation mask.
-// Umask must be set to 0 using umask(2) system call to be read,
-// so its value is cached and protected by a mutex.
 func SetUMask(mask fs.FileMode) {
-	umLock.Lock()
-
-	m := int(mask & fs.ModePerm)
-	_ = syscall.Umask(m)
-
-	umask = fs.FileMode(m)
-
-	umLock.Unlock()
+	m := uint32(mask & fs.ModePerm)
+	atomic.StoreUint32((*uint32)(&umask), m)
 }
 
 // UMask returns the file mode creation mask.

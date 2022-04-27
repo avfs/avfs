@@ -53,7 +53,8 @@ var umask fs.FileMode = 0o111 //nolint:gochecknoglobals // Used by UMask and Set
 
 // SetUMask sets the file mode creation mask.
 func SetUMask(mask fs.FileMode) {
-	atomic.StoreUint32((*uint32)(&umask), uint32(mask))
+	m := uint32(mask & fs.ModePerm)
+	atomic.StoreUint32((*uint32)(&umask), m)
 }
 
 // UMask returns the file mode creation mask.
