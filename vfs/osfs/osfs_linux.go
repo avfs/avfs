@@ -142,5 +142,5 @@ func (lst *LinuxSysStat) Uid() int {
 
 // Nlink returns the number of hard links.
 func (lst *LinuxSysStat) Nlink() uint64 {
-	return lst.Sys.Nlink
+	return uint64(lst.Sys.Nlink) //nolint:unconvert // required for 32 bits systems.
 }
