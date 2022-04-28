@@ -46,6 +46,8 @@ const (
 	golangCiCmd = "golangci-lint"
 	golangCiGit = "github.com/golangci/golangci-lint"
 	golangCiBin = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
+	goxCmd      = "gox"
+	goxUrl      = "github.com/mitchellh/gox@master"
 	raceCount   = 5
 	benchCount  = 5
 )
@@ -200,6 +202,41 @@ func Test() error {
 	}
 
 	return CoverResult()
+}
+
+// TestBuild builds a test executable on all architectures (except Android/*)
+func TestBuild() error {
+	mg.Deps(tmpInit)
+
+	if !isExecutable(goxCmd) {
+		err := sh.RunV(goCmd, "install", goxUrl)
+		if err != nil {
+			return err
+		}
+	}
+
+	osArch, err := sh.Output(goCmd, "tool", "dist", "list")
+	if err != nil {
+		return err
+	}
+
+	// Remove Android platforms : need additional tools.
+	re := regexp.MustCompile("android/[^\n]+\n")
+	osArch = re.ReplaceAllString(osArch, "")
+	osArch = strings.ReplaceAll(osArch, "\n", " ")
+
+	srcPath := filepath.Join(appDir, "test/testbuild")
+	outPath := filepath.Join(appDir, "tmp/{{.Dir}}/{{.Dir}}_{{.OS}}_{{.Arch}}")
+
+	err = sh.RunV(goxCmd, "-cgo",
+		"-osarch=\""+osArch+"\"",
+		"-output="+outPath,
+		srcPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Race runs data race tests.
