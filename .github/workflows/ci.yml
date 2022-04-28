@@ -68,7 +68,7 @@ jobs:
           flags: unittests
           verbose: true
 
-      - name: Run build tests
-        if: ${{ !startsWith(matrix.os, 'ubuntu') }}
+      - name: Run build tests on linux systems only
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: avfs testbuild
 
