@@ -67,3 +67,8 @@ jobs:
           files: ./tmp/cover_test.txt,./tmp/cover_race.txt
           flags: unittests
           verbose: true
+
+      - name: Run build tests
+        if: ${{ !startsWith(matrix.os, 'ubuntu') }}
+        run: avfs testbuild
+
