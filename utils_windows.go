@@ -21,6 +21,7 @@ package avfs
 import (
 	"errors"
 	"io/fs"
+	"os"
 	"sync/atomic"
 	"syscall"
 )
@@ -31,6 +32,8 @@ import (
 func (ut *Utils) IsExist(err error) bool {
 	err = errors.Unwrap(err)
 	switch e := err.(type) {
+	case syscall.Errno:
+		return os.IsExist(err)
 	case LinuxError:
 		return e == ErrFileExists
 	case WindowsError:
@@ -46,6 +49,8 @@ func (ut *Utils) IsExist(err error) bool {
 func (ut *Utils) IsNotExist(err error) bool {
 	err = errors.Unwrap(err)
 	switch e := err.(type) {
+	case syscall.Errno:
+		return os.IsNotExist(err)
 	case LinuxError:
 		return e == ErrNoSuchFileOrDir
 	case WindowsError:
