@@ -9,6 +9,7 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[ErrBadFileDesc-9]
+	_ = x[ErrCrossDevLink-18]
 	_ = x[ErrDirNotEmpty-39]
 	_ = x[ErrFileExists-17]
 	_ = x[ErrInvalidArgument-22]
@@ -24,13 +25,14 @@ const (
 	_LinuxError_name_0 = "operation not permittedno such file or directory"
 	_LinuxError_name_1 = "bad file descriptor"
 	_LinuxError_name_2 = "permission denied"
-	_LinuxError_name_3 = "file exists"
+	_LinuxError_name_3 = "file existsinvalid cross-device link"
 	_LinuxError_name_4 = "not a directoryis a directoryinvalid argument"
 	_LinuxError_name_5 = "directory not emptytoo many levels of symbolic links"
 )
 
 var (
 	_LinuxError_index_0 = [...]uint8{0, 23, 48}
+	_LinuxError_index_3 = [...]uint8{0, 11, 36}
 	_LinuxError_index_4 = [...]uint8{0, 15, 29, 45}
 	_LinuxError_index_5 = [...]uint8{0, 19, 52}
 )
@@ -44,8 +46,9 @@ func (i LinuxError) String() string {
 		return _LinuxError_name_1
 	case i == 13:
 		return _LinuxError_name_2
-	case i == 17:
-		return _LinuxError_name_3
+	case 17 <= i && i <= 18:
+		i -= 17
+		return _LinuxError_name_3[_LinuxError_index_3[i]:_LinuxError_index_3[i+1]]
 	case 20 <= i && i <= 22:
 		i -= 20
 		return _LinuxError_name_4[_LinuxError_index_4[i]:_LinuxError_index_4[i+1]]

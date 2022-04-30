@@ -92,6 +92,7 @@ type LinuxError uint32
 // https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
 const (
 	ErrBadFileDesc     LinuxError = errEBADF     // bad file descriptor
+	ErrCrossDevLink    LinuxError = errEXDEV     // invalid cross-device link
 	ErrDirNotEmpty     LinuxError = errENOTEMPTY // directory not empty
 	ErrFileExists      LinuxError = errEEXIST    // file exists
 	ErrInvalidArgument LinuxError = errEINVAL    // invalid argument
@@ -112,6 +113,7 @@ const (
 	errENOTDIR   = 0x14
 	errENOTEMPTY = 0x27
 	errEPERM     = 0x1
+	errEXDEV     = 0x12
 )
 
 func (i LinuxError) Error() string {
