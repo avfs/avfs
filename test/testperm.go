@@ -158,6 +158,22 @@ func (pt *PermTest) NormalizeError(err error) error {
 
 // CompareErrors compares wanted error to error.
 func (pt *PermTest) CompareErrors(t *testing.T, wantErr, err error) {
+	if wantErr == nil && err == nil {
+		return
+	}
+
+	if wantErr == nil {
+		t.Errorf("want error to be nil, got %v", err)
+
+		return
+	}
+
+	if err == nil {
+		t.Errorf("want error to be %v, got nil", wantErr)
+
+		return
+	}
+
 	if reflect.DeepEqual(wantErr, err) { //nolint:govet // avoid using reflect.DeepEqual with errors.
 		return
 	}
