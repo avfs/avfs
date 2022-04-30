@@ -437,11 +437,8 @@ func (vfs *BasePathFS) Remove(name string) error {
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) RemoveAll(path string) error {
 	err := vfs.baseFS.RemoveAll(vfs.toBasePath(path))
-	if err != nil {
-		return vfs.restoreError(err)
-	}
 
-	return nil
+	return vfs.restoreError(err)
 }
 
 // Rename renames (moves) oldpath to newpath.
