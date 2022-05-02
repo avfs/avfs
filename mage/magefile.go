@@ -42,12 +42,13 @@ const (
 	gitCmd      = "git"
 	goCmd       = "go"
 	goFumptCmd  = "gofumpt"
-	goFumptUrl  = "mvdan.cc/gofumpt@master"
+	goFumptInst = "mvdan.cc/gofumpt@master"
 	golangCiCmd = "golangci-lint"
 	golangCiGit = "github.com/golangci/golangci-lint"
 	golangCiBin = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
 	goxCmd      = "gox"
-	goxUrl      = "github.com/mitchellh/gox@master"
+	goxInst     = "github.com/mitchellh/gox@master"
+	tarCmd      = "tar"
 	raceCount   = 5
 	benchCount  = 5
 )
@@ -61,6 +62,11 @@ var (
 	testDataDir       string
 	dockerTmpDir      string
 	dockerTestDataDir string
+
+	git       = sh.OutCmd(gitCmd)
+	g0        = sh.RunCmd(goCmd)
+	goInstall = sh.RunCmd(goCmd, "install")
+	goTest    = sh.RunCmd(goCmd, "test", "-v")
 )
 
 func init() {
@@ -72,7 +78,7 @@ func init() {
 	coverRacePath = filepath.Join(tmpDir, "cover_race.txt")
 	testDataDir = filepath.Join(appDir, "test/testdata")
 
-	var dockerVolume string
+	dockerVolume := ""
 	if runtime.GOOS == "windows" {
 		dockerVolume = "c:"
 	}
@@ -107,7 +113,7 @@ func tmpInit() error {
 
 // Env returns the go environment variables.
 func Env() {
-	sh.RunV(goCmd, "env")
+	g0("env")
 	fmt.Printf(`
 appDir=%s
 tmpDir=%s
@@ -116,14 +122,12 @@ coverRacePath=%s
 testDataDir=%s
 dockerTmpDir=%s
 dockerTestDataDir=%s
-`,
-		appDir, tmpDir, coverTestPath, coverRacePath,
-		testDataDir, dockerTmpDir, dockerTestDataDir)
+`, appDir, tmpDir, coverTestPath, coverRacePath, testDataDir, dockerTmpDir, dockerTestDataDir)
 }
 
 // Build builds the project.
 func Build() error {
-	return sh.RunV(goCmd, "build", "-v", "./...")
+	return g0("build", "-v", "./...")
 }
 
 // Fmt runs gofumpt on the project.
@@ -134,7 +138,7 @@ func Fmt() error {
 			return err
 		}
 
-		err = sh.RunV(goCmd, "install", goFumptUrl)
+		err = goInstall(goFumptInst)
 		if err != nil {
 			return err
 		}
@@ -184,16 +188,15 @@ func CoverResult() error {
 		return nil
 	}
 
-	return sh.RunV(goCmd, "tool", "cover", "-html="+coverTestPath)
+	return g0("tool", "cover", "-html="+coverTestPath)
 }
 
 // Test runs tests with coverage.
 func Test() error {
 	mg.Deps(tmpInit)
 
-	err := sh.RunV(goCmd, "test",
-		"-run=.",
-		"-race", "-v",
+	err := goTest("-run=.",
+		"-race",
 		"-covermode=atomic",
 		"-coverprofile="+coverTestPath,
 		"./...")
@@ -209,7 +212,7 @@ func TestBuild() error {
 	mg.Deps(tmpInit)
 
 	if !isExecutable(goxCmd) {
-		err := sh.RunV(goCmd, "install", goxUrl)
+		err := goInstall(goxInst)
 		if err != nil {
 			return err
 		}
@@ -243,10 +246,9 @@ func TestBuild() error {
 func Race() error {
 	mg.Deps(tmpInit)
 
-	return sh.RunV(goCmd, "test",
-		"-tags=datarace",
+	return goTest("-tags=datarace",
 		"-run=TestRace",
-		"-race", "-v",
+		"-race",
 		"-count="+strconv.Itoa(raceCount),
 		"-covermode=atomic",
 		"-coverprofile="+coverRacePath,
@@ -255,8 +257,7 @@ func Race() error {
 
 // Bench runs benchmarks.
 func Bench() error {
-	return sh.RunV(goCmd, "test",
-		"-run=^a",
+	return goTest("-run=^a",
 		"-bench=.",
 		"-benchmem",
 		"-count="+strconv.Itoa(benchCount),
@@ -271,19 +272,19 @@ func DockerBuild() error {
 		return fmt.Errorf("can't find docker or podman in the current path")
 	}
 
-	var (
-		image string
-		user  string
-	)
-
-	err := sh.RunV("tar",
+	err := sh.RunV(tarCmd,
 		"-cf", "tmp/avfs.tar",
 		"--exclude-vcs",
-		"--exclude-ignore='.gitignore'",
+		"--exclude-vcs-ignores",
 		".")
 	if err != nil {
 		return err
 	}
+
+	var (
+		image string
+		user  string
+	)
 
 	switch runtime.GOOS {
 	case "windows":
@@ -375,11 +376,7 @@ func gitLastVersion(repo string) (string, error) {
 		repo = "https://" + repo
 	}
 
-	out, err := sh.Output(gitCmd, "ls-remote",
-		"--tags",
-		"--refs",
-		"--sort=v:refname",
-		repo)
+	out, err := git("ls-remote", "--tags", "--refs", "--sort=v:refname", repo)
 	if err != nil {
 		return "", err
 	}
