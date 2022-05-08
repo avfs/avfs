@@ -606,16 +606,12 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 			return nil, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
 		}
 
-		if flag&os.O_CREATE == 0 {
-			if !parent.mode.IsDir() {
-				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
-			}
-
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
-		}
-
 		if !parent.mode.IsDir() {
 			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
+		}
+
+		if flag&os.O_CREATE == 0 {
+			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 		}
 
 		if pm&avfs.PermWrite == 0 {
