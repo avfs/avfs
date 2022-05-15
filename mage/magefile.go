@@ -207,6 +207,28 @@ func Test() error {
 	return CoverResult()
 }
 
+// goOsArch returns an array of [goos/goarch, goos, goarch].
+func goOsArch(exclude string) [][]string {
+	osa, err := sh.Output(goCmd, "tool", "dist", "list")
+	if err != nil {
+		return nil
+	}
+
+	re := regexp.MustCompile("(\\S+)/(\\S+)")
+	matches := re.FindAllStringSubmatch(osa, -1)
+	result := make([][]string, len(matches))
+	i := 0
+
+	for _, match := range matches {
+		if !strings.Contains(match[0], exclude) {
+			result[i] = match
+			i++
+		}
+	}
+
+	return result[:i]
+}
+
 // TestBuild builds a test executable on all architectures (except Android/*)
 func TestBuild() error {
 	mg.Deps(tmpInit)
@@ -218,21 +240,18 @@ func TestBuild() error {
 		}
 	}
 
-	osArch, err := sh.Output(goCmd, "tool", "dist", "list")
-	if err != nil {
-		return err
-	}
-
-	// Remove Android platforms : need additional tools.
-	re := regexp.MustCompile("android/[^\n]+\n")
-	osArch = re.ReplaceAllString(osArch, "")
-	osArch = strings.ReplaceAll(osArch, "\n", " ")
-
 	srcPath := filepath.Join(appDir, "test/testbuild")
 	outPath := filepath.Join(appDir, "tmp/{{.Dir}}/{{.Dir}}_{{.OS}}_{{.Arch}}")
+	osArch := goOsArch("android") // Exclude Android platforms : need additional tools to compile.
 
-	err = sh.RunV(goxCmd, "-cgo",
-		"-osarch=\""+osArch+"\"",
+	var sb strings.Builder
+	for _, oa := range osArch {
+		sb.WriteRune(' ')
+		sb.WriteString(oa[0])
+	}
+
+	err := sh.RunV(goxCmd, "-cgo",
+		"-osarch=\""+sb.String()[1:]+"\"",
 		"-output="+outPath,
 		srcPath)
 	if err != nil {
