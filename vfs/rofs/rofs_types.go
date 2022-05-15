@@ -20,14 +20,14 @@ import "github.com/avfs/avfs"
 
 // RoFS Represents the file system.
 type RoFS struct {
-	baseFS            avfs.VFS
-	errPermDenied     error
-	errOpNotPermitted error
-	features          avfs.Features
+	baseFS            avfs.VFS      // baseFS is the base file system.
+	errOpNotPermitted error         // errOpNotPermitted is the error operation not permitted from the base file system.
+	errPermDenied     error         // errPermDenied is the error permission denied from the base file system.
+	features          avfs.Features // features defines the list of features available for this file system.
 }
 
 // RoFile represents an open file descriptor.
 type RoFile struct {
-	baseFile avfs.File
-	vfs      *RoFS
+	baseFile avfs.File // baseFile represents an open file descriptor from the base file system.
+	vfs      *RoFS     // vfs is the read only file system of the file.
 }

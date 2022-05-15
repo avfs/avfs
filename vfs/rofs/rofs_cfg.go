@@ -22,9 +22,9 @@ import "github.com/avfs/avfs"
 func New(baseFS avfs.VFS) *RoFS {
 	vfs := &RoFS{
 		baseFS:            baseFS,
-		features:          baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly,
 		errOpNotPermitted: avfs.ErrOpNotPermitted,
 		errPermDenied:     avfs.ErrPermDenied,
+		features:          baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly,
 	}
 
 	if baseFS.OSType() == avfs.OsWindows {
