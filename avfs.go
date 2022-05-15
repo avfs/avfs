@@ -72,7 +72,7 @@ const (
 )
 
 // OSType defines the operating system type.
-type OSType uint8
+type OSType uint16
 
 //go:generate stringer -type OSType -linecomment -output avfs_ostype.go
 
@@ -83,14 +83,17 @@ const (
 	OsUnknown               // Unknown
 )
 
-// PermMode defines the permissions to check for CheckPermission() function.
-type PermMode uint8
+// OpenMode defines constants used by OpenFile and CheckPermission functions.
+type OpenMode uint16
 
 const (
-	PermLookup PermMode = 0o001 // PermLookup checks for lookup permission on a directory.
-	PermWrite  PermMode = 0o002 // PermWrite checks for write permission.
-	PermRead   PermMode = 0o004 // PermRead checks for read permission.
-	PermRWX    PermMode = 0o007 // PermRWX checks for all permissions.
+	OpenLookup     OpenMode = 0o001     // OpenLookup checks for lookup permission on a directory.
+	OpenWrite      OpenMode = 0o002     // OpenWrite opens or checks for write permission.
+	OpenRead       OpenMode = 0o004     // OpenRead opens or checks for read permission.
+	OpenAppend     OpenMode = 1 << iota // OpenAppend opens a file for appending (os.O_APPEND).
+	OpenCreate                          // OpenCreate creates a file (os.O_CREATE).
+	OpenCreateExcl                      // OpenCreateExcl creates a non existing file (os.O_EXCL).
+	OpenTruncate                        // OpenTruncate truncates a file (os.O_TRUNC).
 )
 
 // VFS is the virtual file system interface.

@@ -730,6 +730,41 @@ func (ut *Utils) Open(vfs VFS, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }
 
+// OpenMode returns the open mode from the input flags.
+func (ut *Utils) OpenMode(flag int) OpenMode {
+	var om OpenMode
+
+	if flag == os.O_RDONLY {
+		return OpenRead
+	}
+
+	if flag&os.O_RDWR != 0 {
+		om = OpenRead | OpenWrite
+	}
+
+	if flag&(os.O_EXCL|os.O_CREATE) == (os.O_EXCL | os.O_CREATE) {
+		om |= OpenCreate | OpenCreateExcl | OpenWrite
+	}
+
+	if flag&os.O_CREATE != 0 {
+		om |= OpenCreate | OpenWrite
+	}
+
+	if flag&os.O_APPEND != 0 {
+		om |= OpenAppend | OpenWrite
+	}
+
+	if flag&os.O_TRUNC != 0 {
+		om |= OpenTruncate | OpenWrite
+	}
+
+	if flag&os.O_WRONLY != 0 {
+		om |= OpenWrite
+	}
+
+	return om
+}
+
 // PathSeparator return the OS-specific path separator.
 func (ut *Utils) PathSeparator() uint8 {
 	return ut.pathSeparator
