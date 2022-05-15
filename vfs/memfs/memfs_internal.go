@@ -90,7 +90,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			}
 
 			c.mu.RLock()
-			ok := c.checkPermission(avfs.PermLookup, vfs.user)
+			ok := c.checkPermission(avfs.OpenLookup, vfs.user)
 			c.mu.RUnlock()
 
 			if !ok {
@@ -223,7 +223,9 @@ func (vfs *MemFS) isNotExist(err error) bool {
 }
 
 // checkPermission checks if the current user has the desired permissions (perm) on the node.
-func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool {
+func (bn *baseNode) checkPermission(perm avfs.OpenMode, u avfs.UserReader) bool {
+	const PermRWX = 0o007 // filter all permissions bits.
+
 	if u.IsAdmin() {
 		return true
 	}
@@ -237,9 +239,9 @@ func (bn *baseNode) checkPermission(perm avfs.PermMode, u avfs.UserReader) bool 
 		mode >>= 3
 	}
 
-	perm &= avfs.PermRWX
+	perm &= PermRWX
 
-	return avfs.PermMode(mode)&perm == perm
+	return avfs.OpenMode(mode)&perm == perm
 }
 
 // Lock locks the node.

@@ -70,7 +70,7 @@ func (vfs *MemFS) Chdir(dir string) error {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	if !c.checkPermission(avfs.PermLookup, vfs.user) {
+	if !c.checkPermission(avfs.OpenLookup, vfs.user) {
 		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
 	}
 
@@ -369,7 +369,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	nParent.mu.Lock()
 	defer nParent.mu.Unlock()
 
-	if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
+	if !nParent.checkPermission(avfs.OpenWrite, vfs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
 	}
 
@@ -458,7 +458,7 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	if !parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user) {
+	if !parent.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user) {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 	}
 
@@ -497,7 +497,7 @@ func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	if !parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user) {
+	if !parent.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user) {
 		return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 	}
 
@@ -547,14 +547,11 @@ func (vfs *MemFS) Open(name string) (avfs.File, error) {
 func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	const op = "open"
 
-	f := &MemFile{vfs: vfs, name: name}
-
-	if flag == os.O_RDONLY || flag&os.O_RDWR != 0 {
-		f.permMode = avfs.PermRead
-	}
-
-	if flag&(os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC|os.O_WRONLY) != 0 {
-		f.permMode |= avfs.PermWrite
+	om := vfs.utils.OpenMode(flag)
+	f := &MemFile{
+		vfs:      vfs,
+		name:     name,
+		openMode: om,
 	}
 
 	parent, child, pi, err := vfs.searchNode(name, slmEval)
@@ -563,14 +560,14 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 	}
 
 	if vfs.isNotExist(err) {
-		if flag&os.O_CREATE == 0 {
+		if om&avfs.OpenCreate == 0 {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: err}
 		}
 
 		parent.mu.Lock()
 		defer parent.mu.Unlock()
 
-		if f.permMode&avfs.PermWrite == 0 || !parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user) {
+		if om&avfs.OpenWrite == 0 || !parent.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user) {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
@@ -580,6 +577,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		if child == nil {
 			child = vfs.createFile(parent, part, perm)
 			f.nd = child
+			f.openMode = om
 
 			return f, nil
 		}
@@ -590,19 +588,19 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		c.mu.Lock()
 		defer c.mu.Unlock()
 
-		if !c.checkPermission(f.permMode, vfs.user) {
+		if !c.checkPermission(om, vfs.user) {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
-		if flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
+		if om&avfs.OpenCreateExcl != 0 {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 		}
 
-		if flag&os.O_TRUNC != 0 {
+		if om&avfs.OpenTruncate != 0 {
 			c.truncate(0)
 		}
 
-		if flag&os.O_APPEND != 0 {
+		if om&avfs.OpenAppend != 0 {
 			f.at = c.size()
 		}
 
@@ -610,11 +608,11 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		c.mu.Lock()
 		defer c.mu.Unlock()
 
-		if f.permMode&avfs.PermWrite != 0 {
+		if om&avfs.OpenWrite != 0 {
 			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 		}
 
-		if !c.checkPermission(f.permMode, vfs.user) {
+		if !c.checkPermission(om, vfs.user) {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
@@ -623,6 +621,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 	}
 
 	f.nd = child
+	f.openMode = om
 
 	return f, nil
 }
@@ -697,7 +696,7 @@ func (vfs *MemFS) Remove(name string) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
+	if !parent.checkPermission(avfs.OpenWrite, vfs.user) {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 	}
 
@@ -746,7 +745,7 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	ok := parent.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
+	ok := parent.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user)
 	if !ok {
 		return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 	}
@@ -769,7 +768,7 @@ func (vfs *MemFS) removeAll(dn *dirNode) error {
 	dn.mu.Lock()
 	defer dn.mu.Unlock()
 
-	ok := dn.checkPermission(avfs.PermWrite|avfs.PermLookup, vfs.user)
+	ok := dn.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user)
 	if !ok {
 		return vfs.err.PermDenied
 	}
@@ -808,7 +807,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	oParent.mu.Lock()
 	defer oParent.mu.Unlock()
 
-	if !oParent.checkPermission(avfs.PermWrite, vfs.user) {
+	if !oParent.checkPermission(avfs.OpenWrite, vfs.user) {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 	}
 
@@ -816,7 +815,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 		nParent.mu.Lock()
 		defer nParent.mu.Unlock()
 
-		if !nParent.checkPermission(avfs.PermWrite, vfs.user) {
+		if !nParent.checkPermission(avfs.OpenWrite, vfs.user) {
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 		}
 	}
@@ -948,7 +947,7 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	if !parent.checkPermission(avfs.PermWrite, vfs.user) {
+	if !parent.checkPermission(avfs.OpenWrite, vfs.user) {
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 	}
 

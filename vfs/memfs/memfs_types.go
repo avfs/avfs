@@ -61,7 +61,7 @@ type MemFile struct {
 	at         int64         // at is current position in the file used by Read and Write functions.
 	dirIndex   int           // dirIndex is the position of the current index for dirEntries ou dirNames slices.
 	mu         sync.RWMutex  // mu is the RWMutex used to access content of MemFile.
-	permMode   avfs.PermMode // permMode
+	openMode   avfs.OpenMode // OpenMode defines the permissions to check for OpenFile and CheckPermission functions.
 }
 
 // Option defines the option function used for initializing MemFS.
@@ -72,7 +72,7 @@ type node interface {
 	sync.Locker
 
 	// checkPermission returns true if the current user has the desired permissions (perm) on the node.
-	checkPermission(perm avfs.PermMode, u avfs.UserReader) bool
+	checkPermission(perm avfs.OpenMode, u avfs.UserReader) bool
 
 	// delete removes all information from the node.
 	delete()

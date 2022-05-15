@@ -123,7 +123,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 	nd.Lock()
 	defer nd.Unlock()
 
-	if !nd.checkPermission(avfs.PermWrite, f.vfs.user) {
+	if !nd.checkPermission(avfs.OpenWrite, f.vfs.user) {
 		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.OpNotPermitted}
 	}
 
@@ -211,7 +211,7 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	if f.permMode&avfs.PermRead == 0 {
+	if f.openMode&avfs.OpenRead == 0 {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
@@ -264,7 +264,7 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 		return 0, &fs.PathError{Op: "readat", Path: f.name, Err: avfs.ErrNegativeOffset}
 	}
 
-	if f.permMode&avfs.PermRead == 0 {
+	if f.openMode&avfs.OpenRead == 0 {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
@@ -589,7 +589,7 @@ func (f *MemFile) Truncate(size int64) error {
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	if f.permMode&avfs.PermWrite == 0 {
+	if f.openMode&avfs.OpenWrite == 0 {
 		err := error(avfs.ErrInvalidArgument)
 		if f.vfs.OSType() == avfs.OsWindows {
 			err = avfs.ErrWinAccessDenied
@@ -639,7 +639,7 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	if f.permMode&avfs.PermWrite == 0 {
+	if f.openMode&avfs.OpenWrite == 0 {
 		err = avfs.ErrBadFileDesc
 		if f.vfs.OSType() == avfs.OsWindows {
 			err = avfs.ErrWinAccessDenied
@@ -700,7 +700,7 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	if f.permMode&avfs.PermWrite == 0 {
+	if f.openMode&avfs.OpenWrite == 0 {
 		err = avfs.ErrBadFileDesc
 		if f.vfs.OSType() == avfs.OsWindows {
 			err = avfs.ErrWinAccessDenied
