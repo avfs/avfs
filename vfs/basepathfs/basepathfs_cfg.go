@@ -24,12 +24,12 @@ import (
 )
 
 // New returns a new base path file system (BasePathFS).
-func New(baseFs avfs.VFS, basePath string) *BasePathFS {
+func New(baseFS avfs.VFS, basePath string) *BasePathFS {
 	const op = "basepath"
 
-	absPath, _ := baseFs.Abs(basePath)
+	absPath, _ := baseFS.Abs(basePath)
 
-	info, err := baseFs.Stat(absPath)
+	info, err := baseFS.Stat(absPath)
 	if err != nil {
 		err = &fs.PathError{Op: op, Path: basePath, Err: errors.Unwrap(err)}
 		panic(err)
@@ -41,13 +41,13 @@ func New(baseFs avfs.VFS, basePath string) *BasePathFS {
 	}
 
 	vfs := &BasePathFS{
-		baseFS:   baseFs,
+		baseFS:   baseFS,
 		basePath: absPath,
-		features: baseFs.Features() &^ (avfs.FeatSymlink | avfs.FeatChroot),
-		utils:    baseFs.Utils(),
+		features: baseFS.Features() &^ (avfs.FeatSymlink | avfs.FeatChroot),
+		utils:    baseFS.Utils(),
 	}
 
-	if baseFs.HasFeature(avfs.FeatMainDirs) {
+	if baseFS.HasFeature(avfs.FeatMainDirs) {
 		err = vfs.utils.CreateBaseDirs(vfs.baseFS, vfs.basePath)
 		if err != nil {
 			panic(err)
