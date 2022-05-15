@@ -41,15 +41,15 @@ type OrefaFS struct {
 
 // OrefaFile represents an open file descriptor.
 type OrefaFile struct {
-	vfs        *OrefaFS
-	nd         *node
-	name       string
-	dirEntries []fs.DirEntry
-	dirNames   []string
-	at         int64
-	dirIndex   int
-	mu         sync.RWMutex
-	permMode   avfs.PermMode
+	vfs        *OrefaFS      // vfs is the memory file system of the file.
+	nd         *node         // nd is node of the file.
+	name       string        // name is the name of the file.
+	dirEntries []fs.DirEntry // dirEntries stores the file information returned by ReadDir function.
+	dirNames   []string      // dirNames stores the names of the file returned by Readdirnames function.
+	at         int64         // at is current position in the file used by Read and Write functions.
+	dirIndex   int           // dirIndex is the position of the current index for dirEntries ou dirNames slices.
+	mu         sync.RWMutex  // mu is the RWMutex used to access content of OrefaFile.
+	openMode   avfs.OpenMode // OpenMode defines constants used by OpenFile and CheckPermission functions.
 }
 
 // Option defines the option function used for initializing OrefaFS.

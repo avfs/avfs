@@ -578,19 +578,8 @@ func (vfs *OrefaFS) Open(name string) (avfs.File, error) {
 func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	const op = "open"
 
-	var (
-		at      int64
-		pm      avfs.PermMode
-		nilFile *OrefaFile
-	)
-
-	if flag == os.O_RDONLY || flag&os.O_RDWR != 0 {
-		pm = avfs.PermRead
-	}
-
-	if flag&(os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC|os.O_WRONLY) != 0 {
-		pm |= avfs.PermWrite
-	}
+	at := int64(0)
+	om := vfs.utils.OpenMode(flag)
 
 	absPath, _ := vfs.Abs(name)
 	ut := vfs.utils
@@ -610,11 +599,11 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 		}
 
-		if flag&os.O_CREATE == 0 {
+		if om&avfs.OpenCreate == 0 {
 			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 		}
 
-		if pm&avfs.PermWrite == 0 {
+		if om&avfs.OpenWrite == 0 {
 			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
@@ -623,28 +612,28 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 
 		// test for race conditions when opening file in exclusive mode.
 		_, childOk = vfs.nodes[absPath]
-		if childOk && flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
+		if childOk && om&avfs.OpenCreateExcl != 0 {
 			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 		}
 
 		child = vfs.createFile(parent, absPath, fileName, perm)
 	} else {
 		if child.mode.IsDir() {
-			if pm&avfs.PermWrite != 0 {
-				return nilFile, &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
+			if om&avfs.OpenWrite != 0 {
+				return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 			}
 		} else {
-			if flag&(os.O_CREATE|os.O_EXCL) == os.O_CREATE|os.O_EXCL {
+			if om&avfs.OpenCreateExcl != 0 {
 				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 			}
 
-			if flag&os.O_TRUNC != 0 {
+			if om&avfs.OpenTruncate != 0 {
 				child.mu.Lock()
 				child.truncate(0)
 				child.mu.Unlock()
 			}
 
-			if flag&os.O_APPEND != 0 {
+			if om&avfs.OpenAppend != 0 {
 				at = child.Size()
 			}
 		}
@@ -653,7 +642,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 	f := &OrefaFile{
 		vfs:      vfs,
 		nd:       child,
-		permMode: pm,
+		openMode: om,
 		name:     name,
 		at:       at,
 	}
