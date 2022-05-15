@@ -31,8 +31,8 @@ var OSUtils = NewUtils(currentOSType()) //nolint:gochecknoglobals // Utils for t
 
 // Utils regroups common functions used by emulated file systems.
 //
-// Most of these functions are extracted and adapted from Go standard library
-// to be used indifferently on Unix or Windows system.
+// Most of these functions are extracted from Go standard library
+// and adapted to be used indifferently on Unix or Windows system.
 type Utils struct {
 	// OSType defines the operating system type.
 	osType OSType
@@ -526,6 +526,44 @@ func (ut *Utils) IsAbs(path string) bool {
 	}
 
 	return isSlash(path[0])
+}
+
+// IsExist returns a boolean indicating whether the error is known to report
+// that a file or directory already exists. It is satisfied by ErrExist as
+// well as some syscall errors.
+//
+// This function predates errors.Is. It only supports errors returned by
+// the os package. New code should use errors.Is(err, fs.ErrExist).
+func (ut *Utils) IsExist(err error) bool {
+	ue := errors.Unwrap(err)
+	if ue == nil {
+		ue = err
+	}
+
+	if e, ok := ue.(ErrorIdentifier); ok {
+		return e.Is(fs.ErrExist)
+	}
+
+	return os.IsExist(err)
+}
+
+// IsNotExist returns a boolean indicating whether the error is known to
+// report that a file or directory does not exist. It is satisfied by
+// ErrNotExist as well as some syscall errors.
+//
+// This function predates errors.Is. It only supports errors returned by
+// the os package. New code should use errors.Is(err, fs.ErrNotExist).
+func (ut *Utils) IsNotExist(err error) bool {
+	ue := errors.Unwrap(err)
+	if ue == nil {
+		ue = err
+	}
+
+	if e, ok := ue.(ErrorIdentifier); ok {
+		return e.Is(fs.ErrNotExist)
+	}
+
+	return os.IsNotExist(err)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.

@@ -18,6 +18,7 @@ package avfs
 
 import (
 	"errors"
+	"io/fs"
 	"reflect"
 	"strconv"
 )
@@ -82,6 +83,13 @@ func (e UnknownUserIdError) Error() string {
 	return "user: unknown userid " + strconv.Itoa(int(e))
 }
 
+// ErrorIdentifier is the interface that wraps the Is method of an error.
+type ErrorIdentifier interface {
+	// Is returns true if the error can be treated as equivalent to a target error.
+	// target is one of fs.ErrPermission, fs.ErrExist, fs.ErrNotExist.
+	Is(target error) bool
+}
+
 // LinuxError replaces syscall.Errno for Linux operating systems.
 type LinuxError uint32
 
@@ -116,8 +124,24 @@ const (
 	errEXDEV     = 0x12
 )
 
+// Error returns the error string of the Linux operating system.
 func (i LinuxError) Error() string {
 	return i.String()
+}
+
+// Is returns true if the LinuxError can be treated as equivalent to a target error.
+// target is one of fs.ErrPermission, fs.ErrExist, fs.ErrNotExist.
+func (i LinuxError) Is(target error) bool {
+	switch target {
+	case fs.ErrPermission:
+		return i == ErrPermDenied || i == ErrOpNotPermitted
+	case fs.ErrExist:
+		return i == ErrFileExists || i == ErrDirNotEmpty
+	case fs.ErrNotExist:
+		return i == ErrNoSuchFileOrDir
+	}
+
+	return false
 }
 
 const CustomError = 2 << 30
@@ -131,6 +155,7 @@ type WindowsError uint32
 const (
 	ErrWinAccessDenied        = WindowsError(5)               // Access is denied.
 	ErrWinAlreadyExists       = WindowsError(183)             // Cannot create a file when that file already exists.
+	ErrWinBadNetPath          = WindowsError(53)              // Bad network path.
 	ErrWinDirNameInvalid      = WindowsError(0x10B)           // The directory name is invalid.
 	ErrWinDirNotEmpty         = WindowsError(145)             // The directory is not empty.
 	ErrWinFileExists          = WindowsError(80)              // The file exists.
@@ -147,8 +172,28 @@ const (
 	ErrWinVolumeWindows       = WindowsError(CustomError + 3) // Volumes are available for Windows only.
 )
 
+// Error returns the error string of the Windows operating system.
 func (i WindowsError) Error() string {
 	return i.String()
+}
+
+// Is returns true if the WindowsError can be treated as equivalent to a target error.
+// target is one of fs.ErrPermission, fs.ErrExist, fs.ErrNotExist.
+func (i WindowsError) Is(target error) bool {
+	switch target {
+	case fs.ErrPermission:
+		return i == ErrWinAccessDenied
+	case fs.ErrExist:
+		return i == ErrWinAlreadyExists ||
+			i == ErrWinDirNotEmpty ||
+			i == ErrWinFileExists
+	case fs.ErrNotExist:
+		return i == ErrWinFileNotFound ||
+			i == ErrWinBadNetPath ||
+			i == ErrWinPathNotFound
+	}
+
+	return false
 }
 
 // Errors regroups errors depending on the OS emulated.
@@ -167,31 +212,31 @@ type Errors struct {
 }
 
 // SetOSType sets errors depending on the operating system.
-func (ve *Errors) SetOSType(ost OSType) {
+func (e *Errors) SetOSType(ost OSType) {
 	switch ost {
 	case OsWindows:
-		ve.BadFileDesc = ErrWinAccessDenied
-		ve.DirNotEmpty = ErrWinDirNotEmpty
-		ve.FileExists = ErrWinFileExists
-		ve.InvalidArgument = ErrWinNegativeSeek
-		ve.IsADirectory = ErrWinIsADirectory
-		ve.NoSuchDir = ErrWinPathNotFound
-		ve.NoSuchFile = ErrWinFileNotFound
-		ve.NotADirectory = ErrWinPathNotFound
-		ve.OpNotPermitted = ErrWinNotSupported
-		ve.PermDenied = ErrWinAccessDenied
-		ve.TooManySymlinks = ErrTooManySymlinks
+		e.BadFileDesc = ErrWinAccessDenied
+		e.DirNotEmpty = ErrWinDirNotEmpty
+		e.FileExists = ErrWinFileExists
+		e.InvalidArgument = ErrWinNegativeSeek
+		e.IsADirectory = ErrWinIsADirectory
+		e.NoSuchDir = ErrWinPathNotFound
+		e.NoSuchFile = ErrWinFileNotFound
+		e.NotADirectory = ErrWinPathNotFound
+		e.OpNotPermitted = ErrWinNotSupported
+		e.PermDenied = ErrWinAccessDenied
+		e.TooManySymlinks = ErrTooManySymlinks
 	default:
-		ve.BadFileDesc = ErrBadFileDesc
-		ve.DirNotEmpty = ErrDirNotEmpty
-		ve.FileExists = ErrFileExists
-		ve.InvalidArgument = ErrInvalidArgument
-		ve.IsADirectory = ErrIsADirectory
-		ve.NoSuchDir = ErrNoSuchFileOrDir
-		ve.NoSuchFile = ErrNoSuchFileOrDir
-		ve.NotADirectory = ErrNotADirectory
-		ve.OpNotPermitted = ErrOpNotPermitted
-		ve.PermDenied = ErrPermDenied
-		ve.TooManySymlinks = ErrTooManySymlinks
+		e.BadFileDesc = ErrBadFileDesc
+		e.DirNotEmpty = ErrDirNotEmpty
+		e.FileExists = ErrFileExists
+		e.InvalidArgument = ErrInvalidArgument
+		e.IsADirectory = ErrIsADirectory
+		e.NoSuchDir = ErrNoSuchFileOrDir
+		e.NoSuchFile = ErrNoSuchFileOrDir
+		e.NotADirectory = ErrNotADirectory
+		e.OpNotPermitted = ErrOpNotPermitted
+		e.PermDenied = ErrPermDenied
+		e.TooManySymlinks = ErrTooManySymlinks
 	}
 }

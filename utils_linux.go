@@ -19,47 +19,11 @@
 package avfs
 
 import (
-	"errors"
 	"io/fs"
-	"os"
 	"sync"
 	"sync/atomic"
 	"syscall"
 )
-
-// IsExist returns a boolean indicating whether the error is known to report
-// that a file or directory already exists. It is satisfied by ErrExist as
-// well as some syscall errors.
-func (ut *Utils) IsExist(err error) bool {
-	err = errors.Unwrap(err)
-	switch e := err.(type) {
-	case syscall.Errno:
-		return os.IsExist(err)
-	case LinuxError:
-		return e == ErrFileExists
-	case WindowsError:
-		return e == ErrWinFileExists
-	default:
-		return false
-	}
-}
-
-// IsNotExist returns a boolean indicating whether the error is known to
-// report that a file or directory does not exist. It is satisfied by
-// ErrNotExist as well as some syscall errors.
-func (ut *Utils) IsNotExist(err error) bool {
-	err = errors.Unwrap(err)
-	switch e := err.(type) {
-	case syscall.Errno:
-		return os.IsNotExist(err)
-	case LinuxError:
-		return e == ErrNoSuchFileOrDir
-	case WindowsError:
-		return e == ErrWinPathNotFound || e == ErrWinFileNotFound
-	default:
-		return false
-	}
-}
 
 // ShortPathName Retrieves the short path form of the specified path (Windows only).
 func ShortPathName(path string) string {
