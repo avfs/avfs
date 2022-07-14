@@ -62,11 +62,6 @@ var (
 	testDataDir       string
 	dockerTmpDir      string
 	dockerTestDataDir string
-
-	git       = sh.OutCmd(gitCmd)
-	g0        = sh.RunCmd(goCmd)
-	goInstall = sh.RunCmd(goCmd, "install")
-	goTest    = sh.RunCmd(goCmd, "test", "-v")
 )
 
 func init() {
@@ -113,7 +108,7 @@ func tmpInit() error {
 
 // Env returns the go environment variables.
 func Env() {
-	g0("env")
+	sh.RunV(goCmd, "env")
 	fmt.Printf(`
 appDir=%s
 tmpDir=%s
@@ -127,7 +122,7 @@ dockerTestDataDir=%s
 
 // Build builds the project.
 func Build() error {
-	return g0("build", "-v", "./...")
+	return sh.RunV(goCmd, "build", "-v", "./...")
 }
 
 // Fmt runs gofumpt on the project.
@@ -138,7 +133,7 @@ func Fmt() error {
 			return err
 		}
 
-		err = goInstall(goFumptInst)
+		err = sh.RunV(goCmd, "install", goFumptInst)
 		if err != nil {
 			return err
 		}
@@ -188,14 +183,15 @@ func CoverResult() error {
 		return nil
 	}
 
-	return g0("tool", "cover", "-html="+coverTestPath)
+	return sh.RunV(goCmd, "tool", "cover", "-html="+coverTestPath)
 }
 
 // Test runs tests with coverage.
 func Test() error {
 	mg.Deps(tmpInit)
 
-	err := goTest("-run=.",
+	err := sh.RunV(goCmd, "test", "-v",
+		"-run=.",
 		"-race",
 		"-covermode=atomic",
 		"-coverprofile="+coverTestPath,
@@ -234,7 +230,7 @@ func TestBuild() error {
 	mg.Deps(tmpInit)
 
 	if !isExecutable(goxCmd) {
-		err := goInstall(goxInst)
+		err := sh.RunV(goCmd, "install", goxInst)
 		if err != nil {
 			return err
 		}
@@ -265,7 +261,8 @@ func TestBuild() error {
 func Race() error {
 	mg.Deps(tmpInit)
 
-	return goTest("-tags=datarace",
+	return sh.RunV(goCmd, "test", "-v",
+		"-tags=datarace",
 		"-run=TestRace",
 		"-race",
 		"-count="+strconv.Itoa(raceCount),
@@ -276,7 +273,8 @@ func Race() error {
 
 // Bench runs benchmarks.
 func Bench() error {
-	return goTest("-run=^a",
+	return sh.RunV(goCmd, "test", "-v",
+		"-run=^a",
 		"-bench=.",
 		"-benchmem",
 		"-count="+strconv.Itoa(benchCount),
@@ -395,7 +393,7 @@ func gitLastVersion(repo string) (string, error) {
 		repo = "https://" + repo
 	}
 
-	out, err := git("ls-remote", "--tags", "--refs", "--sort=v:refname", repo)
+	out, err := sh.Output(gitCmd, "ls-remote", "--tags", "--refs", "--sort=v:refname", repo)
 	if err != nil {
 		return "", err
 	}
