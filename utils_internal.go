@@ -361,6 +361,7 @@ func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 }
 
 // nextRandom is used in Utils.CreateTemp and Utils.MkdirTemp.
+//
 //go:linkname nextRandom os.nextRandom
 func nextRandom() string
 

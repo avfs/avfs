@@ -38,7 +38,6 @@ import "strings"
 // |------- Left -------|         |------ Right ------|
 // |----- LeftPart ---------------|
 //                      |----------- RightPart -------|
-//
 type PathIterator struct {
 	path          string
 	start         int
