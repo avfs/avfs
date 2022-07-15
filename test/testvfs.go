@@ -619,7 +619,7 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 
 	if vfs.OSType() == avfs.OsWindows {
 		userName := vfs.User().Name()
-		wantTmpDir = vfs.Join(avfs.DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`)
+		wantTmpDir = avfs.ShortPathName(vfs.Join(avfs.DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`))
 	}
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
