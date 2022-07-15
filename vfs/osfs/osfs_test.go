@@ -75,8 +75,8 @@ func TestOsFSConfig(t *testing.T) {
 	}
 
 	ost := vfs.OSType()
-	if ost != avfs.OSUtils.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", avfs.OSUtils.OSType(), ost)
+	if ost != avfs.CurrentOSType {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.CurrentOSType, ost)
 	}
 }
 
