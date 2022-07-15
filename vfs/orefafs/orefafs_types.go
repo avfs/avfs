@@ -25,18 +25,18 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	nodes    nodes           // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	err      avfs.Errors     // err regroups errors depending on the OS emulated.
-	user     avfs.UserReader // user is the current user of the file system.
-	curDir   string          // curDir is the current directory.
-	name     string          // name is the name of the file system.
-	features avfs.Features   // features defines the list of features available for this file system.
-	lastId   uint64          // lastId is the last unique id used to identify files uniquely.
-	mu       sync.RWMutex    // mu is the RWMutex used to access nodes.
-	umask    fs.FileMode     // umask is the user file creation mode mask.
-	dirMode  fs.FileMode     // dirMode is the default fs.FileMode for a directory.
-	fileMode fs.FileMode     // fileMode is de default fs.FileMode for a file.
-	utils    avfs.Utils      // utils regroups common functions used by emulated file systems.
+	nodes                nodes           // nodes is the map of nodes (files or directories) where the key is the absolute path.
+	err                  avfs.Errors     // err regroups errors depending on the OS emulated.
+	user                 avfs.UserReader // user is the current user of the file system.
+	curDir               string          // curDir is the current directory.
+	name                 string          // name is the name of the file system.
+	features             avfs.Features   // features defines the list of features available for this file system.
+	lastId               uint64          // lastId is the last unique id used to identify files uniquely.
+	mu                   sync.RWMutex    // mu is the RWMutex used to access nodes.
+	umask                fs.FileMode     // umask is the user file creation mode mask.
+	dirMode              fs.FileMode     // dirMode is the default fs.FileMode for a directory.
+	fileMode             fs.FileMode     // fileMode is de default fs.FileMode for a file.
+	avfs.Utils[*OrefaFS]                 // utils regroups common functions used by emulated file systems.
 }
 
 // OrefaFile represents an open file descriptor.

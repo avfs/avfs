@@ -30,7 +30,6 @@ func New(opts ...Option) *OrefaFS {
 		umask:    avfs.UMask(),
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		utils:    avfs.OSUtils,
 	}
 
 	for _, opt := range opts {
@@ -39,13 +38,12 @@ func New(opts ...Option) *OrefaFS {
 
 	var volumeName string
 
-	if vfs.utils.OSType() == avfs.OsWindows {
+	if vfs.OSType() == avfs.OsWindows {
 		volumeName = avfs.DefaultVolume
 		vfs.dirMode |= avfs.DefaultDirPerm
 		vfs.fileMode |= avfs.DefaultFilePerm
 	}
 
-	ut := vfs.utils
 	vfs.nodes[volumeName] = createRootNode()
 	vfs.user = avfs.AdminUser
 	vfs.curDir = volumeName
@@ -59,14 +57,14 @@ func New(opts ...Option) *OrefaFS {
 		vfs.user = avfs.AdminUser
 		vfs.umask = 0
 
-		err := ut.CreateBaseDirs(vfs, volumeName)
+		err := vfs.CreateBaseDirs(volumeName)
 		if err != nil {
 			panic("CreateBaseDirs " + err.Error())
 		}
 
 		vfs.umask = um
 		vfs.user = u
-		vfs.curDir = ut.HomeDirUser(vfs, u)
+		vfs.curDir = vfs.HomeDirUser(vfs, u)
 	}
 
 	return vfs
@@ -85,11 +83,6 @@ func (vfs *OrefaFS) HasFeature(feature avfs.Features) bool {
 // Name returns the name of the fileSystem.
 func (vfs *OrefaFS) Name() string {
 	return vfs.name
-}
-
-// OSType returns the operating system type of the file system.
-func (vfs *OrefaFS) OSType() avfs.OSType {
-	return vfs.utils.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -115,7 +108,7 @@ func WithMainDirs() Option {
 
 // WithOSType returns a function setting the OS type of the file system.
 func WithOSType(ost avfs.OSType) Option {
-	return func(idm *OrefaFS) {
-		idm.utils = avfs.NewUtils(ost)
+	return func(vfs *OrefaFS) {
+		vfs.InitUtils(ost)
 	}
 }

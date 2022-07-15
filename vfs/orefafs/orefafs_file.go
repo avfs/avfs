@@ -499,8 +499,7 @@ func (f *OrefaFile) Stat() (fs.FileInfo, error) {
 		return &OrefaInfo{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
 	}
 
-	ut := f.vfs.utils
-	_, name := ut.SplitAbs(f.name)
+	_, name := f.vfs.SplitAbs(f.name)
 	fst := f.nd.fillStatFrom(name)
 
 	return fst, nil
