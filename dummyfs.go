@@ -27,7 +27,7 @@ type DummyFS struct {
 	errPermDenied error
 	opStat        string
 	opLstat       string
-	utils         Utils
+	Utils[*DummyFS]
 }
 
 // DummyFile represents an open file descriptor.
@@ -43,11 +43,12 @@ type DummySysStat struct{}
 // NewDummyFS creates a new NewDummyFS file system.
 func NewDummyFS() *DummyFS {
 	vfs := &DummyFS{
-		utils:         OSUtils,
 		errPermDenied: ErrPermDenied,
 		opStat:        "stat",
 		opLstat:       "lstat",
 	}
+
+	vfs.InitUtils(CurrentOSType)
 
 	if vfs.OSType() == OsWindows {
 		vfs.errPermDenied = ErrWinAccessDenied
@@ -73,11 +74,6 @@ func (vfs *DummyFS) Name() string {
 	return ""
 }
 
-// OSType returns the operating system type of the file system.
-func (vfs *DummyFS) OSType() OSType {
-	return vfs.utils.osType
-}
-
 // Type returns the type of the fileSystem or Identity manager.
 func (vfs *DummyFS) Type() string {
 	return "DummyFS"
@@ -91,15 +87,7 @@ func (vfs *DummyFS) Type() string {
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
 func (vfs *DummyFS) Abs(path string) (string, error) {
-	return vfs.utils.Abs(vfs, path)
-}
-
-// Base returns the last element of path.
-// Trailing path separators are removed before extracting the last element.
-// If the path is empty, Base returns ".".
-// If the path consists entirely of separators, Base returns a single separator.
-func (vfs *DummyFS) Base(path string) string {
-	return vfs.utils.Base(path)
+	return vfs.Utils.Abs(vfs, path)
 }
 
 // Chdir changes the current working directory to the named directory.
@@ -167,40 +155,13 @@ func (vfs *DummyFS) Chtimes(name string, atime, mtime time.Time) error {
 	return &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
 }
 
-// Clean returns the shortest path name equivalent to path
-// by purely lexical processing. It applies the following rules
-// iteratively until no further processing can be done:
-//
-//  1. Replace multiple Separator elements with a single one.
-//  2. Eliminate each . path name element (the current directory).
-//  3. Eliminate each inner .. path name element (the parent directory)
-//     along with the non-.. element that precedes it.
-//  4. Eliminate .. elements that begin a rooted path:
-//     that is, replace "/.." by "/" at the beginning of a path,
-//     assuming Separator is '/'.
-//
-// The returned path ends in a slash only if it represents a root directory,
-// such as "/" on Unix or `C:\` on Windows.
-//
-// Finally, any occurrences of slash are replaced by Separator.
-//
-// If the result of this process is an empty string, Clean
-// returns the string ".".
-//
-// See also Rob Pike, “Lexical File Names in Plan 9 or
-// Getting Dot-Dot Right,”
-// https://9p.io/sys/doc/lexnames.html
-func (vfs *DummyFS) Clean(path string) string {
-	return vfs.utils.Clean(path)
-}
-
 // Create creates or truncates the named file. If the file already exists,
 // it is truncated. If the file does not exist, it is created with mode 0666
 // (before umask). If successful, methods on the returned DummyFile can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
 func (vfs *DummyFS) Create(name string) (File, error) {
-	return vfs.utils.Create(vfs, name)
+	return vfs.Utils.Create(vfs, name)
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -217,16 +178,6 @@ func (vfs *DummyFS) CreateTemp(dir, pattern string) (File, error) {
 	return &DummyFile{}, &fs.PathError{Op: op, Path: dir, Err: vfs.errPermDenied}
 }
 
-// Dir returns all but the last element of path, typically the path's directory.
-// After dropping the final element, Dir calls Clean on the path and trailing
-// slashes are removed.
-// If the path is empty, Dir returns ".".
-// If the path consists entirely of separators, Dir returns a single separator.
-// The returned path does not end in a separator unless it is the root directory.
-func (vfs *DummyFS) Dir(path string) string {
-	return vfs.utils.Dir(path)
-}
-
 // EvalSymlinks returns the path name after the evaluation of any symbolic
 // links.
 // If path is relative the result will be relative to the current directory,
@@ -234,13 +185,6 @@ func (vfs *DummyFS) Dir(path string) string {
 // EvalSymlinks calls Clean on the result.
 func (vfs *DummyFS) EvalSymlinks(path string) (string, error) {
 	return "", &fs.PathError{Op: vfs.opLstat, Path: path, Err: vfs.errPermDenied}
-}
-
-// FromSlash returns the result of replacing each slash ('/') character
-// in path with a separator character. Multiple slashes are replaced
-// by multiple separators.
-func (vfs *DummyFS) FromSlash(path string) string {
-	return vfs.utils.FromSlash(path)
 }
 
 // Getwd returns a rooted path name corresponding to the
@@ -262,30 +206,13 @@ func (vfs *DummyFS) Getwd() (dir string, err error) {
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
 func (vfs *DummyFS) Glob(pattern string) (matches []string, err error) {
-	return vfs.utils.Glob(vfs, pattern)
+	return vfs.Utils.Glob(vfs, pattern)
 }
 
 // Idm returns the identity manager of the file system.
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *DummyFS) Idm() IdentityMgr {
 	return NotImplementedIdm
-}
-
-// IsAbs reports whether the path is absolute.
-func (vfs *DummyFS) IsAbs(path string) bool {
-	return vfs.utils.IsAbs(path)
-}
-
-// IsPathSeparator reports whether c is a directory separator character.
-func (vfs *DummyFS) IsPathSeparator(c uint8) bool {
-	return vfs.utils.IsPathSeparator(c)
-}
-
-// Join joins any number of path elements into a single path, adding a
-// separating slash if necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
-func (vfs *DummyFS) Join(elem ...string) string {
-	return vfs.utils.Join(elem...)
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -314,34 +241,6 @@ func (vfs *DummyFS) Link(oldname, newname string) error {
 // If there is an error, it will be of type *PathError.
 func (vfs *DummyFS) Lstat(name string) (fs.FileInfo, error) {
 	return nil, &fs.PathError{Op: vfs.opLstat, Path: name, Err: vfs.errPermDenied}
-}
-
-// Match reports whether name matches the shell file name pattern.
-// The pattern syntax is:
-//
-//	pattern:
-//		{ term }
-//	term:
-//		'*'         matches any sequence of non-Separator characters
-//		'?'         matches any single non-Separator character
-//		'[' [ '^' ] { character-range } ']'
-//		            character class (must be non-empty)
-//		c           matches character c (c != '*', '?', '\\', '[')
-//		'\\' c      matches character c
-//
-//	character-range:
-//		c           matches character c (c != '\\', '-', ']')
-//		'\\' c      matches character c
-//		lo '-' hi   matches character c for lo <= c <= hi
-//
-// Match requires pattern to match all of name, not just a substring.
-// The only possible returned error is ErrBadPattern, when pattern
-// is malformed.
-//
-// On Windows, escaping is disabled. Instead, '\\' is treated as
-// path separator.
-func (vfs *DummyFS) Match(pattern, name string) (matched bool, err error) {
-	return vfs.utils.Match(pattern, name)
 }
 
 // Mkdir creates a new directory with the specified name and permission
@@ -384,7 +283,7 @@ func (vfs *DummyFS) MkdirTemp(dir, pattern string) (string, error) {
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
 func (vfs *DummyFS) Open(name string) (File, error) {
-	return vfs.utils.Open(vfs, name)
+	return vfs.Utils.Open(vfs, name)
 }
 
 // OpenFile is the generalized open call; most users will use Open
@@ -399,18 +298,13 @@ func (vfs *DummyFS) OpenFile(name string, flag int, perm fs.FileMode) (File, err
 	return &DummyFile{vfs: vfs}, &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
 }
 
-// PathSeparator return the OS-specific path separator.
-func (vfs *DummyFS) PathSeparator() uint8 {
-	return vfs.utils.pathSeparator
-}
-
 // ReadDir reads the named directory,
 // returning all its directory entries sorted by filename.
 // If an error occurs reading the directory,
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
 func (vfs *DummyFS) ReadDir(name string) ([]fs.DirEntry, error) {
-	return vfs.utils.ReadDir(vfs, name)
+	return vfs.Utils.ReadDir(vfs, name)
 }
 
 // ReadFile reads the named file and returns the contents.
@@ -418,7 +312,7 @@ func (vfs *DummyFS) ReadDir(name string) ([]fs.DirEntry, error) {
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
 func (vfs *DummyFS) ReadFile(name string) ([]byte, error) {
-	return vfs.utils.ReadFile(vfs, name)
+	return vfs.Utils.ReadFile(vfs, name)
 }
 
 // Readlink returns the destination of the named symbolic link.
@@ -432,18 +326,6 @@ func (vfs *DummyFS) Readlink(name string) (string, error) {
 	}
 
 	return "", &fs.PathError{Op: op, Path: name, Err: err}
-}
-
-// Rel returns a relative path that is lexically equivalent to targpath when
-// joined to basepath with an intervening separator. That is,
-// Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-// On success, the returned path will always be relative to basepath,
-// even if basepath and targpath share no elements.
-// An error is returned if targpath can't be made relative to basepath or if
-// knowing the current working directory would be necessary to compute it.
-// Rel calls Clean on the result.
-func (vfs *DummyFS) Rel(basepath, targpath string) (string, error) {
-	return vfs.utils.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
@@ -495,15 +377,6 @@ func (vfs *DummyFS) SetUser(name string) (UserReader, error) {
 	return nil, vfs.errPermDenied
 }
 
-// Split splits path immediately following the final Separator,
-// separating it into a directory and file name component.
-// If there is no Separator in path, Split returns an empty dir
-// and file set to path.
-// The returned values have the property that path = dir+file.
-func (vfs *DummyFS) Split(path string) (dir, file string) {
-	return vfs.utils.Split(path)
-}
-
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *DummyFS) Stat(name string) (fs.FileInfo, error) {
@@ -533,14 +406,7 @@ func (vfs *DummyFS) Symlink(oldname, newname string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfs *DummyFS) TempDir() string {
-	return vfs.utils.TempDir(vfs.User().Name())
-}
-
-// ToSlash returns the result of replacing each separator character
-// in path with a slash ('/') character. Multiple separators are
-// replaced by multiple slashes.
-func (vfs *DummyFS) ToSlash(path string) string {
-	return vfs.utils.ToSlash(path)
+	return vfs.Utils.TempDir(vfs.User().Name())
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
@@ -568,11 +434,6 @@ func (vfs *DummyFS) User() UserReader {
 	return DefaultUser
 }
 
-// Utils returns the file utils of the current file system.
-func (vfs *DummyFS) Utils() Utils {
-	return vfs.utils
-}
-
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
@@ -585,14 +446,14 @@ func (vfs *DummyFS) Utils() Utils {
 //
 // WalkDir does not follow symbolic links.
 func (vfs *DummyFS) WalkDir(root string, fn fs.WalkDirFunc) error {
-	return vfs.utils.WalkDir(vfs, root, fn)
+	return vfs.Utils.WalkDir(vfs, root, fn)
 }
 
 // WriteFile writes data to the named file, creating it if necessary.
 // If the file does not exist, WriteFile creates it with permissions perm (before umask);
 // otherwise WriteFile truncates it before writing, without changing permissions.
 func (vfs *DummyFS) WriteFile(name string, data []byte, perm fs.FileMode) error {
-	return vfs.utils.WriteFile(vfs, name, data, perm)
+	return vfs.Utils.WriteFile(vfs, name, data, perm)
 }
 
 // DummyFile functions.
