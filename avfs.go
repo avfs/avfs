@@ -523,8 +523,10 @@ type Typer interface {
 type File interface {
 	fs.File
 	fs.ReadDirFile
+	io.Reader
 	io.ReaderAt
 	io.StringWriter
+	io.Writer
 	io.WriterAt
 	io.WriteSeeker
 

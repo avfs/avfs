@@ -29,6 +29,11 @@ const (
 	slCountMax = 64
 )
 
+// MemIOFS implements a memory file system using the avfs.IOFS interface.
+type MemIOFS struct {
+	MemFS
+}
+
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
 	user               avfs.UserReader // user is the current user of the file system.

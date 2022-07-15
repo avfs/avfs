@@ -29,20 +29,23 @@ import (
 )
 
 var (
-	//  Tests that memfs.MemFS struct implements avfs.VFS interface.
+	// Tests that memfs.MemFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &memfs.MemFS{}
 
-	//  Tests that memfs.MemFile struct implements avfs.File interface.
+	// Tests that memfs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}
 
-	//  Tests that memfs.MemInfo struct implements fs.DirEntry interface.
+	// Tests that memfs.MemInfo struct implements fs.DirEntry interface.
 	_ fs.DirEntry = &memfs.MemInfo{}
 
-	//  Tests that memfs.MemInfo struct implements fs.FileInfo interface.
+	// Tests that memfs.MemInfo struct implements fs.FileInfo interface.
 	_ fs.FileInfo = &memfs.MemInfo{}
 
-	//  Tests that memfs.MemInfo struct implements avfs.SysStater interface.
+	// Tests that memfs.MemInfo struct implements avfs.SysStater interface.
 	_ avfs.SysStater = &memfs.MemInfo{}
+
+	// Tests that memfs.MemIOFS struct implements avfs.IOFS interface.
+	_ avfs.IOFS = &memfs.MemIOFS{}
 )
 
 func TestMemFS(t *testing.T) {
