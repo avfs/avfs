@@ -28,12 +28,10 @@ import (
 
 func ExampleNew() {
 	vfs := memfs.New(memfs.WithOSType(avfs.OsLinux))
-	ut := vfs.Utils()
-
 	tmpDir := vfs.TempDir()
 
 	_, err := vfs.Stat(tmpDir)
-	if ut.IsNotExist(err) {
+	if vfs.IsNotExist(err) {
 		fmt.Printf("%s does not exist", tmpDir)
 	}
 

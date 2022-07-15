@@ -38,7 +38,6 @@ func New(opts ...Option) *MemFS {
 		user:     avfs.DefaultUser,
 		memAttrs: ma,
 		umask:    avfs.UMask(),
-		utils:    avfs.OSUtils,
 	}
 
 	for _, opt := range opts {
@@ -46,16 +45,16 @@ func New(opts ...Option) *MemFS {
 	}
 
 	vfs.rootNode = vfs.createRootNode()
-	ut := vfs.utils
+
 	volumeName := ""
 
-	if ut.OSType() == avfs.OsWindows {
+	if vfs.OSType() == avfs.OsWindows {
 		ma.features ^= avfs.FeatChroot
 		ma.dirMode |= avfs.DefaultDirPerm
 		ma.fileMode |= avfs.DefaultFilePerm
 
 		volumeName = avfs.DefaultVolume
-		vfs.curDir = volumeName + string(ut.PathSeparator())
+		vfs.curDir = volumeName + string(vfs.PathSeparator())
 		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
 	} else {
@@ -71,14 +70,14 @@ func New(opts ...Option) *MemFS {
 		vfs.user = avfs.AdminUser
 		vfs.umask = 0
 
-		err := ut.CreateBaseDirs(vfs, volumeName)
+		err := vfs.CreateBaseDirs(vfs, volumeName)
 		if err != nil {
 			panic("CreateBaseDirs " + err.Error())
 		}
 
 		vfs.umask = um
 		vfs.user = u
-		vfs.curDir = ut.HomeDirUser(vfs, u)
+		vfs.curDir = vfs.HomeDirUser(vfs, u)
 	}
 
 	return vfs
@@ -97,11 +96,6 @@ func (vfs *MemFS) HasFeature(feature avfs.Features) bool {
 // Name returns the name of the fileSystem.
 func (vfs *MemFS) Name() string {
 	return vfs.memAttrs.name
-}
-
-// OSType returns the operating system type of the file system.
-func (vfs *MemFS) OSType() avfs.OSType {
-	return vfs.utils.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -137,7 +131,7 @@ func WithName(name string) Option {
 // WithOSType returns an option function which sets the OS type.
 func WithOSType(osType avfs.OSType) Option {
 	return func(vfs *MemFS) {
-		vfs.utils = avfs.NewUtils(osType)
+		vfs.InitUtils(osType)
 	}
 }
 

@@ -31,14 +31,14 @@ const (
 
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
-	user     avfs.UserReader // user is the current user of the file system.
-	rootNode *dirNode        // rootNode represent the root directory of the file system.
-	memAttrs *memAttrs       // memAttrs represents the file system attributes.
-	err      avfs.Errors     // err regroups errors depending on the OS emulated.
-	volumes  volumes         // volumes contains the volume names (for Windows only).
-	curDir   string          // curDir is the current directory.
-	umask    fs.FileMode     // umask is the user file creation mode mask.
-	utils    avfs.Utils      // utils regroups common functions used by emulated file systems.
+	user               avfs.UserReader // user is the current user of the file system.
+	rootNode           *dirNode        // rootNode represent the root directory of the file system.
+	memAttrs           *memAttrs       // memAttrs represents the file system attributes.
+	err                avfs.Errors     // err regroups errors depending on the OS emulated.
+	volumes            volumes         // volumes contains the volume names (for Windows only).
+	curDir             string          // curDir is the current directory.
+	umask              fs.FileMode     // umask is the user file creation mode mask.
+	avfs.Utils[*MemFS]                 // utils regroups common functions used by emulated file systems.
 }
 
 // memAttrs represents the file system attributes for MemFS.

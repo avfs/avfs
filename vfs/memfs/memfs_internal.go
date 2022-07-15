@@ -42,14 +42,13 @@ import (
 //	ErrNotADirectory when a file node is found while the path segmentation is not finished
 //	ErrTooManySymlinks when more than slCountMax symbolic link resolutions have been performed.
 func (vfs *MemFS) searchNode(path string, slMode slMode) (
-	parent *dirNode, child node, pi *avfs.PathIterator, err error,
+	parent *dirNode, child node, pi *avfs.PathIterator[*MemFS], err error,
 ) {
 	slCount := 0
 	slResolved := false
-	ut := vfs.utils
 
 	absPath, _ := vfs.Abs(path)
-	pi = ut.NewPathIterator(absPath)
+	pi = avfs.NewPathIterator[*MemFS](vfs, absPath)
 
 	volNode := vfs.rootNode
 
@@ -136,7 +135,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 				if slMode == slmStat && !slResolved {
 					slResolved = true
 
-					defer func(piSymLink avfs.PathIterator) { //nolint:gocritic // deferInLoop: Possible resource leak, 'defer' is called in the 'for' loop
+					defer func(piSymLink avfs.PathIterator[*MemFS]) { //nolint:gocritic // deferInLoop: Possible resource leak, 'defer' is called in the 'for' loop
 						pi = &piSymLink
 					}(*pi)
 				}
