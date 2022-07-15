@@ -19,13 +19,15 @@ package mountfs
 import (
 	"io/fs"
 	"os"
+
+	"github.com/avfs/avfs"
 )
 
 // pathToMount resolves a path to a mount point nmt and a path of the mounted file system.
 func (vfs *MountFS) pathToMount(path string) (mnt *mount, vfsPath string) {
 	absPath, _ := vfs.Abs(path)
 
-	pi := vfs.utils.NewPathIterator(absPath)
+	pi := avfs.NewPathIterator(vfs, absPath)
 	lm := vfs.rootMnt
 	lp := path
 

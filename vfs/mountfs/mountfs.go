@@ -33,15 +33,7 @@ import (
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
 func (vfs *MountFS) Abs(path string) (string, error) {
-	return vfs.utils.Abs(vfs, path)
-}
-
-// Base returns the last element of path.
-// Trailing path separators are removed before extracting the last element.
-// If the path is empty, Base returns ".".
-// If the path consists entirely of separators, Base returns a single separator.
-func (vfs *MountFS) Base(path string) string {
-	return vfs.utils.Base(path)
+	return vfs.Utils.Abs(vfs, path)
 }
 
 // Chdir changes the current working directory to the named directory.
@@ -124,40 +116,24 @@ func (vfs *MountFS) Chtimes(name string, atime, mtime time.Time) error {
 	return mnt.restoreError(err)
 }
 
-// Clean returns the shortest path name equivalent to path
-// by purely lexical processing. It applies the following rules
-// iteratively until no further processing can be done:
-//
-//  1. Replace multiple Separator elements with a single one.
-//  2. Eliminate each . path name element (the current directory).
-//  3. Eliminate each inner .. path name element (the parent directory)
-//     along with the non-.. element that precedes it.
-//  4. Eliminate .. elements that begin a rooted path:
-//     that is, replace "/.." by "/" at the beginning of a path,
-//     assuming Separator is '/'.
-//
-// The returned path ends in a slash only if it represents a root directory,
-// such as "/" on Unix or `C:\` on Windows.
-//
-// Finally, any occurrences of slash are replaced by Separator.
-//
-// If the result of this process is an empty string, Clean
-// returns the string ".".
-//
-// See also Rob Pike, “Lexical File Names in Plan 9 or
-// Getting Dot-Dot Right,”
-// https://9p.io/sys/doc/lexnames.html
-func (vfs *MountFS) Clean(path string) string {
-	return vfs.utils.Clean(path)
-}
-
 // Create creates or truncates the named file. If the file already exists,
 // it is truncated. If the file does not exist, it is created with mode 0666
 // (before umask). If successful, methods on the returned File can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
 func (vfs *MountFS) Create(name string) (avfs.File, error) {
-	return vfs.utils.Create(vfs, name)
+	return vfs.Utils.Create(vfs, name)
+}
+
+// CreateBaseDirs creates base directories on a file system.
+func (vfs *MountFS) CreateBaseDirs(basePath string) error {
+	return vfs.Utils.CreateBaseDirs(vfs, basePath)
+}
+
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (vfs *MountFS) CreateHomeDir(u avfs.UserReader) (string, error) {
+	return vfs.Utils.CreateHomeDir(vfs, u)
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -169,17 +145,7 @@ func (vfs *MountFS) Create(name string) (avfs.File, error) {
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func (vfs *MountFS) CreateTemp(dir, pattern string) (avfs.File, error) {
-	return vfs.utils.CreateTemp(vfs, dir, pattern)
-}
-
-// Dir returns all but the last element of path, typically the path's directory.
-// After dropping the final element, Dir calls Clean on the path and trailing
-// slashes are removed.
-// If the path is empty, Dir returns ".".
-// If the path consists entirely of separators, Dir returns a single separator.
-// The returned path does not end in a separator unless it is the root directory.
-func (vfs *MountFS) Dir(path string) string {
-	return vfs.utils.Dir(path)
+	return vfs.Utils.CreateTemp(vfs, dir, pattern)
 }
 
 // EvalSymlinks returns the path name after the evaluation of any symbolic
@@ -197,13 +163,6 @@ func (vfs *MountFS) EvalSymlinks(path string) (string, error) {
 	}
 
 	return "", &fs.PathError{Op: op, Path: path, Err: err}
-}
-
-// FromSlash returns the result of replacing each slash ('/') character
-// in path with a separator character. Multiple slashes are replaced
-// by multiple separators.
-func (vfs *MountFS) FromSlash(path string) string {
-	return vfs.utils.FromSlash(path)
 }
 
 // Getwd returns a rooted name link corresponding to the
@@ -225,7 +184,7 @@ func (vfs *MountFS) Getwd() (dir string, err error) {
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
 func (vfs *MountFS) Glob(pattern string) (matches []string, err error) {
-	matches, err = vfs.utils.Glob(vfs, pattern)
+	matches, err = vfs.Utils.Glob(vfs, pattern)
 
 	/*
 		TODO : restore path if possible or disable function
@@ -241,23 +200,6 @@ func (vfs *MountFS) Glob(pattern string) (matches []string, err error) {
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *MountFS) Idm() avfs.IdentityMgr {
 	return vfs.rootFS.Idm()
-}
-
-// IsAbs reports whether the path is absolute.
-func (vfs *MountFS) IsAbs(path string) bool {
-	return vfs.utils.IsAbs(path)
-}
-
-// IsPathSeparator reports whether c is a directory separator character.
-func (vfs *MountFS) IsPathSeparator(c uint8) bool {
-	return vfs.utils.IsPathSeparator(c)
-}
-
-// Join joins any number of path elements into a single path, adding a
-// separating slash if necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
-func (vfs *MountFS) Join(elem ...string) string {
-	return vfs.utils.Join(elem...)
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -301,34 +243,6 @@ func (vfs *MountFS) Lstat(path string) (fs.FileInfo, error) {
 	return info, mnt.restoreError(err)
 }
 
-// Match reports whether name matches the shell file name pattern.
-// The pattern syntax is:
-//
-//	pattern:
-//		{ term }
-//	term:
-//		'*'         matches any sequence of non-Separator characters
-//		'?'         matches any single non-Separator character
-//		'[' [ '^' ] { character-range } ']'
-//		            character class (must be non-empty)
-//		c           matches character c (c != '*', '?', '\\', '[')
-//		'\\' c      matches character c
-//
-//	character-range:
-//		c           matches character c (c != '\\', '-', ']')
-//		'\\' c      matches character c
-//		lo '-' hi   matches character c for lo <= c <= hi
-//
-// Match requires pattern to match all of name, not just a substring.
-// The only possible returned error is ErrBadPattern, when pattern
-// is malformed.
-//
-// On Windows, escaping is disabled. Instead, '\\' is treated as
-// path separator.
-func (vfs *MountFS) Match(pattern, name string) (matched bool, err error) {
-	return vfs.utils.Match(pattern, name)
-}
-
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
 // If there is an error, it will be of type *PathError.
@@ -357,11 +271,10 @@ func (vfs *MountFS) Mkdir(name string, perm fs.FileMode) error {
 // and returns nil.
 func (vfs *MountFS) MkdirAll(path string, perm fs.FileMode) error {
 	absPath, _ := vfs.rootFS.Abs(path)
-	ut := vfs.utils
 	mnt := vfs.rootMnt
 	mntPos := 0
 
-	pi := ut.NewPathIterator(absPath)
+	pi := avfs.NewPathIterator(vfs, absPath)
 	for pi.Next() {
 		m, ok := vfs.mounts[pi.LeftPart()]
 		if ok {
@@ -390,7 +303,7 @@ func (vfs *MountFS) MkdirAll(path string, perm fs.FileMode) error {
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func (vfs *MountFS) MkdirTemp(dir, prefix string) (name string, err error) {
-	return vfs.utils.MkdirTemp(vfs, dir, prefix)
+	return vfs.Utils.MkdirTemp(vfs, dir, prefix)
 }
 
 // Open opens the named file for reading. If successful, methods on
@@ -398,7 +311,7 @@ func (vfs *MountFS) MkdirTemp(dir, prefix string) (name string, err error) {
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
 func (vfs *MountFS) Open(path string) (avfs.File, error) {
-	return vfs.utils.Open(vfs, path)
+	return vfs.Utils.Open(vfs, path)
 }
 
 // OpenFile is the generalized open call; most users will use Open
@@ -424,15 +337,10 @@ func (vfs *MountFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 	return mf, nil
 }
 
-// PathSeparator return the OS-specific path separator.
-func (vfs *MountFS) PathSeparator() uint8 {
-	return vfs.utils.PathSeparator()
-}
-
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
 func (vfs *MountFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
-	return vfs.utils.ReadDir(vfs, dirname)
+	return vfs.Utils.ReadDir(vfs, dirname)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
@@ -440,7 +348,7 @@ func (vfs *MountFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
 func (vfs *MountFS) ReadFile(filename string) ([]byte, error) {
-	return vfs.utils.ReadFile(vfs, filename)
+	return vfs.Utils.ReadFile(vfs, filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
@@ -453,18 +361,6 @@ func (vfs *MountFS) Readlink(name string) (string, error) {
 	}
 
 	return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
-}
-
-// Rel returns a relative path that is lexically equivalent to targpath when
-// joined to basepath with an intervening separator. That is,
-// Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-// On success, the returned path will always be relative to basepath,
-// even if basepath and targpath share no elements.
-// An error is returned if targpath can't be made relative to basepath or if
-// knowing the current working directory would be necessary to compute it.
-// Rel calls Clean on the result.
-func (vfs *MountFS) Rel(basepath, targpath string) (string, error) {
-	return vfs.utils.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
@@ -533,15 +429,6 @@ func (vfs *MountFS) SetUser(name string) (avfs.UserReader, error) {
 	return vfs.rootFS.SetUser(name)
 }
 
-// Split splits path immediately following the final Separator,
-// separating it into a directory and file name component.
-// If there is no Separator in path, Split returns an empty dir
-// and file set to path.
-// The returned values have the property that path = dir+file.
-func (vfs *MountFS) Split(path string) (dir, file string) {
-	return vfs.utils.Split(path)
-}
-
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *MountFS) Stat(path string) (fs.FileInfo, error) {
@@ -576,13 +463,6 @@ func (vfs *MountFS) TempDir() string {
 	return vfs.rootFS.TempDir()
 }
 
-// ToSlash returns the result of replacing each separator character
-// in path with a slash ('/') character. Multiple separators are
-// replaced by multiple slashes.
-func (vfs *MountFS) ToSlash(path string) string {
-	return vfs.utils.ToSlash(path)
-}
-
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *MountFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 	return vfs.rootFS.ToSysStat(info)
@@ -609,11 +489,6 @@ func (vfs *MountFS) User() avfs.UserReader {
 	return vfs.rootFS.User()
 }
 
-// Utils returns the file utils of the current file system.
-func (vfs *MountFS) Utils() avfs.Utils {
-	return vfs.utils
-}
-
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
@@ -626,7 +501,7 @@ func (vfs *MountFS) Utils() avfs.Utils {
 //
 // WalkDir does not follow symbolic links.
 func (vfs *MountFS) WalkDir(root string, fn fs.WalkDirFunc) error {
-	err := vfs.utils.WalkDir(vfs, root, fn)
+	err := vfs.Utils.WalkDir(vfs, root, fn)
 
 	return vfs.rootMnt.restoreError(err)
 }
@@ -635,7 +510,7 @@ func (vfs *MountFS) WalkDir(root string, fn fs.WalkDirFunc) error {
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
 func (vfs *MountFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
-	err := vfs.utils.WriteFile(vfs, filename, data, perm)
+	err := vfs.Utils.WriteFile(vfs, filename, data, perm)
 
 	return vfs.rootMnt.restoreError(err)
 }

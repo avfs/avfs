@@ -32,7 +32,7 @@ type MountFS struct {
 	name     string
 	features avfs.Features
 	mu       sync.RWMutex
-	utils    avfs.Utils
+	avfs.Utils[*MountFS]
 }
 
 // mounts are the mount points of the MountFS file system.
