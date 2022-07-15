@@ -109,8 +109,8 @@ func WithMainDirs() Option {
 }
 
 // WithOSType returns a function setting the OS type of the file system.
-func WithOSType(ost avfs.OSType) Option {
+func WithOSType(osType avfs.OSType) Option {
 	return func(vfs *OrefaFS) {
-		vfs.InitUtils(ost)
+		vfs.InitUtils(osType)
 	}
 }

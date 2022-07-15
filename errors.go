@@ -212,8 +212,8 @@ type Errors struct {
 }
 
 // SetOSType sets errors depending on the operating system.
-func (e *Errors) SetOSType(ost OSType) {
-	switch ost {
+func (e *Errors) SetOSType(osType OSType) {
+	switch osType {
 	case OsWindows:
 		e.BadFileDesc = ErrWinAccessDenied
 		e.DirNotEmpty = ErrWinDirNotEmpty

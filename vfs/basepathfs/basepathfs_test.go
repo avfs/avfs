@@ -105,8 +105,8 @@ func TestBasepathFSOSType(t *testing.T) {
 	vfsBase := memfs.New(memfs.WithMainDirs())
 	vfs := basepathfs.New(vfsBase, vfsBase.TempDir())
 
-	ost := vfs.OSType()
-	if ost != vfsBase.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", vfsBase.OSType(), ost)
+	osType := vfs.OSType()
+	if osType != vfsBase.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", vfsBase.OSType(), osType)
 	}
 }

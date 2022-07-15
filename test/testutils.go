@@ -1386,22 +1386,22 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	cases := []struct {
-		path string
-		dir  string
-		file string
-		ost  avfs.OSType
+		path   string
+		dir    string
+		file   string
+		osType avfs.OSType
 	}{
-		{ost: avfs.OsLinux, path: "/", dir: "", file: ""},
-		{ost: avfs.OsLinux, path: "/home", dir: "", file: "home"},
-		{ost: avfs.OsLinux, path: "/home/user", dir: "/home", file: "user"},
-		{ost: avfs.OsLinux, path: "/usr/lib/xorg", dir: "/usr/lib", file: "xorg"},
-		{ost: avfs.OsWindows, path: `C:\`, dir: `C:`, file: ""},
-		{ost: avfs.OsWindows, path: `C:\Users`, dir: `C:`, file: "Users"},
-		{ost: avfs.OsWindows, path: `C:\Users\Default`, dir: `C:\Users`, file: "Default"},
+		{osType: avfs.OsLinux, path: "/", dir: "", file: ""},
+		{osType: avfs.OsLinux, path: "/home", dir: "", file: "home"},
+		{osType: avfs.OsLinux, path: "/home/user", dir: "/home", file: "user"},
+		{osType: avfs.OsLinux, path: "/usr/lib/xorg", dir: "/usr/lib", file: "xorg"},
+		{osType: avfs.OsWindows, path: `C:\`, dir: `C:`, file: ""},
+		{osType: avfs.OsWindows, path: `C:\Users`, dir: `C:`, file: "Users"},
+		{osType: avfs.OsWindows, path: `C:\Users\Default`, dir: `C:\Users`, file: "Default"},
 	}
 
 	for _, c := range cases {
-		if c.ost != vfs.OSType() {
+		if c.osType != vfs.OSType() {
 			continue
 		}
 

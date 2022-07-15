@@ -903,8 +903,8 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 
 	canTest := len(osTypes) == 0
 
-	for _, ost := range osTypes {
-		if ost == avfs.CurrentOSType {
+	for _, osType := range osTypes {
+		if osType == avfs.CurrentOSType {
 			canTest = true
 		}
 	}
@@ -965,8 +965,8 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 
 	canTest := len(osTypes) == 0
 
-	for _, ost := range osTypes {
-		if ost == avfs.CurrentOSType {
+	for _, osType := range osTypes {
+		if osType == avfs.CurrentOSType {
 			canTest = true
 		}
 	}
@@ -1033,8 +1033,8 @@ func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkEr
 
 	canTest := len(osTypes) == 0
 
-	for _, ost := range osTypes {
-		if ost == avfs.CurrentOSType {
+	for _, osType := range osTypes {
+		if osType == avfs.CurrentOSType {
 			canTest = true
 		}
 	}
@@ -1093,8 +1093,8 @@ func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkE
 
 	canTest := len(osTypes) == 0
 
-	for _, ost := range osTypes {
-		if ost == avfs.CurrentOSType {
+	for _, osType := range osTypes {
+		if osType == avfs.CurrentOSType {
 			canTest = true
 		}
 	}

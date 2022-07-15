@@ -140,9 +140,9 @@ func TestMemFSConfig(t *testing.T) {
 		t.Errorf("Name : want name to be empty, got %v", name)
 	}
 
-	ost := vfs.OSType()
-	if ost != avfs.CurrentOSType {
-		t.Errorf("OSType : want os type to be %v, got %v", avfs.CurrentOSType, ost)
+	osType := vfs.OSType()
+	if osType != avfs.CurrentOSType {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.CurrentOSType, osType)
 	}
 }
 

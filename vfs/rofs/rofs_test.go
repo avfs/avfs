@@ -68,8 +68,8 @@ func TestRoFSConfig(t *testing.T) {
 		t.Errorf("Name : want name to be empty, got %v", name)
 	}
 
-	ost := vfs.OSType()
-	if ost != vfsWrite.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", vfsWrite.OSType(), ost)
+	osType := vfs.OSType()
+	if osType != vfsWrite.OSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", vfsWrite.OSType(), osType)
 	}
 }
