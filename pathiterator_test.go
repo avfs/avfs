@@ -23,71 +23,10 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
+// TestPathIterator tests PathIterator methods.
 func TestPathIterator(t *testing.T) {
-	piTests := []struct {
-		path  string
-		parts []string
-	}{
-		{
-			path:  "/",
-			parts: nil,
-		},
-		{
-			path:  "/Hello",
-			parts: []string{"Hello"},
-		},
-		{
-			path:  "/Hello/World",
-			parts: []string{"Hello", "World"},
-		},
-		{
-			path:  "/एक/दो/तीन/चार/पांच",
-			parts: []string{"एक", "दो", "तीन", "चार", "पांच"},
-		},
-	}
-
 	vfs := memfs.New()
 
-	for _, piTest := range piTests {
-		path := vfs.FromUnixPath(avfs.DefaultVolume, piTest.path)
-		i := 0
-
-		pi := avfs.NewPathIterator[*memfs.MemFS](vfs, path)
-		for ; pi.Next(); i++ {
-			if i >= len(piTest.parts) {
-				continue
-			}
-
-			if pi.Part() != piTest.parts[i] {
-				t.Errorf("%s : want Part %d to be %s, got %s", path, i, piTest.parts[i], pi.Part())
-			}
-
-			if pi.Left() != piTest.path[:pi.Start()] {
-				t.Errorf("%s : want Left %d to be %s, got %s", path, i, piTest.path[:pi.Start()], pi.Left())
-			}
-
-			if pi.LeftPart() != piTest.path[:pi.End()] {
-				t.Errorf("%s : want LeftPart %d to be %s, got %s", path, i, piTest.path[:pi.End()], pi.LeftPart())
-			}
-
-			if pi.Right() != piTest.path[pi.End():] {
-				t.Errorf("%s : want Right %d to be %s, got %s", path, i, piTest.path[pi.End():], pi.Right())
-			}
-
-			if pi.RightPart() != piTest.path[pi.Start():] {
-				t.Errorf("%s : want Right %d to be %s, got %s", path, i, piTest.path[pi.Start():], pi.RightPart())
-			}
-		}
-
-		if i != len(piTest.parts) {
-			t.Errorf("%s : want %d parts, got %d parts", path, len(piTest.parts), i)
-		}
-	}
-}
-
-/*
-// TestPathIterator tests PathIterator methods.
-func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 	t.Run("PathIterator", func(t *testing.T) {
 		cases := []struct {
 			path   string
@@ -105,12 +44,18 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 		}
 
 		for _, c := range cases {
+			if c.osType != avfs.CurrentOSType {
+				continue
+			}
 
-			pi := avfs.NewPathIterator[vfs](c.path)
+			pi := avfs.NewPathIterator(vfs, c.path)
 			i := 0
-			gotPath := pi.VolumeName() + string(ut.PathSeparator())
 
 			for ; pi.Next(); i++ {
+				if i >= len(c.parts) {
+					continue
+				}
+
 				if pi.Part() != c.parts[i] {
 					t.Errorf("%s : want part %d to be %s, got %s", c.path, i, c.parts[i], pi.Part())
 				}
@@ -139,12 +84,10 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 				if pi.IsLast() != wantIsLast {
 					t.Errorf("%s : want IsLast %d to be %t, got %t", c.path, i, wantIsLast, pi.IsLast())
 				}
-
-				gotPath = ut.Join(gotPath, pi.Part())
 			}
 
-			if gotPath != pi.Path() {
-				t.Errorf("%s : want path to be %s, got %s", c.path, c.path, gotPath)
+			if i != len(c.parts) {
+				t.Errorf("%s : want %d parts, got %d parts", pi.Path(), len(c.parts), i)
 			}
 		}
 	})
@@ -193,16 +136,11 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 		}
 
 		for _, c := range cases {
-			var ut avfs.Utils
-
-			switch c.osType {
-			case avfs.OsLinux:
-				ut = utLinux
-			case avfs.OsWindows:
-				ut = utWindows
+			if c.osType != avfs.CurrentOSType {
+				continue
 			}
 
-			pi := ut.NewPathIterator(c.path)
+			pi := avfs.NewPathIterator(vfs, c.path)
 			for pi.Next() {
 				if pi.Part() == c.part {
 					reset := pi.ReplacePart(c.newPart)
@@ -220,5 +158,3 @@ func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
 		}
 	})
 }
-
-*/
