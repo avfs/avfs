@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfs/memfs"
 )
 
 func TestPathIterator(t *testing.T) {
@@ -45,13 +46,13 @@ func TestPathIterator(t *testing.T) {
 		},
 	}
 
-	ut := avfs.OSUtils
+	vfs := memfs.New()
 
 	for _, piTest := range piTests {
-		path := ut.FromUnixPath("C:", piTest.path)
+		path := vfs.FromUnixPath(avfs.DefaultVolume, piTest.path)
 		i := 0
 
-		pi := ut.NewPathIterator(path)
+		pi := avfs.NewPathIterator[*memfs.MemFS](vfs, path)
 		for ; pi.Next(); i++ {
 			if i >= len(piTest.parts) {
 				continue

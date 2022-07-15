@@ -23,65 +23,65 @@ import "strings"
 // The volume name (for Windows) is not considered as part of the path
 // it is returned by VolumeName.
 //
-//  ut := avfs.NewUtils(avfs.OsWindows)
+// Sample code :
+//
+//	ut := avfs.NewUtils(avfs.OsWindows)
 //	pi := ut.NewPathIterator(path)
-// 	for pi.Next() {
-//		fmt.Println(pi.Part())
+//	for pi.Next() {
+//	  fmt.Println(pi.Part())
 //	}
 //
 // The path below shows the different results of the PathIterator methods
 // when thirdPart is the current Part :
 //
 // /firstPart/secondPart/thirdPart/fourthPart/fifthPart
-//                      |- Part --|
-//					  Start      End
+//
+// ..........................|- Part --|
+// ........................Start      End
 // |------- Left -------|         |------ Right ------|
 // |----- LeftPart ---------------|
-//                      |----------- RightPart -------|
-type PathIterator struct {
+// .....................|----------- RightPart -------|
+type PathIterator[T VFS] struct {
 	path          string
 	start         int
 	end           int
 	volumeNameLen int
-	ut            Utils
+	ut            Utils[T]
 }
 
 // NewPathIterator creates a new path iterator from an absolute path.
-func (ut *Utils) NewPathIterator(path string) *PathIterator {
-	pi := PathIterator{
-		path:          path,
-		volumeNameLen: ut.VolumeNameLen(path),
-		ut:            *ut,
-	}
-
+func NewPathIterator[T VFS](vfs T, path string) *PathIterator[T] {
+	pi := PathIterator[T]{path: path}
+	pi.ut.InitUtils(vfs.OSType())
+	pi.volumeNameLen = pi.ut.VolumeNameLen(path)
 	pi.Reset()
 
 	return &pi
 }
 
 // End returns the end position of the current Part.
-func (pi *PathIterator) End() int {
+func (pi *PathIterator[_]) End() int {
 	return pi.end
 }
 
 // IsLast returns true if the current Part is the last one.
-func (pi *PathIterator) IsLast() bool {
+func (pi *PathIterator[_]) IsLast() bool {
 	return pi.end == len(pi.path)
 }
 
 // Left returns the left path of the current Part.
-func (pi *PathIterator) Left() string {
+func (pi *PathIterator[_]) Left() string {
 	return pi.path[:pi.start]
 }
 
 // LeftPart returns the left path and current Part.
-func (pi *PathIterator) LeftPart() string {
+func (pi *PathIterator[_]) LeftPart() string {
 	return pi.path[:pi.end]
 }
 
 // Next iterates through the next Part of the path.
 // It returns false if there's no more parts.
-func (pi *PathIterator) Next() bool {
+func (pi *PathIterator[_]) Next() bool {
 	pi.start = pi.end + 1
 	if pi.start >= len(pi.path) {
 		pi.end = pi.start
@@ -100,19 +100,19 @@ func (pi *PathIterator) Next() bool {
 }
 
 // Part returns the current Part.
-func (pi *PathIterator) Part() string {
+func (pi *PathIterator[_]) Part() string {
 	return pi.path[pi.start:pi.end]
 }
 
 // Path returns the path to iterate.
-func (pi *PathIterator) Path() string {
+func (pi *PathIterator[_]) Path() string {
 	return pi.path
 }
 
 // ReplacePart replaces the current Part of the path with the new path.
 // If the path iterator has been reset it returns true.
 // It can be used in symbolic link replacement.
-func (pi *PathIterator) ReplacePart(newPath string) bool {
+func (pi *PathIterator[_]) ReplacePart(newPath string) bool {
 	ut := pi.ut
 	oldPath := pi.path
 
@@ -136,32 +136,32 @@ func (pi *PathIterator) ReplacePart(newPath string) bool {
 }
 
 // Reset resets the iterator.
-func (pi *PathIterator) Reset() {
+func (pi *PathIterator[_]) Reset() {
 	pi.end = pi.volumeNameLen
 }
 
 // Right returns the right path of the current Part.
-func (pi *PathIterator) Right() string {
+func (pi *PathIterator[_]) Right() string {
 	return pi.path[pi.end:]
 }
 
 // RightPart returns the right path and the current Part.
-func (pi *PathIterator) RightPart() string {
+func (pi *PathIterator[_]) RightPart() string {
 	return pi.path[pi.start:]
 }
 
 // Start returns the start position of the current Part.
-func (pi *PathIterator) Start() int {
+func (pi *PathIterator[_]) Start() int {
 	return pi.start
 }
 
 // VolumeName returns leading volume name.
-func (pi *PathIterator) VolumeName() string {
+func (pi *PathIterator[_]) VolumeName() string {
 	return pi.path[:pi.volumeNameLen]
 }
 
 // VolumeNameLen returns length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func (pi *PathIterator) VolumeNameLen() int {
+func (pi *PathIterator[_]) VolumeNameLen() int {
 	return pi.volumeNameLen
 }
