@@ -532,16 +532,7 @@ func (ut *Utils[_]) IsAbs(path string) bool {
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrExist).
 func (ut *Utils[_]) IsExist(err error) bool {
-	ue := errors.Unwrap(err)
-	if ue == nil {
-		ue = err
-	}
-
-	if e, ok := ue.(ErrorIdentifier); ok {
-		return e.Is(fs.ErrExist)
-	}
-
-	return os.IsExist(err)
+	return errors.Is(err, fs.ErrExist)
 }
 
 // IsNotExist returns a boolean indicating whether the error is known to
@@ -551,16 +542,7 @@ func (ut *Utils[_]) IsExist(err error) bool {
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrNotExist).
 func (ut *Utils[_]) IsNotExist(err error) bool {
-	ue := errors.Unwrap(err)
-	if ue == nil {
-		ue = err
-	}
-
-	if e, ok := ue.(ErrorIdentifier); ok {
-		return e.Is(fs.ErrNotExist)
-	}
-
-	return os.IsNotExist(err)
+	return errors.Is(err, fs.ErrNotExist)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
