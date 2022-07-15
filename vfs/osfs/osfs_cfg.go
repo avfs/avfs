@@ -25,10 +25,10 @@ func New(opts ...Option) *OsFS {
 	vfs := &OsFS{
 		idm:      avfs.NotImplementedIdm,
 		features: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs | avfs.FeatSymlink | avfs.FeatHardlink,
-		utils:    avfs.OSUtils,
 	}
 
-	if vfs.utils.OSType() == avfs.OsLinux {
+	vfs.InitUtils(avfs.CurrentOSType)
+	if vfs.OSType() == avfs.OsLinux {
 		vfs.features |= avfs.FeatChroot
 	}
 
@@ -43,7 +43,7 @@ func New(opts ...Option) *OsFS {
 
 // setErrors sets OsFS errors depending on the operating system.
 func (vfs *OsFS) setErrors() {
-	switch vfs.utils.OSType() {
+	switch vfs.OSType() {
 	case avfs.OsWindows:
 		vfs.err.PermDenied = avfs.ErrWinAccessDenied
 	default:
@@ -64,11 +64,6 @@ func (vfs *OsFS) HasFeature(feature avfs.Features) bool {
 // Name returns the name of the fileSystem.
 func (vfs *OsFS) Name() string {
 	return ""
-}
-
-// OSType returns the operating system type of the file system.
-func (vfs *OsFS) OSType() avfs.OSType {
-	return vfs.utils.OSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.

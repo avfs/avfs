@@ -23,7 +23,7 @@ type OsFS struct {
 	idm      avfs.IdentityMgr
 	err      OsErrors
 	features avfs.Features
-	utils    avfs.Utils
+	avfs.Utils[*OsFS]
 }
 
 // OsErrors regroups the errors returned by OsFS functions.

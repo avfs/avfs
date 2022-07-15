@@ -83,7 +83,7 @@ func (vfs *OsFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *OsFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.utils.OSType() != avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.OSType() != avfs.OsWindows {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -230,7 +230,7 @@ func (vfs *OsFS) Join(elem ...string) string {
 func (vfs *OsFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.utils.OSType() != avfs.OsWindows {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.OSType() != avfs.OsWindows {
 		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
 	}
 
@@ -472,11 +472,6 @@ func (vfs *OsFS) UMask() fs.FileMode {
 // If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *OsFS) User() avfs.UserReader {
 	return User()
-}
-
-// Utils returns the file utils of the current file system.
-func (vfs *OsFS) Utils() avfs.Utils {
-	return avfs.OSUtils
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
