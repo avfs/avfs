@@ -27,7 +27,7 @@ func New(opts ...Option) *OsFS {
 		features: avfs.FeatBasicFs | avfs.FeatRealFS | avfs.FeatMainDirs | avfs.FeatSymlink | avfs.FeatHardlink,
 	}
 
-	vfs.InitUtils(avfs.CurrentOSType)
+	vfs.InitUtils(avfs.CurrentOSType())
 
 	if vfs.OSType() == avfs.OsLinux {
 		vfs.features |= avfs.FeatChroot

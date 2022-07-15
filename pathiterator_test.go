@@ -44,7 +44,7 @@ func TestPathIterator(t *testing.T) {
 		}
 
 		for _, c := range cases {
-			if c.osType != avfs.CurrentOSType {
+			if c.osType != avfs.CurrentOSType() {
 				continue
 			}
 
@@ -136,7 +136,7 @@ func TestPathIterator(t *testing.T) {
 		}
 
 		for _, c := range cases {
-			if c.osType != avfs.CurrentOSType {
+			if c.osType != avfs.CurrentOSType() {
 				continue
 			}
 

@@ -19,7 +19,6 @@ package avfs
 import (
 	"io/fs"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"unicode/utf8"
@@ -57,20 +56,6 @@ func (ut *Utils[_]) cleanGlobPathWindows(path string) (prefixLen int, cleaned st
 		}
 
 		return vollen, path[0 : len(path)-1] // chop off trailing separator
-	}
-}
-
-// currentOSType returns the current OSType.
-func currentOSType() OSType {
-	switch runtime.GOOS {
-	case "linux":
-		return OsLinux
-	case "darwin":
-		return OsDarwin
-	case "windows":
-		return OsWindows
-	default:
-		return OsUnknown
 	}
 }
 

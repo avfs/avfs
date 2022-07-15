@@ -22,11 +22,31 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 )
 
-var CurrentOSType = currentOSType() //nolint:gochecknoglobals // Store the current OS Type.
+// CurrentOSType returns the current OSType.
+func CurrentOSType() OSType {
+	return currentOSType
+}
+
+var currentOSType = initOSsType() //nolint:gochecknoglobals // Store the current OS Type.
+
+// initOSsType initialize the current OSType.
+func initOSsType() OSType {
+	switch runtime.GOOS {
+	case "linux":
+		return OsLinux
+	case "darwin":
+		return OsDarwin
+	case "windows":
+		return OsWindows
+	default:
+		return OsUnknown
+	}
+}
 
 // Utils regroups common functions used by emulated file systems.
 //

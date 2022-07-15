@@ -1422,7 +1422,7 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umaskTest := umaskSet
 
-	if avfs.CurrentOSType == avfs.OsWindows {
+	if avfs.CurrentOSType() == avfs.OsWindows {
 		umaskTest = defaultUmask
 	}
 

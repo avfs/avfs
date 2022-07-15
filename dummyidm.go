@@ -21,20 +21,20 @@ import "os"
 var (
 	// AdminUser represents an administrator user.
 	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
-		name: AdminUserName(CurrentOSType),
+		name: AdminUserName(CurrentOSType()),
 		uid:  0,
 		gid:  0,
 	}
 
 	// DefaultGroup represents the default group.
 	DefaultGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
-		name: DefaultGroupName(CurrentOSType),
+		name: DefaultGroupName(CurrentOSType()),
 		gid:  MaxInt,
 	}
 
 	// DefaultUser represents the default user.
 	DefaultUser = &DummyUser{ //nolint:gochecknoglobals // Used as default user for other file systems.
-		name: DefaultUserName(CurrentOSType),
+		name: DefaultUserName(CurrentOSType()),
 		uid:  MaxInt,
 		gid:  MaxInt,
 	}

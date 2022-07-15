@@ -29,9 +29,9 @@ import (
 func (sfs *SuiteFS) TestRace(t *testing.T) {
 	vfs := sfs.vfsTest
 
-	if vfs.OSType() != avfs.CurrentOSType {
+	if vfs.OSType() != avfs.CurrentOSType() {
 		t.Skipf("TestRace : Current OSType = %s is different from %s OSType = %s, skipping race tests",
-			avfs.CurrentOSType, vfs.Type(), vfs.OSType())
+			avfs.CurrentOSType(), vfs.Type(), vfs.OSType())
 	}
 
 	sfs.RunTests(t, UsrTest,

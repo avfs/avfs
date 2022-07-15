@@ -54,13 +54,13 @@ func (sIdm *SuiteIdm) TestAdmin(t *testing.T) {
 
 	t.Run("Admin", func(t *testing.T) {
 		ag := idm.AdminGroup()
-		if ag.Name() != avfs.AdminGroupName(avfs.CurrentOSType) {
-			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.AdminGroupName(avfs.CurrentOSType), ag.Name())
+		if ag.Name() != avfs.AdminGroupName(avfs.CurrentOSType()) {
+			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.AdminGroupName(avfs.CurrentOSType()), ag.Name())
 		}
 
 		au := idm.AdminUser()
-		if au.Name() != avfs.AdminUserName(avfs.CurrentOSType) {
-			t.Errorf("AdminUser : want name to be %s, got %s", avfs.AdminUserName(avfs.CurrentOSType), au.Name())
+		if au.Name() != avfs.AdminUserName(avfs.CurrentOSType()) {
+			t.Errorf("AdminUser : want name to be %s, got %s", avfs.AdminUserName(avfs.CurrentOSType()), au.Name())
 		}
 	})
 }

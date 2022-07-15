@@ -40,7 +40,7 @@ func New(opts ...Option) *MemFS {
 		umask:    avfs.UMask(),
 	}
 
-	vfs.InitUtils(avfs.CurrentOSType)
+	vfs.InitUtils(avfs.CurrentOSType())
 
 	for _, opt := range opts {
 		opt(vfs)

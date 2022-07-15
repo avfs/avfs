@@ -48,7 +48,7 @@ func NewDummyFS() *DummyFS {
 		opLstat:       "lstat",
 	}
 
-	vfs.InitUtils(CurrentOSType)
+	vfs.InitUtils(CurrentOSType())
 
 	if vfs.OSType() == OsWindows {
 		vfs.errPermDenied = ErrWinAccessDenied
