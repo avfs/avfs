@@ -46,14 +46,14 @@ var (
 )
 
 func TestMemFS(t *testing.T) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs(), memfs.WithOSType(avfs.OSUtils.OSType()))
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs(), memfs.WithOSType(avfs.CurrentOSType))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithOSType(avfs.OSUtils.OSType()))
+	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithOSType(avfs.CurrentOSType))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
@@ -141,8 +141,8 @@ func TestMemFSConfig(t *testing.T) {
 	}
 
 	ost := vfs.OSType()
-	if ost != avfs.OSUtils.OSType() {
-		t.Errorf("OSType : want os type to be %v, got %v", avfs.OSUtils.OSType(), ost)
+	if ost != avfs.CurrentOSType {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.CurrentOSType, ost)
 	}
 }
 

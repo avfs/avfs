@@ -40,6 +40,8 @@ func New(opts ...Option) *MemFS {
 		umask:    avfs.UMask(),
 	}
 
+	vfs.InitUtils(avfs.CurrentOSType)
+
 	for _, opt := range opts {
 		opt(vfs)
 	}
@@ -70,7 +72,7 @@ func New(opts ...Option) *MemFS {
 		vfs.user = avfs.AdminUser
 		vfs.umask = 0
 
-		err := vfs.CreateBaseDirs(vfs, volumeName)
+		err := vfs.CreateBaseDirs(volumeName)
 		if err != nil {
 			panic("CreateBaseDirs " + err.Error())
 		}
