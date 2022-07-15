@@ -16,7 +16,11 @@
 
 package avfs
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"io/fs"
+)
 
 // DirExists checks if a path exists and is a directory.
 func DirExists(vfs VFS, path string) (bool, error) {
@@ -25,8 +29,7 @@ func DirExists(vfs VFS, path string) (bool, error) {
 		return true, nil
 	}
 
-	ut := vfs.Utils()
-	if ut.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		return false, nil
 	}
 
@@ -40,8 +43,7 @@ func Exists(vfs VFS, path string) (bool, error) {
 		return true, nil
 	}
 
-	ut := vfs.Utils()
-	if ut.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		return false, nil
 	}
 
