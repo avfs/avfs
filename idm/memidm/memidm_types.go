@@ -39,11 +39,11 @@ type MemIdm struct {
 	usersByName  usersByName   // Users map by Name.
 	usersById    usersById     // Users map by Id.
 	feature      avfs.Features // Idm features.
-	utils        avfs.Utils    // Utils regroups common functions used by emulated file systems.
 	maxGid       int           // Current maximum Gid.
 	maxUid       int           // Current maximum Uid.
 	grpMu        sync.RWMutex  // Groups mutex.
 	usrMu        sync.RWMutex  // Users mutex.
+	osType       avfs.OSType
 }
 
 // groupsByName is the map of groups by group name.
