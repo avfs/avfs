@@ -72,9 +72,9 @@ func New(opts ...Option) *MemFS {
 		vfs.user = avfs.AdminUser
 		vfs.umask = 0
 
-		err := vfs.CreateBaseDirs(volumeName)
+		err := vfs.CreateSystemDirs(volumeName)
 		if err != nil {
-			panic("CreateBaseDirs " + err.Error())
+			panic("CreateSystemDirs " + err.Error())
 		}
 
 		vfs.umask = um
@@ -105,7 +105,7 @@ func (vfs *MemFS) Type() string {
 	return "MemFS"
 }
 
-// Options
+// Options.
 
 // WithMainDirs returns an option function to create main directories.
 func WithMainDirs() Option {
@@ -142,4 +142,87 @@ func WithUser(user avfs.UserReader) Option {
 	return func(vfs *MemFS) {
 		vfs.user = user
 	}
+}
+
+// Configuration functions.
+
+// CreateSystemDirs creates the system directories of a file system.
+func (vfs *MemFS) CreateSystemDirs(basePath string) error {
+	return vfs.Utils.CreateSystemDirs(vfs, basePath)
+}
+
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (vfs *MemFS) CreateHomeDir(u avfs.UserReader) (string, error) {
+	return vfs.Utils.CreateHomeDir(vfs, u)
+}
+
+// VolumeAdd adds a new volume to a Windows file system.
+// If there is an error, it will be of type *PathError.
+func (vfs *MemFS) VolumeAdd(path string) error {
+	const op = "VolumeAdd"
+
+	ut := vfs.Utils
+
+	if ut.OSType() != avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
+	}
+
+	vol := ut.VolumeName(path)
+	if vol == "" {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+	}
+
+	_, ok := vfs.volumes[vol]
+	if ok {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeAlreadyExists}
+	}
+
+	vfs.volumes[vol] = vfs.createRootNode()
+
+	return nil
+}
+
+// VolumeDelete deletes an existing volume and all its files from a Windows file system.
+// If there is an error, it will be of type *PathError.
+func (vfs *MemFS) VolumeDelete(path string) error {
+	const op = "VolumeDelete"
+
+	if vfs.OSType() != avfs.OsWindows {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
+	}
+
+	vol := vfs.VolumeName(path)
+	if vol == "" {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+	}
+
+	_, ok := vfs.volumes[vol]
+	if !ok {
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+	}
+
+	err := vfs.RemoveAll(vol)
+	if err != nil {
+		return err
+	}
+
+	delete(vfs.volumes, vol)
+
+	return nil
+}
+
+// VolumeList returns the volumes of the file system.
+func (vfs *MemFS) VolumeList() []string {
+	var l []string // nolint:prealloc // Consider preallocating `l`
+
+	if vfs.OSType() != avfs.OsWindows {
+		return l
+	}
+
+	for v := range vfs.volumes {
+		l = append(l, v)
+	}
+
+	return l
 }

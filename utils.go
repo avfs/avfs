@@ -149,8 +149,8 @@ type DirInfo struct {
 	Perm fs.FileMode
 }
 
-// BaseDirs returns an array of directories always present in the file system.
-func (ut *Utils[_]) BaseDirs(basePath string) []DirInfo {
+// SystemDirs returns an array of directories always present in the file system.
+func (ut *Utils[_]) SystemDirs(basePath string) []DirInfo {
 	const volumeNameLen = 2
 
 	switch ut.osType {
@@ -283,9 +283,9 @@ func (ut *Utils[T]) Create(vfs T, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
-// CreateBaseDirs creates base directories on a file system.
-func (ut *Utils[T]) CreateBaseDirs(vfs T, basePath string) error {
-	dirs := ut.BaseDirs(basePath)
+// CreateSystemDirs creates the system directories of a file system.
+func (ut *Utils[T]) CreateSystemDirs(vfs T, basePath string) error {
+	dirs := ut.SystemDirs(basePath)
 	for _, dir := range dirs {
 		err := vfs.MkdirAll(dir.Path, dir.Perm)
 		if err != nil {

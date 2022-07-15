@@ -59,9 +59,9 @@ func New(opts ...Option) *OrefaFS {
 		vfs.user = avfs.AdminUser
 		vfs.umask = 0
 
-		err := vfs.CreateBaseDirs(volumeName)
+		err := vfs.CreateSystemDirs(volumeName)
 		if err != nil {
-			panic("CreateBaseDirs " + err.Error())
+			panic("CreateSystemDirs " + err.Error())
 		}
 
 		vfs.umask = um
@@ -92,7 +92,7 @@ func (vfs *OrefaFS) Type() string {
 	return "OrefaFS"
 }
 
-// Options
+// Options.
 
 // WithChownUser returns an option function.
 func WithChownUser() Option {
@@ -113,4 +113,17 @@ func WithOSType(osType avfs.OSType) Option {
 	return func(vfs *OrefaFS) {
 		vfs.InitUtils(osType)
 	}
+}
+
+// Configuration functions.
+
+// CreateSystemDirs creates system directories of a file system.
+func (vfs *OrefaFS) CreateSystemDirs(basePath string) error {
+	return vfs.Utils.CreateSystemDirs(vfs, basePath)
+}
+
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (vfs *OrefaFS) CreateHomeDir(u avfs.UserReader) (string, error) {
+	return vfs.Utils.CreateHomeDir(vfs, u)
 }

@@ -622,11 +622,11 @@ type IdentityMgr interface {
 
 // SystemDirMgr is the interface that wraps system directories functions.
 type SystemDirMgr interface {
-	// BaseDirs returns an array of directories always present in the file system.
-	BaseDirs(basePath string) []DirInfo
+	// SystemDirs returns the system directories of the file system.
+	SystemDirs(basePath string) []DirInfo
 
-	// CreateBaseDirs creates base directories on a file system.
-	CreateBaseDirs(basePath string) error
+	// CreateSystemDirs creates the system directories of a file system.
+	CreateSystemDirs(basePath string) error
 
 	// CreateHomeDir creates and returns the home directory of a user.
 	// If there is an error, it will be of type *PathError.

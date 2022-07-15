@@ -400,20 +400,20 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	})
 }
 
-// TestCreateBaseDirs tests CreateBaseDirs function.
-func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
+// TestCreateSystemDirs tests CreateSystemDirs function.
+func (sfs *SuiteFS) TestCreateSystemDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
-	err := vfs.CreateBaseDirs(testDir)
-	if !CheckNoError(t, "CreateBaseDirs", err) {
+	err := vfs.CreateSystemDirs(testDir)
+	if !CheckNoError(t, "CreateSystemDirs", err) {
 		return
 	}
 
-	for _, dir := range vfs.BaseDirs(testDir) {
+	for _, dir := range vfs.SystemDirs(testDir) {
 		info, err := vfs.Stat(dir.Path)
 		if !CheckNoError(t, "Stat "+dir.Path, err) {
 			continue
@@ -421,7 +421,7 @@ func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 
 		gotMode := info.Mode() & fs.ModePerm
 		if gotMode != dir.Perm {
-			t.Errorf("CreateBaseDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
+			t.Errorf("CreateSystemDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
 		}
 	}
 }

@@ -131,3 +131,16 @@ func (vfs *MountFS) OSType() avfs.OSType {
 func (vfs *MountFS) Type() string {
 	return "MountFS"
 }
+
+// Configuration functions.
+
+// CreateSystemDirs creates the system directories of a file system.
+func (vfs *MountFS) CreateSystemDirs(basePath string) error {
+	return vfs.Utils.CreateSystemDirs(vfs, basePath)
+}
+
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (vfs *MountFS) CreateHomeDir(u avfs.UserReader) (string, error) {
+	return vfs.Utils.CreateHomeDir(vfs, u)
+}

@@ -16,7 +16,11 @@
 
 package rofs
 
-import "github.com/avfs/avfs"
+import (
+	"io/fs"
+
+	"github.com/avfs/avfs"
+)
 
 // New creates a new readonly file system (RoFS) from a base file system.
 func New(baseFS avfs.VFS) *RoFS {
@@ -58,4 +62,26 @@ func (vfs *RoFS) OSType() avfs.OSType {
 // Type returns the type of the fileSystem or Identity manager.
 func (vfs *RoFS) Type() string {
 	return "RoFS"
+}
+
+// Configuration functions.
+
+// CreateSystemDirs creates the system directories of a file system.
+func (vfs *RoFS) CreateSystemDirs(basePath string) error {
+	const op = "mkdir"
+
+	return &fs.PathError{Op: op, Path: basePath, Err: vfs.errPermDenied}
+}
+
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (vfs *RoFS) CreateHomeDir(u avfs.UserReader) (string, error) {
+	const op = "mkdir"
+
+	return "", &fs.PathError{Op: op, Path: u.Name(), Err: vfs.errPermDenied}
+}
+
+// SystemDirs returns the system directories of the file system.
+func (vfs *RoFS) SystemDirs(basePath string) []avfs.DirInfo {
+	return vfs.baseFS.SystemDirs(basePath)
 }

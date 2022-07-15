@@ -425,7 +425,7 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestChmod,
 		sfs.TestChown,
 		sfs.TestChroot,
-		sfs.TestCreateBaseDirs,
+		sfs.TestCreateSystemDirs,
 		sfs.TestCreateHomeDir,
 		sfs.TestLchown,
 		sfs.TestFileChmod,

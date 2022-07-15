@@ -164,9 +164,9 @@ func (vfs *DummyFS) Create(name string) (File, error) {
 	return vfs.Utils.Create(vfs, name)
 }
 
-// CreateBaseDirs creates base directories on a file system.
-func (vfs *DummyFS) CreateBaseDirs(basePath string) error {
-	return vfs.Utils.CreateBaseDirs(vfs, basePath)
+// CreateSystemDirs creates the system directories of a file system.
+func (vfs *DummyFS) CreateSystemDirs(basePath string) error {
+	return vfs.Utils.CreateSystemDirs(vfs, basePath)
 }
 
 // CreateHomeDir creates and returns the home directory of a user.
