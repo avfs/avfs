@@ -27,7 +27,7 @@ import (
 )
 
 // cleanGlobPath prepares path for glob matching.
-func (ut *Utils) cleanGlobPath(path string) string {
+func (ut *Utils[_]) cleanGlobPath(path string) string {
 	switch path {
 	case "":
 		return "."
@@ -40,7 +40,7 @@ func (ut *Utils) cleanGlobPath(path string) string {
 }
 
 // cleanGlobPathWindows is windows version of cleanGlobPath.
-func (ut *Utils) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
+func (ut *Utils[_]) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
 	vollen := ut.VolumeNameLen(path)
 
 	switch {
@@ -75,7 +75,7 @@ func currentOSType() OSType {
 }
 
 // getEsc gets a possibly-escaped character from chunk, for a character class.
-func (ut *Utils) getEsc(chunk string) (r rune, nchunk string, err error) {
+func (ut *Utils[_]) getEsc(chunk string) (r rune, nchunk string, err error) {
 	if chunk == "" || chunk[0] == '-' || chunk[0] == ']' {
 		err = filepath.ErrBadPattern
 
@@ -108,7 +108,7 @@ func (ut *Utils) getEsc(chunk string) (r rune, nchunk string, err error) {
 // and appends them to matches. If the directory cannot be
 // opened, it returns the existing matches. New matches are
 // added in lexicographical order.
-func (ut *Utils) glob(vfs VFS, dir, pattern string, matches []string) (m []string, e error) {
+func (ut *Utils[T]) glob(vfs T, dir, pattern string, matches []string) (m []string, e error) {
 	m = matches
 
 	fi, err := vfs.Stat(dir)
@@ -146,7 +146,7 @@ func (ut *Utils) glob(vfs VFS, dir, pattern string, matches []string) (m []strin
 
 // hasMeta reports whether path contains any of the magic characters
 // recognized by Match.
-func (ut *Utils) hasMeta(path string) bool {
+func (ut *Utils[_]) hasMeta(path string) bool {
 	magicChars := `*?[`
 
 	if ut.osType != OsWindows {
@@ -156,7 +156,7 @@ func (ut *Utils) hasMeta(path string) bool {
 	return strings.ContainsAny(path, magicChars)
 }
 
-func (ut *Utils) joinWindows(elem []string) string {
+func (ut *Utils[_]) joinWindows(elem []string) string {
 	for i, e := range elem {
 		if e != "" {
 			return ut.joinNonEmpty(elem[i:])
@@ -167,7 +167,7 @@ func (ut *Utils) joinWindows(elem []string) string {
 }
 
 // joinNonEmpty is like join, but it assumes that the first element is non-empty.
-func (ut *Utils) joinNonEmpty(elem []string) string {
+func (ut *Utils[_]) joinNonEmpty(elem []string) string {
 	if len(elem[0]) == 2 && elem[0][1] == ':' {
 		// First element is drive letter without terminating slash.
 		// Keep path relative to current directory on that drive.
@@ -206,11 +206,11 @@ func (ut *Utils) joinNonEmpty(elem []string) string {
 }
 
 // isUNC reports whether path is a UNC path.
-func (ut *Utils) isUNC(path string) bool {
+func (ut *Utils[_]) isUNC(path string) bool {
 	return ut.VolumeNameLen(path) > 2
 }
 
-func (ut *Utils) joinPath(dir, name string) string {
+func (ut *Utils[_]) joinPath(dir, name string) string {
 	if len(dir) > 0 && ut.IsPathSeparator(dir[len(dir)-1]) {
 		return dir + name
 	}
@@ -218,7 +218,7 @@ func (ut *Utils) joinPath(dir, name string) string {
 	return dir + string(ut.pathSeparator) + name
 }
 
-func (ut *Utils) sameWord(a, b string) bool {
+func (ut *Utils[_]) sameWord(a, b string) bool {
 	if ut.osType != OsWindows {
 		return a == b
 	}
@@ -254,7 +254,7 @@ func isReservedName(path string) bool {
 // matchChunk checks whether chunk matches the beginning of s.
 // If so, it returns the remainder of s (after the match).
 // Chunk is all single-character operators: literals, char classes, and ?.
-func (ut *Utils) matchChunk(chunk, s string) (rest string, ok bool, err error) {
+func (ut *Utils[_]) matchChunk(chunk, s string) (rest string, ok bool, err error) {
 	// failed records whether the match has failed.
 	// After the match fails, the loop continues on processing chunk,
 	// checking that the pattern is well-formed but no longer reading s.
@@ -367,7 +367,7 @@ func nextRandom() string
 
 // scanChunk gets the next segment of pattern, which is a non-star string
 // possibly preceded by a star.
-func (ut *Utils) scanChunk(pattern string) (star bool, chunk, rest string) {
+func (ut *Utils[_]) scanChunk(pattern string) (star bool, chunk, rest string) {
 	for len(pattern) > 0 && pattern[0] == '*' {
 		pattern = pattern[1:]
 		star = true
@@ -403,7 +403,7 @@ Scan:
 
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
 // returning prefix as the part before "*" and suffix as the part after "*".
-func (ut *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
+func (ut *Utils[_]) prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
 	for i := 0; i < len(pattern); i++ {
 		if ut.IsPathSeparator(pattern[i]) {
 			return "", "", ErrPatternHasSeparator
@@ -420,7 +420,7 @@ func (ut *Utils) prefixAndSuffix(pattern string) (prefix, suffix string, err err
 }
 
 // walkDir recursively descends path, calling walkDirFn.
-func (ut *Utils) walkDir(vfs VFS, path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
+func (ut *Utils[T]) walkDir(vfs T, path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
 	if err := walkDirFn(path, d, nil); err != nil || !d.IsDir() {
 		if err == filepath.SkipDir && d.IsDir() {
 			// Successfully skipped directory.

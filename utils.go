@@ -26,14 +26,13 @@ import (
 	"strings"
 )
 
-// OSUtils is the default utilities structure for the current operating system.
-var OSUtils = NewUtils(currentOSType()) //nolint:gochecknoglobals // Utils for the current operating system.
+var CurrentOSType = currentOSType()
 
 // Utils regroups common functions used by emulated file systems.
 //
 // Most of these functions are extracted from Go standard library
 // and adapted to be used indifferently on Unix or Windows system.
-type Utils struct {
+type Utils[T VFS] struct {
 	// OSType defines the operating system type.
 	osType OSType
 
@@ -41,16 +40,14 @@ type Utils struct {
 	pathSeparator uint8
 }
 
-func NewUtils(osType OSType) Utils {
-	sep := '/'
+func (ut *Utils[_]) InitUtils(osType OSType) {
+	sep := uint8('/')
 	if osType == OsWindows {
 		sep = '\\'
 	}
 
-	return Utils{
-		osType:        osType,
-		pathSeparator: uint8(sep),
-	}
+	ut.pathSeparator = sep
+	ut.osType = osType
 }
 
 // Abs returns an absolute representation of path.
@@ -58,7 +55,7 @@ func NewUtils(osType OSType) Utils {
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls Clean on the result.
-func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
+func (ut *Utils[T]) Abs(vfs T, path string) (string, error) {
 	if ut.IsAbs(path) {
 		return ut.Clean(path), nil
 	}
@@ -72,8 +69,8 @@ func (ut *Utils) Abs(vfs VFS, path string) (string, error) {
 }
 
 // AdminGroupName returns the name of the administrator group of the file system.
-func (ut *Utils) AdminGroupName() string {
-	switch ut.osType {
+func AdminGroupName(osType OSType) string {
+	switch osType {
 	case OsWindows:
 		return "Administrators"
 	default:
@@ -82,8 +79,8 @@ func (ut *Utils) AdminGroupName() string {
 }
 
 // AdminUserName returns the name of the administrator of the file system.
-func (ut *Utils) AdminUserName() string {
-	switch ut.osType {
+func AdminUserName(osType OSType) string {
+	switch osType {
 	case OsWindows:
 		return "ContainerAdministrator"
 	default:
@@ -95,7 +92,7 @@ func (ut *Utils) AdminUserName() string {
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (ut *Utils) Base(path string) string {
+func (ut *Utils[_]) Base(path string) string {
 	if path == "" {
 		return "."
 	}
@@ -133,14 +130,14 @@ type DirInfo struct {
 }
 
 // BaseDirs returns an array of directories always present in the file system.
-func (ut *Utils) BaseDirs(basePath string) []DirInfo {
+func (ut *Utils[_]) BaseDirs(basePath string) []DirInfo {
 	const volumeNameLen = 2
 
 	switch ut.osType {
 	case OsWindows:
 		return []DirInfo{
 			{Path: ut.Join(basePath, ut.HomeDir()[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: ut.Join(basePath, ut.TempDir(ut.AdminUserName())[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.TempDir(AdminUserName(ut.osType))[volumeNameLen:]), Perm: DefaultDirPerm},
 			{Path: ut.Join(basePath, ut.TempDir(DefaultUser.Name())[volumeNameLen:]), Perm: DefaultDirPerm},
 			{Path: ut.Join(basePath, `\Windows`), Perm: DefaultDirPerm},
 		}
@@ -176,7 +173,7 @@ func (ut *Utils) BaseDirs(basePath string) []DirInfo {
 // See also Rob Pike, “Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
-func (ut *Utils) Clean(path string) string {
+func (ut *Utils[_]) Clean(path string) string {
 	originalPath := path
 	volLen := ut.VolumeNameLen(path)
 
@@ -262,12 +259,12 @@ func (ut *Utils) Clean(path string) string {
 // (before umask). If successful, methods on the returned DummyFile can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (ut *Utils) Create(vfs VFS, name string) (File, error) {
+func (ut *Utils[T]) Create(vfs T, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
 // CreateBaseDirs creates base directories on a file system.
-func (ut *Utils) CreateBaseDirs(vfs VFS, basePath string) error {
+func (ut *Utils[T]) CreateBaseDirs(vfs T, basePath string) error {
 	dirs := ut.BaseDirs(basePath)
 	for _, dir := range dirs {
 		err := vfs.MkdirAll(dir.Path, dir.Perm)
@@ -288,7 +285,7 @@ func (ut *Utils) CreateBaseDirs(vfs VFS, basePath string) error {
 
 // CreateHomeDir creates and returns the home directory of a user.
 // If there is an error, it will be of type *PathError.
-func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) (string, error) {
+func (ut *Utils[T]) CreateHomeDir(vfs T, u UserReader) (string, error) {
 	userDir := ut.HomeDirUser(vfs, u)
 
 	err := vfs.Mkdir(userDir, ut.HomeDirPerm())
@@ -318,7 +315,7 @@ func (ut *Utils) CreateHomeDir(vfs VFS, u UserReader) (string, error) {
 // Multiple programs or goroutines calling CreateTemp simultaneously will not choose the same file.
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
-func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
+func (ut *Utils[T]) CreateTemp(vfs T, dir, pattern string) (File, error) {
 	const op = "createtemp"
 
 	if dir == "" {
@@ -352,8 +349,8 @@ func (ut *Utils) CreateTemp(vfs VFS, dir, pattern string) (File, error) {
 }
 
 // DefaultGroupName returns the name of the default users group of the file system.
-func (ut *Utils) DefaultGroupName() string {
-	switch ut.osType {
+func DefaultGroupName(osType OSType) string {
+	switch osType {
 	case OsWindows:
 		return "Users"
 	default:
@@ -362,8 +359,8 @@ func (ut *Utils) DefaultGroupName() string {
 }
 
 // DefaultUserName returns the name of the default username of the file system.
-func (ut *Utils) DefaultUserName() string {
-	switch ut.osType {
+func DefaultUserName(osType OSType) string {
+	switch osType {
 	case OsWindows:
 		return "Default"
 	default:
@@ -377,7 +374,7 @@ func (ut *Utils) DefaultUserName() string {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (ut *Utils) Dir(path string) string {
+func (ut *Utils[_]) Dir(path string) string {
 	vol := ut.VolumeName(path)
 
 	i := len(path) - 1
@@ -397,7 +394,7 @@ func (ut *Utils) Dir(path string) string {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (ut *Utils) FromSlash(path string) string {
+func (ut *Utils[_]) FromSlash(path string) string {
 	if ut.osType != OsWindows {
 		return path
 	}
@@ -406,7 +403,7 @@ func (ut *Utils) FromSlash(path string) string {
 }
 
 // FromUnixPath returns valid path from a unix path.
-func (ut *Utils) FromUnixPath(volumeName, path string) string {
+func (ut *Utils[_]) FromUnixPath(volumeName, path string) string {
 	if ut.OSType() != OsWindows {
 		return path
 	}
@@ -426,7 +423,7 @@ func (ut *Utils) FromUnixPath(volumeName, path string) string {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
+func (ut *Utils[T]) Glob(vfs T, pattern string) (matches []string, err error) {
 	// Check pattern is well-formed.
 	if _, err = ut.Match(pattern, ""); err != nil {
 		return nil, err
@@ -476,7 +473,7 @@ func (ut *Utils) Glob(vfs VFS, pattern string) (matches []string, err error) {
 }
 
 // HomeDir returns the home directory of the file system.
-func (ut *Utils) HomeDir() string {
+func (ut *Utils[_]) HomeDir() string {
 	switch ut.osType {
 	case OsWindows:
 		return DefaultVolume + `\Users`
@@ -487,13 +484,13 @@ func (ut *Utils) HomeDir() string {
 
 // HomeDirUser returns the home directory of the user.
 // If the file system does not have an identity manager, the root directory is returned.
-func (ut *Utils) HomeDirUser(vfs VFS, u UserReader) string {
+func (ut *Utils[T]) HomeDirUser(vfs T, u UserReader) string {
 	if !vfs.HasFeature(FeatIdentityMgr) {
 		return ut.FromUnixPath(DefaultVolume, "/")
 	}
 
 	name := u.Name()
-	if ut.osType != OsWindows && name == ut.AdminUserName() {
+	if ut.osType != OsWindows && name == AdminUserName(ut.osType) {
 		return "/root"
 	}
 
@@ -501,12 +498,12 @@ func (ut *Utils) HomeDirUser(vfs VFS, u UserReader) string {
 }
 
 // HomeDirPerm return the default permission for home directories.
-func (ut *Utils) HomeDirPerm() fs.FileMode {
+func (ut *Utils[_]) HomeDirPerm() fs.FileMode {
 	return 0o755
 }
 
 // IsAbs reports whether the path is absolute.
-func (ut *Utils) IsAbs(path string) bool {
+func (ut *Utils[_]) IsAbs(path string) bool {
 	if ut.osType != OsWindows {
 		return strings.HasPrefix(path, "/")
 	}
@@ -534,7 +531,7 @@ func (ut *Utils) IsAbs(path string) bool {
 //
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrExist).
-func (ut *Utils) IsExist(err error) bool {
+func (ut *Utils[_]) IsExist(err error) bool {
 	ue := errors.Unwrap(err)
 	if ue == nil {
 		ue = err
@@ -553,7 +550,7 @@ func (ut *Utils) IsExist(err error) bool {
 //
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrNotExist).
-func (ut *Utils) IsNotExist(err error) bool {
+func (ut *Utils[_]) IsNotExist(err error) bool {
 	ue := errors.Unwrap(err)
 	if ue == nil {
 		ue = err
@@ -567,7 +564,7 @@ func (ut *Utils) IsNotExist(err error) bool {
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (ut *Utils) IsPathSeparator(c uint8) bool {
+func (ut *Utils[_]) IsPathSeparator(c uint8) bool {
 	if ut.osType != OsWindows {
 		return c == '/'
 	}
@@ -578,7 +575,7 @@ func (ut *Utils) IsPathSeparator(c uint8) bool {
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (ut *Utils) Join(elem ...string) string {
+func (ut *Utils[_]) Join(elem ...string) string {
 	if ut.osType != OsWindows {
 		// If there's a bug here, fix the logic in ./path_plan9.go too.
 		for i, e := range elem {
@@ -617,7 +614,7 @@ func (ut *Utils) Join(elem ...string) string {
 //
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
-func (ut *Utils) Match(pattern, name string) (matched bool, err error) {
+func (ut *Utils[_]) Match(pattern, name string) (matched bool, err error) {
 Pattern:
 	for len(pattern) > 0 {
 		var star bool
@@ -678,7 +675,7 @@ Pattern:
 // If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by TempDir.
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
-func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
+func (ut *Utils[T]) MkdirTemp(vfs T, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
@@ -725,12 +722,12 @@ func (ut *Utils) MkdirTemp(vfs VFS, dir, pattern string) (string, error) {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (ut *Utils) Open(vfs VFS, name string) (File, error) {
+func (ut *Utils[T]) Open(vfs T, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }
 
 // OpenMode returns the open mode from the input flags.
-func (ut *Utils) OpenMode(flag int) OpenMode {
+func (ut *Utils[_]) OpenMode(flag int) OpenMode {
 	var om OpenMode
 
 	if flag == os.O_RDONLY {
@@ -765,12 +762,12 @@ func (ut *Utils) OpenMode(flag int) OpenMode {
 }
 
 // PathSeparator return the OS-specific path separator.
-func (ut *Utils) PathSeparator() uint8 {
+func (ut *Utils[_]) PathSeparator() uint8 {
 	return ut.pathSeparator
 }
 
 // OSType returns the operating system type of the file system.
-func (ut *Utils) OSType() OSType {
+func (ut *Utils[_]) OSType() OSType {
 	return ut.osType
 }
 
@@ -779,7 +776,7 @@ func (ut *Utils) OSType() OSType {
 // If an error occurs reading the directory,
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
-func (ut *Utils) ReadDir(vfs VFS, name string) ([]fs.DirEntry, error) {
+func (ut *Utils[T]) ReadDir(vfs T, name string) ([]fs.DirEntry, error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
@@ -798,7 +795,7 @@ func (ut *Utils) ReadDir(vfs VFS, name string) ([]fs.DirEntry, error) {
 // A successful call returns err == nil, not err == EOF.
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
-func (ut *Utils) ReadFile(vfs VFS, name string) ([]byte, error) {
+func (ut *Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
 	f, err := vfs.Open(name)
 	if err != nil {
 		return nil, err
@@ -854,7 +851,7 @@ func (ut *Utils) ReadFile(vfs VFS, name string) ([]byte, error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (ut *Utils) Rel(basepath, targpath string) (string, error) {
+func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 	baseVol := ut.VolumeName(basepath)
 	targVol := ut.VolumeName(targpath)
 	base := ut.Clean(basepath)
@@ -951,7 +948,7 @@ func (ut *Utils) Rel(basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (ut *Utils) Split(path string) (dir, file string) {
+func (ut *Utils[_]) Split(path string) (dir, file string) {
 	vol := ut.VolumeName(path)
 
 	i := len(path) - 1
@@ -967,7 +964,7 @@ func (ut *Utils) Split(path string) (dir, file string) {
 // If there is no Separator in path, splitPath returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir + PathSeparator + file.
-func (ut *Utils) SplitAbs(path string) (dir, file string) {
+func (ut *Utils[_]) SplitAbs(path string) (dir, file string) {
 	l := ut.VolumeNameLen(path)
 
 	i := len(path) - 1
@@ -987,7 +984,7 @@ func (ut *Utils) SplitAbs(path string) (dir, file string) {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (ut *Utils) TempDir(userName string) string {
+func (ut *Utils[_]) TempDir(userName string) string {
 	if ut.osType != OsWindows {
 		return "/tmp"
 	}
@@ -1000,7 +997,7 @@ func (ut *Utils) TempDir(userName string) string {
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (ut *Utils) ToSlash(path string) string {
+func (ut *Utils[_]) ToSlash(path string) string {
 	if ut.pathSeparator == '/' {
 		return path
 	}
@@ -1012,13 +1009,13 @@ func (ut *Utils) ToSlash(path string) string {
 // Given "C:\foo\bar" it returns "C:" on Windows.
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
-func (ut *Utils) VolumeName(path string) string {
+func (ut *Utils[_]) VolumeName(path string) string {
 	return path[:ut.VolumeNameLen(path)]
 }
 
 // VolumeNameLen returns length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func (ut *Utils) VolumeNameLen(path string) int {
+func (ut *Utils[_]) VolumeNameLen(path string) int {
 	if ut.osType != OsWindows {
 		return 0
 	}
@@ -1075,7 +1072,7 @@ func (ut *Utils) VolumeNameLen(path string) int {
 // to walk that directory.
 //
 // WalkDir does not follow symbolic links.
-func (ut *Utils) WalkDir(vfs VFS, root string, fn fs.WalkDirFunc) error {
+func (ut *Utils[T]) WalkDir(vfs T, root string, fn fs.WalkDirFunc) error {
 	info, err := vfs.Lstat(root)
 	if err != nil {
 		err = fn(root, nil, err)
@@ -1102,7 +1099,7 @@ func (d *statDirEntry) Info() (fs.FileInfo, error) { return d.info, nil }
 // WriteFile writes data to the named file, creating it if necessary.
 // If the file does not exist, WriteFile creates it with permissions perm (before umask);
 // otherwise WriteFile truncates it before writing, without changing permissions.
-func (ut *Utils) WriteFile(vfs VFS, name string, data []byte, perm fs.FileMode) error {
+func (ut *Utils[T]) WriteFile(vfs T, name string, data []byte, perm fs.FileMode) error {
 	f, err := vfs.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err

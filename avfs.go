@@ -458,9 +458,6 @@ type BaseVFS interface {
 	// if the file system does not have a current user, the user avfs.DefaultUser is returned.
 	User() UserReader
 
-	// Utils returns the file utils of the current file system.
-	Utils() Utils
-
 	// WalkDir walks the file tree rooted at root, calling fn for each file or
 	// directory in the tree, including root.
 	//
