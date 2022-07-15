@@ -26,7 +26,7 @@ import (
 	"strings"
 )
 
-var CurrentOSType = currentOSType()
+var CurrentOSType = currentOSType() //nolint:gochecknoglobals // Store the current OS Type.
 
 // Utils regroups common functions used by emulated file systems.
 //

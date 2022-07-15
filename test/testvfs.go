@@ -615,8 +615,8 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 // TestTempDir tests TempDir function.
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-
 	wantTmpDir := "/tmp"
+
 	if vfs.OSType() == avfs.OsWindows {
 		userName := vfs.User().Name()
 		wantTmpDir = vfs.Join(avfs.DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`)

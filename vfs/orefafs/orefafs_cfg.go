@@ -32,6 +32,8 @@ func New(opts ...Option) *OrefaFS {
 		fileMode: 0,
 	}
 
+	vfs.InitUtils(avfs.CurrentOSType)
+
 	for _, opt := range opts {
 		opt(vfs)
 	}

@@ -135,7 +135,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 				if slMode == slmStat && !slResolved {
 					slResolved = true
 
-					defer func(piSymLink avfs.PathIterator[*MemFS]) { //nolint:gocritic // deferInLoop: Possible resource leak, 'defer' is called in the 'for' loop
+					defer func(piSymLink avfs.PathIterator[*MemFS]) {
 						pi = &piSymLink
 					}(*pi)
 				}
