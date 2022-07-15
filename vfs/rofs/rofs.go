@@ -44,6 +44,11 @@ func (vfs *RoFS) Base(path string) string {
 	return vfs.baseFS.Base(path)
 }
 
+// BaseDirs returns an array of directories always present in the file system.
+func (vfs *RoFS) BaseDirs(basePath string) []avfs.DirInfo {
+	return vfs.baseFS.BaseDirs(basePath)
+}
+
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *RoFS) Chdir(dir string) error {
@@ -143,6 +148,21 @@ func (vfs *RoFS) Create(name string) (avfs.File, error) {
 	const op = "open"
 
 	return &RoFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
+}
+
+// CreateBaseDirs creates base directories on a file system.
+func (vfs *RoFS) CreateBaseDirs(basePath string) error {
+	const op = "mkdir"
+
+	return &fs.PathError{Op: op, Path: basePath, Err: vfs.errPermDenied}
+}
+
+// CreateHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func (vfs *RoFS) CreateHomeDir(u avfs.UserReader) (string, error) {
+	const op = "mkdir"
+
+	return "", &fs.PathError{Op: op, Path: u.Name(), Err: vfs.errPermDenied}
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -446,6 +466,15 @@ func (vfs *RoFS) Split(path string) (dir, file string) {
 	return vfs.baseFS.Split(path)
 }
 
+// SplitAbs splits an absolute path immediately preceding the final Separator,
+// separating it into a directory and file name component.
+// If there is no Separator in path, splitPath returns an empty dir
+// and file set to path.
+// The returned values have the property that path = dir + PathSeparator + file.
+func (vfs *RoFS) SplitAbs(path string) (dir, file string) {
+	return vfs.baseFS.SplitAbs(path)
+}
+
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *RoFS) Stat(name string) (fs.FileInfo, error) {
@@ -508,11 +537,6 @@ func (vfs *RoFS) UMask() fs.FileMode {
 // If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *RoFS) User() avfs.UserReader {
 	return vfs.baseFS.User()
-}
-
-// Utils returns the file utils of the current file system.
-func (vfs *RoFS) Utils() avfs.Utils {
-	return vfs.baseFS.Utils()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
