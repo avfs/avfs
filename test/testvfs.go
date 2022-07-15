@@ -18,6 +18,7 @@ package test
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"io/fs"
 	"os"
@@ -614,9 +615,12 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 // TestTempDir tests TempDir function.
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-	ut := vfs.Utils()
-	userName := vfs.User().Name()
-	wantTmpDir := ut.TempDir(userName)
+
+	wantTmpDir := "/tmp"
+	if vfs.OSType() == avfs.OsWindows {
+		userName := vfs.User().Name()
+		wantTmpDir = vfs.Join(avfs.DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`)
+	}
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		tmpDir := vfs.TempDir()
@@ -990,7 +994,6 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 // TestMkdir tests Mkdir function.
 func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(testDir, avfs.DefaultDirPerm)
@@ -1044,7 +1047,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 
 			curPath := testDir
 
-			pi := ut.NewPathIterator(relDir)
+			pi := avfs.NewPathIterator(vfs, relDir)
 			for i := 0; pi.Next(); i++ {
 				wantMode := dir.WantModes[i]
 				curPath = vfs.Join(curPath, pi.Part())
@@ -1071,7 +1074,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	t.Run("MkdirOnExistingDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			err := vfs.Mkdir(dir.Path, dir.Mode)
-			if !ut.IsExist(err) {
+			if !errors.Is(err, fs.ErrExist) {
 				t.Errorf("mkdir %s : want IsExist(err) to be true, got error %v", dir.Path, err)
 			}
 		}
@@ -1122,7 +1125,6 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 // TestMkdirAll tests MkdirAll function.
 func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
@@ -1171,7 +1173,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 
 			curPath := testDir
 
-			pi := ut.NewPathIterator(relDir)
+			pi := avfs.NewPathIterator(vfs, relDir)
 			for i := 0; pi.Next(); i++ {
 				wantMode := dir.WantModes[i]
 				curPath = vfs.Join(curPath, pi.Part())

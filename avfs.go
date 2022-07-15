@@ -124,6 +124,7 @@ type IOFS interface {
 type BaseVFS interface {
 	Featurer
 	Namer
+	SystemDirMgr
 	Typer
 
 	// Abs returns an absolute representation of path.
@@ -423,6 +424,13 @@ type BaseVFS interface {
 	// The returned values have the property that path = dir+file.
 	Split(path string) (dir, file string)
 
+	// SplitAbs splits an absolute path immediately preceding the final Separator,
+	// separating it into a directory and file name component.
+	// If there is no Separator in path, splitPath returns an empty dir
+	// and file set to path.
+	// The returned values have the property that path = dir + PathSeparator + file.
+	SplitAbs(path string) (dir, file string)
+
 	// Symlink creates newname as a symbolic link to oldname.
 	// If there is an error, it will be of type *LinkError.
 	Symlink(oldname, newname string) error
@@ -610,6 +618,19 @@ type IdentityMgr interface {
 
 	// UserDel deletes an existing user.
 	UserDel(name string) error
+}
+
+// SystemDirMgr is the interface that wraps system directories functions.
+type SystemDirMgr interface {
+	// BaseDirs returns an array of directories always present in the file system.
+	BaseDirs(basePath string) []DirInfo
+
+	// CreateBaseDirs creates base directories on a file system.
+	CreateBaseDirs(basePath string) error
+
+	// CreateHomeDir creates and returns the home directory of a user.
+	// If there is an error, it will be of type *PathError.
+	CreateHomeDir(u UserReader) (string, error)
 }
 
 // GroupIdentifier is the interface that wraps the Gid method.

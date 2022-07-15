@@ -18,6 +18,7 @@ package test
 
 import (
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -96,7 +97,7 @@ func (pt *PermTest) registerGob() {
 // Load loads a permissions test file.
 func (pt *PermTest) Load(t *testing.T) {
 	f, err := os.Open(pt.path)
-	if os.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		pt.create = true
 	} else if !CheckNoError(t, "Open "+pt.path, err) {
 		return

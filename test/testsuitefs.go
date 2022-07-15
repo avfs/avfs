@@ -17,6 +17,7 @@
 package test
 
 import (
+	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -58,10 +59,9 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 
 	vfs := vfsSetup
 
-	osType := avfs.OSUtils.OSType()
-	if osType != vfs.OSType() {
+	if vfs.OSType() != avfs.CurrentOSType {
 		tb.Skipf("New : Current OSType = %s is different from %s OSType = %s, skipping tests",
-			osType, vfs.Type(), vfs.OSType())
+			avfs.CurrentOSType, vfs.Type(), vfs.OSType())
 	}
 
 	initUser := vfs.User()
@@ -415,7 +415,6 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestIsDir,
 		sfs.TestIsEmpty,
 		sfs.TestHashFile,
-		sfs.TestPathIterator,
 		sfs.TestRndTree,
 		sfs.TestUmask,
 	)
@@ -465,11 +464,10 @@ func (sfs *SuiteFS) EmptyFile(tb testing.TB, testDir string) string {
 	const emptyFile = "emptyFile"
 
 	vfs := sfs.vfsSetup
-	ut := vfs.Utils()
 	fileName := vfs.Join(testDir, emptyFile)
 
 	_, err := vfs.Stat(fileName)
-	if ut.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		f, err := vfs.Create(fileName)
 		if err != nil {
 			tb.Fatalf("Create %s : want error to be nil, got %v", fileName, err)
@@ -489,8 +487,6 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
-	ut := vfs.Utils()
-
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return vfs.Join(testDir, defaultDir)
 	}
@@ -501,7 +497,7 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	}
 
 	_, err = vfs.Stat(dirName)
-	if ut.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		tb.Fatalf("Stat %s : want error to be nil, got %v", dirName, err)
 	}
 
@@ -542,7 +538,6 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
-	ut := vfs.Utils()
 
 	fileName := vfs.Join(testDir, defaultNonExisting)
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
@@ -550,7 +545,7 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	}
 
 	_, err := vfs.Stat(fileName)
-	if !ut.IsNotExist(err) {
+	if !errors.Is(err, fs.ErrNotExist) {
 		tb.Fatalf("Stat : want error to be %v, got %v", avfs.ErrNoSuchFileOrDir, err)
 	}
 
@@ -594,10 +589,9 @@ func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs
 
 	fileName := sfs.NonExistingFile(tb, testDir)
 	vfs := sfs.vfsTest
-	ut := vfs.Utils()
 
 	f, err := vfs.Open(fileName)
-	if vfs.HasFeature(avfs.FeatBasicFs) && (err == nil || ut.IsExist(err)) {
+	if vfs.HasFeature(avfs.FeatBasicFs) && (err == nil || errors.Is(err, fs.ErrExist)) {
 		tb.Fatalf("Open %s : want non existing file, got %v", fileName, err)
 	}
 
@@ -660,10 +654,8 @@ func (sfs *SuiteFS) GetSampleDirs(testDir string) []*Dir {
 		{Path: "/C/5", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
 	}
 
-	ut := sfs.vfsTest.Utils()
-
 	for i, dir := range dirs {
-		dirs[i].Path = ut.Join(testDir, dir.Path)
+		dirs[i].Path = sfs.vfsTest.Join(testDir, dir.Path)
 	}
 
 	return dirs
@@ -677,10 +669,8 @@ func (sfs *SuiteFS) GetSampleDirsAll(testDir string) []*Dir {
 		{Path: "/H/6/I/7/J/8", Mode: 0o777, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755, 0o777, 0o777}},
 	}
 
-	ut := sfs.vfsTest.Utils()
-
 	for i, dir := range dirs {
-		dirs[i].Path = ut.Join(testDir, dir.Path)
+		dirs[i].Path = sfs.vfsTest.Join(testDir, dir.Path)
 	}
 
 	return dirs
@@ -730,9 +720,8 @@ func (sfs *SuiteFS) GetSampleFiles(testDir string) []*File {
 		{Path: "/C/cfile.txt", Mode: avfs.DefaultFilePerm, Content: []byte("cfile")},
 	}
 
-	ut := sfs.vfsTest.Utils()
 	for i, file := range files {
-		files[i].Path = ut.Join(testDir, file.Path)
+		files[i].Path = sfs.vfsTest.Join(testDir, file.Path)
 	}
 
 	return files
@@ -779,10 +768,9 @@ func (sfs *SuiteFS) GetSampleSymlinks(testDir string) []*Symlink {
 		{NewPath: "/C/lNonExist", OldPath: "/A/path/to/a/non/existing/file"},
 	}
 
-	ut := vfs.Utils()
 	for i, sl := range sls {
-		sls[i].NewPath = ut.Join(testDir, sl.NewPath)
-		sls[i].OldPath = ut.Join(testDir, sl.OldPath)
+		sls[i].NewPath = vfs.Join(testDir, sl.NewPath)
+		sls[i].OldPath = vfs.Join(testDir, sl.OldPath)
 	}
 
 	return sls
@@ -816,10 +804,9 @@ func (sfs *SuiteFS) GetSampleSymlinksEval(testDir string) []*SymlinkEval {
 		{NewPath: "/C/lllf/3/3file1.txt", OldPath: "/B/2/F/3/3file1.txt", IsSymlink: false, Mode: 0o640},
 	}
 
-	ut := vfs.Utils()
 	for i, sle := range sles {
-		sles[i].NewPath = ut.Join(testDir, sle.NewPath)
-		sles[i].OldPath = ut.Join(testDir, sle.OldPath)
+		sles[i].NewPath = vfs.Join(testDir, sle.NewPath)
+		sles[i].OldPath = vfs.Join(testDir, sle.OldPath)
 	}
 
 	return sles
@@ -917,7 +904,7 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.OSUtils.OSType() {
+		if ost == avfs.CurrentOSType {
 			canTest = true
 		}
 	}
@@ -979,7 +966,7 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.OSUtils.OSType() {
+		if ost == avfs.CurrentOSType {
 			canTest = true
 		}
 	}
@@ -1047,7 +1034,7 @@ func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkEr
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.OSUtils.OSType() {
+		if ost == avfs.CurrentOSType {
 			canTest = true
 		}
 	}
@@ -1107,7 +1094,7 @@ func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkE
 	canTest := len(osTypes) == 0
 
 	for _, ost := range osTypes {
-		if ost == avfs.OSUtils.OSType() {
+		if ost == avfs.CurrentOSType {
 			canTest = true
 		}
 	}

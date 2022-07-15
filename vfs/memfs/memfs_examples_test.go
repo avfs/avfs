@@ -17,7 +17,9 @@
 package memfs_test
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 
 	"github.com/avfs/avfs"
@@ -31,7 +33,7 @@ func ExampleNew() {
 	tmpDir := vfs.TempDir()
 
 	_, err := vfs.Stat(tmpDir)
-	if vfs.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		fmt.Printf("%s does not exist", tmpDir)
 	}
 

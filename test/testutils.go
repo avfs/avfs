@@ -403,18 +403,17 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 // TestCreateBaseDirs tests CreateBaseDirs function.
 func (sfs *SuiteFS) TestCreateBaseDirs(t *testing.T, testDir string) {
 	vfs := sfs.VFSSetup()
-	ut := vfs.Utils()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
-	err := ut.CreateBaseDirs(vfs, testDir)
+	err := vfs.CreateBaseDirs(testDir)
 	if !CheckNoError(t, "CreateBaseDirs", err) {
 		return
 	}
 
-	for _, dir := range ut.BaseDirs(testDir) {
+	for _, dir := range vfs.BaseDirs(testDir) {
 		info, err := vfs.Stat(dir.Path)
 		if !CheckNoError(t, "Stat "+dir.Path, err) {
 			continue
@@ -434,7 +433,6 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
 	}
 
 	vfs := sfs.vfsSetup
-	ut := vfs.Utils()
 
 	for _, ui := range UserInfos() {
 		u, err := vfs.Idm().LookupUser(ui.Name)
@@ -442,7 +440,7 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
 			t.Fatalf("Can't find user %s", ui.Name)
 		}
 
-		homeDir, err := ut.CreateHomeDir(vfs, u)
+		homeDir, err := vfs.CreateHomeDir(u)
 		if !CheckNoError(t, "CreateHomeDir "+ui.Name, err) {
 			continue
 		}
@@ -456,7 +454,7 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
 			return
 		}
 
-		wantMode := fs.ModeDir | ut.HomeDirPerm()&^vfs.UMask()
+		wantMode := fs.ModeDir | avfs.HomeDirPerm()&^vfs.UMask()
 		if fst.Mode() != wantMode {
 			t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
 		}
@@ -1101,152 +1099,6 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 	}
 }
 
-// TestPathIterator tests PathIterator methods.
-func (sfs *SuiteFS) TestPathIterator(t *testing.T, testDir string) {
-	utLinux := avfs.NewUtils(avfs.OsLinux)
-	utWindows := avfs.NewUtils(avfs.OsWindows)
-
-	t.Run("PathIterator", func(t *testing.T) {
-		cases := []struct {
-			path   string
-			parts  []string
-			osType avfs.OSType
-		}{
-			{path: `C:\`, parts: nil, osType: avfs.OsWindows},
-			{path: `C:\Users`, parts: []string{"Users"}, osType: avfs.OsWindows},
-			{path: `c:\नमस्ते\दुनिया`, parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsWindows},
-
-			{path: "/", parts: nil, osType: avfs.OsLinux},
-			{path: "/a", parts: []string{"a"}, osType: avfs.OsLinux},
-			{path: "/b/c/d", parts: []string{"b", "c", "d"}, osType: avfs.OsLinux},
-			{path: "/नमस्ते/दुनिया", parts: []string{"नमस्ते", "दुनिया"}, osType: avfs.OsLinux},
-		}
-
-		for _, c := range cases {
-			var ut avfs.Utils
-
-			switch c.osType {
-			case avfs.OsLinux:
-				ut = utLinux
-			case avfs.OsWindows:
-				ut = utWindows
-			}
-
-			pi := ut.NewPathIterator(c.path)
-			i := 0
-			gotPath := pi.VolumeName() + string(ut.PathSeparator())
-
-			for ; pi.Next(); i++ {
-				if pi.Part() != c.parts[i] {
-					t.Errorf("%s : want part %d to be %s, got %s", c.path, i, c.parts[i], pi.Part())
-				}
-
-				wantLeft := pi.Path()[:pi.Start()]
-				if pi.Left() != wantLeft {
-					t.Errorf("%s : want left %d to be %s, got %s", c.path, i, wantLeft, pi.Left())
-				}
-
-				wantLeftPart := pi.Path()[:pi.End()]
-				if pi.LeftPart() != wantLeftPart {
-					t.Errorf("%s : want left %d to be %s, got %s", c.path, i, wantLeftPart, pi.LeftPart())
-				}
-
-				wantRight := pi.Path()[pi.End():]
-				if pi.Right() != wantRight {
-					t.Errorf("%s : want right %d to be %s, got %s", c.path, i, wantRight, pi.Right())
-				}
-
-				wantRightPart := pi.Path()[pi.Start():]
-				if pi.RightPart() != wantRightPart {
-					t.Errorf("%s : want right %d to be %s, got %s", c.path, i, wantRightPart, pi.RightPart())
-				}
-
-				wantIsLast := i == (len(c.parts) - 1)
-				if pi.IsLast() != wantIsLast {
-					t.Errorf("%s : want IsLast %d to be %t, got %t", c.path, i, wantIsLast, pi.IsLast())
-				}
-
-				gotPath = ut.Join(gotPath, pi.Part())
-			}
-
-			if gotPath != pi.Path() {
-				t.Errorf("%s : want path to be %s, got %s", c.path, c.path, gotPath)
-			}
-		}
-	})
-
-	t.Run("ReplacePart", func(t *testing.T) {
-		cases := []struct {
-			path    string
-			part    string
-			newPart string
-			newPath string
-			reset   bool
-			osType  avfs.OSType
-		}{
-			{
-				path: `c:\path`, part: `path`, newPart: `..\..\..`,
-				newPath: `c:\`, reset: true, osType: avfs.OsWindows,
-			},
-			{
-				path: `c:\an\absolute\path`, part: `absolute`, newPart: `c:\just\another`,
-				newPath: `c:\just\another\path`, reset: true, osType: avfs.OsWindows,
-			},
-			{
-				path: `c:\a\random\path`, part: `random`, newPart: `very\long`,
-				newPath: `c:\a\very\long\path`, reset: false, osType: avfs.OsWindows,
-			},
-			{
-				path: "/a/very/very/long/path", part: "long", newPart: "/a",
-				newPath: "/a/path", reset: true, osType: avfs.OsLinux,
-			},
-			{
-				path: "/path", part: "path", newPart: "../../..",
-				newPath: "/", reset: true, osType: avfs.OsLinux,
-			},
-			{
-				path: "/a/relative/path", part: "relative", newPart: "../../..",
-				newPath: "/path", reset: true, osType: avfs.OsLinux,
-			},
-			{
-				path: "/an/absolute/path", part: "random", newPart: "/just/another",
-				newPath: "/just/another/path", reset: true, osType: avfs.OsLinux,
-			},
-			{
-				path: "/a/relative/path", part: "relative", newPart: "very/long",
-				newPath: "/a/very/long/path", reset: false, osType: avfs.OsLinux,
-			},
-		}
-
-		for _, c := range cases {
-			var ut avfs.Utils
-
-			switch c.osType {
-			case avfs.OsLinux:
-				ut = utLinux
-			case avfs.OsWindows:
-				ut = utWindows
-			}
-
-			pi := ut.NewPathIterator(c.path)
-			for pi.Next() {
-				if pi.Part() == c.part {
-					reset := pi.ReplacePart(c.newPart)
-					if pi.Path() != c.newPath {
-						t.Errorf("%s : want new path to be %s, got %s", c.path, c.newPath, pi.Path())
-					}
-
-					if reset != c.reset {
-						t.Errorf("%s : want Reset to be %t, got %t", c.path, c.reset, reset)
-					}
-
-					break
-				}
-			}
-		}
-	})
-}
-
 // TestRel tests Rel function.
 func (sfs *SuiteFS) TestRel(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
@@ -1532,7 +1384,6 @@ func (sfs *SuiteFS) TestSplit(t *testing.T, testDir string) {
 // TestSplitAbs tests SplitAbs function.
 func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-	ut := vfs.Utils()
 
 	cases := []struct {
 		path string
@@ -1554,7 +1405,7 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
 			continue
 		}
 
-		dir, file := ut.SplitAbs(c.path)
+		dir, file := vfs.SplitAbs(c.path)
 		if c.dir != dir {
 			t.Errorf("splitPath %s : want dir to be %s, got %s", c.path, c.dir, dir)
 		}
@@ -1571,7 +1422,7 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
 
 	umaskTest := umaskSet
 
-	if avfs.OSUtils.OSType() == avfs.OsWindows {
+	if avfs.CurrentOSType == avfs.OsWindows {
 		umaskTest = defaultUmask
 	}
 

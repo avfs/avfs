@@ -28,16 +28,12 @@ type SuiteIdm struct {
 	idm     avfs.IdentityMgr   // idm is the identity manager to be tested.
 	Groups  []avfs.GroupReader // Groups contains the test groups created with the identity manager.
 	Users   []avfs.UserReader  // Users contains the test users created with the identity manager.
-	utils   avfs.Utils         // utils regroups common functions used by emulated file systems.
 	canTest bool               // canTest is true when the identity manager can be tested.
 }
 
 // NewSuiteIdm returns a new test suite for an identity manager.
 func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
-	sIdm := &SuiteIdm{
-		idm:   idm,
-		utils: avfs.OSUtils,
-	}
+	sIdm := &SuiteIdm{idm: idm}
 
 	defer func() {
 		t.Logf("Info Idm = %s, can test permissions = %t", sIdm.Type(), sIdm.canTest)

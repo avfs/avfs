@@ -143,7 +143,7 @@ func (ut *Utils[_]) BaseDirs(basePath string) []DirInfo {
 		}
 	default:
 		return []DirInfo{
-			{Path: ut.Join(basePath, ut.HomeDir()), Perm: ut.HomeDirPerm()},
+			{Path: ut.Join(basePath, ut.HomeDir()), Perm: HomeDirPerm()},
 			{Path: ut.Join(basePath, "/root"), Perm: 0o700},
 			{Path: ut.Join(basePath, "/tmp"), Perm: 0o777},
 		}
@@ -288,7 +288,7 @@ func (ut *Utils[T]) CreateBaseDirs(vfs T, basePath string) error {
 func (ut *Utils[T]) CreateHomeDir(vfs T, u UserReader) (string, error) {
 	userDir := ut.HomeDirUser(vfs, u)
 
-	err := vfs.Mkdir(userDir, ut.HomeDirPerm())
+	err := vfs.Mkdir(userDir, HomeDirPerm())
 	if err != nil {
 		return "", err
 	}
@@ -498,7 +498,7 @@ func (ut *Utils[T]) HomeDirUser(vfs T, u UserReader) string {
 }
 
 // HomeDirPerm return the default permission for home directories.
-func (ut *Utils[_]) HomeDirPerm() fs.FileMode {
+func HomeDirPerm() fs.FileMode {
 	return 0o755
 }
 
