@@ -37,10 +37,8 @@ var (
 )
 
 func initFS(tb testing.TB) *basepathfs.BasePathFS {
-	ut := avfs.OSUtils
-	basePath := ut.FromUnixPath(avfs.DefaultVolume, "/base/path")
-
 	baseFs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	basePath := baseFs.FromUnixPath(avfs.DefaultVolume, "/base/path")
 
 	err := baseFs.MkdirAll(basePath, avfs.DefaultDirPerm)
 	if err != nil {
@@ -66,9 +64,8 @@ func TestBasePathFS(t *testing.T) {
 
 // TestBasePathFsOptions tests BasePathFS configuration options.
 func TestBasePathFSOptions(t *testing.T) {
-	ut := avfs.OSUtils
 	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
-	nonExistingDir := ut.FromUnixPath(avfs.DefaultVolume, "/non/existing/dir")
+	nonExistingDir := vfs.FromUnixPath(avfs.DefaultVolume, "/non/existing/dir")
 
 	test.CheckPanic(t, "", func() {
 		_ = basepathfs.New(vfs, nonExistingDir)
