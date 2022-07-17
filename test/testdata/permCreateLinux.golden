@@ -1,0 +1,7298 @@
+{
+	"UsrGrp/----------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--------w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--------wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wx---": {},
+	"UsrGrp/-----wx--x": {},
+	"UsrGrp/-----wx-w-": {},
+	"UsrGrp/-----wx-wx": {},
+	"UsrGrp/-----wxr--": {},
+	"UsrGrp/-----wxr-x": {},
+	"UsrGrp/-----wxrw-": {},
+	"UsrGrp/-----wxrwx": {},
+	"UsrGrp/----r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwx---": {},
+	"UsrGrp/----rwx--x": {},
+	"UsrGrp/----rwx-w-": {},
+	"UsrGrp/----rwx-wx": {},
+	"UsrGrp/----rwxr--": {},
+	"UsrGrp/----rwxr-x": {},
+	"UsrGrp/----rwxrw-": {},
+	"UsrGrp/----rwxrwx": {},
+	"UsrGrp/---x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wx---": {},
+	"UsrGrp/---x-wx--x": {},
+	"UsrGrp/---x-wx-w-": {},
+	"UsrGrp/---x-wx-wx": {},
+	"UsrGrp/---x-wxr--": {},
+	"UsrGrp/---x-wxr-x": {},
+	"UsrGrp/---x-wxrw-": {},
+	"UsrGrp/---x-wxrwx": {},
+	"UsrGrp/---xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwx---": {},
+	"UsrGrp/---xrwx--x": {},
+	"UsrGrp/---xrwx-w-": {},
+	"UsrGrp/---xrwx-wx": {},
+	"UsrGrp/---xrwxr--": {},
+	"UsrGrp/---xrwxr-x": {},
+	"UsrGrp/---xrwxrw-": {},
+	"UsrGrp/---xrwxrwx": {},
+	"UsrGrp/--w-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wx---": {},
+	"UsrGrp/--w--wx--x": {},
+	"UsrGrp/--w--wx-w-": {},
+	"UsrGrp/--w--wx-wx": {},
+	"UsrGrp/--w--wxr--": {},
+	"UsrGrp/--w--wxr-x": {},
+	"UsrGrp/--w--wxrw-": {},
+	"UsrGrp/--w--wxrwx": {},
+	"UsrGrp/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwx---": {},
+	"UsrGrp/--w-rwx--x": {},
+	"UsrGrp/--w-rwx-w-": {},
+	"UsrGrp/--w-rwx-wx": {},
+	"UsrGrp/--w-rwxr--": {},
+	"UsrGrp/--w-rwxr-x": {},
+	"UsrGrp/--w-rwxrw-": {},
+	"UsrGrp/--w-rwxrwx": {},
+	"UsrGrp/--wx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wx---": {},
+	"UsrGrp/--wx-wx--x": {},
+	"UsrGrp/--wx-wx-w-": {},
+	"UsrGrp/--wx-wx-wx": {},
+	"UsrGrp/--wx-wxr--": {},
+	"UsrGrp/--wx-wxr-x": {},
+	"UsrGrp/--wx-wxrw-": {},
+	"UsrGrp/--wx-wxrwx": {},
+	"UsrGrp/--wxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwx---": {},
+	"UsrGrp/--wxrwx--x": {},
+	"UsrGrp/--wxrwx-w-": {},
+	"UsrGrp/--wxrwx-wx": {},
+	"UsrGrp/--wxrwxr--": {},
+	"UsrGrp/--wxrwxr-x": {},
+	"UsrGrp/--wxrwxrw-": {},
+	"UsrGrp/--wxrwxrwx": {},
+	"UsrGrp/-r--------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r------w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r------wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wx---": {},
+	"UsrGrp/-r---wx--x": {},
+	"UsrGrp/-r---wx-w-": {},
+	"UsrGrp/-r---wx-wx": {},
+	"UsrGrp/-r---wxr--": {},
+	"UsrGrp/-r---wxr-x": {},
+	"UsrGrp/-r---wxrw-": {},
+	"UsrGrp/-r---wxrwx": {},
+	"UsrGrp/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwx---": {},
+	"UsrGrp/-r--rwx--x": {},
+	"UsrGrp/-r--rwx-w-": {},
+	"UsrGrp/-r--rwx-wx": {},
+	"UsrGrp/-r--rwxr--": {},
+	"UsrGrp/-r--rwxr-x": {},
+	"UsrGrp/-r--rwxrw-": {},
+	"UsrGrp/-r--rwxrwx": {},
+	"UsrGrp/-r-x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wx---": {},
+	"UsrGrp/-r-x-wx--x": {},
+	"UsrGrp/-r-x-wx-w-": {},
+	"UsrGrp/-r-x-wx-wx": {},
+	"UsrGrp/-r-x-wxr--": {},
+	"UsrGrp/-r-x-wxr-x": {},
+	"UsrGrp/-r-x-wxrw-": {},
+	"UsrGrp/-r-x-wxrwx": {},
+	"UsrGrp/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwx---": {},
+	"UsrGrp/-r-xrwx--x": {},
+	"UsrGrp/-r-xrwx-w-": {},
+	"UsrGrp/-r-xrwx-wx": {},
+	"UsrGrp/-r-xrwxr--": {},
+	"UsrGrp/-r-xrwxr-x": {},
+	"UsrGrp/-r-xrwxrw-": {},
+	"UsrGrp/-r-xrwxrwx": {},
+	"UsrGrp/-rw-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wx---": {},
+	"UsrGrp/-rw--wx--x": {},
+	"UsrGrp/-rw--wx-w-": {},
+	"UsrGrp/-rw--wx-wx": {},
+	"UsrGrp/-rw--wxr--": {},
+	"UsrGrp/-rw--wxr-x": {},
+	"UsrGrp/-rw--wxrw-": {},
+	"UsrGrp/-rw--wxrwx": {},
+	"UsrGrp/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwx---": {},
+	"UsrGrp/-rw-rwx--x": {},
+	"UsrGrp/-rw-rwx-w-": {},
+	"UsrGrp/-rw-rwx-wx": {},
+	"UsrGrp/-rw-rwxr--": {},
+	"UsrGrp/-rw-rwxr-x": {},
+	"UsrGrp/-rw-rwxrw-": {},
+	"UsrGrp/-rw-rwxrwx": {},
+	"UsrGrp/-rwx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wx---": {},
+	"UsrGrp/-rwx-wx--x": {},
+	"UsrGrp/-rwx-wx-w-": {},
+	"UsrGrp/-rwx-wx-wx": {},
+	"UsrGrp/-rwx-wxr--": {},
+	"UsrGrp/-rwx-wxr-x": {},
+	"UsrGrp/-rwx-wxrw-": {},
+	"UsrGrp/-rwx-wxrwx": {},
+	"UsrGrp/-rwxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwx---": {},
+	"UsrGrp/-rwxrwx--x": {},
+	"UsrGrp/-rwxrwx-w-": {},
+	"UsrGrp/-rwxrwx-wx": {},
+	"UsrGrp/-rwxrwxr--": {},
+	"UsrGrp/-rwxrwxr-x": {},
+	"UsrGrp/-rwxrwxrw-": {},
+	"UsrGrp/-rwxrwxrwx": {},
+	"UsrOth/----------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--------w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--------wx": {},
+	"UsrOth/-------r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------rwx": {},
+	"UsrOth/------x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x-wx": {},
+	"UsrOth/------xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xrwx": {},
+	"UsrOth/-----w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w--wx": {},
+	"UsrOth/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-rwx": {},
+	"UsrOth/-----wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx-wx": {},
+	"UsrOth/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxrwx": {},
+	"UsrOth/----r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r---wx": {},
+	"UsrOth/----r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--rwx": {},
+	"UsrOth/----r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x-wx": {},
+	"UsrOth/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xrwx": {},
+	"UsrOth/----rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw--wx": {},
+	"UsrOth/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-rwx": {},
+	"UsrOth/----rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx-wx": {},
+	"UsrOth/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxrwx": {},
+	"UsrOth/---x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x----wx": {},
+	"UsrOth/---x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---rwx": {},
+	"UsrOth/---x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x-wx": {},
+	"UsrOth/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xrwx": {},
+	"UsrOth/---x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w--wx": {},
+	"UsrOth/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-rwx": {},
+	"UsrOth/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx-wx": {},
+	"UsrOth/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxrwx": {},
+	"UsrOth/---xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr---wx": {},
+	"UsrOth/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--rwx": {},
+	"UsrOth/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x-wx": {},
+	"UsrOth/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xrwx": {},
+	"UsrOth/---xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw--wx": {},
+	"UsrOth/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-rwx": {},
+	"UsrOth/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx-wx": {},
+	"UsrOth/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxrwx": {},
+	"UsrOth/--w-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-----wx": {},
+	"UsrOth/--w----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----rwx": {},
+	"UsrOth/--w---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x-wx": {},
+	"UsrOth/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xrwx": {},
+	"UsrOth/--w--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w--wx": {},
+	"UsrOth/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-rwx": {},
+	"UsrOth/--w--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx-wx": {},
+	"UsrOth/--w--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxrwx": {},
+	"UsrOth/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r---wx": {},
+	"UsrOth/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--rwx": {},
+	"UsrOth/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x-wx": {},
+	"UsrOth/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xrwx": {},
+	"UsrOth/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw--wx": {},
+	"UsrOth/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-rwx": {},
+	"UsrOth/--w-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx-wx": {},
+	"UsrOth/--w-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxrwx": {},
+	"UsrOth/--wx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx----wx": {},
+	"UsrOth/--wx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---rwx": {},
+	"UsrOth/--wx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x-wx": {},
+	"UsrOth/--wx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xrwx": {},
+	"UsrOth/--wx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w--wx": {},
+	"UsrOth/--wx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-rwx": {},
+	"UsrOth/--wx-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx-wx": {},
+	"UsrOth/--wx-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxrwx": {},
+	"UsrOth/--wxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr---wx": {},
+	"UsrOth/--wxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--rwx": {},
+	"UsrOth/--wxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x-wx": {},
+	"UsrOth/--wxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xrwx": {},
+	"UsrOth/--wxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw--wx": {},
+	"UsrOth/--wxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-rwx": {},
+	"UsrOth/--wxrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx-wx": {},
+	"UsrOth/--wxrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxrwx": {},
+	"UsrOth/-r--------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r------w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r------wx": {},
+	"UsrOth/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----rwx": {},
+	"UsrOth/-r----x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x-wx": {},
+	"UsrOth/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xrwx": {},
+	"UsrOth/-r---w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w--wx": {},
+	"UsrOth/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-rwx": {},
+	"UsrOth/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx-wx": {},
+	"UsrOth/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxrwx": {},
+	"UsrOth/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r---wx": {},
+	"UsrOth/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--rwx": {},
+	"UsrOth/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x-wx": {},
+	"UsrOth/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xrwx": {},
+	"UsrOth/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw--wx": {},
+	"UsrOth/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-rwx": {},
+	"UsrOth/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx-wx": {},
+	"UsrOth/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxrwx": {},
+	"UsrOth/-r-x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x----wx": {},
+	"UsrOth/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---rwx": {},
+	"UsrOth/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x-wx": {},
+	"UsrOth/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xrwx": {},
+	"UsrOth/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w--wx": {},
+	"UsrOth/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-rwx": {},
+	"UsrOth/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx-wx": {},
+	"UsrOth/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxrwx": {},
+	"UsrOth/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr---wx": {},
+	"UsrOth/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--rwx": {},
+	"UsrOth/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x-wx": {},
+	"UsrOth/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xrwx": {},
+	"UsrOth/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw--wx": {},
+	"UsrOth/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-rwx": {},
+	"UsrOth/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx-wx": {},
+	"UsrOth/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxrwx": {},
+	"UsrOth/-rw-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-----wx": {},
+	"UsrOth/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----rwx": {},
+	"UsrOth/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x-wx": {},
+	"UsrOth/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xrwx": {},
+	"UsrOth/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w--wx": {},
+	"UsrOth/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-rwx": {},
+	"UsrOth/-rw--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx-wx": {},
+	"UsrOth/-rw--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxrwx": {},
+	"UsrOth/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r---wx": {},
+	"UsrOth/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--rwx": {},
+	"UsrOth/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x-wx": {},
+	"UsrOth/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xrwx": {},
+	"UsrOth/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw--wx": {},
+	"UsrOth/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-rwx": {},
+	"UsrOth/-rw-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx-wx": {},
+	"UsrOth/-rw-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxrwx": {},
+	"UsrOth/-rwx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx----wx": {},
+	"UsrOth/-rwx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---rwx": {},
+	"UsrOth/-rwx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x-wx": {},
+	"UsrOth/-rwx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xrwx": {},
+	"UsrOth/-rwx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w--wx": {},
+	"UsrOth/-rwx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-rwx": {},
+	"UsrOth/-rwx-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx-wx": {},
+	"UsrOth/-rwx-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxrwx": {},
+	"UsrOth/-rwxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr---wx": {},
+	"UsrOth/-rwxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--rwx": {},
+	"UsrOth/-rwxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x-wx": {},
+	"UsrOth/-rwxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xrwx": {},
+	"UsrOth/-rwxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw--wx": {},
+	"UsrOth/-rwxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-rwx": {},
+	"UsrOth/-rwxrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx-wx": {},
+	"UsrOth/-rwxrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxrwx": {},
+	"UsrTest/----------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--------w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--------wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w----rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w---xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w--wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w--wxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--w-rwxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--wx------": {},
+	"UsrTest/--wx-----x": {},
+	"UsrTest/--wx----w-": {},
+	"UsrTest/--wx----wx": {},
+	"UsrTest/--wx---r--": {},
+	"UsrTest/--wx---r-x": {},
+	"UsrTest/--wx---rw-": {},
+	"UsrTest/--wx---rwx": {},
+	"UsrTest/--wx--x---": {},
+	"UsrTest/--wx--x--x": {},
+	"UsrTest/--wx--x-w-": {},
+	"UsrTest/--wx--x-wx": {},
+	"UsrTest/--wx--xr--": {},
+	"UsrTest/--wx--xr-x": {},
+	"UsrTest/--wx--xrw-": {},
+	"UsrTest/--wx--xrwx": {},
+	"UsrTest/--wx-w----": {},
+	"UsrTest/--wx-w---x": {},
+	"UsrTest/--wx-w--w-": {},
+	"UsrTest/--wx-w--wx": {},
+	"UsrTest/--wx-w-r--": {},
+	"UsrTest/--wx-w-r-x": {},
+	"UsrTest/--wx-w-rw-": {},
+	"UsrTest/--wx-w-rwx": {},
+	"UsrTest/--wx-wx---": {},
+	"UsrTest/--wx-wx--x": {},
+	"UsrTest/--wx-wx-w-": {},
+	"UsrTest/--wx-wx-wx": {},
+	"UsrTest/--wx-wxr--": {},
+	"UsrTest/--wx-wxr-x": {},
+	"UsrTest/--wx-wxrw-": {},
+	"UsrTest/--wx-wxrwx": {},
+	"UsrTest/--wxr-----": {},
+	"UsrTest/--wxr----x": {},
+	"UsrTest/--wxr---w-": {},
+	"UsrTest/--wxr---wx": {},
+	"UsrTest/--wxr--r--": {},
+	"UsrTest/--wxr--r-x": {},
+	"UsrTest/--wxr--rw-": {},
+	"UsrTest/--wxr--rwx": {},
+	"UsrTest/--wxr-x---": {},
+	"UsrTest/--wxr-x--x": {},
+	"UsrTest/--wxr-x-w-": {},
+	"UsrTest/--wxr-x-wx": {},
+	"UsrTest/--wxr-xr--": {},
+	"UsrTest/--wxr-xr-x": {},
+	"UsrTest/--wxr-xrw-": {},
+	"UsrTest/--wxr-xrwx": {},
+	"UsrTest/--wxrw----": {},
+	"UsrTest/--wxrw---x": {},
+	"UsrTest/--wxrw--w-": {},
+	"UsrTest/--wxrw--wx": {},
+	"UsrTest/--wxrw-r--": {},
+	"UsrTest/--wxrw-r-x": {},
+	"UsrTest/--wxrw-rw-": {},
+	"UsrTest/--wxrw-rwx": {},
+	"UsrTest/--wxrwx---": {},
+	"UsrTest/--wxrwx--x": {},
+	"UsrTest/--wxrwx-w-": {},
+	"UsrTest/--wxrwx-wx": {},
+	"UsrTest/--wxrwxr--": {},
+	"UsrTest/--wxrwxr-x": {},
+	"UsrTest/--wxrwxrw-": {},
+	"UsrTest/--wxrwxrwx": {},
+	"UsrTest/-r--------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r------w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r------wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-------/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw------x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-----w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-----wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw----r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw----r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw----rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw----rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw---xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--w-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw--wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw--wxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r----x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r---w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r---wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r--r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r--r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r--rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r--rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-x---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-x--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-x-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-x-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-xr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-xr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-xrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-r-xrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw----/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw---x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw--w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw--wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw-r--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw-r-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw-rw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rw-rwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwx---/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwx--x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwx-w-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwx-wx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwxr--/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwxr-x/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwxrw-/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-rw-rwxrwx/defaultFile",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rwx------": {},
+	"UsrTest/-rwx-----x": {},
+	"UsrTest/-rwx----w-": {},
+	"UsrTest/-rwx----wx": {},
+	"UsrTest/-rwx---r--": {},
+	"UsrTest/-rwx---r-x": {},
+	"UsrTest/-rwx---rw-": {},
+	"UsrTest/-rwx---rwx": {},
+	"UsrTest/-rwx--x---": {},
+	"UsrTest/-rwx--x--x": {},
+	"UsrTest/-rwx--x-w-": {},
+	"UsrTest/-rwx--x-wx": {},
+	"UsrTest/-rwx--xr--": {},
+	"UsrTest/-rwx--xr-x": {},
+	"UsrTest/-rwx--xrw-": {},
+	"UsrTest/-rwx--xrwx": {},
+	"UsrTest/-rwx-w----": {},
+	"UsrTest/-rwx-w---x": {},
+	"UsrTest/-rwx-w--w-": {},
+	"UsrTest/-rwx-w--wx": {},
+	"UsrTest/-rwx-w-r--": {},
+	"UsrTest/-rwx-w-r-x": {},
+	"UsrTest/-rwx-w-rw-": {},
+	"UsrTest/-rwx-w-rwx": {},
+	"UsrTest/-rwx-wx---": {},
+	"UsrTest/-rwx-wx--x": {},
+	"UsrTest/-rwx-wx-w-": {},
+	"UsrTest/-rwx-wx-wx": {},
+	"UsrTest/-rwx-wxr--": {},
+	"UsrTest/-rwx-wxr-x": {},
+	"UsrTest/-rwx-wxrw-": {},
+	"UsrTest/-rwx-wxrwx": {},
+	"UsrTest/-rwxr-----": {},
+	"UsrTest/-rwxr----x": {},
+	"UsrTest/-rwxr---w-": {},
+	"UsrTest/-rwxr---wx": {},
+	"UsrTest/-rwxr--r--": {},
+	"UsrTest/-rwxr--r-x": {},
+	"UsrTest/-rwxr--rw-": {},
+	"UsrTest/-rwxr--rwx": {},
+	"UsrTest/-rwxr-x---": {},
+	"UsrTest/-rwxr-x--x": {},
+	"UsrTest/-rwxr-x-w-": {},
+	"UsrTest/-rwxr-x-wx": {},
+	"UsrTest/-rwxr-xr--": {},
+	"UsrTest/-rwxr-xr-x": {},
+	"UsrTest/-rwxr-xrw-": {},
+	"UsrTest/-rwxr-xrwx": {},
+	"UsrTest/-rwxrw----": {},
+	"UsrTest/-rwxrw---x": {},
+	"UsrTest/-rwxrw--w-": {},
+	"UsrTest/-rwxrw--wx": {},
+	"UsrTest/-rwxrw-r--": {},
+	"UsrTest/-rwxrw-r-x": {},
+	"UsrTest/-rwxrw-rw-": {},
+	"UsrTest/-rwxrw-rwx": {},
+	"UsrTest/-rwxrwx---": {},
+	"UsrTest/-rwxrwx--x": {},
+	"UsrTest/-rwxrwx-w-": {},
+	"UsrTest/-rwxrwx-wx": {},
+	"UsrTest/-rwxrwxr--": {},
+	"UsrTest/-rwxrwxr-x": {},
+	"UsrTest/-rwxrwxrw-": {},
+	"UsrTest/-rwxrwxrwx": {}
+}

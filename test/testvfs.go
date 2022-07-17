@@ -116,8 +116,10 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Chdir", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.Chdir(path)
 		})
 	})
@@ -207,8 +209,10 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Chmod", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.Chmod(path, 0o777)
 		})
 	})
@@ -329,8 +333,10 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Chown", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.Chown(path, 0, 0)
 		})
 	})
@@ -463,8 +469,10 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Chtimes", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.Chtimes(path, time.Now(), time.Now())
 		})
 	})
@@ -503,8 +511,10 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Create", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			newFile := vfs.Join(path, defaultFile)
 
 			f, err := vfs.Create(newFile)
@@ -782,8 +792,10 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Lchown", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.Lchown(path, 0, 0)
 		})
 	})
@@ -1113,8 +1125,10 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Mkdir", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
 			return vfs.Mkdir(newDir, avfs.DefaultDirPerm)
@@ -1224,8 +1238,10 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "MkdirAll", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
 			return vfs.MkdirAll(newDir, avfs.DefaultDirPerm)
@@ -1793,14 +1809,14 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemovePerm", func(t *testing.T) {
-		t.Skip("TODO: Remove")
-
 		if !sfs.canTestPerm {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "Remove", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.Remove(path)
 		})
 	})
@@ -1888,14 +1904,14 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveAllPerm", func(t *testing.T) {
-		t.Skip("TODO: RemoveAll")
-
 		if !sfs.canTestPerm {
 			return
 		}
 
-		pt := NewPermTest(sfs, testDir)
-		pt.Test(t, func(path string) error {
+		pts := sfs.NewPermTests(testDir, "RemoveAll", &PermOptions{IgnoreOp: true})
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
 			return vfs.RemoveAll(path)
 		})
 	})

@@ -1,0 +1,6658 @@
+{
+	"UsrGrp/----------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--------w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--------w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--------wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--------wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-------r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-------r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-------r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-------r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-------rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-------rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-------rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-------rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/------xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/------xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-----wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-----wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/----rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/----rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---x-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/---xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/---xrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w----r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w----r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w----r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w----rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w----rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w----rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w---xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w---xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w--wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w--wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--w-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--w-rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wx-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/--wxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/--wxrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r------w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r------w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r------wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r------wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-----r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-----r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-----rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-----rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r----xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r---wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r---wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r--rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r--rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-x-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-r-xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-r-xrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw----r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw----r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw----rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw----rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw----rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw---xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw---xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw--wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw--wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rw-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rw-rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx------",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwx-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrGrp/-rwxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrGrp/-rwxrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--------w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--------w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--------wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--------wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-------r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-------r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-------r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-------r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-------rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-------rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-------rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-------rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/------xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/------xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-----wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-----wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/----rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/----rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---x-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/---xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/---xrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w----r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w----r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w----r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w----rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w----rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w----rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w---xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w---xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w--wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w--wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--w-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--w-rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wx-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/--wxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/--wxrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r------w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r------w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r------wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r------wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-----r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-----r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-----rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-----rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r----xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r---wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r---wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r--rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r--rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-x-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-r-xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-r-xrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw------x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw------x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw----r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw----r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw----rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw----rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw----rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw---xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw---xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw--wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw--wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-r-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rw-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rw-rwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx------": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx------",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx----w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx----w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx----wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx----wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx---r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx---r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx---r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx---r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx---rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx---rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx---rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx---rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx--xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx--xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-w-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwx-wxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr----x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr----x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr---w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr---w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr---wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr---wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr--r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr--r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr--r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr--r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr--rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr--rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr--rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr--rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-x---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-x---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-x--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-x--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-x-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-x-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-xr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-xr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-xr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-xrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxr-xrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw----": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw----",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw---x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw---x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw--w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw--w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw--wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw--wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw-r--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw-r--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw-r-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw-rw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrw-rwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwx---": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwx---",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwx--x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwx--x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwx-w-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwx-wx",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwxr--": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwxr--",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwxr-x",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwxrw-",
+		"errErr": "operation not permitted"
+	},
+	"UsrOth/-rwxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "chmod",
+		"errPath": "UsrOth/-rwxrwxrwx",
+		"errErr": "operation not permitted"
+	},
+	"UsrTest/----------": {},
+	"UsrTest/---------x": {},
+	"UsrTest/--------w-": {},
+	"UsrTest/--------wx": {},
+	"UsrTest/-------r--": {},
+	"UsrTest/-------r-x": {},
+	"UsrTest/-------rw-": {},
+	"UsrTest/-------rwx": {},
+	"UsrTest/------x---": {},
+	"UsrTest/------x--x": {},
+	"UsrTest/------x-w-": {},
+	"UsrTest/------x-wx": {},
+	"UsrTest/------xr--": {},
+	"UsrTest/------xr-x": {},
+	"UsrTest/------xrw-": {},
+	"UsrTest/------xrwx": {},
+	"UsrTest/-----w----": {},
+	"UsrTest/-----w---x": {},
+	"UsrTest/-----w--w-": {},
+	"UsrTest/-----w--wx": {},
+	"UsrTest/-----w-r--": {},
+	"UsrTest/-----w-r-x": {},
+	"UsrTest/-----w-rw-": {},
+	"UsrTest/-----w-rwx": {},
+	"UsrTest/-----wx---": {},
+	"UsrTest/-----wx--x": {},
+	"UsrTest/-----wx-w-": {},
+	"UsrTest/-----wx-wx": {},
+	"UsrTest/-----wxr--": {},
+	"UsrTest/-----wxr-x": {},
+	"UsrTest/-----wxrw-": {},
+	"UsrTest/-----wxrwx": {},
+	"UsrTest/----r-----": {},
+	"UsrTest/----r----x": {},
+	"UsrTest/----r---w-": {},
+	"UsrTest/----r---wx": {},
+	"UsrTest/----r--r--": {},
+	"UsrTest/----r--r-x": {},
+	"UsrTest/----r--rw-": {},
+	"UsrTest/----r--rwx": {},
+	"UsrTest/----r-x---": {},
+	"UsrTest/----r-x--x": {},
+	"UsrTest/----r-x-w-": {},
+	"UsrTest/----r-x-wx": {},
+	"UsrTest/----r-xr--": {},
+	"UsrTest/----r-xr-x": {},
+	"UsrTest/----r-xrw-": {},
+	"UsrTest/----r-xrwx": {},
+	"UsrTest/----rw----": {},
+	"UsrTest/----rw---x": {},
+	"UsrTest/----rw--w-": {},
+	"UsrTest/----rw--wx": {},
+	"UsrTest/----rw-r--": {},
+	"UsrTest/----rw-r-x": {},
+	"UsrTest/----rw-rw-": {},
+	"UsrTest/----rw-rwx": {},
+	"UsrTest/----rwx---": {},
+	"UsrTest/----rwx--x": {},
+	"UsrTest/----rwx-w-": {},
+	"UsrTest/----rwx-wx": {},
+	"UsrTest/----rwxr--": {},
+	"UsrTest/----rwxr-x": {},
+	"UsrTest/----rwxrw-": {},
+	"UsrTest/----rwxrwx": {},
+	"UsrTest/---x------": {},
+	"UsrTest/---x-----x": {},
+	"UsrTest/---x----w-": {},
+	"UsrTest/---x----wx": {},
+	"UsrTest/---x---r--": {},
+	"UsrTest/---x---r-x": {},
+	"UsrTest/---x---rw-": {},
+	"UsrTest/---x---rwx": {},
+	"UsrTest/---x--x---": {},
+	"UsrTest/---x--x--x": {},
+	"UsrTest/---x--x-w-": {},
+	"UsrTest/---x--x-wx": {},
+	"UsrTest/---x--xr--": {},
+	"UsrTest/---x--xr-x": {},
+	"UsrTest/---x--xrw-": {},
+	"UsrTest/---x--xrwx": {},
+	"UsrTest/---x-w----": {},
+	"UsrTest/---x-w---x": {},
+	"UsrTest/---x-w--w-": {},
+	"UsrTest/---x-w--wx": {},
+	"UsrTest/---x-w-r--": {},
+	"UsrTest/---x-w-r-x": {},
+	"UsrTest/---x-w-rw-": {},
+	"UsrTest/---x-w-rwx": {},
+	"UsrTest/---x-wx---": {},
+	"UsrTest/---x-wx--x": {},
+	"UsrTest/---x-wx-w-": {},
+	"UsrTest/---x-wx-wx": {},
+	"UsrTest/---x-wxr--": {},
+	"UsrTest/---x-wxr-x": {},
+	"UsrTest/---x-wxrw-": {},
+	"UsrTest/---x-wxrwx": {},
+	"UsrTest/---xr-----": {},
+	"UsrTest/---xr----x": {},
+	"UsrTest/---xr---w-": {},
+	"UsrTest/---xr---wx": {},
+	"UsrTest/---xr--r--": {},
+	"UsrTest/---xr--r-x": {},
+	"UsrTest/---xr--rw-": {},
+	"UsrTest/---xr--rwx": {},
+	"UsrTest/---xr-x---": {},
+	"UsrTest/---xr-x--x": {},
+	"UsrTest/---xr-x-w-": {},
+	"UsrTest/---xr-x-wx": {},
+	"UsrTest/---xr-xr--": {},
+	"UsrTest/---xr-xr-x": {},
+	"UsrTest/---xr-xrw-": {},
+	"UsrTest/---xr-xrwx": {},
+	"UsrTest/---xrw----": {},
+	"UsrTest/---xrw---x": {},
+	"UsrTest/---xrw--w-": {},
+	"UsrTest/---xrw--wx": {},
+	"UsrTest/---xrw-r--": {},
+	"UsrTest/---xrw-r-x": {},
+	"UsrTest/---xrw-rw-": {},
+	"UsrTest/---xrw-rwx": {},
+	"UsrTest/---xrwx---": {},
+	"UsrTest/---xrwx--x": {},
+	"UsrTest/---xrwx-w-": {},
+	"UsrTest/---xrwx-wx": {},
+	"UsrTest/---xrwxr--": {},
+	"UsrTest/---xrwxr-x": {},
+	"UsrTest/---xrwxrw-": {},
+	"UsrTest/---xrwxrwx": {},
+	"UsrTest/--w-------": {},
+	"UsrTest/--w------x": {},
+	"UsrTest/--w-----w-": {},
+	"UsrTest/--w-----wx": {},
+	"UsrTest/--w----r--": {},
+	"UsrTest/--w----r-x": {},
+	"UsrTest/--w----rw-": {},
+	"UsrTest/--w----rwx": {},
+	"UsrTest/--w---x---": {},
+	"UsrTest/--w---x--x": {},
+	"UsrTest/--w---x-w-": {},
+	"UsrTest/--w---x-wx": {},
+	"UsrTest/--w---xr--": {},
+	"UsrTest/--w---xr-x": {},
+	"UsrTest/--w---xrw-": {},
+	"UsrTest/--w---xrwx": {},
+	"UsrTest/--w--w----": {},
+	"UsrTest/--w--w---x": {},
+	"UsrTest/--w--w--w-": {},
+	"UsrTest/--w--w--wx": {},
+	"UsrTest/--w--w-r--": {},
+	"UsrTest/--w--w-r-x": {},
+	"UsrTest/--w--w-rw-": {},
+	"UsrTest/--w--w-rwx": {},
+	"UsrTest/--w--wx---": {},
+	"UsrTest/--w--wx--x": {},
+	"UsrTest/--w--wx-w-": {},
+	"UsrTest/--w--wx-wx": {},
+	"UsrTest/--w--wxr--": {},
+	"UsrTest/--w--wxr-x": {},
+	"UsrTest/--w--wxrw-": {},
+	"UsrTest/--w--wxrwx": {},
+	"UsrTest/--w-r-----": {},
+	"UsrTest/--w-r----x": {},
+	"UsrTest/--w-r---w-": {},
+	"UsrTest/--w-r---wx": {},
+	"UsrTest/--w-r--r--": {},
+	"UsrTest/--w-r--r-x": {},
+	"UsrTest/--w-r--rw-": {},
+	"UsrTest/--w-r--rwx": {},
+	"UsrTest/--w-r-x---": {},
+	"UsrTest/--w-r-x--x": {},
+	"UsrTest/--w-r-x-w-": {},
+	"UsrTest/--w-r-x-wx": {},
+	"UsrTest/--w-r-xr--": {},
+	"UsrTest/--w-r-xr-x": {},
+	"UsrTest/--w-r-xrw-": {},
+	"UsrTest/--w-r-xrwx": {},
+	"UsrTest/--w-rw----": {},
+	"UsrTest/--w-rw---x": {},
+	"UsrTest/--w-rw--w-": {},
+	"UsrTest/--w-rw--wx": {},
+	"UsrTest/--w-rw-r--": {},
+	"UsrTest/--w-rw-r-x": {},
+	"UsrTest/--w-rw-rw-": {},
+	"UsrTest/--w-rw-rwx": {},
+	"UsrTest/--w-rwx---": {},
+	"UsrTest/--w-rwx--x": {},
+	"UsrTest/--w-rwx-w-": {},
+	"UsrTest/--w-rwx-wx": {},
+	"UsrTest/--w-rwxr--": {},
+	"UsrTest/--w-rwxr-x": {},
+	"UsrTest/--w-rwxrw-": {},
+	"UsrTest/--w-rwxrwx": {},
+	"UsrTest/--wx------": {},
+	"UsrTest/--wx-----x": {},
+	"UsrTest/--wx----w-": {},
+	"UsrTest/--wx----wx": {},
+	"UsrTest/--wx---r--": {},
+	"UsrTest/--wx---r-x": {},
+	"UsrTest/--wx---rw-": {},
+	"UsrTest/--wx---rwx": {},
+	"UsrTest/--wx--x---": {},
+	"UsrTest/--wx--x--x": {},
+	"UsrTest/--wx--x-w-": {},
+	"UsrTest/--wx--x-wx": {},
+	"UsrTest/--wx--xr--": {},
+	"UsrTest/--wx--xr-x": {},
+	"UsrTest/--wx--xrw-": {},
+	"UsrTest/--wx--xrwx": {},
+	"UsrTest/--wx-w----": {},
+	"UsrTest/--wx-w---x": {},
+	"UsrTest/--wx-w--w-": {},
+	"UsrTest/--wx-w--wx": {},
+	"UsrTest/--wx-w-r--": {},
+	"UsrTest/--wx-w-r-x": {},
+	"UsrTest/--wx-w-rw-": {},
+	"UsrTest/--wx-w-rwx": {},
+	"UsrTest/--wx-wx---": {},
+	"UsrTest/--wx-wx--x": {},
+	"UsrTest/--wx-wx-w-": {},
+	"UsrTest/--wx-wx-wx": {},
+	"UsrTest/--wx-wxr--": {},
+	"UsrTest/--wx-wxr-x": {},
+	"UsrTest/--wx-wxrw-": {},
+	"UsrTest/--wx-wxrwx": {},
+	"UsrTest/--wxr-----": {},
+	"UsrTest/--wxr----x": {},
+	"UsrTest/--wxr---w-": {},
+	"UsrTest/--wxr---wx": {},
+	"UsrTest/--wxr--r--": {},
+	"UsrTest/--wxr--r-x": {},
+	"UsrTest/--wxr--rw-": {},
+	"UsrTest/--wxr--rwx": {},
+	"UsrTest/--wxr-x---": {},
+	"UsrTest/--wxr-x--x": {},
+	"UsrTest/--wxr-x-w-": {},
+	"UsrTest/--wxr-x-wx": {},
+	"UsrTest/--wxr-xr--": {},
+	"UsrTest/--wxr-xr-x": {},
+	"UsrTest/--wxr-xrw-": {},
+	"UsrTest/--wxr-xrwx": {},
+	"UsrTest/--wxrw----": {},
+	"UsrTest/--wxrw---x": {},
+	"UsrTest/--wxrw--w-": {},
+	"UsrTest/--wxrw--wx": {},
+	"UsrTest/--wxrw-r--": {},
+	"UsrTest/--wxrw-r-x": {},
+	"UsrTest/--wxrw-rw-": {},
+	"UsrTest/--wxrw-rwx": {},
+	"UsrTest/--wxrwx---": {},
+	"UsrTest/--wxrwx--x": {},
+	"UsrTest/--wxrwx-w-": {},
+	"UsrTest/--wxrwx-wx": {},
+	"UsrTest/--wxrwxr--": {},
+	"UsrTest/--wxrwxr-x": {},
+	"UsrTest/--wxrwxrw-": {},
+	"UsrTest/--wxrwxrwx": {},
+	"UsrTest/-r--------": {},
+	"UsrTest/-r-------x": {},
+	"UsrTest/-r------w-": {},
+	"UsrTest/-r------wx": {},
+	"UsrTest/-r-----r--": {},
+	"UsrTest/-r-----r-x": {},
+	"UsrTest/-r-----rw-": {},
+	"UsrTest/-r-----rwx": {},
+	"UsrTest/-r----x---": {},
+	"UsrTest/-r----x--x": {},
+	"UsrTest/-r----x-w-": {},
+	"UsrTest/-r----x-wx": {},
+	"UsrTest/-r----xr--": {},
+	"UsrTest/-r----xr-x": {},
+	"UsrTest/-r----xrw-": {},
+	"UsrTest/-r----xrwx": {},
+	"UsrTest/-r---w----": {},
+	"UsrTest/-r---w---x": {},
+	"UsrTest/-r---w--w-": {},
+	"UsrTest/-r---w--wx": {},
+	"UsrTest/-r---w-r--": {},
+	"UsrTest/-r---w-r-x": {},
+	"UsrTest/-r---w-rw-": {},
+	"UsrTest/-r---w-rwx": {},
+	"UsrTest/-r---wx---": {},
+	"UsrTest/-r---wx--x": {},
+	"UsrTest/-r---wx-w-": {},
+	"UsrTest/-r---wx-wx": {},
+	"UsrTest/-r---wxr--": {},
+	"UsrTest/-r---wxr-x": {},
+	"UsrTest/-r---wxrw-": {},
+	"UsrTest/-r---wxrwx": {},
+	"UsrTest/-r--r-----": {},
+	"UsrTest/-r--r----x": {},
+	"UsrTest/-r--r---w-": {},
+	"UsrTest/-r--r---wx": {},
+	"UsrTest/-r--r--r--": {},
+	"UsrTest/-r--r--r-x": {},
+	"UsrTest/-r--r--rw-": {},
+	"UsrTest/-r--r--rwx": {},
+	"UsrTest/-r--r-x---": {},
+	"UsrTest/-r--r-x--x": {},
+	"UsrTest/-r--r-x-w-": {},
+	"UsrTest/-r--r-x-wx": {},
+	"UsrTest/-r--r-xr--": {},
+	"UsrTest/-r--r-xr-x": {},
+	"UsrTest/-r--r-xrw-": {},
+	"UsrTest/-r--r-xrwx": {},
+	"UsrTest/-r--rw----": {},
+	"UsrTest/-r--rw---x": {},
+	"UsrTest/-r--rw--w-": {},
+	"UsrTest/-r--rw--wx": {},
+	"UsrTest/-r--rw-r--": {},
+	"UsrTest/-r--rw-r-x": {},
+	"UsrTest/-r--rw-rw-": {},
+	"UsrTest/-r--rw-rwx": {},
+	"UsrTest/-r--rwx---": {},
+	"UsrTest/-r--rwx--x": {},
+	"UsrTest/-r--rwx-w-": {},
+	"UsrTest/-r--rwx-wx": {},
+	"UsrTest/-r--rwxr--": {},
+	"UsrTest/-r--rwxr-x": {},
+	"UsrTest/-r--rwxrw-": {},
+	"UsrTest/-r--rwxrwx": {},
+	"UsrTest/-r-x------": {},
+	"UsrTest/-r-x-----x": {},
+	"UsrTest/-r-x----w-": {},
+	"UsrTest/-r-x----wx": {},
+	"UsrTest/-r-x---r--": {},
+	"UsrTest/-r-x---r-x": {},
+	"UsrTest/-r-x---rw-": {},
+	"UsrTest/-r-x---rwx": {},
+	"UsrTest/-r-x--x---": {},
+	"UsrTest/-r-x--x--x": {},
+	"UsrTest/-r-x--x-w-": {},
+	"UsrTest/-r-x--x-wx": {},
+	"UsrTest/-r-x--xr--": {},
+	"UsrTest/-r-x--xr-x": {},
+	"UsrTest/-r-x--xrw-": {},
+	"UsrTest/-r-x--xrwx": {},
+	"UsrTest/-r-x-w----": {},
+	"UsrTest/-r-x-w---x": {},
+	"UsrTest/-r-x-w--w-": {},
+	"UsrTest/-r-x-w--wx": {},
+	"UsrTest/-r-x-w-r--": {},
+	"UsrTest/-r-x-w-r-x": {},
+	"UsrTest/-r-x-w-rw-": {},
+	"UsrTest/-r-x-w-rwx": {},
+	"UsrTest/-r-x-wx---": {},
+	"UsrTest/-r-x-wx--x": {},
+	"UsrTest/-r-x-wx-w-": {},
+	"UsrTest/-r-x-wx-wx": {},
+	"UsrTest/-r-x-wxr--": {},
+	"UsrTest/-r-x-wxr-x": {},
+	"UsrTest/-r-x-wxrw-": {},
+	"UsrTest/-r-x-wxrwx": {},
+	"UsrTest/-r-xr-----": {},
+	"UsrTest/-r-xr----x": {},
+	"UsrTest/-r-xr---w-": {},
+	"UsrTest/-r-xr---wx": {},
+	"UsrTest/-r-xr--r--": {},
+	"UsrTest/-r-xr--r-x": {},
+	"UsrTest/-r-xr--rw-": {},
+	"UsrTest/-r-xr--rwx": {},
+	"UsrTest/-r-xr-x---": {},
+	"UsrTest/-r-xr-x--x": {},
+	"UsrTest/-r-xr-x-w-": {},
+	"UsrTest/-r-xr-x-wx": {},
+	"UsrTest/-r-xr-xr--": {},
+	"UsrTest/-r-xr-xr-x": {},
+	"UsrTest/-r-xr-xrw-": {},
+	"UsrTest/-r-xr-xrwx": {},
+	"UsrTest/-r-xrw----": {},
+	"UsrTest/-r-xrw---x": {},
+	"UsrTest/-r-xrw--w-": {},
+	"UsrTest/-r-xrw--wx": {},
+	"UsrTest/-r-xrw-r--": {},
+	"UsrTest/-r-xrw-r-x": {},
+	"UsrTest/-r-xrw-rw-": {},
+	"UsrTest/-r-xrw-rwx": {},
+	"UsrTest/-r-xrwx---": {},
+	"UsrTest/-r-xrwx--x": {},
+	"UsrTest/-r-xrwx-w-": {},
+	"UsrTest/-r-xrwx-wx": {},
+	"UsrTest/-r-xrwxr--": {},
+	"UsrTest/-r-xrwxr-x": {},
+	"UsrTest/-r-xrwxrw-": {},
+	"UsrTest/-r-xrwxrwx": {},
+	"UsrTest/-rw-------": {},
+	"UsrTest/-rw------x": {},
+	"UsrTest/-rw-----w-": {},
+	"UsrTest/-rw-----wx": {},
+	"UsrTest/-rw----r--": {},
+	"UsrTest/-rw----r-x": {},
+	"UsrTest/-rw----rw-": {},
+	"UsrTest/-rw----rwx": {},
+	"UsrTest/-rw---x---": {},
+	"UsrTest/-rw---x--x": {},
+	"UsrTest/-rw---x-w-": {},
+	"UsrTest/-rw---x-wx": {},
+	"UsrTest/-rw---xr--": {},
+	"UsrTest/-rw---xr-x": {},
+	"UsrTest/-rw---xrw-": {},
+	"UsrTest/-rw---xrwx": {},
+	"UsrTest/-rw--w----": {},
+	"UsrTest/-rw--w---x": {},
+	"UsrTest/-rw--w--w-": {},
+	"UsrTest/-rw--w--wx": {},
+	"UsrTest/-rw--w-r--": {},
+	"UsrTest/-rw--w-r-x": {},
+	"UsrTest/-rw--w-rw-": {},
+	"UsrTest/-rw--w-rwx": {},
+	"UsrTest/-rw--wx---": {},
+	"UsrTest/-rw--wx--x": {},
+	"UsrTest/-rw--wx-w-": {},
+	"UsrTest/-rw--wx-wx": {},
+	"UsrTest/-rw--wxr--": {},
+	"UsrTest/-rw--wxr-x": {},
+	"UsrTest/-rw--wxrw-": {},
+	"UsrTest/-rw--wxrwx": {},
+	"UsrTest/-rw-r-----": {},
+	"UsrTest/-rw-r----x": {},
+	"UsrTest/-rw-r---w-": {},
+	"UsrTest/-rw-r---wx": {},
+	"UsrTest/-rw-r--r--": {},
+	"UsrTest/-rw-r--r-x": {},
+	"UsrTest/-rw-r--rw-": {},
+	"UsrTest/-rw-r--rwx": {},
+	"UsrTest/-rw-r-x---": {},
+	"UsrTest/-rw-r-x--x": {},
+	"UsrTest/-rw-r-x-w-": {},
+	"UsrTest/-rw-r-x-wx": {},
+	"UsrTest/-rw-r-xr--": {},
+	"UsrTest/-rw-r-xr-x": {},
+	"UsrTest/-rw-r-xrw-": {},
+	"UsrTest/-rw-r-xrwx": {},
+	"UsrTest/-rw-rw----": {},
+	"UsrTest/-rw-rw---x": {},
+	"UsrTest/-rw-rw--w-": {},
+	"UsrTest/-rw-rw--wx": {},
+	"UsrTest/-rw-rw-r--": {},
+	"UsrTest/-rw-rw-r-x": {},
+	"UsrTest/-rw-rw-rw-": {},
+	"UsrTest/-rw-rw-rwx": {},
+	"UsrTest/-rw-rwx---": {},
+	"UsrTest/-rw-rwx--x": {},
+	"UsrTest/-rw-rwx-w-": {},
+	"UsrTest/-rw-rwx-wx": {},
+	"UsrTest/-rw-rwxr--": {},
+	"UsrTest/-rw-rwxr-x": {},
+	"UsrTest/-rw-rwxrw-": {},
+	"UsrTest/-rw-rwxrwx": {},
+	"UsrTest/-rwx------": {},
+	"UsrTest/-rwx-----x": {},
+	"UsrTest/-rwx----w-": {},
+	"UsrTest/-rwx----wx": {},
+	"UsrTest/-rwx---r--": {},
+	"UsrTest/-rwx---r-x": {},
+	"UsrTest/-rwx---rw-": {},
+	"UsrTest/-rwx---rwx": {},
+	"UsrTest/-rwx--x---": {},
+	"UsrTest/-rwx--x--x": {},
+	"UsrTest/-rwx--x-w-": {},
+	"UsrTest/-rwx--x-wx": {},
+	"UsrTest/-rwx--xr--": {},
+	"UsrTest/-rwx--xr-x": {},
+	"UsrTest/-rwx--xrw-": {},
+	"UsrTest/-rwx--xrwx": {},
+	"UsrTest/-rwx-w----": {},
+	"UsrTest/-rwx-w---x": {},
+	"UsrTest/-rwx-w--w-": {},
+	"UsrTest/-rwx-w--wx": {},
+	"UsrTest/-rwx-w-r--": {},
+	"UsrTest/-rwx-w-r-x": {},
+	"UsrTest/-rwx-w-rw-": {},
+	"UsrTest/-rwx-w-rwx": {},
+	"UsrTest/-rwx-wx---": {},
+	"UsrTest/-rwx-wx--x": {},
+	"UsrTest/-rwx-wx-w-": {},
+	"UsrTest/-rwx-wx-wx": {},
+	"UsrTest/-rwx-wxr--": {},
+	"UsrTest/-rwx-wxr-x": {},
+	"UsrTest/-rwx-wxrw-": {},
+	"UsrTest/-rwx-wxrwx": {},
+	"UsrTest/-rwxr-----": {},
+	"UsrTest/-rwxr----x": {},
+	"UsrTest/-rwxr---w-": {},
+	"UsrTest/-rwxr---wx": {},
+	"UsrTest/-rwxr--r--": {},
+	"UsrTest/-rwxr--r-x": {},
+	"UsrTest/-rwxr--rw-": {},
+	"UsrTest/-rwxr--rwx": {},
+	"UsrTest/-rwxr-x---": {},
+	"UsrTest/-rwxr-x--x": {},
+	"UsrTest/-rwxr-x-w-": {},
+	"UsrTest/-rwxr-x-wx": {},
+	"UsrTest/-rwxr-xr--": {},
+	"UsrTest/-rwxr-xr-x": {},
+	"UsrTest/-rwxr-xrw-": {},
+	"UsrTest/-rwxr-xrwx": {},
+	"UsrTest/-rwxrw----": {},
+	"UsrTest/-rwxrw---x": {},
+	"UsrTest/-rwxrw--w-": {},
+	"UsrTest/-rwxrw--wx": {},
+	"UsrTest/-rwxrw-r--": {},
+	"UsrTest/-rwxrw-r-x": {},
+	"UsrTest/-rwxrw-rw-": {},
+	"UsrTest/-rwxrw-rwx": {},
+	"UsrTest/-rwxrwx---": {},
+	"UsrTest/-rwxrwx--x": {},
+	"UsrTest/-rwxrwx-w-": {},
+	"UsrTest/-rwxrwx-wx": {},
+	"UsrTest/-rwxrwxr--": {},
+	"UsrTest/-rwxrwxr-x": {},
+	"UsrTest/-rwxrwxrw-": {},
+	"UsrTest/-rwxrwxrwx": {}
+}
