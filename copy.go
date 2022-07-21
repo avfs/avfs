@@ -123,7 +123,7 @@ func HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
 }
 
 // copyBufPool copies a source reader to a writer using a buffer from the buffer pool.
-func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) {
+func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //nolint:unparam // unparam shoudn't check return values.
 	buf := copyPool.Get().(*[]byte) //nolint:errcheck,forcetypeassert // Get() always returns a pointer to a byte slice.
 	defer copyPool.Put(buf)
 
