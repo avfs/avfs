@@ -638,35 +638,32 @@ func (vfs *MemFS) RemoveAll(path string) error {
 	parent.mu.Lock()
 	defer parent.mu.Unlock()
 
-	ok := parent.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user)
-	if !ok {
-		return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
-	}
-
-	defer child.delete()
-
-	if c, ok := child.(*dirNode); ok {
-		err := vfs.removeAll(c)
+	if c, ok := child.(*dirNode); ok && len(c.children) != 0 {
+		err = vfs.removeAll(c)
 		if err != nil {
-			return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
+			return &fs.PathError{Op: op, Path: path, Err: err}
 		}
 	}
 
+	if ok := parent.checkPermission(avfs.OpenWrite, vfs.user); !ok {
+		return &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
+	}
+
 	parent.removeChild(pi.Part())
+	child.delete()
 
 	return nil
 }
 
-func (vfs *MemFS) removeAll(dn *dirNode) error {
-	dn.mu.Lock()
-	defer dn.mu.Unlock()
+func (vfs *MemFS) removeAll(parent *dirNode) error {
+	parent.mu.Lock()
+	defer parent.mu.Unlock()
 
-	ok := dn.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.user)
-	if !ok {
+	if ok := parent.checkPermission(avfs.OpenWrite, vfs.user); !ok {
 		return vfs.err.PermDenied
 	}
 
-	for _, child := range dn.children {
+	for _, child := range parent.children {
 		if c, ok := child.(*dirNode); ok {
 			err := vfs.removeAll(c)
 			if err != nil {

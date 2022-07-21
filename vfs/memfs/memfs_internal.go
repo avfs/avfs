@@ -230,7 +230,7 @@ func (bn *baseNode) checkPermission(perm avfs.OpenMode, u avfs.UserReader) bool 
 		return true
 	}
 
-	mode := bn.mode
+	mode := avfs.OpenMode(bn.mode)
 
 	switch {
 	case bn.uid == u.Uid():
@@ -241,7 +241,7 @@ func (bn *baseNode) checkPermission(perm avfs.OpenMode, u avfs.UserReader) bool 
 
 	perm &= PermRWX
 
-	return avfs.OpenMode(mode)&perm == perm
+	return mode&perm == perm
 }
 
 // Lock locks the node.
