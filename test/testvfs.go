@@ -1844,6 +1844,10 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 			return
 		}
 
+		parentDir := vfs.Dir(baseDir)
+		_, err = vfs.Stat(parentDir)
+		CheckNoError(t, "Stat "+parentDir, err)
+
 		for _, dir := range dirs {
 			_, err = vfs.Stat(dir.Path)
 			CheckPathError(t, err).OpStat().Path(dir.Path).
