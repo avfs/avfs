@@ -872,7 +872,7 @@ type checkPathError struct {
 }
 
 // CheckPathError checks if err is a fs.PathError.
-func CheckPathError(tb testing.TB, err error) *checkPathError { //nolint:revive // No need to export checkPathError to use it.
+func CheckPathError(tb testing.TB, err error) *checkPathError {
 	tb.Helper()
 
 	foundErr := false
@@ -1002,7 +1002,7 @@ type checkLinkError struct {
 }
 
 // CheckLinkError checks if err is a os.LinkError.
-func CheckLinkError(tb testing.TB, err error) *checkLinkError { //nolint:revive // No need to export checkLinkError to use it.
+func CheckLinkError(tb testing.TB, err error) *checkLinkError {
 	tb.Helper()
 
 	foundErr := false
