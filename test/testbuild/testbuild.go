@@ -28,7 +28,7 @@ import (
 func main() {
 	vfs := osfs.New()
 
-	tmpDir, err := vfs.MkdirTemp("", "avfs")
+	tmpDir, err := vfs.MkdirTemp("", "gox")
 	if err != nil {
 		log.Fatal(err)
 	}

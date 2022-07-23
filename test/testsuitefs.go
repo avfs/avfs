@@ -478,7 +478,7 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 		return vfs.Join(testDir, defaultDir)
 	}
 
-	dirName, err := vfs.MkdirTemp(testDir, defaultDir)
+	dirName, err := vfs.MkdirTemp(testDir, "ExistingDir")
 	if err != nil {
 		tb.Fatalf("MkdirTemp %s : want error to be nil, got %v", dirName, err)
 	}

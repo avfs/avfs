@@ -316,7 +316,7 @@ func (sfs *SuiteFS) TestClean(t *testing.T, testDir string) {
 
 // TestCopyFile tests avfs.CopyFile function.
 func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
-	const pattern = "CopyFile"
+	const copyFile = "CopyFile"
 
 	srcFs := sfs.VFSSetup()
 
@@ -345,7 +345,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	h := sha512.New()
 
 	t.Run("CopyFile_WithHashSum", func(t *testing.T) {
-		dstDir, err := dstFs.MkdirTemp("", pattern)
+		dstDir, err := dstFs.MkdirTemp("", copyFile)
 		if !CheckNoError(t, "MkdirTemp", err) {
 			return
 		}
@@ -370,8 +370,8 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	})
 
 	t.Run("CopyFile", func(t *testing.T) {
-		dstDir, err := dstFs.MkdirTemp("", pattern)
-		if !CheckNoError(t, "MkdirTemp "+pattern, err) {
+		dstDir, err := dstFs.MkdirTemp("", copyFile)
+		if !CheckNoError(t, "MkdirTemp "+copyFile, err) {
 			return
 		}
 

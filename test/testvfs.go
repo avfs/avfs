@@ -143,7 +143,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 			for mode := fs.FileMode(1); mode <= 6; mode++ {
 				wantMode := mode << shift
 
-				path, err := vfs.MkdirTemp(testDir, "")
+				path, err := vfs.MkdirTemp(testDir, "ChmodDir")
 				if !CheckNoError(t, "MkdirTemp", err) {
 					return
 				}
@@ -532,15 +532,17 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		_, err := vfs.CreateTemp(testDir, "")
+		_, err := vfs.CreateTemp(testDir, "CreateTemp")
 		CheckPathError(t, err).Op("createtemp").ErrPermDenied()
 
 		return
 	}
 
 	t.Run("CreateTempEmptyDir", func(t *testing.T) {
-		f, err := vfs.CreateTemp("", "")
+		f, err := vfs.CreateTemp("", "CreateTemp")
 		CheckNoError(t, "CreateTemp", err)
+
+		defer vfs.Remove(f.Name())
 
 		wantDir := vfs.TempDir()
 		dir := vfs.Dir(f.Name())
@@ -560,7 +562,7 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 	t.Run("CreateTempOnFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
-		_, err := vfs.CreateTemp(existingFile, "")
+		_, err := vfs.CreateTemp(existingFile, "CreateTempOnFile")
 		CheckPathError(t, err).Op("open").
 			Err(avfs.ErrNotADirectory, avfs.OsLinux).
 			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
@@ -1254,15 +1256,17 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
-		_, err := vfs.MkdirTemp(testDir, "")
+		_, err := vfs.MkdirTemp(testDir, "MkdirTemp")
 		CheckPathError(t, err).Op("mkdirtemp").ErrPermDenied()
 
 		return
 	}
 
 	t.Run("MkdirTempEmptyDir", func(t *testing.T) {
-		tmpDir, err := vfs.MkdirTemp("", "")
+		tmpDir, err := vfs.MkdirTemp("", "MkdirTemp")
 		CheckNoError(t, "MkdirTemp", err)
+
+		defer vfs.Remove(tmpDir)
 
 		wantDir := vfs.TempDir()
 		dir := vfs.Dir(tmpDir)
@@ -1282,7 +1286,7 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	t.Run("MkdirTempOnFile", func(t *testing.T) {
 		existingFile := sfs.EmptyFile(t, testDir)
 
-		_, err := vfs.MkdirTemp(existingFile, "")
+		_, err := vfs.MkdirTemp(existingFile, "MkdirTempOnFile")
 		CheckPathError(t, err).Op("mkdir").
 			Err(avfs.ErrNotADirectory, avfs.OsLinux).
 			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)

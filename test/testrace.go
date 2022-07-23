@@ -111,7 +111,7 @@ func (sfs *SuiteFS) RaceMkdirTemp(t *testing.T, testDir string) {
 	var dirs sync.Map
 
 	sfs.RaceFunc(t, RaceAllOk, func() error {
-		dir, err := vfs.MkdirTemp(testDir, "avfs")
+		dir, err := vfs.MkdirTemp(testDir, "RaceMkdirTemp")
 
 		_, exists := dirs.LoadOrStore(dir, nil)
 		if exists {
