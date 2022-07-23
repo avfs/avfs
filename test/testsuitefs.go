@@ -198,6 +198,8 @@ func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTe
 
 		sfs.RemoveTestDir(t, testDir)
 	}
+
+	sfs.RemoveTestDir(t, sfs.rootDir)
 }
 
 // SuiteBenchFunc is a bench function to be used by RunBenches.
@@ -231,6 +233,8 @@ func (sfs *SuiteFS) RunBenches(b *testing.B, userName string, benchFuncs ...Suit
 
 		sfs.RemoveTestDir(b, testDir)
 	}
+
+	sfs.RemoveTestDir(b, sfs.rootDir)
 }
 
 // funcName returns the name of a function or a method.
@@ -314,26 +318,9 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 		tb.Fatalf("Chdir %s : want error to be nil, got %v", sfs.rootDir, err)
 	}
 
-	err = vfs.RemoveAll(testDir)
-	if err == nil || !sfs.canTestPerm {
-		return
-	}
-
-	// Cleanup permissions for RemoveAll()
-	// as the user who started the tests.
+	// RemoveAll() should be executed as the user who started the tests, generally root,
+	// to cleanup files whith different permissions.
 	sfs.SetUser(tb, sfs.initUser.Name())
-
-	err = vfs.WalkDir(testDir, func(path string, info fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		return vfs.Chmod(path, 0o777)
-	})
-
-	if err != nil {
-		tb.Fatalf("Walk %s : want error to be nil, got %v", testDir, err)
-	}
 
 	err = vfs.RemoveAll(testDir)
 	if err != nil {
