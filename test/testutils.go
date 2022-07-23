@@ -380,14 +380,10 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 			dstPath := dstFs.Join(dstDir, fileName)
 			copyName := fmt.Sprintf("CopyFile (%s)%s, (%s)%s", dstFs.Type(), dstPath, srcFs.Type(), srcFile.Name)
 
-			wantSum, err := avfs.CopyFileHash(dstFs, srcFs, dstPath, srcFile.Name, nil)
+			err = avfs.CopyFile(dstFs, srcFs, dstPath, srcFile.Name)
 			CheckNoError(t, copyName, err)
 
-			if wantSum != nil {
-				t.Fatalf("%s : want hash sum to be nil, got %v", copyName, err)
-			}
-
-			wantSum, err = avfs.HashFile(srcFs, srcFile.Name, h)
+			wantSum, err := avfs.HashFile(srcFs, srcFile.Name, h)
 			CheckNoError(t, fmt.Sprintf("HashFile (%s)%s", srcFs.Type(), srcFile.Name), err)
 
 			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
