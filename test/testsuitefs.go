@@ -319,7 +319,7 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	}
 
 	// RemoveAll() should be executed as the user who started the tests, generally root,
-	// to cleanup files whith different permissions.
+	// to clean up files with different permissions.
 	sfs.SetUser(tb, sfs.initUser.Name())
 
 	err = vfs.RemoveAll(testDir)

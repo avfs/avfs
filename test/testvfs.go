@@ -136,61 +136,53 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 		return
 	}
 
+	existingDir := sfs.ExistingDir(t, testDir)
 	existingFile := sfs.EmptyFile(t, testDir)
 
 	t.Run("ChmodDir", func(t *testing.T) {
-		for shift := 6; shift >= 0; shift -= 3 {
-			for mode := fs.FileMode(1); mode <= 6; mode++ {
-				wantMode := mode << shift
+		for mode := fs.FileMode(1); mode <= 0o777; mode++ {
+			wantMode := mode
 
-				path, err := vfs.MkdirTemp(testDir, "ChmodDir")
-				if !CheckNoError(t, "MkdirTemp", err) {
-					return
-				}
+			err := vfs.Chmod(existingDir, wantMode)
+			CheckNoError(t, "Chmod "+existingDir, err)
 
-				err = vfs.Chmod(path, wantMode)
-				CheckNoError(t, "Chmod "+path, err)
+			fst, err := vfs.Stat(existingDir)
+			CheckNoError(t, "Stat "+existingDir, err)
 
-				fst, err := vfs.Stat(path)
-				CheckNoError(t, "Stat "+path, err)
+			gotMode := fst.Mode() & fs.ModePerm
 
-				gotMode := fst.Mode() & fs.ModePerm
+			// On Windows, only the 0200 bit (owner writable) of mode is used.
+			if vfs.OSType() == avfs.OsWindows {
+				wantMode &= 0o200
+				gotMode &= 0o200
+			}
 
-				// On Windows, only the 0200 bit (owner writable) of mode is used.
-				if vfs.OSType() == avfs.OsWindows {
-					wantMode &= 0o200
-					gotMode &= 0o200
-				}
-
-				if gotMode != wantMode {
-					t.Errorf("Stat %s : want mode to be %03o, got %03o", path, wantMode, gotMode)
-				}
+			if gotMode != wantMode {
+				t.Errorf("Stat %s : want mode to be %03o, got %03o", existingDir, wantMode, gotMode)
 			}
 		}
 	})
 
 	t.Run("ChmodFile", func(t *testing.T) {
-		for shift := 6; shift >= 0; shift -= 3 {
-			for mode := fs.FileMode(1); mode <= 6; mode++ {
-				wantMode := mode << shift
+		for mode := fs.FileMode(1); mode <= 0o777; mode++ {
+			wantMode := mode
 
-				err := vfs.Chmod(existingFile, wantMode)
-				CheckNoError(t, "Chmod "+existingFile, err)
+			err := vfs.Chmod(existingFile, wantMode)
+			CheckNoError(t, "Chmod "+existingFile, err)
 
-				fst, err := vfs.Stat(existingFile)
-				CheckNoError(t, "Stat "+existingFile, err)
+			fst, err := vfs.Stat(existingFile)
+			CheckNoError(t, "Stat "+existingFile, err)
 
-				gotMode := fst.Mode() & fs.ModePerm
+			gotMode := fst.Mode() & fs.ModePerm
 
-				// On Windows, only the 0200 bit (owner writable) of mode is used.
-				if vfs.OSType() == avfs.OsWindows {
-					wantMode &= 0o200
-					gotMode &= 0o200
-				}
+			// On Windows, only the 0200 bit (owner writable) of mode is used.
+			if vfs.OSType() == avfs.OsWindows {
+				wantMode &= 0o200
+				gotMode &= 0o200
+			}
 
-				if gotMode != wantMode {
-					t.Errorf("Stat %s : want mode to be %03o, got %03o", existingFile, wantMode, gotMode)
-				}
+			if gotMode != wantMode {
+				t.Errorf("Stat %s : want mode to be %03o, got %03o", existingFile, wantMode, gotMode)
 			}
 		}
 	})
@@ -542,14 +534,15 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 		f, err := vfs.CreateTemp("", "CreateTemp")
 		CheckNoError(t, "CreateTemp", err)
 
-		defer vfs.Remove(f.Name())
-
 		wantDir := vfs.TempDir()
 		dir := vfs.Dir(f.Name())
 
 		if dir != wantDir {
 			t.Errorf("want directory to be %s, got %s", wantDir, dir)
 		}
+
+		err = vfs.Remove(f.Name())
+		CheckNoError(t, "Remove", err)
 	})
 
 	t.Run("CreateTempBadPattern", func(t *testing.T) {
@@ -1266,14 +1259,15 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 		tmpDir, err := vfs.MkdirTemp("", "MkdirTemp")
 		CheckNoError(t, "MkdirTemp", err)
 
-		defer vfs.Remove(tmpDir)
-
 		wantDir := vfs.TempDir()
 		dir := vfs.Dir(tmpDir)
 
 		if dir != wantDir {
 			t.Errorf("want directory to be %s, got %s", wantDir, dir)
 		}
+
+		err = vfs.Remove(tmpDir)
+		CheckNoError(t, "Remove", err)
 	})
 
 	t.Run("MkdirTempBadPattern", func(t *testing.T) {
@@ -2446,8 +2440,6 @@ func (sfs *SuiteFS) TestSetUser(t *testing.T, testDir string) {
 
 		return
 	}
-
-	defer vfs.SetUser(idm.AdminUser().Name()) //nolint:errcheck // Ignore errors.
 
 	CreateGroups(t, idm, suffix)
 	CreateUsers(t, idm, suffix)
