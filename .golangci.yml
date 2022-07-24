@@ -249,3 +249,6 @@ issues:
     - text: "preferStringWriter"
       linters:
         - gocritic
+    - source: "// "
+      linters:
+        - lll
