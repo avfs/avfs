@@ -541,6 +541,9 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 			t.Errorf("want directory to be %s, got %s", wantDir, dir)
 		}
 
+		err = f.Close()
+		CheckNoError(t, "Close", err)
+
 		err = vfs.Remove(f.Name())
 		CheckNoError(t, "Remove", err)
 	})
