@@ -51,6 +51,8 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 			f, err := vfs.Open(dir.Path)
 			CheckNoError(t, "Open "+dir.Path, err)
 
+			defer f.Close()
+
 			err = f.Chdir()
 			switch vfs.OSType() {
 			case avfs.OsWindows:
@@ -67,13 +69,12 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 			if curDir != dir.Path {
 				t.Errorf("Getwd : want current directory to be %s, got %s", dir.Path, curDir)
 			}
-
-			f.Close()
 		}
 	})
 
 	t.Run("FileChdirOnFile", func(t *testing.T) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
 		defer f.Close()
 
 		err := f.Chdir()
@@ -113,6 +114,8 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
+		defer f.Close()
+
 		err := f.Chmod(0)
 		CheckPathError(t, err).Op("chmod").Path(fileName).ErrPermDenied()
 
@@ -150,6 +153,8 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
+		defer f.Close()
+
 		err := f.Chown(0, 0)
 		CheckPathError(t, err).Op("chown").Path(fileName).ErrPermDenied()
 
@@ -158,6 +163,8 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 
 	t.Run("FileChown", func(t *testing.T) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		defer f.Close()
 
 		u := vfs.User()
 		uid, gid := u.Uid(), u.Gid()
@@ -647,6 +654,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 
 	t.Run("FileReadDirExistingFile", func(t *testing.T) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
 		defer f.Close()
 
 		_, err := f.ReadDir(-1)
@@ -697,6 +705,8 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 			return
 		}
 
+		defer f.Close()
+
 		names, err := f.Readdirnames(-1)
 		CheckNoError(t, "Readdirnames", err)
 
@@ -710,6 +720,8 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
+
+		defer f.Close()
 
 		var names []string
 
@@ -787,8 +799,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 
 	defer f.Close()
 
-	var pos int64
-
+	pos := int64(0)
 	lenData := int64(len(data))
 
 	t.Run("TestFileSeek", func(t *testing.T) {
@@ -962,6 +973,8 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 			info, err := f.Stat()
 			if !CheckNoError(t, "Stat "+dir.Path, err) {
+				_ = f.Close()
+
 				continue
 			}
 
@@ -977,6 +990,8 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			if wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", dir.Path, wantMode, info.Mode())
 			}
+
+			_ = f.Close()
 		}
 	})
 
@@ -987,6 +1002,8 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 			info, err := f.Stat()
 			if !CheckNoError(t, "Stat "+file.Path, err) {
+				_ = f.Close()
+
 				continue
 			}
 
@@ -1007,6 +1024,8 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			if wantSize != info.Size() {
 				t.Errorf("Lstat %s : want size to be %d, got %d", file.Path, wantSize, info.Size())
 			}
+
+			_ = f.Close()
 		}
 	})
 
@@ -1017,6 +1036,8 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 			info, err := f.Stat()
 			if !CheckNoError(t, "Stat "+sl.NewPath, err) {
+				_ = f.Close()
+
 				continue
 			}
 
@@ -1033,6 +1054,8 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 			if sfs.canTestPerm && wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", sl.NewPath, wantMode, info.Mode())
 			}
+
+			_ = f.Close()
 		}
 	})
 
@@ -1115,6 +1138,8 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		defer f.Close()
 
 		err := f.Truncate(0)
 		CheckPathError(t, err).Op("truncate").Path(fileName).ErrPermDenied()
@@ -1240,6 +1265,8 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f, fileName := sfs.OpenedEmptyFile(t, testDir)
+
+		defer f.Close()
 
 		_, err := f.Write([]byte{})
 		CheckPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
