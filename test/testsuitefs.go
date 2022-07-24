@@ -323,7 +323,7 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	sfs.SetUser(tb, sfs.initUser.Name())
 
 	err = vfs.RemoveAll(testDir)
-	if err != nil {
+	if err != nil && !(avfs.CurrentOSType() == avfs.OsWindows && err == avfs.ErrWinSharingViolation) {
 		tb.Fatalf("RemoveAll %s : want error to be nil, got %v", testDir, err)
 	}
 }
