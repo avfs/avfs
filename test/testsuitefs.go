@@ -624,8 +624,8 @@ type Dir struct { //nolint:govet // no fieldalignment for test structs.
 	WantModes []fs.FileMode
 }
 
-// GetSampleDirs returns the sample directories used by Mkdir function.
-func (sfs *SuiteFS) GetSampleDirs(testDir string) []*Dir {
+// SampleDirs returns the sample directories used by Mkdir function.
+func (sfs *SuiteFS) SampleDirs(testDir string) []*Dir {
 	dirs := []*Dir{
 		{Path: "/A", Mode: 0o777, WantModes: []fs.FileMode{0o777}},
 		{Path: "/B", Mode: 0o755, WantModes: []fs.FileMode{0o755}},
@@ -648,8 +648,8 @@ func (sfs *SuiteFS) GetSampleDirs(testDir string) []*Dir {
 	return dirs
 }
 
-// GetSampleDirsAll returns the sample directories used by MkdirAll function.
-func (sfs *SuiteFS) GetSampleDirsAll(testDir string) []*Dir {
+// SampleDirsAll returns the sample directories used by MkdirAll function.
+func (sfs *SuiteFS) SampleDirsAll(testDir string) []*Dir {
 	dirs := []*Dir{
 		{Path: "/H/6", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
 		{Path: "/H/6/I/7", Mode: 0o755, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755}},
@@ -663,8 +663,8 @@ func (sfs *SuiteFS) GetSampleDirsAll(testDir string) []*Dir {
 	return dirs
 }
 
-// SampleDirs create sample directories and testDir directory if necessary.
-func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
+// CreateSampleDirs creates and returns sample directories and testDir directory if necessary.
+func (sfs *SuiteFS) CreateSampleDirs(tb testing.TB, testDir string) []*Dir {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
@@ -674,7 +674,7 @@ func (sfs *SuiteFS) SampleDirs(tb testing.TB, testDir string) []*Dir {
 		tb.Fatalf("MkdirAll %s : want error to be nil, got %v", testDir, err)
 	}
 
-	dirs := sfs.GetSampleDirs(testDir)
+	dirs := sfs.SampleDirs(testDir)
 	for _, dir := range dirs {
 		err = vfs.Mkdir(dir.Path, dir.Mode)
 		if err != nil {
@@ -692,8 +692,8 @@ type File struct { //nolint:govet // no fieldalignment for test structs.
 	Content []byte
 }
 
-// GetSampleFiles returns the sample files.
-func (sfs *SuiteFS) GetSampleFiles(testDir string) []*File {
+// SampleFiles returns the sample files.
+func (sfs *SuiteFS) SampleFiles(testDir string) []*File {
 	files := []*File{
 		{Path: "/file.txt", Mode: avfs.DefaultFilePerm, Content: []byte("file")},
 		{Path: "/A/afile1.txt", Mode: 0o777, Content: []byte("afile1")},
@@ -714,13 +714,13 @@ func (sfs *SuiteFS) GetSampleFiles(testDir string) []*File {
 	return files
 }
 
-// SampleFiles create the sample files.
-func (sfs *SuiteFS) SampleFiles(tb testing.TB, testDir string) []*File {
+// CreateSampleFiles creates and returns the sample files.
+func (sfs *SuiteFS) CreateSampleFiles(tb testing.TB, testDir string) []*File {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
 
-	files := sfs.GetSampleFiles(testDir)
+	files := sfs.SampleFiles(testDir)
 	for _, file := range files {
 		err := vfs.WriteFile(file.Path, file.Content, file.Mode)
 		if err != nil {
@@ -737,8 +737,8 @@ type Symlink struct {
 	OldPath string
 }
 
-// GetSampleSymlinks returns the sample symbolic links.
-func (sfs *SuiteFS) GetSampleSymlinks(testDir string) []*Symlink {
+// SampleSymlinks returns the sample symbolic links.
+func (sfs *SuiteFS) SampleSymlinks(testDir string) []*Symlink {
 	vfs := sfs.vfsTest
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
@@ -771,8 +771,8 @@ type SymlinkEval struct {
 	Mode      fs.FileMode //
 }
 
-// GetSampleSymlinksEval return the sample symbolic links to evaluate.
-func (sfs *SuiteFS) GetSampleSymlinksEval(testDir string) []*SymlinkEval {
+// SampleSymlinksEval returns the sample symbolic links to evaluate.
+func (sfs *SuiteFS) SampleSymlinksEval(testDir string) []*SymlinkEval {
 	vfs := sfs.vfsTest
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
@@ -799,13 +799,13 @@ func (sfs *SuiteFS) GetSampleSymlinksEval(testDir string) []*SymlinkEval {
 	return sles
 }
 
-// SampleSymlinks creates the sample symbolic links.
-func (sfs *SuiteFS) SampleSymlinks(tb testing.TB, testDir string) []*Symlink {
+// CreateSampleSymlinks creates the sample symbolic links.
+func (sfs *SuiteFS) CreateSampleSymlinks(tb testing.TB, testDir string) []*Symlink {
 	tb.Helper()
 
 	vfs := sfs.vfsSetup
 
-	symlinks := sfs.GetSampleSymlinks(testDir)
+	symlinks := sfs.SampleSymlinks(testDir)
 	for _, sl := range symlinks {
 		err := vfs.Symlink(sl.OldPath, sl.NewPath)
 		if err != nil {

@@ -42,7 +42,7 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.SampleDirs(t, testDir)
+	dirs := sfs.CreateSampleDirs(t, testDir)
 
 	vfs = sfs.vfsTest
 
@@ -960,9 +960,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.SampleDirs(t, testDir)
-	files := sfs.SampleFiles(t, testDir)
-	_ = sfs.SampleSymlinks(t, testDir)
+	dirs := sfs.CreateSampleDirs(t, testDir)
+	files := sfs.CreateSampleFiles(t, testDir)
+	_ = sfs.CreateSampleSymlinks(t, testDir)
 
 	vfs = sfs.vfsTest
 
@@ -1030,7 +1030,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatSymlink", func(t *testing.T) {
-		for _, sl := range sfs.GetSampleSymlinksEval(testDir) {
+		for _, sl := range sfs.SampleSymlinksEval(testDir) {
 			f, err := vfs.Open(sl.NewPath)
 			CheckNoError(t, "Open "+sl.NewPath, err)
 

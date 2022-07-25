@@ -645,9 +645,9 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 		return
 	}
 
-	_ = sfs.SampleDirs(t, testDir)
-	_ = sfs.SampleFiles(t, testDir)
-	sl := len(sfs.SampleSymlinks(t, testDir))
+	_ = sfs.CreateSampleDirs(t, testDir)
+	_ = sfs.CreateSampleFiles(t, testDir)
+	sl := len(sfs.CreateSampleSymlinks(t, testDir))
 
 	vfs = sfs.vfsTest
 
@@ -1455,9 +1455,9 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.SampleDirs(t, testDir)
-	files := sfs.SampleFiles(t, testDir)
-	symlinks := sfs.SampleSymlinks(t, testDir)
+	dirs := sfs.CreateSampleDirs(t, testDir)
+	files := sfs.CreateSampleFiles(t, testDir)
+	symlinks := sfs.CreateSampleSymlinks(t, testDir)
 
 	vfs = sfs.vfsTest
 	lNames := len(dirs) + len(files) + len(symlinks)
