@@ -49,14 +49,14 @@ var (
 )
 
 func TestMemFS(t *testing.T) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs(), memfs.WithOSType(avfs.CurrentOSType()))
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs(), memfs.WithOSType(avfs.CurrentOSType()))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithOSType(avfs.CurrentOSType()))
+	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithOSType(avfs.CurrentOSType()))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
@@ -150,7 +150,7 @@ func TestMemFSConfig(t *testing.T) {
 }
 
 func BenchmarkMemFSAll(b *testing.B) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
 
 	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)

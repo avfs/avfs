@@ -149,27 +149,6 @@ type DirInfo struct {
 	Perm fs.FileMode
 }
 
-// SystemDirs returns an array of directories always present in the file system.
-func (ut *Utils[_]) SystemDirs(basePath string) []DirInfo {
-	const volumeNameLen = 2
-
-	switch ut.osType {
-	case OsWindows:
-		return []DirInfo{
-			{Path: ut.Join(basePath, ut.HomeDir()[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: ut.Join(basePath, ut.TempDir(AdminUserName(ut.osType))[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: ut.Join(basePath, ut.TempDir(DefaultUser.Name())[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: ut.Join(basePath, `\Windows`), Perm: DefaultDirPerm},
-		}
-	default:
-		return []DirInfo{
-			{Path: ut.Join(basePath, ut.HomeDir()), Perm: HomeDirPerm()},
-			{Path: ut.Join(basePath, "/root"), Perm: 0o700},
-			{Path: ut.Join(basePath, "/tmp"), Perm: 0o777},
-		}
-	}
-}
-
 // Clean returns the shortest path name equivalent to path
 // by purely lexical processing. It applies the following rules
 // iteratively until no further processing can be done:
@@ -283,26 +262,6 @@ func (ut *Utils[T]) Create(vfs T, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
-// CreateSystemDirs creates the system directories of a file system.
-func (ut *Utils[T]) CreateSystemDirs(vfs T, basePath string) error {
-	dirs := ut.SystemDirs(basePath)
-	for _, dir := range dirs {
-		err := vfs.MkdirAll(dir.Path, dir.Perm)
-		if err != nil {
-			return err
-		}
-
-		if ut.osType != OsWindows {
-			err = vfs.Chmod(dir.Path, dir.Perm)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
 // CreateHomeDir creates and returns the home directory of a user.
 // If there is an error, it will be of type *PathError.
 func (ut *Utils[T]) CreateHomeDir(vfs T, u UserReader) (string, error) {
@@ -325,6 +284,26 @@ func (ut *Utils[T]) CreateHomeDir(vfs T, u UserReader) (string, error) {
 	}
 
 	return userDir, nil
+}
+
+// CreateSystemDirs creates the system directories of a file system.
+func (ut *Utils[T]) CreateSystemDirs(vfs T, basePath string) error {
+	dirs := ut.SystemDirs(basePath)
+	for _, dir := range dirs {
+		err := vfs.MkdirAll(dir.Path, dir.Perm)
+		if err != nil {
+			return err
+		}
+
+		if ut.osType != OsWindows {
+			err = vfs.Chmod(dir.Path, dir.Perm)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -975,6 +954,27 @@ func (ut *Utils[_]) SplitAbs(path string) (dir, file string) {
 	}
 
 	return path[:i], path[i+1:]
+}
+
+// SystemDirs returns an array of system directories always present in the file system.
+func (ut *Utils[_]) SystemDirs(basePath string) []DirInfo {
+	const volumeNameLen = 2
+
+	switch ut.osType {
+	case OsWindows:
+		return []DirInfo{
+			{Path: ut.Join(basePath, ut.HomeDir()[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.TempDir(AdminUserName(ut.osType))[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.TempDir(DefaultUser.Name())[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, `\Windows`), Perm: DefaultDirPerm},
+		}
+	default:
+		return []DirInfo{
+			{Path: ut.Join(basePath, ut.HomeDir()), Perm: HomeDirPerm()},
+			{Path: ut.Join(basePath, "/root"), Perm: 0o700},
+			{Path: ut.Join(basePath, "/tmp"), Perm: 0o777},
+		}
+	}
 }
 
 // TempDir returns the default directory to use for temporary files.

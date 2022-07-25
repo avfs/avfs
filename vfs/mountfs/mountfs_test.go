@@ -38,7 +38,7 @@ var (
 
 func initFS(tb testing.TB) *mountfs.MountFS {
 	idm := memidm.New()
-	rootFS := memfs.New(memfs.WithName("rootFS"), memfs.WithIdm(idm), memfs.WithMainDirs())
+	rootFS := memfs.New(memfs.WithName("rootFS"), memfs.WithIdm(idm), memfs.WithSystemDirs())
 	tmpFS := memfs.New(memfs.WithName("tmpFS"), memfs.WithIdm(idm))
 
 	vfs := mountfs.New(rootFS, "")

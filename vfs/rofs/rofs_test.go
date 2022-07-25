@@ -37,7 +37,7 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFS {
-	vfsSetup := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfsSetup := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
 
 	vfs := rofs.New(vfsSetup)
 	sfs := test.NewSuiteFS(t, vfsSetup, test.WithVFSTest(vfs))

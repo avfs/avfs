@@ -52,7 +52,7 @@ func New(opts ...Option) *OrefaFS {
 
 	vfs.err.SetOSType(vfs.OSType())
 
-	if vfs.HasFeature(avfs.FeatMainDirs) {
+	if vfs.HasFeature(avfs.FeatSystemDirs) {
 		u := vfs.user
 		um := vfs.umask
 
@@ -101,10 +101,10 @@ func WithChownUser() Option {
 	}
 }
 
-// WithMainDirs returns an option function to create main directories (/home, /root and /tmp).
-func WithMainDirs() Option {
+// WithSystemDirs returns an option function to create system directories (/home, /root and /tmp).
+func WithSystemDirs() Option {
 	return func(vfs *OrefaFS) {
-		vfs.features |= avfs.FeatMainDirs
+		vfs.features |= avfs.FeatSystemDirs
 	}
 }
 

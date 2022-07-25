@@ -29,14 +29,14 @@ import (
 )
 
 func TestUtilsMemFS(t *testing.T) {
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(memidm.New()))
+	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithIdm(memidm.New()))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestUtilsOrefaFS(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithMainDirs(), orefafs.WithOSType(avfs.OsLinux))
+	vfs := orefafs.New(orefafs.WithSystemDirs(), orefafs.WithOSType(avfs.OsLinux))
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)

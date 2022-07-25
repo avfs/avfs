@@ -49,8 +49,8 @@ const (
 	// FeatChownUser indicates that a non privileged user can use Chown.
 	FeatChownUser
 
-	// FeatMainDirs indicates that the main directories of the filesystem (/home, /root and /tmp) are present.
-	FeatMainDirs
+	// FeatSystemDirs indicates that the system directories of the filesystem (/home, /root and /tmp for linux) are present.
+	FeatSystemDirs
 
 	// FeatHardlink indicates that the file system supports hard links (link(), readlink() functions).
 	FeatHardlink
@@ -579,6 +579,19 @@ type File interface {
 	Truncate(size int64) error
 }
 
+// SystemDirMgr is the interface that wraps system directories functions.
+type SystemDirMgr interface {
+	// CreateHomeDir creates and returns the home directory of a user.
+	// If there is an error, it will be of type *PathError.
+	CreateHomeDir(u UserReader) (string, error)
+
+	// CreateSystemDirs creates the system directories of a file system.
+	CreateSystemDirs(basePath string) error
+
+	// SystemDirs returns the system directories of the file system.
+	SystemDirs(basePath string) []DirInfo
+}
+
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
 	Featurer
@@ -620,19 +633,6 @@ type IdentityMgr interface {
 
 	// UserDel deletes an existing user.
 	UserDel(name string) error
-}
-
-// SystemDirMgr is the interface that wraps system directories functions.
-type SystemDirMgr interface {
-	// SystemDirs returns the system directories of the file system.
-	SystemDirs(basePath string) []DirInfo
-
-	// CreateSystemDirs creates the system directories of a file system.
-	CreateSystemDirs(basePath string) error
-
-	// CreateHomeDir creates and returns the home directory of a user.
-	// If there is an error, it will be of type *PathError.
-	CreateHomeDir(u UserReader) (string, error)
 }
 
 // GroupIdentifier is the interface that wraps the Gid method.

@@ -65,7 +65,7 @@ func New(opts ...Option) *MemFS {
 
 	vfs.err.SetOSType(vfs.OSType())
 
-	if vfs.HasFeature(avfs.FeatMainDirs) {
+	if vfs.HasFeature(avfs.FeatSystemDirs) {
 		u := vfs.user
 		um := vfs.umask
 
@@ -107,10 +107,10 @@ func (vfs *MemFS) Type() string {
 
 // Options.
 
-// WithMainDirs returns an option function to create main directories.
-func WithMainDirs() Option {
+// WithSystemDirs returns an option function to create system directories.
+func WithSystemDirs() Option {
 	return func(vfs *MemFS) {
-		vfs.memAttrs.features |= avfs.FeatMainDirs
+		vfs.memAttrs.features |= avfs.FeatSystemDirs
 	}
 }
 

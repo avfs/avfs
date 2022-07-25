@@ -27,7 +27,7 @@ import (
 )
 
 func TestRaceMemFS(t *testing.T) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithMainDirs())
+	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestRace(t)
