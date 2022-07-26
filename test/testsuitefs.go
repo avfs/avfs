@@ -1109,12 +1109,3 @@ func (cl *checkLinkError) ErrPermDenied() *checkLinkError {
 		Err(avfs.ErrPermDenied, avfs.OsLinux).
 		Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 }
-
-// FromUnixPath returns valid path from a unix path.
-func FromUnixPath(path string) string {
-	if avfs.CurrentOSType() != avfs.OsWindows {
-		return path
-	}
-
-	return filepath.Join(avfs.DefaultVolume, filepath.FromSlash(path))
-}

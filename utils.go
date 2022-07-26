@@ -1101,3 +1101,18 @@ func (ut *Utils[T]) WriteFile(vfs T, name string, data []byte, perm fs.FileMode)
 
 	return err
 }
+
+// FromUnixPath returns valid path for Unix or Windows from a unix path.
+// For Windows systems, absolute paths are prefixed with the default volume
+// and relative paths are preserved.
+func FromUnixPath(path string) string {
+	if CurrentOSType() != OsWindows {
+		return path
+	}
+
+	if path[0] != '/' {
+		return filepath.FromSlash(path)
+	}
+
+	return filepath.Join(DefaultVolume, filepath.FromSlash(path))
+}

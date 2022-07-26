@@ -1507,6 +1507,7 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 		err := vfs.WalkDir(nonExistingFile, func(path string, info fs.DirEntry, err error) error {
 			return nil
 		})
+
 		CheckNoError(t, "WalkDir "+nonExistingFile, err)
 	})
 }
