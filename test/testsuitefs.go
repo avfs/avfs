@@ -323,7 +323,8 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	sfs.SetUser(tb, sfs.initUser.Name())
 
 	err = vfs.RemoveAll(testDir)
-	if err != nil && !(avfs.CurrentOSType() == avfs.OsWindows && errors.Is(err, avfs.ErrWinSharingViolation)) {
+	if err != nil && avfs.CurrentOSType() != avfs.OsWindows {
+		// TODO : Print list of opened files for emulated file systems to resolve ErrWinSharingViolation errors.
 		tb.Fatalf("RemoveAll %s : want error to be nil, got %v", testDir, err)
 	}
 }
