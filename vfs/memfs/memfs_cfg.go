@@ -79,7 +79,7 @@ func New(opts ...Option) *MemFS {
 
 		vfs.umask = um
 		vfs.user = u
-		vfs.curDir = vfs.HomeDirUser(vfs, u)
+		vfs.curDir = vfs.Utils.HomeDirUser(u)
 	}
 
 	return vfs

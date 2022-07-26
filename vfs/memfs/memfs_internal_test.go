@@ -20,6 +20,7 @@ package memfs
 
 import (
 	"io/fs"
+	"path/filepath"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -60,12 +61,12 @@ func TestSearchNode(t *testing.T) {
 	fa3 := vfs.createFile(da, "afile3", avfs.DefaultFilePerm)
 
 	// Symlinks
-	vfs.createSymlink(rn, "lroot", vfs.Utils.FromUnixPath(avfs.DefaultVolume, "/"))
-	vfs.createSymlink(rn, "la", vfs.Utils.FromUnixPath(avfs.DefaultVolume, "/a"))
-	vfs.createSymlink(db1b, "lb1", vfs.Utils.FromUnixPath(avfs.DefaultVolume, "/b/b1"))
-	vfs.createSymlink(dc, "lafile3", vfs.Utils.FromUnixPath(avfs.DefaultVolume, "../a/afile3"))
-	lloop1 := vfs.createSymlink(rn, "loop1", vfs.Utils.FromUnixPath(avfs.DefaultVolume, "/loop2"))
-	vfs.createSymlink(rn, "loop2", vfs.Utils.FromUnixPath(avfs.DefaultVolume, "/loop1"))
+	vfs.createSymlink(rn, "lroot", fromUnixPath("/"))
+	vfs.createSymlink(rn, "la", fromUnixPath("/a"))
+	vfs.createSymlink(db1b, "lb1", fromUnixPath("/b/b1"))
+	vfs.createSymlink(dc, "lafile3", fromUnixPath("../a/afile3"))
+	lloop1 := vfs.createSymlink(rn, "loop1", fromUnixPath("/loop2"))
+	vfs.createSymlink(rn, "loop2", fromUnixPath("/loop1"))
 
 	cases := []struct { //nolint:govet // no fieldalignment for test structs
 		path        string
@@ -109,8 +110,8 @@ func TestSearchNode(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		path := vfs.FromUnixPath(avfs.DefaultVolume, c.path)
-		wantRest := vfs.FromSlash(c.rest)
+		path := fromUnixPath(c.path)
+		wantRest := vfs.Utils.FromSlash(c.rest)
 
 		parent, child, pi, err := vfs.searchNode(path, slmEval)
 		first := pi.Part()
@@ -136,4 +137,12 @@ func TestSearchNode(t *testing.T) {
 			t.Errorf("%s : want rest to be %s, got %s", path, wantRest, rest)
 		}
 	}
+}
+
+func fromUnixPath(path string) string {
+	if avfs.CurrentOSType() != avfs.OsWindows {
+		return path
+	}
+
+	return filepath.Join(avfs.DefaultVolume, filepath.FromSlash(path))
 }

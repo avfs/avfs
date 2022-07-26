@@ -792,7 +792,7 @@ func (vfs *MemFS) SetUser(name string) (avfs.UserReader, error) {
 	}
 
 	vfs.user = u
-	vfs.curDir = vfs.Utils.HomeDirUser(vfs, u)
+	vfs.curDir = vfs.Utils.HomeDirUser(u)
 
 	return u, nil
 }

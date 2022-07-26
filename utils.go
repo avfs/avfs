@@ -265,7 +265,7 @@ func (ut *Utils[T]) Create(vfs T, name string) (File, error) {
 // CreateHomeDir creates and returns the home directory of a user.
 // If there is an error, it will be of type *PathError.
 func (ut *Utils[T]) CreateHomeDir(vfs T, u UserReader) (string, error) {
-	userDir := ut.HomeDirUser(vfs, u)
+	userDir := ut.HomeDirUser(u)
 
 	err := vfs.Mkdir(userDir, HomeDirPerm())
 	if err != nil {
@@ -401,19 +401,6 @@ func (ut *Utils[_]) FromSlash(path string) string {
 	return strings.ReplaceAll(path, "/", string(ut.pathSeparator))
 }
 
-// FromUnixPath returns valid path from a unix path.
-func (ut *Utils[_]) FromUnixPath(volumeName, path string) string {
-	if ut.OSType() != OsWindows {
-		return path
-	}
-
-	if path[0] == '/' {
-		return ut.Join(volumeName, path)
-	}
-
-	return ut.FromSlash(path)
-}
-
 // Glob returns the names of all files matching pattern or nil
 // if there is no matching file. The syntax of patterns is the same
 // as in Match. The pattern may describe hierarchical names such as
@@ -483,17 +470,17 @@ func (ut *Utils[_]) HomeDir() string {
 
 // HomeDirUser returns the home directory of the user.
 // If the file system does not have an identity manager, the root directory is returned.
-func (ut *Utils[T]) HomeDirUser(vfs T, u UserReader) string {
-	if !vfs.HasFeature(FeatIdentityMgr) {
-		return ut.FromUnixPath(DefaultVolume, "/")
+func (ut *Utils[T]) HomeDirUser(u UserReader) string {
+	name := u.Name()
+	if ut.osType == OsWindows {
+		return ut.joinPath(ut.HomeDir(), name)
 	}
 
-	name := u.Name()
-	if ut.osType != OsWindows && name == AdminUserName(ut.osType) {
+	if name == AdminUserName(ut.osType) {
 		return "/root"
 	}
 
-	return ut.Join(ut.HomeDir(), name)
+	return ut.joinPath(ut.HomeDir(), name)
 }
 
 // HomeDirPerm return the default permission for home directories.
