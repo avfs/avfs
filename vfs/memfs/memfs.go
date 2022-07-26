@@ -457,12 +457,8 @@ func (vfs *MemIOFS) Open(name string) (fs.File, error) {
 func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	const op = "open"
 
+	at := int64(0)
 	om := vfs.Utils.OpenMode(flag)
-	f := &MemFile{
-		vfs:      vfs,
-		name:     name,
-		openMode: om,
-	}
 
 	parent, child, pi, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists && !vfs.isNotExist(err) || !pi.IsLast() {
@@ -486,10 +482,8 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		child = parent.children[part]
 		if child == nil {
 			child = vfs.createFile(parent, part, perm)
-			f.nd = child
-			f.openMode = om
 
-			return f, nil
+			goto createMemFile
 		}
 	}
 
@@ -511,7 +505,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		}
 
 		if om&avfs.OpenAppend != 0 {
-			f.at = c.size()
+			at = c.size()
 		}
 
 	case *dirNode:
@@ -530,8 +524,14 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		return &MemFile{}, fs.ErrInvalid
 	}
 
-	f.nd = child
-	f.openMode = om
+createMemFile:
+	f := &MemFile{
+		nd:       child,
+		vfs:      vfs,
+		name:     name,
+		at:       at,
+		openMode: om,
+	}
 
 	return f, nil
 }
