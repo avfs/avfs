@@ -107,7 +107,7 @@ func SetUser(name string) (avfs.UserReader, error) {
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	return &LinuxSysStat{Sys: info.Sys().(*syscall.Stat_t)} // nolint:forcetypeassert // type assertion must be checked
+	return &LinuxSysStat{Sys: info.Sys().(*syscall.Stat_t)} //nolint:forcetypeassert // type assertion must be checked
 }
 
 // User returns the current user of the OS.

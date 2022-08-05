@@ -834,7 +834,7 @@ func (vfs *OrefaFS) TempDir() string {
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OrefaFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	return info.Sys().(avfs.SysStater) // nolint:forcetypeassert // type assertion must be checked
+	return info.Sys().(avfs.SysStater) //nolint:forcetypeassert // type assertion must be checked
 }
 
 // Truncate changes the size of the named file.
