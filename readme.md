@@ -3,7 +3,7 @@
 Another Virtual File System for Go
 
 ![CI](https://github.com/avfs/avfs/workflows/CI/badge.svg)
-[![codecov](https://codecov.io/gh/avfs/avfs/branch/master/graph/badge.svg)](https://codecov.io/gh/avfs/avfs)
+[![codecov](https://codecov.io/gh/avfs/avfs/branch/master/graph/badge.svg?token=z325AezWts)](https://codecov.io/gh/avfs/avfs)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/avfs/avfs)](https://pkg.go.dev/github.com/avfs/avfs)
 [![Release](https://img.shields.io/github/release/avfs/avfs.svg)](https://github.com/avfs/avfs/releases/latest)
 [![License](https://img.shields.io/github/license/avfs/avfs)](/LICENSE)
@@ -36,7 +36,7 @@ This package can be installed with the go install command :
 go install github.com/avfs/avfs@latest
 ```
 
-It is only tested with Go version >= 1.17
+It is only tested with Go version >= 1.18
 
 ## Getting started
 
@@ -48,7 +48,7 @@ To make an existing code work with **AVFS** :
 - import the packages of the file systems and, if necessary, the `avfs` package
   and initialize the file system variable.
 - some file systems provide specific options available at initialization. For
-  instance `MemFS` needs `WithMainDirs` option to create `/home`, `/root`
+  instance `MemFS` needs `WithSystemDirs` option to create `/home`, `/root`
   and `/tmp` directories.
 
 ## Examples
@@ -79,7 +79,7 @@ func main() {
 	case "PROD": // The real file system for production.
 		vfs = osfs.New()
 	default: // in memory for tests.
-		vfs = memfs.New(memfs.WithMainDirs())
+		vfs = memfs.New(memfs.WithSystemDirs())
 	}
 
 	// From this point all references of 'os', 'path/filepath'
@@ -131,7 +131,7 @@ func main() {
 	)
 
 	idm := memidm.New()
-	vfs := memfs.New(memfs.WithMainDirs(), memfs.WithIdm(idm))
+	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithIdm(idm))
 
 	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	vfs.Chmod(rootDir, 0o777)
