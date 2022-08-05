@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [1.18.x]
+        go: [1.18.x, 1.19.x]
         os: [ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
