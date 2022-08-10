@@ -400,9 +400,10 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestCopyFile,
 		sfs.TestDirExists,
 		sfs.TestExists,
+		sfs.TestHashFile,
 		sfs.TestIsDir,
 		sfs.TestIsEmpty,
-		sfs.TestHashFile,
+		sfs.TestIsPathSeparator,
 		sfs.TestRndTree,
 		sfs.TestUmask,
 	)

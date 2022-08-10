@@ -709,74 +709,103 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 	})
 }
 
+// TestHashFile tests avfs.HashFile function.
+func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
+	vfs := sfs.VFSSetup()
+
+	if !vfs.HasFeature(avfs.FeatBasicFs) {
+		return
+	}
+
+	rtParams := &avfs.RndTreeParams{
+		MinName: 32, MaxName: 32,
+		MinFiles: 100, MaxFiles: 100,
+		MinFileSize: 16, MaxFileSize: 100 * 1024,
+	}
+
+	rt, err := avfs.NewRndTree(vfs, testDir, rtParams)
+	if !CheckNoError(t, "NewRndTree", err) {
+		return
+	}
+
+	err = rt.CreateTree()
+	if !CheckNoError(t, "CreateTree", err) {
+		return
+	}
+
+	defer vfs.RemoveAll(testDir) //nolint:errcheck // Ignore errors.
+
+	h := sha512.New()
+
+	for _, file := range rt.Files {
+		content, err := vfs.ReadFile(file.Name)
+		if !CheckNoError(t, "ReadFile", err) {
+			continue
+		}
+
+		h.Reset()
+
+		_, err = h.Write(content)
+		CheckNoError(t, "Write", err)
+
+		wantSum := h.Sum(nil)
+
+		gotSum, err := avfs.HashFile(vfs, file.Name, h)
+		CheckNoError(t, "HashFile", err)
+
+		if !bytes.Equal(wantSum, gotSum) {
+			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", file.Name, wantSum, gotSum)
+		}
+	}
+}
+
 // TestIsAbs tests IsAbs function.
 func (sfs *SuiteFS) TestIsAbs(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	t.Run("IsAbs", func(t *testing.T) {
-		type IsAbsTest struct {
-			path  string
-			isAbs bool
+	type IsAbsTest struct {
+		path  string
+		isAbs bool
+	}
+
+	var isAbsTests []IsAbsTest
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		isAbsTests = []IsAbsTest{
+			{`C:\`, true},
+			{`c\`, false},
+			{`c::`, false},
+			{`c:`, false},
+			{`/`, false},
+			{`\`, false},
+			{`\Windows`, false},
+			{`c:a\b`, false},
+			{`c:\a\b`, true},
+			{`c:/a/b`, true},
+			{`\\host\share\foo`, true},
+			{`//host/share/foo/bar`, true},
 		}
 
-		var isAbsTests []IsAbsTest
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			isAbsTests = []IsAbsTest{
-				{`C:\`, true},
-				{`c\`, false},
-				{`c::`, false},
-				{`c:`, false},
-				{`/`, false},
-				{`\`, false},
-				{`\Windows`, false},
-				{`c:a\b`, false},
-				{`c:\a\b`, true},
-				{`c:/a/b`, true},
-				{`\\host\share\foo`, true},
-				{`//host/share/foo/bar`, true},
-			}
-
-		default:
-			isAbsTests = []IsAbsTest{
-				{"", false},
-				{"/", true},
-				{"/usr/bin/gcc", true},
-				{"..", false},
-				{"/a/../bb", true},
-				{".", false},
-				{"./", false},
-				{"lala", false},
-			}
+	default:
+		isAbsTests = []IsAbsTest{
+			{"", false},
+			{"/", true},
+			{"/usr/bin/gcc", true},
+			{"..", false},
+			{"/a/../bb", true},
+			{".", false},
+			{"./", false},
+			{"lala", false},
 		}
+	}
 
-		for _, test := range isAbsTests {
-			r := vfs.IsAbs(test.path)
-			if r != test.isAbs {
-				t.Errorf("IsAbs(%q) = %v, want %v", test.path, r, test.isAbs)
-			}
+	for _, test := range isAbsTests {
+		r := vfs.IsAbs(test.path)
+		if r != test.isAbs {
+			t.Errorf("IsAbs(%q) = %v, want %v", test.path, r, test.isAbs)
 		}
-	})
-
-	t.Run("IsPathSeparator", func(t *testing.T) {
-		isPathSepTests := []struct {
-			sep   uint8
-			isAbs bool
-		}{
-			{sep: '/', isAbs: true},
-			{sep: '\\', isAbs: vfs.OSType() == avfs.OsWindows},
-			{sep: '.', isAbs: false},
-			{sep: 'a', isAbs: false},
-		}
-
-		for _, test := range isPathSepTests {
-			r := vfs.IsPathSeparator(test.sep)
-			if r != test.isAbs {
-				t.Errorf("IsPathSeparator(%q) = %v, want %v", test.sep, r, test.isAbs)
-			}
-		}
-	})
+	}
 }
 
 // TestIsDir tests avfs.IsDir function.
@@ -880,52 +909,28 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	})
 }
 
-// TestHashFile tests avfs.HashFile function.
-func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
-	vfs := sfs.VFSSetup()
+// TestIsPathSeparator tests IsPathSeparator function.
+func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, testDir string) {
+	vfs := sfs.VFSTest()
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
 	}
 
-	rtParams := &avfs.RndTreeParams{
-		MinName: 32, MaxName: 32,
-		MinFiles: 100, MaxFiles: 100,
-		MinFileSize: 16, MaxFileSize: 100 * 1024,
+	isPathSepTests := []struct {
+		sep   uint8
+		isAbs bool
+	}{
+		{sep: '/', isAbs: true},
+		{sep: '\\', isAbs: vfs.OSType() == avfs.OsWindows},
+		{sep: '.', isAbs: false},
+		{sep: 'a', isAbs: false},
 	}
 
-	rt, err := avfs.NewRndTree(vfs, testDir, rtParams)
-	if !CheckNoError(t, "NewRndTree", err) {
-		return
-	}
-
-	err = rt.CreateTree()
-	if !CheckNoError(t, "CreateTree", err) {
-		return
-	}
-
-	defer vfs.RemoveAll(testDir) //nolint:errcheck // Ignore errors.
-
-	h := sha512.New()
-
-	for _, file := range rt.Files {
-		content, err := vfs.ReadFile(file.Name)
-		if !CheckNoError(t, "ReadFile", err) {
-			continue
-		}
-
-		h.Reset()
-
-		_, err = h.Write(content)
-		CheckNoError(t, "Write", err)
-
-		wantSum := h.Sum(nil)
-
-		gotSum, err := avfs.HashFile(vfs, file.Name, h)
-		CheckNoError(t, "HashFile", err)
-
-		if !bytes.Equal(wantSum, gotSum) {
-			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", file.Name, wantSum, gotSum)
+	for _, test := range isPathSepTests {
+		r := vfs.IsPathSeparator(test.sep)
+		if r != test.isAbs {
+			t.Errorf("IsPathSeparator(%q) = %v, want %v", test.sep, r, test.isAbs)
 		}
 	}
 }
