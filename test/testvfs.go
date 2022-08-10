@@ -1535,6 +1535,23 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
 			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
 	})
+
+	t.Run("OpenFileInvalidSymlink", func(t *testing.T) {
+		if !vfs.HasFeature(avfs.FeatSymlink) {
+			return
+		}
+
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+		InvalidSymlink := vfs.Join(testDir, "InvalidSymlink")
+
+		err := vfs.Symlink(nonExistingFile, InvalidSymlink)
+		CheckNoError(t, "InvalidSymlink", err)
+
+		_, err = vfs.OpenFile(InvalidSymlink, os.O_RDONLY, avfs.DefaultFilePerm)
+		CheckPathError(t, err).Op("open").Path(InvalidSymlink).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+	})
 }
 
 // TestPathSeparator tests PathSeparator function.
