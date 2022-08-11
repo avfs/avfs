@@ -1550,7 +1550,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 		_, err = vfs.OpenFile(InvalidSymlink, os.O_RDONLY, avfs.DefaultFilePerm)
 		CheckPathError(t, err).Op("open").Path(InvalidSymlink).
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
-			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
 	})
 }
 
