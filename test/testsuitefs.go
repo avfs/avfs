@@ -239,7 +239,7 @@ func (sfs *SuiteFS) RunBenches(b *testing.B, userName string, benchFuncs ...Suit
 
 // funcName returns the name of a function or a method.
 // It returns an empty string if not available.
-func funcName(i interface{}) string {
+func funcName(i any) string {
 	v := reflect.ValueOf(i)
 	if v.Kind() != reflect.Func {
 		return ""
@@ -272,8 +272,6 @@ func funcName(i interface{}) string {
 
 // CreateDir creates a directory for the tests.
 func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode fs.FileMode) {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -292,8 +290,6 @@ func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode fs.FileMode) {
 
 // ChangeDir changes the current directory for the tests.
 func (sfs *SuiteFS) ChangeDir(tb testing.TB, dir string) {
-	tb.Helper()
-
 	vfs := sfs.vfsTest
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return
@@ -427,8 +423,6 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 
 // ClosedFile returns a closed avfs.File.
 func (sfs *SuiteFS) ClosedFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
-	tb.Helper()
-
 	fileName = sfs.EmptyFile(tb, testDir)
 
 	vfs := sfs.vfsTest
@@ -448,8 +442,6 @@ func (sfs *SuiteFS) ClosedFile(tb testing.TB, testDir string) (f avfs.File, file
 
 // EmptyFile returns an empty file name.
 func (sfs *SuiteFS) EmptyFile(tb testing.TB, testDir string) string {
-	tb.Helper()
-
 	const emptyFile = "emptyFile"
 
 	vfs := sfs.vfsSetup
@@ -473,8 +465,6 @@ func (sfs *SuiteFS) EmptyFile(tb testing.TB, testDir string) string {
 
 // ExistingDir returns an existing directory.
 func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return vfs.Join(testDir, defaultDir)
@@ -495,8 +485,6 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 
 // ExistingFile returns an existing file name with the given content.
 func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) string {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		return vfs.Join(testDir, defaultFile)
@@ -524,8 +512,6 @@ func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) 
 
 // NonExistingFile returns the name of a non-existing file.
 func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 
 	fileName := vfs.Join(testDir, defaultNonExisting)
@@ -543,8 +529,6 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 
 // OpenedEmptyFile returns an opened empty avfs.File and its file name.
 func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (fd avfs.File, fileName string) {
-	tb.Helper()
-
 	fileName = sfs.EmptyFile(tb, testDir)
 
 	vfs := sfs.vfsTest
@@ -574,8 +558,6 @@ func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (fd avfs.File
 
 // OpenedNonExistingFile returns a non-existing avfs.File and its file name.
 func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs.File) {
-	tb.Helper()
-
 	fileName := sfs.NonExistingFile(tb, testDir)
 	vfs := sfs.vfsTest
 
@@ -589,8 +571,6 @@ func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs
 
 // RandomDir returns one directory with random empty subdirectories, files and symbolic links.
 func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *avfs.RndTree {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 	RndParamsOneDir := avfs.RndTreeParams{
 		MinName:     4,
@@ -667,8 +647,6 @@ func (sfs *SuiteFS) SampleDirsAll(testDir string) []*Dir {
 
 // CreateSampleDirs creates and returns sample directories and testDir directory if necessary.
 func (sfs *SuiteFS) CreateSampleDirs(tb testing.TB, testDir string) []*Dir {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 
 	err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
@@ -718,8 +696,6 @@ func (sfs *SuiteFS) SampleFiles(testDir string) []*File {
 
 // CreateSampleFiles creates and returns the sample files.
 func (sfs *SuiteFS) CreateSampleFiles(tb testing.TB, testDir string) []*File {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 
 	files := sfs.SampleFiles(testDir)
@@ -803,8 +779,6 @@ func (sfs *SuiteFS) SampleSymlinksEval(testDir string) []*SymlinkEval {
 
 // CreateSampleSymlinks creates the sample symbolic links.
 func (sfs *SuiteFS) CreateSampleSymlinks(tb testing.TB, testDir string) []*Symlink {
-	tb.Helper()
-
 	vfs := sfs.vfsSetup
 
 	symlinks := sfs.SampleSymlinks(testDir)
