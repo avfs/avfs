@@ -482,8 +482,15 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		child = parent.children[part]
 		if child == nil {
 			child = vfs.createFile(parent, part, perm)
+			f := &MemFile{
+				nd:       child,
+				vfs:      vfs,
+				name:     name,
+				at:       at,
+				openMode: om,
+			}
 
-			goto createMemFile
+			return f, nil
 		}
 	}
 
@@ -519,12 +526,8 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		if !c.checkPermission(om, vfs.user) {
 			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
-
-	default:
-		return &MemFile{}, fs.ErrInvalid
 	}
 
-createMemFile:
 	f := &MemFile{
 		nd:       child,
 		vfs:      vfs,
