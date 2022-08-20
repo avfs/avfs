@@ -588,6 +588,10 @@ type SystemDirMgr interface {
 	// CreateSystemDirs creates the system directories of a file system.
 	CreateSystemDirs(basePath string) error
 
+	// HomeDirUser returns the home directory of the user.
+	// If the file system does not have an identity manager, the root directory is returned.
+	HomeDirUser(u UserReader) string
+
 	// SystemDirs returns the system directories of the file system.
 	SystemDirs(basePath string) []DirInfo
 }
