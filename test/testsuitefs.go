@@ -70,7 +70,6 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 	initDir := filepath.Dir(file)
 
 	canTestPerm := vfs.OSType() != avfs.OsWindows &&
-		vfs.HasFeature(avfs.FeatBasicFs) &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) &&
 		initUser.IsAdmin()
 
@@ -88,16 +87,10 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
 		tb.Logf("Info vfs : type=%s, OSType=%s, Features=%s", vfs.Type(), vfs.OSType(), vfs.Features())
 	}()
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return sfs
-	}
-
 	for _, opt := range opts {
 		opt(sfs)
 	}
 
-	sfs.createTestRoot(tb)
-	sfs.createBenchRoot(tb)
 	sfs.createUsersAndGroups(tb)
 
 	return sfs
@@ -118,6 +111,13 @@ func WithVFSTest(vfsTest avfs.VFS) Option {
 // createTestRoot creates tests root directory.
 func (sfs *SuiteFS) createTestRoot(tb testing.TB) {
 	vfs := sfs.vfsSetup
+
+	if sfs.testRoot != "" {
+		_, err := vfs.Stat(sfs.testRoot)
+		if errors.Is(err, fs.ErrExist) {
+			return
+		}
+	}
 
 	testRoot, err := vfs.MkdirTemp("", "avfs")
 	if err != nil {
@@ -204,6 +204,8 @@ type SuiteTestFunc func(t *testing.T, testDir string)
 func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...SuiteTestFunc) {
 	vfs := sfs.vfsSetup
 
+	sfs.createTestRoot(t)
+
 	defer func() {
 		sfs.SetUser(t, sfs.initUser.Name())
 
@@ -238,6 +240,8 @@ type SuiteBenchFunc func(b *testing.B, testDir string)
 // RunBenches runs all benchmark functions benchFuncs specified as user userName.
 func (sfs *SuiteFS) RunBenches(b *testing.B, userName string, benchFuncs ...SuiteBenchFunc) {
 	vfs := sfs.vfsSetup
+
+	sfs.createBenchRoot(b)
 
 	defer func() {
 		sfs.SetUser(b, sfs.initUser.Name())
@@ -334,9 +338,6 @@ func (sfs *SuiteFS) cleanCache(tb testing.TB) {
 // CreateDir creates a directory for the tests.
 func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode fs.FileMode) {
 	vfs := sfs.vfsSetup
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return
-	}
 
 	err := vfs.MkdirAll(dir, mode)
 	if err != nil {
@@ -352,9 +353,6 @@ func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode fs.FileMode) {
 // ChangeDir changes the current directory for the tests.
 func (sfs *SuiteFS) ChangeDir(tb testing.TB, dir string) {
 	vfs := sfs.vfsTest
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return
-	}
 
 	err := vfs.Chdir(dir)
 	if err != nil {
@@ -365,10 +363,6 @@ func (sfs *SuiteFS) ChangeDir(tb testing.TB, dir string) {
 // RemoveTestDir removes all files under testDir.
 func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 	vfs := sfs.vfsSetup
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return
-	}
 
 	err := vfs.Chdir(sfs.testRoot)
 	if err != nil {
@@ -527,9 +521,6 @@ func (sfs *SuiteFS) EmptyFile(tb testing.TB, testDir string) string {
 // ExistingDir returns an existing directory.
 func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 	vfs := sfs.vfsSetup
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return vfs.Join(testDir, defaultDir)
-	}
 
 	dirName, err := vfs.MkdirTemp(testDir, "ExistingDir")
 	if err != nil {
@@ -547,9 +538,6 @@ func (sfs *SuiteFS) ExistingDir(tb testing.TB, testDir string) string {
 // ExistingFile returns an existing file name with the given content.
 func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) string {
 	vfs := sfs.vfsSetup
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return vfs.Join(testDir, defaultFile)
-	}
 
 	f, err := vfs.CreateTemp(testDir, defaultFile)
 	if err != nil {
@@ -574,11 +562,7 @@ func (sfs *SuiteFS) ExistingFile(tb testing.TB, testDir string, content []byte) 
 // NonExistingFile returns the name of a non-existing file.
 func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 	vfs := sfs.vfsSetup
-
 	fileName := vfs.Join(testDir, defaultNonExisting)
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return fileName
-	}
 
 	_, err := vfs.Stat(fileName)
 	if !errors.Is(err, fs.ErrNotExist) {
@@ -591,14 +575,7 @@ func (sfs *SuiteFS) NonExistingFile(tb testing.TB, testDir string) string {
 // OpenedEmptyFile returns an opened empty avfs.File and its file name.
 func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (fd avfs.File, fileName string) {
 	fileName = sfs.EmptyFile(tb, testDir)
-
 	vfs := sfs.vfsTest
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		f, _ := vfs.Open(fileName)
-
-		return f, fileName
-	}
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f, err := vfs.Open(fileName)
@@ -623,7 +600,7 @@ func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs
 	vfs := sfs.vfsTest
 
 	f, err := vfs.Open(fileName)
-	if vfs.HasFeature(avfs.FeatBasicFs) && (err == nil || errors.Is(err, fs.ErrExist)) {
+	if !errors.Is(err, fs.ErrNotExist) {
 		tb.Fatalf("Open %s : want non existing file, got %v", fileName, err)
 	}
 

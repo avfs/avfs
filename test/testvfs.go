@@ -34,16 +34,6 @@ import (
 func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		err := vfs.Chdir(testDir)
-		CheckPathError(t, err).Op("chdir").Path(testDir).ErrPermDenied()
-
-		_, err = vfs.Getwd()
-		CheckPathError(t, err).Op("getwd").Path("").ErrPermDenied()
-
-		return
-	}
-
 	dirs := sfs.CreateSampleDirs(t, testDir)
 	existingFile := sfs.EmptyFile(t, testDir)
 
@@ -129,7 +119,7 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chmod(testDir, avfs.DefaultDirPerm)
 		CheckPathError(t, err).Op("chmod").Path(testDir).ErrPermDenied()
 
@@ -422,7 +412,7 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chtimes(testDir, time.Now(), time.Now())
 		CheckPathError(t, err).Op("chtimes").Path(testDir).ErrPermDenied()
 
@@ -474,10 +464,6 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestClone(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		return
-	}
-
 	if vfsClonable, ok := vfs.(avfs.Cloner); ok {
 		vfsCloned := vfsClonable.Clone()
 
@@ -491,7 +477,7 @@ func (sfs *SuiteFS) TestClone(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.Create(testDir)
 		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
@@ -523,7 +509,7 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.CreateTemp(testDir, "CreateTemp")
 		CheckPathError(t, err).Op("createtemp").ErrPermDenied()
 
@@ -628,15 +614,6 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	if vfs.OSType() == avfs.OsWindows {
 		userName := vfs.User().Name()
 		wantTmpDir = avfs.ShortPathName(vfs.Join(avfs.DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`))
-	}
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		tmpDir := vfs.TempDir()
-		if tmpDir != wantTmpDir {
-			t.Errorf("TempDir : want error to be %v, got %v", wantTmpDir, tmpDir)
-		}
-
-		return
 	}
 
 	tmpDir := vfs.TempDir()
@@ -893,20 +870,11 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 
 // TestLstat tests Lstat function.
 func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		_, err := vfs.Lstat(testDir)
-		CheckPathError(t, err).OpLstat().Path(testDir).ErrPermDenied()
-
-		return
-	}
-
 	dirs := sfs.CreateSampleDirs(t, testDir)
 	files := sfs.CreateSampleFiles(t, testDir)
 	sfs.CreateSampleSymlinks(t, testDir)
 
-	vfs = sfs.vfsTest
+	vfs := sfs.vfsTest
 
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -1005,7 +973,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(testDir, avfs.DefaultDirPerm)
 		CheckPathError(t, err).Op("mkdir").Path(testDir).ErrPermDenied()
 
@@ -1138,7 +1106,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
 		CheckPathError(t, err).Op("mkdir").Path(testDir).ErrPermDenied()
 
@@ -1251,7 +1219,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.MkdirTemp(testDir, "MkdirTemp")
 		CheckPathError(t, err).Op("mkdirtemp").ErrPermDenied()
 
@@ -1301,20 +1269,11 @@ func (sfs *SuiteFS) TestName(t *testing.T, testDir string) {
 
 // TestOpen tests Open function.
 func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		_, err := vfs.Open(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
-
-		return
-	}
-
 	data := []byte("AAABBBCCCDDD")
 	existingFile := sfs.ExistingFile(t, testDir, data)
 	existingDir := sfs.ExistingDir(t, testDir)
 
-	vfs = sfs.vfsTest
+	vfs := sfs.vfsTest
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
 		f, err := vfs.Open(existingFile)
@@ -1358,7 +1317,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.OpenFile(testDir, os.O_WRONLY, avfs.DefaultFilePerm)
 		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
@@ -1573,13 +1532,6 @@ func (sfs *SuiteFS) TestPathSeparator(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		_, err := vfs.ReadDir(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
-
-		return
-	}
-
 	rndTree := sfs.RandomDir(t, testDir)
 	wDirs := len(rndTree.Dirs)
 	wFiles := len(rndTree.Files)
@@ -1648,15 +1600,6 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 // TestReadFile tests ReadFile function.
 func (sfs *SuiteFS) TestReadFile(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		_, err := vfs.ReadFile(testDir)
-		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
-
-		return
-	}
-
-	vfs = sfs.vfsTest
 
 	t.Run("ReadFile", func(t *testing.T) {
 		data := []byte("AAABBBCCCDDD")
@@ -1747,7 +1690,7 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Remove(testDir)
 		CheckPathError(t, err).Op("remove").Path(testDir).ErrPermDenied()
 
@@ -1844,7 +1787,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.RemoveAll(testDir)
 		CheckPathError(t, err).Op("removeall").Path(testDir).ErrPermDenied()
 
@@ -1943,7 +1886,7 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Rename(testDir, testDir)
 		CheckLinkError(t, err).Op("rename").Old(testDir).New(testDir).ErrPermDenied()
 
@@ -2053,14 +1996,6 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestSameFile(t *testing.T, testDir string) {
 	vfs := sfs.vfsSetup
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		if vfs.SameFile(nil, nil) {
-			t.Errorf("SameFile : want SameFile to be false, got true")
-		}
-
-		return
-	}
-
 	testDir1 := vfs.Join(testDir, "dir1")
 	testDir2 := vfs.Join(testDir, "dir2")
 
@@ -2146,13 +2081,6 @@ func (sfs *SuiteFS) TestSameFile(t *testing.T, testDir string) {
 // TestStat tests Stat function.
 func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		_, err := vfs.Stat(testDir)
-		CheckPathError(t, err).OpStat().Path(testDir).ErrPermDenied()
-
-		return
-	}
 
 	dirs := sfs.CreateSampleDirs(t, testDir)
 	files := sfs.CreateSampleFiles(t, testDir)
@@ -2285,16 +2213,6 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) {
-		sst := vfs.ToSysStat(nil)
-
-		if _, ok := sst.(*avfs.DummySysStat); !ok {
-			t.Errorf("ToSysStat : want result of type DummySysStat, got %s", reflect.TypeOf(sst).Name())
-		}
-
-		return
-	}
-
 	existingFile := sfs.EmptyFile(t, testDir)
 
 	fst, err := vfs.Stat(existingFile)
@@ -2327,7 +2245,7 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Truncate(testDir, 0)
 		CheckPathError(t, err).Op("truncate").Path(testDir).ErrPermDenied()
 
@@ -2412,7 +2330,7 @@ func (sfs *SuiteFS) TestUmask(t *testing.T, testDir string) {
 
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		vfs.SetUMask(0)
 
 		if um := vfs.UMask(); um <= 0 {
@@ -2582,7 +2500,7 @@ func (sfs *SuiteFS) TestVolume(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestWriteFile(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.WriteFile(testDir, []byte{0}, avfs.DefaultFilePerm)
 		CheckPathError(t, err).Op("open").Path(testDir).ErrPermDenied()
 
@@ -2647,7 +2565,7 @@ func (sfs *SuiteFS) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
 func (sfs *SuiteFS) TestWriteString(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
-	if !vfs.HasFeature(avfs.FeatBasicFs) || vfs.HasFeature(avfs.FeatReadOnly) {
+	if vfs.HasFeature(avfs.FeatReadOnly) {
 		return
 	}
 
