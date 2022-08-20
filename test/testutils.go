@@ -46,7 +46,7 @@ func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatBasicFs) {
 		_, err := vfs.Abs(testDir)
-		CheckNoError(t, "Abs "+testDir, err)
+		CheckPathError(t, err).Op("getwd").Path("").ErrPermDenied()
 
 		return
 	}

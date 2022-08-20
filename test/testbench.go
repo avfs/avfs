@@ -28,7 +28,9 @@ func (sfs *SuiteFS) BenchAll(b *testing.B) {
 	sfs.RunBenches(b, UsrTest,
 		sfs.BenchCreate,
 		sfs.BenchMkdir,
-		sfs.BenchRemove)
+		sfs.BenchOpenFile,
+		sfs.BenchRemove,
+		sfs.BenchStat)
 }
 
 // BenchCreate benchmarks Create function.
@@ -43,18 +45,18 @@ func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 			files[n] = path
 		}
 
-		b.ReportAllocs()
-		b.ResetTimer()
+		sfs.BenchStart(b)
+		defer sfs.BenchStop(b)
 
 		for n := 0; n < b.N; n++ {
 			fileName := files[n]
+
 			f, err := vfs.Create(fileName)
-			if !CheckNoError(b, "Create "+fileName, err) {
-				return
+			if err != nil {
+				b.Fatalf("Create %s : %v", fileName, err)
 			}
 
-			err = f.Close()
-			CheckNoError(b, "Close "+fileName, err)
+			_ = f.Close()
 		}
 	})
 }
@@ -73,13 +75,20 @@ func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 			dirs[n] = path
 		}
 
-		b.ReportAllocs()
-		b.ResetTimer()
+		sfs.BenchStart(b)
+		defer sfs.BenchStop(b)
 
 		for n := 0; n < b.N; n++ {
-			_ = vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
+			err := vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
+			if err != nil {
+				b.Fatalf("Mkdir %s : %v", dirs[n], err)
+			}
 		}
 	})
+}
+
+// BenchOpenFile benchmarks OpenFile function.
+func (sfs *SuiteFS) BenchOpenFile(b *testing.B, testDir string) {
 }
 
 // BenchRemove benchmarks Remove function.
@@ -93,6 +102,7 @@ func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
 			MinDirs: b.N,
 			MaxDirs: b.N,
 		})
+
 		if !CheckNoError(b, "RndTree "+testDir, err) {
 			return
 		}
@@ -102,11 +112,18 @@ func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
 			return
 		}
 
-		b.ReportAllocs()
-		b.ResetTimer()
+		sfs.BenchStart(b)
+		defer sfs.BenchStop(b)
 
 		for n := b.N - 1; n >= 0; n-- {
-			_ = vfs.Remove(rt.Dirs[n])
+			err = vfs.Remove(rt.Dirs[n])
+			if err != nil {
+				b.Fatalf("Remove %s : %v", rt.Dirs[n], err)
+			}
 		}
 	})
+}
+
+// BenchStat benchmarks OpenFile function.
+func (sfs *SuiteFS) BenchStat(b *testing.B, testDir string) {
 }
