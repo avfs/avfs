@@ -47,7 +47,7 @@ var (
 func TestOrefaFS(t *testing.T) {
 	vfs := orefafs.New(orefafs.WithSystemDirs())
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatSystemDirs
+	wantFeatures := avfs.FeatHardlink | avfs.FeatSystemDirs
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
 	}
@@ -59,7 +59,7 @@ func TestOrefaFS(t *testing.T) {
 func TestOrefaFSWithChown(t *testing.T) {
 	vfs := orefafs.New(orefafs.WithSystemDirs(), orefafs.WithChownUser())
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatChownUser | avfs.FeatHardlink | avfs.FeatSystemDirs
+	wantFeatures := avfs.FeatChownUser | avfs.FeatHardlink | avfs.FeatSystemDirs
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
 	}

@@ -26,7 +26,7 @@ import (
 func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
 		nodes:    make(nodes),
-		features: avfs.FeatBasicFs | avfs.FeatHardlink,
+		features: avfs.FeatHardlink,
 		umask:    avfs.UMask(),
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
