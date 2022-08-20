@@ -18,6 +18,8 @@ package rofs
 
 import (
 	"io/fs"
+
+	"github.com/avfs/avfs"
 )
 
 // Chdir changes the current working directory to the file,
@@ -129,7 +131,7 @@ func (f *RoFile) Stat() (fs.FileInfo, error) {
 // Typically, this means flushing the file system's in-memory copy
 // of recently written data to disk.
 func (f *RoFile) Sync() error {
-	return f.baseFile.Sync()
+	return &fs.PathError{Op: "sync", Path: avfs.NotImplemented, Err: f.vfs.errPermDenied}
 }
 
 // Truncate changes the size of the file.
