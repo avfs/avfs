@@ -28,10 +28,7 @@ func New(opts ...Option) *MemFS {
 		idm:      avfs.NotImplementedIdm,
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		features: avfs.FeatBasicFs |
-			avfs.FeatChroot |
-			avfs.FeatHardlink |
-			avfs.FeatSymlink,
+		features: avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSymlink,
 	}
 
 	vfs := &MemFS{

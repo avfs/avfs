@@ -118,7 +118,7 @@ func TestMemFSNilPtrFile(t *testing.T) {
 func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatSymlink
+	wantFeatures := avfs.FeatHardlink | avfs.FeatSymlink
 	if vfs.OSType() == avfs.OsLinux {
 		wantFeatures |= avfs.FeatChroot
 	}
@@ -129,7 +129,7 @@ func TestMemFSConfig(t *testing.T) {
 
 	vfs = memfs.New(memfs.WithIdm(memidm.New()))
 
-	wantFeatures = avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSymlink
+	wantFeatures = avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSymlink
 	if vfs.OSType() == avfs.OsLinux {
 		wantFeatures |= avfs.FeatChroot
 	}
