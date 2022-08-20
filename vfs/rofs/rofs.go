@@ -205,12 +205,6 @@ func (vfs *RoFS) Glob(pattern string) (matches []string, err error) {
 	return vfs.baseFS.Glob(pattern)
 }
 
-// HomeDirUser returns the home directory of the user.
-// If the file system does not have an identity manager, the root directory is returned.
-func (vfs *RoFS) HomeDirUser(u avfs.UserReader) string {
-	return vfs.baseFS.HomeDirUser(u)
-}
-
 // Idm returns the identity manager of the file system.
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *RoFS) Idm() avfs.IdentityMgr {

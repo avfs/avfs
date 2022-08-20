@@ -189,7 +189,6 @@ The following file systems are currently available :
 File system |Comments
 ------------|--------
 [BasePathFS](vfs/basepathfs)|file system that restricts all operations to a given path within a file system
-[DummyFS](dummyfs.go)|Non implemented file system to be used as model
 [MemFS](vfs/memfs)|In memory file system supporting major features of a linux file system (hard links, symbolic links, chroot, umask)
 [OrefaFS](vfs/orefafs)|Afero like in memory file system
 [OsFS](vfs/osfs)|Operating system native file system

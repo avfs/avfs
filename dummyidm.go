@@ -16,7 +16,10 @@
 
 package avfs
 
-import "os"
+import (
+	"math"
+	"os"
+)
 
 var (
 	// AdminUser represents an administrator user.
@@ -29,14 +32,14 @@ var (
 	// DefaultGroup represents the default group.
 	DefaultGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
 		name: DefaultGroupName(CurrentOSType()),
-		gid:  MaxInt,
+		gid:  math.MaxInt,
 	}
 
 	// DefaultUser represents the default user.
 	DefaultUser = &DummyUser{ //nolint:gochecknoglobals // Used as default user for other file systems.
 		name: DefaultUserName(CurrentOSType()),
-		uid:  MaxInt,
-		gid:  MaxInt,
+		uid:  math.MaxInt,
+		gid:  math.MaxInt,
 	}
 
 	// CurrentUser represents the current user of the file system.

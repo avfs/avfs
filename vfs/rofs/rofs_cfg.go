@@ -81,6 +81,12 @@ func (vfs *RoFS) CreateHomeDir(u avfs.UserReader) (string, error) {
 	return "", &fs.PathError{Op: op, Path: u.Name(), Err: vfs.errPermDenied}
 }
 
+// HomeDirUser returns the home directory of the user.
+// If the file system does not have an identity manager, the root directory is returned.
+func (vfs *RoFS) HomeDirUser(u avfs.UserReader) string {
+	return vfs.baseFS.HomeDirUser(u)
+}
+
 // SystemDirs returns the system directories of the file system.
 func (vfs *RoFS) SystemDirs(basePath string) []avfs.DirInfo {
 	return vfs.baseFS.SystemDirs(basePath)
