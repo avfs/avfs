@@ -54,7 +54,7 @@ func TestRoFSConfig(t *testing.T) {
 	vfsWrite := memfs.New()
 	vfs := rofs.New(vfsWrite)
 
-	wantFeatures := avfs.FeatBasicFs | avfs.FeatHardlink | avfs.FeatReadOnly | avfs.FeatSymlink
+	wantFeatures := avfs.FeatHardlink | avfs.FeatReadOnly | avfs.FeatSymlink
 	if vfs.OSType() == avfs.OsLinux {
 		wantFeatures |= avfs.FeatChroot
 	}
