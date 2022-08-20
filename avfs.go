@@ -40,11 +40,8 @@ type Features uint64
 //go:generate stringer -type Features -trimprefix Feat -bitmask -output avfs_features.go
 
 const (
-	// FeatBasicFs indicates that the file system implements all basic functions.
-	FeatBasicFs Features = 1 << iota
-
 	// FeatChroot indicates that the file system supports Chroot.
-	FeatChroot
+	FeatChroot Features = 1 << iota
 
 	// FeatChownUser indicates that a non privileged user can use Chown.
 	FeatChownUser
