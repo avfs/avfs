@@ -208,7 +208,7 @@ func (vfs *RoFS) Glob(pattern string) (matches []string, err error) {
 // Idm returns the identity manager of the file system.
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *RoFS) Idm() avfs.IdentityMgr {
-	return avfs.NotImplementedIdm
+	return vfs.baseFS.Idm()
 }
 
 // IsAbs reports whether the path is absolute.
