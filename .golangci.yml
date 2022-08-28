@@ -246,9 +246,10 @@ issues:
     - text: "appendAssign: append result not assigned to the same slice"
       linters:
         - gocritic
-    - text: "preferStringWriter"
+    - text: "unexported-return: exported func Check"
+      path: "test"
       linters:
-        - gocritic
+        - revive
     - source: "// "
       linters:
         - lll
