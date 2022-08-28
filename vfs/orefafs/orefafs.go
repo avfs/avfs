@@ -15,6 +15,10 @@
 //
 
 // Package orefafs implements an Afero like in memory file system.
+//
+// it supports several features :
+//   - can emulate Linux or Windows systems regardless of the host system
+//   - supports Hard links
 package orefafs
 
 import (

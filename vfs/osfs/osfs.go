@@ -15,6 +15,8 @@
 //
 
 // Package osfs implements a file system using functions from os and path/filepath packages.
+//
+// Most functions are just calls to the original ones from os and filepath packages.
 package osfs
 
 import (

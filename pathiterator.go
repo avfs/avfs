@@ -34,13 +34,12 @@ import "strings"
 // The path below shows the different results of the PathIterator methods
 // when thirdPart is the current Part :
 //
-// /firstPart/secondPart/thirdPart/fourthPart/fifthPart
-//
-// ..........................|- Part --|
-// ........................Start      End
-// |------- Left -------|         |------ Right ------|
-// |----- LeftPart ---------------|
-// .....................|----------- RightPart -------|
+//	/firstPart/secondPart/thirdPart/fourthPart/fifthPart
+//	                     |- Part --|
+//	                   Start      End
+//	|------- Left -------|         |------ Right ------|
+//	|----- LeftPart ---------------|
+//	                     |----------- RightPart -------|
 type PathIterator[T VFS] struct {
 	path          string
 	start         int

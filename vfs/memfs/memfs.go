@@ -16,7 +16,14 @@
 
 // Package memfs implements an in memory file system.
 //
-// it supports several features : symbolic links, hard links, Chroot  ....
+// it supports several features :
+//   - can emulate Linux or Windows systems regardless of the host system
+//   - checks files permissions
+//   - supports different Identity managers
+//   - supports multiple concurrent users
+//   - supports Hard links
+//   - supports symbolic links
+//   - supports Chroot
 package memfs
 
 import (
