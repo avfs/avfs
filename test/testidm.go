@@ -23,8 +23,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// TestAdmin tests AdminGroup and AdminUser.
-func (sIdm *SuiteIdm) TestAdmin(t *testing.T) {
+// TestAdminGroupUser tests AdminGroup and AdminUser.
+func (sIdm *SuiteIdm) TestAdminGroupUser(t *testing.T) {
 	idm := sIdm.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {

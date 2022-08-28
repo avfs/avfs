@@ -57,7 +57,7 @@ func (sIdm *SuiteIdm) Type() string {
 
 // TestAll run all identity manager tests.
 func (sIdm *SuiteIdm) TestAll(t *testing.T) {
-	sIdm.TestAdmin(t)
+	sIdm.TestAdminGroupUser(t)
 	sIdm.TestGroupAddDel(t)
 	sIdm.TestUserAddDel(t)
 	sIdm.TestLookup(t)
