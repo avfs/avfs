@@ -17,6 +17,7 @@
 package test
 
 import (
+	"math"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -28,21 +29,25 @@ func (sIdm *SuiteIdm) TestAdmin(t *testing.T) {
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
 		ag := idm.AdminGroup()
-		if ag.Name() != avfs.DefaultGroup.Name() {
-			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.DefaultGroup.Name(), ag.Name())
+		if ag.Name() != avfs.NotImplemented {
+			t.Errorf("AdminGroup : want name to be %s, got %s", avfs.NotImplemented, ag.Name())
 		}
 
-		if ag.Gid() != avfs.DefaultGroup.Gid() {
-			t.Errorf("AdminGroup : want Gid to be %d, got %d", avfs.DefaultGroup.Gid(), ag.Gid())
+		if ag.Gid() != math.MaxInt {
+			t.Errorf("AdminGroup : want Gid to be %d, got %d", math.MaxInt, ag.Gid())
 		}
 
 		au := idm.AdminUser()
-		if au.Name() != avfs.DefaultUser.Name() {
-			t.Errorf("AdminUser : want name to be %s, got %s", avfs.DefaultUser.Name(), au.Name())
+		if au.Name() != avfs.NotImplemented {
+			t.Errorf("AdminUser : want name to be %s, got %s", avfs.NotImplemented, au.Name())
 		}
 
-		if au.Uid() != avfs.DefaultUser.Uid() {
-			t.Errorf("AdminUser : want Uid to be %d, got %d", avfs.DefaultUser.Uid(), au.Uid())
+		if au.Uid() != math.MaxInt {
+			t.Errorf("AdminUser : want Uid to be %d, got %d", math.MaxInt, au.Uid())
+		}
+
+		if au.Gid() != math.MaxInt {
+			t.Errorf("AdminUser : want Gid to be %d, got %d", math.MaxInt, au.Gid())
 		}
 
 		return

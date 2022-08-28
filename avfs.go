@@ -459,7 +459,6 @@ type BaseVFS interface {
 	UMask() fs.FileMode
 
 	// User returns the current user.
-	// if the file system does not have a current user, the user avfs.DefaultUser is returned.
 	User() UserReader
 
 	// WalkDir walks the file tree rooted at root, calling fn for each file or

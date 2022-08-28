@@ -26,6 +26,8 @@ import (
 func New(opts ...Option) *OrefaFS {
 	vfs := &OrefaFS{
 		nodes:    make(nodes),
+		user:     avfs.NotImplementedIdm.AdminUser(),
+		curDir:   "",
 		features: avfs.FeatHardlink,
 		umask:    avfs.UMask(),
 		dirMode:  fs.ModeDir,
@@ -47,16 +49,17 @@ func New(opts ...Option) *OrefaFS {
 	}
 
 	vfs.nodes[volumeName] = createRootNode()
-	vfs.user = avfs.AdminUser
 	vfs.curDir = volumeName
 
 	vfs.err.SetOSType(vfs.OSType())
 
 	if vfs.HasFeature(avfs.FeatSystemDirs) {
+		// Save the current user and umask.
 		u := vfs.user
 		um := vfs.umask
 
-		vfs.user = avfs.AdminUser
+		// Create system directories as administrator user without umask.
+		vfs.user = avfs.NotImplementedIdm.AdminUser()
 		vfs.umask = 0
 
 		err := vfs.CreateSystemDirs(volumeName)
@@ -64,6 +67,7 @@ func New(opts ...Option) *OrefaFS {
 			panic("CreateSystemDirs " + err.Error())
 		}
 
+		// Restore the previous user and umask.
 		vfs.umask = um
 		vfs.user = u
 		vfs.curDir = vfs.Utils.HomeDirUser(u)

@@ -52,9 +52,6 @@ func TestOsIdmCfg(t *testing.T) {
 		wantFeat = 0
 	default:
 		wantFeat = avfs.FeatIdentityMgr
-		if !avfs.CurrentUser.IsAdmin() {
-			wantFeat |= avfs.FeatReadOnlyIdm
-		}
 	}
 
 	idm := osidm.New()

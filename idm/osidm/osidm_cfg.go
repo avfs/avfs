@@ -16,29 +16,25 @@
 
 package osidm
 
-import "github.com/avfs/avfs"
+import (
+	"math"
+
+	"github.com/avfs/avfs"
+)
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
-	var (
-		features   avfs.Features
-		adminGroup *OsGroup
-		adminUser  *OsUser
-	)
+	osType := avfs.CurrentOSType()
+	features := avfs.FeatIdentityMgr
+	uid, gid := 0, 0
 
-	switch avfs.CurrentOSType() {
-	case avfs.OsWindows:
-		adminGroup = &OsGroup{name: avfs.DefaultGroupName(avfs.CurrentOSType()), gid: avfs.DefaultGroup.Gid()}
-		adminUser = &OsUser{name: avfs.DefaultUserName(avfs.CurrentOSType()), uid: avfs.DefaultUser.Uid(), gid: avfs.DefaultUser.Gid()}
-	default:
-		adminGroup = &OsGroup{name: avfs.AdminGroupName(avfs.CurrentOSType()), gid: 0}
-		adminUser = &OsUser{name: avfs.AdminUserName(avfs.CurrentOSType()), uid: 0, gid: 0}
-
-		features = avfs.FeatIdentityMgr
-		if !avfs.CurrentUser.IsAdmin() {
-			features |= avfs.FeatReadOnlyIdm
-		}
+	if osType == avfs.OsWindows {
+		features = 0
+		uid, gid = math.MaxInt, math.MaxInt
 	}
+
+	adminGroup := &OsGroup{name: avfs.AdminGroupName(osType), gid: gid}
+	adminUser := &OsUser{name: avfs.AdminUserName(osType), uid: uid, gid: gid}
 
 	idm := &OsIdm{
 		adminGroup: adminGroup,

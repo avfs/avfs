@@ -20,6 +20,7 @@ package osfs
 
 import (
 	"io/fs"
+	"math"
 
 	"github.com/avfs/avfs"
 )
@@ -40,14 +41,12 @@ func SetUser(name string) (avfs.UserReader, error) {
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	u := avfs.CurrentUser
-
-	return &WindowsSysStat{gid: u.Gid(), uid: u.Gid()}
+	return &WindowsSysStat{gid: math.MaxInt, uid: math.MaxInt}
 }
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	return avfs.CurrentUser
+	return avfs.NotImplementedIdm.AdminUser()
 }
 
 // WindowsSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Windows file system.

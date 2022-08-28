@@ -208,7 +208,7 @@ func (vfs *RoFS) Glob(pattern string) (matches []string, err error) {
 // Idm returns the identity manager of the file system.
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *RoFS) Idm() avfs.IdentityMgr {
-	return vfs.baseFS.Idm()
+	return avfs.NotImplementedIdm
 }
 
 // IsAbs reports whether the path is absolute.
@@ -514,7 +514,6 @@ func (vfs *RoFS) UMask() fs.FileMode {
 }
 
 // User returns the current user.
-// If the file system does not have a current user, the user avfs.DefaultUser is returned.
 func (vfs *RoFS) User() avfs.UserReader {
 	return vfs.baseFS.User()
 }

@@ -347,26 +347,6 @@ func (ut *Utils[T]) CreateTemp(vfs T, dir, pattern string) (File, error) {
 	}
 }
 
-// DefaultGroupName returns the name of the default users group of the file system.
-func DefaultGroupName(osType OSType) string {
-	switch osType {
-	case OsWindows:
-		return "Users"
-	default:
-		return "users"
-	}
-}
-
-// DefaultUserName returns the name of the default username of the file system.
-func DefaultUserName(osType OSType) string {
-	switch osType {
-	case OsWindows:
-		return "Default"
-	default:
-		return "user"
-	}
-}
-
 // Dir returns all but the last element of path, typically the path's directory.
 // After dropping the final element, Dir calls Clean on the path and trailing
 // slashes are removed.
@@ -952,7 +932,6 @@ func (ut *Utils[_]) SystemDirs(basePath string) []DirInfo {
 		return []DirInfo{
 			{Path: ut.Join(basePath, ut.HomeDir()[volumeNameLen:]), Perm: DefaultDirPerm},
 			{Path: ut.Join(basePath, ut.TempDir(AdminUserName(ut.osType))[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: ut.Join(basePath, ut.TempDir(DefaultUser.Name())[volumeNameLen:]), Perm: DefaultDirPerm},
 			{Path: ut.Join(basePath, `\Windows`), Perm: DefaultDirPerm},
 		}
 	default:

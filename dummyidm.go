@@ -16,45 +16,16 @@
 
 package avfs
 
-import (
-	"math"
-	"os"
-)
+import "math"
 
-var (
-	// AdminUser represents an administrator user.
-	AdminUser = &DummyUser{ //nolint:gochecknoglobals // Used as Admin user for other file systems.
-		name: AdminUserName(CurrentOSType()),
-		uid:  0,
-		gid:  0,
-	}
-
-	// DefaultGroup represents the default group.
-	DefaultGroup = &DummyGroup{ //nolint:gochecknoglobals // Used as default Idm for other file systems.
-		name: DefaultGroupName(CurrentOSType()),
-		gid:  math.MaxInt,
-	}
-
-	// DefaultUser represents the default user.
-	DefaultUser = &DummyUser{ //nolint:gochecknoglobals // Used as default user for other file systems.
-		name: DefaultUserName(CurrentOSType()),
-		uid:  math.MaxInt,
-		gid:  math.MaxInt,
-	}
-
-	// CurrentUser represents the current user of the file system.
-	CurrentUser = &DummyUser{ //nolint:gochecknoglobals // Used as current user for other file systems.
-		name: os.Getenv("USERNAME"),
-		uid:  0,
-		gid:  0,
-	}
-
-	// NotImplementedIdm is the default identity manager for all file systems.
-	NotImplementedIdm = &DummyIdm{} //nolint:gochecknoglobals // Used as default Idm for other file systems.
-)
+// NotImplementedIdm is the default identity manager for all file systems.
+var NotImplementedIdm = NewDummyIdm() //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 // DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
-type DummyIdm struct{}
+type DummyIdm struct {
+	adminGroup GroupReader
+	adminUser  UserReader
+}
 
 // DummyUser is the implementation of avfs.UserReader.
 type DummyUser struct {
@@ -71,7 +42,10 @@ type DummyGroup struct {
 
 // NewDummyIdm create a new identity manager.
 func NewDummyIdm() *DummyIdm {
-	return &DummyIdm{}
+	return &DummyIdm{
+		adminGroup: &DummyGroup{name: NotImplemented, gid: math.MaxInt},
+		adminUser:  &DummyUser{name: NotImplemented, uid: math.MaxInt, gid: math.MaxInt},
+	}
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -91,12 +65,12 @@ func (idm *DummyIdm) HasFeature(feature Features) bool {
 
 // AdminGroup returns the administrators (root) group.
 func (idm *DummyIdm) AdminGroup() GroupReader {
-	return DefaultGroup
+	return idm.adminGroup
 }
 
 // AdminUser returns the administrator (root) user.
 func (idm *DummyIdm) AdminUser() UserReader {
-	return DefaultUser
+	return idm.adminUser
 }
 
 // GroupAdd adds a new group.
@@ -167,7 +141,7 @@ func (u *DummyUser) IsAdmin() bool {
 	return u.uid == 0 || u.gid == 0
 }
 
-// Name returns the User name.
+// Name returns the username.
 func (u *DummyUser) Name() string {
 	return u.name
 }
