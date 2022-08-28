@@ -26,10 +26,9 @@ import (
 func New() *OsIdm {
 	osType := avfs.CurrentOSType()
 	features := avfs.FeatIdentityMgr
-	uid, gid := 0, 0
 
+	uid, gid := 0, 0
 	if osType == avfs.OsWindows {
-		features = 0
 		uid, gid = math.MaxInt, math.MaxInt
 	}
 
