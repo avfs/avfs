@@ -461,6 +461,11 @@ func (vfs *RoFS) Stat(name string) (fs.FileInfo, error) {
 	return vfs.baseFS.Stat(name)
 }
 
+// Sub returns an FS corresponding to the subtree rooted at dir.
+func (vfs *RoFS) Sub(dir string) (avfs.VFS, error) {
+	return vfs.baseFS.Sub(dir)
+}
+
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
 func (vfs *RoFS) Symlink(oldname, newname string) error {

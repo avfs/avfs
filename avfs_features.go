@@ -16,10 +16,11 @@ func _() {
 	_ = x[FeatReadOnly-32]
 	_ = x[FeatReadOnlyIdm-64]
 	_ = x[FeatRealFS-128]
-	_ = x[FeatSymlink-256]
+	_ = x[FeatSubFS-256]
+	_ = x[FeatSymlink-512]
 }
 
-const _Features_name = "ChrootChownUserSystemDirsHardlinkIdentityMgrReadOnlyReadOnlyIdmRealFSSymlink"
+const _Features_name = "ChrootChownUserSystemDirsHardlinkIdentityMgrReadOnlyReadOnlyIdmRealFSSubFSSymlink"
 
 var _Features_map = map[Features]string{
 	1:   _Features_name[0:6],
@@ -30,7 +31,8 @@ var _Features_map = map[Features]string{
 	32:  _Features_name[44:52],
 	64:  _Features_name[52:63],
 	128: _Features_name[63:69],
-	256: _Features_name[69:76],
+	256: _Features_name[69:74],
+	512: _Features_name[74:81],
 }
 
 func (i Features) String() string {

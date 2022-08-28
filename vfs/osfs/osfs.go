@@ -429,6 +429,13 @@ func (vfs *OsFS) Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
+// Sub returns an FS corresponding to the subtree rooted at dir.
+func (vfs *OsFS) Sub(dir string) (avfs.VFS, error) {
+	const op = "sub"
+
+	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
+}
+
 // Symlink creates newname as a symbolic link to oldname.
 // On Windows, a symlink to a non-existent oldname creates a file symlink;
 // if oldname is later created as a directory the symlink will not work.

@@ -806,6 +806,13 @@ func (vfs *OrefaFS) stat(path, op string) (fs.FileInfo, error) {
 	return fst, nil
 }
 
+// Sub returns an FS corresponding to the subtree rooted at dir.
+func (vfs *OrefaFS) Sub(dir string) (avfs.VFS, error) {
+	const op = "sub"
+
+	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
+}
+
 // Symlink creates newname as a symbolic link to oldname.
 // If there is an error, it will be of type *LinkError.
 func (vfs *OrefaFS) Symlink(oldname, newname string) error {

@@ -819,6 +819,26 @@ func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
 }
 
 // Sub returns an FS corresponding to the subtree rooted at dir.
+func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
+	const op = "sub"
+
+	_, child, _, err := vfs.searchNode(dir, slmEval)
+	if err != vfs.err.FileExists || child == nil {
+		return nil, &fs.PathError{Op: op, Path: dir, Err: err}
+	}
+
+	c, ok := child.(*dirNode)
+	if !ok {
+		return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
+	}
+
+	subFS := *vfs
+	subFS.rootNode = c
+
+	return &subFS, nil
+}
+
+// Sub returns an FS corresponding to the subtree rooted at dir.
 func (vfs *MemIOFS) Sub(dir string) (fs.FS, error) {
 	const op = "sub"
 

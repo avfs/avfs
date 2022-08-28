@@ -63,6 +63,9 @@ const (
 	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS).
 	FeatRealFS
 
+	// FeatSubFS indicates that the file system supports
+	FeatSubFS
+
 	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).
 	FeatSymlink
 )
@@ -103,6 +106,9 @@ type VFS interface {
 	// descriptor has mode O_RDONLY.
 	// If there is an error, it will be of type *PathError.
 	Open(name string) (File, error)
+
+	// Sub returns an FS corresponding to the subtree rooted at dir.
+	Sub(dir string) (VFS, error)
 }
 
 // IOFS is the virtual file system interface implementing io/fs interfaces.
