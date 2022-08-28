@@ -18,6 +18,9 @@ package avfs
 
 import "math"
 
+// DummyName is the adminGroup and adminUser name.
+const DummyName = "Default"
+
 // NotImplementedIdm is the default identity manager for all file systems.
 var NotImplementedIdm = NewDummyIdm() //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
@@ -43,8 +46,8 @@ type DummyGroup struct {
 // NewDummyIdm create a new identity manager.
 func NewDummyIdm() *DummyIdm {
 	return &DummyIdm{
-		adminGroup: &DummyGroup{name: NotImplemented, gid: math.MaxInt},
-		adminUser:  &DummyUser{name: NotImplemented, uid: math.MaxInt, gid: math.MaxInt},
+		adminGroup: &DummyGroup{name: DummyName, gid: math.MaxInt},
+		adminUser:  &DummyUser{name: DummyName, uid: math.MaxInt, gid: math.MaxInt},
 	}
 }
 
