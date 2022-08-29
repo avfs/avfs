@@ -2207,6 +2207,20 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 			}
 		}
 	})
+
+	t.Run("SymlinkPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		pts := sfs.NewPermTests(testDir, "Symlink", PermDefaultOptions)
+		pts.CreateDirs(t)
+
+		pts.Test(t, func(path string) error {
+			newName := vfs.Join(path, "Symlink")
+			return vfs.Symlink(path, newName)
+		})
+	})
 }
 
 // TestToSysStat tests ToSysStat function.
