@@ -336,17 +336,27 @@ func (sfs *SuiteFS) cleanCache(tb testing.TB) {
 }
 
 // CreateDir creates a directory for the tests.
-func (sfs *SuiteFS) CreateDir(tb testing.TB, dir string, mode fs.FileMode) {
+func (sfs *SuiteFS) CreateDir(tb testing.TB, dirName string, mode fs.FileMode) {
 	vfs := sfs.vfsSetup
 
-	err := vfs.MkdirAll(dir, mode)
+	err := vfs.MkdirAll(dirName, mode)
 	if err != nil {
-		tb.Fatalf("MkdirAll %s : want error to be nil, got %s", dir, err)
+		tb.Fatalf("MkdirAll %s : want error to be nil, got %s", dirName, err)
 	}
 
-	err = vfs.Chmod(dir, mode)
+	err = vfs.Chmod(dirName, mode)
 	if err != nil {
-		tb.Fatalf("Chmod %s : want error to be nil, got %s", dir, err)
+		tb.Fatalf("Chmod %s : want error to be nil, got %s", dirName, err)
+	}
+}
+
+// CreateFile creates an empty file for the tests.
+func (sfs *SuiteFS) CreateFile(tb testing.TB, fileName string, mode fs.FileMode) {
+	vfs := sfs.vfsSetup
+
+	err := vfs.WriteFile(fileName, nil, mode)
+	if err != nil {
+		tb.Fatalf("WriteFile %s : want error to be nil, got %s", fileName, err)
 	}
 }
 
