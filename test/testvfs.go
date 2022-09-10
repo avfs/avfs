@@ -106,9 +106,7 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Chdir", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Chdir")
 		pts.Test(t, func(path string) error {
 			return vfs.Chdir(path)
 		})
@@ -191,9 +189,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Chmod", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Chmod")
 		pts.Test(t, func(path string) error {
 			return vfs.Chmod(path, 0o777)
 		})
@@ -315,9 +311,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Chown", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Chown")
 		pts.Test(t, func(path string) error {
 			return vfs.Chown(path, 0, 0)
 		})
@@ -451,9 +445,7 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Chtimes", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Chtimes")
 		pts.Test(t, func(path string) error {
 			return vfs.Chtimes(path, time.Now(), time.Now())
 		})
@@ -489,9 +481,7 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Create", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Create")
 		pts.Test(t, func(path string) error {
 			newFile := vfs.Join(path, defaultFile)
 
@@ -767,9 +757,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Lchown", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Lchown")
 		pts.Test(t, func(path string) error {
 			return vfs.Lchown(path, 0, 0)
 		})
@@ -865,6 +853,23 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 		CheckLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
 			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
+	})
+
+	t.Run("LinkPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		pts := sfs.NewPermTests(t, testDir, "LinkNew")
+
+		oldFile := vfs.Join(pts.permDir, "OldFile")
+		sfs.CreateFile(t, oldFile, 0o666)
+
+		pts.Test(t, func(path string) error {
+			newFile := vfs.Join(path, "newFile")
+
+			return vfs.Link(oldFile, newFile)
+		})
 	})
 }
 
@@ -1091,9 +1096,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Mkdir", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Mkdir")
 		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
@@ -1204,9 +1207,7 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "MkdirAll", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "MkdirAll")
 		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
@@ -1774,9 +1775,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Remove", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Remove")
 		pts.Test(t, func(path string) error {
 			return vfs.Remove(path)
 		})
@@ -1873,9 +1872,7 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "RemoveAll", &PermOptions{IgnoreOp: true})
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTestsWithOptions(t, testDir, "RemoveAll", &PermOptions{IgnoreOp: true})
 		pts.Test(t, func(path string) error {
 			return vfs.RemoveAll(path)
 		})
@@ -2213,11 +2210,10 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := sfs.NewPermTests(testDir, "Symlink", PermDefaultOptions)
-		pts.CreateDirs(t)
-
+		pts := sfs.NewPermTests(t, testDir, "Symlink")
 		pts.Test(t, func(path string) error {
 			newName := vfs.Join(path, "Symlink")
+
 			return vfs.Symlink(path, newName)
 		})
 	})

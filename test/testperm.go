@@ -29,60 +29,62 @@ import (
 	"github.com/avfs/avfs"
 )
 
+// PermTests regroups all tests for a specific function.
+type PermTests struct {
+	sfs           *SuiteFS              // sfs is a test suite for virtual file systems.
+	errors        map[string]*permError // errors store the errors for each "User/Permission" combination.
+	errFileName   string                // errFileName is the json file storing the test results from OsFs.
+	permDir       string                // permDir is the root directory of the test environment.
+	options       PermOptions           // PermOptions are options for running the tests.
+	errFileExists bool                  // errFileExists indicates if errFileName exits.
+}
+
+// errType defines the error type.
+type errType string
+
 const (
-	LinkError   = "LinkError"
-	PathError   = "PathError"
-	StringError = "StringError"
+	LinkError   errType = "LinkError"
+	PathError   errType = "PathError"
+	StringError errType = "StringError"
 )
 
-type PermTests struct {
-	sfs      *SuiteFS
-	tests    map[string]*permTest
-	options  *PermOptions
-	permDir  string
-	testFile string
-	create   bool
+// permError is the error returned by each test, to be stored as json.
+type permError struct {
+	ErrType errType `json:"errType,omitempty"`
+	ErrOp   string  `json:"errOp,omitempty"`
+	ErrPath string  `json:"errPath,omitempty"`
+	ErrOld  string  `json:"errOld,omitempty"`
+	ErrNew  string  `json:"errNew,omitempty"`
+	ErrErr  string  `json:"errErr,omitempty"`
 }
 
-type permTest struct {
-	ErrType string `json:"errType,omitempty"`
-	ErrOp   string `json:"errOp,omitempty"`
-	ErrPath string `json:"errPath,omitempty"`
-	ErrOld  string `json:"errOld,omitempty"`
-	ErrNew  string `json:"errNew,omitempty"`
-	ErrErr  string `json:"errErr,omitempty"`
-}
-
+// PermOptions are options for running the tests.
 type PermOptions struct {
-	IgnoreOp   bool
-	IgnorePath bool
+	IgnoreOp    bool // IgnoreOp ignores the Op field comparison of fs.PathError or os.LinkError structs.
+	IgnorePath  bool // IgnorePath ignores the Path, Old or New field comparison of fs.PathError or os.LinkError errors.
+	CreateFiles bool // CreateFiles creates files instead of directories.
 }
 
-var PermDefaultOptions = &PermOptions{} //nolint:gochecknoglobals // PermDefaultOptions regroups the default options.
+// NewPermTests creates and returns a new environment for permissions test.
+func (sfs *SuiteFS) NewPermTests(t *testing.T, testDir, funcName string) *PermTests {
+	return sfs.NewPermTestsWithOptions(t, testDir, funcName, &PermOptions{})
+}
 
-func (sfs *SuiteFS) NewPermTests(testDir, funcName string, options *PermOptions) *PermTests {
+// NewPermTestsWithOptions creates and returns a new environment for permissions test with options.
+func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName string, options *PermOptions) *PermTests {
 	osName := avfs.CurrentOSType().String()
-	testFile := filepath.Join(sfs.initDir, "testdata", fmt.Sprintf("perm%s%s.golden", funcName, osName))
+	errFileName := filepath.Join(sfs.initDir, "testdata", fmt.Sprintf("perm%s%s.golden", funcName, osName))
 	permDir := filepath.Join(testDir, "perm")
 
 	pts := &PermTests{
-		sfs:      sfs,
-		tests:    make(map[string]*permTest),
-		options:  options,
-		permDir:  permDir,
-		testFile: testFile,
-		create:   false,
+		sfs:           sfs,
+		errors:        make(map[string]*permError),
+		errFileName:   errFileName,
+		errFileExists: true,
+		permDir:       permDir,
+		options:       *options,
 	}
 
-	return pts
-}
-
-// PermFunc returns an error depending on the permissions of the user and the file mode on the path.
-type PermFunc func(path string) error
-
-// CreateDirs creates directories and sets permissions to all tests directories.
-func (pts *PermTests) CreateDirs(t *testing.T) {
-	sfs := pts.sfs
 	vfs := sfs.vfsSetup
 	adminUser := vfs.Idm().AdminUser()
 
@@ -96,70 +98,70 @@ func (pts *PermTests) CreateDirs(t *testing.T) {
 		sfs.CreateDir(t, usrDir, 0o777)
 
 		for m := fs.FileMode(0); m <= 0o777; m++ {
-			usrModDir := vfs.Join(usrDir, m.String())
-			sfs.CreateDir(t, usrModDir, m)
+			path := vfs.Join(usrDir, m.String())
+			if pts.options.CreateFiles {
+				sfs.CreateFile(t, path, m)
+			} else {
+				sfs.CreateDir(t, path, m)
+			}
 		}
 
 		// Allow updates from user and group.
 		err := vfs.Chmod(usrDir, 0o775)
 		CheckNoError(t, "Chmod "+usrDir, err)
 	}
+
+	sfs.SetUser(t, UsrTest)
+
+	return pts
 }
 
-// Load loads a permissions test file.
+// PermFunc returns an error depending on the permissions of the user and the file mode on the path.
+type PermFunc func(path string) error
+
+// load loads a permissions test file.
 func (pts *PermTests) load(t *testing.T) {
-	b, err := os.ReadFile(pts.testFile)
+	b, err := os.ReadFile(pts.errFileName)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			pts.create = true
+			pts.errFileExists = false
 
 			return
 		}
 
-		t.Fatalf("ReadFile %s : %v", pts.testFile, err)
+		t.Fatalf("ReadFile %s : %v", pts.errFileName, err)
 	}
 
-	err = json.Unmarshal(b, &pts.tests)
+	err = json.Unmarshal(b, &pts.errors)
 	if err != nil {
-		t.Fatalf("Unmarshal %s : %v", pts.testFile, err)
+		t.Fatalf("Unmarshal %s : %v", pts.errFileName, err)
 	}
 }
 
-// Save saves a permissions test file.
+// save saves a permissions test file.
 func (pts *PermTests) save(t *testing.T) {
-	if !pts.create {
+	if pts.errFileExists {
 		return
 	}
 
-	sfs := pts.sfs
-	sfs.SetUser(t, sfs.initUser.Name())
-
-	b, err := json.MarshalIndent(pts.tests, "", "\t")
+	b, err := json.MarshalIndent(pts.errors, "", "\t")
 	if err != nil {
-		t.Fatalf("MarshalIndent %s : %v", pts.testFile, err)
+		t.Fatalf("MarshalIndent %s : %v", pts.errFileName, err)
 	}
 
-	err = os.WriteFile(pts.testFile, b, avfs.DefaultFilePerm)
+	err = os.WriteFile(pts.errFileName, b, avfs.DefaultFilePerm)
 	if err != nil {
-		t.Fatalf("ReadFile %s : %v", pts.testFile, err)
+		t.Fatalf("ReadFile %s : %v", pts.errFileName, err)
 	}
 }
 
-func (pts *PermTests) addTest(path string, err error) bool {
-	if pts.create {
-		pt := pts.newPermTest(err)
-		pts.tests[path] = pt
-	}
-
-	return pts.create
-}
-
-func (pts *PermTests) newPermTest(err error) *permTest {
+// newPermError creates and returns a normalized permError where all paths are relative to permDir.
+func (pts *PermTests) newPermError(err error) *permError {
 	prefix := pts.permDir + string(os.PathSeparator)
 
 	switch e := err.(type) {
 	case *fs.PathError:
-		return &permTest{
+		return &permError{
 			ErrType: PathError,
 			ErrOp:   e.Op,
 			ErrPath: strings.TrimPrefix(e.Path, prefix),
@@ -167,7 +169,7 @@ func (pts *PermTests) newPermTest(err error) *permTest {
 		}
 
 	case *os.LinkError:
-		return &permTest{
+		return &permError{
 			ErrType: LinkError,
 			ErrOp:   e.Op,
 			ErrOld:  strings.TrimPrefix(e.Old, prefix),
@@ -175,9 +177,9 @@ func (pts *PermTests) newPermTest(err error) *permTest {
 			ErrErr:  e.Err.Error(),
 		}
 	case nil:
-		return &permTest{}
+		return &permError{}
 	default:
-		return &permTest{
+		return &permError{
 			ErrType: StringError,
 			ErrErr:  e.Error(),
 		}
@@ -191,7 +193,7 @@ func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
 
 	pts.load(t)
 
-	if pts.create && !vfs.HasFeature(avfs.FeatRealFS) {
+	if !pts.errFileExists && !vfs.HasFeature(avfs.FeatRealFS) {
 		t.Errorf("Can't test emulated file system %s before a real file system.", vfs.Type())
 
 		return
@@ -202,59 +204,64 @@ func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
 	for _, ui := range UserInfos() {
 		for m := fs.FileMode(0); m <= 0o777; m++ {
 			relPath := vfs.Join(ui.Name, m.String())
+
 			path := vfs.Join(pts.permDir, relPath)
-
 			err := permFunc(path)
-			if pts.addTest(relPath, err) {
-				continue
-			}
+			pe := pts.newPermError(err)
 
-			pts.compare(t, relPath, err)
+			if pts.errFileExists {
+				wantErr, ok := pts.errors[relPath]
+				if !ok {
+					t.Fatalf("Compare %s : no test recorded", path)
+				}
+
+				errStr := pts.compare(wantErr, pe)
+				if errStr != "" {
+					t.Errorf("Compare %s : %s", relPath, errStr)
+				}
+			} else {
+				pts.errors[relPath] = pe
+			}
 		}
 	}
+
+	sfs.SetUser(t, sfs.initUser.Name())
 
 	pts.save(t)
 }
 
-// compare compares wanted error to error.
-func (pts *PermTests) compare(t *testing.T, path string, err error) {
-	wantPt, ok := pts.tests[path]
-	if !ok {
-		t.Fatalf("Compare %s : no test recorded", path)
+// compare compares wanted error to error and returns a non-empty string if there is an error.
+func (pts *PermTests) compare(wantErr, err *permError) string {
+	po := pts.options
+	errStr := ""
+
+	if err.ErrType != wantErr.ErrType {
+		errStr += fmt.Sprintf("\n\twant error type to be %s, got %s", wantErr.ErrType, err.ErrType)
 	}
 
-	var errStr string
-
-	pt := pts.newPermTest(err)
-	if pt.ErrType != wantPt.ErrType {
-		errStr += fmt.Sprintf("\n\twant error type to be %s, got %s", wantPt.ErrType, pt.ErrType)
+	if !po.IgnoreOp && (wantErr.ErrType == PathError || wantErr.ErrType == LinkError) && err.ErrOp != wantErr.ErrOp {
+		errStr += fmt.Sprintf("\n\twant Op to be %s, got %s", wantErr.ErrOp, err.ErrOp)
 	}
 
-	if !pts.options.IgnoreOp && (pt.ErrType == PathError || pt.ErrType == LinkError) && pt.ErrOp != wantPt.ErrOp {
-		errStr += fmt.Sprintf("\n\twant Op to be %s, got %s", wantPt.ErrOp, pt.ErrOp)
-	}
-
-	if !pts.options.IgnorePath {
-		if pt.ErrType == PathError && pt.ErrPath != wantPt.ErrPath {
-			errStr += fmt.Sprintf("\n\twant path to be %s, got %s", wantPt.ErrPath, pt.ErrPath)
+	if !po.IgnorePath {
+		if wantErr.ErrType == PathError && err.ErrPath != wantErr.ErrPath {
+			errStr += fmt.Sprintf("\n\twant path to be %s, got %s", wantErr.ErrPath, err.ErrPath)
 		}
 
-		if pt.ErrType == LinkError {
-			if pt.ErrOld != wantPt.ErrOld {
-				errStr += fmt.Sprintf("\n\twant Old to be %s, got %s", wantPt.ErrOld, pt.ErrOld)
+		if wantErr.ErrType == LinkError {
+			if err.ErrOld != wantErr.ErrOld {
+				errStr += fmt.Sprintf("\n\twant Old to be %s, got %s", wantErr.ErrOld, err.ErrOld)
 			}
 
-			if pt.ErrNew != wantPt.ErrNew {
-				errStr += fmt.Sprintf("\n\twant New to be %s, got %s", wantPt.ErrNew, pt.ErrNew)
+			if err.ErrNew != wantErr.ErrNew {
+				errStr += fmt.Sprintf("\n\twant New to be %s, got %s", wantErr.ErrNew, err.ErrNew)
 			}
 		}
 	}
 
-	if pt.ErrErr != wantPt.ErrErr {
-		errStr += fmt.Sprintf("\n\twant error to be %s, got %s", wantPt.ErrErr, pt.ErrErr)
+	if err.ErrErr != wantErr.ErrErr {
+		errStr += fmt.Sprintf("\n\twant error to be %s, got %s", wantErr.ErrErr, err.ErrErr)
 	}
 
-	if errStr != "" {
-		t.Errorf("Compare %s : %s", path, errStr)
-	}
+	return errStr
 }
