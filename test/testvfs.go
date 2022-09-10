@@ -2162,6 +2162,10 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 		CheckPathError(t, err).OpStat().Path(nonExistingFile).
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
 			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
+
+		if !errors.Is(err, fs.ErrNotExist) {
+			t.Errorf("Stat %s : want errors.Is(err, fs.ErrNotExist) to be true, got false ", nonExistingFile)
+		}
 	})
 
 	t.Run("StatSubDirOnFile", func(t *testing.T) {
