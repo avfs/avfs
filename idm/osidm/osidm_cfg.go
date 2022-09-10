@@ -24,11 +24,12 @@ import (
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
-	osType := avfs.CurrentOSType()
 	features := avfs.FeatIdentityMgr
-
 	uid, gid := 0, 0
+
+	osType := avfs.CurrentOSType()
 	if osType == avfs.OsWindows {
+		features = 0
 		uid, gid = math.MaxInt, math.MaxInt
 	}
 
