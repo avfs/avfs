@@ -308,7 +308,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	defer nParent.mu.Unlock()
 
 	if !nParent.checkPermission(avfs.OpenWrite, vfs.user) {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.OpNotPermitted}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 	}
 
 	c, ok := oChild.(*fileNode)
