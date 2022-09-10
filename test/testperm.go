@@ -74,7 +74,7 @@ func (sfs *SuiteFS) NewPermTests(t *testing.T, testDir, funcName string) *PermTe
 func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName string, options *PermOptions) *PermTests {
 	osName := avfs.CurrentOSType().String()
 	errFileName := filepath.Join(sfs.initDir, "testdata", fmt.Sprintf("perm%s%s.golden", funcName, osName))
-	permDir := filepath.Join(testDir, "perm")
+	permDir := filepath.Join(testDir, funcName)
 
 	pts := &PermTests{
 		sfs:           sfs,

@@ -1512,6 +1512,60 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
 			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
 	})
+
+	t.Run("OpenFileDirPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		pts := sfs.NewPermTests(t, testDir, "OpenFileDir")
+		pts.Test(t, func(path string) error {
+			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
+			if err != nil {
+				return err
+			}
+
+			f.Close()
+
+			return nil
+		})
+	})
+
+	t.Run("OpenFileReadPerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		pts := sfs.NewPermTestsWithOptions(t, testDir, "OpenFileRead", &PermOptions{CreateFiles: true})
+		pts.Test(t, func(path string) error {
+			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
+			if err != nil {
+				return err
+			}
+
+			f.Close()
+
+			return nil
+		})
+	})
+
+	t.Run("OpenFileWritePerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		pts := sfs.NewPermTestsWithOptions(t, testDir, "OpenFileWrite", &PermOptions{CreateFiles: true})
+		pts.Test(t, func(path string) error {
+			f, err := vfs.OpenFile(path, os.O_WRONLY, 0)
+			if err != nil {
+				return err
+			}
+
+			f.Close()
+
+			return nil
+		})
+	})
 }
 
 // TestPathSeparator tests PathSeparator function.

@@ -1,0 +1,7938 @@
+{
+	"UsrGrp/----------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---------x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--------w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--------wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-------rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-------rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/------xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/------xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-----wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-----wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/----rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/----rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x----w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x----wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---x-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/---xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/---xrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w------x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-----w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-----wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w---xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w--wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w--wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--w-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--w-rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx----w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx----wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wx-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/--wxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/--wxrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-------x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r------w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r------wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r----xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r---wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r---wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r--rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r--rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x----w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x----wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-x-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-r-xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-r-xrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw------x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-----w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-----wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw---xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw--wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw--wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rw-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rw-rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx------",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx----w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx----wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwx-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr----x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw----",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrGrp/-rwxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrGrp/-rwxrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---------x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--------w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--------wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-------rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-------rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/------xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/------xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-----wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-----wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/----rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/----rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x----w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x----wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---x-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/---xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/---xrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w------x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-----w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-----wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w---xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w--wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w--wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--w-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--w-rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx----w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx----wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wx-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/--wxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/--wxrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-------x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r------w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r------wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r----xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r---wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r---wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r--rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r--rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x----w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x----wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-x-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-r-xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-r-xrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw------x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-----w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-----wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw---xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw---xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw--wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw--wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rw-rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rw-rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx------",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx----w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx----wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwx-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwx-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr----x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw----",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrOth/-rwxrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrOth/-rwxrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----------",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---------x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--------w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/--------wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-------rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-------rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/------xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/------xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-----wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-----wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r----x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/----rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/----rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x------",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-----x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x----w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x----wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---x-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr----x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/---xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/---xrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/--w-------": {},
+	"UsrTest/--w------x": {},
+	"UsrTest/--w-----w-": {},
+	"UsrTest/--w-----wx": {},
+	"UsrTest/--w----r--": {},
+	"UsrTest/--w----r-x": {},
+	"UsrTest/--w----rw-": {},
+	"UsrTest/--w----rwx": {},
+	"UsrTest/--w---x---": {},
+	"UsrTest/--w---x--x": {},
+	"UsrTest/--w---x-w-": {},
+	"UsrTest/--w---x-wx": {},
+	"UsrTest/--w---xr--": {},
+	"UsrTest/--w---xr-x": {},
+	"UsrTest/--w---xrw-": {},
+	"UsrTest/--w---xrwx": {},
+	"UsrTest/--w--w----": {},
+	"UsrTest/--w--w---x": {},
+	"UsrTest/--w--w--w-": {},
+	"UsrTest/--w--w--wx": {},
+	"UsrTest/--w--w-r--": {},
+	"UsrTest/--w--w-r-x": {},
+	"UsrTest/--w--w-rw-": {},
+	"UsrTest/--w--w-rwx": {},
+	"UsrTest/--w--wx---": {},
+	"UsrTest/--w--wx--x": {},
+	"UsrTest/--w--wx-w-": {},
+	"UsrTest/--w--wx-wx": {},
+	"UsrTest/--w--wxr--": {},
+	"UsrTest/--w--wxr-x": {},
+	"UsrTest/--w--wxrw-": {},
+	"UsrTest/--w--wxrwx": {},
+	"UsrTest/--w-r-----": {},
+	"UsrTest/--w-r----x": {},
+	"UsrTest/--w-r---w-": {},
+	"UsrTest/--w-r---wx": {},
+	"UsrTest/--w-r--r--": {},
+	"UsrTest/--w-r--r-x": {},
+	"UsrTest/--w-r--rw-": {},
+	"UsrTest/--w-r--rwx": {},
+	"UsrTest/--w-r-x---": {},
+	"UsrTest/--w-r-x--x": {},
+	"UsrTest/--w-r-x-w-": {},
+	"UsrTest/--w-r-x-wx": {},
+	"UsrTest/--w-r-xr--": {},
+	"UsrTest/--w-r-xr-x": {},
+	"UsrTest/--w-r-xrw-": {},
+	"UsrTest/--w-r-xrwx": {},
+	"UsrTest/--w-rw----": {},
+	"UsrTest/--w-rw---x": {},
+	"UsrTest/--w-rw--w-": {},
+	"UsrTest/--w-rw--wx": {},
+	"UsrTest/--w-rw-r--": {},
+	"UsrTest/--w-rw-r-x": {},
+	"UsrTest/--w-rw-rw-": {},
+	"UsrTest/--w-rw-rwx": {},
+	"UsrTest/--w-rwx---": {},
+	"UsrTest/--w-rwx--x": {},
+	"UsrTest/--w-rwx-w-": {},
+	"UsrTest/--w-rwx-wx": {},
+	"UsrTest/--w-rwxr--": {},
+	"UsrTest/--w-rwxr-x": {},
+	"UsrTest/--w-rwxrw-": {},
+	"UsrTest/--w-rwxrwx": {},
+	"UsrTest/--wx------": {},
+	"UsrTest/--wx-----x": {},
+	"UsrTest/--wx----w-": {},
+	"UsrTest/--wx----wx": {},
+	"UsrTest/--wx---r--": {},
+	"UsrTest/--wx---r-x": {},
+	"UsrTest/--wx---rw-": {},
+	"UsrTest/--wx---rwx": {},
+	"UsrTest/--wx--x---": {},
+	"UsrTest/--wx--x--x": {},
+	"UsrTest/--wx--x-w-": {},
+	"UsrTest/--wx--x-wx": {},
+	"UsrTest/--wx--xr--": {},
+	"UsrTest/--wx--xr-x": {},
+	"UsrTest/--wx--xrw-": {},
+	"UsrTest/--wx--xrwx": {},
+	"UsrTest/--wx-w----": {},
+	"UsrTest/--wx-w---x": {},
+	"UsrTest/--wx-w--w-": {},
+	"UsrTest/--wx-w--wx": {},
+	"UsrTest/--wx-w-r--": {},
+	"UsrTest/--wx-w-r-x": {},
+	"UsrTest/--wx-w-rw-": {},
+	"UsrTest/--wx-w-rwx": {},
+	"UsrTest/--wx-wx---": {},
+	"UsrTest/--wx-wx--x": {},
+	"UsrTest/--wx-wx-w-": {},
+	"UsrTest/--wx-wx-wx": {},
+	"UsrTest/--wx-wxr--": {},
+	"UsrTest/--wx-wxr-x": {},
+	"UsrTest/--wx-wxrw-": {},
+	"UsrTest/--wx-wxrwx": {},
+	"UsrTest/--wxr-----": {},
+	"UsrTest/--wxr----x": {},
+	"UsrTest/--wxr---w-": {},
+	"UsrTest/--wxr---wx": {},
+	"UsrTest/--wxr--r--": {},
+	"UsrTest/--wxr--r-x": {},
+	"UsrTest/--wxr--rw-": {},
+	"UsrTest/--wxr--rwx": {},
+	"UsrTest/--wxr-x---": {},
+	"UsrTest/--wxr-x--x": {},
+	"UsrTest/--wxr-x-w-": {},
+	"UsrTest/--wxr-x-wx": {},
+	"UsrTest/--wxr-xr--": {},
+	"UsrTest/--wxr-xr-x": {},
+	"UsrTest/--wxr-xrw-": {},
+	"UsrTest/--wxr-xrwx": {},
+	"UsrTest/--wxrw----": {},
+	"UsrTest/--wxrw---x": {},
+	"UsrTest/--wxrw--w-": {},
+	"UsrTest/--wxrw--wx": {},
+	"UsrTest/--wxrw-r--": {},
+	"UsrTest/--wxrw-r-x": {},
+	"UsrTest/--wxrw-rw-": {},
+	"UsrTest/--wxrw-rwx": {},
+	"UsrTest/--wxrwx---": {},
+	"UsrTest/--wxrwx--x": {},
+	"UsrTest/--wxrwx-w-": {},
+	"UsrTest/--wxrwx-wx": {},
+	"UsrTest/--wxrwxr--": {},
+	"UsrTest/--wxrwxr-x": {},
+	"UsrTest/--wxrwxrw-": {},
+	"UsrTest/--wxrwxrwx": {},
+	"UsrTest/-r--------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--------",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-------x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-------x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r------w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r------w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r------wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r------wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-----rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-----rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r----xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r----xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r---wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r---wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r----x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r---w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r---wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--r-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--r-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r--rwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r--rwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x------": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x------",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-----x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x----w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x----w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x----wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x----wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x---rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x---rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x--xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x--xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-w-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-w-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-x-wxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-x-wxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr----x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr----x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr---w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr---w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr---wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr---wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr--rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr--rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-x-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-x-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xr-xrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xr-xrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw----": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw----",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw---x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw---x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw--w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw--w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw--wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw--wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-r--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-r--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-r-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-r-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-rw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-rw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrw-rwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrw-rwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx---": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx---",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx--x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx--x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx-w-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx-w-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwx-wx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwx-wx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxr--": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxr--",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxr-x": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxr-x",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxrw-": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxrw-",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-r-xrwxrwx": {
+		"errType": "PathError",
+		"errOp": "open",
+		"errPath": "UsrTest/-r-xrwxrwx",
+		"errErr": "permission denied"
+	},
+	"UsrTest/-rw-------": {},
+	"UsrTest/-rw------x": {},
+	"UsrTest/-rw-----w-": {},
+	"UsrTest/-rw-----wx": {},
+	"UsrTest/-rw----r--": {},
+	"UsrTest/-rw----r-x": {},
+	"UsrTest/-rw----rw-": {},
+	"UsrTest/-rw----rwx": {},
+	"UsrTest/-rw---x---": {},
+	"UsrTest/-rw---x--x": {},
+	"UsrTest/-rw---x-w-": {},
+	"UsrTest/-rw---x-wx": {},
+	"UsrTest/-rw---xr--": {},
+	"UsrTest/-rw---xr-x": {},
+	"UsrTest/-rw---xrw-": {},
+	"UsrTest/-rw---xrwx": {},
+	"UsrTest/-rw--w----": {},
+	"UsrTest/-rw--w---x": {},
+	"UsrTest/-rw--w--w-": {},
+	"UsrTest/-rw--w--wx": {},
+	"UsrTest/-rw--w-r--": {},
+	"UsrTest/-rw--w-r-x": {},
+	"UsrTest/-rw--w-rw-": {},
+	"UsrTest/-rw--w-rwx": {},
+	"UsrTest/-rw--wx---": {},
+	"UsrTest/-rw--wx--x": {},
+	"UsrTest/-rw--wx-w-": {},
+	"UsrTest/-rw--wx-wx": {},
+	"UsrTest/-rw--wxr--": {},
+	"UsrTest/-rw--wxr-x": {},
+	"UsrTest/-rw--wxrw-": {},
+	"UsrTest/-rw--wxrwx": {},
+	"UsrTest/-rw-r-----": {},
+	"UsrTest/-rw-r----x": {},
+	"UsrTest/-rw-r---w-": {},
+	"UsrTest/-rw-r---wx": {},
+	"UsrTest/-rw-r--r--": {},
+	"UsrTest/-rw-r--r-x": {},
+	"UsrTest/-rw-r--rw-": {},
+	"UsrTest/-rw-r--rwx": {},
+	"UsrTest/-rw-r-x---": {},
+	"UsrTest/-rw-r-x--x": {},
+	"UsrTest/-rw-r-x-w-": {},
+	"UsrTest/-rw-r-x-wx": {},
+	"UsrTest/-rw-r-xr--": {},
+	"UsrTest/-rw-r-xr-x": {},
+	"UsrTest/-rw-r-xrw-": {},
+	"UsrTest/-rw-r-xrwx": {},
+	"UsrTest/-rw-rw----": {},
+	"UsrTest/-rw-rw---x": {},
+	"UsrTest/-rw-rw--w-": {},
+	"UsrTest/-rw-rw--wx": {},
+	"UsrTest/-rw-rw-r--": {},
+	"UsrTest/-rw-rw-r-x": {},
+	"UsrTest/-rw-rw-rw-": {},
+	"UsrTest/-rw-rw-rwx": {},
+	"UsrTest/-rw-rwx---": {},
+	"UsrTest/-rw-rwx--x": {},
+	"UsrTest/-rw-rwx-w-": {},
+	"UsrTest/-rw-rwx-wx": {},
+	"UsrTest/-rw-rwxr--": {},
+	"UsrTest/-rw-rwxr-x": {},
+	"UsrTest/-rw-rwxrw-": {},
+	"UsrTest/-rw-rwxrwx": {},
+	"UsrTest/-rwx------": {},
+	"UsrTest/-rwx-----x": {},
+	"UsrTest/-rwx----w-": {},
+	"UsrTest/-rwx----wx": {},
+	"UsrTest/-rwx---r--": {},
+	"UsrTest/-rwx---r-x": {},
+	"UsrTest/-rwx---rw-": {},
+	"UsrTest/-rwx---rwx": {},
+	"UsrTest/-rwx--x---": {},
+	"UsrTest/-rwx--x--x": {},
+	"UsrTest/-rwx--x-w-": {},
+	"UsrTest/-rwx--x-wx": {},
+	"UsrTest/-rwx--xr--": {},
+	"UsrTest/-rwx--xr-x": {},
+	"UsrTest/-rwx--xrw-": {},
+	"UsrTest/-rwx--xrwx": {},
+	"UsrTest/-rwx-w----": {},
+	"UsrTest/-rwx-w---x": {},
+	"UsrTest/-rwx-w--w-": {},
+	"UsrTest/-rwx-w--wx": {},
+	"UsrTest/-rwx-w-r--": {},
+	"UsrTest/-rwx-w-r-x": {},
+	"UsrTest/-rwx-w-rw-": {},
+	"UsrTest/-rwx-w-rwx": {},
+	"UsrTest/-rwx-wx---": {},
+	"UsrTest/-rwx-wx--x": {},
+	"UsrTest/-rwx-wx-w-": {},
+	"UsrTest/-rwx-wx-wx": {},
+	"UsrTest/-rwx-wxr--": {},
+	"UsrTest/-rwx-wxr-x": {},
+	"UsrTest/-rwx-wxrw-": {},
+	"UsrTest/-rwx-wxrwx": {},
+	"UsrTest/-rwxr-----": {},
+	"UsrTest/-rwxr----x": {},
+	"UsrTest/-rwxr---w-": {},
+	"UsrTest/-rwxr---wx": {},
+	"UsrTest/-rwxr--r--": {},
+	"UsrTest/-rwxr--r-x": {},
+	"UsrTest/-rwxr--rw-": {},
+	"UsrTest/-rwxr--rwx": {},
+	"UsrTest/-rwxr-x---": {},
+	"UsrTest/-rwxr-x--x": {},
+	"UsrTest/-rwxr-x-w-": {},
+	"UsrTest/-rwxr-x-wx": {},
+	"UsrTest/-rwxr-xr--": {},
+	"UsrTest/-rwxr-xr-x": {},
+	"UsrTest/-rwxr-xrw-": {},
+	"UsrTest/-rwxr-xrwx": {},
+	"UsrTest/-rwxrw----": {},
+	"UsrTest/-rwxrw---x": {},
+	"UsrTest/-rwxrw--w-": {},
+	"UsrTest/-rwxrw--wx": {},
+	"UsrTest/-rwxrw-r--": {},
+	"UsrTest/-rwxrw-r-x": {},
+	"UsrTest/-rwxrw-rw-": {},
+	"UsrTest/-rwxrw-rwx": {},
+	"UsrTest/-rwxrwx---": {},
+	"UsrTest/-rwxrwx--x": {},
+	"UsrTest/-rwxrwx-w-": {},
+	"UsrTest/-rwxrwx-wx": {},
+	"UsrTest/-rwxrwxr--": {},
+	"UsrTest/-rwxrwxr-x": {},
+	"UsrTest/-rwxrwxrw-": {},
+	"UsrTest/-rwxrwxrwx": {}
+}
