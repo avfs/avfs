@@ -140,30 +140,6 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	return nil
 }
 
-// Chroot changes the root to that specified in path.
-// If there is an error, it will be of type *PathError.
-func (vfs *MemFS) Chroot(path string) error {
-	const op = "chroot"
-
-	if !vfs.HasFeature(avfs.FeatChroot) || !vfs.user.IsAdmin() {
-		return &fs.PathError{Op: op, Path: path, Err: vfs.err.OpNotPermitted}
-	}
-
-	_, child, _, err := vfs.searchNode(path, slmEval)
-	if err != vfs.err.FileExists || child == nil {
-		return &fs.PathError{Op: op, Path: path, Err: err}
-	}
-
-	c, ok := child.(*dirNode)
-	if !ok {
-		return &fs.PathError{Op: op, Path: path, Err: vfs.err.NotADirectory}
-	}
-
-	vfs.rootNode = c
-
-	return nil
-}
-
 // Chtimes changes the access and modification times of the named
 // file, similar to the Unix utime() or utimes() functions.
 //

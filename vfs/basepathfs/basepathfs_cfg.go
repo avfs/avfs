@@ -43,7 +43,7 @@ func New(baseFS avfs.VFS, basePath string) *BasePathFS {
 	vfs := &BasePathFS{
 		baseFS:   baseFS,
 		basePath: absPath,
-		features: baseFS.Features() &^ (avfs.FeatSymlink | avfs.FeatChroot),
+		features: baseFS.Features() &^ avfs.FeatSymlink,
 	}
 
 	vfs.InitUtils(avfs.CurrentOSType())

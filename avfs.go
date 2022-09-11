@@ -39,17 +39,8 @@ type Features uint64
 //go:generate stringer -type Features -trimprefix Feat -bitmask -output avfs_features.go
 
 const (
-	// FeatChroot indicates that the file system supports Chroot.
-	FeatChroot Features = 1 << iota
-
-	// FeatChownUser indicates that a non privileged user can use Chown.
-	FeatChownUser
-
-	// FeatSystemDirs indicates that the system directories of the filesystem (/home, /root and /tmp for linux) are present.
-	FeatSystemDirs
-
 	// FeatHardlink indicates that the file system supports hard links (link(), readlink() functions).
-	FeatHardlink
+	FeatHardlink Features = 1 << iota
 
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
 	FeatIdentityMgr
@@ -68,6 +59,12 @@ const (
 
 	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).
 	FeatSymlink
+
+	// FeatSystemDirs indicates that the system directories of the filesystem (/home, /root and /tmp for linux) are present.
+	FeatSystemDirs
+
+	// FeatChownUser indicates that a non privileged user can use Chown.
+	FeatChownUser
 )
 
 // OSType defines the operating system type.

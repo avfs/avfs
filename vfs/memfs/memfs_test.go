@@ -119,10 +119,6 @@ func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 
 	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink
-	if vfs.OSType() == avfs.OsLinux {
-		wantFeatures |= avfs.FeatChroot
-	}
-
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
@@ -130,10 +126,6 @@ func TestMemFSConfig(t *testing.T) {
 	vfs = memfs.New(memfs.WithIdm(memidm.New()))
 
 	wantFeatures = avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSubFS | avfs.FeatSymlink
-	if vfs.OSType() == avfs.OsLinux {
-		wantFeatures |= avfs.FeatChroot
-	}
-
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}

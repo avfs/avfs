@@ -28,7 +28,7 @@ func New(opts ...Option) *MemFS {
 		idm:      avfs.NotImplementedIdm,
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		features: avfs.FeatChroot | avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink,
+		features: avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink,
 	}
 
 	vfs := &MemFS{
@@ -48,7 +48,6 @@ func New(opts ...Option) *MemFS {
 	volumeName := ""
 
 	if vfs.OSType() == avfs.OsWindows {
-		ma.features ^= avfs.FeatChroot
 		ma.dirMode |= avfs.DefaultDirPerm
 		ma.fileMode |= avfs.DefaultFilePerm
 

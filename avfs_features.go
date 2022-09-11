@@ -8,31 +8,29 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[FeatChroot-1]
-	_ = x[FeatChownUser-2]
-	_ = x[FeatSystemDirs-4]
-	_ = x[FeatHardlink-8]
-	_ = x[FeatIdentityMgr-16]
-	_ = x[FeatReadOnly-32]
-	_ = x[FeatReadOnlyIdm-64]
-	_ = x[FeatRealFS-128]
-	_ = x[FeatSubFS-256]
-	_ = x[FeatSymlink-512]
+	_ = x[FeatHardlink-1]
+	_ = x[FeatIdentityMgr-2]
+	_ = x[FeatReadOnly-4]
+	_ = x[FeatReadOnlyIdm-8]
+	_ = x[FeatRealFS-16]
+	_ = x[FeatSubFS-32]
+	_ = x[FeatSymlink-64]
+	_ = x[FeatSystemDirs-128]
+	_ = x[FeatChownUser-256]
 }
 
-const _Features_name = "ChrootChownUserSystemDirsHardlinkIdentityMgrReadOnlyReadOnlyIdmRealFSSubFSSymlink"
+const _Features_name = "HardlinkIdentityMgrReadOnlyReadOnlyIdmRealFSSubFSSymlinkSystemDirsChownUser"
 
 var _Features_map = map[Features]string{
-	1:   _Features_name[0:6],
-	2:   _Features_name[6:15],
-	4:   _Features_name[15:25],
-	8:   _Features_name[25:33],
-	16:  _Features_name[33:44],
-	32:  _Features_name[44:52],
-	64:  _Features_name[52:63],
-	128: _Features_name[63:69],
-	256: _Features_name[69:74],
-	512: _Features_name[74:81],
+	1:   _Features_name[0:8],
+	2:   _Features_name[8:19],
+	4:   _Features_name[19:27],
+	8:   _Features_name[27:38],
+	16:  _Features_name[38:44],
+	32:  _Features_name[44:49],
+	64:  _Features_name[49:56],
+	128: _Features_name[56:66],
+	256: _Features_name[66:75],
 }
 
 func (i Features) String() string {

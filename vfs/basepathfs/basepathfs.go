@@ -93,18 +93,6 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 	return vfs.restoreError(err)
 }
 
-// Chroot changes the root to that specified in path.
-// If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) Chroot(path string) error {
-	const op = "chroot"
-
-	if vfs.OSType() == avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinNotSupported}
-	}
-
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrOpNotPermitted}
-}
-
 // Chtimes changes the access and modification times of the named
 // file, similar to the Unix utime() or utimes() functions.
 //

@@ -29,10 +29,6 @@ func New(opts ...Option) *OsFS {
 
 	vfs.InitUtils(avfs.CurrentOSType())
 
-	if vfs.OSType() == avfs.OsLinux {
-		vfs.features |= avfs.FeatChroot
-	}
-
 	for _, opt := range opts {
 		opt(vfs)
 	}
