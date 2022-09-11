@@ -23,6 +23,7 @@ import (
 	"io/fs"
 	"os"
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -599,16 +600,20 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 // TestTempDir tests TempDir function.
 func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
-	wantTmpDir := "/tmp"
+	tmpDir := vfs.TempDir()
 
 	if vfs.OSType() == avfs.OsWindows {
-		userName := vfs.User().Name()
-		wantTmpDir = avfs.ShortPathName(vfs.Join(avfs.DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`))
-	}
+		const wantRe = `(?i)^(c:\\windows\\temp|c:\\Users\\[^\\]+\\AppData\\Local\\Temp)$`
 
-	tmpDir := vfs.TempDir()
-	if tmpDir != wantTmpDir {
-		t.Fatalf("TempDir : want temp dir to be %s, got %s", wantTmpDir, tmpDir)
+		re := regexp.MustCompile(wantRe)
+		if !re.MatchString(tmpDir) {
+			t.Errorf("TempDir : want temp dir to match '%s', got %s", wantRe, tmpDir)
+		}
+	} else {
+		wantTmpDir := "/tmp"
+		if tmpDir != wantTmpDir {
+			t.Errorf("TempDir : want temp dir to be %s, got %s", wantTmpDir, tmpDir)
+		}
 	}
 }
 
