@@ -36,7 +36,7 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 
 	t.Run("FileChdir", func(t *testing.T) {
 		for _, dir := range dirs {
-			f, err := vfs.Open(dir.Path)
+			f, err := vfs.OpenFile(dir.Path, os.O_RDONLY, 0)
 			CheckNoError(t, "Open "+dir.Path, err)
 
 			defer f.Close()
@@ -176,7 +176,7 @@ func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
 			return
 		}
 
-		f, err := vfs.Open(path)
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+path, err) {
 			return
 		}
@@ -369,7 +369,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadOnDir", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
@@ -435,7 +435,7 @@ func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadAtAfterEndOfFile", func(t *testing.T) {
-		f, err := vfs.Open(path)
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+path, err) {
 			return
 		}
@@ -464,7 +464,7 @@ func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadAtOnDir", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
@@ -500,7 +500,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	const maxRead = 7
 
 	t.Run("FileReadDirN", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
@@ -583,7 +583,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	t.Run("FileReaddirnamesAll", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
@@ -599,7 +599,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReaddirnamesN", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
@@ -627,7 +627,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReaddirnamesExistingFile", func(t *testing.T) {
-		f, err := vfs.Open(existingFile)
+		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+existingFile, err) {
 			return
 		}
@@ -663,7 +663,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 	path := sfs.ExistingFile(t, testDir, data)
 	vfs := sfs.vfsTest
 
-	f, err := vfs.Open(path)
+	f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 	if !CheckNoError(t, "Open "+path, err) {
 		return
 	}
@@ -786,7 +786,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileSeekOnDir", func(t *testing.T) {
-		f, err = vfs.Open(testDir)
+		f, err = vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+path, err) {
 			return
 		}
@@ -827,7 +827,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 	t.Run("FileStatDir", func(t *testing.T) {
 		for _, dir := range dirs {
-			f, err := vfs.Open(dir.Path)
+			f, err := vfs.OpenFile(dir.Path, os.O_RDONLY, 0)
 			CheckNoError(t, "Open "+dir.Path, err)
 
 			info, err := f.Stat()
@@ -856,7 +856,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 	t.Run("FileStatFile", func(t *testing.T) {
 		for _, file := range files {
-			f, err := vfs.Open(file.Path)
+			f, err := vfs.OpenFile(file.Path, os.O_RDONLY, 0)
 			CheckNoError(t, "Open "+file.Path, err)
 
 			info, err := f.Stat()
@@ -890,7 +890,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 
 	t.Run("FileStatSymlink", func(t *testing.T) {
 		for _, sl := range sfs.SampleSymlinksEval(testDir) {
-			f, err := vfs.Open(sl.NewPath)
+			f, err := vfs.OpenFile(sl.NewPath, os.O_RDONLY, 0)
 			CheckNoError(t, "Open "+sl.NewPath, err)
 
 			info, err := f.Stat()
@@ -928,7 +928,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	t.Run("FileStatSubDirOnFile", func(t *testing.T) {
 		path := vfs.Join(files[0].Path, defaultNonExisting)
 
-		f, err := vfs.Open(path)
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		CheckPathError(t, err).Op("open").Path(path).
 			Err(avfs.ErrNotADirectory, avfs.OsLinux).
 			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
@@ -1024,7 +1024,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileTruncateOnDir", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		CheckNoError(t, "Truncate "+testDir, err)
 
 		defer f.Close()
@@ -1158,7 +1158,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 	t.Run("FileWriteReadOnly", func(t *testing.T) {
 		path := sfs.ExistingFile(t, testDir, data)
 
-		f, err := vfs.Open(path)
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		CheckNoError(t, "Open "+path, err)
 
 		defer f.Close()
@@ -1182,7 +1182,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteOnDir", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}
@@ -1312,7 +1312,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	t.Run("FileWriteAtReadOnly", func(t *testing.T) {
 		path := sfs.ExistingFile(t, testDir, data)
 
-		f, err := vfs.Open(path)
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		CheckNoError(t, "Open "+path, err)
 
 		defer f.Close()
@@ -1339,7 +1339,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteAtOnDir", func(t *testing.T) {
-		f, err := vfs.Open(testDir)
+		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+testDir, err) {
 			return
 		}

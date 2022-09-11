@@ -75,7 +75,7 @@ type SymLinkParams struct {
 
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
-	vfs           VFS              // virtual file system.
+	vfs           VFSBase          // virtual file system.
 	baseDir       string           // base directory of the random tree.
 	Dirs          []string         // all directories.
 	Files         []*FileParams    // all files.
@@ -84,7 +84,7 @@ type RndTree struct {
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(vfs VFS, baseDir string, p *RndTreeParams) (*RndTree, error) {
+func NewRndTree(vfs VFSBase, baseDir string, p *RndTreeParams) (*RndTree, error) {
 	if p.MinName < 1 || p.MinName > p.MaxName {
 		return nil, ErrNameOutOfRange
 	}

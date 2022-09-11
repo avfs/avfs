@@ -321,17 +321,10 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 
 // TestChroot tests Chroot function.
 func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
-	if !sfs.canTestPerm {
-		return
-	}
-
 	vfs := sfs.vfsTest
-	if !vfs.HasFeature(avfs.FeatChroot) {
-		err := vfs.Chroot(testDir)
-		CheckPathError(t, err).Op("chroot").Path(testDir).
-			Err(avfs.ErrOpNotPermitted, avfs.OsLinux).
-			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
+	vfsR, ok := vfs.(avfs.ChRooter)
 
+	if !ok || !sfs.canTestPerm {
 		return
 	}
 
@@ -353,37 +346,24 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 
 		// A file descriptor is used to save the real root of the file system.
 		// See https://devsidestory.com/exit-from-a-chroot-with-golang/
-		fSave, err := vfs.Open("/")
+		fSave, err := vfs.OpenFile("/", os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open /", err) {
 			return
 		}
 
 		defer fSave.Close()
 
-		// Some file systems (MemFs) don't allow exit from a chroot.
-		// A shallow clone of the file system is then used to perform the chroot
-		// without loosing access to the original root of the file system.
-		vfsChroot := vfs
-
-		vfsClone, cloned := vfs.(avfs.Cloner)
-		if cloned {
-			vfsChroot = vfsClone.Clone()
-		}
-
-		err = vfsChroot.Chroot(chrootDir)
+		err = vfsR.Chroot(chrootDir)
 		CheckNoError(t, "Chroot "+chrootDir, err)
 
-		_, err = vfsChroot.Stat(chrootFile)
+		_, err = vfs.Stat(chrootFile)
 		CheckNoError(t, "Chroot "+chrootFile, err)
 
-		// Restore the original file system root if possible.
-		if !cloned {
-			err = fSave.Chdir()
-			CheckNoError(t, "Chdir", err)
+		err = fSave.Chdir()
+		CheckNoError(t, "Chdir", err)
 
-			err = vfs.Chroot(".")
-			CheckNoError(t, "Chroot", err)
-		}
+		err = vfsR.Chroot(".")
+		CheckNoError(t, "Chroot", err)
 
 		_, err = vfs.Stat(chrootFilePath)
 		CheckNoError(t, "Chroot "+chrootFilePath, err)
@@ -393,11 +373,11 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 		existingFile := sfs.EmptyFile(t, testDir)
 		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
 
-		err := vfs.Chroot(existingFile)
+		err := vfsR.Chroot(existingFile)
 		CheckPathError(t, err).Op("chroot").Path(existingFile).
 			Err(avfs.ErrNotADirectory, avfs.OsLinux)
 
-		err = vfs.Chroot(nonExistingFile)
+		err = vfsR.Chroot(nonExistingFile)
 		CheckPathError(t, err).Op("chroot").Path(nonExistingFile).
 			Err(avfs.ErrNotADirectory, avfs.OsLinux)
 	})
@@ -1282,7 +1262,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
-		f, err := vfs.Open(existingFile)
+		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
 		CheckNoError(t, "Open", err)
 
 		defer f.Close()
@@ -1296,7 +1276,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileDirReadOnly", func(t *testing.T) {
-		f, err := vfs.Open(existingDir)
+		f, err := vfs.OpenFile(existingDir, os.O_RDONLY, 0)
 		CheckNoError(t, "Open", err)
 
 		defer f.Close()
@@ -1312,7 +1292,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
 		fileName := sfs.NonExistingFile(t, testDir)
 
-		_, err := vfs.Open(fileName)
+		_, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 		CheckPathError(t, err).Op("open").Path(fileName).
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
 			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
@@ -1419,7 +1399,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
 		existingFile := sfs.ExistingFile(t, testDir, data)
 
-		f, err := vfs.Open(existingFile)
+		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
 		CheckNoError(t, "Open", err)
 
 		defer f.Close()
@@ -2609,7 +2589,7 @@ func (sfs *SuiteFS) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
 	}
 
 	t.Run("ReadOnlyFile", func(t *testing.T) {
-		f, err := vfs.Open(existingFile)
+		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
 		if !CheckNoError(t, "Open "+existingFile, err) {
 			return
 		}

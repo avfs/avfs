@@ -25,8 +25,7 @@ import "strings"
 //
 // Sample code :
 //
-//	ut := avfs.NewUtils(avfs.OsWindows)
-//	pi := ut.NewPathIterator(path)
+//	pi := NewPathIterator(vfs, path)
 //	for pi.Next() {
 //	  fmt.Println(pi.Part())
 //	}
@@ -40,7 +39,7 @@ import "strings"
 //	|------- Left -------|         |------ Right ------|
 //	|----- LeftPart ---------------|
 //	                     |----------- RightPart -------|
-type PathIterator[T VFS] struct {
+type PathIterator[T VFSBase] struct {
 	path          string
 	start         int
 	end           int
@@ -49,7 +48,7 @@ type PathIterator[T VFS] struct {
 }
 
 // NewPathIterator creates a new path iterator from an absolute path.
-func NewPathIterator[T VFS](vfs T, path string) *PathIterator[T] {
+func NewPathIterator[T VFSBase](vfs T, path string) *PathIterator[T] {
 	pi := PathIterator[T]{path: path}
 	pi.ut.InitUtils(vfs.OSType())
 	pi.volumeNameLen = pi.ut.VolumeNameLen(path)

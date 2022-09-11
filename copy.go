@@ -19,6 +19,7 @@ package avfs
 import (
 	"hash"
 	"io"
+	"os"
 	"sync"
 )
 
@@ -38,15 +39,15 @@ func newCopyPool() *sync.Pool {
 }
 
 // CopyFile copies a file between file systems and returns an error if any.
-func CopyFile(dstFs, srcFs VFS, dstPath, srcPath string) error {
+func CopyFile(dstFs, srcFs VFSBase, dstPath, srcPath string) error {
 	_, err := CopyFileHash(dstFs, srcFs, dstPath, srcPath, nil)
 
 	return err
 }
 
 // CopyFileHash copies a file between file systems and returns the hash sum of the source file.
-func CopyFileHash(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
-	src, err := srcFs.Open(srcPath)
+func CopyFileHash(dstFs, srcFs VFSBase, dstPath, srcPath string, hasher hash.Hash) (sum []byte, err error) {
+	src, err := srcFs.OpenFile(srcPath, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -102,8 +103,8 @@ func CopyFileHash(dstFs, srcFs VFS, dstPath, srcPath string, hasher hash.Hash) (
 }
 
 // HashFile hashes a file and returns the hash sum.
-func HashFile(vfs VFS, name string, hasher hash.Hash) (sum []byte, err error) {
-	f, err := vfs.Open(name)
+func HashFile(vfs VFSBase, name string, hasher hash.Hash) (sum []byte, err error) {
+	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}

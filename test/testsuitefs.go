@@ -37,8 +37,8 @@ const (
 
 // SuiteFS is a test suite for virtual file systems.
 type SuiteFS struct {
-	vfsSetup    avfs.VFS           // vfsSetup is the file system used to set up the tests (generally with read/write access).
-	vfsTest     avfs.VFS           // vfsTest is the file system used to run the tests.
+	vfsSetup    avfs.VFSBase       // vfsSetup is the file system used to set up the tests (generally with read/write access).
+	vfsTest     avfs.VFSBase       // vfsTest is the file system used to run the tests.
 	initDir     string             // initDir is the initial directory of the tests.
 	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
 	testRoot    string             // testRoot is the root directory for tests.
@@ -53,7 +53,7 @@ type SuiteFS struct {
 type Option func(*SuiteFS)
 
 // NewSuiteFS creates a new test suite for a file system.
-func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFS, opts ...Option) *SuiteFS {
+func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFSBase, opts ...Option) *SuiteFS {
 	if vfsSetup == nil {
 		tb.Fatal("New : want vfsSetup to be set, got nil")
 	}
@@ -188,12 +188,12 @@ func (sfs *SuiteFS) SetUser(tb testing.TB, userName string) avfs.UserReader {
 }
 
 // VFSTest returns the file system used to run the tests.
-func (sfs *SuiteFS) VFSTest() avfs.VFS {
+func (sfs *SuiteFS) VFSTest() avfs.VFSBase {
 	return sfs.vfsTest
 }
 
 // VFSSetup returns the file system used to set up the tests.
-func (sfs *SuiteFS) VFSSetup() avfs.VFS {
+func (sfs *SuiteFS) VFSSetup() avfs.VFSBase {
 	return sfs.vfsSetup
 }
 
@@ -492,7 +492,7 @@ func (sfs *SuiteFS) ClosedFile(tb testing.TB, testDir string) (f avfs.File, file
 
 	vfs := sfs.vfsTest
 
-	f, err := vfs.Open(fileName)
+	f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 	if err != nil {
 		tb.Fatalf("Create %s : want error to be nil, got %v", fileName, err)
 	}
@@ -588,7 +588,7 @@ func (sfs *SuiteFS) OpenedEmptyFile(tb testing.TB, testDir string) (fd avfs.File
 	vfs := sfs.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f, err := vfs.Open(fileName)
+		f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 		if err != nil {
 			tb.Fatalf("Open %s : want error to be nil, got %v", fileName, err)
 		}
@@ -609,7 +609,7 @@ func (sfs *SuiteFS) OpenedNonExistingFile(tb testing.TB, testDir string) (f avfs
 	fileName := sfs.NonExistingFile(tb, testDir)
 	vfs := sfs.vfsTest
 
-	f, err := vfs.Open(fileName)
+	f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 	if !errors.Is(err, fs.ErrNotExist) {
 		tb.Fatalf("Open %s : want non existing file, got %v", fileName, err)
 	}

@@ -52,7 +52,7 @@ func initOSsType() OSType {
 //
 // Most of these functions are extracted from Go standard library
 // and adapted to be used indifferently on Unix or Windows system.
-type Utils[T VFS] struct {
+type Utils[T VFSBase] struct {
 	// OSType defines the operating system type.
 	osType OSType
 
@@ -725,7 +725,7 @@ func (ut *Utils[_]) OSType() OSType {
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
 func (ut *Utils[T]) ReadDir(vfs T, name string) ([]fs.DirEntry, error) {
-	f, err := vfs.Open(name)
+	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -744,7 +744,7 @@ func (ut *Utils[T]) ReadDir(vfs T, name string) ([]fs.DirEntry, error) {
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
 func (ut *Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
-	f, err := vfs.Open(name)
+	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}

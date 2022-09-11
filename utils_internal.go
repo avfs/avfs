@@ -18,6 +18,7 @@ package avfs
 
 import (
 	"io/fs"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -105,7 +106,7 @@ func (ut *Utils[T]) glob(vfs T, dir, pattern string, matches []string) (m []stri
 		return // ignore I/O error
 	}
 
-	d, err := vfs.Open(dir)
+	d, err := vfs.OpenFile(dir, os.O_RDONLY, 0)
 	if err != nil {
 		return // ignore I/O error
 	}

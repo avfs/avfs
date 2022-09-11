@@ -128,7 +128,7 @@ func (sfs *SuiteFS) RaceOpen(t *testing.T, testDir string) {
 	roFile := sfs.EmptyFile(t, testDir)
 
 	sfs.RaceFunc(t, RaceAllOk, func() error {
-		f, err := vfs.Open(roFile)
+		f, err := vfs.OpenFile(roFile, os.O_RDONLY, 0)
 		if err == nil {
 			defer f.Close()
 		}
