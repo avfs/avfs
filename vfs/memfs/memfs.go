@@ -164,13 +164,6 @@ func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
 	return nil
 }
 
-// Clone returns a shallow copy of the current file system.
-func (vfs *MemFS) Clone() avfs.VFS {
-	newFs := *vfs
-
-	return &newFs
-}
-
 // Create creates or truncates the named file. If the file already exists,
 // it is truncated. If the file does not exist, it is created with mode 0666
 // (before umask). If successful, methods on the returned DummyFile can
