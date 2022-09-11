@@ -98,8 +98,7 @@ const (
 // VFS is the virtual file system interface.
 // Any simulated or real file system should implement this interface.
 type VFS interface {
-	BaseVFS
-	ChRooter
+	VFSBase
 
 	// Open opens the named file for reading. If successful, methods on
 	// the returned file can be used for reading; the associated file
@@ -113,7 +112,7 @@ type VFS interface {
 
 // IOFS is the virtual file system interface implementing io/fs interfaces.
 type IOFS interface {
-	BaseVFS
+	VFSBase
 	fs.FS
 	fs.GlobFS
 	fs.ReadDirFS
@@ -122,8 +121,8 @@ type IOFS interface {
 	fs.SubFS
 }
 
-// BaseVFS regroups the common methods to VFS and IOFS.
-type BaseVFS interface {
+// VFSBase regroups the common methods to VFS and IOFS.
+type VFSBase interface {
 	Featurer
 	Namer
 	SystemDirMgr
