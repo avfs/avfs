@@ -60,6 +60,7 @@ type Utils[T VFSBase] struct {
 	pathSeparator uint8
 }
 
+// InitUtils initialize the utils with the osType provided.
 func (ut *Utils[_]) InitUtils(osType OSType) {
 	sep := uint8('/')
 	if osType == OsWindows {

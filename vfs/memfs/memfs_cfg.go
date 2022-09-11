@@ -44,8 +44,8 @@ func New(opts ...Option) *MemFS {
 	}
 
 	vfs.rootNode = vfs.createRootNode()
-
 	volumeName := ""
+	vfs.curDir = "/"
 
 	if vfs.OSType() == avfs.OsWindows {
 		ma.dirMode |= avfs.DefaultDirPerm
@@ -55,8 +55,6 @@ func New(opts ...Option) *MemFS {
 		vfs.curDir = volumeName + string(vfs.PathSeparator())
 		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
-	} else {
-		vfs.curDir = "/"
 	}
 
 	vfs.err.SetOSType(vfs.OSType())
@@ -161,13 +159,11 @@ func (vfs *MemFS) CreateHomeDir(u avfs.UserReader) (string, error) {
 func (vfs *MemFS) VolumeAdd(path string) error {
 	const op = "VolumeAdd"
 
-	ut := vfs.Utils
-
-	if ut.OSType() != avfs.OsWindows {
+	if vfs.OSType() != avfs.OsWindows {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
 	}
 
-	vol := ut.VolumeName(path)
+	vol := vfs.Utils.VolumeName(path)
 	if vol == "" {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
 	}

@@ -45,22 +45,22 @@ const (
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
 	FeatIdentityMgr
 
-	// FeatReadOnly indicates that the file system is a read only file system (see RoFs).
+	// FeatReadOnly is set for read only file systems (see RoFs).
 	FeatReadOnly
 
-	// FeatReadOnlyIdm indicates that the identity manager is a read only (see OsIdm).
+	// FeatReadOnlyIdm is set when identity manager is read only (see OsIdm).
 	FeatReadOnlyIdm
 
 	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS).
 	FeatRealFS
 
-	// FeatSubFS indicates that the file system supports
+	// FeatSubFS allow to create a new file system from the subtree rooted at an arbitrary directory.
 	FeatSubFS
 
 	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).
 	FeatSymlink
 
-	// FeatSystemDirs indicates that the system directories of the filesystem (/home, /root and /tmp for linux) are present.
+	// FeatSystemDirs is set when system directories  (/home, /root and /tmp for linux).
 	FeatSystemDirs
 )
 

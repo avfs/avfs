@@ -23,7 +23,6 @@
 //   - supports multiple concurrent users
 //   - supports Hard links
 //   - supports symbolic links
-//   - supports Chroot
 package memfs
 
 import (
