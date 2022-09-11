@@ -94,7 +94,7 @@ func main() {
 		avfsBin += ".exe"
 	}
 
-	err = run("mage", "-compile", avfsBin)
+	err = run("mage", "-ldflags", "-w -s", "-compile", avfsBin)
 	if err != nil {
 		log.Fatalf("mage compile : want error to be nil, got %v", err)
 	}

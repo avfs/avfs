@@ -62,6 +62,7 @@ var (
 	testDataDir       string
 	dockerTmpDir      string
 	dockerTestDataDir string
+	cgoEnabled        bool
 )
 
 func init() {
@@ -88,6 +89,10 @@ func init() {
 		dockerCmd = "podman"
 	default:
 		dockerCmd = ""
+	}
+
+	if os.Getenv("CGO_ENABLED") == "1" {
+		cgoEnabled = true
 	}
 }
 
@@ -190,12 +195,17 @@ func CoverResult() error {
 func Test() error {
 	mg.Deps(tmpInit)
 
-	err := sh.RunV(goCmd, "test", "-v",
+	args := []string{
+		"test", "-v",
 		"-run=.",
-		"-race",
 		"-covermode=atomic",
-		"-coverprofile="+coverTestPath,
-		"./...")
+		"-coverprofile=" + coverTestPath,
+		"./..."}
+	if cgoEnabled {
+		args = append(args, "-race")
+	}
+
+	err := sh.RunV(goCmd, args...)
 	if err != nil {
 		return err
 	}
@@ -261,6 +271,10 @@ func TestBuild() error {
 func Race() error {
 	mg.Deps(tmpInit)
 
+	if !cgoEnabled {
+		return nil
+	}
+
 	return sh.RunV(goCmd, "test", "-v",
 		"-tags=datarace",
 		"-run=TestRace",
@@ -289,36 +303,35 @@ func DockerBuild() error {
 		return fmt.Errorf("can't find docker or podman in the current path")
 	}
 
-	err := sh.RunV(tarCmd,
-		"-cf", "tmp/avfs.tar",
-		"--exclude-vcs",
-		"--exclude-vcs-ignores",
-		".")
+	dockerFile := runtime.GOOS + ".Dockerfile"
+
+	_, err := os.Stat(dockerFile)
+	if err != nil {
+		return fmt.Errorf("can't find Dockerfile %s", dockerFile)
+	}
+
+	avfsPath, err := exec.LookPath("avfs")
 	if err != nil {
 		return err
 	}
 
-	var (
-		image string
-		user  string
-	)
+	avfsBin := filepath.Base(avfsPath)
+	tmpBin := "tmp/" + avfsBin
 
-	switch runtime.GOOS {
-	case "windows":
-		image = "golang:windowsservercore"
-		user = "ContainerAdministrator"
-	case "linux":
-		image = "golang:bullseye"
-		user = "root"
+	err = sh.Copy(tmpBin, avfsPath)
+	if err != nil {
+		return err
 	}
 
-	fmt.Printf("image = %s\nuser = %s\n", image, user)
+	err = sh.RunV(tarCmd, "-cf", "tmp/avfs.tar", "--exclude-vcs", "--exclude-vcs-ignores", ".")
+	if err != nil {
+		return err
+	}
 
 	return sh.RunV(dockerCmd,
 		"build",
 		"-t", dockerImage,
-		"--build-arg", "image="+image,
-		"--build-arg", "user="+user,
+		"-f", dockerFile,
 		".")
 }
 
