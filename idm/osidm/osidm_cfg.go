@@ -24,17 +24,19 @@ import (
 
 // New creates a new OsIdm identity manager.
 func New() *OsIdm {
+	osType := avfs.CurrentOSType()
 	features := avfs.FeatIdentityMgr
 	uid, gid := 0, 0
+	GroupName, UserName := avfs.AdminGroupName(osType), avfs.AdminUserName(osType)
 
-	osType := avfs.CurrentOSType()
 	if osType == avfs.OsWindows {
 		features = 0
 		uid, gid = math.MaxInt, math.MaxInt
+		GroupName, UserName = avfs.DummyName, avfs.DummyName
 	}
 
-	adminGroup := &OsGroup{name: avfs.AdminGroupName(osType), gid: gid}
-	adminUser := &OsUser{name: avfs.AdminUserName(osType), uid: uid, gid: gid}
+	adminGroup := &OsGroup{name: GroupName, gid: gid}
+	adminUser := &OsUser{name: UserName, uid: uid, gid: gid}
 
 	idm := &OsIdm{
 		adminGroup: adminGroup,
