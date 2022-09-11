@@ -2020,6 +2020,22 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 			Err(avfs.ErrFileExists, avfs.OsLinux).
 			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 	})
+
+	t.Run("RenamePerm", func(t *testing.T) {
+		if !sfs.canTestPerm {
+			return
+		}
+
+		pts := sfs.NewPermTests(t, testDir, "RenameNew")
+		pts.Test(t, func(path string) error {
+			oldPath := vfs.Join(pts.permDir, vfs.Base(path))
+			newPath := vfs.Join(path, "New")
+
+			sfs.CreateFile(t, oldPath, avfs.DefaultFilePerm)
+
+			return vfs.Rename(oldPath, newPath)
+		})
+	})
 }
 
 // TestSameFile tests SameFile function.

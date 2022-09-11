@@ -718,8 +718,6 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: err}
 		}
-	default:
-		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.PermDenied}
 	}
 
 	nParent.addChild(nPI.Part(), oChild)
