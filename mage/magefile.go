@@ -91,7 +91,13 @@ func init() {
 		dockerCmd = ""
 	}
 
-	if os.Getenv("CGO_ENABLED") == "1" {
+	cc := os.Getenv("CC")
+	if cc == "" {
+		cc = "gcc"
+	}
+
+	ccPath, err := exec.LookPath(cc)
+	if err == nil && ccPath != "" {
 		cgoEnabled = true
 	}
 }
@@ -122,7 +128,8 @@ coverRacePath=%s
 testDataDir=%s
 dockerTmpDir=%s
 dockerTestDataDir=%s
-`, appDir, tmpDir, coverTestPath, coverRacePath, testDataDir, dockerTmpDir, dockerTestDataDir)
+cgoEnabled=%t
+`, appDir, tmpDir, coverTestPath, coverRacePath, testDataDir, dockerTmpDir, dockerTestDataDir, cgoEnabled)
 }
 
 // Build builds the project.
@@ -200,7 +207,8 @@ func Test() error {
 		"-run=.",
 		"-covermode=atomic",
 		"-coverprofile=" + coverTestPath,
-		"./..."}
+		"./...",
+	}
 	if cgoEnabled {
 		args = append(args, "-race")
 	}
