@@ -202,7 +202,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 	idm := vfs.Idm()
 
-	if !sfs.canTestPerm && !vfs.HasFeature(avfs.FeatChownUser) {
+	if !sfs.canTestPerm && vfs.HasFeature(avfs.FeatRealFS) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chown(testDir, 0, 0)
 
 		CheckPathError(t, err).Op("chown").Path(testDir).
@@ -602,7 +602,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest
 	idm := vfs.Idm()
 
-	if !sfs.canTestPerm && !vfs.HasFeature(avfs.FeatChownUser) {
+	if !sfs.canTestPerm && vfs.HasFeature(avfs.FeatRealFS) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Lchown(testDir, 0, 0)
 
 		CheckPathError(t, err).Op("lchown").Path(testDir).

@@ -98,13 +98,6 @@ func (vfs *OrefaFS) Type() string {
 
 // Options.
 
-// WithChownUser returns an option function.
-func WithChownUser() Option {
-	return func(vfs *OrefaFS) {
-		vfs.features |= avfs.FeatChownUser
-	}
-}
-
 // WithSystemDirs returns an option function to create system directories (/home, /root and /tmp).
 func WithSystemDirs() Option {
 	return func(vfs *OrefaFS) {

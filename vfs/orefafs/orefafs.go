@@ -119,10 +119,6 @@ func (vfs *OrefaFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	if !vfs.HasFeature(avfs.FeatChownUser) {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
-	}
-
 	absPath, _ := vfs.Abs(name)
 
 	vfs.mu.RLock()
@@ -237,10 +233,6 @@ func (vfs *OrefaFS) Idm() avfs.IdentityMgr {
 // in *PathError.
 func (vfs *OrefaFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
-
-	if !vfs.HasFeature(avfs.FeatChownUser) {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
-	}
 
 	absPath, _ := vfs.Abs(name)
 

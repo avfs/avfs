@@ -124,7 +124,7 @@ func (vfs *MemFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsAdmin() || vfs.OSType() == avfs.OsWindows {
+	if (vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.user.IsAdmin()) || vfs.OSType() == avfs.OsWindows {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
@@ -245,7 +245,7 @@ func (vfs *MemFS) Idm() avfs.IdentityMgr {
 func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) || !vfs.user.IsAdmin() || vfs.OSType() == avfs.OsWindows {
+	if (vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.user.IsAdmin()) || vfs.OSType() == avfs.OsWindows {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 

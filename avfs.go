@@ -62,9 +62,6 @@ const (
 
 	// FeatSystemDirs indicates that the system directories of the filesystem (/home, /root and /tmp for linux) are present.
 	FeatSystemDirs
-
-	// FeatChownUser indicates that a non privileged user can use Chown.
-	FeatChownUser
 )
 
 // OSType defines the operating system type.
