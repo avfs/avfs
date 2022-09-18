@@ -79,7 +79,7 @@ func main() {
 	case "PROD": // The real file system for production.
 		vfs = osfs.New()
 	default: // in memory for tests.
-		vfs = memfs.New(memfs.WithSystemDirs())
+		vfs = memfs.New()
 	}
 
 	// From this point all references of 'os', 'path/filepath'
@@ -131,7 +131,7 @@ func main() {
 	)
 
 	idm := memidm.New()
-	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithIdm(idm))
+	vfs := memfs.New()
 
 	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	vfs.Chmod(rootDir, 0o777)
@@ -206,7 +206,6 @@ File system methods <br> `avfs.FS`|Comments
 `Chroot`|equivalent to `syscall.Chroot`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
-`Clone`|returns a shallow copy of the current file system (see MemFS) or the file system itself
 `Create`|equivalent to `os.Create`
 `CreateTemp`|equivalent to `os.CreateTemp`
 `Dir`|equivalent to `filepath.Dir`
@@ -292,8 +291,8 @@ Identity Manager |Comments
 
 Identity Manager methods <br>`avfs.FS` <br> `avfs.IdentityMgr`|Comments
 --------------------------------------------------------------|--------
-`AdminGroup`|returns the administrator (root) group
-`AdminUser`|returns the administrator (root) user
+`AdminGroup`|returns the administrator group (root for Linux)
+`AdminUser`|returns the administrator user (root for Linux)
 `GroupAdd`| adds a new group
 `GroupDel`| deletes an existing group
 `LookupGroup`| looks up a group by name
