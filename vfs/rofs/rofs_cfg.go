@@ -60,7 +60,7 @@ func (vfs *RoFS) OSType() avfs.OSType {
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *RoFS) Type() string {
+func (*RoFS) Type() string {
 	return "RoFS"
 }
 

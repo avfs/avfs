@@ -123,12 +123,12 @@ func (vfs *MountFS) Name() string {
 }
 
 // OSType returns the operating system type of the file system.
-func (vfs *MountFS) OSType() avfs.OSType {
+func (*MountFS) OSType() avfs.OSType {
 	return avfs.OsLinux
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *MountFS) Type() string {
+func (*MountFS) Type() string {
 	return "MountFS"
 }
 

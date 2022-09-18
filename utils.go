@@ -248,7 +248,7 @@ func (ut *Utils[_]) Clean(path string) string {
 // (before umask). If successful, methods on the returned DummyFile can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (ut *Utils[T]) Create(vfs T, name string) (File, error) {
+func (*Utils[T]) Create(vfs T, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
 }
 
@@ -487,7 +487,7 @@ func (ut *Utils[_]) IsAbs(path string) bool {
 //
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrExist).
-func (ut *Utils[_]) IsExist(err error) bool {
+func (*Utils[_]) IsExist(err error) bool {
 	return errors.Is(err, fs.ErrExist)
 }
 
@@ -497,7 +497,7 @@ func (ut *Utils[_]) IsExist(err error) bool {
 //
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrNotExist).
-func (ut *Utils[_]) IsNotExist(err error) bool {
+func (*Utils[_]) IsNotExist(err error) bool {
 	return errors.Is(err, fs.ErrNotExist)
 }
 
@@ -660,12 +660,12 @@ func (ut *Utils[T]) MkdirTemp(vfs T, dir, pattern string) (string, error) {
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (ut *Utils[T]) Open(vfs T, name string) (File, error) {
+func (*Utils[T]) Open(vfs T, name string) (File, error) {
 	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }
 
 // OpenMode returns the open mode from the input flags.
-func (ut *Utils[_]) OpenMode(flag int) OpenMode {
+func (*Utils[_]) OpenMode(flag int) OpenMode {
 	var om OpenMode
 
 	if flag == os.O_RDONLY {
@@ -733,7 +733,7 @@ func (ut *Utils[T]) ReadDir(vfs T, name string) ([]fs.DirEntry, error) {
 // A successful call returns err == nil, not err == EOF.
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
-func (ut *Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
+func (*Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
 	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err

@@ -79,7 +79,7 @@ func (vfs *BasePathFS) OSType() avfs.OSType {
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *BasePathFS) Type() string {
+func (*BasePathFS) Type() string {
 	return "BasePathFS"
 }
 

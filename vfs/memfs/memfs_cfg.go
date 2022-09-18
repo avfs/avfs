@@ -132,7 +132,7 @@ func (vfs *MemFS) Name() string {
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *MemFS) Type() string {
+func (*MemFS) Type() string {
 	return "MemFS"
 }
 

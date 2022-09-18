@@ -59,12 +59,12 @@ func (vfs *OsFS) HasFeature(feature avfs.Features) bool {
 }
 
 // Name returns the name of the fileSystem.
-func (vfs *OsFS) Name() string {
+func (*OsFS) Name() string {
 	return ""
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *OsFS) Type() string {
+func (*OsFS) Type() string {
 	return "OsFS"
 }
 

@@ -105,7 +105,7 @@ func (vfs *OrefaFS) Name() string {
 }
 
 // Type returns the type of the fileSystem or Identity manager.
-func (vfs *OrefaFS) Type() string {
+func (*OrefaFS) Type() string {
 	return "OrefaFS"
 }
 
