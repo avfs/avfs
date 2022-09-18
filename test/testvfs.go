@@ -431,7 +431,7 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 }
 
 // TestClone tests Clone function.
-func (sfs *SuiteFS) TestClone(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestClone(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	if vfsClonable, ok := vfs.(avfs.Cloner); ok {
@@ -520,7 +520,7 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 }
 
 // TestUser tests User function.
-func (sfs *SuiteFS) TestUser(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestUser(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	u := vfs.User()
@@ -575,7 +575,7 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 }
 
 // TestTempDir tests TempDir function.
-func (sfs *SuiteFS) TestTempDir(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestTempDir(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 	tmpDir := vfs.TempDir()
 
@@ -1239,7 +1239,7 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 }
 
 // TestName tests Name function.
-func (sfs *SuiteFS) TestName(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestName(t *testing.T, _ string) {
 	vfs := sfs.vfsSetup
 
 	if vfs.Name() != "" {
@@ -1548,7 +1548,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 }
 
 // TestPathSeparator tests PathSeparator function.
-func (sfs *SuiteFS) TestPathSeparator(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestPathSeparator(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	wantSep := uint8('/')
@@ -2408,7 +2408,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 }
 
 // TestUmask tests SetUMask and UMask functions.
-func (sfs *SuiteFS) TestUmask(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestUmask(t *testing.T, _ string) {
 	const umaskTest = 0o077
 
 	vfs := sfs.vfsTest
@@ -2440,7 +2440,7 @@ func (sfs *SuiteFS) TestUmask(t *testing.T, testDir string) {
 }
 
 // TestSetUser tests SetUser and User functions.
-func (sfs *SuiteFS) TestSetUser(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestSetUser(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 	idm := vfs.Idm()
 
@@ -2530,7 +2530,7 @@ func (sfs *SuiteFS) TestSetUser(t *testing.T, testDir string) {
 }
 
 // TestVolume tests VolumeAdd, VolumeDelete and VolumeList functions.
-func (sfs *SuiteFS) TestVolume(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestVolume(t *testing.T, _ string) {
 	const testVolume = "Z:"
 
 	vfs := sfs.vfsTest
