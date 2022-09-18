@@ -415,14 +415,6 @@ func (vfs *MemFS) Open(name string) (avfs.File, error) {
 	return vfs.Utils.Open(vfs, name)
 }
 
-// Open opens the named file for reading. If successful, methods on
-// the returned file can be used for reading; the associated file
-// descriptor has mode O_RDONLY.
-// If there is an error, it will be of type *PathError.
-func (vfs *MemIOFS) Open(name string) (fs.File, error) {
-	return vfs.OpenFile(name, os.O_RDONLY, 0)
-}
-
 // OpenFile is the generalized open call; most users will use Open
 // or Create instead. It opens the named file with specified flag
 // (O_RDONLY etc.). If the file does not exist, and the O_CREATE flag
@@ -793,26 +785,6 @@ func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
 
 // Sub returns an FS corresponding to the subtree rooted at dir.
 func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
-	const op = "sub"
-
-	_, child, _, err := vfs.searchNode(dir, slmEval)
-	if err != vfs.err.FileExists || child == nil {
-		return nil, &fs.PathError{Op: op, Path: dir, Err: err}
-	}
-
-	c, ok := child.(*dirNode)
-	if !ok {
-		return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
-	}
-
-	subFS := *vfs
-	subFS.rootNode = c
-
-	return &subFS, nil
-}
-
-// Sub returns an FS corresponding to the subtree rooted at dir.
-func (vfs *MemIOFS) Sub(dir string) (fs.FS, error) {
 	const op = "sub"
 
 	_, child, _, err := vfs.searchNode(dir, slmEval)
