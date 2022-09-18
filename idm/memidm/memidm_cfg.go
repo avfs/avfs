@@ -63,12 +63,12 @@ func NewWithOptions(opts *Options) *MemIdm {
 }
 
 // Type returns the type of the Identity manager.
-func (idm *MemIdm) Type() string {
+func (*MemIdm) Type() string {
 	return "MemIdm"
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (idm *MemIdm) Features() avfs.Features {
+func (*MemIdm) Features() avfs.Features {
 	return avfs.FeatIdentityMgr
 }
 

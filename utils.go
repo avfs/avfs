@@ -714,7 +714,7 @@ func (ut *Utils[_]) OSType() OSType {
 // If an error occurs reading the directory,
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
-func (ut *Utils[T]) ReadDir(vfs T, name string) ([]fs.DirEntry, error) {
+func (*Utils[T]) ReadDir(vfs T, name string) ([]fs.DirEntry, error) {
 	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
@@ -1069,7 +1069,7 @@ func (d *statDirEntry) Info() (fs.FileInfo, error) { return d.info, nil }
 // WriteFile writes data to the named file, creating it if necessary.
 // If the file does not exist, WriteFile creates it with permissions perm (before umask);
 // otherwise WriteFile truncates it before writing, without changing permissions.
-func (ut *Utils[T]) WriteFile(vfs T, name string, data []byte, perm fs.FileMode) error {
+func (*Utils[T]) WriteFile(vfs T, name string, data []byte, perm fs.FileMode) error {
 	f, err := vfs.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
