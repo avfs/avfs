@@ -49,14 +49,14 @@ var (
 )
 
 func TestMemFS(t *testing.T) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs(), memfs.WithOSType(avfs.CurrentOSType()))
+	vfs := memfs.New()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithOSType(avfs.CurrentOSType()))
+	vfs := memfs.NewWithOptions(&memfs.Options{SystemDirs: true})
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
@@ -73,7 +73,7 @@ func TestMemFSOptionUser(t *testing.T) {
 	u, err := idm.UserAdd(userName, groupName)
 	test.CheckNoError(t, "UserAdd "+userName, err)
 
-	vfs := memfs.New(memfs.WithUser(u))
+	vfs := memfs.NewWithOptions(&memfs.Options{User: u})
 
 	dir := "test"
 	err = vfs.Mkdir(dir, avfs.DefaultDirPerm)
@@ -101,7 +101,7 @@ func TestMemFSOptionName(t *testing.T) {
 		t.Errorf("New : want name to be '', got %s", vfs.Name())
 	}
 
-	vfs = memfs.New(memfs.WithName(wantName))
+	vfs = memfs.NewWithOptions(&memfs.Options{Name: wantName})
 
 	name := vfs.Name()
 	if name != wantName {
@@ -118,14 +118,14 @@ func TestMemFSNilPtrFile(t *testing.T) {
 func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 
-	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink
+	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatSystemDirs | avfs.FeatIdentityMgr
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
 
-	vfs = memfs.New(memfs.WithIdm(memidm.New()))
+	vfs = memfs.New()
 
-	wantFeatures = avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSubFS | avfs.FeatSymlink
+	wantFeatures = avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatSystemDirs
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
@@ -142,7 +142,7 @@ func TestMemFSConfig(t *testing.T) {
 }
 
 func BenchmarkMemFSAll(b *testing.B) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
+	vfs := memfs.New()
 
 	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)

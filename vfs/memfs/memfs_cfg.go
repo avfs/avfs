@@ -20,28 +20,62 @@ import (
 	"io/fs"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/memidm"
 )
 
-// New returns a new memory file system (MemFS).
-func New(opts ...Option) *MemFS {
+// New returns a new memory file system (MemFS) with the default Options.
+func New() *MemFS {
+	return NewWithOptions(nil)
+}
+
+// NewWithOptions returns a new memory file system (MemFS) with the selected Options.
+func NewWithOptions(opts *Options) *MemFS {
+	if opts == nil {
+		opts = &Options{
+			Idm:        memidm.New(),
+			OSType:     avfs.CurrentOSType(),
+			SystemDirs: true,
+		}
+	}
+
+	osType := opts.OSType
+	if osType == avfs.OsUnknown {
+		osType = avfs.CurrentOSType()
+	}
+
+	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink
+	if opts.SystemDirs {
+		features |= avfs.FeatSystemDirs
+	}
+
+	var idm avfs.IdentityMgr = avfs.NotImplementedIdm
+
+	if opts.Idm != nil && opts.Idm != avfs.NotImplementedIdm {
+		idm = opts.Idm
+	}
+
+	features |= idm.Features()
+
+	user := opts.User
+	if opts.User == nil {
+		user = idm.AdminUser()
+	}
+
 	ma := &memAttrs{
-		idm:      avfs.NotImplementedIdm,
+		idm:      idm,
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		features: avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink,
+		features: features,
+		name:     opts.Name,
 	}
 
 	vfs := &MemFS{
 		memAttrs: ma,
 		umask:    avfs.UMask(),
-		user:     ma.idm.AdminUser(),
+		user:     user,
 	}
 
-	vfs.InitUtils(avfs.CurrentOSType())
-
-	for _, opt := range opts {
-		opt(vfs)
-	}
+	vfs.Utils.InitUtils(osType)
 
 	vfs.rootNode = vfs.createRootNode()
 	volumeName := ""
@@ -100,45 +134,6 @@ func (vfs *MemFS) Name() string {
 // Type returns the type of the fileSystem or Identity manager.
 func (vfs *MemFS) Type() string {
 	return "MemFS"
-}
-
-// Options.
-
-// WithSystemDirs returns an option function to create system directories.
-func WithSystemDirs() Option {
-	return func(vfs *MemFS) {
-		vfs.memAttrs.features |= avfs.FeatSystemDirs
-	}
-}
-
-// WithIdm returns an option function which sets the identity manager.
-func WithIdm(idm avfs.IdentityMgr) Option {
-	return func(vfs *MemFS) {
-		vfs.memAttrs.idm = idm
-		vfs.memAttrs.features |= idm.Features()
-		vfs.user = idm.AdminUser()
-	}
-}
-
-// WithName returns an option function which sets the name of the file system.
-func WithName(name string) Option {
-	return func(vfs *MemFS) {
-		vfs.memAttrs.name = name
-	}
-}
-
-// WithOSType returns an option function which sets the OS type.
-func WithOSType(osType avfs.OSType) Option {
-	return func(vfs *MemFS) {
-		vfs.InitUtils(osType)
-	}
-}
-
-// WithUser returns an option function which sets the default user.
-func WithUser(user avfs.UserReader) Option {
-	return func(vfs *MemFS) {
-		vfs.user = user
-	}
 }
 
 // Configuration functions.

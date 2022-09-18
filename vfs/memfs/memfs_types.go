@@ -66,11 +66,17 @@ type MemFile struct {
 	at         int64         // at is current position in the file used by Read and Write functions.
 	dirIndex   int           // dirIndex is the position of the current index for dirEntries ou dirNames slices.
 	mu         sync.RWMutex  // mu is the RWMutex used to access content of MemFile.
-	openMode   avfs.OpenMode // OpenMode defines the permissions to check for OpenFile and CheckPermission functions.
+	openMode   avfs.OpenMode // openMode defines the permissions to check for OpenFile and CheckPermission functions.
 }
 
-// Option defines the option function used for initializing MemFS.
-type Option func(*MemFS)
+// Options defines the initialization options of MemFS.
+type Options struct {
+	Idm        avfs.IdentityMgr // Idm is the identity manager of the file system.
+	User       avfs.UserReader  // User is the current user of the file system.
+	Name       string           // Name is the name of the file system.
+	OSType     avfs.OSType      // OSType defines the operating system type.
+	SystemDirs bool             // SystemDirs must be true to create system directories.
+}
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.
 type node interface {

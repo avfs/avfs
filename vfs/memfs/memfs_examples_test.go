@@ -29,7 +29,29 @@ import (
 )
 
 func ExampleNew() {
-	vfs := memfs.New(memfs.WithOSType(avfs.OsLinux))
+	vfs := memfs.New()
+
+	fmt.Println(vfs.Features())
+	fmt.Println(vfs.User().Name())
+	fmt.Println(vfs.TempDir())
+
+	homeDir := vfs.HomeDirUser(vfs.User())
+	fmt.Println(homeDir)
+
+	_, err := vfs.Stat(homeDir)
+	if err == nil {
+		fmt.Printf("%s exists", homeDir)
+	}
+
+	// Output: Features(Hardlink|IdentityMgr|SubFS|Symlink|SystemDirs)
+	// root
+	// /tmp
+	// /root
+	// /root exists
+}
+
+func ExampleNewWithOptions_noSystemDirs() {
+	vfs := memfs.NewWithOptions(&memfs.Options{OSType: avfs.OsLinux})
 	tmpDir := vfs.TempDir()
 
 	_, err := vfs.Stat(tmpDir)
@@ -40,31 +62,16 @@ func ExampleNew() {
 	// Output: /tmp does not exist
 }
 
-func ExampleWithSystemDirs() {
-	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithOSType(avfs.OsLinux))
-
-	info, err := vfs.Stat(vfs.TempDir())
-	if err != nil {
-		log.Fatalf("stat : want error to be nil, got %v", err)
-	}
-
-	fmt.Println(info.Name())
-
-	// Output: tmp
-}
-
-func ExampleWithIdm() {
-	idm := memidm.New(memidm.WithOSType(avfs.OsLinux))
-	vfs := memfs.New(memfs.WithIdm(idm), memfs.WithSystemDirs(), memfs.WithOSType(avfs.OsLinux))
-
+func ExampleNewWithOptions_noIdm() {
+	vfs := memfs.NewWithOptions(&memfs.Options{OSType: avfs.OsLinux})
 	fmt.Println(vfs.User().Name())
 
-	// Output: root
+	// Output: Default
 }
 
 func ExampleMemFS_Sub() {
-	idm := memidm.New(memidm.WithOSType(avfs.OsLinux))
-	vfsSrc := memfs.New(memfs.WithSystemDirs(), memfs.WithIdm(idm), memfs.WithOSType(avfs.OsLinux))
+	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
+	vfsSrc := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux, SystemDirs: true})
 
 	_, err := vfsSrc.Idm().UserAdd(test.UsrTest, "root")
 	if err != nil {
@@ -90,8 +97,8 @@ func ExampleMemFS_Sub() {
 }
 
 func ExampleMemFS_SetUser() {
-	idm := memidm.New(memidm.WithOSType(avfs.OsLinux))
-	vfs := memfs.New(memfs.WithSystemDirs(), memfs.WithIdm(idm), memfs.WithOSType(avfs.OsLinux))
+	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux, SystemDirs: true})
 
 	_, err := vfs.Idm().UserAdd(test.UsrTest, idm.AdminGroup().Name())
 	if err != nil {
