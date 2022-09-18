@@ -52,8 +52,13 @@ type OrefaFile struct {
 	openMode   avfs.OpenMode // OpenMode defines constants used by OpenFile and CheckPermission functions.
 }
 
-// Option defines the option function used for initializing OrefaFS.
-type Option func(*OrefaFS)
+// Options defines the initialization options of OrefaFS.
+type Options struct {
+	User       avfs.UserReader // User is the current user of the file system.
+	Name       string          // Name is the name of the file system.
+	OSType     avfs.OSType     // OSType defines the operating system type.
+	SystemDirs bool            // SystemDirs must be true to create system directories.
+}
 
 // nodes is the map of nodes (files or directories) where the key is the absolute path.
 type nodes map[string]*node

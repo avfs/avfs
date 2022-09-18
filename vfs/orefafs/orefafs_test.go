@@ -45,11 +45,11 @@ var (
 )
 
 func TestOrefaFS(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithSystemDirs())
+	vfs := orefafs.New()
 
 	wantFeatures := avfs.FeatHardlink | avfs.FeatSystemDirs
 	if vfs.Features() != wantFeatures {
-		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, vfs.Features())
+		t.Errorf("Features : want Features to be %s, got %s", wantFeatures.String(), vfs.Features())
 	}
 
 	sfs := test.NewSuiteFS(t, vfs)
@@ -63,7 +63,7 @@ func TestOrefaFSNilPtrFile(t *testing.T) {
 }
 
 func BenchmarkOrefaFSAll(b *testing.B) {
-	vfs := orefafs.New(orefafs.WithSystemDirs())
+	vfs := orefafs.New()
 
 	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)

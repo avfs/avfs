@@ -22,23 +22,36 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// New returns a new memory file system (OrefaFS).
-func New(opts ...Option) *OrefaFS {
+// New returns a new memory file system (OrefaFS) with the default Options.
+func New() *OrefaFS {
+	return NewWithOptions(nil)
+}
+
+// NewWithOptions returns a new memory file system (OrefaFS) with the selected Options.
+func NewWithOptions(opts *Options) *OrefaFS {
+	if opts == nil {
+		opts = &Options{
+			OSType:     avfs.CurrentOSType(),
+			SystemDirs: true,
+		}
+	}
+
+	features := avfs.FeatHardlink
+	if opts.SystemDirs {
+		features |= avfs.FeatSystemDirs
+	}
+
 	vfs := &OrefaFS{
 		nodes:    make(nodes),
 		user:     avfs.NotImplementedIdm.AdminUser(),
 		curDir:   "",
-		features: avfs.FeatHardlink,
+		features: features,
 		umask:    avfs.UMask(),
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
 	}
 
-	vfs.InitUtils(avfs.CurrentOSType())
-
-	for _, opt := range opts {
-		opt(vfs)
-	}
+	vfs.InitUtils(opts.OSType)
 
 	var volumeName string
 
@@ -94,22 +107,6 @@ func (vfs *OrefaFS) Name() string {
 // Type returns the type of the fileSystem or Identity manager.
 func (vfs *OrefaFS) Type() string {
 	return "OrefaFS"
-}
-
-// Options.
-
-// WithSystemDirs returns an option function to create system directories (/home, /root and /tmp).
-func WithSystemDirs() Option {
-	return func(vfs *OrefaFS) {
-		vfs.features |= avfs.FeatSystemDirs
-	}
-}
-
-// WithOSType returns a function setting the OS type of the file system.
-func WithOSType(osType avfs.OSType) Option {
-	return func(vfs *OrefaFS) {
-		vfs.InitUtils(osType)
-	}
 }
 
 // Configuration functions.
