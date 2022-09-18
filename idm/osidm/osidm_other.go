@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build windows
+//go:build !linux
 
 package osidm
 
