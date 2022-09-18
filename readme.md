@@ -148,7 +148,7 @@ func main() {
 			userName := fmt.Sprintf("user_%08d", i)
 			idm.UserAdd(userName, g.Name())
 
-			vfsU := vfs.Clone()
+			vfsU, _ := vfs.Sub("/")
 			vfsU.SetUser(userName)
 
 			path := vfsU.Join(rootDir, userName)
