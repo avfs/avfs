@@ -172,7 +172,7 @@ func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
 }
 
 // TestBase tests Base function.
-func (sfs *SuiteFS) TestBase(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestBase(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	var baseTests []*pathTest
@@ -214,7 +214,7 @@ func (sfs *SuiteFS) TestBase(t *testing.T, testDir string) {
 }
 
 // TestClean tests Clean function.
-func (sfs *SuiteFS) TestClean(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	var cleanTests []*pathTest
@@ -407,7 +407,7 @@ func (sfs *SuiteFS) TestCreateSystemDirs(t *testing.T, testDir string) {
 }
 
 // TestCreateHomeDir tests that the user home directory exists and has the correct permissions.
-func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, _ string) {
 	if !sfs.canTestPerm {
 		return
 	}
@@ -449,7 +449,7 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, testDir string) {
 }
 
 // TestDir tests Dir function.
-func (sfs *SuiteFS) TestDir(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestDir(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	var dirTests []*pathTest
@@ -584,7 +584,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 }
 
 // TestFromToSlash tests FromSlash and ToSlash functions.
-func (sfs *SuiteFS) TestFromToSlash(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestFromToSlash(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	sep := byte('/')
@@ -722,7 +722,7 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 }
 
 // TestIsAbs tests IsAbs function.
-func (sfs *SuiteFS) TestIsAbs(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestIsAbs(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	type IsAbsTest struct {
@@ -864,7 +864,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 }
 
 // TestIsPathSeparator tests IsPathSeparator function.
-func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	isPathSepTests := []struct {
@@ -886,7 +886,7 @@ func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, testDir string) {
 }
 
 // TestJoin tests Join function.
-func (sfs *SuiteFS) TestJoin(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestJoin(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	type joinTest struct { //nolint:govet // no fieldalignment for test structs
@@ -963,7 +963,7 @@ func errp(e error) string {
 	return e.Error()
 }
 
-func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestMatch(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	matchTests := []struct { //nolint:govet // no fieldalignment for test structs
@@ -1051,7 +1051,7 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, testDir string) {
 }
 
 // TestRel tests Rel function.
-func (sfs *SuiteFS) TestRel(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestRel(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	type relTest struct {
@@ -1287,7 +1287,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 }
 
 // TestSplit tests Split function.
-func (sfs *SuiteFS) TestSplit(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestSplit(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	type splitTest struct {
@@ -1329,7 +1329,7 @@ func (sfs *SuiteFS) TestSplit(t *testing.T, testDir string) {
 }
 
 // TestSplitAbs tests SplitAbs function.
-func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestSplitAbs(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
 	cases := []struct {
@@ -1364,7 +1364,7 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
 }
 
 // TestUMask tests Umask methods.
-func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
+func (sfs *SuiteFS) TestUMask(t *testing.T, _ string) {
 	const umaskSet = fs.FileMode(0o77)
 
 	umaskTest := umaskSet

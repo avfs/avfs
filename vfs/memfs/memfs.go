@@ -145,7 +145,7 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFS) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *MemFS) Chtimes(name string, _, mtime time.Time) error {
 	const op = "chtimes"
 
 	_, child, _, err := vfs.searchNode(name, slmLstat)
