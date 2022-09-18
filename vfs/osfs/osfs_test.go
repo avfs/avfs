@@ -23,7 +23,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/osfs"
 )
@@ -37,14 +36,14 @@ var (
 )
 
 func TestOsFS(t *testing.T) {
-	vfs := osfs.New(osfs.WithIdm(osidm.New()))
+	vfs := osfs.New()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
 }
 
 func TestOsFSWithNoIdm(t *testing.T) {
-	vfs := osfs.New()
+	vfs := osfs.NewWithNoIdm()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
@@ -59,7 +58,7 @@ func TestOsFSNilPtrFile(t *testing.T) {
 func TestOsFSConfig(t *testing.T) {
 	vfs := osfs.New()
 
-	wantFeatures := avfs.FeatHardlink | avfs.FeatSystemDirs | avfs.FeatRealFS | avfs.FeatSymlink
+	wantFeatures := avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSystemDirs | avfs.FeatRealFS | avfs.FeatSymlink
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}
@@ -76,7 +75,7 @@ func TestOsFSConfig(t *testing.T) {
 }
 
 func BenchmarkOsFSAll(b *testing.B) {
-	vfs := osfs.New(osfs.WithIdm(osidm.New()))
+	vfs := osfs.New()
 
 	sfs := test.NewSuiteFS(b, vfs)
 	sfs.BenchAll(b)

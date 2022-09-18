@@ -21,13 +21,12 @@ package osfs_test
 import (
 	"testing"
 
-	"github.com/avfs/avfs/idm/osidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/osfs"
 )
 
 func TestRaceOsFS(t *testing.T) {
-	vfs := osfs.New(osfs.WithIdm(osidm.New()))
+	vfs := osfs.New()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestRace(t)

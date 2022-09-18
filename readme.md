@@ -22,7 +22,7 @@ an abstraction layer to emulate the behavior of a file system that provides seve
 
 Additionally, some file systems support :
 - user file creation mode mask (**Umask**) (MemFS, OrefaFS)
-- **chroot** (MemFS)
+- **chroot** (OSFS on Linux)
 - **hard links** (MemFS, OrefaFS)
 - **symbolic links** (MemFS)
 - **multiple users concurrently** (MemFS)
@@ -77,7 +77,7 @@ func main() {
 
 	switch os.Getenv("ENV") {
 	case "PROD": // The real file system for production.
-		vfs = osfs.New()
+		vfs = osfs.NewWithNoIdm()
 	default: // in memory for tests.
 		vfs = memfs.New()
 	}
@@ -196,14 +196,13 @@ File system |Comments
 
 ## Supported methods
 
-File system methods <br> `avfs.FS`|Comments
-----------------------------------|--------
+File system methods <br> `avfs.VFS`|Comments
+-----------------------------------|--------
 `Abs`|equivalent to `filepath.Abs`
 `Base`|equivalent to `filepath.Base`
 `Chdir`|equivalent to `os.Chdir`
 `Chmod`|equivalent to `os.Chmod`
 `Chown`|equivalent to `os.Chown`
-`Chroot`|equivalent to `syscall.Chroot`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
 `Create`|equivalent to `os.Create`
@@ -242,6 +241,7 @@ File system methods <br> `avfs.FS`|Comments
 `SetUser`|sets and returns the current user
 `Split`|equivalent to `filepath.Split`
 `Stat`|equivalent to `os.Stat`
+`Sub`|equivalent to `fs.Sub`
 `Symlink`|equivalent to `os.Symlink`
 `TempDir`|equivalent to `os.TempDir`
 `ToSlash`|equivalent to `filepath.ToSlash`

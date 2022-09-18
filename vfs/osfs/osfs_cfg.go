@@ -18,21 +18,34 @@ package osfs
 
 import (
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/osidm"
 )
 
-// New returns a new OsFS file system.
-func New(opts ...Option) *OsFS {
+// New returns a new OS file system with the default Options.
+// Don't use this for a production environment, prefer NewWithNoIdm.
+func New() *OsFS {
+	return NewWithOptions(nil)
+}
+
+// NewWithNoIdm returns a new OS file system with no identity management.
+// Use this for production environments.
+func NewWithNoIdm() *OsFS {
+	return NewWithOptions(&Options{Idm: avfs.NotImplementedIdm})
+}
+
+// NewWithOptions returns a new memory file system (MemFS) with the selected Options.
+func NewWithOptions(opts *Options) *OsFS {
+	if opts == nil {
+		opts = &Options{Idm: osidm.New()}
+	}
+
+	features := avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink | opts.Idm.Features()
 	vfs := &OsFS{
-		idm:      avfs.NotImplementedIdm,
-		features: avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink,
+		idm:      opts.Idm,
+		features: features,
 	}
 
 	vfs.SetOSType(avfs.CurrentOSType())
-
-	for _, opt := range opts {
-		opt(vfs)
-	}
-
 	vfs.setErrors()
 
 	return vfs
@@ -66,16 +79,6 @@ func (*OsFS) Name() string {
 // Type returns the type of the fileSystem or Identity manager.
 func (*OsFS) Type() string {
 	return "OsFS"
-}
-
-// Options
-
-// WithIdm returns a function setting the identity manager for the file system.
-func WithIdm(idm avfs.IdentityMgr) Option {
-	return func(vfs *OsFS) {
-		vfs.idm = idm
-		vfs.features |= idm.Features()
-	}
 }
 
 // Configuration functions.

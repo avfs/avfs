@@ -32,5 +32,7 @@ type OsErrors struct {
 	PermDenied error // Permission denied.
 }
 
-// Option defines the option function used for initializing OsFS.
-type Option func(*OsFS)
+// Options defines the initialization options of OsFS.
+type Options struct {
+	Idm avfs.IdentityMgr // Idm is the identity manager of the file system.
+}
