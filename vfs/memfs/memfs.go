@@ -724,7 +724,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 // the decision may be based on the path names.
 // SameFile only applies to results returned by this package's Stat.
 // It returns false in other cases.
-func (vfs *MemFS) SameFile(fi1, fi2 fs.FileInfo) bool {
+func (*MemFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	fs1, ok1 := fi1.(*MemInfo)
 	if !ok1 {
 		return false
@@ -841,7 +841,7 @@ func (vfs *MemFS) TempDir() string {
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func (vfs *MemFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
+func (*MemFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 	return info.Sys().(avfs.SysStater) //nolint:forcetypeassert // type assertion must be checked
 }
 

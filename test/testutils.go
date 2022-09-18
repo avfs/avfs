@@ -1364,7 +1364,7 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, testDir string) {
 }
 
 // TestUMask tests Umask methods.
-func (sfs *SuiteFS) TestUMask(t *testing.T, testDir string) {
+func (*SuiteFS) TestUMask(t *testing.T, testDir string) {
 	const umaskSet = fs.FileMode(0o77)
 
 	umaskTest := umaskSet
