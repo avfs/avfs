@@ -21,13 +21,12 @@ package memfs_test
 import (
 	"testing"
 
-	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
 func TestRaceMemFS(t *testing.T) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
+	vfs := memfs.New()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestRace(t)

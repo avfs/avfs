@@ -26,7 +26,7 @@ import (
 )
 
 func TestRaceOrefaFs(t *testing.T) {
-	vfs := orefafs.New(orefafs.WithSystemDirs())
+	vfs := orefafs.New()
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestRace(t)
