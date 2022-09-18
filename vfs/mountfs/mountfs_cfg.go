@@ -39,7 +39,7 @@ func New(rootFS avfs.VFS, basePath string) *MountFS {
 		features: rootFS.Features() &^ (avfs.FeatSymlink | avfs.FeatIdentityMgr),
 	}
 
-	vfs.InitUtils(avfs.CurrentOSType())
+	vfs.SetOSType(avfs.CurrentOSType())
 
 	return vfs
 }

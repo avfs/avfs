@@ -27,7 +27,7 @@ func New(opts ...Option) *OsFS {
 		features: avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink,
 	}
 
-	vfs.InitUtils(avfs.CurrentOSType())
+	vfs.SetOSType(avfs.CurrentOSType())
 
 	for _, opt := range opts {
 		opt(vfs)
