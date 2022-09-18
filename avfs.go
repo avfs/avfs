@@ -70,10 +70,10 @@ type OSType uint16
 //go:generate stringer -type OSType -linecomment -output avfs_ostype.go
 
 const (
-	OsLinux   OSType = iota // Linux
+	OsUnknown OSType = iota // Unknown
+	OsLinux                 // Linux
 	OsWindows               // Windows
 	OsDarwin                // Darwin
-	OsUnknown               // Unknown
 )
 
 // OpenMode defines constants used by OpenFile and CheckPermission functions.

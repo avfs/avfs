@@ -8,15 +8,15 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[OsLinux-0]
-	_ = x[OsWindows-1]
-	_ = x[OsDarwin-2]
-	_ = x[OsUnknown-3]
+	_ = x[OsUnknown-0]
+	_ = x[OsLinux-1]
+	_ = x[OsWindows-2]
+	_ = x[OsDarwin-3]
 }
 
-const _OSType_name = "LinuxWindowsDarwinUnknown"
+const _OSType_name = "UnknownLinuxWindowsDarwin"
 
-var _OSType_index = [...]uint8{0, 5, 12, 18, 25}
+var _OSType_index = [...]uint8{0, 7, 12, 19, 25}
 
 func (i OSType) String() string {
 	if i >= OSType(len(_OSType_index)-1) {
