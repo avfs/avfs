@@ -28,8 +28,10 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
+// ExampleNew should produce the same results independently of the host OS.
 func ExampleNew() {
-	vfs := memfs.New()
+	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux, SystemDirs: true})
 
 	fmt.Println(vfs.Features())
 	fmt.Println(vfs.User().Name())
