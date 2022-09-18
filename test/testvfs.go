@@ -2272,6 +2272,26 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 	})
 }
 
+// TestSub tests Sub function.
+func (sfs *SuiteFS) TestSub(t *testing.T, testDir string) {
+	vfs, ok := sfs.vfsTest.(avfs.VFS)
+	if !ok {
+		return
+	}
+
+	if !vfs.HasFeature(avfs.FeatSubFS) {
+		_, err := vfs.Sub(testDir)
+		CheckPathError(t, err).Op("sub").Path(testDir).ErrPermDenied()
+
+		return
+	}
+
+	t.Run("Sub", func(t *testing.T) {
+		//		vfsSub, err := vfs.Sub(testDir)
+		//		CheckNoError(t, "Sub "+testDir, err)
+	})
+}
+
 // TestToSysStat tests ToSysStat function.
 func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 	vfs := sfs.vfsTest

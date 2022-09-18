@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/basepathfs"
 	"github.com/avfs/avfs/vfs/memfs"
@@ -37,7 +36,7 @@ var (
 )
 
 func initFS(tb testing.TB) *basepathfs.BasePathFS {
-	baseFs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
+	baseFs := memfs.New()
 	basePath := avfs.FromUnixPath("/base/path")
 
 	err := baseFs.MkdirAll(basePath, avfs.DefaultDirPerm)
@@ -64,7 +63,7 @@ func TestBasePathFS(t *testing.T) {
 
 // TestBasePathFsOptions tests BasePathFS configuration options.
 func TestBasePathFSOptions(t *testing.T) {
-	vfs := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
+	vfs := memfs.New()
 	nonExistingDir := avfs.FromUnixPath("/non/existing/dir")
 
 	test.CheckPanic(t, "", func() {
@@ -89,11 +88,11 @@ func TestBasePathFSFeatures(t *testing.T) {
 		t.Errorf("Features : want FeatSymlink missing, got present")
 	}
 
-	if vfs.HasFeature(avfs.FeatIdentityMgr) {
-		t.Errorf("Features : want FeatIdentityMgr missing, got present")
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		t.Errorf("Features : want FeatIdentityMgr present, got missing")
 	}
 
-	mfs := memfs.New(memfs.WithIdm(memidm.New()))
+	mfs := memfs.New()
 
 	vfs = basepathfs.New(mfs, "/")
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
@@ -102,7 +101,7 @@ func TestBasePathFSFeatures(t *testing.T) {
 }
 
 func TestBasepathFSOSType(t *testing.T) {
-	vfsBase := memfs.New(memfs.WithSystemDirs())
+	vfsBase := memfs.New()
 	vfs := basepathfs.New(vfsBase, vfsBase.TempDir())
 
 	osType := vfs.OSType()

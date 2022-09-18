@@ -312,7 +312,7 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 	const copyFile = "CopyFile"
 
 	srcFs := sfs.vfsSetup
-	dstFs := memfs.New(memfs.WithSystemDirs())
+	dstFs := memfs.New()
 
 	rtParams := &avfs.RndTreeParams{
 		MinName: 32, MaxName: 32,

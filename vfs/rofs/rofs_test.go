@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
 	"github.com/avfs/avfs/vfs/rofs"
@@ -37,7 +36,7 @@ var (
 )
 
 func initTest(t *testing.T) *test.SuiteFS {
-	vfsSetup := memfs.New(memfs.WithIdm(memidm.New()), memfs.WithSystemDirs())
+	vfsSetup := memfs.New()
 
 	vfs := rofs.New(vfsSetup)
 	sfs := test.NewSuiteFS(t, vfsSetup, test.WithVFSTest(vfs))
