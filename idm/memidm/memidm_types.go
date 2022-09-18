@@ -32,18 +32,18 @@ const (
 
 // MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
 type MemIdm struct {
-	adminGroup   *MemGroup     // Administrator Group.
-	adminUser    *MemUser      // Administrator User.
-	groupsByName groupsByName  // Groups map by Name.
-	groupsById   groupsById    // Groups map by Id.
-	usersByName  usersByName   // Users map by Name.
-	usersById    usersById     // Users map by Id.
-	feature      avfs.Features // Idm features.
-	maxGid       int           // Current maximum Gid.
-	maxUid       int           // Current maximum Uid.
-	grpMu        sync.RWMutex  // Groups mutex.
-	usrMu        sync.RWMutex  // Users mutex.
-	osType       avfs.OSType
+	adminGroup   *MemGroup     // adminGroup is the Administrator Group.
+	adminUser    *MemUser      // adminUser is the Administrator User.
+	groupsByName groupsByName  // groupsByName is the groups map by Name.
+	groupsById   groupsById    // groupsById is the groups map by Id.
+	usersByName  usersByName   // usersByName is the users map by Name.
+	usersById    usersById     // usersById is users map by Id.
+	features     avfs.Features // features defines the list of features available for this idm.
+	maxGid       int           // maxGid is the current maximum Gid.
+	maxUid       int           // maxUid is the current maximum Uid.
+	grpMu        sync.RWMutex  // grpMu is the groups mutex.
+	usrMu        sync.RWMutex  // usrMu is the users mutex.
+	osType       avfs.OSType   // OSType is the operating system type.
 }
 
 // groupsByName is the map of groups by group name.
@@ -71,5 +71,7 @@ type MemGroup struct {
 	gid  int
 }
 
-// Option defines the option function used for initializing OsFS.
-type Option func(idm *MemIdm)
+// Options defines the initialization options of MemIdm.
+type Options struct {
+	OSType avfs.OSType // OSType defines the operating system type.
+}

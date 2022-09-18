@@ -17,9 +17,7 @@
 // Package memidm implements an in memory identity manager.
 package memidm
 
-import (
-	"github.com/avfs/avfs"
-)
+import "github.com/avfs/avfs"
 
 // AdminGroup returns the administrator (root) group.
 func (idm *MemIdm) AdminGroup() avfs.GroupReader {

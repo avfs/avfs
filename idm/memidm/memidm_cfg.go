@@ -16,25 +16,28 @@
 
 package memidm
 
-import (
-	"github.com/avfs/avfs"
-)
+import "github.com/avfs/avfs"
 
 // New creates a new identity manager.
-func New(opts ...Option) *MemIdm {
+func New() *MemIdm {
+	return NewWithOptions(nil)
+}
+
+// NewWithOptions creates a new identity manager using Options.
+func NewWithOptions(opts *Options) *MemIdm {
+	if opts == nil {
+		opts = &Options{OSType: avfs.CurrentOSType()}
+	}
+
 	idm := &MemIdm{
 		groupsByName: make(groupsByName),
 		groupsById:   make(groupsById),
 		usersByName:  make(usersByName),
 		usersById:    make(usersById),
-		feature:      avfs.FeatIdentityMgr,
+		features:     avfs.FeatIdentityMgr,
 		maxGid:       minGid,
 		maxUid:       minUid,
-		osType:       avfs.CurrentOSType(),
-	}
-
-	for _, opt := range opts {
-		opt(idm)
+		osType:       opts.OSType,
 	}
 
 	adminGroupName := avfs.AdminGroupName(idm.osType)
@@ -69,21 +72,12 @@ func (idm *MemIdm) Features() avfs.Features {
 	return avfs.FeatIdentityMgr
 }
 
-// HasFeature returns true if the file system or identity manager provides a given feature.
+// HasFeature returns true if the file system or identity manager provides a given features.
 func (idm *MemIdm) HasFeature(feature avfs.Features) bool {
-	return (idm.feature & feature) == feature
+	return (idm.features & feature) == feature
 }
 
 // OSType returns the operating system type of the identity manager.
 func (idm *MemIdm) OSType() avfs.OSType {
 	return idm.osType
-}
-
-// Options
-
-// WithOSType returns a function setting the OS type of the file system.
-func WithOSType(osType avfs.OSType) Option {
-	return func(idm *MemIdm) {
-		idm.osType = osType
-	}
 }
