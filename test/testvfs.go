@@ -213,6 +213,15 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		return
 	}
 
+	t.Run("ChownNonExistingFile", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		err := vfs.Chown(nonExistingFile, 0, 0)
+		CheckPathError(t, err).Op("chown").Path(nonExistingFile).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
+	})
+
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		wantUid, wantGid := 42, 42
 
@@ -293,15 +302,6 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 				}
 			}
 		}
-	})
-
-	t.Run("ChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t, testDir)
-
-		err := vfs.Chown(nonExistingFile, 0, 0)
-		CheckPathError(t, err).Op("chown").Path(nonExistingFile).
-			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
-			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
 	})
 
 	t.Run("ChownPerm", func(t *testing.T) {
@@ -610,6 +610,15 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		return
 	}
 
+	t.Run("LChownNonExistingFile", func(t *testing.T) {
+		nonExistingFile := sfs.NonExistingFile(t, testDir)
+
+		err := vfs.Lchown(nonExistingFile, 0, 0)
+		CheckPathError(t, err).Op("lchown").Path(nonExistingFile).
+			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
+	})
+
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		wantUid, wantGid := 42, 42
 
@@ -720,15 +729,6 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 				}
 			}
 		}
-	})
-
-	t.Run("LChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.NonExistingFile(t, testDir)
-
-		err := vfs.Lchown(nonExistingFile, 0, 0)
-		CheckPathError(t, err).Op("lchown").Path(nonExistingFile).
-			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
-			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
 	})
 
 	t.Run("LchownPerm", func(t *testing.T) {
