@@ -325,6 +325,10 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 		return
 	}
 
+	if os.Getenv("container") == "podman" {
+		return
+	}
+
 	t.Run("Chroot", func(t *testing.T) {
 		chrootDir := vfs.Join(testDir, "chroot")
 
