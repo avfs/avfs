@@ -121,6 +121,9 @@ type PermFunc func(path string) error
 
 // load loads a permissions test file.
 func (pts *PermTests) load(t *testing.T) {
+	sfs := pts.sfs
+	sfs.SetUser(t, sfs.initUser.Name())
+
 	b, err := os.ReadFile(pts.errFileName)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
@@ -148,6 +151,9 @@ func (pts *PermTests) save(t *testing.T) {
 	if err != nil {
 		t.Fatalf("MarshalIndent %s : %v", pts.errFileName, err)
 	}
+
+	sfs := pts.sfs
+	sfs.SetUser(t, sfs.initUser.Name())
 
 	err = os.WriteFile(pts.errFileName, b, avfs.DefaultFilePerm)
 	if err != nil {
@@ -224,8 +230,6 @@ func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
 			}
 		}
 	}
-
-	sfs.SetUser(t, sfs.initUser.Name())
 
 	pts.save(t)
 }
