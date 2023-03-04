@@ -231,13 +231,29 @@ func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
 			{`c:..\abc`, `c:..\abc`},
 			{`\`, `\`},
 			{`/`, `\`},
-			{`\\i\..\c$`, `\c$`},
-			{`\\i\..\i\c$`, `\i\c$`},
-			{`\\i\..\I\c$`, `\I\c$`},
+			{`\\i\..\c$`, `\\i\..\c$`},
+			{`\\i\..\i\c$`, `\\i\..\i\c$`},
+			{`\\i\..\I\c$`, `\\i\..\I\c$`},
 			{`\\host\share\foo\..\bar`, `\\host\share\bar`},
 			{`//host/share/foo/../baz`, `\\host\share\baz`},
+			{`\\host\share\foo\..\..\..\..\bar`, `\\host\share\bar`},
+			{`\\.\C:\a\..\..\..\..\bar`, `\\.\C:\bar`},
+			{`\\.\C:\\\\a`, `\\.\C:\a`},
 			{`\\a\b\..\c`, `\\a\b\c`},
 			{`\\a\b`, `\\a\b`},
+			{`.\c:`, `.\c:`},
+			{`.\c:\foo`, `.\c:\foo`},
+			{`.\c:foo`, `.\c:foo`},
+			{`//abc`, `\\abc`},
+			{`///abc`, `\\\abc`},
+			{`//abc//`, `\\abc\\`},
+
+			// Don't allow cleaning to move an element with a colon to the start of the path.
+			{`a/../c:`, `.\c:`},
+			{`a\..\c:`, `.\c:`},
+			{`a/../c:/a`, `.\c:\a`},
+			{`a/../../c:`, `..\c:`},
+			{`foo:bar`, `foo:bar`},
 		}
 	default:
 		cleanTests = []*pathTest{
@@ -266,9 +282,6 @@ func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
 
 			// Remove doubled slash
 			{"abc//def//ghi", "abc/def/ghi"},
-			{"//abc", "/abc"},
-			{"///abc", "/abc"},
-			{"//abc//", "/abc"},
 			{"abc//", "abc"},
 
 			// Remove . elements

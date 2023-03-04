@@ -159,6 +159,10 @@ type DirInfo struct {
 // If the result of this process is an empty string, Clean
 // returns the string ".".
 //
+// On Windows, Clean does not modify the volume name other than to replace
+// occurrences of "/" with `\`.
+// For example, Clean("//host/share/../x") returns `\\host\share\x`.
+//
 // See also Rob Pike, “Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
@@ -168,7 +172,7 @@ func (ut *Utils[_]) Clean(path string) string {
 
 	path = path[volLen:]
 	if path == "" {
-		if volLen > 1 && originalPath[1] != ':' {
+		if volLen > 1 && ut.IsPathSeparator(originalPath[0]) && ut.IsPathSeparator(originalPath[1]) {
 			// should be UNC
 			return ut.FromSlash(originalPath)
 		}
@@ -228,6 +232,21 @@ func (ut *Utils[_]) Clean(path string) string {
 			if rooted && out.w != 1 || !rooted && out.w != 0 {
 				out.append(ut.pathSeparator)
 			}
+
+			// If a ':' appears in the path element at the start of a Windows path,
+			// insert a .\ at the beginning to avoid converting relative paths
+			// like a/../c: into c:.
+			if ut.osType == OsWindows && out.w == 0 && out.volLen == 0 && r != 0 {
+				for i := r; i < n && !ut.IsPathSeparator(path[i]); i++ {
+					if path[i] == ':' {
+						out.append('.')
+						out.append(ut.pathSeparator)
+
+						break
+					}
+				}
+			}
+
 			// copy element
 			for ; r < n && !ut.IsPathSeparator(path[r]); r++ {
 				out.append(path[r])
