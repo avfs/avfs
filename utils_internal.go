@@ -143,57 +143,51 @@ func (ut *Utils[_]) hasMeta(path string) bool {
 }
 
 func (ut *Utils[_]) joinWindows(elem []string) string {
-	for i, e := range elem {
-		if e != "" {
-			return ut.joinNonEmpty(elem[i:])
-		}
-	}
+	var (
+		b        strings.Builder
+		lastChar byte
+	)
 
-	return ""
-}
-
-// joinNonEmpty is like join, but it assumes that the first element is non-empty.
-func (ut *Utils[_]) joinNonEmpty(elem []string) string {
-	if len(elem[0]) == 2 && elem[0][1] == ':' {
-		// First element is drive letter without terminating slash.
-		// Keep path relative to current directory on that drive.
-		// Skip empty elements.
-		i := 1
-		for ; i < len(elem); i++ {
-			if elem[i] != "" {
-				break
+	for _, e := range elem {
+		switch {
+		case b.Len() == 0:
+			// Add the first non-empty path element unchanged.
+		case isSlash(lastChar):
+			// If the path ends in a slash, strip any leading slashes from the next
+			// path element to avoid creating a UNC path (any path starting with "\\")
+			// from non-UNC elements.
+			//
+			// The correct behavior for Join when the first element is an incomplete UNC
+			// path (for example, "\\") is underspecified. We currently join subsequent
+			// elements so Join("\\", "host", "share") produces "\\host\share".
+			for len(e) > 0 && isSlash(e[0]) {
+				e = e[1:]
 			}
+		case lastChar == ':':
+			// If the path ends in a colon, keep the path relative to the current directory
+			// on a drive and don't add a separator. Preserve leading slashes in the next
+			// path element, which may make the path absolute.
+			//
+			// 	Join(`C:`, `f`) = `C:f`
+			//	Join(`C:`, `\f`) = `C:\f`
+		default:
+			// In all other cases, add a separator between elements.
+			b.WriteByte('\\')
+
+			lastChar = '\\'
 		}
 
-		return ut.Clean(elem[0] + strings.Join(elem[i:], string(ut.pathSeparator)))
-	}
-	// The following logic prevents Join from inadvertently creating a
-	// UNC path on Windows. Unless the first element is a UNC path, Join
-	// shouldn't create a UNC path. See golang.org/issue/9167.
-	p := ut.Clean(strings.Join(elem, string(ut.pathSeparator)))
-	if !ut.isUNC(p) {
-		return p
+		if len(e) > 0 {
+			b.WriteString(e)
+			lastChar = e[len(e)-1]
+		}
 	}
 
-	// p == UNC only allowed when the first element is a UNC path.
-	head := ut.Clean(elem[0])
-	if ut.isUNC(head) {
-		return p
+	if b.Len() == 0 {
+		return ""
 	}
 
-	// head + tail == UNC, but joining two non-UNC paths should not result
-	// in a UNC path. Undo creation of UNC path.
-	tail := ut.Clean(strings.Join(elem[1:], string(ut.pathSeparator)))
-	if head[len(head)-1] == ut.pathSeparator {
-		return head + tail
-	}
-
-	return head + string(ut.pathSeparator) + tail
-}
-
-// isUNC reports whether path is a UNC path.
-func (ut *Utils[_]) isUNC(path string) bool {
-	return ut.VolumeNameLen(path) > 2
+	return ut.Clean(b.String())
 }
 
 func (ut *Utils[_]) joinPath(dir, name string) string {
@@ -210,31 +204,6 @@ func (ut *Utils[_]) sameWord(a, b string) bool {
 	}
 
 	return strings.EqualFold(a, b)
-}
-
-// reservedNames lists reserved Windows names. Search for PRN in
-// https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file
-// for details.
-var reservedNames = []string{ //nolint:gochecknoglobals // Used by isReservedName().
-	"CON", "PRN", "AUX", "NUL",
-	"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-	"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
-}
-
-// isReservedName returns true, if path is Windows reserved name.
-// See reservedNames for the full list.
-func isReservedName(path string) bool {
-	if path == "" {
-		return false
-	}
-
-	for _, reserved := range reservedNames {
-		if strings.EqualFold(path, reserved) {
-			return true
-		}
-	}
-
-	return false
 }
 
 // matchChunk checks whether chunk matches the beginning of s.

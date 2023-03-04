@@ -907,57 +907,74 @@ func (sfs *SuiteFS) TestJoin(t *testing.T, _ string) {
 		path string
 	}
 
-	var joinTests []*joinTest
+	joinTests := []*joinTest{
+		// zero parameters
+		{[]string{}, ""},
+
+		// one parameter
+		{[]string{""}, ""},
+		{[]string{"/"}, "/"},
+		{[]string{"a"}, "a"},
+
+		// two parameters
+		{[]string{"a", "b"}, "a/b"},
+		{[]string{"a", ""}, "a"},
+		{[]string{"", "b"}, "b"},
+		{[]string{"/", "a"}, "/a"},
+		{[]string{"/", "a/b"}, "/a/b"},
+		{[]string{"/", ""}, "/"},
+		{[]string{"/a", "b"}, "/a/b"},
+		{[]string{"a", "/b"}, "a/b"},
+		{[]string{"/a", "/b"}, "/a/b"},
+		{[]string{"a/", "b"}, "a/b"},
+		{[]string{"a/", ""}, "a"},
+		{[]string{"", ""}, ""},
+
+		// three parameters
+		{[]string{"/", "a", "b"}, "/a/b"},
+	}
 
 	switch vfs.OSType() {
 	case avfs.OsWindows:
-		joinTests = []*joinTest{
-			{elem: []string{`directory`, `file`}, path: `directory\file`},
-			{elem: []string{`C:\Windows\`, `System32`}, path: `C:\Windows\System32`},
-			{elem: []string{`C:\Windows\`, ``}, path: `C:\Windows`},
-			{elem: []string{`C:\`, `Windows`}, path: `C:\Windows`},
-			{elem: []string{`C:`, `a`}, path: `C:a`},
-			{elem: []string{`C:`, `a\b`}, path: `C:a\b`},
-			{elem: []string{`C:`, `a`, `b`}, path: `C:a\b`},
-			{elem: []string{`C:`, ``, `b`}, path: `C:b`},
-			{elem: []string{`C:`, ``, ``, `b`}, path: `C:b`},
-			{elem: []string{`C:`, ``}, path: `C:.`},
-			{elem: []string{`C:`, ``, ``}, path: `C:.`},
-			{elem: []string{`C:.`, `a`}, path: `C:a`},
-			{elem: []string{`C:a`, `b`}, path: `C:a\b`},
-			{elem: []string{`C:a`, `b`, `d`}, path: `C:a\b\d`},
-			{elem: []string{`\\host\share`, `foo`}, path: `\\host\share\foo`},
-			{elem: []string{`\\host\share\foo`}, path: `\\host\share\foo`},
-			{elem: []string{`//host/share`, `foo/bar`}, path: `\\host\share\foo\bar`},
-			{elem: []string{`\`}, path: `\`},
-			{elem: []string{`\`, ``}, path: `\`},
-			{elem: []string{`\`, `a`}, path: `\a`},
-			{elem: []string{`\\`, `a`}, path: `\a`},
-			{elem: []string{`\`, `a`, `b`}, path: `\a\b`},
-			{elem: []string{`\\`, `a`, `b`}, path: `\a\b`},
-			{elem: []string{`\`, `\\a\b`, `c`}, path: `\a\b\c`},
-			{elem: []string{`\\a`, `b`, `c`}, path: `\a\b\c`},
-			{elem: []string{`\\a\`, `b`, `c`}, path: `\a\b\c`},
+		winJoinTests := []*joinTest{
+			{[]string{`directory`, `file`}, `directory\file`},
+			{[]string{`C:\Windows\`, `System32`}, `C:\Windows\System32`},
+			{[]string{`C:\Windows\`, ``}, `C:\Windows`},
+			{[]string{`C:\`, `Windows`}, `C:\Windows`},
+			{[]string{`C:`, `a`}, `C:a`},
+			{[]string{`C:`, `a\b`}, `C:a\b`},
+			{[]string{`C:`, `a`, `b`}, `C:a\b`},
+			{[]string{`C:`, ``, `b`}, `C:b`},
+			{[]string{`C:`, ``, ``, `b`}, `C:b`},
+			{[]string{`C:`, ``}, `C:.`},
+			{[]string{`C:`, ``, ``}, `C:.`},
+			{[]string{`C:`, `\a`}, `C:\a`},
+			{[]string{`C:`, ``, `\a`}, `C:\a`},
+			{[]string{`C:.`, `a`}, `C:a`},
+			{[]string{`C:a`, `b`}, `C:a\b`},
+			{[]string{`C:a`, `b`, `d`}, `C:a\b\d`},
+			{[]string{`\\host\share`, `foo`}, `\\host\share\foo`},
+			{[]string{`\\host\share\foo`}, `\\host\share\foo`},
+			{[]string{`//host/share`, `foo/bar`}, `\\host\share\foo\bar`},
+			{[]string{`\`}, `\`},
+			{[]string{`\`, ``}, `\`},
+			{[]string{`\`, `a`}, `\a`},
+			{[]string{`\\`, `a`}, `\\a`},
+			{[]string{`\`, `a`, `b`}, `\a\b`},
+			{[]string{`\\`, `a`, `b`}, `\\a\b`},
+			{[]string{`\`, `\\a\b`, `c`}, `\a\b\c`},
+			{[]string{`\\a`, `b`, `c`}, `\\a\b\c`},
+			{[]string{`\\a\`, `b`, `c`}, `\\a\b\c`},
+			{[]string{`//`, `a`}, `\\a`},
 		}
+
+		joinTests = append(joinTests, winJoinTests...)
 	default:
-		joinTests = []*joinTest{
-			// zero parameters
-			{elem: []string{}},
-
-			// one parameter
-			{elem: []string{""}},
-			{elem: []string{"a"}, path: "a"},
-
-			// two parameters
-			{elem: []string{"a", "b"}, path: "a/b"},
-			{elem: []string{"a", ""}, path: "a"},
-			{elem: []string{"", "b"}, path: "b"},
-			{elem: []string{"/", "a"}, path: "/a"},
-			{elem: []string{"/", ""}, path: "/"},
-			{elem: []string{"a/", "b"}, path: "a/b"},
-			{elem: []string{"a/", ""}, path: "a"},
-			{elem: []string{"", ""}},
+		nonWinJoinTests := []*joinTest{
+			{elem: []string{"//", "a"}, path: "/a"},
 		}
+
+		joinTests = append(joinTests, nonWinJoinTests...)
 	}
 
 	for _, test := range joinTests {
