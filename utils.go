@@ -167,6 +167,10 @@ type DirInfo struct {
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
 func (ut *Utils[_]) Clean(path string) string {
+	if ut.osType == currentOSType {
+		return filepath.Clean(path)
+	}
+
 	originalPath := path
 	volLen := ut.VolumeNameLen(path)
 

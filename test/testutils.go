@@ -217,11 +217,63 @@ func (sfs *SuiteFS) TestBase(t *testing.T, _ string) {
 func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
-	var cleanTests []*pathTest
+	cleanTests := []*pathTest{
+		// Already clean
+		{"abc", "abc"},
+		{"abc/def", "abc/def"},
+		{"a/b/c", "a/b/c"},
+		{".", "."},
+		{"..", ".."},
+		{"../..", "../.."},
+		{"../../abc", "../../abc"},
+		{"/abc", "/abc"},
+		{"/", "/"},
+
+		// Empty is current dir
+		{"", "."},
+
+		// Remove trailing slash
+		{"abc/", "abc"},
+		{"abc/def/", "abc/def"},
+		{"a/b/c/", "a/b/c"},
+		{"./", "."},
+		{"../", ".."},
+		{"../../", "../.."},
+		{"/abc/", "/abc"},
+
+		// Remove doubled slash
+		{"abc//def//ghi", "abc/def/ghi"},
+		{"abc//", "abc"},
+
+		// Remove . elements
+		{"abc/./def", "abc/def"},
+		{"/./abc/def", "/abc/def"},
+		{"abc/.", "abc"},
+
+		// Remove .. elements
+		{"abc/def/ghi/../jkl", "abc/def/jkl"},
+		{"abc/def/../ghi/../jkl", "abc/jkl"},
+		{"abc/def/..", "abc"},
+		{"abc/def/../..", "."},
+		{"/abc/def/../..", "/"},
+		{"abc/def/../../..", ".."},
+		{"/abc/def/../../..", "/"},
+		{"abc/def/../../../ghi/jkl/../../../mno", "../../mno"},
+		{"/../abc", "/abc"},
+
+		// Combinations
+		{"abc/./../def", "def"},
+		{"abc//./../def", "def"},
+		{"abc/../../././../def", "../../def"},
+	}
 
 	switch vfs.OSType() {
 	case avfs.OsWindows:
-		cleanTests = []*pathTest{
+		for i := range cleanTests {
+			cleanTests[i].result = vfs.FromSlash(cleanTests[i].result)
+		}
+
+		winCleantests := []*pathTest{
 			{`c:`, `c:.`},
 			{`c:\`, `c:\`},
 			{`c:\abc`, `c:\abc`},
@@ -255,67 +307,25 @@ func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
 			{`a/../../c:`, `..\c:`},
 			{`foo:bar`, `foo:bar`},
 		}
+
+		cleanTests = append(cleanTests, winCleantests...)
 	default:
-		cleanTests = []*pathTest{
-			// Already clean
-			{"abc", "abc"},
-			{"abc/def", "abc/def"},
-			{"a/b/c", "a/b/c"},
-			{".", "."},
-			{"..", ".."},
-			{"../..", "../.."},
-			{"../../abc", "../../abc"},
-			{"/abc", "/abc"},
-			{"/", "/"},
-
-			// Empty is current dir
-			{"", "."},
-
-			// Remove trailing slash
-			{"abc/", "abc"},
-			{"abc/def/", "abc/def"},
-			{"a/b/c/", "a/b/c"},
-			{"./", "."},
-			{"../", ".."},
-			{"../../", "../.."},
-			{"/abc/", "/abc"},
-
-			// Remove doubled slash
-			{"abc//def//ghi", "abc/def/ghi"},
-			{"abc//", "abc"},
-
-			// Remove . elements
-			{"abc/./def", "abc/def"},
-			{"/./abc/def", "/abc/def"},
-			{"abc/.", "abc"},
-
-			// Remove .. elements
-			{"abc/def/ghi/../jkl", "abc/def/jkl"},
-			{"abc/def/../ghi/../jkl", "abc/jkl"},
-			{"abc/def/..", "abc"},
-			{"abc/def/../..", "."},
-			{"/abc/def/../..", "/"},
-			{"abc/def/../../..", ".."},
-			{"/abc/def/../../..", "/"},
-			{"abc/def/../../../ghi/jkl/../../../mno", "../../mno"},
-			{"/../abc", "/abc"},
-
-			// Combinations
-			{"abc/./../def", "def"},
-			{"abc//./../def", "def"},
-			{"abc/../../././../def", "../../def"},
+		nonWinCleantests := []*pathTest{
+			// Remove leading doubled slash
+			{"//abc", "/abc"},
+			{"///abc", "/abc"},
+			{"//abc//", "/abc"},
 		}
+
+		cleanTests = append(cleanTests, nonWinCleantests...)
 	}
 
 	for _, test := range cleanTests {
-		s := vfs.Clean(test.path)
-		if s != test.result {
-			t.Errorf("Clean(%q) = %q, want %q", test.path, s, test.result)
-		}
+		p := vfs.Clean(test.path)
+		expected := vfs.FromSlash(test.result)
 
-		s = vfs.Clean(test.result)
-		if s != test.result {
-			t.Errorf("Clean(%q) = %q, want %q", test.result, s, test.result)
+		if p != expected {
+			t.Errorf("Clean(%q) = %q, want %q", test.path, p, expected)
 		}
 	}
 }
@@ -979,8 +989,10 @@ func (sfs *SuiteFS) TestJoin(t *testing.T, _ string) {
 
 	for _, test := range joinTests {
 		p := vfs.Join(test.elem...)
-		if p != test.path {
-			t.Errorf("Join(%q) = %q, want %q", test.elem, p, test.path)
+		expected := vfs.FromSlash(test.path)
+
+		if p != expected {
+			t.Errorf("Join(%q) = %q, want %q", test.elem, p, expected)
 		}
 	}
 }
