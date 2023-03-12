@@ -205,7 +205,7 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 	if !ok {
 		err = avfs.ErrIsADirectory
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinIncorrectFunc
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -254,7 +254,7 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 	if !ok {
 		err = avfs.ErrIsADirectory
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinIncorrectFunc
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -293,7 +293,7 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 //
 // If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
 // When it succeeds, it returns a nil error (not io.EOF).
-func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
+func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -311,13 +311,9 @@ func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	}
 
 	if f.nd == nil {
-		var err error
-
-		switch f.vfs.OSType() {
-		case avfs.OsWindows:
+		err = avfs.ErrFileClosing
+		if f.vfs.OSType() == avfs.OsWindows {
 			err = avfs.ErrWinPathNotFound
-		default:
-			err = avfs.ErrFileClosing
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -330,7 +326,7 @@ func (f *MemFile) ReadDir(n int) ([]fs.DirEntry, error) {
 
 	if n <= 0 || f.dirEntries == nil {
 		nd.mu.RLock()
-		entries := nd.dirEntries()
+		entries = nd.dirEntries()
 		nd.mu.RUnlock()
 
 		f.dirIndex = 0
@@ -466,11 +462,7 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		if f.vfs.OSType() != avfs.OsWindows {
-			return 0, nil
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinInvalidHandle}
+		return 0, nil
 	}
 
 	nd.mu.RLock()
@@ -509,7 +501,7 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
-func (f *MemFile) Stat() (fs.FileInfo, error) {
+func (f *MemFile) Stat() (info fs.FileInfo, err error) {
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -527,7 +519,12 @@ func (f *MemFile) Stat() (fs.FileInfo, error) {
 	}
 
 	if f.nd == nil {
-		return &MemInfo{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		err = avfs.ErrFileClosing
+		if f.vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return &MemInfo{}, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	name := f.vfs.Base(f.name)
@@ -589,7 +586,7 @@ func (f *MemFile) Truncate(size int64) error {
 	if !ok {
 		err := error(avfs.ErrInvalidArgument)
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinAccessDenied
 		}
 
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -639,7 +636,7 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 	if !ok {
 		err = avfs.ErrBadFileDesc
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinAccessDenied
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -700,7 +697,7 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 	if !ok {
 		err = avfs.ErrBadFileDesc
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinAccessDenied
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
