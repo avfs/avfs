@@ -91,7 +91,9 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFSBase, opts ...Option) *SuiteFS {
 		opt(sfs)
 	}
 
-	sfs.createUsersAndGroups(tb)
+	idm := vfs.Idm()
+	sfs.Groups = CreateGroups(tb, idm, "")
+	sfs.Users = CreateUsers(tb, idm, "")
 
 	return sfs
 }
@@ -155,19 +157,6 @@ func (sfs *SuiteFS) createBenchRoot(tb testing.TB) {
 	}
 
 	sfs.benchRoot = benchRoot
-}
-
-// createUsersAndGroups creates tests users and groups.
-func (sfs *SuiteFS) createUsersAndGroups(tb testing.TB) {
-	if !sfs.canTestPerm {
-		return
-	}
-
-	vfs := sfs.vfsSetup
-	idm := vfs.Idm()
-
-	sfs.Groups = CreateGroups(tb, idm, "")
-	sfs.Users = CreateUsers(tb, idm, "")
 }
 
 // SetUser sets the test user to userName.

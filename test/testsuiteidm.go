@@ -88,6 +88,10 @@ func GroupInfos() []*GroupInfo {
 // CreateGroups creates and returns test groups with a suffix appended to each group.
 // Errors are ignored if the group already exists.
 func CreateGroups(tb testing.TB, idm avfs.IdentityMgr, suffix string) (groups []avfs.GroupReader) {
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return
+	}
+
 	for _, group := range GroupInfos() {
 		groupName := group.Name + suffix
 
@@ -128,6 +132,10 @@ func UserInfos() []*UserInfo {
 // CreateUsers creates and returns test users with a suffix appended to each user.
 // Errors are ignored if the user or his home directory already exists.
 func CreateUsers(tb testing.TB, idm avfs.IdentityMgr, suffix string) (users []avfs.UserReader) {
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return
+	}
+
 	for _, ui := range UserInfos() {
 		userName := ui.Name + suffix
 		groupName := ui.GroupName + suffix
@@ -156,5 +164,5 @@ func CreateUsers(tb testing.TB, idm avfs.IdentityMgr, suffix string) (users []av
 		users = append(users, u)
 	}
 
-	return
+	return users
 }

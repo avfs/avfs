@@ -2445,6 +2445,10 @@ func (sfs *SuiteFS) TestUmask(t *testing.T, _ string) {
 
 // TestSetUser tests SetUser and User functions.
 func (sfs *SuiteFS) TestSetUser(t *testing.T, _ string) {
+	if !sfs.canTestPerm {
+		return
+	}
+
 	vfs := sfs.vfsTest
 	idm := vfs.Idm()
 
