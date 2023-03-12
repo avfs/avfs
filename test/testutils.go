@@ -21,7 +21,6 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"io/fs"
-	"math/rand"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -1182,8 +1181,6 @@ func (sfs *SuiteFS) TestRel(t *testing.T, _ string) {
 
 // TestRndTree tests RndTree methods.
 func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
-	const randSeed = 42
-
 	vfs := sfs.vfsSetup
 
 	rtTests := []*avfs.RndTreeParams{
@@ -1204,8 +1201,6 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	}
 
 	t.Run("RndTree", func(t *testing.T) {
-		rand.Seed(randSeed)
-
 		for i, rtTest := range rtTests {
 			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
 
@@ -1251,8 +1246,6 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 	})
 
 	t.Run("RndTreeAlreadyCreated", func(t *testing.T) {
-		rand.Seed(randSeed)
-
 		for i, rtTest := range rtTests {
 			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
 
