@@ -63,3 +63,8 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 func (idm *OsIdm) UserDel(name string) error {
 	return avfs.ErrPermDenied
 }
+
+// IsUserAdmin returns true if the current user has admin privileges.
+func isUserAdmin() bool {
+	return false
+}

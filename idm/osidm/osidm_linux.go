@@ -301,3 +301,8 @@ func lookupUserFunc(compareFunc compareFunc, value string, notFoundErr error) (*
 		}
 	}
 }
+
+// IsUserAdmin returns true if the current user has admin privileges.
+func isUserAdmin() bool {
+	return os.Geteuid() == 0
+}

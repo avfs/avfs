@@ -47,12 +47,13 @@ func TestOsIdmAll(t *testing.T) {
 func TestOsIdmCfg(t *testing.T) {
 	idm := osidm.New()
 
-	if avfs.CurrentOSType() == avfs.OsWindows {
+	switch avfs.CurrentOSType() {
+	case avfs.OsWindows:
 		if idm.Features() != 0 {
 			t.Errorf("want feature to be %v, got %v", 0, idm.Features())
 		}
-	} else {
-		if idm.Features() != avfs.FeatIdentityMgr {
+	default:
+		if idm.Features()&avfs.FeatIdentityMgr == 0 {
 			t.Errorf("want feature to be %v, got %v", avfs.FeatIdentityMgr, idm.Features())
 		}
 	}
