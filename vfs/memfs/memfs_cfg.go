@@ -155,17 +155,17 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 	const op = "VolumeAdd"
 
 	if vfs.OSType() != avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeWindows}
 	}
 
 	vol := vfs.Utils.VolumeName(path)
 	if vol == "" {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
 	}
 
 	_, ok := vfs.volumes[vol]
 	if ok {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeAlreadyExists}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeAlreadyExists}
 	}
 
 	vfs.volumes[vol] = vfs.createRootNode()
@@ -179,17 +179,17 @@ func (vfs *MemFS) VolumeDelete(path string) error {
 	const op = "VolumeDelete"
 
 	if vfs.OSType() != avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeWindows}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeWindows}
 	}
 
 	vol := vfs.VolumeName(path)
 	if vol == "" {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
 	}
 
 	_, ok := vfs.volumes[vol]
 	if !ok {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinVolumeNameInvalid}
+		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
 	}
 
 	err := vfs.RemoveAll(vol)

@@ -2551,10 +2551,10 @@ func (sfs *SuiteFS) TestVolume(t *testing.T, _ string) {
 		}
 
 		err := vm.VolumeAdd(testVolume)
-		CheckPathError(t, err).Op("VolumeAdd").Path(testVolume).Err(avfs.ErrWinVolumeWindows)
+		CheckPathError(t, err).Op("VolumeAdd").Path(testVolume).Err(avfs.ErrVolumeWindows)
 
 		err = vm.VolumeDelete(testVolume)
-		CheckPathError(t, err).Op("VolumeDelete").Path(testVolume).Err(avfs.ErrWinVolumeWindows)
+		CheckPathError(t, err).Op("VolumeDelete").Path(testVolume).Err(avfs.ErrVolumeWindows)
 
 		return
 	}

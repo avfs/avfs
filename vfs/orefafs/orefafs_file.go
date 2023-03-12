@@ -286,9 +286,13 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	}
 
 	if f.nd == nil {
-		err := avfs.ErrFileClosing
-		if f.vfs.OSType() == avfs.OsWindows {
+		var err error
+
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinPathNotFound
+		default:
+			err = avfs.ErrFileClosing
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}

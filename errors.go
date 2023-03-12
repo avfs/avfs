@@ -17,21 +17,9 @@
 package avfs
 
 import (
-	"errors"
 	"io/fs"
 	"reflect"
 	"strconv"
-)
-
-var (
-	// ErrNegativeOffset is the Error negative offset.
-	ErrNegativeOffset = errors.New("negative offset")
-
-	// ErrFileClosing is returned when a file descriptor is used after it has been closed.
-	ErrFileClosing = errors.New("use of closed file")
-
-	// ErrPatternHasSeparator is returned when a bad pattern is used in CreateTemp or MkdirTemp.
-	ErrPatternHasSeparator = errors.New("pattern contains path separator")
 )
 
 // AlreadyExistsGroupError is returned when the group name already exists.
@@ -85,13 +73,34 @@ func (e UnknownUserIdError) Error() string {
 
 // ErrorIdentifier is the interface that wraps the Is method of an error.
 type ErrorIdentifier interface {
+	error
+
 	// Is returns true if the error can be treated as equivalent to a target error.
 	// target is one of fs.ErrPermission, fs.ErrExist, fs.ErrNotExist.
 	Is(target error) bool
 }
 
+const customErrorBase = 2 << 30
+
+type CustomError uintptr
+
+//go:generate stringer -type CustomError -linecomment -output errors_custom.go
+
+const (
+	ErrNegativeOffset      CustomError = customErrorBase + 1 // negative offset
+	ErrFileClosing         CustomError = customErrorBase + 2 // use of closed file
+	ErrPatternHasSeparator CustomError = customErrorBase + 3 // pattern contains path separator
+	ErrVolumeAlreadyExists CustomError = customErrorBase + 4 // Volume already exists.
+	ErrVolumeNameInvalid   CustomError = customErrorBase + 5 // Volume name is invalid.
+	ErrVolumeWindows       CustomError = customErrorBase + 6 // Volumes are available for Windows only.
+)
+
+func (i CustomError) Error() string {
+	return i.String()
+}
+
 // LinuxError replaces syscall.Errno for Linux operating systems.
-type LinuxError uint32
+type LinuxError uintptr
 
 //go:generate stringer -type LinuxError -linecomment -output errors_forlinux.go
 
@@ -144,33 +153,28 @@ func (i LinuxError) Is(target error) bool {
 	return false
 }
 
-const CustomError = 2 << 30
-
 // WindowsError replaces syscall.Errno for Windows operating systems.
-type WindowsError uint32
+type WindowsError uintptr
 
 //go:generate stringer -type WindowsError -linecomment -output errors_forwindows.go
 
 // Errors for Windows operating systems.
 const (
-	ErrWinAccessDenied        = WindowsError(5)               // Access is denied.
-	ErrWinAlreadyExists       = WindowsError(183)             // Cannot create a file when that file already exists.
-	ErrWinBadNetPath          = WindowsError(53)              // Bad network path.
-	ErrWinDirNameInvalid      = WindowsError(0x10B)           // The directory name is invalid.
-	ErrWinDirNotEmpty         = WindowsError(145)             // The directory is not empty.
-	ErrWinFileExists          = WindowsError(80)              // The file exists.
-	ErrWinFileNotFound        = WindowsError(2)               // The system cannot find the file specified.
-	ErrWinIsADirectory        = WindowsError(21)              // is a directory
-	ErrWinNegativeSeek        = WindowsError(0x83)            // An attempt was made to move the file pointer before the beginning of the file.
-	ErrWinNotReparsePoint     = WindowsError(4390)            // The file or directory is not a reparse point.
-	ErrWinInvalidHandle       = WindowsError(6)               // The handle is invalid.
-	ErrWinSharingViolation    = WindowsError(32)              // The process cannot access the file because it is being used by another process.
-	ErrWinNotSupported        = WindowsError(0x20000082)      // not supported by windows
-	ErrWinPathNotFound        = WindowsError(3)               // The system cannot find the path specified.
-	ErrWinPrivilegeNotHeld    = WindowsError(1314)            // A required privilege is not held by the client.
-	ErrWinVolumeAlreadyExists = WindowsError(CustomError + 1) // Volume already exists.
-	ErrWinVolumeNameInvalid   = WindowsError(CustomError + 2) // Volume name is invalid.
-	ErrWinVolumeWindows       = WindowsError(CustomError + 3) // Volumes are available for Windows only.
+	ErrWinAccessDenied     WindowsError = 5          // Access is denied.
+	ErrWinAlreadyExists    WindowsError = 183        // Cannot create a file when that file already exists.
+	ErrWinBadNetPath       WindowsError = 53         // Bad network path.
+	ErrWinDirNameInvalid   WindowsError = 0x10B      // The directory name is invalid.
+	ErrWinDirNotEmpty      WindowsError = 145        // The directory is not empty.
+	ErrWinFileExists       WindowsError = 80         // The file exists.
+	ErrWinFileNotFound     WindowsError = 2          // The system cannot find the file specified.
+	ErrWinIsADirectory     WindowsError = 21         // is a directory
+	ErrWinNegativeSeek     WindowsError = 0x83       // An attempt was made to move the file pointer before the beginning of the file.
+	ErrWinNotReparsePoint  WindowsError = 4390       // The file or directory is not a reparse point.
+	ErrWinInvalidHandle    WindowsError = 6          // The handle is invalid.
+	ErrWinSharingViolation WindowsError = 32         // The process cannot access the file because it is being used by another process.
+	ErrWinNotSupported     WindowsError = 0x20000082 // not supported by windows
+	ErrWinPathNotFound     WindowsError = 3          // The system cannot find the path specified.
+	ErrWinPrivilegeNotHeld WindowsError = 1314       // A required privilege is not held by the client.
 )
 
 // Error returns the error string of the Windows operating system.
@@ -185,13 +189,9 @@ func (i WindowsError) Is(target error) bool {
 	case fs.ErrPermission:
 		return i == ErrWinAccessDenied
 	case fs.ErrExist:
-		return i == ErrWinAlreadyExists ||
-			i == ErrWinDirNotEmpty ||
-			i == ErrWinFileExists
+		return i == ErrWinAlreadyExists || i == ErrWinDirNotEmpty || i == ErrWinFileExists
 	case fs.ErrNotExist:
-		return i == ErrWinFileNotFound ||
-			i == ErrWinBadNetPath ||
-			i == ErrWinPathNotFound
+		return i == ErrWinFileNotFound || i == ErrWinBadNetPath || i == ErrWinPathNotFound
 	}
 
 	return false
