@@ -180,7 +180,7 @@ func (f *OrefaFile) Read(b []byte) (n int, err error) {
 	if nd.mode.IsDir() {
 		err = avfs.ErrIsADirectory
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinIncorrectFunc
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -229,7 +229,7 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 	if nd.mode.IsDir() {
 		err = avfs.ErrIsADirectory
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinIncorrectFunc
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -439,11 +439,7 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		if f.vfs.OSType() != avfs.OsWindows {
-			return 0, nil
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinInvalidHandle}
+		return 0, nil
 	}
 
 	nd.mu.RLock()
@@ -482,7 +478,7 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
-func (f *OrefaFile) Stat() (fs.FileInfo, error) {
+func (f *OrefaFile) Stat() (info fs.FileInfo, err error) {
 	if f == nil {
 		return nil, fs.ErrInvalid
 	}
@@ -500,13 +496,18 @@ func (f *OrefaFile) Stat() (fs.FileInfo, error) {
 	}
 
 	if f.nd == nil {
-		return &OrefaInfo{}, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrFileClosing}
+		err = avfs.ErrFileClosing
+		if f.vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
+		}
+
+		return &OrefaInfo{}, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	_, name := f.vfs.SplitAbs(f.name)
-	fst := f.nd.fillStatFrom(name)
+	info = f.nd.fillStatFrom(name)
 
-	return fst, nil
+	return info, nil
 }
 
 // Sync commits the current contents of the file to stable storage.
@@ -558,7 +559,7 @@ func (f *OrefaFile) Truncate(size int64) error {
 	if nd.mode.IsDir() {
 		err := error(avfs.ErrInvalidArgument)
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinAccessDenied
 		}
 
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -612,7 +613,7 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 	if nd.mode.IsDir() {
 		err = avfs.ErrBadFileDesc
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinAccessDenied
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -673,7 +674,7 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 	if nd.mode.IsDir() {
 		err = avfs.ErrBadFileDesc
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
+			err = avfs.ErrWinAccessDenied
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
