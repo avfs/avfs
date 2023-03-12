@@ -105,8 +105,7 @@ type LinuxError uintptr
 //go:generate stringer -type LinuxError -linecomment -output errors_forlinux.go
 
 // Errors for Linux operating systems.
-// Most of the errors below can be found there :
-// https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
+// See https://github.com/torvalds/linux/blob/master/tools/include/uapi/asm-generic/errno-base.h
 const (
 	ErrBadFileDesc     LinuxError = errEBADF     // bad file descriptor
 	ErrCrossDevLink    LinuxError = errEXDEV     // invalid cross-device link
@@ -159,6 +158,7 @@ type WindowsError uintptr
 //go:generate stringer -type WindowsError -linecomment -output errors_forwindows.go
 
 // Errors for Windows operating systems.
+// See https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes
 const (
 	ErrWinAccessDenied     WindowsError = 5          // Access is denied.
 	ErrWinAlreadyExists    WindowsError = 183        // Cannot create a file when that file already exists.
@@ -167,6 +167,7 @@ const (
 	ErrWinDirNotEmpty      WindowsError = 145        // The directory is not empty.
 	ErrWinFileExists       WindowsError = 80         // The file exists.
 	ErrWinFileNotFound     WindowsError = 2          // The system cannot find the file specified.
+	ErrWinIncorrectFunc    WindowsError = 1          // Incorrect function.
 	ErrWinIsADirectory     WindowsError = 21         // is a directory
 	ErrWinNegativeSeek     WindowsError = 0x83       // An attempt was made to move the file pointer before the beginning of the file.
 	ErrWinNotReparsePoint  WindowsError = 4390       // The file or directory is not a reparse point.

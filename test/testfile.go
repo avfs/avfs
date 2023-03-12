@@ -18,7 +18,6 @@ package test
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"io/fs"
 	"os"
@@ -381,7 +380,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 		_, err = f.Read(b)
 		CheckPathError(t, err).Op("read").Path(testDir).
 			Err(avfs.ErrIsADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			Err(avfs.ErrWinIncorrectFunc, avfs.OsWindows)
 	})
 
 	t.Run("FileReadClosed", func(t *testing.T) {
@@ -476,7 +475,7 @@ func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
 		_, err = f.ReadAt(b, 0)
 		CheckPathError(t, err).Op("read").Path(testDir).
 			Err(avfs.ErrIsADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			Err(avfs.ErrWinIncorrectFunc, avfs.OsWindows)
 	})
 
 	t.Run("FileReadAtClosed", func(t *testing.T) {
@@ -794,13 +793,7 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 		defer f.Close()
 
 		_, err = f.Seek(0, io.SeekStart)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			CheckPathError(t, err).Op("seek").Path(testDir).Err(avfs.ErrWinInvalidHandle)
-		default:
-			CheckNoError(t, "Seek", err)
-		}
+		CheckNoError(t, "Seek", err)
 	})
 
 	t.Run("FileSeekClosed", func(t *testing.T) {
@@ -941,7 +934,9 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 		f, fileName := sfs.ClosedFile(t, testDir)
 
 		_, err := f.Stat()
-		CheckPathError(t, err).Path(fileName).Err(avfs.ErrFileClosing).
+		CheckPathError(t, err).Path(fileName).
+			Err(avfs.ErrFileClosing, avfs.OsLinux).
+			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows).
 			Op("stat", avfs.OsLinux).
 			Op("GetFileType", avfs.OsWindows)
 	})
@@ -1032,7 +1027,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 		err = f.Truncate(0)
 		CheckPathError(t, err).Op("truncate").Path(testDir).
 			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 	})
 
 	t.Run("FileTruncateSizeNegative", func(t *testing.T) {
@@ -1194,7 +1189,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 		_, err = f.Write(b)
 		CheckPathError(t, err).Op("write").Path(testDir).
 			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 	})
 
 	t.Run("FileWriteClosed", func(t *testing.T) {
@@ -1351,7 +1346,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 		_, err = f.WriteAt(b, 0)
 		CheckPathError(t, err).Op("write").Path(testDir).
 			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
 	})
 
 	t.Run("FileWriteAtClosed", func(t *testing.T) {
@@ -1392,76 +1387,67 @@ func (sfs *SuiteFS) TestFileWriteTime(t *testing.T, testDir string) {
 		return
 	}
 
-	var start, end int64
+	var previous time.Time
 
-	data := []byte("AAABBBCCCDDD")
-	existingFile := vfs.Join(testDir, defaultFile)
-
-	f, err := vfs.Create(existingFile)
-	if !CheckNoError(t, "Create "+existingFile, err) {
-		return
-	}
+	f, fileName := sfs.OpenedEmptyFile(t, testDir)
 
 	// CompareTime tests if the modification time of the file has changed.
-	CompareTime := func(mustChange bool) {
+	compareTime := func(mustChange bool) {
 		time.Sleep(10 * time.Millisecond)
 
-		info, err := f.Stat() //nolint:govet // Shadows previous declaration of err.
+		info, err := vfs.Stat(fileName)
 		if err != nil {
-			if errors.Unwrap(err).Error() != avfs.ErrFileClosing.Error() {
-				t.Fatalf("Stat : want error to be %v, got %v", avfs.ErrFileClosing, err)
-			}
-
-			info, err = vfs.Stat(existingFile)
-			if !CheckNoError(t, "Stat "+existingFile, err) {
-				return
-			}
+			t.Fatalf("Stat %s : want error to be nil, got %v", fileName, err)
 		}
 
-		start = end
-		end = info.ModTime().UnixNano()
+		// Don't compare for the first time.
+		if previous.IsZero() {
+			previous = info.ModTime()
 
-		// dont compare for the first time.
-		if start == 0 {
 			return
 		}
 
-		if mustChange && (start >= end) {
-			t.Errorf("Stat %s : want start time < end time\nstart : %v\nend : %v", existingFile, start, end)
+		current := info.ModTime()
+		if mustChange && !current.After(previous) {
+			t.Errorf("CompareTime : want previous < current time\ngot prev = %v, curr = %v", previous, current)
 		}
 
-		if !mustChange && (start != end) {
-			t.Errorf("Stat %s : want start time == end time\nstart : %v\nend : %v", existingFile, start, end)
+		if !mustChange && !current.Equal(previous) {
+			t.Errorf("CompareTime : want previous = current time\ngot prev = %v, curr = %v", previous, current)
 		}
+
+		previous = current
 	}
 
-	CompareTime(true)
+	compareTime(true)
+
+	data := []byte("AAABBBCCCDDD")
 
 	t.Run("TimeWrite", func(t *testing.T) {
-		_, err = f.Write(data)
+		_, err := f.Write(data)
 		CheckNoError(t, "Write", err)
 
-		CompareTime(true)
+		compareTime(true)
 	})
 
 	t.Run("TimeWriteAt", func(t *testing.T) {
-		_, err = f.WriteAt(data, 5)
+		_, err := f.WriteAt(data, 5)
 		CheckNoError(t, "WriteAt", err)
 
-		CompareTime(true)
+		compareTime(true)
 	})
 
 	t.Run("TimeTruncate", func(t *testing.T) {
-		err = f.Truncate(5)
+		err := f.Truncate(5)
 		CheckNoError(t, "Truncate", err)
 
-		CompareTime(true)
+		compareTime(true)
 	})
 
 	t.Run("TimeClose", func(t *testing.T) {
-		err = f.Close()
+		err := f.Close()
 		CheckNoError(t, "Close", err)
 
-		CompareTime(false)
+		compareTime(false)
 	})
 }
