@@ -877,38 +877,38 @@ func CheckPanic(tb testing.TB, funcName string, f func()) {
 
 // checkPathError stores the current fs.PathError test data.
 type checkPathError struct {
-	tb       testing.TB
-	err      *fs.PathError
-	foundErr bool
+	tb   testing.TB
+	err  error
+	op   string
+	path string
 }
 
 // CheckPathError checks if err is a fs.PathError.
 func CheckPathError(tb testing.TB, err error) *checkPathError {
 	tb.Helper()
 
-	foundErr := false
-
 	if err == nil {
-		foundErr = true
-
 		tb.Error("want error to be not nil, got nil")
+
+		return &checkPathError{tb: tb, op: "", path: "", err: nil}
 	}
 
 	e, ok := err.(*fs.PathError)
 	if !ok {
-		foundErr = true
-
 		tb.Errorf("want error type to be *fs.PathError, got %v : %v", reflect.TypeOf(err), err)
+
+		return &checkPathError{tb: tb, op: "", path: "", err: nil}
 	}
 
-	return &checkPathError{tb: tb, err: e, foundErr: foundErr}
+	return &checkPathError{tb: tb, op: e.Op, path: e.Path, err: e.Err}
 }
 
 // Op checks if op is equal to the current fs.PathError Op for one of the osTypes.
 func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError {
-	cp.tb.Helper()
+	tb := cp.tb
+	tb.Helper()
 
-	if cp.foundErr {
+	if cp.err == nil {
 		return cp
 	}
 
@@ -924,9 +924,8 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 		return cp
 	}
 
-	err := cp.err
-	if err.Op != op {
-		cp.tb.Errorf("want Op to be %s, got %s", op, err.Op)
+	if cp.op != op {
+		tb.Errorf("want Op to be %s, got %s", op, cp.op)
 	}
 
 	return cp
@@ -934,7 +933,8 @@ func (cp *checkPathError) Op(op string, osTypes ...avfs.OSType) *checkPathError 
 
 // OpStat checks if the current fs.PathError Op is a Stat Op.
 func (cp *checkPathError) OpStat() *checkPathError {
-	cp.tb.Helper()
+	tb := cp.tb
+	tb.Helper()
 
 	return cp.
 		Op("stat", avfs.OsLinux).
@@ -943,7 +943,8 @@ func (cp *checkPathError) OpStat() *checkPathError {
 
 // OpLstat checks if the current fs.PathError Op is a Lstat Op.
 func (cp *checkPathError) OpLstat() *checkPathError {
-	cp.tb.Helper()
+	tb := cp.tb
+	tb.Helper()
 
 	return cp.
 		Op("lstat", avfs.OsLinux).
@@ -952,15 +953,15 @@ func (cp *checkPathError) OpLstat() *checkPathError {
 
 // Path checks the path of the current fs.PathError.
 func (cp *checkPathError) Path(path string) *checkPathError {
-	cp.tb.Helper()
+	tb := cp.tb
+	tb.Helper()
 
-	if cp.foundErr {
+	if cp.err == nil {
 		return cp
 	}
 
-	err := cp.err
-	if err.Path != path {
-		cp.tb.Errorf("want Path to be %s, got %s", path, err.Path)
+	if cp.path != path {
+		tb.Errorf("want Path to be %s, got %s", path, cp.path)
 	}
 
 	return cp
@@ -968,9 +969,10 @@ func (cp *checkPathError) Path(path string) *checkPathError {
 
 // Err checks the error of current fs.PathError.
 func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathError {
-	cp.tb.Helper()
+	tb := cp.tb
+	tb.Helper()
 
-	if cp.foundErr {
+	if cp.err == nil {
 		return cp
 	}
 
@@ -979,6 +981,8 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 	for _, osType := range osTypes {
 		if osType == avfs.CurrentOSType() {
 			canTest = true
+
+			break
 		}
 	}
 
@@ -986,12 +990,18 @@ func (cp *checkPathError) Err(wantErr error, osTypes ...avfs.OSType) *checkPathE
 		return cp
 	}
 
-	err := cp.err
-	if err.Err == wantErr || err.Err.Error() == wantErr.Error() {
+	e := reflect.ValueOf(cp.err)
+	we := reflect.ValueOf(wantErr)
+
+	if e.CanUint() && we.CanUint() && e.Uint() == we.Uint() {
 		return cp
 	}
 
-	cp.tb.Errorf("%s : want error to be %v, got %v", err.Path, wantErr, err.Err)
+	if cp.err.Error() == wantErr.Error() {
+		return cp
+	}
+
+	tb.Errorf("%s : want error to be %v, got %v", cp.path, wantErr, cp.err)
 
 	return cp
 }
@@ -1007,38 +1017,39 @@ func (cp *checkPathError) ErrPermDenied() *checkPathError {
 
 // checkLinkError stores the current os.LinkError test data.
 type checkLinkError struct {
-	tb       testing.TB
-	err      *os.LinkError
-	foundErr bool
+	tb  testing.TB
+	err error
+	op  string
+	old string
+	new string
 }
 
 // CheckLinkError checks if err is a os.LinkError.
 func CheckLinkError(tb testing.TB, err error) *checkLinkError {
 	tb.Helper()
 
-	foundErr := false
-
 	if err == nil {
-		foundErr = true
-
 		tb.Error("want error to be not nil")
+
+		return &checkLinkError{tb: tb, op: "", old: "", new: "", err: nil}
 	}
 
 	e, ok := err.(*os.LinkError)
 	if !ok {
-		foundErr = true
-
 		tb.Errorf("want error type to be *os.LinkError, got %v : %v", reflect.TypeOf(err), err)
+
+		return &checkLinkError{tb: tb, op: "", old: "", new: "", err: nil}
 	}
 
-	return &checkLinkError{tb: tb, err: e, foundErr: foundErr}
+	return &checkLinkError{tb: tb, op: e.Op, old: e.Old, new: e.New, err: e.Err}
 }
 
 // Op checks if wantOp is equal to the current os.LinkError Op.
 func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkError {
-	cl.tb.Helper()
+	tb := cl.tb
+	tb.Helper()
 
-	if cl.foundErr {
+	if cl.err == nil {
 		return cl
 	}
 
@@ -1047,6 +1058,8 @@ func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkEr
 	for _, osType := range osTypes {
 		if osType == avfs.CurrentOSType() {
 			canTest = true
+
+			break
 		}
 	}
 
@@ -1054,9 +1067,8 @@ func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkEr
 		return cl
 	}
 
-	err := cl.err
-	if err.Op != wantOp {
-		cl.tb.Errorf("want Op to be %s, got %s", wantOp, err.Op)
+	if cl.op != wantOp {
+		tb.Errorf("want Op to be %s, got %s", wantOp, cl.op)
 	}
 
 	return cl
@@ -1064,15 +1076,15 @@ func (cl *checkLinkError) Op(wantOp string, osTypes ...avfs.OSType) *checkLinkEr
 
 // Old checks the old path of the current os.LinkError.
 func (cl *checkLinkError) Old(wantOld string) *checkLinkError {
-	cl.tb.Helper()
+	tb := cl.tb
+	tb.Helper()
 
-	if cl.foundErr {
+	if cl.err == nil {
 		return cl
 	}
 
-	err := cl.err
-	if err.Old != wantOld {
-		cl.tb.Errorf("want old path to be %s, got %s", wantOld, err.Old)
+	if cl.old != wantOld {
+		tb.Errorf("want old path to be %s, got %s", wantOld, cl.old)
 	}
 
 	return cl
@@ -1080,15 +1092,15 @@ func (cl *checkLinkError) Old(wantOld string) *checkLinkError {
 
 // New checks the new path of the current os.LinkError.
 func (cl *checkLinkError) New(wantNew string) *checkLinkError {
-	cl.tb.Helper()
+	tb := cl.tb
+	tb.Helper()
 
-	if cl.foundErr {
+	if cl.err == nil {
 		return cl
 	}
 
-	err := cl.err
-	if err.New != wantNew {
-		cl.tb.Errorf("want new path to be %s, got %s", wantNew, err.New)
+	if cl.new != wantNew {
+		tb.Errorf("want new path to be %s, got %s", wantNew, cl.new)
 	}
 
 	return cl
@@ -1096,9 +1108,10 @@ func (cl *checkLinkError) New(wantNew string) *checkLinkError {
 
 // Err checks the error of current os.LinkError.
 func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkError {
-	cl.tb.Helper()
+	tb := cl.tb
+	tb.Helper()
 
-	if cl.foundErr {
+	if cl.err == nil {
 		return cl
 	}
 
@@ -1107,6 +1120,8 @@ func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkE
 	for _, osType := range osTypes {
 		if osType == avfs.CurrentOSType() {
 			canTest = true
+
+			break
 		}
 	}
 
@@ -1114,12 +1129,18 @@ func (cl *checkLinkError) Err(wantErr error, osTypes ...avfs.OSType) *checkLinkE
 		return cl
 	}
 
-	err := cl.err
-	if err.Err == wantErr || err.Err.Error() == wantErr.Error() {
+	e := reflect.ValueOf(cl.err)
+	we := reflect.ValueOf(wantErr)
+
+	if e.CanUint() && we.CanUint() && e.Uint() == we.Uint() {
 		return cl
 	}
 
-	cl.tb.Errorf("want error to be %v, got %v", wantErr, err.Err)
+	if cl.err.Error() == wantErr.Error() {
+		return cl
+	}
+
+	tb.Errorf("%s %s : want error to be %v, got %v", cl.old, cl.new, wantErr, cl.err)
 
 	return cl
 }
