@@ -43,3 +43,9 @@ func UMask() fs.FileMode {
 
 	return fs.FileMode(um)
 }
+
+// VolumeNameLen returns length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+//func (ut *Utils[_]) VolumeNameLen(path string) int {
+//	return 0
+//}
