@@ -17,7 +17,10 @@
 package main
 
 import (
+	"io"
 	"log"
+	"os"
+	"time"
 
 	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/vfs/osfs"
@@ -34,18 +37,88 @@ func main() {
 	}
 
 	tmpFile := vfs.Join(tmpDir, "file")
+	u := vfs.User()
 
-	err = vfs.WriteFile(tmpFile, nil, avfs.DefaultFilePerm)
-	if err != nil {
-		log.Fatal(err)
-	}
+	_, _ = vfs.Abs(tmpDir)
+	_ = vfs.Base(tmpDir)
+	_ = vfs.Chdir(tmpDir)
+	_ = vfs.Chmod(tmpDir, avfs.DefaultDirPerm)
+	_ = vfs.Chown(tmpDir, 0, 0)
+	_ = vfs.Chroot(tmpDir)
+	_ = vfs.Chtimes(tmpDir, time.Now(), time.Now())
+	_ = vfs.Clean(tmpDir)
+	_, _ = vfs.Create(tmpFile)
+	_, _ = vfs.CreateHomeDir(u)
+	_ = vfs.CreateSystemDirs(tmpDir)
+	_, _ = vfs.CreateTemp(tmpDir, "")
+	_ = vfs.Dir(tmpDir)
+	_, _ = vfs.EvalSymlinks(tmpDir)
+	_ = vfs.Features()
+	_ = vfs.FromSlash(tmpDir)
+	_, _ = vfs.Getwd()
+	_, _ = vfs.Glob("")
+	_ = vfs.HasFeature(avfs.FeatSymlink)
+	_ = vfs.HomeDir()
+	_ = vfs.HomeDirUser(u)
+	_ = vfs.Idm()
+	_ = vfs.IsAbs(tmpDir)
+	_ = vfs.IsExist(err)
+	_ = vfs.IsNotExist(err)
+	_ = vfs.IsPathSeparator('a')
+	_ = vfs.Join("", "")
+	_ = vfs.Lchown(tmpDir, 0, 0)
+	_ = vfs.Link(tmpDir, tmpDir)
+	_, _ = vfs.Lstat(tmpDir)
+	_, _ = vfs.Match("", "")
+	_ = vfs.Mkdir(tmpDir, avfs.DefaultDirPerm)
+	_ = vfs.MkdirAll(tmpDir, avfs.DefaultDirPerm)
+	_, _ = vfs.MkdirTemp(tmpDir, "")
+	_ = vfs.Name()
+	f, _ := vfs.Open(tmpDir)
+	_, _ = vfs.OpenFile(tmpDir, os.O_RDONLY, avfs.DefaultDirPerm)
+	_ = vfs.OSType()
+	_ = vfs.OpenMode(os.O_RDONLY)
+	_ = vfs.PathSeparator()
+	_, _ = vfs.ReadDir(tmpDir)
+	_, _ = vfs.ReadFile(tmpDir)
+	_, _ = vfs.Readlink(tmpDir)
+	_, _ = vfs.Rel(tmpDir, tmpDir)
+	_ = vfs.Remove(tmpDir)
+	_ = vfs.RemoveAll(tmpDir)
+	_ = vfs.Rename(tmpDir, tmpDir)
+	vfs.SetOSType(avfs.OsLinux)
+	_, _ = vfs.Split(tmpDir)
+	_, _ = vfs.SplitAbs(tmpDir)
+	info, _ := vfs.Stat(tmpFile)
+	vfs.SetUMask(0)
+	_, _ = vfs.SetUser("")
+	_ = vfs.SystemDirs(tmpDir)
+	_ = vfs.TempDir()
+	_ = vfs.ToSlash(tmpDir)
+	_ = vfs.ToSysStat(info)
+	_ = vfs.Truncate(tmpFile, 0)
+	_ = vfs.Type()
+	_ = vfs.User()
+	_ = vfs.UMask()
+	_ = vfs.VolumeName(tmpDir)
+	_ = vfs.VolumeNameLen(tmpDir)
+	_ = vfs.WalkDir(tmpDir, nil)
+	_ = vfs.WriteFile(tmpFile, nil, avfs.DefaultFilePerm)
 
-	info, err := vfs.Stat(tmpFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	sst := vfs.ToSysStat(info)
-
-	log.Printf("gid = %d\nuid = %d\nnlink = %d\n", sst.Gid(), sst.Uid(), sst.Nlink())
+	_ = f.Chdir()
+	_ = f.Chmod(0)
+	_ = f.Chown(0, 0)
+	_ = f.Close()
+	_ = f.Fd()
+	_ = f.Name()
+	_, _ = f.Read(nil)
+	_, _ = f.ReadAt(nil, 0)
+	_, _ = f.ReadDir(0)
+	_, _ = f.Readdirnames(0)
+	_, _ = f.Seek(0, io.SeekStart)
+	_, _ = f.Stat()
+	_ = f.Sync()
+	_, _ = f.Write(nil)
+	_, _ = f.WriteAt(nil, 0)
+	_, _ = f.WriteString("")
 }
