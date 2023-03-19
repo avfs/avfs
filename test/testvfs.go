@@ -2411,8 +2411,8 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	})
 }
 
-// TestUmask tests SetUMask and UMask functions.
-func (sfs *SuiteFS) TestUmask(t *testing.T, _ string) {
+// TestUMask tests SetUMask and UMask functions.
+func (sfs *SuiteFS) TestUMask(t *testing.T, _ string) {
 	const umaskTest = 0o077
 
 	vfs := sfs.vfsTest

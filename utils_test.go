@@ -19,8 +19,10 @@
 package avfs_test
 
 import (
+	"io/fs"
 	"testing"
 
+	"github.com/avfs/avfs"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
 	"github.com/avfs/avfs/vfs/orefafs"
@@ -38,4 +40,37 @@ func TestUtilsOrefaFS(t *testing.T) {
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
+}
+
+// TestUMaskOS tests Umask functions for the current OS.
+func TestUMaskOS(t *testing.T) {
+	const (
+		defaultUmask = fs.FileMode(0o22) // defaultUmask is the default umask.
+		umaskSet     = fs.FileMode(0o77)
+	)
+
+	umaskTest := umaskSet
+
+	if avfs.CurrentOSType() == avfs.OsWindows {
+		umaskTest = defaultUmask
+	}
+
+	umask := avfs.UMask()
+	if umask != defaultUmask {
+		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
+	}
+
+	avfs.SetUMask(umaskSet)
+
+	umask = avfs.UMask()
+	if umask != umaskTest {
+		t.Errorf("UMask : want test umask %o, got %o", umaskTest, umask)
+	}
+
+	avfs.SetUMask(defaultUmask)
+
+	umask = avfs.UMask()
+	if umask != defaultUmask {
+		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
+	}
 }

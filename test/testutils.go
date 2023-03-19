@@ -31,10 +31,6 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
-const (
-	defaultUmask = fs.FileMode(0o22) // defaultUmask is the default umask.
-)
-
 type pathTest struct {
 	path, result string
 }
@@ -1395,36 +1391,6 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, _ string) {
 		if c.file != file {
 			t.Errorf("splitPath %s : want file to be %s, got %s", c.path, c.file, file)
 		}
-	}
-}
-
-// TestUMask tests Umask methods.
-func (sfs *SuiteFS) TestUMask(t *testing.T, _ string) {
-	const umaskSet = fs.FileMode(0o77)
-
-	umaskTest := umaskSet
-
-	if avfs.CurrentOSType() == avfs.OsWindows {
-		umaskTest = defaultUmask
-	}
-
-	umask := avfs.UMask()
-	if umask != defaultUmask {
-		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
-	}
-
-	avfs.SetUMask(umaskSet)
-
-	umask = avfs.UMask()
-	if umask != umaskTest {
-		t.Errorf("UMask : want test umask %o, got %o", umaskTest, umask)
-	}
-
-	avfs.SetUMask(defaultUmask)
-
-	umask = avfs.UMask()
-	if umask != defaultUmask {
-		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
 	}
 }
 

@@ -21,7 +21,6 @@ package avfs
 import (
 	"io/fs"
 	"sync"
-	"sync/atomic"
 	"syscall"
 )
 
@@ -32,20 +31,20 @@ func ShortPathName(path string) string {
 
 var (
 	// umask is the file mode creation mask.
-	umask fs.FileMode //nolint:gochecknoglobals // Used by UMask and SetUMask.
+	umask fs.FileMode = initUMask() //nolint:gochecknoglobals // Used by UMask and SetUMask.
 
 	// umLock lock access to the umask.
 	umLock sync.RWMutex //nolint:gochecknoglobals // Used by UMask and SetUMask.
 )
 
-func init() { //nolint:gochecknoinits // To initialize umask.
+func initUMask() fs.FileMode {
 	umLock.Lock()
+	defer umLock.Unlock()
 
 	m := syscall.Umask(0) // read mask.
 	syscall.Umask(m)      // restore mask after read.
-	umask = fs.FileMode(m)
 
-	umLock.Unlock()
+	return fs.FileMode(m)
 }
 
 // SetUMask sets the file mode creation mask.
@@ -53,18 +52,17 @@ func init() { //nolint:gochecknoinits // To initialize umask.
 // so its value is cached and protected by a mutex.
 func SetUMask(mask fs.FileMode) {
 	umLock.Lock()
-
 	m := int(mask & fs.ModePerm)
 	_ = syscall.Umask(m)
-
 	umask = fs.FileMode(m)
-
 	umLock.Unlock()
 }
 
 // UMask returns the file mode creation mask.
 func UMask() fs.FileMode {
-	um := atomic.LoadUint32((*uint32)(&umask))
+	umLock.RLock()
+	um := umask
+	umLock.RUnlock()
 
-	return fs.FileMode(um)
+	return um
 }

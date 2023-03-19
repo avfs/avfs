@@ -84,7 +84,8 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFSBase, opts ...Option) *SuiteFS {
 
 	defer func() {
 		vfs = sfs.vfsTest
-		tb.Logf("Info vfs : type=%s, OSType=%s, Features=%s", vfs.Type(), vfs.OSType(), vfs.Features())
+		tb.Logf("VFS: Type=%s OSType=%s UMask=%03o Features=%s",
+			vfs.Type(), vfs.OSType(), vfs.UMask(), vfs.Features())
 	}()
 
 	for _, opt := range opts {
@@ -454,7 +455,7 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestIsEmpty,
 		sfs.TestIsPathSeparator,
 		sfs.TestRndTree,
-		sfs.TestUmask,
+		sfs.TestUMask,
 	)
 
 	// Tests to be run as root
