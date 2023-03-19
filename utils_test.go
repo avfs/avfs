@@ -45,32 +45,37 @@ func TestUtilsOrefaFS(t *testing.T) {
 // TestUMaskOS tests Umask functions for the current OS.
 func TestUMaskOS(t *testing.T) {
 	const (
-		defaultUmask = fs.FileMode(0o22) // defaultUmask is the default umask.
-		umaskSet     = fs.FileMode(0o77)
+		linuxUMask   = fs.FileMode(0o22)
+		windowsUMask = fs.FileMode(0o111)
+		testUMask    = fs.FileMode(0o77)
 	)
 
-	umaskTest := umaskSet
+	saveUMask := avfs.UMask()
+	defer avfs.SetUMask(saveUMask)
 
+	defaultUMask := linuxUMask
 	if avfs.CurrentOSType() == avfs.OsWindows {
-		umaskTest = defaultUmask
+		defaultUMask = windowsUMask
 	}
+
+	wantedUMask := defaultUMask
 
 	umask := avfs.UMask()
-	if umask != defaultUmask {
-		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
+	if umask != wantedUMask {
+		t.Errorf("UMask : want OS umask %o, got %o", wantedUMask, umask)
 	}
 
-	avfs.SetUMask(umaskSet)
+	avfs.SetUMask(testUMask)
 
 	umask = avfs.UMask()
-	if umask != umaskTest {
-		t.Errorf("UMask : want test umask %o, got %o", umaskTest, umask)
+	if umask != testUMask {
+		t.Errorf("UMask : want test umask %o, got %o", testUMask, umask)
 	}
 
-	avfs.SetUMask(defaultUmask)
+	avfs.SetUMask(defaultUMask)
 
 	umask = avfs.UMask()
-	if umask != defaultUmask {
-		t.Errorf("UMask : want OS umask %o, got %o", defaultUmask, umask)
+	if umask != defaultUMask {
+		t.Errorf("UMask : want OS umask %o, got %o", defaultUMask, umask)
 	}
 }

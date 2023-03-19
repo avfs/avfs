@@ -2413,33 +2413,41 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 
 // TestUMask tests SetUMask and UMask functions.
 func (sfs *SuiteFS) TestUMask(t *testing.T, _ string) {
-	const umaskTest = 0o077
+	const (
+		linuxUMask   = fs.FileMode(0o22)
+		windowsUMask = fs.FileMode(0o111)
+		testUMask    = fs.FileMode(0o77)
+	)
 
 	vfs := sfs.vfsTest
 
-	if vfs.HasFeature(avfs.FeatReadOnly) {
-		vfs.SetUMask(0)
+	saveUMask := vfs.UMask()
+	defer vfs.SetUMask(saveUMask)
 
-		if um := vfs.UMask(); um <= 0 {
-			t.Errorf("UMask : want umask to be > 0, got %d", um)
-		}
-
-		return
+	defaultUMask := linuxUMask
+	if vfs.OSType() == avfs.OsWindows {
+		defaultUMask = windowsUMask
 	}
 
-	umaskStart := vfs.UMask()
-	vfs.SetUMask(umaskTest)
+	wantedUMask := defaultUMask
 
-	u := vfs.UMask()
-	if u != umaskTest {
-		t.Errorf("umaskTest : want umask to be %o, got %o", umaskTest, u)
+	umask := vfs.UMask()
+	if umask != wantedUMask {
+		t.Errorf("UMask : want OS umask %o, got %o", wantedUMask, umask)
 	}
 
-	vfs.SetUMask(umaskStart)
+	vfs.SetUMask(testUMask)
 
-	u = vfs.UMask()
-	if u != umaskStart {
-		t.Errorf("umaskTest : want umask to be %o, got %o", umaskStart, u)
+	umask = vfs.UMask()
+	if umask != testUMask {
+		t.Errorf("UMask : want test umask %o, got %o", testUMask, umask)
+	}
+
+	vfs.SetUMask(defaultUMask)
+
+	umask = vfs.UMask()
+	if umask != defaultUMask {
+		t.Errorf("UMask : want OS umask %o, got %o", defaultUMask, umask)
 	}
 }
 

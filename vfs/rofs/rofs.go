@@ -421,6 +421,7 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 // SetUMask sets the file mode creation mask.
 // Setting Umask is disabled for read only file systems.
 func (vfs *RoFS) SetUMask(mask fs.FileMode) {
+	vfs.baseFS.SetUMask(mask)
 }
 
 // SetUser sets and returns the current user.
