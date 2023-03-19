@@ -29,7 +29,7 @@ var copyPool = newCopyPool() //nolint:gochecknoglobals // copyPool is the buffer
 func newCopyPool() *sync.Pool {
 	const bufSize = 32 * 1024
 
-	pool := &sync.Pool{New: func() interface{} {
+	pool := &sync.Pool{New: func() any {
 		buf := make([]byte, bufSize)
 
 		return &buf
@@ -125,7 +125,7 @@ func HashFile(vfs VFSBase, name string, hasher hash.Hash) (sum []byte, err error
 
 // copyBufPool copies a source reader to a writer using a buffer from the buffer pool.
 func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //nolint:unparam // unparam shoudn't check return values.
-	buf := copyPool.Get().(*[]byte) //nolint:errcheck,forcetypeassert // Get() always returns a pointer to a byte slice.
+	buf := copyPool.Get().(*[]byte) //nolint:forcetypeassert // Get() always returns a pointer to a byte slice.
 	defer copyPool.Put(buf)
 
 	written, err = io.CopyBuffer(dst, src, *buf)

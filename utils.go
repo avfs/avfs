@@ -111,7 +111,7 @@ type DirInfo struct {
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
 func (*Utils[T]) Create(vfs T, name string) (File, error) {
-	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o666)
+	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, DefaultFilePerm)
 }
 
 // CreateHomeDir creates and returns the home directory of a user.
@@ -384,7 +384,7 @@ func (ut *Utils[T]) HomeDirUser(u UserReader) string {
 
 // HomeDirPerm return the default permission for home directories.
 func HomeDirPerm() fs.FileMode {
-	return 0o755
+	return DefaultDirPerm
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
@@ -591,7 +591,7 @@ func (*Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
 
 	for {
 		if len(data) >= cap(data) {
-			d := append(data[:cap(data)], 0)
+			d := append(data[:cap(data)], 0) //nolint:gocritic // append result not assigned to the same slice
 			data = d[:len(data)]
 		}
 

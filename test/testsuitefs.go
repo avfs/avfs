@@ -374,7 +374,6 @@ func (sfs *SuiteFS) RemoveTestDir(tb testing.TB, testDir string) {
 
 	err = vfs.RemoveAll(testDir)
 	if err != nil && avfs.CurrentOSType() != avfs.OsWindows {
-		// TODO : Print list of opened files for emulated file systems to resolve ErrWinSharingViolation errors.
 		tb.Fatalf("RemoveAll %s : want error to be nil, got %v", testDir, err)
 	}
 }
@@ -637,7 +636,7 @@ func (sfs *SuiteFS) RandomDir(tb testing.TB, testDir string) *avfs.RndTree {
 }
 
 // Dir contains the sample directories.
-type Dir struct { //nolint:govet // no fieldalignment for test structs.
+type Dir struct {
 	Path      string
 	Mode      fs.FileMode
 	WantModes []fs.FileMode
@@ -703,7 +702,7 @@ func (sfs *SuiteFS) CreateSampleDirs(tb testing.TB, testDir string) []*Dir {
 }
 
 // File contains the sample files.
-type File struct { //nolint:govet // no fieldalignment for test structs.
+type File struct {
 	Path    string
 	Mode    fs.FileMode
 	Content []byte

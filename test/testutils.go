@@ -911,7 +911,7 @@ func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, _ string) {
 func (sfs *SuiteFS) TestJoin(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
-	type joinTest struct { //nolint:govet // no fieldalignment for test structs
+	type joinTest struct {
 		elem []string
 		path string
 	}
@@ -1007,7 +1007,7 @@ func errp(e error) string {
 func (sfs *SuiteFS) TestMatch(t *testing.T, _ string) {
 	vfs := sfs.vfsTest
 
-	matchTests := []struct { //nolint:govet // no fieldalignment for test structs
+	matchTests := []struct {
 		pattern, s string
 		match      bool
 		err        error

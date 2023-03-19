@@ -749,7 +749,7 @@ func (info *OrefaInfo) Size() int64 {
 }
 
 // Sys returns the underlying data source (can return nil).
-func (info *OrefaInfo) Sys() interface{} {
+func (info *OrefaInfo) Sys() any {
 	return info
 }
 

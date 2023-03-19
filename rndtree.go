@@ -246,6 +246,8 @@ func (rt *RndTree) randFile(max int) *FileParams {
 
 // randName generates a random name using different sets of runes (ASCII, Cyrillic, Devanagari).
 func (rt *RndTree) randName() string {
+	const maxAlphabets = 4
+
 	var name strings.Builder
 
 	nbRunes := rt.randRange(rt.MinName, rt.MaxName)
@@ -253,7 +255,7 @@ func (rt *RndTree) randName() string {
 	for i := 0; i < nbRunes; i++ {
 		var s, e int
 
-		switch rt.rnd.Intn(4) {
+		switch rt.rnd.Intn(maxAlphabets) {
 		case 0: // ASCII Uppercase
 			s = 65
 			e = 90

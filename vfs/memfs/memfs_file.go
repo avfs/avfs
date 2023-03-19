@@ -772,7 +772,7 @@ func (info *MemInfo) Size() int64 {
 }
 
 // Sys returns the underlying data source (can return nil).
-func (info *MemInfo) Sys() interface{} {
+func (info *MemInfo) Sys() any {
 	return info
 }
 

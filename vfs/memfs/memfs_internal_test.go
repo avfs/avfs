@@ -67,7 +67,7 @@ func TestSearchNode(t *testing.T) {
 	lloop1 := vfs.createSymlink(rn, "loop1", avfs.FromUnixPath("/loop2"))
 	vfs.createSymlink(rn, "loop2", avfs.FromUnixPath("/loop1"))
 
-	cases := []struct { //nolint:govet // no fieldalignment for test structs
+	cases := []struct {
 		path        string
 		parent      *dirNode
 		child       node

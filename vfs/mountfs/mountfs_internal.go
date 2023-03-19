@@ -44,7 +44,6 @@ func (vfs *MountFS) pathToMount(path string) (mnt *mount, vfsPath string) {
 	return lm, lp
 }
 
-// toAbsPath
 func (mnt *mount) toAbsPath(path string) string {
 	return mnt.vfs.Join(mnt.mntPath, mnt.basePath, path)
 }
