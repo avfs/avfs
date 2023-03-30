@@ -384,7 +384,7 @@ func (ut *Utils[T]) HomeDirUser(u UserReader) string {
 
 // HomeDirPerm return the default permission for home directories.
 func HomeDirPerm() fs.FileMode {
-	return DefaultDirPerm
+	return 0o700
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
