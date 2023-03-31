@@ -30,7 +30,6 @@ type OrefaFS struct {
 	user                 avfs.UserReader // user is the current user of the file system.
 	curDir               string          // curDir is the current directory.
 	name                 string          // name is the name of the file system.
-	features             avfs.Features   // features defines the list of features available for this file system.
 	lastId               uint64          // lastId is the last unique id used to identify files uniquely.
 	mu                   sync.RWMutex    // mu is the RWMutex used to access nodes.
 	umask                fs.FileMode     // umask is the user file creation mode mask.

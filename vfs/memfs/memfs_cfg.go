@@ -65,7 +65,6 @@ func NewWithOptions(opts *Options) *MemFS {
 		idm:      idm,
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		features: features,
 		name:     opts.Name,
 	}
 
@@ -75,8 +74,8 @@ func NewWithOptions(opts *Options) *MemFS {
 		user:     user,
 	}
 
-	vfs.Utils.SetOSType(osType)
-
+	vfs.SetFeatures(features)
+	vfs.SetOSType(osType)
 	vfs.rootNode = vfs.createRootNode()
 	volumeName := ""
 	vfs.curDir = "/"
@@ -114,16 +113,6 @@ func NewWithOptions(opts *Options) *MemFS {
 	}
 
 	return vfs
-}
-
-// Features returns the set of features provided by the file system or identity manager.
-func (vfs *MemFS) Features() avfs.Features {
-	return vfs.memAttrs.features
-}
-
-// HasFeature returns true if the file system or identity manager provides a given features.
-func (vfs *MemFS) HasFeature(feature avfs.Features) bool {
-	return vfs.memAttrs.features&feature == feature
 }
 
 // Name returns the name of the fileSystem.

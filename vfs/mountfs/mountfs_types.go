@@ -24,14 +24,13 @@ import (
 
 // MountFS implements a memory file system using the avfs.VFS interface.
 type MountFS struct {
-	rootFS   avfs.VFS
-	mounts   mounts
-	rootMnt  *mount
-	curMnt   *mount
-	curDir   string
-	name     string
-	features avfs.Features
-	mu       sync.RWMutex
+	rootFS  avfs.VFS
+	mounts  mounts
+	rootMnt *mount
+	curMnt  *mount
+	curDir  string
+	name    string
+	mu      sync.RWMutex
 	avfs.Utils[*MountFS]
 }
 

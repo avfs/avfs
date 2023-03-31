@@ -41,10 +41,10 @@ func NewWithOptions(opts *Options) *OsFS {
 
 	features := avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink | opts.Idm.Features()
 	vfs := &OsFS{
-		idm:      opts.Idm,
-		features: features,
+		idm: opts.Idm,
 	}
 
+	vfs.SetFeatures(features)
 	vfs.SetOSType(avfs.CurrentOSType())
 	vfs.setErrors()
 
@@ -59,16 +59,6 @@ func (vfs *OsFS) setErrors() {
 	default:
 		vfs.err.PermDenied = avfs.ErrPermDenied
 	}
-}
-
-// Features returns the set of features provided by the file system or identity manager.
-func (vfs *OsFS) Features() avfs.Features {
-	return vfs.features
-}
-
-// HasFeature returns true if the file system or identity manager provides a given features.
-func (vfs *OsFS) HasFeature(feature avfs.Features) bool {
-	return vfs.features&feature == feature
 }
 
 // Name returns the name of the fileSystem.

@@ -54,11 +54,24 @@ func initOSsType() OSType {
 // Most of these functions are extracted from Go standard library
 // and adapted to be used indifferently on Unix or Windows system.
 type Utils[T VFSBase] struct {
-	// OSType defines the operating system type.
-	osType OSType
+	features      Features // features defines the list of features available for the file system.
+	osType        OSType   // OSType defines the operating system type.
+	pathSeparator uint8    // pathSeparator is the OS-specific path separator.
+}
 
-	// pathSeparator is the OS-specific path separator.
-	pathSeparator uint8
+// Features returns the set of features provided by the file system or identity manager.
+func (ut *Utils[T]) Features() Features {
+	return ut.features
+}
+
+// HasFeature returns true if the file system or identity manager provides a given features.
+func (ut *Utils[T]) HasFeature(feature Features) bool {
+	return ut.features&feature == feature
+}
+
+// SetFeatures sets the features of the file system or identity manager.
+func (ut *Utils[T]) SetFeatures(feature Features) {
+	ut.features = feature
 }
 
 // Abs returns an absolute representation of path.

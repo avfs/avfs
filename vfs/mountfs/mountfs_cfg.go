@@ -31,14 +31,14 @@ func New(rootFS avfs.VFS, basePath string) *MountFS {
 	}
 
 	vfs := &MountFS{
-		rootFS:   rootFS,
-		mounts:   make(mounts),
-		rootMnt:  rootMnt,
-		curMnt:   rootMnt,
-		curDir:   "/",
-		features: rootFS.Features() &^ (avfs.FeatSymlink | avfs.FeatIdentityMgr),
+		rootFS:  rootFS,
+		mounts:  make(mounts),
+		rootMnt: rootMnt,
+		curMnt:  rootMnt,
+		curDir:  "/",
 	}
 
+	vfs.SetFeatures(rootFS.Features() &^ (avfs.FeatSymlink | avfs.FeatIdentityMgr))
 	vfs.SetOSType(avfs.CurrentOSType())
 
 	return vfs
@@ -105,16 +105,6 @@ func (vfs *MountFS) String() string {
 	}
 
 	return buf.String()
-}
-
-// Features returns the set of features provided by the file system or identity manager.
-func (vfs *MountFS) Features() avfs.Features {
-	return vfs.features
-}
-
-// HasFeature returns true if the file system or identity manager provides a given features.
-func (vfs *MountFS) HasFeature(feature avfs.Features) bool {
-	return (vfs.features & feature) == feature
 }
 
 // Name returns the name of the fileSystem.

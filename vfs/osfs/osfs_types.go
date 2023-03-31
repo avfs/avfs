@@ -20,9 +20,8 @@ import "github.com/avfs/avfs"
 
 // OsFS represents the current file system.
 type OsFS struct {
-	idm      avfs.IdentityMgr
-	err      OsErrors
-	features avfs.Features
+	idm avfs.IdentityMgr
+	err OsErrors
 	avfs.Utils[*OsFS]
 }
 
