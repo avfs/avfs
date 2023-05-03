@@ -14,6 +14,8 @@
 //  limitations under the License.
 //
 
+//go:build !avfs_setostype
+
 package memfs_test
 
 import (
@@ -65,7 +67,7 @@ func ExampleNewWithOptions_noSystemDirs() {
 }
 
 func ExampleNewWithOptions_noIdm() {
-	vfs := memfs.NewWithOptions(&memfs.Options{OSType: avfs.OsLinux})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.NotImplementedIdm, OSType: avfs.OsLinux})
 	fmt.Println(vfs.User().Name())
 
 	// Output: Default

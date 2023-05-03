@@ -56,7 +56,7 @@ func TestMemFS(t *testing.T) {
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.NewWithOptions(&memfs.Options{SystemDirs: true})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.NotImplementedIdm, SystemDirs: true})
 
 	sfs := test.NewSuiteFS(t, vfs)
 	sfs.TestAll(t)
@@ -118,14 +118,8 @@ func TestMemFSNilPtrFile(t *testing.T) {
 func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 
-	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatSystemDirs | avfs.FeatIdentityMgr
-	if vfs.Features() != wantFeatures {
-		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
-	}
-
-	vfs = memfs.New()
-
-	wantFeatures = avfs.FeatHardlink | avfs.FeatIdentityMgr | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatSystemDirs
+	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatSystemDirs | avfs.FeatIdentityMgr |
+		avfs.BuildFeatures()
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}

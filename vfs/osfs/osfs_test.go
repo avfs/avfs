@@ -63,6 +63,10 @@ func TestOsFSConfig(t *testing.T) {
 		wantFeatures |= avfs.FeatIdentityMgr
 	}
 
+	if !vfs.User().IsAdmin() {
+		wantFeatures |= avfs.FeatReadOnlyIdm
+	}
+
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}

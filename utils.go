@@ -30,6 +30,11 @@ import (
 
 var currentOSType = initOSsType() //nolint:gochecknoglobals // Store the current OS Type.
 
+// BuildFeatures returns the features available depending on build tags.
+func BuildFeatures() Features {
+	return buildFeatSetOSType
+}
+
 // CurrentOSType returns the current OSType.
 func CurrentOSType() OSType {
 	return currentOSType
@@ -60,17 +65,17 @@ type Utils[T VFSBase] struct {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (ut *Utils[T]) Features() Features {
+func (ut *Utils[_]) Features() Features {
 	return ut.features
 }
 
 // HasFeature returns true if the file system or identity manager provides a given features.
-func (ut *Utils[T]) HasFeature(feature Features) bool {
+func (ut *Utils[_]) HasFeature(feature Features) bool {
 	return ut.features&feature == feature
 }
 
 // SetFeatures sets the features of the file system or identity manager.
-func (ut *Utils[T]) SetFeatures(feature Features) {
+func (ut *Utils[_]) SetFeatures(feature Features) {
 	ut.features = feature
 }
 
@@ -225,7 +230,7 @@ func (ut *Utils[_]) cleanGlobPath(path string) string {
 	}
 }
 
-// cleanGlobPathWindows is windows version of cleanGlobPath.
+// cleanGlobPathWindows is Windows version of cleanGlobPath.
 func (ut *Utils[_]) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
 	vollen := ut.VolumeNameLen(path)
 
@@ -623,6 +628,14 @@ func (*Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
 
 // SetOSType sets the osType.
 func (ut *Utils[_]) SetOSType(osType OSType) {
+	if osType == OsUnknown {
+		osType = CurrentOSType()
+	}
+
+	if buildFeatSetOSType == 0 && ut.osType != OsUnknown {
+		panic("Can't set OS type, use build tag 'avfs_setostype' to set OS type")
+	}
+
 	sep := uint8('/')
 	if osType == OsWindows {
 		sep = '\\'
@@ -687,6 +700,9 @@ func (ut *Utils[_]) TempDir(userName string) string {
 
 	return ShortPathName(dir)
 }
+
+//go:linkname volumeNameLen path/filepath.volumeNameLen
+func volumeNameLen(path string) int
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
@@ -773,12 +789,3 @@ func (*Utils[T]) WriteFile(vfs T, name string, data []byte, perm fs.FileMode) er
 
 	return err
 }
-
-// VolumeNameLen returns length of the leading volume name on Windows.
-// It returns 0 elsewhere.
-func (ut *Utils[_]) VolumeNameLen(path string) int {
-	return volumeNameLen(path)
-}
-
-//go:linkname volumeNameLen path/filepath.volumeNameLen
-func volumeNameLen(path string) int

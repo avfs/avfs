@@ -10,25 +10,27 @@ func _() {
 	var x [1]struct{}
 	_ = x[FeatHardlink-1]
 	_ = x[FeatIdentityMgr-2]
-	_ = x[FeatReadOnly-4]
-	_ = x[FeatReadOnlyIdm-8]
-	_ = x[FeatRealFS-16]
-	_ = x[FeatSubFS-32]
-	_ = x[FeatSymlink-64]
-	_ = x[FeatSystemDirs-128]
+	_ = x[FeatSetOSType-4]
+	_ = x[FeatReadOnly-8]
+	_ = x[FeatReadOnlyIdm-16]
+	_ = x[FeatRealFS-32]
+	_ = x[FeatSubFS-64]
+	_ = x[FeatSymlink-128]
+	_ = x[FeatSystemDirs-256]
 }
 
-const _Features_name = "HardlinkIdentityMgrReadOnlyReadOnlyIdmRealFSSubFSSymlinkSystemDirs"
+const _Features_name = "HardlinkIdentityMgrSetOSTypeReadOnlyReadOnlyIdmRealFSSubFSSymlinkSystemDirs"
 
 var _Features_map = map[Features]string{
 	1:   _Features_name[0:8],
 	2:   _Features_name[8:19],
-	4:   _Features_name[19:27],
-	8:   _Features_name[27:38],
-	16:  _Features_name[38:44],
-	32:  _Features_name[44:49],
-	64:  _Features_name[49:56],
-	128: _Features_name[56:66],
+	4:   _Features_name[19:28],
+	8:   _Features_name[28:36],
+	16:  _Features_name[36:47],
+	32:  _Features_name[47:53],
+	64:  _Features_name[53:58],
+	128: _Features_name[58:65],
+	256: _Features_name[65:75],
 }
 
 func (i Features) String() string {

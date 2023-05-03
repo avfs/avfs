@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build !avfs_portable
+//go:build !avfs_setostype
 
 package avfs
 
@@ -22,6 +22,8 @@ import (
 	"os"
 	"path/filepath"
 )
+
+const buildFeatSetOSType = 0
 
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
@@ -163,4 +165,10 @@ func (ut *Utils[_]) ToSlash(path string) string {
 // On other platforms it returns "".
 func (ut *Utils[_]) VolumeName(path string) string {
 	return filepath.VolumeName(path)
+}
+
+// VolumeNameLen returns length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func (ut *Utils[_]) VolumeNameLen(path string) int {
+	return volumeNameLen(path)
 }

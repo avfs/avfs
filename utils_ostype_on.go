@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build avfs_portable
+//go:build avfs_setostype
 
 package avfs
 
@@ -24,6 +24,8 @@ import (
 	"strings"
 	"unicode/utf8"
 )
+
+const buildFeatSetOSType = FeatSetOSType
 
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
@@ -88,7 +90,7 @@ func (ut *Utils[_]) Base(path string) string {
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
 func (ut *Utils[_]) Clean(path string) string {
-	if ut.osType == currentOSType {
+	if ut.osType == CurrentOSType() {
 		return filepath.Clean(path)
 	}
 

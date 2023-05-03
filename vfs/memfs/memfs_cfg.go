@@ -31,27 +31,17 @@ func New() *MemFS {
 // NewWithOptions returns a new memory file system (MemFS) with the selected Options.
 func NewWithOptions(opts *Options) *MemFS {
 	if opts == nil {
-		opts = &Options{
-			Idm:        memidm.New(),
-			OSType:     avfs.CurrentOSType(),
-			SystemDirs: true,
-		}
+		opts = &Options{SystemDirs: true}
 	}
 
-	osType := opts.OSType
-	if osType == avfs.OsUnknown {
-		osType = avfs.CurrentOSType()
-	}
-
-	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink
+	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.BuildFeatures()
 	if opts.SystemDirs {
 		features |= avfs.FeatSystemDirs
 	}
 
-	var idm avfs.IdentityMgr = avfs.NotImplementedIdm
-
-	if opts.Idm != nil && opts.Idm != avfs.NotImplementedIdm {
-		idm = opts.Idm
+	idm := opts.Idm
+	if idm == nil {
+		idm = memidm.New()
 	}
 
 	features |= idm.Features()
@@ -75,7 +65,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	}
 
 	vfs.SetFeatures(features)
-	vfs.SetOSType(osType)
+	vfs.SetOSType(opts.OSType)
 	vfs.rootNode = vfs.createRootNode()
 	volumeName := ""
 	vfs.curDir = "/"
