@@ -55,14 +55,14 @@ const (
 
 var (
 	appDir            string
-	dockerCmd         string
-	tmpDir            string
-	coverTestPath     string
-	coverRacePath     string
-	testDataDir       string
-	dockerTmpDir      string
-	dockerTestDataDir string
 	cgoEnabled        bool
+	coverRacePath     string
+	coverTestPath     string
+	dockerCmd         string
+	dockerTestDataDir string
+	dockerTmpDir      string
+	tmpDir            string
+	testDataDir       string
 )
 
 func init() {
@@ -221,8 +221,8 @@ func Test() error {
 	return CoverResult()
 }
 
-// goOsArch returns an array of [goos/goarch, goos, goarch].
-func goOsArch(exclude string) [][]string {
+// goOSArch returns an array of [goos/goarch, goos, goarch].
+func goOSArch(exclude string) [][]string {
 	osa, err := sh.Output(goCmd, "tool", "dist", "list")
 	if err != nil {
 		return nil
@@ -256,7 +256,7 @@ func TestBuild() error {
 
 	srcPath := filepath.Join(appDir, "test/testbuild")
 	outPath := filepath.Join(appDir, "tmp/{{.Dir}}/{{.Dir}}_{{.OS}}_{{.Arch}}")
-	osArch := goOsArch("android") // Exclude Android platforms : need additional tools to compile.
+	osArch := goOSArch("android") // Exclude Android platforms : need additional tools to compile.
 
 	var sb strings.Builder
 	for _, oa := range osArch {
@@ -383,6 +383,7 @@ func dockerTest(args ...string) error {
 	testDataMount := testDataDir + ":" + dockerTestDataDir
 	cmdArgs := []string{
 		"run",
+		"-e", "GOFLAGS",
 		termOptions,
 		"-v", tmpMount,
 		"-v", testDataMount,
