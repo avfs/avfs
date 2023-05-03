@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build !avfs_setostype
+//go:build avfs_setostype
 
 package memfs_test
 

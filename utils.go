@@ -632,7 +632,7 @@ func (ut *Utils[_]) SetOSType(osType OSType) {
 		osType = CurrentOSType()
 	}
 
-	if buildFeatSetOSType == 0 && ut.osType != OsUnknown {
+	if buildFeatSetOSType == 0 && osType != CurrentOSType() {
 		panic("Can't set OS type, use build tag 'avfs_setostype' to set OS type")
 	}
 

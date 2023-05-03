@@ -63,7 +63,7 @@ func TestOsFSConfig(t *testing.T) {
 		wantFeatures |= avfs.FeatIdentityMgr
 	}
 
-	if !vfs.User().IsAdmin() {
+	if !vfs.User().IsAdmin() && vfs.OSType() != avfs.OsWindows {
 		wantFeatures |= avfs.FeatReadOnlyIdm
 	}
 
