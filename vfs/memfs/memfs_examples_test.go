@@ -47,7 +47,7 @@ func ExampleNew() {
 		fmt.Printf("%s exists", homeDir)
 	}
 
-	// Output: Features(Hardlink|IdentityMgr|SubFS|Symlink|SystemDirs)
+	// Features(Hardlink|IdentityMgr|SetOSType|SubFS|Symlink|SystemDirs)
 	// root
 	// /tmp
 	// /root

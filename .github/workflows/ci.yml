@@ -26,14 +26,12 @@ jobs:
       - name: Install mage & avfs binaries
         run: go run mage/build.go
 
-      - name: Run tests as root on linux
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        # preserve user environment variables :
-        # for some reason go version as root is different from user version.
-        run: sudo -E env "PATH=$PATH" avfs test
+      - name: Run tests
+        run: avfs test
 
-      - name: Run tests on non linux systems
-        if: ${{ !startsWith(matrix.os, 'ubuntu') }}
+      - name: Run tests with SetOsType
+        env:
+          GOFLAGS: "-tags=avfs_setostype"
         run: avfs test
 
       - name: Run race tests
@@ -46,8 +44,6 @@ jobs:
           GO: ${{ matrix.go }}
         with:
           env_vars: OS,GO
-          files: ./tmp/cover_test.txt,./tmp/cover_race.txt
-          flags: unittests
           verbose: true
 
       - name: Run build tests on linux systems only

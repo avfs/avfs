@@ -31,6 +31,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -48,6 +49,7 @@ const (
 	golangCiBin = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
 	goxCmd      = "gox"
 	goxInst     = "github.com/mitchellh/gox@master"
+	sudoCmd     = "sudo"
 	tarCmd      = "tar"
 	raceCount   = 5
 	benchCount  = 5
@@ -56,8 +58,8 @@ const (
 var (
 	appDir            string
 	cgoEnabled        bool
-	coverRacePath     string
-	coverTestPath     string
+	coverDir          string
+	coverFile         string
 	dockerCmd         string
 	dockerTestDataDir string
 	dockerTmpDir      string
@@ -70,8 +72,8 @@ func init() {
 	appDir = strings.TrimSuffix(appDir, "mage")
 
 	tmpDir = filepath.Join(appDir, "tmp")
-	coverTestPath = filepath.Join(tmpDir, "cover_test.txt")
-	coverRacePath = filepath.Join(tmpDir, "cover_race.txt")
+	coverDir = filepath.Join(tmpDir, "cover")
+	coverFile = filepath.Join(coverDir, "coverfile.txt")
 	testDataDir = filepath.Join(appDir, "test/testdata")
 
 	dockerVolume := ""
@@ -104,17 +106,33 @@ func init() {
 
 // tmpInit creates the temporary directory.
 func tmpInit() error {
-	_, err := os.Stat(tmpDir)
-	if err == nil {
-		return nil
-	}
-
-	err = os.MkdirAll(tmpDir, 0o755)
+	err := os.MkdirAll(coverDir, 0o755)
 	if err != nil {
 		return err
 	}
 
-	return os.Chmod(tmpDir, 0o777)
+	err = os.Chmod(tmpDir, 0o777)
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod(coverDir, 0o777)
+}
+
+// sudo runs a command as root if possible, as an unprivileged user otherwise.
+func sudo(cmd string, args ...string) error {
+	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
+		return sh.RunV(cmd, args...)
+	}
+
+	err := sh.RunV(sudoCmd, "-n", "-l")
+	if err != nil {
+		return sh.RunV(cmd, args...)
+	}
+
+	sudoArgs := append([]string{"-n", "-E", cmd}, args...)
+
+	return sh.RunV(sudoCmd, sudoArgs...)
 }
 
 // Env returns the go environment variables.
@@ -123,13 +141,12 @@ func Env() {
 	fmt.Printf(`
 appDir=%s
 tmpDir=%s
-coverTestPath=%s
-coverRacePath=%s
 testDataDir=%s
 dockerTmpDir=%s
 dockerTestDataDir=%s
+coverFile=%s
 cgoEnabled=%t
-`, appDir, tmpDir, coverTestPath, coverRacePath, testDataDir, dockerTmpDir, dockerTestDataDir, cgoEnabled)
+`, appDir, tmpDir, testDataDir, dockerTmpDir, dockerTestDataDir, coverFile, cgoEnabled)
 }
 
 // Build builds the project.
@@ -189,13 +206,15 @@ func Lint() error {
 	return sh.RunV(golangCiCmd, "run", "-v")
 }
 
-// CoverResult opens a web browser with the latest coverage file.
+// CoverResult opens a web browser with the latest coverage file if used
 func CoverResult() error {
 	if isCI() {
-		return nil
+		coverArch := filepath.Join(coverDir, time.Now().Format("cover-20060102-030405.txt"))
+
+		return os.Rename(coverFile, coverArch)
 	}
 
-	return sh.RunV(goCmd, "tool", "cover", "-html="+coverTestPath)
+	return sh.RunV(goCmd, "tool", "cover", "-html="+coverFile)
 }
 
 // Test runs tests with coverage.
@@ -206,14 +225,14 @@ func Test() error {
 		"test", "-v",
 		"-run=.",
 		"-covermode=atomic",
-		"-coverprofile=" + coverTestPath,
+		"-coverprofile=" + coverFile,
 		"./...",
 	}
 	if cgoEnabled {
 		args = append(args, "-race")
 	}
 
-	err := sh.RunV(goCmd, args...)
+	err := sudo(goCmd, args...)
 	if err != nil {
 		return err
 	}
@@ -283,14 +302,19 @@ func Race() error {
 		return nil
 	}
 
-	return sh.RunV(goCmd, "test", "-v",
+	err := sh.RunV(goCmd, "test", "-v",
 		"-tags=datarace",
 		"-run=TestRace",
 		"-race",
 		"-count="+strconv.Itoa(raceCount),
 		"-covermode=atomic",
-		"-coverprofile="+coverRacePath,
+		"-coverprofile="+coverFile,
 		"./...")
+	if err != nil {
+		return err
+	}
+
+	return CoverResult()
 }
 
 // Bench runs benchmarks.

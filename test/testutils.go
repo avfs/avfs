@@ -448,6 +448,11 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, _ string) {
 			continue
 		}
 
+		err = vfs.Remove(homeDir)
+		if !CheckNoError(t, "Remove "+homeDir, err) {
+			continue
+		}
+
 		if vfs.OSType() == avfs.OsWindows {
 			return
 		}
