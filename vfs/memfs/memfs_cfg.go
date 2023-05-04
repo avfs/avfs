@@ -68,6 +68,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	vfs.SetFeatures(features)
 	vfs.SetOSType(opts.OSType)
 	vfs.err.SetOSType(vfs.OSType())
+	vfs.rootNode = vfs.createRootNode()
 
 	volumeName := ""
 
@@ -80,8 +81,6 @@ func NewWithOptions(opts *Options) *MemFS {
 		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
-
-	vfs.rootNode = vfs.createRootNode()
 
 	if vfs.HasFeature(avfs.FeatSystemDirs) {
 		// Save the current user and umask.
