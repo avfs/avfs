@@ -60,15 +60,16 @@ func NewWithOptions(opts *Options) *MemFS {
 
 	vfs := &MemFS{
 		memAttrs: ma,
+		curDir:   "/",
 		umask:    avfs.UMask(),
 		user:     user,
 	}
 
 	vfs.SetFeatures(features)
 	vfs.SetOSType(opts.OSType)
-	vfs.rootNode = vfs.createRootNode()
+	vfs.err.SetOSType(vfs.OSType())
+
 	volumeName := ""
-	vfs.curDir = "/"
 
 	if vfs.OSType() == avfs.OsWindows {
 		ma.dirMode |= avfs.DefaultDirPerm
@@ -80,7 +81,7 @@ func NewWithOptions(opts *Options) *MemFS {
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
 
-	vfs.err.SetOSType(vfs.OSType())
+	vfs.rootNode = vfs.createRootNode()
 
 	if vfs.HasFeature(avfs.FeatSystemDirs) {
 		// Save the current user and umask.
