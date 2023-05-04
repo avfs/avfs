@@ -58,7 +58,6 @@ const (
 var (
 	appDir            string
 	cgoEnabled        bool
-	coverDir          string
 	coverFile         string
 	dockerCmd         string
 	dockerTestDataDir string
@@ -72,8 +71,7 @@ func init() {
 	appDir = strings.TrimSuffix(appDir, "mage")
 
 	tmpDir = filepath.Join(appDir, "tmp")
-	coverDir = filepath.Join(tmpDir, "cover")
-	coverFile = filepath.Join(coverDir, "coverfile.txt")
+	coverFile = filepath.Join(tmpDir, "avfs-cover.txt")
 	testDataDir = filepath.Join(appDir, "test/testdata")
 
 	dockerVolume := ""
@@ -106,17 +104,12 @@ func init() {
 
 // tmpInit creates the temporary directory.
 func tmpInit() error {
-	err := os.MkdirAll(coverDir, 0o755)
+	err := os.MkdirAll(tmpDir, 0o755)
 	if err != nil {
 		return err
 	}
 
-	err = os.Chmod(tmpDir, 0o777)
-	if err != nil {
-		return err
-	}
-
-	return os.Chmod(coverDir, 0o777)
+	return os.Chmod(tmpDir, 0o777)
 }
 
 // sudo runs a command as root if possible, as an unprivileged user otherwise.
@@ -209,7 +202,8 @@ func Lint() error {
 // CoverResult opens a web browser with the latest coverage file if used
 func CoverResult() error {
 	if isCI() {
-		coverArch := filepath.Join(coverDir, time.Now().Format("cover-20060102-030405.txt"))
+		// Archive coverage file for code coverage upload.
+		coverArch := filepath.Join(tmpDir, time.Now().Format("avfs-cover-20060102-030405.txt"))
 
 		return os.Rename(coverFile, coverArch)
 	}

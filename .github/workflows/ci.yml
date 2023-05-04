@@ -43,10 +43,11 @@ jobs:
           OS: ${{ matrix.os }}
           GO: ${{ matrix.go }}
         with:
+          files: tmp/avfs-cover-*.txt
           env_vars: OS,GO
           verbose: true
 
-      - name: Run build tests on linux systems only
+      - name: Run build tests on linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: avfs testbuild
 
