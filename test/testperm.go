@@ -88,21 +88,21 @@ func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName stri
 	vfs := sfs.vfsSetup
 	adminUser := vfs.Idm().AdminUser()
 
-	sfs.SetUser(t, adminUser.Name())
-	sfs.CreateDir(t, pts.permDir, 0o777)
+	sfs.setUser(t, adminUser.Name())
+	sfs.createDir(t, pts.permDir, avfs.DefaultDirPerm)
 
 	for _, ui := range UserInfos() {
-		sfs.SetUser(t, ui.Name)
+		sfs.setUser(t, ui.Name)
 
 		usrDir := vfs.Join(pts.permDir, ui.Name)
-		sfs.CreateDir(t, usrDir, 0o777)
+		sfs.createDir(t, usrDir, avfs.DefaultDirPerm)
 
 		for m := fs.FileMode(0); m <= 0o777; m++ {
 			path := vfs.Join(usrDir, m.String())
 			if pts.options.CreateFiles {
-				sfs.CreateFile(t, path, m)
+				sfs.createFile(t, path, m)
 			} else {
-				sfs.CreateDir(t, path, m)
+				sfs.createDir(t, path, m)
 			}
 		}
 
@@ -111,7 +111,7 @@ func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName stri
 		CheckNoError(t, "Chmod "+usrDir, err)
 	}
 
-	sfs.SetUser(t, UsrTest)
+	sfs.setUser(t, UsrTest)
 
 	return pts
 }
@@ -122,7 +122,7 @@ type PermFunc func(path string) error
 // load loads a permissions test file.
 func (pts *PermTests) load(t *testing.T) {
 	sfs := pts.sfs
-	sfs.SetUser(t, sfs.initUser.Name())
+	sfs.setUser(t, sfs.initUser.Name())
 
 	b, err := os.ReadFile(pts.errFileName)
 	if err != nil {
@@ -153,7 +153,7 @@ func (pts *PermTests) save(t *testing.T) {
 	}
 
 	sfs := pts.sfs
-	sfs.SetUser(t, sfs.initUser.Name())
+	sfs.setUser(t, sfs.initUser.Name())
 
 	err = os.WriteFile(pts.errFileName, b, avfs.DefaultFilePerm)
 	if err != nil {
@@ -205,7 +205,7 @@ func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
 		return
 	}
 
-	sfs.SetUser(t, UsrTest)
+	sfs.setUser(t, UsrTest)
 
 	for _, ui := range UserInfos() {
 		for m := fs.FileMode(0); m <= 0o777; m++ {
