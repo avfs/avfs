@@ -20,6 +20,7 @@ import (
 	"io/fs"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // New returns a new memory file system (OrefaFS) with the default Options.
@@ -40,7 +41,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 	user := opts.User
 	if opts.User == nil {
-		user = avfs.NotImplementedIdm.AdminUser()
+		user = dummyidm.NotImplementedIdm.AdminUser()
 	}
 
 	vfs := &OrefaFS{

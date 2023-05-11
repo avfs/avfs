@@ -25,6 +25,7 @@ import (
 	"log"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
@@ -67,7 +68,7 @@ func ExampleNewWithOptions_noSystemDirs() {
 }
 
 func ExampleNewWithOptions_noIdm() {
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.NotImplementedIdm, OSType: avfs.OsLinux})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: dummyidm.NotImplementedIdm, OSType: avfs.OsLinux})
 	fmt.Println(vfs.User().Name())
 
 	// Output: Default

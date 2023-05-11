@@ -28,7 +28,7 @@ func (sIdm *SuiteIdm) TestAdminGroupUser(t *testing.T) {
 	idm := sIdm.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
-		wantGroup, wantUser := avfs.DummyName, avfs.DummyName
+		wantGroup, wantUser := avfs.DefaultName, avfs.DefaultName
 
 		ag := idm.AdminGroup()
 		if ag.Name() != wantGroup {
@@ -50,6 +50,10 @@ func (sIdm *SuiteIdm) TestAdminGroupUser(t *testing.T) {
 
 		if au.Gid() != math.MaxInt {
 			t.Errorf("AdminUser : want Gid to be %d, got %d", math.MaxInt, au.Gid())
+		}
+
+		if au.IsAdmin() {
+			t.Errorf("AdminUser : want IsAdmin to be false, got true")
 		}
 
 		return

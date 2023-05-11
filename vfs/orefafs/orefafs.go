@@ -29,6 +29,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // file system functions.
@@ -226,7 +227,7 @@ func (vfs *OrefaFS) Glob(pattern string) (matches []string, err error) {
 // Idm returns the identity manager of the file system.
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *OrefaFS) Idm() avfs.IdentityMgr {
-	return avfs.NotImplementedIdm
+	return dummyidm.NotImplementedIdm
 }
 
 // Lchown changes the numeric uid and gid of the named file.

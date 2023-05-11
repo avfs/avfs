@@ -23,6 +23,7 @@ import (
 	"math"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // Chroot changes the root to that specified in path.
@@ -46,7 +47,7 @@ func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	return avfs.NotImplementedIdm.AdminUser()
+	return dummyidm.NotImplementedIdm.AdminUser()
 }
 
 // WindowsSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Windows file system.

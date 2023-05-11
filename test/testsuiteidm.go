@@ -36,7 +36,8 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 	sIdm := &SuiteIdm{idm: idm}
 
 	defer func() {
-		t.Logf("Info Idm = %s, can test permissions = %t", sIdm.Type(), sIdm.canTest)
+		t.Logf("Idm: Type=%s OSType=%s Features=%s CanTestPerm=%t",
+			sIdm.Type(), idm.OSType(), idm.Features(), sIdm.canTest)
 	}()
 
 	sIdm.canTest = idm.HasFeature(avfs.FeatIdentityMgr) && !idm.HasFeature(avfs.FeatReadOnlyIdm)

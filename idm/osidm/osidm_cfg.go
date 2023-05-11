@@ -36,7 +36,7 @@ func New() *OsIdm {
 	if osType == avfs.OsWindows {
 		features = 0
 		uid, gid = math.MaxInt, math.MaxInt
-		GroupName, UserName = avfs.DummyName, avfs.DummyName
+		GroupName, UserName = avfs.DefaultName, avfs.DefaultName
 	}
 
 	adminGroup := &OsGroup{name: GroupName, gid: gid}
@@ -49,6 +49,11 @@ func New() *OsIdm {
 	}
 
 	return idm
+}
+
+// OSType returns the operating system type of the identity manager.
+func (idm *OsIdm) OSType() avfs.OSType {
+	return avfs.CurrentOSType()
 }
 
 // Type returns the type of the fileSystem or Identity manager.

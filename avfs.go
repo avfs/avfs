@@ -26,6 +26,7 @@ import (
 const (
 	DefaultDirPerm  = fs.FileMode(0o777) // DefaultDirPerm is the default permission for directories.
 	DefaultFilePerm = fs.FileMode(0o666) // DefaultFilePerm is the default permission for files.
+	DefaultName     = "Default"          // DefaultName is the default name.
 	DefaultVolume   = "C:"               // DefaultVolume is the default volume name for Windows.
 	NotImplemented  = "not implemented"  // NotImplemented is the return string of a non-implemented feature.
 
@@ -123,6 +124,7 @@ type VFSBase interface {
 	Featurer
 	Namer
 	SystemDirMgr
+	OSTyper
 	Typer
 
 	// Abs returns an absolute representation of path.
@@ -347,9 +349,6 @@ type VFSBase interface {
 	// If there is an error, it will be of type *PathError.
 	OpenFile(name string, flag int, perm fs.FileMode) (File, error)
 
-	// OSType returns the operating system type of the file system.
-	OSType() OSType
-
 	// PathSeparator return the OS-specific path separator.
 	PathSeparator() uint8
 
@@ -510,6 +509,12 @@ type Namer interface {
 	Name() string
 }
 
+// OSTyper is the interface that wraps the OSType method.
+type OSTyper interface {
+	// OSType returns the operating system type of the file system.
+	OSType() OSType
+}
+
 // Typer is the interface that wraps the Type method.
 type Typer interface {
 	// Type returns the type of the fileSystem or Identity manager.
@@ -596,6 +601,7 @@ type SystemDirMgr interface {
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
 	Featurer
+	OSTyper
 	Typer
 
 	// AdminGroup returns the administrator (root) group.

@@ -18,6 +18,7 @@ package osfs
 
 import (
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/idm/osidm"
 )
 
@@ -30,7 +31,7 @@ func New() *OsFS {
 // NewWithNoIdm returns a new OS file system with no identity management.
 // Use this for production environments.
 func NewWithNoIdm() *OsFS {
-	return NewWithOptions(&Options{Idm: avfs.NotImplementedIdm})
+	return NewWithOptions(&Options{Idm: dummyidm.NotImplementedIdm})
 }
 
 // NewWithOptions returns a new memory file system (MemFS) with the selected Options.

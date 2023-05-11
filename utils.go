@@ -670,7 +670,7 @@ func (ut *Utils[_]) SystemDirs(basePath string) []DirInfo {
 		return []DirInfo{
 			{Path: ut.Join(basePath, ut.HomeDir()[volumeNameLen:]), Perm: DefaultDirPerm},
 			{Path: ut.Join(basePath, ut.TempDir(AdminUserName(ut.osType))[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: ut.Join(basePath, ut.TempDir(DummyName)[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: ut.Join(basePath, ut.TempDir(DefaultName)[volumeNameLen:]), Perm: DefaultDirPerm},
 			{Path: ut.Join(basePath, `\Windows`), Perm: DefaultDirPerm},
 		}
 	default:
