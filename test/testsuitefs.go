@@ -115,7 +115,7 @@ func (sfs *SuiteFS) createRootDir(tb testing.TB) {
 	vfs := sfs.vfsSetup
 	rootDir := ""
 
-	if _, ok := tb.(*testing.B); ok {
+	if _, ok := tb.(*testing.B); ok && vfs.HasFeature(avfs.FeatRealFS) {
 		// run Benches on real disks, /tmp is usually an in memory file system.
 		rootDir = vfs.Join(vfs.HomeDirUser(vfs.User()), "tmp")
 		sfs.createDir(tb, rootDir, avfs.DefaultDirPerm)
@@ -144,20 +144,18 @@ func (sfs *SuiteFS) createRootDir(tb testing.TB) {
 }
 
 // setUser sets the test user to userName.
-func (sfs *SuiteFS) setUser(tb testing.TB, userName string) avfs.UserReader {
+func (sfs *SuiteFS) setUser(tb testing.TB, userName string) {
 	vfs := sfs.vfsSetup
 
 	u := vfs.User()
 	if !sfs.canTestPerm || u.Name() == userName {
-		return u
+		return
 	}
 
-	u, err := vfs.SetUser(userName)
+	_, err := vfs.SetUser(userName)
 	if err != nil {
 		tb.Fatalf("setUser %s : want error to be nil, got %s", userName, err)
 	}
-
-	return u
 }
 
 // VFSTest returns the file system used to run the tests.
@@ -405,7 +403,8 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 func (sfs *SuiteFS) BenchAll(b *testing.B) {
 	sfs.RunBenchmarks(b, UsrTest,
 		sfs.BenchCreate,
-		sfs.BenchFileReadWrite,
+		sfs.BenchFileRead,
+		sfs.BenchFileWrite,
 		sfs.BenchMkdir,
 		sfs.BenchOpenFile,
 		sfs.BenchRemove,

@@ -51,8 +51,8 @@ const (
 	goxInst     = "github.com/mitchellh/gox@master"
 	sudoCmd     = "sudo"
 	tarCmd      = "tar"
-	raceCount   = 5
-	benchCount  = 5
+	raceCount   = 12
+	benchCount  = 12
 )
 
 var (
