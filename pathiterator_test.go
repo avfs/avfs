@@ -89,6 +89,16 @@ func TestPathIterator(t *testing.T) {
 			if i != len(c.parts) {
 				t.Errorf("%s : want %d parts, got %d parts", pi.Path(), len(c.parts), i)
 			}
+
+			if c.osType == avfs.OsWindows {
+				if pi.VolumeNameLen() == 0 || pi.VolumeName() == "" {
+					t.Errorf("%s : want VolumeName != '', got ''", pi.Path())
+				}
+			} else {
+				if pi.VolumeNameLen() != 0 || pi.VolumeName() != "" {
+					t.Errorf("%s : want VolumeName == '', got %s ", pi.Path(), pi.VolumeName())
+				}
+			}
 		}
 	})
 
