@@ -81,7 +81,7 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "GroupAddDel" + sIdm.Type()
 
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		groupName := "AGroup" + suffix
 
 		_, err := idm.GroupAdd(groupName)
@@ -184,7 +184,7 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 	idm := sIdm.idm
 	suffix := "UserAddDel" + sIdm.Type()
 
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		groupName := "InvalidGroup" + suffix
 		userName := "InvalidUser" + suffix
 
@@ -345,6 +345,16 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 		return
 	}
 
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		groupName := "InvalidGroup" + suffix
+		_, err := idm.LookupGroup(groupName)
+
+		wantGroupErr := avfs.UnknownGroupError(groupName)
+		if err != wantGroupErr {
+			t.Errorf("LookupGroup %s : want error to be %v, got %v", groupName, wantGroupErr, err)
+		}
+	}
+
 	if !sIdm.canTest {
 		return
 	}
@@ -355,8 +365,17 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 	t.Run("LookupGroup", func(t *testing.T) {
 		for _, gi := range GroupInfos() {
 			groupName := gi.Name + suffix
+			wantErr := avfs.UnknownGroupError(groupName)
 
 			g, err := idm.LookupGroup(groupName)
+			if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+				if err != wantErr {
+					t.Errorf("LookupGroup %s : want error to be %v, got %v", groupName, wantErr, err)
+				}
+
+				continue
+			}
+
 			if !AssertNoError(t, err, "LookupGroup %s", groupName) {
 				continue
 			}
@@ -374,8 +393,17 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 	t.Run("LookupUser", func(t *testing.T) {
 		for _, ui := range UserInfos() {
 			userName := ui.Name + suffix
+			wantErr := avfs.UnknownUserError(userName)
 
 			u, err := idm.LookupUser(userName)
+			if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+				if err != wantErr {
+					t.Errorf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
+				}
+
+				continue
+			}
+
 			if !AssertNoError(t, err, "LookupUser %s", userName) {
 				continue
 			}

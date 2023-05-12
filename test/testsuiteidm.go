@@ -40,7 +40,7 @@ func NewSuiteIdm(t *testing.T, idm avfs.IdentityMgr) *SuiteIdm {
 			sIdm.Type(), idm.OSType(), idm.Features(), sIdm.canTest)
 	}()
 
-	sIdm.canTest = idm.HasFeature(avfs.FeatIdentityMgr) && !idm.HasFeature(avfs.FeatReadOnlyIdm)
+	sIdm.canTest = idm.HasFeature(avfs.FeatIdentityMgr)
 	if !sIdm.canTest {
 		return sIdm
 	}

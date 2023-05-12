@@ -20,8 +20,6 @@ package osidm
 
 import (
 	"bytes"
-	"encoding/csv"
-	"io"
 	"os"
 	"os/exec"
 	"runtime"
@@ -29,11 +27,6 @@ import (
 	"strings"
 
 	"github.com/avfs/avfs"
-)
-
-const (
-	groupFile = "/etc/group"
-	userFile  = "/etc/passwd"
 )
 
 // To avoid flaky tests when executing commands or making system calls as root,
@@ -188,118 +181,82 @@ func (idm *OsIdm) UserDel(name string) error {
 	return nil
 }
 
-type compareFunc func(line []string, value string) bool
-
 func LookupGroup(name string) (*OsGroup, error) {
-	return lookupGroupFunc(func(line []string, value string) bool { return line[0] == value },
-		name,
-		avfs.UnknownGroupError(name))
+	return lookupGroup(name, avfs.UnknownGroupError(name))
 }
 
 func LookupGroupId(gid int) (*OsGroup, error) {
 	sGid := strconv.Itoa(gid)
 
-	return lookupGroupFunc(func(line []string, value string) bool { return line[2] == value },
-		sGid,
-		avfs.UnknownGroupIdError(gid))
+	return lookupGroup(sGid, avfs.UnknownGroupIdError(gid))
 }
 
-func lookupGroupFunc(compareFunc compareFunc, value string, notFoundErr error) (*OsGroup, error) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	f, err := os.Open(groupFile)
+func lookupGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
+	line, err := getent("group", nameOrId, notFoundErr)
 	if err != nil {
 		return nil, err
 	}
 
-	defer f.Close()
+	cols := strings.Split(line, ":")
+	gid, _ := strconv.Atoi(cols[2])
 
-	// Line format :
-	// groupname:x:gid:
-	r := csv.NewReader(f)
-	r.Comma = ':'
-	r.Comment = '#'
-	r.FieldsPerRecord = 4
-
-	for {
-		line, err := r.Read()
-		if err == io.EOF {
-			return nil, notFoundErr
-		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		if compareFunc(line, value) {
-			gid, _ := strconv.Atoi(line[2])
-
-			g := &OsGroup{
-				name: line[0],
-				gid:  gid,
-			}
-
-			return g, nil
-		}
+	g := &OsGroup{
+		name: cols[0],
+		gid:  gid,
 	}
+
+	return g, nil
 }
 
 func LookupUser(name string) (*OsUser, error) {
-	return lookupUserFunc(func(line []string, value string) bool { return line[0] == value },
-		name,
-		avfs.UnknownUserError(name))
+	return lookupUser(name, avfs.UnknownUserError(name))
 }
 
 func LookupUserId(uid int) (*OsUser, error) {
 	sUid := strconv.Itoa(uid)
 
-	return lookupUserFunc(func(line []string, value string) bool { return line[2] == value },
-		sUid,
-		avfs.UnknownUserIdError(uid))
+	return lookupUser(sUid, avfs.UnknownUserIdError(uid))
 }
 
-func lookupUserFunc(compareFunc compareFunc, value string, notFoundErr error) (*OsUser, error) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	f, err := os.Open(userFile)
+func lookupUser(nameOrId string, notFoundErr error) (*OsUser, error) {
+	line, err := getent("passwd", nameOrId, notFoundErr)
 	if err != nil {
 		return nil, err
 	}
 
-	defer f.Close()
+	cols := strings.Split(line, ":")
+	uid, _ := strconv.Atoi(cols[2])
+	gid, _ := strconv.Atoi(cols[3])
 
-	// Line format :
-	// username:x:uid:gid::/home/username:/bin/bash
-	r := csv.NewReader(f)
-	r.Comma = ':'
-	r.Comment = '#'
-	r.FieldsPerRecord = 7
-
-	for {
-		line, err := r.Read()
-		if err == io.EOF {
-			return nil, notFoundErr
-		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		if compareFunc(line, value) {
-			uid, _ := strconv.Atoi(line[2])
-			gid, _ := strconv.Atoi(line[3])
-
-			u := &OsUser{
-				name: line[0],
-				uid:  uid,
-				gid:  gid,
-			}
-
-			return u, nil
-		}
+	u := &OsUser{
+		name: cols[0],
+		uid:  uid,
+		gid:  gid,
 	}
+
+	return u, nil
+}
+
+func getent(database, key string, notFoundErr error) (string, error) {
+	cmd := exec.Command("getent", database, key)
+
+	buf, err := cmd.Output()
+	if err != nil {
+		if e, ok := err.(*exec.ExitError); ok {
+			switch e.ExitCode() {
+			case 1:
+				return "", avfs.UnknownError("Missing arguments, or database unknown.")
+			case 2:
+				return "", notFoundErr
+			case 3:
+				return "", avfs.UnknownError("Enumeration not supported on this database.")
+			}
+		}
+
+		return "", err
+	}
+
+	return string(buf), nil
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.
