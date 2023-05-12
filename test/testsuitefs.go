@@ -892,7 +892,7 @@ func (cp *checkPathError) OpStat() *checkPathError {
 
 	return cp.
 		Op("stat", avfs.OsLinux).
-		Op("createFile", avfs.OsWindows)
+		Op("CreateFile", avfs.OsWindows)
 }
 
 // OpLstat checks if the current fs.PathError Op is a Lstat Op.
@@ -902,7 +902,7 @@ func (cp *checkPathError) OpLstat() *checkPathError {
 
 	return cp.
 		Op("lstat", avfs.OsLinux).
-		Op("createFile", avfs.OsWindows)
+		Op("CreateFile", avfs.OsWindows)
 }
 
 // Path checks the path of the current fs.PathError.
