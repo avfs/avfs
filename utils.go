@@ -500,7 +500,7 @@ func (*Utils[T]) Open(vfs T, name string) (File, error) {
 func (*Utils[_]) OpenMode(flag int) OpenMode {
 	var om OpenMode
 
-	// Mask flags that could be used in read only mode (syscall.O_DIRECT for example)
+	// Mask flags that can be used in read only mode (syscall.O_DIRECT for example)
 	if flag&0xFFF == os.O_RDONLY {
 		return OpenRead
 	}

@@ -68,20 +68,20 @@ func TestMemFSOptionUser(t *testing.T) {
 
 	groupName := "aGroup"
 	_, err := idm.GroupAdd(groupName)
-	test.CheckNoError(t, "GroupAdd "+groupName, err)
+	test.RequireNoError(t, err, "GroupAdd %s", groupName)
 
 	userName := "aUser"
 	u, err := idm.UserAdd(userName, groupName)
-	test.CheckNoError(t, "UserAdd "+userName, err)
+	test.RequireNoError(t, err, "UserAdd %s", userName)
 
 	vfs := memfs.NewWithOptions(&memfs.Options{User: u})
 
 	dir := "test"
 	err = vfs.Mkdir(dir, avfs.DefaultDirPerm)
-	test.CheckNoError(t, "Mkdir "+dir, err)
+	test.RequireNoError(t, err, "Mkdir %s", dir)
 
 	info, err := vfs.Stat(dir)
-	test.CheckNoError(t, "Stat "+dir, err)
+	test.RequireNoError(t, err, "Stat %s", dir)
 
 	sst := vfs.ToSysStat(info)
 	if sst.Uid() != u.Uid() {

@@ -21,7 +21,6 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -31,6 +30,16 @@ const (
 	bufSize     = 32 * 1024
 	maxFileSize = 1024 * bufSize
 )
+
+// benchOpenFlags returns the flags used to disable cache.
+func (sfs *SuiteFS) benchOpenFlags() int {
+	vfs := sfs.vfsTest
+	if !vfs.HasFeature(avfs.FeatRealFS) || vfs.OSType() != avfs.OsLinux {
+		return 0
+	}
+
+	return 0x4000 // syscall.O_DIRECT for linux.
+}
 
 // BenchCreate benchmarks Create function.
 func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
@@ -52,9 +61,7 @@ func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 			fileName := files[n]
 
 			f, err := vfs.Create(fileName)
-			if err != nil {
-				b.Fatalf("Create %s : %v", fileName, err)
-			}
+			RequireNoError(b, err, "Create %s", fileName)
 
 			_ = f.Close()
 		}
@@ -67,10 +74,10 @@ func (sfs *SuiteFS) BenchFileRead(b *testing.B, testDir string) {
 	fileName := vfs.Join(testDir, "BenchFileRead.txt")
 
 	err := vfs.WriteFile(fileName, make([]byte, maxFileSize), avfs.DefaultFilePerm)
-	CheckNoError(b, "WriteFile"+fileName, err)
+	RequireNoError(b, err, "WriteFile %s", fileName)
 
-	f, err := vfs.OpenFile(fileName, os.O_RDONLY|syscall.O_DIRECT, avfs.DefaultFilePerm)
-	CheckNoError(b, "OpenFile"+fileName, err)
+	f, err := vfs.OpenFile(fileName, os.O_RDONLY|sfs.benchOpenFlags(), avfs.DefaultFilePerm)
+	RequireNoError(b, err, "OpenFile %s", fileName)
 
 	defer func() {
 		_ = f.Close()
@@ -81,7 +88,7 @@ func (sfs *SuiteFS) BenchFileRead(b *testing.B, testDir string) {
 
 	b.Run("FileRead", func(b *testing.B) {
 		_, err = f.Seek(0, io.SeekStart)
-		CheckNoError(b, "Seek"+fileName, err)
+		RequireNoError(b, err, "Seek %s", fileName)
 
 		s := 0
 
@@ -89,11 +96,11 @@ func (sfs *SuiteFS) BenchFileRead(b *testing.B, testDir string) {
 			if s >= maxFileSize {
 				s = 0
 				_, err = f.Seek(0, io.SeekStart)
-				CheckNoError(b, "Seek"+fileName, err)
+				RequireNoError(b, err, "Seek %s", fileName)
 			}
 
 			_, err = f.Read(buf)
-			CheckNoError(b, "Read"+fileName, err)
+			RequireNoError(b, err, "Read %s", fileName)
 
 			s += bufSize
 		}
@@ -105,8 +112,8 @@ func (sfs *SuiteFS) BenchFileWrite(b *testing.B, testDir string) {
 	buf := make([]byte, bufSize)
 	fileName := vfs.Join(testDir, "BenchFileWrite.txt")
 
-	f, err := vfs.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|syscall.O_DIRECT, avfs.DefaultFilePerm)
-	CheckNoError(b, "OpenFile"+fileName, err)
+	f, err := vfs.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|sfs.benchOpenFlags(), avfs.DefaultFilePerm)
+	RequireNoError(b, err, "OpenFile %s", fileName)
 
 	defer func() {
 		_ = f.Close()
@@ -123,15 +130,11 @@ func (sfs *SuiteFS) BenchFileWrite(b *testing.B, testDir string) {
 			if s >= maxFileSize {
 				s = 0
 				_, err = f.Seek(0, io.SeekStart)
-				if err != nil {
-					b.Fatalf("Seek %s : %v", fileName, err)
-				}
+				RequireNoError(b, err, "Seek %s", fileName)
 			}
 
 			_, err = f.Write(buf)
-			if err != nil {
-				b.Fatalf("Write %s : %v", fileName, err)
-			}
+			RequireNoError(b, err, "Write %s", fileName)
 		}
 	})
 }
@@ -152,17 +155,13 @@ func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 		}
 
 		err := vfs.RemoveAll(testDir)
-		if err != nil {
-			b.Fatalf("RemoveAll %s : %v", testDir, err)
-		}
+		RequireNoError(b, err, "RemoveAll %s", testDir)
 
 		b.StartTimer()
 
 		for n := 0; n < b.N; n++ {
 			err = vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
-			if err != nil {
-				b.Fatalf("Mkdir %s : %v", dirs[n], err)
-			}
+			RequireNoError(b, err, "Mkdir %s", dirs[n])
 		}
 	})
 }
@@ -177,9 +176,7 @@ func (sfs *SuiteFS) BenchOpenFile(b *testing.B, testDir string) {
 	b.Run("Open", func(b *testing.B) {
 		for n := 1; n < b.N; n++ {
 			f, err := vfs.OpenFile(fileName, os.O_RDONLY, avfs.DefaultFilePerm)
-			if err != nil {
-				b.Fatalf("OpenFile %s : %v", fileName, err)
-			}
+			RequireNoError(b, err, "OpenFile %s", fileName)
 
 			_ = f.Close()
 		}
@@ -200,22 +197,16 @@ func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
 			MaxDirs: b.N,
 		})
 
-		if !CheckNoError(b, "RndTree "+testDir, err) {
-			return
-		}
+		RequireNoError(b, err, "RndTree %s", testDir)
 
 		err = rt.CreateTree()
-		if !CheckNoError(b, "CreateTree "+testDir, err) {
-			return
-		}
+		RequireNoError(b, err, "CreateTree %s", testDir)
 
 		b.StartTimer()
 
 		for n := b.N - 1; n >= 0; n-- {
 			err = vfs.Remove(rt.Dirs[n])
-			if err != nil {
-				b.Fatalf("Remove %s : %v", rt.Dirs[n], err)
-			}
+			RequireNoError(b, err, "Remove %s", rt.Dirs[n])
 		}
 	})
 }

@@ -115,7 +115,7 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 			}
 
 			g, err := idm.GroupAdd(groupName)
-			if !CheckNoError(t, "GroupAdd "+groupName, err) {
+			if !AssertNoError(t, err, "GroupAdd %s", groupName) {
 				continue
 			}
 
@@ -130,10 +130,10 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 			}
 
 			_, err = idm.LookupGroup(groupName)
-			CheckNoError(t, "LookupGroup "+groupName, err)
+			RequireNoError(t, err, "LookupGroup %s", groupName)
 
 			_, err = idm.LookupGroupId(g.Gid())
-			CheckNoError(t, "LookupGroupId "+groupName, err)
+			RequireNoError(t, err, "LookupGroupId %s", groupName)
 		}
 	})
 
@@ -154,12 +154,10 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
-			if !CheckNoError(t, "LookupGroup "+groupName, err) {
-				return
-			}
+			RequireNoError(t, err, "LookupGroup %s", groupName)
 
 			err = idm.GroupDel(groupName)
-			CheckNoError(t, "GroupDel "+groupName, err)
+			RequireNoError(t, err, "GroupDel %s", groupName)
 
 			_, err = idm.LookupGroup(g.Name())
 			wantGroupErr := avfs.UnknownGroupError(groupName)
@@ -217,9 +215,7 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			groupName := ui.GroupName + suffix
 
 			g, err := idm.LookupGroup(groupName)
-			if !CheckNoError(t, "LookupGroup "+groupName, err) {
-				return
-			}
+			RequireNoError(t, err, "LookupGroup %s", groupName)
 
 			userName := ui.Name + suffix
 			wantUserErr := avfs.UnknownUserError(userName)
@@ -230,7 +226,7 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			}
 
 			u, err := idm.UserAdd(userName, groupName)
-			CheckNoError(t, "UserAdd "+userName, err)
+			RequireNoError(t, err, "UserAdd %s", userName)
 
 			if u == nil {
 				t.Errorf("UserAdd %s : want user to be not nil, got nil", userName)
@@ -257,10 +253,10 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			}
 
 			_, err = idm.LookupUser(userName)
-			CheckNoError(t, "LookupUser "+userName, err)
+			RequireNoError(t, err, "LookupUser %s", userName)
 
 			_, err = idm.LookupUserId(u.Uid())
-			CheckNoError(t, "LookupUserId "+userName, err)
+			RequireNoError(t, err, "LookupUserId %s", userName)
 		}
 	})
 
@@ -298,12 +294,10 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
-			if !CheckNoError(t, "LookupGroup "+userName, err) {
-				return
-			}
+			RequireNoError(t, err, "LookupUser %s", userName)
 
 			err = idm.UserDel(userName)
-			CheckNoError(t, "UserDel "+userName, err)
+			RequireNoError(t, err, "UserDel %s", userName)
 
 			_, err = idm.LookupUser(u.Name())
 			wantUserErr := avfs.UnknownUserError(userName)
@@ -363,7 +357,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
-			if !CheckNoError(t, "LookupGroup "+groupName, err) {
+			if !AssertNoError(t, err, "LookupGroup %s", groupName) {
 				continue
 			}
 
@@ -382,7 +376,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
-			if !CheckNoError(t, "LookupUser "+userName, err) {
+			if !AssertNoError(t, err, "LookupUser %s", userName) {
 				continue
 			}
 

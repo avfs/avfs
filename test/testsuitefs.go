@@ -18,6 +18,7 @@ package test
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -765,12 +766,11 @@ func (sfs *SuiteFS) CreateSampleSymlinks(tb testing.TB, testDir string) []*Symli
 	return symlinks
 }
 
-// CheckNoError checks if there is no error.
-func CheckNoError(tb testing.TB, name string, err error) bool {
-	tb.Helper()
-
-	if err != nil {
-		tb.Errorf("%s : want error to be nil, got %v", name, err)
+// AssertInvalid asserts that the error is fs.ErrInvalid.
+func AssertInvalid(tb testing.TB, err error, msgAndArgs ...any) bool {
+	if err != fs.ErrInvalid {
+		tb.Helper()
+		tb.Errorf("error : want error to be %v, got %v\n%s", fs.ErrInvalid, err, formatArgs(msgAndArgs))
 
 		return false
 	}
@@ -778,12 +778,41 @@ func CheckNoError(tb testing.TB, name string, err error) bool {
 	return true
 }
 
-// CheckInvalid checks if the error is fs.ErrInvalid.
-func CheckInvalid(tb testing.TB, name string, err error) {
-	tb.Helper()
+// AssertNoError asserts that there is no error (err == nil).
+func AssertNoError(tb testing.TB, err error, msgAndArgs ...any) bool {
+	if err != nil {
+		tb.Helper()
+		tb.Errorf("error : want error to be nil, got %v\n%s", err, formatArgs(msgAndArgs))
 
-	if err != fs.ErrInvalid {
-		tb.Errorf("%s : want error to be %v, got %v", name, fs.ErrInvalid, err)
+		return false
+	}
+
+	return true
+}
+
+// formatArgs formats a list of optional arguments to a string, the first argument being a format string.
+func formatArgs(msgAndArgs []any) string {
+	na := len(msgAndArgs)
+	if na == 0 {
+		return ""
+	}
+
+	format, ok := msgAndArgs[0].(string)
+	if !ok {
+		return ""
+	}
+
+	if na == 1 {
+		return format
+	}
+
+	return fmt.Sprintf(format, msgAndArgs[1:]...)
+}
+
+// RequireNoError require that a function returned no error.
+func RequireNoError(tb testing.TB, err error, msgAndArgs ...any) {
+	if !AssertNoError(tb, err, msgAndArgs...) {
+		tb.FailNow()
 	}
 }
 

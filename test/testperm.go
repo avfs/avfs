@@ -108,7 +108,7 @@ func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName stri
 
 		// Allow updates from user and group.
 		err := vfs.Chmod(usrDir, 0o775)
-		CheckNoError(t, "Chmod "+usrDir, err)
+		RequireNoError(t, err, "Chmod %s", usrDir)
 	}
 
 	sfs.setUser(t, UsrTest)
