@@ -53,3 +53,40 @@ func TestDummyIdmFeatures(t *testing.T) {
 		t.Errorf("Features : want Features to be 0, got %d", idm.Features())
 	}
 }
+
+func TestNewGroup(t *testing.T) {
+	const (
+		groupName = "aGroup"
+		gid       = 1
+	)
+
+	aGroup := dummyidm.NewGroup(groupName, gid)
+	if aGroup.Name() != groupName {
+		t.Errorf("want group to be %s, got %s", groupName, aGroup.Name())
+	}
+
+	if aGroup.Gid() != gid {
+		t.Errorf("want group id to be %d, got %d", gid, aGroup.Gid())
+	}
+}
+
+func TestNewUser(t *testing.T) {
+	const (
+		userName = "aUser"
+		uid      = 1
+		gid      = 2
+	)
+
+	aUser := dummyidm.NewUser(userName, uid, gid)
+	if aUser.Name() != userName {
+		t.Errorf("want user to be %s, got %s", userName, aUser.Name())
+	}
+
+	if aUser.Gid() != gid {
+		t.Errorf("want group id to be %d, got %d", gid, aUser.Gid())
+	}
+
+	if aUser.Uid() != uid {
+		t.Errorf("want user id to be %d, got %d", uid, aUser.Uid())
+	}
+}

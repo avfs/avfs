@@ -30,6 +30,14 @@ func New() *DummyIdm {
 	}
 }
 
+func NewGroup(name string, gid int) *DummyGroup {
+	return &DummyGroup{name: name, gid: gid}
+}
+
+func NewUser(name string, uid, gid int) *DummyUser {
+	return &DummyUser{name: name, uid: uid, gid: gid}
+}
+
 // Type returns the type of the fileSystem or Identity manager.
 func (idm *DummyIdm) Type() string {
 	return "DummyIdm"
