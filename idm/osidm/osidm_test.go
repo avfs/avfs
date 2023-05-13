@@ -30,6 +30,9 @@ var (
 	// OsIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &osidm.OsIdm{}
 
+	// OsIdm implements avfs.UserSetter interface.
+	_ avfs.UserSetter = &osidm.OsIdm{}
+
 	// OsUser implements avfs.UserReader interface.
 	_ avfs.UserReader = &osidm.OsUser{}
 

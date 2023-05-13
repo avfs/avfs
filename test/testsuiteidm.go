@@ -58,10 +58,20 @@ func (sIdm *SuiteIdm) Type() string {
 
 // TestAll run all identity manager tests.
 func (sIdm *SuiteIdm) TestAll(t *testing.T) {
+	idm := sIdm.idm
+
+	ust, ok := idm.(avfs.UserSetter)
+	if ok && !idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		defer func() {
+			_, _ = ust.SetUser(idm.AdminUser().Name())
+		}()
+	}
+
 	sIdm.TestAdminGroupUser(t)
 	sIdm.TestGroupAddDel(t)
 	sIdm.TestUserAddDel(t)
 	sIdm.TestLookup(t)
+	sIdm.TestSetUser(t)
 }
 
 // GroupInfo contains information to create a test group.

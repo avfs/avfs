@@ -18,7 +18,10 @@
 
 package osidm
 
-import "github.com/avfs/avfs"
+import (
+	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
+)
 
 // GroupAdd adds a new group.
 func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
@@ -52,6 +55,17 @@ func (idm *OsIdm) LookupUser(name string) (avfs.UserReader, error) {
 // returned error is of type UnknownUserIdError.
 func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
+}
+
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func SetUser(name string) (avfs.UserReader, error) {
+	return nil, avfs.ErrPermDenied
+}
+
+// User returns the current user of the OS.
+func User() avfs.UserReader {
+	return dummyidm.NotImplementedIdm.AdminUser()
 }
 
 // UserAdd adds a new user.

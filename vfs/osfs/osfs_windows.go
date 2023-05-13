@@ -23,7 +23,6 @@ import (
 	"math"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // Chroot changes the root to that specified in path.
@@ -34,20 +33,9 @@ func (vfs *OsFS) Chroot(path string) error {
 	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinNotSupported}
 }
 
-// SetUser sets the current user of the file system to uid.
-// If the current user has not root privileges avfs.errPermDenied is returned.
-func SetUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
-}
-
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 	return &WindowsSysStat{gid: math.MaxInt, uid: math.MaxInt}
-}
-
-// User returns the current user of the OS.
-func User() avfs.UserReader {
-	return dummyidm.NotImplementedIdm.AdminUser()
 }
 
 // WindowsSysStat implements SysStater interface returned by fs.FileInfo.Sys() for a Windows file system.

@@ -126,6 +126,7 @@ type VFSBase interface {
 	SystemDirMgr
 	OSTyper
 	Typer
+	UserSetter
 
 	// Abs returns an absolute representation of path.
 	// If the path is not absolute it will be joined with the current
@@ -406,10 +407,6 @@ type VFSBase interface {
 	// SetUMask sets the file mode creation mask.
 	SetUMask(mask fs.FileMode)
 
-	// SetUser sets and returns the current user.
-	// If the user is not found, the returned error is of type UnknownUserError.
-	SetUser(name string) (UserReader, error)
-
 	// Stat returns a FileInfo describing the named file.
 	// If there is an error, it will be of type *PathError.
 	Stat(name string) (fs.FileInfo, error)
@@ -458,9 +455,6 @@ type VFSBase interface {
 
 	// UMask returns the file mode creation mask.
 	UMask() fs.FileMode
-
-	// User returns the current user.
-	User() UserReader
 
 	// WalkDir walks the file tree rooted at root, calling fn for each file or
 	// directory in the tree, including root.
@@ -519,6 +513,16 @@ type OSTyper interface {
 type Typer interface {
 	// Type returns the type of the fileSystem or Identity manager.
 	Type() string
+}
+
+// UserSetter is the interface that wraps the SetUser and User methods.
+type UserSetter interface {
+	// SetUser sets and returns the current user.
+	// If the user is not found, the returned error is of type UnknownUserError.
+	SetUser(name string) (UserReader, error)
+
+	// User returns the current user.
+	User() UserReader
 }
 
 // File represents a file in the file system.

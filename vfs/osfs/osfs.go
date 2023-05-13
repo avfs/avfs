@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/osidm"
 )
 
 // file system functions.
@@ -413,7 +414,7 @@ func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
 		return nil, vfs.err.PermDenied
 	}
 
-	return SetUser(name)
+	return osidm.SetUser(name)
 }
 
 // Stat returns a FileInfo describing the named file.
@@ -479,7 +480,7 @@ func (vfs *OsFS) UMask() fs.FileMode {
 
 // User returns the current user.
 func (vfs *OsFS) User() avfs.UserReader {
-	return User()
+	return osidm.User()
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or

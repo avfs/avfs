@@ -20,11 +20,13 @@ package osidm
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/avfs/avfs"
 )
@@ -97,25 +99,157 @@ func (idm *OsIdm) GroupDel(name string) error {
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
 func (idm *OsIdm) LookupGroup(name string) (avfs.GroupReader, error) {
-	return LookupGroup(name)
+	return getGroup(name, avfs.UnknownGroupError(name))
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
 // returned error is of type UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	return LookupGroupId(gid)
+	sGid := strconv.Itoa(gid)
+
+	return getGroup(sGid, avfs.UnknownGroupIdError(gid))
+}
+
+func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
+	line, err := getent("group", nameOrId, notFoundErr)
+	if err != nil {
+		return nil, err
+	}
+
+	cols := strings.Split(line, ":")
+	gid, _ := strconv.Atoi(cols[2])
+
+	g := &OsGroup{
+		name: cols[0],
+		gid:  gid,
+	}
+
+	return g, nil
 }
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
 func (idm *OsIdm) LookupUser(name string) (avfs.UserReader, error) {
-	return LookupUser(name)
+	return lookupUser(name)
+}
+
+func lookupUser(name string) (avfs.UserReader, error) {
+	return getUser(name, avfs.UnknownUserError(name))
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
 // returned error is of type UnknownUserIdError.
 func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
-	return LookupUserId(uid)
+	return lookupUserId(uid)
+}
+
+func lookupUserId(uid int) (avfs.UserReader, error) {
+	sUid := strconv.Itoa(uid)
+
+	return getUser(sUid, avfs.UnknownUserIdError(uid))
+}
+
+func getUser(nameOrId string, notFoundErr error) (*OsUser, error) {
+	line, err := getent("passwd", nameOrId, notFoundErr)
+	if err != nil {
+		return nil, err
+	}
+
+	cols := strings.Split(line, ":")
+	uid, _ := strconv.Atoi(cols[2])
+	gid, _ := strconv.Atoi(cols[3])
+
+	u := &OsUser{
+		name: cols[0],
+		uid:  uid,
+		gid:  gid,
+	}
+
+	return u, nil
+}
+
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (idm *OsIdm) SetUser(name string) (avfs.UserReader, error) {
+	return SetUser(name)
+}
+
+func SetUser(name string) (avfs.UserReader, error) {
+	const op = "user"
+
+	u, err := lookupUser(name)
+	if err != nil {
+		return nil, err
+	}
+
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	// If the current user is the target user there is nothing to do.
+	curUid := syscall.Geteuid()
+	if curUid == u.Uid() {
+		return u, nil
+	}
+
+	runtime.LockOSThread()
+
+	curGid := syscall.Getegid()
+
+	// If the current user is not root, root privileges must be restored
+	// before setting the new uid and gid.
+	if curGid != 0 {
+		runtime.LockOSThread()
+
+		if err := syscall.Setresgid(0, 0, 0); err != nil {
+			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
+		}
+	}
+
+	if curUid != 0 {
+		runtime.LockOSThread()
+
+		if err := syscall.Setresuid(0, 0, 0); err != nil {
+			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
+		}
+	}
+
+	if u.Uid() == 0 {
+		return u, nil
+	}
+
+	runtime.LockOSThread()
+
+	if err := syscall.Setresgid(u.Gid(), u.Gid(), 0); err != nil {
+		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, u.Gid(), err))
+	}
+
+	runtime.LockOSThread()
+
+	if err := syscall.Setresuid(u.Uid(), u.Uid(), 0); err != nil {
+		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, u.Uid(), err))
+	}
+
+	return u, nil
+}
+
+// User returns the current user.
+func (idm *OsIdm) User() avfs.UserReader {
+	return User()
+}
+
+// User returns the current user of the OS.
+func User() avfs.UserReader {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	uid := syscall.Geteuid()
+
+	user, err := lookupUserId(uid)
+	if err != nil {
+		return nil
+	}
+
+	return user
 }
 
 // UserAdd adds a new user.
@@ -145,7 +279,7 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		}
 	}
 
-	u, err := LookupUser(name)
+	u, err := idm.LookupUser(name)
 	if err != nil {
 		return nil, err
 	}
@@ -179,62 +313,6 @@ func (idm *OsIdm) UserDel(name string) error {
 	}
 
 	return nil
-}
-
-func LookupGroup(name string) (*OsGroup, error) {
-	return lookupGroup(name, avfs.UnknownGroupError(name))
-}
-
-func LookupGroupId(gid int) (*OsGroup, error) {
-	sGid := strconv.Itoa(gid)
-
-	return lookupGroup(sGid, avfs.UnknownGroupIdError(gid))
-}
-
-func lookupGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
-	line, err := getent("group", nameOrId, notFoundErr)
-	if err != nil {
-		return nil, err
-	}
-
-	cols := strings.Split(line, ":")
-	gid, _ := strconv.Atoi(cols[2])
-
-	g := &OsGroup{
-		name: cols[0],
-		gid:  gid,
-	}
-
-	return g, nil
-}
-
-func LookupUser(name string) (*OsUser, error) {
-	return lookupUser(name, avfs.UnknownUserError(name))
-}
-
-func LookupUserId(uid int) (*OsUser, error) {
-	sUid := strconv.Itoa(uid)
-
-	return lookupUser(sUid, avfs.UnknownUserIdError(uid))
-}
-
-func lookupUser(nameOrId string, notFoundErr error) (*OsUser, error) {
-	line, err := getent("passwd", nameOrId, notFoundErr)
-	if err != nil {
-		return nil, err
-	}
-
-	cols := strings.Split(line, ":")
-	uid, _ := strconv.Atoi(cols[2])
-	gid, _ := strconv.Atoi(cols[3])
-
-	u := &OsUser{
-		name: cols[0],
-		uid:  uid,
-		gid:  gid,
-	}
-
-	return u, nil
 }
 
 func getent(database, key string, notFoundErr error) (string, error) {

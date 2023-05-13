@@ -69,9 +69,8 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFSBase, opts ...Option) *SuiteFS {
 	_, file, _, _ := runtime.Caller(0)
 	initDir := filepath.Dir(file)
 
-	canTestPerm := vfs.OSType() != avfs.OsWindows &&
-		vfs.HasFeature(avfs.FeatIdentityMgr) &&
-		initUser.IsAdmin()
+	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
+		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
 
 	sfs := &SuiteFS{
 		vfsSetup:    vfs,
@@ -394,7 +393,6 @@ func (sfs *SuiteFS) TestAll(t *testing.T) {
 		sfs.TestLchown,
 		sfs.TestFileChmod,
 		sfs.TestFileChown,
-		sfs.TestSetUser,
 		sfs.TestVolume,
 		sfs.TestWriteOnReadOnlyFS,
 	)
