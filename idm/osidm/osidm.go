@@ -31,6 +31,17 @@ func (idm *OsIdm) AdminUser() avfs.UserReader {
 	return idm.adminUser
 }
 
+// SetUser sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (idm *OsIdm) SetUser(name string) (avfs.UserReader, error) {
+	return SetUser(name)
+}
+
+// User returns the current user.
+func (idm *OsIdm) User() avfs.UserReader {
+	return User()
+}
+
 // OsGroup
 
 // Gid returns the group ID.

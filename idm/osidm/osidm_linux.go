@@ -168,12 +168,6 @@ func getUser(nameOrId string, notFoundErr error) (*OsUser, error) {
 	return u, nil
 }
 
-// SetUser sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (idm *OsIdm) SetUser(name string) (avfs.UserReader, error) {
-	return SetUser(name)
-}
-
 func SetUser(name string) (avfs.UserReader, error) {
 	const op = "user"
 
@@ -230,11 +224,6 @@ func SetUser(name string) (avfs.UserReader, error) {
 	}
 
 	return u, nil
-}
-
-// User returns the current user.
-func (idm *OsIdm) User() avfs.UserReader {
-	return User()
 }
 
 // User returns the current user of the OS.

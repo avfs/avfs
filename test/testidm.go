@@ -445,10 +445,6 @@ func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
 			wantErr = avfs.ErrPermDenied
 		}
 
-		if idm.OSType() == avfs.OsWindows {
-			wantErr = avfs.ErrWinAccessDenied
-		}
-
 		_, err := ust.SetUser(userName)
 		if err != wantErr {
 			t.Errorf("setUser : want error to be %v, got %v", wantErr, err)
