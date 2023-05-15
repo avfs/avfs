@@ -112,22 +112,6 @@ func tmpInit() error {
 	return os.Chmod(tmpDir, 0o777)
 }
 
-// sudo runs a command as root if possible, as an unprivileged user otherwise.
-func sudo(cmd string, args ...string) error {
-	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
-		return sh.RunV(cmd, args...)
-	}
-
-	err := sh.RunV(sudoCmd, "-n", "-l")
-	if err != nil {
-		return sh.RunV(cmd, args...)
-	}
-
-	sudoArgs := append([]string{"-n", "-E", cmd}, args...)
-
-	return sh.RunV(sudoCmd, sudoArgs...)
-}
-
 // Env returns the go environment variables.
 func Env() {
 	sh.RunV(goCmd, "env")
@@ -199,7 +183,38 @@ func Lint() error {
 	return sh.RunV(golangCiCmd, "run", "-v")
 }
 
-// CoverResult opens a web browser with the latest coverage file if used
+// sudo runs a command as root if possible, as an unprivileged user otherwise.
+func sudo(cmd string, args ...string) error {
+	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
+		return sh.RunV(cmd, args...)
+	}
+
+	err := sh.RunV(sudoCmd, "-n", "-l")
+	if err != nil {
+		return sh.RunV(cmd, args...)
+	}
+
+	sudoArgs := append([]string{"-n", "-E", cmd}, args...)
+
+	return sh.RunV(sudoCmd, sudoArgs...)
+}
+
+// testArgs returns the arguments of the go command used for tests.
+func testArgs() []string {
+	args := []string{
+		"test", "-v", "-run=.",
+		"-covermode=atomic", "-coverprofile=" + coverFile,
+		"./...",
+	}
+	if cgoEnabled {
+		args = append(args, "-race")
+	}
+
+	return args
+}
+
+// CoverResult opens a web browser with the latest coverage file if used interactively,
+// or archive current coverage file when executed in CI mode.
 func CoverResult() error {
 	if isCI() {
 		// Archive coverage file for code coverage upload.
@@ -211,22 +226,23 @@ func CoverResult() error {
 	return sh.RunV(goCmd, "tool", "cover", "-html="+coverFile)
 }
 
-// Test runs tests with coverage.
+// Test runs tests with coverage as the current user.
 func Test() error {
 	mg.Deps(tmpInit)
 
-	args := []string{
-		"test", "-v",
-		"-run=.",
-		"-covermode=atomic",
-		"-coverprofile=" + coverFile,
-		"./...",
-	}
-	if cgoEnabled {
-		args = append(args, "-race")
+	err := sh.RunV(goCmd, testArgs()...)
+	if err != nil {
+		return err
 	}
 
-	err := sudo(goCmd, args...)
+	return CoverResult()
+}
+
+// TestAsRoot runs tests as root with coverage (using sudo if necessary).
+func TestAsRoot() error {
+	mg.Deps(tmpInit)
+
+	err := sudo(goCmd, testArgs()...)
 	if err != nil {
 		return err
 	}
