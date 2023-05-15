@@ -424,9 +424,7 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, _ string) {
 
 	for _, ui := range UserInfos() {
 		u, err := vfs.Idm().LookupUser(ui.Name)
-		if err != nil {
-			t.Fatalf("Can't find user %s", ui.Name)
-		}
+		RequireNoError(t, err, "Can't find user %s", ui.Name)
 
 		homeDir, err := vfs.CreateHomeDir(u)
 		if !AssertNoError(t, err, "CreateHomeDir %s", ui.Name) {
@@ -586,7 +584,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 		case avfs.OsWindows:
 			RequireNoError(t, err, "Stat %s", invalidPath)
 		default:
-			CheckPathError(t, err).OpStat().Path(invalidPath).
+			AssertPathError(t, err).OpStat().Path(invalidPath).
 				Err(avfs.ErrNotADirectory, avfs.OsLinux)
 		}
 
@@ -627,7 +625,7 @@ func (sfs *SuiteFS) TestFromToSlash(t *testing.T, _ string) {
 func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 	_ = sfs.createSampleDirs(t, testDir)
 	_ = sfs.createSampleFiles(t, testDir)
-	sl := len(sfs.CreateSampleSymlinks(t, testDir))
+	sl := len(sfs.createSampleSymlinks(t, testDir))
 
 	vfs := sfs.vfsTest
 
@@ -806,7 +804,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 		nonExistingFile := sfs.nonExistingFile(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, nonExistingFile)
-		CheckPathError(t, err).OpStat().Path(nonExistingFile).
+		AssertPathError(t, err).OpStat().Path(nonExistingFile).
 			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
 			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
 
@@ -1386,7 +1384,7 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, _ string) {
 func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 	dirs := sfs.createSampleDirs(t, testDir)
 	files := sfs.createSampleFiles(t, testDir)
-	symlinks := sfs.CreateSampleSymlinks(t, testDir)
+	symlinks := sfs.createSampleSymlinks(t, testDir)
 
 	vfs := sfs.vfsTest
 	lNames := len(dirs) + len(files) + len(symlinks)

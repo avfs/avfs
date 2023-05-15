@@ -26,6 +26,9 @@ jobs:
       - name: Install mage & avfs binaries
         run: go run mage/build.go
 
+      - name: Run tests as an unprivileged user
+        run: avfs test
+
       - name: Run tests as root
         run: avfs testAsRoot
 
@@ -33,10 +36,6 @@ jobs:
         env:
           GOFLAGS: "-tags=avfs_setostype"
         run: avfs testAsRoot
-
-      - name: Run tests as an unprivileged user
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        run: avfs test
 
       - name: Run race tests
         run: avfs race

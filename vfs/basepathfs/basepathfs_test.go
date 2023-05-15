@@ -66,7 +66,7 @@ func TestBasePathFSOptions(t *testing.T) {
 	vfs := memfs.New()
 	nonExistingDir := avfs.FromUnixPath("/non/existing/dir")
 
-	test.CheckPanic(t, "", func() {
+	test.AssertPanic(t, "", func() {
 		_ = basepathfs.New(vfs, nonExistingDir)
 	})
 
@@ -77,7 +77,7 @@ func TestBasePathFSOptions(t *testing.T) {
 		t.Fatalf("WriteFile : want error to be nil, got %v", err)
 	}
 
-	test.CheckPanic(t, "", func() {
+	test.AssertPanic(t, "", func() {
 		_ = basepathfs.New(vfs, existingFile)
 	})
 }

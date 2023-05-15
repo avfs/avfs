@@ -17,7 +17,9 @@
 package test
 
 import (
+	"fmt"
 	"math"
+	"math/rand"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -79,7 +81,7 @@ func (sIdm *SuiteIdm) TestAdminGroupUser(t *testing.T) {
 // TestGroupAddDel tests GroupAdd and GroupDel functions.
 func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 	idm := sIdm.idm
-	suffix := "GroupAddDel" + sIdm.Type()
+	suffix := fmt.Sprintf("GroupAddDel%x", rand.Uint32())
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		groupName := "AGroup" + suffix
@@ -182,7 +184,7 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 // TestUserAddDel tests UserAdd and UserDel functions.
 func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 	idm := sIdm.idm
-	suffix := "UserAddDel" + sIdm.Type()
+	suffix := fmt.Sprintf("UserAddDel%x", rand.Uint32())
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		groupName := "InvalidGroup" + suffix
@@ -317,7 +319,7 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 // TestLookup tests Lookup* functions.
 func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 	idm := sIdm.idm
-	suffix := "Lookup" + sIdm.Type()
+	suffix := fmt.Sprintf("Lookup%x", rand.Uint32())
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
 		groupName := "InvalidGroup" + suffix
@@ -430,7 +432,7 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 // TestSetUser tests setUser and User functions.
 func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
 	idm := sIdm.idm
-	suffix := "User" + idm.Type()
+	suffix := fmt.Sprintf("SetUser%x", rand.Uint32())
 
 	ust, ok := sIdm.idm.(avfs.UserSetter)
 	if !ok {
@@ -487,7 +489,7 @@ func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
 			// loop to test change with the same user
 			for i := 0; i < 2; i++ {
 				u, err := ust.SetUser(userName)
-				if !AssertNoError(t, err, "setUser %s %d", userName, i) {
+				if !AssertNoError(t, err, "SetUser %s %d", userName, i) {
 					continue
 				}
 

@@ -136,9 +136,7 @@ func (pts *PermTests) load(t *testing.T) {
 	}
 
 	err = json.Unmarshal(b, &pts.errors)
-	if err != nil {
-		t.Fatalf("Unmarshal %s : %v", pts.errFileName, err)
-	}
+	RequireNoError(t, err, "Unmarshal %", pts.errFileName)
 }
 
 // save saves a permissions test file.
@@ -148,17 +146,13 @@ func (pts *PermTests) save(t *testing.T) {
 	}
 
 	b, err := json.MarshalIndent(pts.errors, "", "\t")
-	if err != nil {
-		t.Fatalf("MarshalIndent %s : %v", pts.errFileName, err)
-	}
+	RequireNoError(t, err, "MarshalIndent %s", pts.errFileName)
 
 	sfs := pts.sfs
 	sfs.setUser(t, sfs.initUser.Name())
 
 	err = os.WriteFile(pts.errFileName, b, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("ReadFile %s : %v", pts.errFileName, err)
-	}
+	RequireNoError(t, err, "WriteFile %s", pts.errFileName)
 }
 
 // newPermError creates and returns a normalized permError where all paths are relative to permDir.

@@ -166,9 +166,7 @@ func CreateUsers(tb testing.TB, idm avfs.IdentityMgr, suffix string) (users []av
 
 			if u == nil {
 				u, err = idm.LookupUser(userName)
-				if err != nil {
-					tb.Fatalf("LookupUser %s : want error to be nil, got %v", userName, err)
-				}
+				RequireNoError(tb, err, "LookupUser %s", userName)
 			}
 		}
 
