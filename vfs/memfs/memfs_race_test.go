@@ -28,6 +28,6 @@ import (
 func TestRaceMemFS(t *testing.T) {
 	vfs := memfs.New()
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestRace(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestRace(t)
 }

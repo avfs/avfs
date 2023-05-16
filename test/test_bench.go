@@ -32,8 +32,8 @@ const (
 )
 
 // benchOpenFlags returns the flags used to disable cache.
-func (sfs *SuiteFS) benchOpenFlags() int {
-	vfs := sfs.vfsTest
+func (ts *Suite) benchOpenFlags() int {
+	vfs := ts.vfsTest
 	if !vfs.HasFeature(avfs.FeatRealFS) || vfs.OSType() != avfs.OsLinux {
 		return 0
 	}
@@ -42,8 +42,8 @@ func (sfs *SuiteFS) benchOpenFlags() int {
 }
 
 // BenchCreate benchmarks Create function.
-func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) BenchCreate(b *testing.B, testDir string) {
+	vfs := ts.vfsTest
 
 	b.Run("Create", func(b *testing.B) {
 		b.StopTimer()
@@ -68,15 +68,15 @@ func (sfs *SuiteFS) BenchCreate(b *testing.B, testDir string) {
 	})
 }
 
-func (sfs *SuiteFS) BenchFileRead(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) BenchFileRead(b *testing.B, testDir string) {
+	vfs := ts.vfsTest
 	buf := make([]byte, bufSize)
 	fileName := vfs.Join(testDir, "BenchFileRead.txt")
 
 	err := vfs.WriteFile(fileName, make([]byte, maxFileSize), avfs.DefaultFilePerm)
 	RequireNoError(b, err, "WriteFile %s", fileName)
 
-	f, err := vfs.OpenFile(fileName, os.O_RDONLY|sfs.benchOpenFlags(), avfs.DefaultFilePerm)
+	f, err := vfs.OpenFile(fileName, os.O_RDONLY|ts.benchOpenFlags(), avfs.DefaultFilePerm)
 	RequireNoError(b, err, "OpenFile %s", fileName)
 
 	defer func() {
@@ -107,12 +107,12 @@ func (sfs *SuiteFS) BenchFileRead(b *testing.B, testDir string) {
 	})
 }
 
-func (sfs *SuiteFS) BenchFileWrite(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) BenchFileWrite(b *testing.B, testDir string) {
+	vfs := ts.vfsTest
 	buf := make([]byte, bufSize)
 	fileName := vfs.Join(testDir, "BenchFileWrite.txt")
 
-	f, err := vfs.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|sfs.benchOpenFlags(), avfs.DefaultFilePerm)
+	f, err := vfs.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|ts.benchOpenFlags(), avfs.DefaultFilePerm)
 	RequireNoError(b, err, "OpenFile %s", fileName)
 
 	defer func() {
@@ -140,8 +140,8 @@ func (sfs *SuiteFS) BenchFileWrite(b *testing.B, testDir string) {
 }
 
 // BenchMkdir benchmarks Mkdir function.
-func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) BenchMkdir(b *testing.B, testDir string) {
+	vfs := ts.vfsTest
 
 	b.Run("Mkdir", func(b *testing.B) {
 		b.StopTimer()
@@ -167,9 +167,9 @@ func (sfs *SuiteFS) BenchMkdir(b *testing.B, testDir string) {
 }
 
 // BenchOpenFile benchmarks OpenFile function.
-func (sfs *SuiteFS) BenchOpenFile(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
-	fileName := sfs.existingFile(b, testDir, nil)
+func (ts *Suite) BenchOpenFile(b *testing.B, testDir string) {
+	vfs := ts.vfsTest
+	fileName := ts.existingFile(b, testDir, nil)
 
 	b.ResetTimer()
 
@@ -184,8 +184,8 @@ func (sfs *SuiteFS) BenchOpenFile(b *testing.B, testDir string) {
 }
 
 // BenchRemove benchmarks Remove function.
-func (sfs *SuiteFS) BenchRemove(b *testing.B, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) BenchRemove(b *testing.B, testDir string) {
+	vfs := ts.vfsTest
 
 	b.Run("Remove", func(b *testing.B) {
 		b.StopTimer()

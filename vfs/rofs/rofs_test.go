@@ -35,18 +35,18 @@ var (
 	_ avfs.File = &rofs.RoFile{}
 )
 
-func initTest(t *testing.T) *test.SuiteFS {
+func initTest(t *testing.T) *test.Suite {
 	vfsSetup := memfs.New()
-
 	vfs := rofs.New(vfsSetup)
-	sfs := test.NewSuiteFS(t, vfsSetup, test.WithVFSTest(vfs))
 
-	return sfs
+	ts := test.NewSuiteFS(t, vfsSetup, vfs)
+
+	return ts
 }
 
 func TestRoFS(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestAll(t)
+	ts := initTest(t)
+	ts.TestVFSAll(t)
 }
 
 func TestRoFSConfig(t *testing.T) {

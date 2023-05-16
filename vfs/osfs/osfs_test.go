@@ -38,15 +38,15 @@ var (
 func TestOsFS(t *testing.T) {
 	vfs := osfs.New()
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestVFSAll(t)
 }
 
 func TestOsFSWithNoIdm(t *testing.T) {
 	vfs := osfs.NewWithNoIdm()
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestVFSAll(t)
 }
 
 func TestOsFSNilPtrFile(t *testing.T) {
@@ -85,6 +85,6 @@ func TestOsFSConfig(t *testing.T) {
 func BenchmarkOsFSAll(b *testing.B) {
 	vfs := osfs.New()
 
-	sfs := test.NewSuiteFS(b, vfs)
-	sfs.BenchAll(b)
+	ts := test.NewSuiteFS(b, vfs, vfs)
+	ts.BenchAll(b)
 }

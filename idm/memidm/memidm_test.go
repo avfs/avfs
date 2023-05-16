@@ -40,20 +40,21 @@ var (
 // TestMemIdmAll run all tests.
 func TestMemIdmAll(t *testing.T) {
 	idm := memidm.New()
-	sIdm := test.NewSuiteIdm(t, idm)
-	sIdm.TestAll(t)
+
+	ts := test.NewSuiteIdm(t, idm)
+	ts.TestIdmAll(t)
 }
 
 // TestMemIdmAllOSType run all tests with the current OS.
 func TestMemIdmAllOSType(t *testing.T) {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.CurrentOSType()})
-	sIdm := test.NewSuiteIdm(t, idm)
-	sIdm.TestAll(t)
+
+	ts := test.NewSuiteIdm(t, idm)
+	ts.TestIdmAll(t)
 }
 
 func TestMemIdmFeatures(t *testing.T) {
 	idm := memidm.New()
-
 	if idm.Features() != avfs.FeatIdentityMgr {
 		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatIdentityMgr, idm.Features())
 	}

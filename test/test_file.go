@@ -28,10 +28,38 @@ import (
 	"github.com/avfs/avfs"
 )
 
+func (ts *Suite) TestFile(t *testing.T) {
+	ts.RunTests(t, UsrTest,
+		ts.TestFileChdir,
+		ts.TestFileCloseWrite,
+		ts.TestFileCloseRead,
+		ts.TestFileFd,
+		ts.TestFileName,
+		ts.TestFileRead,
+		ts.TestFileReadAt,
+		ts.TestFileReadDir,
+		ts.TestFileReaddirnames,
+		ts.TestFileSeek,
+		ts.TestFileStat,
+		ts.TestFileSync,
+		ts.TestFileTruncate,
+		ts.TestFileWrite,
+		ts.TestFileWriteAt,
+		ts.TestFileWriteString,
+		ts.TestFileWriteTime)
+
+	// Tests to be run as root
+	adminUser := ts.idm.AdminUser()
+	ts.RunTests(t, adminUser.Name(),
+		ts.TestFileChmod,
+		ts.TestFileChown,
+	)
+}
+
 // TestFileChdir tests File.Chdir function.
-func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
-	dirs := sfs.createSampleDirs(t, testDir)
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileChdir(t *testing.T, testDir string) {
+	dirs := ts.createSampleDirs(t, testDir)
+	vfs := ts.vfsTest
 
 	t.Run("FileChdir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -60,7 +88,7 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileChdirOnFile", func(t *testing.T) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -71,14 +99,14 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileChdirClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Chdir()
 		AssertPathError(t, err).Op("chdir").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileChdirNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Chdir()
 		AssertInvalid(t, err, "Chdir")
@@ -86,11 +114,11 @@ func (sfs *SuiteFS) TestFileChdir(t *testing.T, testDir string) {
 }
 
 // TestFileChmod tests File.Chmod function.
-func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileChmod(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -101,14 +129,14 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 	}
 
 	t.Run("FileChmodClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Chmod(avfs.DefaultFilePerm)
 		AssertPathError(t, err).Op("chmod").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileChmodNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Chmod(0)
 		AssertInvalid(t, err, "Chmod")
@@ -116,11 +144,11 @@ func (sfs *SuiteFS) TestFileChmod(t *testing.T, testDir string) {
 }
 
 // TestFileChown tests File.Chown function.
-func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileChown(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -131,7 +159,7 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	}
 
 	t.Run("FileChown", func(t *testing.T) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -149,14 +177,14 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileChownClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Chown(0, 0)
 		AssertPathError(t, err).Op("chown").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileChownNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Chown(0, 0)
 		AssertInvalid(t, err, "Chown")
@@ -164,10 +192,10 @@ func (sfs *SuiteFS) TestFileChown(t *testing.T, testDir string) {
 }
 
 // TestFileCloseRead tests File.Close function for read only files.
-func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
+func (ts *Suite) TestFileCloseRead(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
-	path := sfs.existingFile(t, testDir, data)
-	vfs := sfs.vfsTest
+	path := ts.existingFile(t, testDir, data)
+	vfs := ts.vfsTest
 
 	t.Run("FileCloseReadOnly", func(t *testing.T) {
 		openInfo, err := vfs.Stat(path)
@@ -191,7 +219,7 @@ func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileCloseNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Close()
 		AssertInvalid(t, err, "Close")
@@ -199,14 +227,14 @@ func (sfs *SuiteFS) TestFileCloseRead(t *testing.T, testDir string) {
 }
 
 // TestFileCloseWrite tests File.Close function for read/write files.
-func (sfs *SuiteFS) TestFileCloseWrite(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileCloseWrite(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		return
 	}
 
 	data := []byte("AAABBBCCCDDD")
-	path := sfs.existingFile(t, testDir, data)
+	path := ts.existingFile(t, testDir, data)
 
 	openInfo, err := vfs.Stat(path)
 	RequireNoError(t, err, "Stat %s", path)
@@ -238,8 +266,8 @@ func (sfs *SuiteFS) TestFileCloseWrite(t *testing.T, testDir string) {
 }
 
 // TestFileFd tests File.Fd function.
-func (sfs *SuiteFS) TestFileFd(t *testing.T, testDir string) {
-	f, fileName := sfs.closedFile(t, testDir)
+func (ts *Suite) TestFileFd(t *testing.T, testDir string) {
+	f, fileName := ts.closedFile(t, testDir)
 
 	fd := f.Fd()
 	if fd != ^(uintptr(0)) {
@@ -248,8 +276,8 @@ func (sfs *SuiteFS) TestFileFd(t *testing.T, testDir string) {
 }
 
 // TestFileName tests File.Name function.
-func (sfs *SuiteFS) TestFileName(t *testing.T, testDir string) {
-	f, wantName := sfs.closedFile(t, testDir)
+func (ts *Suite) TestFileName(t *testing.T, testDir string) {
+	f, wantName := ts.closedFile(t, testDir)
 
 	name := f.Name()
 	if name != wantName {
@@ -313,10 +341,10 @@ func FileNilPtr(t *testing.T, f avfs.File) {
 }
 
 // TestFileRead tests File.Read function.
-func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
+func (ts *Suite) TestFileRead(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
-	path := sfs.existingFile(t, testDir, data)
-	vfs := sfs.vfsTest
+	path := ts.existingFile(t, testDir, data)
+	vfs := ts.vfsTest
 
 	t.Run("FileRead", func(t *testing.T) {
 		const bufSize = 5
@@ -344,7 +372,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 		buf := make([]byte, 0)
 
 		_, err := f.Read(buf)
@@ -366,7 +394,7 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		b := make([]byte, 1)
 
@@ -376,10 +404,10 @@ func (sfs *SuiteFS) TestFileRead(t *testing.T, testDir string) {
 }
 
 // TestFileReadAt tests File.ReadAt function.
-func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
+func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
-	path := sfs.existingFile(t, testDir, data)
-	vfs := sfs.vfsTest
+	path := ts.existingFile(t, testDir, data)
+	vfs := ts.vfsTest
 
 	t.Run("FileReadAt", func(t *testing.T) {
 		const bufSize = 3
@@ -406,7 +434,7 @@ func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadAtNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 		buf := make([]byte, 0)
 
 		_, err := f.ReadAt(buf, 0)
@@ -455,7 +483,7 @@ func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadAtClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		b := make([]byte, 1)
 
@@ -465,12 +493,12 @@ func (sfs *SuiteFS) TestFileReadAt(t *testing.T, testDir string) {
 }
 
 // TestFileReadDir tests File.ReadDir function.
-func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
-	rndTree := sfs.randomDir(t, testDir)
+func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
+	rndTree := ts.randomDir(t, testDir)
 	wDirs := len(rndTree.Dirs)
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	const maxRead = 7
 
@@ -519,7 +547,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadDirExistingFile", func(t *testing.T) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -530,7 +558,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadDirClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		_, err := f.ReadDir(-1)
 		AssertPathError(t, err).Path(fileName).
@@ -539,7 +567,7 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReadDirNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.ReadDir(-1)
 		AssertInvalid(t, err, "ReadDir")
@@ -547,11 +575,11 @@ func (sfs *SuiteFS) TestFileReadDir(t *testing.T, testDir string) {
 }
 
 // TestFileReaddirnames tests File.Readdirnames function.
-func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
-	rndTree := sfs.randomDir(t, testDir)
+func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
+	rndTree := ts.randomDir(t, testDir)
 	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
 	existingFile := rndTree.Files[0].Name
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	t.Run("FileReaddirnamesAll", func(t *testing.T) {
 		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
@@ -604,7 +632,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReaddirnamesClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		_, err := f.Readdirnames(-1)
 		AssertPathError(t, err).Path(fileName).
@@ -613,7 +641,7 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileReaddirnamesNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.Readdirnames(-1)
 		AssertInvalid(t, err, "Readdirnames")
@@ -621,10 +649,10 @@ func (sfs *SuiteFS) TestFileReaddirnames(t *testing.T, testDir string) {
 }
 
 // TestFileSeek tests File.Seek function.
-func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
+func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
-	path := sfs.existingFile(t, testDir, data)
-	vfs := sfs.vfsTest
+	path := ts.existingFile(t, testDir, data)
+	vfs := ts.vfsTest
 
 	f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 	RequireNoError(t, err, "OpenFile %s", path)
@@ -757,14 +785,14 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileSeekClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		_, err = f.Seek(0, io.SeekStart)
 		AssertPathError(t, err).Op("seek").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileSeekNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err = f.Seek(0, io.SeekStart)
 		AssertInvalid(t, err, "Seek")
@@ -772,11 +800,11 @@ func (sfs *SuiteFS) TestFileSeek(t *testing.T, testDir string) {
 }
 
 // TestFileStat tests File.Stat function.
-func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	_ = sfs.createSampleSymlinks(t, testDir)
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileStat(t *testing.T, testDir string) {
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	_ = ts.createSampleSymlinks(t, testDir)
+	vfs := ts.vfsTest
 
 	t.Run("FileStatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -842,7 +870,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatSymlink", func(t *testing.T) {
-		for _, sl := range sfs.sampleSymlinksEval(testDir) {
+		for _, sl := range ts.sampleSymlinksEval(testDir) {
 			f, err := vfs.OpenFile(sl.NewPath, os.O_RDONLY, 0)
 			RequireNoError(t, err, "OpenFile %s", sl.NewPath)
 
@@ -863,7 +891,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", sl.NewPath, wantName, info.Name())
 			}
 
-			if sfs.canTestPerm && wantMode != info.Mode() {
+			if ts.canTestPerm && wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", sl.NewPath, wantMode, info.Mode())
 			}
 
@@ -872,7 +900,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatNonExistingFile", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.Stat()
 		AssertInvalid(t, err, "Stat")
@@ -891,7 +919,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		_, err := f.Stat()
 		AssertPathError(t, err).Path(fileName).
@@ -902,7 +930,7 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileStatNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.Stat()
 		AssertInvalid(t, err, "Stat")
@@ -910,11 +938,11 @@ func (sfs *SuiteFS) TestFileStat(t *testing.T, testDir string) {
 }
 
 // TestFileSync tests File.Sync function.
-func (sfs *SuiteFS) TestFileSync(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileSync(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Sync()
 		AssertPathError(t, err).Op("sync").Path(avfs.NotImplemented).ErrPermDenied()
@@ -923,14 +951,14 @@ func (sfs *SuiteFS) TestFileSync(t *testing.T, testDir string) {
 	}
 
 	t.Run("FileSyncClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Sync()
 		AssertPathError(t, err).Op("sync").Path(fileName).Err(fs.ErrClosed)
 	})
 
 	t.Run("FileSyncNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Sync()
 		AssertInvalid(t, err, "Sync")
@@ -938,11 +966,11 @@ func (sfs *SuiteFS) TestFileSync(t *testing.T, testDir string) {
 }
 
 // TestFileTruncate tests File.Truncate function.
-func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -955,7 +983,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
 
 	t.Run("FileTruncate", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -991,7 +1019,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileTruncateSizeNegative", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -1005,7 +1033,7 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileTruncateSizeBiggerFileSize", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -1035,14 +1063,14 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileTruncateNonExistingFile", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Truncate(0)
 		AssertInvalid(t, err, "Truncate")
 	})
 
 	t.Run("FileTruncateClosed", func(t *testing.T) {
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Truncate(0)
 		AssertPathError(t, err).Op("truncate").Path(fileName).Err(fs.ErrClosed)
@@ -1050,11 +1078,11 @@ func (sfs *SuiteFS) TestFileTruncate(t *testing.T, testDir string) {
 }
 
 // TestFileWrite tests File.Write function.
-func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileWrite(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -1095,7 +1123,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 		buf := make([]byte, 0)
 
 		_, err := f.Write(buf)
@@ -1103,7 +1131,7 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteReadOnly", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -1145,18 +1173,18 @@ func (sfs *SuiteFS) TestFileWrite(t *testing.T, testDir string) {
 	t.Run("FileWriteClosed", func(t *testing.T) {
 		b := make([]byte, 1)
 
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 		_, err := f.Write(b)
 		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
 	})
 }
 
 // TestFileWriteAt tests File.WriteAt function.
-func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f, fileName := sfs.openedEmptyFile(t, testDir)
+		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		_, err := f.WriteAt([]byte{}, 0)
 		AssertPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
@@ -1196,7 +1224,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteAtNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 		buf := make([]byte, 0)
 
 		_, err := f.WriteAt(buf, 0)
@@ -1204,7 +1232,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteAtNegativeOffset", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultDirPerm)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -1220,7 +1248,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteAtAfterEndOfFile", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDWR, avfs.DefaultFilePerm)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -1249,7 +1277,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	})
 
 	t.Run("FileWriteAtReadOnly", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		RequireNoError(t, err, "OpenFile %s", path)
@@ -1294,7 +1322,7 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 	t.Run("FileWriteAtClosed", func(t *testing.T) {
 		b := make([]byte, 1)
 
-		f, fileName := sfs.closedFile(t, testDir)
+		f, fileName := ts.closedFile(t, testDir)
 
 		_, err := f.WriteAt(b, 0)
 		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
@@ -1302,11 +1330,11 @@ func (sfs *SuiteFS) TestFileWriteAt(t *testing.T, testDir string) {
 }
 
 // TestFileWriteString tests File.WriteString function.
-func (sfs *SuiteFS) TestFileWriteString(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileWriteString(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.WriteString("")
 		AssertPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied()
@@ -1315,7 +1343,7 @@ func (sfs *SuiteFS) TestFileWriteString(t *testing.T, testDir string) {
 	}
 
 	t.Run("FileWriteNonExisting", func(t *testing.T) {
-		f := sfs.openedNonExistingFile(t, testDir)
+		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.WriteString("")
 		AssertInvalid(t, err, "WriteString")
@@ -1323,15 +1351,15 @@ func (sfs *SuiteFS) TestFileWriteString(t *testing.T, testDir string) {
 }
 
 // TestFileWriteTime checks that modification time is updated on write operations.
-func (sfs *SuiteFS) TestFileWriteTime(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFileWriteTime(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		return
 	}
 
 	var previous time.Time
 
-	f, fileName := sfs.openedEmptyFile(t, testDir)
+	f, fileName := ts.openedEmptyFile(t, testDir)
 
 	// CompareTime tests if the modification time of the file has changed.
 	compareTime := func(mustChange bool) {

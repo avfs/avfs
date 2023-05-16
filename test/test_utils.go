@@ -35,9 +35,23 @@ type pathTest struct {
 	path, result string
 }
 
+func (ts *Suite) TestUtils(t *testing.T) {
+	ts.RunTests(t, UsrTest,
+		ts.TestCopyFile,
+		ts.TestDirExists,
+		ts.TestExists,
+		ts.TestHashFile,
+		ts.TestIsDir,
+		ts.TestIsEmpty,
+		ts.TestIsPathSeparator,
+		ts.TestRndTree,
+		ts.TestSetUserFS,
+		ts.TestUMask)
+}
+
 // TestAbs test Abs function.
-func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) TestAbs(t *testing.T, testDir string) {
+	vfs := ts.vfsSetup
 
 	t.Run("Abs", func(t *testing.T) {
 		// Test directories relative to temporary directory.
@@ -90,7 +104,7 @@ func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
 			t.Fatal("chdir failed: ", err)
 		}
 
-		vfs = sfs.vfsTest
+		vfs = ts.vfsTest
 
 		for _, path := range absTests {
 			path = strings.ReplaceAll(path, "$", testDir)
@@ -167,8 +181,8 @@ func (sfs *SuiteFS) TestAbs(t *testing.T, testDir string) {
 }
 
 // TestBase tests Base function.
-func (sfs *SuiteFS) TestBase(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestBase(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	var baseTests []*pathTest
 
@@ -209,8 +223,8 @@ func (sfs *SuiteFS) TestBase(t *testing.T, _ string) {
 }
 
 // TestClean tests Clean function.
-func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestClean(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	cleanTests := []*pathTest{
 		// Already clean
@@ -326,10 +340,10 @@ func (sfs *SuiteFS) TestClean(t *testing.T, _ string) {
 }
 
 // TestCopyFile tests avfs.CopyFile function.
-func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
+func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 	const copyFile = "CopyFile"
 
-	srcFs := sfs.vfsSetup
+	srcFs := ts.vfsSetup
 	dstFs := memfs.New()
 
 	rtParams := &avfs.RndTreeParams{
@@ -395,8 +409,8 @@ func (sfs *SuiteFS) TestCopyFile(t *testing.T, testDir string) {
 }
 
 // TestCreateSystemDirs tests CreateSystemDirs function.
-func (sfs *SuiteFS) TestCreateSystemDirs(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) TestCreateSystemDirs(t *testing.T, testDir string) {
+	vfs := ts.vfsSetup
 
 	err := vfs.CreateSystemDirs(testDir)
 	RequireNoError(t, err, "CreateSystemDirs %s", testDir)
@@ -415,12 +429,12 @@ func (sfs *SuiteFS) TestCreateSystemDirs(t *testing.T, testDir string) {
 }
 
 // TestCreateHomeDir tests that the user home directory exists and has the correct permissions.
-func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, _ string) {
-	if !sfs.canTestPerm {
+func (ts *Suite) TestCreateHomeDir(t *testing.T, _ string) {
+	if !ts.canTestPerm {
 		return
 	}
 
-	vfs := sfs.vfsSetup
+	vfs := ts.vfsSetup
 
 	for _, ui := range UserInfos() {
 		u, err := vfs.Idm().LookupUser(ui.Name)
@@ -460,8 +474,8 @@ func (sfs *SuiteFS) TestCreateHomeDir(t *testing.T, _ string) {
 }
 
 // TestDir tests Dir function.
-func (sfs *SuiteFS) TestDir(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestDir(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	var dirTests []*pathTest
 
@@ -504,8 +518,8 @@ func (sfs *SuiteFS) TestDir(t *testing.T, _ string) {
 }
 
 // TestDirExists tests avfs.DirExists function.
-func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestDirExists(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	t.Run("DirExistsDir", func(t *testing.T) {
 		ok, err := avfs.DirExists(vfs, testDir)
@@ -517,7 +531,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	})
 
 	t.Run("DirExistsFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		ok, err := avfs.DirExists(vfs, existingFile)
 		RequireNoError(t, err, "DirExists %s", testDir)
@@ -528,7 +542,7 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 	})
 
 	t.Run("DirExistsNotExisting", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		ok, err := avfs.DirExists(vfs, nonExistingFile)
 		RequireNoError(t, err, "DirExists %s", nonExistingFile)
@@ -540,8 +554,8 @@ func (sfs *SuiteFS) TestDirExists(t *testing.T, testDir string) {
 }
 
 // TestExists tests avfs.Exists function.
-func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestExists(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	t.Run("ExistsDir", func(t *testing.T) {
 		ok, err := avfs.Exists(vfs, testDir)
@@ -553,7 +567,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	})
 
 	t.Run("ExistsFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		ok, err := avfs.Exists(vfs, existingFile)
 		RequireNoError(t, err, "DirExists %s", existingFile)
@@ -564,7 +578,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	})
 
 	t.Run("ExistsNotExisting", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		ok, err := avfs.Exists(vfs, nonExistingFile)
 		RequireNoError(t, err, "Exists %s", nonExistingFile)
@@ -575,7 +589,7 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 	})
 
 	t.Run("ExistsInvalidPath", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 		invalidPath := vfs.Join(existingFile, defaultFile)
 
 		ok, err := avfs.Exists(vfs, invalidPath)
@@ -595,8 +609,8 @@ func (sfs *SuiteFS) TestExists(t *testing.T, testDir string) {
 }
 
 // TestFromToSlash tests FromSlash and ToSlash functions.
-func (sfs *SuiteFS) TestFromToSlash(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestFromToSlash(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	sep := byte('/')
 	if vfs.OSType() == avfs.OsWindows {
@@ -622,12 +636,12 @@ func (sfs *SuiteFS) TestFromToSlash(t *testing.T, _ string) {
 }
 
 // TestGlob tests Glob function.
-func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
-	_ = sfs.createSampleDirs(t, testDir)
-	_ = sfs.createSampleFiles(t, testDir)
-	sl := len(sfs.createSampleSymlinks(t, testDir))
+func (ts *Suite) TestGlob(t *testing.T, testDir string) {
+	_ = ts.createSampleDirs(t, testDir)
+	_ = ts.createSampleFiles(t, testDir)
+	sl := len(ts.createSampleSymlinks(t, testDir))
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	t.Run("GlobNormal", func(t *testing.T) {
 		pattern := testDir + "/*/*/[A-Z0-9]"
@@ -685,8 +699,8 @@ func (sfs *SuiteFS) TestGlob(t *testing.T, testDir string) {
 }
 
 // TestHashFile tests avfs.HashFile function.
-func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) TestHashFile(t *testing.T, testDir string) {
+	vfs := ts.vfsSetup
 	rtParams := &avfs.RndTreeParams{
 		MinName: 32, MaxName: 32,
 		MinFiles: 100, MaxFiles: 100,
@@ -726,8 +740,8 @@ func (sfs *SuiteFS) TestHashFile(t *testing.T, testDir string) {
 }
 
 // TestIsAbs tests IsAbs function.
-func (sfs *SuiteFS) TestIsAbs(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestIsAbs(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	type IsAbsTest struct {
 		path  string
@@ -775,11 +789,11 @@ func (sfs *SuiteFS) TestIsAbs(t *testing.T, _ string) {
 }
 
 // TestIsDir tests avfs.IsDir function.
-func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestIsDir(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	t.Run("IsDir", func(t *testing.T) {
-		existingDir := sfs.existingDir(t, testDir)
+		existingDir := ts.existingDir(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, existingDir)
 		RequireNoError(t, err, "IsDir %s", existingDir)
@@ -790,7 +804,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	})
 
 	t.Run("IsDirFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, existingFile)
 		RequireNoError(t, err, "IsDir %s", existingFile)
@@ -801,7 +815,7 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 	})
 
 	t.Run("IsDirNonExisting", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		ok, err := avfs.IsDir(vfs, nonExistingFile)
 		AssertPathError(t, err).OpStat().Path(nonExistingFile).
@@ -815,11 +829,11 @@ func (sfs *SuiteFS) TestIsDir(t *testing.T, testDir string) {
 }
 
 // TestIsEmpty tests avfs.IsEmpty function.
-func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestIsEmpty(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	t.Run("IsEmptyFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		ok, err := avfs.IsEmpty(vfs, existingFile)
 		RequireNoError(t, err, "IsEmpty %s", existingFile)
@@ -830,7 +844,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	})
 
 	t.Run("IsEmptyDirEmpty", func(t *testing.T) {
-		emptyDir := sfs.existingDir(t, testDir)
+		emptyDir := ts.existingDir(t, testDir)
 
 		ok, err := avfs.IsEmpty(vfs, emptyDir)
 		RequireNoError(t, err, "IsEmpty %s", emptyDir)
@@ -841,7 +855,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	})
 
 	t.Run("IsEmptyDir", func(t *testing.T) {
-		sfs.existingDir(t, testDir)
+		ts.existingDir(t, testDir)
 
 		ok, err := avfs.IsEmpty(vfs, testDir)
 		RequireNoError(t, err, "IsEmpty %s", testDir)
@@ -852,7 +866,7 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 	})
 
 	t.Run("IsEmptyNonExisting", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		wantErr := fmt.Errorf("%q path does not exist", nonExistingFile)
 
@@ -868,8 +882,8 @@ func (sfs *SuiteFS) TestIsEmpty(t *testing.T, testDir string) {
 }
 
 // TestIsPathSeparator tests IsPathSeparator function.
-func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestIsPathSeparator(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	isPathSepTests := []struct {
 		sep   uint8
@@ -890,8 +904,8 @@ func (sfs *SuiteFS) TestIsPathSeparator(t *testing.T, _ string) {
 }
 
 // TestJoin tests Join function.
-func (sfs *SuiteFS) TestJoin(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestJoin(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	type joinTest struct {
 		elem []string
@@ -986,8 +1000,8 @@ func errp(e error) string {
 	return e.Error()
 }
 
-func (sfs *SuiteFS) TestMatch(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestMatch(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	matchTests := []struct {
 		pattern, s string
@@ -1074,8 +1088,8 @@ func (sfs *SuiteFS) TestMatch(t *testing.T, _ string) {
 }
 
 // TestRel tests Rel function.
-func (sfs *SuiteFS) TestRel(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestRel(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	type relTest struct {
 		root, path, want string
@@ -1162,8 +1176,8 @@ func (sfs *SuiteFS) TestRel(t *testing.T, _ string) {
 }
 
 // TestRndTree tests RndTree methods.
-func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
+	vfs := ts.vfsSetup
 
 	rtTests := []*avfs.RndTreeParams{
 		{
@@ -1186,7 +1200,7 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 		for i, rtTest := range rtTests {
 			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
 
-			sfs.createDir(t, path, avfs.DefaultDirPerm)
+			ts.createDir(t, path, avfs.DefaultDirPerm)
 
 			rt, err := avfs.NewRndTree(vfs, path, rtTest)
 			RequireNoError(t, err, "NewRndTree %s", path)
@@ -1304,8 +1318,8 @@ func (sfs *SuiteFS) TestRndTree(t *testing.T, testDir string) {
 }
 
 // TestSplit tests Split function.
-func (sfs *SuiteFS) TestSplit(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestSplit(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	type splitTest struct {
 		path, dir, file string
@@ -1346,8 +1360,8 @@ func (sfs *SuiteFS) TestSplit(t *testing.T, _ string) {
 }
 
 // TestSplitAbs tests SplitAbs function.
-func (sfs *SuiteFS) TestSplitAbs(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestSplitAbs(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	cases := []struct {
 		path   string
@@ -1381,12 +1395,12 @@ func (sfs *SuiteFS) TestSplitAbs(t *testing.T, _ string) {
 }
 
 // TestWalkDir tests WalkDir function.
-func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	symlinks := sfs.createSampleSymlinks(t, testDir)
+func (ts *Suite) TestWalkDir(t *testing.T, testDir string) {
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	symlinks := ts.createSampleSymlinks(t, testDir)
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 	lNames := len(dirs) + len(files) + len(symlinks)
 	wantNames := make([]string, 0, lNames)
 
@@ -1429,7 +1443,7 @@ func (sfs *SuiteFS) TestWalkDir(t *testing.T, testDir string) {
 	})
 
 	t.Run("WalkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.WalkDir(nonExistingFile, func(path string, info fs.DirEntry, err error) error {
 			return nil

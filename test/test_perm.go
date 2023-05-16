@@ -29,55 +29,19 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// PermTests regroups all tests for a specific function.
-type PermTests struct {
-	sfs           *SuiteFS              // sfs is a test suite for virtual file systems.
-	errors        map[string]*permError // errors store the errors for each "User/Permission" combination.
-	errFileName   string                // errFileName is the json file storing the test results from OsFs.
-	permDir       string                // permDir is the root directory of the test environment.
-	options       PermOptions           // PermOptions are options for running the tests.
-	errFileExists bool                  // errFileExists indicates if errFileName exits.
-}
-
-// errType defines the error type.
-type errType string
-
-const (
-	LinkError   errType = "LinkError"
-	PathError   errType = "PathError"
-	StringError errType = "StringError"
-)
-
-// permError is the error returned by each test, to be stored as json.
-type permError struct {
-	ErrType errType `json:"errType,omitempty"`
-	ErrOp   string  `json:"errOp,omitempty"`
-	ErrPath string  `json:"errPath,omitempty"`
-	ErrOld  string  `json:"errOld,omitempty"`
-	ErrNew  string  `json:"errNew,omitempty"`
-	ErrErr  string  `json:"errErr,omitempty"`
-}
-
-// PermOptions are options for running the tests.
-type PermOptions struct {
-	IgnoreOp    bool // IgnoreOp ignores the Op field comparison of fs.PathError or os.LinkError structs.
-	IgnorePath  bool // IgnorePath ignores the Path, Old or New field comparison of fs.PathError or os.LinkError errors.
-	CreateFiles bool // CreateFiles creates files instead of directories.
-}
-
 // NewPermTests creates and returns a new environment for permissions test.
-func (sfs *SuiteFS) NewPermTests(t *testing.T, testDir, funcName string) *PermTests {
-	return sfs.NewPermTestsWithOptions(t, testDir, funcName, &PermOptions{})
+func (ts *Suite) NewPermTests(t *testing.T, testDir, funcName string) *PermTests {
+	return ts.NewPermTestsWithOptions(t, testDir, funcName, &PermOptions{})
 }
 
 // NewPermTestsWithOptions creates and returns a new environment for permissions test with options.
-func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName string, options *PermOptions) *PermTests {
+func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string, options *PermOptions) *PermTests {
 	osName := avfs.CurrentOSType().String()
-	errFileName := filepath.Join(sfs.initDir, "testdata", fmt.Sprintf("perm%s%s.golden", funcName, osName))
+	errFileName := filepath.Join(ts.initDir, "testdata", fmt.Sprintf("perm%s%s.golden", funcName, osName))
 	permDir := filepath.Join(testDir, funcName)
 
 	pts := &PermTests{
-		sfs:           sfs,
+		ts:            ts,
 		errors:        make(map[string]*permError),
 		errFileName:   errFileName,
 		errFileExists: true,
@@ -85,24 +49,24 @@ func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName stri
 		options:       *options,
 	}
 
-	vfs := sfs.vfsSetup
+	vfs := ts.vfsSetup
 	adminUser := vfs.Idm().AdminUser()
 
-	sfs.setUser(t, adminUser.Name())
-	sfs.createDir(t, pts.permDir, avfs.DefaultDirPerm)
+	ts.setUser(t, adminUser.Name())
+	ts.createDir(t, pts.permDir, avfs.DefaultDirPerm)
 
 	for _, ui := range UserInfos() {
-		sfs.setUser(t, ui.Name)
+		ts.setUser(t, ui.Name)
 
 		usrDir := vfs.Join(pts.permDir, ui.Name)
-		sfs.createDir(t, usrDir, avfs.DefaultDirPerm)
+		ts.createDir(t, usrDir, avfs.DefaultDirPerm)
 
 		for m := fs.FileMode(0); m <= 0o777; m++ {
 			path := vfs.Join(usrDir, m.String())
 			if pts.options.CreateFiles {
-				sfs.createFile(t, path, m)
+				ts.createFile(t, path, m)
 			} else {
-				sfs.createDir(t, path, m)
+				ts.createDir(t, path, m)
 			}
 		}
 
@@ -111,7 +75,7 @@ func (sfs *SuiteFS) NewPermTestsWithOptions(t *testing.T, testDir, funcName stri
 		RequireNoError(t, err, "Chmod %s", usrDir)
 	}
 
-	sfs.setUser(t, UsrTest)
+	ts.setUser(t, UsrTest)
 
 	return pts
 }
@@ -121,8 +85,8 @@ type PermFunc func(path string) error
 
 // load loads a permissions test file.
 func (pts *PermTests) load(t *testing.T) {
-	sfs := pts.sfs
-	sfs.setUser(t, sfs.initUser.Name())
+	ts := pts.ts
+	ts.setUser(t, ts.initUser.Name())
 
 	b, err := os.ReadFile(pts.errFileName)
 	if err != nil {
@@ -148,8 +112,8 @@ func (pts *PermTests) save(t *testing.T) {
 	b, err := json.MarshalIndent(pts.errors, "", "\t")
 	RequireNoError(t, err, "MarshalIndent %s", pts.errFileName)
 
-	sfs := pts.sfs
-	sfs.setUser(t, sfs.initUser.Name())
+	ts := pts.ts
+	ts.setUser(t, ts.initUser.Name())
 
 	err = os.WriteFile(pts.errFileName, b, avfs.DefaultFilePerm)
 	RequireNoError(t, err, "WriteFile %s", pts.errFileName)
@@ -188,8 +152,8 @@ func (pts *PermTests) newPermError(err error) *permError {
 
 // Test generates or tests the golden file of the permissions for a specific function.
 func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
-	sfs := pts.sfs
-	vfs := sfs.vfsSetup
+	ts := pts.ts
+	vfs := ts.vfsSetup
 
 	pts.load(t)
 
@@ -199,7 +163,7 @@ func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
 		return
 	}
 
-	sfs.setUser(t, UsrTest)
+	ts.setUser(t, UsrTest)
 
 	for _, ui := range UserInfos() {
 		for m := fs.FileMode(0); m <= 0o777; m++ {

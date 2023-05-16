@@ -53,6 +53,6 @@ func initFS(tb testing.TB) *mountfs.MountFS {
 
 func TestMountFS(t *testing.T) {
 	vfs := initFS(t)
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestVFSAll(t)
 }

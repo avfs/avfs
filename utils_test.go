@@ -31,15 +31,15 @@ import (
 func TestUtilsMemFS(t *testing.T) {
 	vfs := memfs.New()
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestVFSAll(t)
 }
 
 func TestUtilsOrefaFS(t *testing.T) {
 	vfs := orefafs.New()
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestAll(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestVFSAll(t)
 }
 
 // TestUMaskOS tests Umask functions for the current OS.

@@ -43,8 +43,8 @@ var (
 func TestOsIdmAll(t *testing.T) {
 	idm := osidm.New()
 
-	sidm := test.NewSuiteIdm(t, idm)
-	sidm.TestAll(t)
+	ts := test.NewSuiteIdm(t, idm)
+	ts.TestIdmAll(t)
 }
 
 func TestOsIdmCfg(t *testing.T) {

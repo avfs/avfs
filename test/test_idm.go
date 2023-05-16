@@ -18,6 +18,7 @@ package test
 
 import (
 	"fmt"
+	"io/fs"
 	"math"
 	"math/rand"
 	"testing"
@@ -25,9 +26,18 @@ import (
 	"github.com/avfs/avfs"
 )
 
+// TestIdmAll runs all identity manager tests.
+func (ts *Suite) TestIdmAll(t *testing.T) {
+	ts.TestAdminGroupUser(t)
+	ts.TestGroupAddDel(t)
+	ts.TestUserAddDel(t)
+	ts.TestLookup(t)
+	ts.TestSetUserIdm(t)
+}
+
 // TestAdminGroupUser tests AdminGroup and AdminUser.
-func (sIdm *SuiteIdm) TestAdminGroupUser(t *testing.T) {
-	idm := sIdm.idm
+func (ts *Suite) TestAdminGroupUser(t *testing.T) {
+	idm := ts.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
 		wantGroup, wantUser := avfs.DefaultName, avfs.DefaultName
@@ -79,8 +89,8 @@ func (sIdm *SuiteIdm) TestAdminGroupUser(t *testing.T) {
 }
 
 // TestGroupAddDel tests GroupAdd and GroupDel functions.
-func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
-	idm := sIdm.idm
+func (ts *Suite) TestGroupAddDel(t *testing.T) {
+	idm := ts.idm
 	suffix := fmt.Sprintf("GroupAddDel%x", rand.Uint32())
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
@@ -99,7 +109,7 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 		return
 	}
 
-	if !sIdm.canTest {
+	if !ts.canTestIdm {
 		return
 	}
 
@@ -182,8 +192,8 @@ func (sIdm *SuiteIdm) TestGroupAddDel(t *testing.T) {
 }
 
 // TestUserAddDel tests UserAdd and UserDel functions.
-func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
-	idm := sIdm.idm
+func (ts *Suite) TestUserAddDel(t *testing.T) {
+	idm := ts.idm
 	suffix := fmt.Sprintf("UserAddDel%x", rand.Uint32())
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
@@ -203,14 +213,14 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 		return
 	}
 
-	if !sIdm.canTest {
+	if !ts.canTestIdm {
 		return
 	}
 
-	_ = CreateGroups(t, idm, suffix)
-	uis := UserInfos()
+	ts.CreateGroups(t, suffix)
 
 	prevUid := 0
+	uis := UserInfos()
 
 	t.Run("UserAdd", func(t *testing.T) {
 		for _, ui := range uis {
@@ -317,8 +327,8 @@ func (sIdm *SuiteIdm) TestUserAddDel(t *testing.T) {
 }
 
 // TestLookup tests Lookup* functions.
-func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
-	idm := sIdm.idm
+func (ts *Suite) TestLookup(t *testing.T) {
+	idm := ts.idm
 	suffix := fmt.Sprintf("Lookup%x", rand.Uint32())
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
@@ -357,16 +367,16 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 		}
 	}
 
-	if !sIdm.canTest {
+	if !ts.canTestIdm {
 		return
 	}
 
-	CreateGroups(t, idm, suffix)
-	CreateUsers(t, idm, suffix)
+	groups := ts.CreateGroups(t, suffix)
+	users := ts.CreateUsers(t, suffix)
 
 	t.Run("LookupGroup", func(t *testing.T) {
-		for _, gi := range GroupInfos() {
-			groupName := gi.Name + suffix
+		for _, wantGroup := range groups {
+			groupName := wantGroup.Name()
 			wantErr := avfs.UnknownGroupError(groupName)
 
 			g, err := idm.LookupGroup(groupName)
@@ -386,15 +396,15 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 				t.Errorf("LookupGroup %s : want name to be %s, got %s", groupName, groupName, g.Name())
 			}
 
-			if g.Gid() <= 0 {
-				t.Errorf("LookupGroup %s : want gid to be > 0, got %d", groupName, g.Gid())
+			if g.Gid() != wantGroup.Gid() {
+				t.Errorf("LookupGroup %s : want gid to be %d, got %d", wantGroup.Gid(), g.Gid())
 			}
 		}
 	})
 
 	t.Run("LookupUser", func(t *testing.T) {
-		for _, ui := range UserInfos() {
-			userName := ui.Name + suffix
+		for _, wantUser := range users {
+			userName := wantUser.Name()
 			wantErr := avfs.UnknownUserError(userName)
 
 			u, err := idm.LookupUser(userName)
@@ -414,12 +424,12 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 				t.Errorf("LookupUser %s : want name to be %s, got %s", userName, userName, u.Name())
 			}
 
-			if u.Uid() <= 0 {
-				t.Errorf("LookupUser %s : want uid to be > 0, got %d", userName, u.Uid())
+			if u.Uid() != wantUser.Uid() {
+				t.Errorf("LookupUser %s : want uid to be %d, got %d", wantUser.Uid(), u.Uid())
 			}
 
-			if u.Gid() <= 0 {
-				t.Errorf("LookupUser %s : want gid to be > 0, got %d", userName, u.Gid())
+			if u.Gid() != wantUser.Gid() {
+				t.Errorf("LookupUser %s : want gid to be %d, got %d", userName, wantUser.Gid(), u.Gid())
 			}
 
 			if (u.Uid() != 0 && u.Gid() != 0) && u.IsAdmin() {
@@ -429,15 +439,20 @@ func (sIdm *SuiteIdm) TestLookup(t *testing.T) {
 	})
 }
 
-// TestSetUser tests setUser and User functions.
-func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
-	idm := sIdm.idm
-	suffix := fmt.Sprintf("SetUser%x", rand.Uint32())
-
-	ust, ok := sIdm.idm.(avfs.UserSetter)
-	if !ok {
-		return
+func (ts *Suite) TestSetUserIdm(t *testing.T) {
+	ust, ok := ts.idm.(avfs.UserSetter)
+	if ok {
+		ts.testSetUser(t, ust)
 	}
+}
+
+func (ts *Suite) TestSetUserFS(t *testing.T, _ string) {
+	ts.testSetUser(t, ts.vfsTest)
+}
+
+// testSetUser tests setUser and User functions.
+func (ts *Suite) testSetUser(t *testing.T, ust avfs.UserSetter) {
+	idm := ts.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		userName := ust.User().Name()
@@ -455,8 +470,7 @@ func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
 		return
 	}
 
-	CreateGroups(t, idm, suffix)
-	CreateUsers(t, idm, suffix)
+	t.Logf("CurrentUser = %v", ust.User())
 
 	t.Run("UserNotExists", func(t *testing.T) {
 		const userName = "notExistingUser"
@@ -476,7 +490,7 @@ func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
 
 	t.Run("UserExists", func(t *testing.T) {
 		for _, ui := range UserInfos() {
-			userName := ui.Name + suffix
+			userName := ui.Name
 
 			lu, err := idm.LookupUser(userName)
 			if !AssertNoError(t, err, "LookupUser %s", userName) {
@@ -520,4 +534,108 @@ func (sIdm *SuiteIdm) TestSetUser(t *testing.T) {
 			}
 		}
 	})
+}
+
+const (
+	grpTest  = "grpTest"  // grpTest is the default group of the default test user UsrTest.
+	grpOther = "grpOther" // grpOther is the group to test users who are not members of grpTest.
+	grpEmpty = "grpEmpty" // grpEmpty is a group without users.
+)
+
+// GroupInfo contains information to create a test group.
+type GroupInfo struct {
+	Name string
+}
+
+// GroupInfos returns a GroupInfo slice describing the test groups.
+func GroupInfos() []*GroupInfo {
+	gis := []*GroupInfo{
+		{Name: grpTest},
+		{Name: grpOther},
+		{Name: grpEmpty},
+	}
+
+	return gis
+}
+
+// CreateGroups creates and returns test groups with a suffix appended to each group.
+// Errors are ignored if the group already exists.
+func (ts *Suite) CreateGroups(tb testing.TB, suffix string) (groups []avfs.GroupReader) {
+	idm := ts.idm
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return nil
+	}
+
+	for _, group := range GroupInfos() {
+		groupName := group.Name + suffix
+
+		g, err := idm.GroupAdd(groupName)
+		if err != avfs.AlreadyExistsGroupError(groupName) {
+			RequireNoError(tb, err, "GroupAdd %s", groupName)
+		}
+
+		groups = append(groups, g)
+	}
+
+	return groups
+}
+
+const (
+	UsrTest = "UsrTest" // UsrTest is used to test user access rights.
+	UsrGrp  = "UsrGrp"  // UsrGrp is a member of the group GrpTest used to test default group access rights.
+	UsrOth  = "UsrOth"  // UsrOth is a member of the group GrpOth used to test non-members access rights.
+)
+
+// UserInfo contains information to create a test user.
+type UserInfo struct {
+	Name      string
+	GroupName string
+}
+
+// UserInfos returns a UserInfo slice describing the test users.
+func UserInfos() []*UserInfo {
+	uis := []*UserInfo{
+		{Name: UsrTest, GroupName: grpTest},
+		{Name: UsrGrp, GroupName: grpTest},
+		{Name: UsrOth, GroupName: grpOther},
+	}
+
+	return uis
+}
+
+// CreateUsers creates and returns test users with a suffix appended to each user.
+// Errors are ignored if the user or his home directory already exists.
+func (ts *Suite) CreateUsers(tb testing.TB, suffix string) (users []avfs.UserReader) {
+	idm := ts.idm
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return nil
+	}
+
+	for _, ui := range UserInfos() {
+		userName := ui.Name + suffix
+		groupName := ui.GroupName + suffix
+
+		u, err := idm.UserAdd(userName, groupName)
+		if err != nil {
+			switch e := err.(type) {
+			case *fs.PathError:
+				if e.Op != "mkdir" || e.Err != avfs.ErrFileExists {
+					tb.Fatalf("UserAdd %s : want Mkdir error, got %v", userName, err)
+				}
+			default:
+				if err != avfs.AlreadyExistsUserError(userName) {
+					tb.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+				}
+			}
+
+			if u == nil {
+				u, err = idm.LookupUser(userName)
+				RequireNoError(tb, err, "LookupUser %s", userName)
+			}
+		}
+
+		users = append(users, u)
+	}
+
+	return users
 }

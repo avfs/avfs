@@ -31,12 +31,73 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// TestChdir tests Chdir and Getwd functions.
-func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestVFS(t *testing.T) {
+	ts.RunTests(t, UsrTest,
+		ts.TestAbs,
+		ts.TestBase,
+		ts.TestClean,
+		ts.TestDir,
+		ts.TestClone,
+		ts.TestChdir,
+		ts.TestChtimes,
+		ts.TestCreate,
+		ts.TestCreateTemp,
+		ts.TestEvalSymlink,
+		ts.TestFromToSlash,
+		ts.TestGlob,
+		ts.TestIsAbs,
+		ts.TestJoin,
+		ts.TestLink,
+		ts.TestLstat,
+		ts.TestMatch,
+		ts.TestMkdir,
+		ts.TestMkdirTemp,
+		ts.TestMkdirAll,
+		ts.TestName,
+		ts.TestOpen,
+		ts.TestOpenFileWrite,
+		ts.TestPathSeparator,
+		ts.TestReadDir,
+		ts.TestReadFile,
+		ts.TestReadlink,
+		ts.TestRel,
+		ts.TestRemove,
+		ts.TestRemoveAll,
+		ts.TestRename,
+		ts.TestSameFile,
+		ts.TestSplit,
+		ts.TestSplitAbs,
+		ts.TestStat,
+		ts.TestSymlink,
+		ts.TestTempDir,
+		ts.TestToSysStat,
+		ts.TestTruncate,
+		ts.TestUser,
+		ts.TestWalkDir,
+		ts.TestWriteFile,
+		ts.TestWriteString,
+	)
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	existingFile := sfs.emptyFile(t, testDir)
+	// Tests to be run as root
+	adminUser := ts.idm.AdminUser()
+	ts.RunTests(t, adminUser.Name(),
+		ts.TestChmod,
+		ts.TestChown,
+		ts.TestChroot,
+		ts.TestCreateSystemDirs,
+		ts.TestCreateHomeDir,
+		ts.TestLchown,
+		ts.TestVolume,
+		ts.TestWriteOnReadOnlyFS,
+	)
+}
+
+// TestChdir tests Chdir and Getwd functions.
+func (ts *Suite) TestChdir(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
+
+	dirs := ts.createSampleDirs(t, testDir)
+	existingFile := ts.emptyFile(t, testDir)
 
 	t.Run("ChdirAbsolute", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -101,11 +162,11 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChdirPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Chdir")
+		pts := ts.NewPermTests(t, testDir, "Chdir")
 		pts.Test(t, func(path string) error {
 			return vfs.Chdir(path)
 		})
@@ -113,8 +174,8 @@ func (sfs *SuiteFS) TestChdir(t *testing.T, testDir string) {
 }
 
 // TestChmod tests Chmod function.
-func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestChmod(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chmod(testDir, avfs.DefaultDirPerm)
@@ -123,8 +184,8 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 		return
 	}
 
-	existingDir := sfs.existingDir(t, testDir)
-	existingFile := sfs.emptyFile(t, testDir)
+	existingDir := ts.existingDir(t, testDir)
+	existingFile := ts.emptyFile(t, testDir)
 
 	t.Run("ChmodDir", func(t *testing.T) {
 		for mode := fs.FileMode(1); mode <= 0o777; mode++ {
@@ -175,7 +236,7 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChmodNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
 		AssertPathError(t, err).Op("chmod").Path(nonExistingFile).
@@ -184,11 +245,11 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChmodPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Chmod")
+		pts := ts.NewPermTests(t, testDir, "Chmod")
 		pts.Test(t, func(path string) error {
 			return vfs.Chmod(path, 0o777)
 		})
@@ -196,11 +257,11 @@ func (sfs *SuiteFS) TestChmod(t *testing.T, testDir string) {
 }
 
 // TestChown tests Chown function.
-func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestChown(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 	idm := vfs.Idm()
 
-	if !sfs.canTestPerm && vfs.HasFeature(avfs.FeatRealFS) ||
+	if !ts.canTestPerm && vfs.HasFeature(avfs.FeatRealFS) ||
 		vfs.HasFeature(avfs.FeatReadOnly) || avfs.CurrentOSType() == avfs.OsWindows {
 		err := vfs.Chown(testDir, 0, 0)
 
@@ -212,7 +273,7 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	}
 
 	t.Run("ChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Chown(nonExistingFile, 0, 0)
 		AssertPathError(t, err).Op("chown").Path(nonExistingFile).
@@ -240,8 +301,8 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
 	uis := UserInfos()
 
 	t.Run("ChownDir", func(t *testing.T) {
@@ -299,11 +360,11 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChownPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Chown")
+		pts := ts.NewPermTests(t, testDir, "Chown")
 		pts.Test(t, func(path string) error {
 			return vfs.Chown(path, 0, 0)
 		})
@@ -311,11 +372,11 @@ func (sfs *SuiteFS) TestChown(t *testing.T, testDir string) {
 }
 
 // TestChroot tests Chroot function.
-func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestChroot(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 	vfsR, ok := vfs.(avfs.ChRooter)
 
-	if !ok || !sfs.canTestPerm {
+	if !ok || !ts.canTestPerm {
 		return
 	}
 
@@ -359,7 +420,7 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChrootOnFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 		nonExistingFile := vfs.Join(existingFile, "invalid", "path")
 
 		err := vfsR.Chroot(existingFile)
@@ -373,8 +434,8 @@ func (sfs *SuiteFS) TestChroot(t *testing.T, testDir string) {
 }
 
 // TestChtimes tests Chtimes function.
-func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestChtimes(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Chtimes(testDir, time.Now(), time.Now())
@@ -384,8 +445,8 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 	}
 
 	t.Run("Chtimes", func(t *testing.T) {
-		_ = sfs.createSampleDirs(t, testDir)
-		files := sfs.createSampleFiles(t, testDir)
+		_ = ts.createSampleDirs(t, testDir)
+		files := ts.createSampleFiles(t, testDir)
 		tomorrow := time.Now().AddDate(0, 0, 1)
 
 		for _, file := range files {
@@ -402,7 +463,7 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChtimesNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
 		AssertPathError(t, err).Op("chtimes").Path(nonExistingFile).
@@ -411,11 +472,11 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 	})
 
 	t.Run("ChtimesPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Chtimes")
+		pts := ts.NewPermTests(t, testDir, "Chtimes")
 		pts.Test(t, func(path string) error {
 			return vfs.Chtimes(path, time.Now(), time.Now())
 		})
@@ -423,8 +484,8 @@ func (sfs *SuiteFS) TestChtimes(t *testing.T, testDir string) {
 }
 
 // TestClone tests Clone function.
-func (sfs *SuiteFS) TestClone(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestClone(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	if vfsClonable, ok := vfs.(avfs.Cloner); ok {
 		vfsCloned := vfsClonable.Clone()
@@ -436,8 +497,8 @@ func (sfs *SuiteFS) TestClone(t *testing.T, _ string) {
 }
 
 // TestCreate tests Create function.
-func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestCreate(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.Create(testDir)
@@ -447,11 +508,11 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 	}
 
 	t.Run("CreatePerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Create")
+		pts := ts.NewPermTests(t, testDir, "Create")
 		pts.Test(t, func(path string) error {
 			newFile := vfs.Join(path, defaultFile)
 
@@ -466,8 +527,8 @@ func (sfs *SuiteFS) TestCreate(t *testing.T, testDir string) {
 }
 
 // TestCreateTemp tests CreateTemp function.
-func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestCreateTemp(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.CreateTemp(testDir, "CreateTemp")
@@ -502,7 +563,7 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 	})
 
 	t.Run("CreateTempOnFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		_, err := vfs.CreateTemp(existingFile, "CreateTempOnFile")
 		AssertPathError(t, err).Op("open").
@@ -512,8 +573,8 @@ func (sfs *SuiteFS) TestCreateTemp(t *testing.T, testDir string) {
 }
 
 // TestUser tests User function.
-func (sfs *SuiteFS) TestUser(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestUser(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	u := vfs.User()
 
@@ -534,8 +595,8 @@ func (sfs *SuiteFS) TestUser(t *testing.T, _ string) {
 }
 
 // TestEvalSymlink tests EvalSymlink function.
-func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestEvalSymlink(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
@@ -544,12 +605,12 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 		return
 	}
 
-	_ = sfs.createSampleDirs(t, testDir)
-	_ = sfs.createSampleFiles(t, testDir)
-	_ = sfs.createSampleSymlinks(t, testDir)
+	_ = ts.createSampleDirs(t, testDir)
+	_ = ts.createSampleFiles(t, testDir)
+	_ = ts.createSampleSymlinks(t, testDir)
 
 	t.Run("EvalSymlink", func(t *testing.T) {
-		symlinks := sfs.sampleSymlinksEval(testDir)
+		symlinks := ts.sampleSymlinksEval(testDir)
 		for _, sl := range symlinks {
 			wantPath := sl.OldPath
 			slPath := sl.NewPath
@@ -567,8 +628,8 @@ func (sfs *SuiteFS) TestEvalSymlink(t *testing.T, testDir string) {
 }
 
 // TestTempDir tests TempDir function.
-func (sfs *SuiteFS) TestTempDir(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestTempDir(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 	tmpDir := vfs.TempDir()
 
 	if vfs.OSType() == avfs.OsWindows {
@@ -587,11 +648,11 @@ func (sfs *SuiteFS) TestTempDir(t *testing.T, _ string) {
 }
 
 // TestLchown tests Lchown function.
-func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestLchown(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 	idm := vfs.Idm()
 
-	if !sfs.canTestPerm && vfs.HasFeature(avfs.FeatRealFS) ||
+	if !ts.canTestPerm && vfs.HasFeature(avfs.FeatRealFS) ||
 		vfs.HasFeature(avfs.FeatReadOnly) || avfs.CurrentOSType() == avfs.OsWindows {
 		err := vfs.Lchown(testDir, 0, 0)
 
@@ -603,7 +664,7 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	}
 
 	t.Run("LChownNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Lchown(nonExistingFile, 0, 0)
 		AssertPathError(t, err).Op("lchown").Path(nonExistingFile).
@@ -631,9 +692,9 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	symlinks := sfs.createSampleSymlinks(t, testDir)
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	symlinks := ts.createSampleSymlinks(t, testDir)
 	uis := UserInfos()
 
 	t.Run("LchownDir", func(t *testing.T) {
@@ -718,11 +779,11 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 	})
 
 	t.Run("LchownPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Lchown")
+		pts := ts.NewPermTests(t, testDir, "Lchown")
 		pts.Test(t, func(path string) error {
 			return vfs.Lchown(path, 0, 0)
 		})
@@ -730,8 +791,8 @@ func (sfs *SuiteFS) TestLchown(t *testing.T, testDir string) {
 }
 
 // TestLink tests Link function.
-func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestLink(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatHardlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Link(testDir, testDir)
@@ -740,9 +801,9 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	pathLinks := sfs.existingDir(t, testDir)
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	pathLinks := ts.existingDir(t, testDir)
 
 	t.Run("LinkCreate", func(t *testing.T) {
 		for _, file := range files {
@@ -811,8 +872,8 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 	})
 
 	t.Run("LinkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
-		existingFile := sfs.emptyFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		err := vfs.Link(nonExistingFile, existingFile)
 		AssertLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).
@@ -821,14 +882,14 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 	})
 
 	t.Run("LinkPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "LinkNew")
+		pts := ts.NewPermTests(t, testDir, "LinkNew")
 
 		oldFile := vfs.Join(pts.permDir, "OldFile")
-		sfs.createFile(t, oldFile, avfs.DefaultFilePerm)
+		ts.createFile(t, oldFile, avfs.DefaultFilePerm)
 
 		pts.Test(t, func(path string) error {
 			newFile := vfs.Join(path, "newFile")
@@ -839,12 +900,12 @@ func (sfs *SuiteFS) TestLink(t *testing.T, testDir string) {
 }
 
 // TestLstat tests Lstat function.
-func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	sfs.createSampleSymlinks(t, testDir)
+func (ts *Suite) TestLstat(t *testing.T, testDir string) {
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	ts.createSampleSymlinks(t, testDir)
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -896,7 +957,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 	})
 
 	t.Run("LstatSymlink", func(t *testing.T) {
-		for _, sl := range sfs.sampleSymlinksEval(testDir) {
+		for _, sl := range ts.sampleSymlinksEval(testDir) {
 			info, err := vfs.Lstat(sl.NewPath)
 			if !AssertNoError(t, err, "Lstat %s", sl.NewPath) {
 				continue
@@ -921,7 +982,7 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 	})
 
 	t.Run("LStatNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		_, err := vfs.Lstat(nonExistingFile)
 		AssertPathError(t, err).OpLstat().Path(nonExistingFile).
@@ -940,8 +1001,8 @@ func (sfs *SuiteFS) TestLstat(t *testing.T, testDir string) {
 }
 
 // TestMkdir tests Mkdir function.
-func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestMkdir(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Mkdir(testDir, avfs.DefaultDirPerm)
@@ -950,7 +1011,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.sampleDirs(testDir)
+	dirs := ts.sampleDirs(testDir)
 
 	t.Run("Mkdir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -1041,7 +1102,7 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	})
 
 	t.Run("MkdirOnFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 		subDirOnFile := vfs.Join(existingFile, defaultDir)
 
 		err := vfs.Mkdir(subDirOnFile, avfs.DefaultDirPerm)
@@ -1051,11 +1112,11 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 	})
 
 	t.Run("MkdirPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Mkdir")
+		pts := ts.NewPermTests(t, testDir, "Mkdir")
 		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
@@ -1065,8 +1126,8 @@ func (sfs *SuiteFS) TestMkdir(t *testing.T, testDir string) {
 }
 
 // TestMkdirAll tests MkdirAll function.
-func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestMkdirAll(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
@@ -1075,8 +1136,8 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 		return
 	}
 
-	existingFile := sfs.emptyFile(t, testDir)
-	dirs := sfs.sampleDirsAll(testDir)
+	existingFile := ts.emptyFile(t, testDir)
+	dirs := ts.sampleDirsAll(testDir)
 
 	t.Run("MkdirAll", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -1160,11 +1221,11 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 	})
 
 	t.Run("MkdirAllPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "MkdirAll")
+		pts := ts.NewPermTests(t, testDir, "MkdirAll")
 		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
@@ -1174,8 +1235,8 @@ func (sfs *SuiteFS) TestMkdirAll(t *testing.T, testDir string) {
 }
 
 // TestMkdirTemp tests MkdirTemp function.
-func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestMkdirTemp(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.MkdirTemp(testDir, "MkdirTemp")
@@ -1207,7 +1268,7 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 	})
 
 	t.Run("MkdirTempOnFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		_, err := vfs.MkdirTemp(existingFile, "MkdirTempOnFile")
 		AssertPathError(t, err).Op("mkdir").
@@ -1217,8 +1278,8 @@ func (sfs *SuiteFS) TestMkdirTemp(t *testing.T, testDir string) {
 }
 
 // TestName tests Name function.
-func (sfs *SuiteFS) TestName(t *testing.T, _ string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) TestName(t *testing.T, _ string) {
+	vfs := ts.vfsSetup
 
 	if vfs.Name() != "" {
 		t.Errorf("want name to be empty, got %s", vfs.Name())
@@ -1226,12 +1287,12 @@ func (sfs *SuiteFS) TestName(t *testing.T, _ string) {
 }
 
 // TestOpen tests Open function.
-func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
+func (ts *Suite) TestOpen(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
-	existingFile := sfs.existingFile(t, testDir, data)
-	existingDir := sfs.existingDir(t, testDir)
+	existingFile := ts.existingFile(t, testDir, data)
+	existingDir := ts.existingDir(t, testDir)
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
 		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
@@ -1262,7 +1323,7 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
-		fileName := sfs.nonExistingFile(t, testDir)
+		fileName := ts.nonExistingFile(t, testDir)
 
 		_, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 		AssertPathError(t, err).Op("open").Path(fileName).
@@ -1272,8 +1333,8 @@ func (sfs *SuiteFS) TestOpen(t *testing.T, testDir string) {
 }
 
 // TestOpenFileWrite tests OpenFile function for write.
-func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		_, err := vfs.OpenFile(testDir, os.O_WRONLY, avfs.DefaultFilePerm)
@@ -1287,7 +1348,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	buf3 := make([]byte, 3)
 
 	t.Run("OpenFileWriteOnly", func(t *testing.T) {
-		existingFile := sfs.existingFile(t, testDir, data)
+		existingFile := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(existingFile, os.O_WRONLY, avfs.DefaultFilePerm)
 		RequireNoError(t, err, "OpenFile %s", existingFile)
@@ -1344,7 +1405,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileAppend", func(t *testing.T) {
-		existingFile := sfs.existingFile(t, testDir, data)
+		existingFile := ts.existingFile(t, testDir, data)
 		appendData := []byte("appendData")
 
 		f, err := vfs.OpenFile(existingFile, os.O_WRONLY|os.O_APPEND, avfs.DefaultFilePerm)
@@ -1369,7 +1430,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
-		existingFile := sfs.existingFile(t, testDir, data)
+		existingFile := ts.existingFile(t, testDir, data)
 
 		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
 		RequireNoError(t, err, "OpenFile %s", existingFile)
@@ -1418,7 +1479,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileWriteOnDir", func(t *testing.T) {
-		existingDir := sfs.existingDir(t, testDir)
+		existingDir := ts.existingDir(t, testDir)
 
 		f, err := vfs.OpenFile(existingDir, os.O_WRONLY, avfs.DefaultFilePerm)
 		AssertPathError(t, err).Op("open").Path(existingDir).
@@ -1458,7 +1519,7 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 			return
 		}
 
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 		InvalidSymlink := vfs.Join(testDir, "InvalidSymlink")
 
 		err := vfs.Symlink(nonExistingFile, InvalidSymlink)
@@ -1471,11 +1532,11 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileDirPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "OpenFileDir")
+		pts := ts.NewPermTests(t, testDir, "OpenFileDir")
 		pts.Test(t, func(path string) error {
 			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 			if err != nil {
@@ -1489,11 +1550,11 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileReadPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTestsWithOptions(t, testDir, "OpenFileRead", &PermOptions{CreateFiles: true})
+		pts := ts.NewPermTestsWithOptions(t, testDir, "OpenFileRead", &PermOptions{CreateFiles: true})
 		pts.Test(t, func(path string) error {
 			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 			if err != nil {
@@ -1507,11 +1568,11 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 	})
 
 	t.Run("OpenFileWritePerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTestsWithOptions(t, testDir, "OpenFileWrite", &PermOptions{CreateFiles: true})
+		pts := ts.NewPermTestsWithOptions(t, testDir, "OpenFileWrite", &PermOptions{CreateFiles: true})
 		pts.Test(t, func(path string) error {
 			f, err := vfs.OpenFile(path, os.O_WRONLY, 0)
 			if err != nil {
@@ -1526,8 +1587,8 @@ func (sfs *SuiteFS) TestOpenFileWrite(t *testing.T, testDir string) {
 }
 
 // TestPathSeparator tests PathSeparator function.
-func (sfs *SuiteFS) TestPathSeparator(t *testing.T, _ string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestPathSeparator(t *testing.T, _ string) {
+	vfs := ts.vfsTest
 
 	wantSep := uint8('/')
 	if vfs.OSType() == avfs.OsWindows {
@@ -1541,10 +1602,10 @@ func (sfs *SuiteFS) TestPathSeparator(t *testing.T, _ string) {
 }
 
 // TestReadDir tests ReadDir function.
-func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
-	rndTree := sfs.randomDir(t, testDir)
+	rndTree := ts.randomDir(t, testDir)
 	wDirs := len(rndTree.Dirs)
 	wFiles := len(rndTree.Files)
 	wSymlinks := len(rndTree.SymLinks)
@@ -1608,12 +1669,12 @@ func (sfs *SuiteFS) TestReadDir(t *testing.T, testDir string) {
 }
 
 // TestReadFile tests ReadFile function.
-func (sfs *SuiteFS) TestReadFile(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestReadFile(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	t.Run("ReadFile", func(t *testing.T) {
 		data := []byte("AAABBBCCCDDD")
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		rb, err := vfs.ReadFile(path)
 		RequireNoError(t, err, "ReadFile %s", path)
@@ -1624,7 +1685,7 @@ func (sfs *SuiteFS) TestReadFile(t *testing.T, testDir string) {
 	})
 
 	t.Run("ReadFileNotExisting", func(t *testing.T) {
-		path := sfs.nonExistingFile(t, testDir)
+		path := ts.nonExistingFile(t, testDir)
 
 		rb, err := vfs.ReadFile(path)
 		AssertPathError(t, err).Op("open").Path(path).
@@ -1638,8 +1699,8 @@ func (sfs *SuiteFS) TestReadFile(t *testing.T, testDir string) {
 }
 
 // TestReadlink tests Readlink function.
-func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestReadlink(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.Readlink(testDir)
@@ -1651,11 +1712,11 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	symlinks := sfs.createSampleSymlinks(t, testDir)
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	symlinks := ts.createSampleSymlinks(t, testDir)
 
-	vfs = sfs.vfsTest
+	vfs = ts.vfsTest
 
 	t.Run("ReadlinkLink", func(t *testing.T) {
 		for _, sl := range symlinks {
@@ -1687,7 +1748,7 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 	})
 
 	t.Run("ReadLinkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		_, err := vfs.Readlink(nonExistingFile)
 		AssertPathError(t, err).Op("readlink").Path(nonExistingFile).
@@ -1697,8 +1758,8 @@ func (sfs *SuiteFS) TestReadlink(t *testing.T, testDir string) {
 }
 
 // TestRemove tests Remove function.
-func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestRemove(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Remove(testDir)
@@ -1707,9 +1768,9 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	symlinks := sfs.createSampleSymlinks(t, testDir)
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	symlinks := ts.createSampleSymlinks(t, testDir)
 
 	t.Run("RemoveFile", func(t *testing.T) {
 		for _, file := range files {
@@ -1771,7 +1832,7 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Remove(nonExistingFile)
 		AssertPathError(t, err).Op("remove").Path(nonExistingFile).
@@ -1780,11 +1841,11 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemovePerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Remove")
+		pts := ts.NewPermTests(t, testDir, "Remove")
 		pts.Test(t, func(path string) error {
 			return vfs.Remove(path)
 		})
@@ -1792,8 +1853,8 @@ func (sfs *SuiteFS) TestRemove(t *testing.T, testDir string) {
 }
 
 // TestRemoveAll tests RemoveAll function.
-func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.RemoveAll(testDir)
@@ -1803,9 +1864,9 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 	}
 
 	baseDir := vfs.Join(testDir, "RemoveAll")
-	dirs := sfs.createSampleDirs(t, baseDir)
-	files := sfs.createSampleFiles(t, baseDir)
-	symlinks := sfs.createSampleSymlinks(t, baseDir)
+	dirs := ts.createSampleDirs(t, baseDir)
+	files := ts.createSampleFiles(t, baseDir)
+	symlinks := ts.createSampleSymlinks(t, baseDir)
 
 	t.Run("RemoveAll", func(t *testing.T) {
 		err := vfs.RemoveAll(baseDir)
@@ -1843,14 +1904,14 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveAllOneFile", func(t *testing.T) {
-		existingFile := sfs.emptyFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
 
 		err := vfs.RemoveAll(existingFile)
 		RequireNoError(t, err, "RemoveAll %s", existingFile)
 	})
 
 	t.Run("RemoveAllPathEmpty", func(t *testing.T) {
-		_ = sfs.createSampleDirs(t, baseDir)
+		_ = ts.createSampleDirs(t, baseDir)
 
 		err := vfs.Chdir(baseDir)
 		RequireNoError(t, err, "Chdir %s", baseDir)
@@ -1866,18 +1927,18 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 	})
 
 	t.Run("RemoveAllNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.RemoveAll(nonExistingFile)
 		RequireNoError(t, err, "RemoveAll %s", nonExistingFile)
 	})
 
 	t.Run("RemoveAllPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTestsWithOptions(t, testDir, "RemoveAll", &PermOptions{IgnoreOp: true})
+		pts := ts.NewPermTestsWithOptions(t, testDir, "RemoveAll", &PermOptions{IgnoreOp: true})
 		pts.Test(t, func(path string) error {
 			return vfs.RemoveAll(path)
 		})
@@ -1885,8 +1946,8 @@ func (sfs *SuiteFS) TestRemoveAll(t *testing.T, testDir string) {
 }
 
 // TestRename tests Rename function.
-func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestRename(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Rename(testDir, testDir)
@@ -1898,7 +1959,7 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	data := []byte("data")
 
 	t.Run("RenameDir", func(t *testing.T) {
-		dirs := sfs.createSampleDirs(t, testDir)
+		dirs := ts.createSampleDirs(t, testDir)
 
 		for i := len(dirs) - 1; i >= 0; i-- {
 			oldPath := dirs[i].Path
@@ -1918,8 +1979,8 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	})
 
 	t.Run("RenameFile", func(t *testing.T) {
-		_ = sfs.createSampleDirs(t, testDir)
-		files := sfs.createSampleFiles(t, testDir)
+		_ = ts.createSampleDirs(t, testDir)
+		files := ts.createSampleFiles(t, testDir)
 
 		for _, file := range files {
 			newPath := vfs.Join(testDir, vfs.Base(file.Path))
@@ -1954,8 +2015,8 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	})
 
 	t.Run("RenameDirToExistingDir", func(t *testing.T) {
-		srcExistingDir := sfs.existingDir(t, testDir)
-		dstExistingDir := sfs.existingDir(t, testDir)
+		srcExistingDir := ts.existingDir(t, testDir)
+		dstExistingDir := ts.existingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingDir, dstExistingDir)
 		AssertLinkError(t, err).Op("rename").Old(srcExistingDir).New(dstExistingDir).
@@ -1964,8 +2025,8 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	})
 
 	t.Run("RenameFileToExistingFile", func(t *testing.T) {
-		srcExistingFile := sfs.existingFile(t, testDir, data)
-		dstExistingFile := sfs.emptyFile(t, testDir)
+		srcExistingFile := ts.existingFile(t, testDir, data)
+		dstExistingFile := ts.emptyFile(t, testDir)
 
 		err := vfs.Rename(srcExistingFile, dstExistingFile)
 		RequireNoError(t, err, "Rename %s %s", srcExistingFile, dstExistingFile)
@@ -1984,8 +2045,8 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	})
 
 	t.Run("RenameFileToExistingDir", func(t *testing.T) {
-		srcExistingFile := sfs.existingFile(t, testDir, data)
-		dstExistingDir := sfs.existingDir(t, testDir)
+		srcExistingFile := ts.existingFile(t, testDir, data)
+		dstExistingDir := ts.existingDir(t, testDir)
 
 		err := vfs.Rename(srcExistingFile, dstExistingDir)
 		AssertLinkError(t, err).Op("rename").Old(srcExistingFile).New(dstExistingDir).
@@ -1994,16 +2055,16 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 	})
 
 	t.Run("RenamePerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "RenameNew")
+		pts := ts.NewPermTests(t, testDir, "RenameNew")
 		pts.Test(t, func(path string) error {
 			oldPath := vfs.Join(pts.permDir, vfs.Base(path))
 			newPath := vfs.Join(path, "New")
 
-			sfs.createFile(t, oldPath, avfs.DefaultFilePerm)
+			ts.createFile(t, oldPath, avfs.DefaultFilePerm)
 
 			return vfs.Rename(oldPath, newPath)
 		})
@@ -2011,16 +2072,16 @@ func (sfs *SuiteFS) TestRename(t *testing.T, testDir string) {
 }
 
 // TestSameFile tests SameFile function.
-func (sfs *SuiteFS) TestSameFile(t *testing.T, testDir string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) TestSameFile(t *testing.T, testDir string) {
+	vfs := ts.vfsSetup
 
 	testDir1 := vfs.Join(testDir, "dir1")
 	testDir2 := vfs.Join(testDir, "dir2")
 
-	sfs.createSampleDirs(t, testDir1)
-	files1 := sfs.createSampleFiles(t, testDir1)
+	ts.createSampleDirs(t, testDir1)
+	files1 := ts.createSampleFiles(t, testDir1)
 
-	sfs.createSampleDirs(t, testDir2)
+	ts.createSampleDirs(t, testDir2)
 
 	t.Run("SameFileLink", func(t *testing.T) {
 		if !vfs.HasFeature(avfs.FeatHardlink) {
@@ -2097,12 +2158,12 @@ func (sfs *SuiteFS) TestSameFile(t *testing.T, testDir string) {
 }
 
 // TestStat tests Stat function.
-func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestStat(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
-	dirs := sfs.createSampleDirs(t, testDir)
-	files := sfs.createSampleFiles(t, testDir)
-	_ = sfs.createSampleSymlinks(t, testDir)
+	dirs := ts.createSampleDirs(t, testDir)
+	files := ts.createSampleFiles(t, testDir)
+	_ = ts.createSampleSymlinks(t, testDir)
 
 	t.Run("StatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -2154,7 +2215,7 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 	})
 
 	t.Run("StatSymlink", func(t *testing.T) {
-		for _, sl := range sfs.sampleSymlinksEval(testDir) {
+		for _, sl := range ts.sampleSymlinksEval(testDir) {
 			info, err := vfs.Stat(sl.NewPath)
 			if !AssertNoError(t, err, "Stat %s ", sl.NewPath) {
 				continue
@@ -2170,14 +2231,14 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 				t.Errorf("Stat %s : want name to be %s, got %s", sl.NewPath, wantName, info.Name())
 			}
 
-			if sfs.canTestPerm && wantMode != info.Mode() {
+			if ts.canTestPerm && wantMode != info.Mode() {
 				t.Errorf("Stat %s : want mode to be %s, got %s", sl.NewPath, wantMode, info.Mode())
 			}
 		}
 	})
 
 	t.Run("StatNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		_, err := vfs.Stat(nonExistingFile)
 		AssertPathError(t, err).OpStat().Path(nonExistingFile).
@@ -2200,8 +2261,8 @@ func (sfs *SuiteFS) TestStat(t *testing.T, testDir string) {
 }
 
 // TestSymlink tests Symlink function.
-func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Symlink(testDir, testDir)
@@ -2212,11 +2273,11 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 		return
 	}
 
-	_ = sfs.createSampleDirs(t, testDir)
-	_ = sfs.createSampleFiles(t, testDir)
+	_ = ts.createSampleDirs(t, testDir)
+	_ = ts.createSampleFiles(t, testDir)
 
 	t.Run("Symlink", func(t *testing.T) {
-		symlinks := sfs.sampleSymlinks(testDir)
+		symlinks := ts.sampleSymlinks(testDir)
 		for _, sl := range symlinks {
 			err := vfs.Symlink(sl.OldPath, sl.NewPath)
 			RequireNoError(t, err, "Symlink %s %s", sl.OldPath, sl.NewPath)
@@ -2231,11 +2292,11 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 	})
 
 	t.Run("SymlinkPerm", func(t *testing.T) {
-		if !sfs.canTestPerm {
+		if !ts.canTestPerm {
 			return
 		}
 
-		pts := sfs.NewPermTests(t, testDir, "Symlink")
+		pts := ts.NewPermTests(t, testDir, "Symlink")
 		pts.Test(t, func(path string) error {
 			newName := vfs.Join(path, "Symlink")
 
@@ -2245,8 +2306,8 @@ func (sfs *SuiteFS) TestSymlink(t *testing.T, testDir string) {
 }
 
 // TestSub tests Sub function.
-func (sfs *SuiteFS) TestSub(t *testing.T, testDir string) {
-	vfs, ok := sfs.vfsTest.(avfs.VFS)
+func (ts *Suite) TestSub(t *testing.T, testDir string) {
+	vfs, ok := ts.vfsTest.(avfs.VFS)
 	if !ok {
 		return
 	}
@@ -2265,17 +2326,17 @@ func (sfs *SuiteFS) TestSub(t *testing.T, testDir string) {
 }
 
 // TestToSysStat tests ToSysStat function.
-func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestToSysStat(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
-	existingFile := sfs.emptyFile(t, testDir)
+	existingFile := ts.emptyFile(t, testDir)
 
 	fst, err := vfs.Stat(existingFile)
 	RequireNoError(t, err, "Stat %s", existingFile)
 
 	u := vfs.User()
 	if vfs.HasFeature(avfs.FeatReadOnly) {
-		u = sfs.vfsSetup.User()
+		u = ts.vfsSetup.User()
 	}
 
 	wantUid, wantGid := u.Uid(), u.Gid()
@@ -2295,8 +2356,8 @@ func (sfs *SuiteFS) TestToSysStat(t *testing.T, testDir string) {
 }
 
 // TestTruncate tests Truncate function.
-func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestTruncate(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Truncate(testDir, 0)
@@ -2308,7 +2369,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
 
 	t.Run("Truncate", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		for i := len(data); i >= 0; i-- {
 			err := vfs.Truncate(path, int64(i))
@@ -2324,7 +2385,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("TruncateNonExistingFile", func(t *testing.T) {
-		nonExistingFile := sfs.nonExistingFile(t, testDir)
+		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Truncate(nonExistingFile, 0)
 
@@ -2344,7 +2405,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("TruncateSizeNegative", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 
 		err := vfs.Truncate(path, -1)
 		AssertPathError(t, err).Op("truncate").Path(path).
@@ -2353,7 +2414,7 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 	})
 
 	t.Run("TruncateSizeBiggerFileSize", func(t *testing.T) {
-		path := sfs.existingFile(t, testDir, data)
+		path := ts.existingFile(t, testDir, data)
 		newSize := len(data) * 2
 
 		err := vfs.Truncate(path, int64(newSize))
@@ -2378,14 +2439,14 @@ func (sfs *SuiteFS) TestTruncate(t *testing.T, testDir string) {
 }
 
 // TestUMask tests SetUMask and UMask functions.
-func (sfs *SuiteFS) TestUMask(t *testing.T, _ string) {
+func (ts *Suite) TestUMask(t *testing.T, _ string) {
 	const (
 		linuxUMask   = fs.FileMode(0o22)
 		windowsUMask = fs.FileMode(0o111)
 		testUMask    = fs.FileMode(0o77)
 	)
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	saveUMask := vfs.UMask()
 	defer vfs.SetUMask(saveUMask)
@@ -2418,10 +2479,10 @@ func (sfs *SuiteFS) TestUMask(t *testing.T, _ string) {
 }
 
 // TestVolume tests VolumeAdd, VolumeDelete and VolumeList functions.
-func (sfs *SuiteFS) TestVolume(t *testing.T, _ string) {
+func (ts *Suite) TestVolume(t *testing.T, _ string) {
 	const testVolume = "Z:"
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	vm, ok := vfs.(avfs.VolumeManager)
 	if !ok {
@@ -2468,8 +2529,8 @@ func (sfs *SuiteFS) TestVolume(t *testing.T, _ string) {
 }
 
 // TestWriteFile tests WriteFile function.
-func (sfs *SuiteFS) TestWriteFile(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestWriteFile(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.WriteFile(testDir, []byte{0}, avfs.DefaultFilePerm)
@@ -2496,10 +2557,10 @@ func (sfs *SuiteFS) TestWriteFile(t *testing.T, testDir string) {
 }
 
 // TestWriteOnReadOnlyFS tests all write functions of a read only file system.
-func (sfs *SuiteFS) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
-	existingFile := sfs.emptyFile(t, testDir)
+	existingFile := ts.emptyFile(t, testDir)
 
 	if !vfs.HasFeature(avfs.FeatReadOnly) {
 		// Skip tests if the file system is not read only
@@ -2531,8 +2592,8 @@ func (sfs *SuiteFS) TestWriteOnReadOnlyFS(t *testing.T, testDir string) {
 }
 
 // TestWriteString tests WriteString function.
-func (sfs *SuiteFS) TestWriteString(t *testing.T, testDir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) TestWriteString(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		return

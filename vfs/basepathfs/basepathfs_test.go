@@ -49,16 +49,16 @@ func initFS(tb testing.TB) *basepathfs.BasePathFS {
 	return vfs
 }
 
-func initTest(t *testing.T) *test.SuiteFS {
+func initTest(t *testing.T) *test.Suite {
 	vfs := initFS(t)
-	sfs := test.NewSuiteFS(t, vfs)
+	ts := test.NewSuiteFS(t, vfs, vfs)
 
-	return sfs
+	return ts
 }
 
 func TestBasePathFS(t *testing.T) {
-	sfs := initTest(t)
-	sfs.TestAll(t)
+	ts := initTest(t)
+	ts.TestVFSAll(t)
 }
 
 // TestBasePathFsOptions tests BasePathFS configuration options.

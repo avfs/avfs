@@ -28,6 +28,6 @@ import (
 func TestRaceOsFS(t *testing.T) {
 	vfs := osfs.New()
 
-	sfs := test.NewSuiteFS(t, vfs)
-	sfs.TestRace(t)
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestRace(t)
 }

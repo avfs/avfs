@@ -30,38 +30,19 @@ import (
 	"github.com/avfs/avfs"
 )
 
-const (
-	defaultDir         = "defaultDir"
-	defaultFile        = "defaultFile"
-	defaultNonExisting = "defaultNonExisting"
-)
-
-// SuiteFS is a test suite for virtual file systems.
-type SuiteFS struct {
-	vfsSetup    avfs.VFSBase       // vfsSetup is the file system used to set up the tests (generally with read/write access).
-	vfsTest     avfs.VFSBase       // vfsTest is the file system used to run the tests.
-	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
-	groups      []avfs.GroupReader // groups contains the test groups created with the identity manager.
-	users       []avfs.UserReader  // users contains the test users created with the identity manager.
-	initDir     string             // initDir is the initial directory of the tests.
-	rootDir     string             // rootDir is the root directory for tests and benchmarks.
-	maxRace     int                // maxRace is the maximum number of concurrent goroutines used in race tests.
-	canTestPerm bool               // canTestPerm indicates if permissions can be tested.
-}
-
-// Option defines the option function used for initializing SuiteFS.
-type Option func(*SuiteFS)
-
 // NewSuiteFS creates a new test suite for a file system.
-func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFSBase, opts ...Option) *SuiteFS {
+func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 	if vfsSetup == nil {
-		tb.Fatal("New : want vfsSetup to be set, got nil")
+		tb.Skip("NewSuiteFS : vfsSetup must not be nil, skipping tests")
 	}
 
-	vfs := vfsSetup
+	if vfsTest == nil {
+		vfsTest = vfsSetup
+	}
 
+	vfs := vfsTest
 	if vfs.OSType() != avfs.CurrentOSType() {
-		tb.Skipf("New : Current OSType = %s is different from %s OSType = %s, skipping tests",
+		tb.Skipf("NewSuiteFS : Current OSType = %s is different from %s OSType = %s, skipping tests",
 			avfs.CurrentOSType(), vfs.Type(), vfs.OSType())
 	}
 
@@ -72,42 +53,42 @@ func NewSuiteFS(tb testing.TB, vfsSetup avfs.VFSBase, opts ...Option) *SuiteFS {
 	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
 
-	sfs := &SuiteFS{
-		vfsSetup:    vfs,
-		vfsTest:     vfs,
-		initDir:     initDir,
+	ts := &Suite{
+		vfsSetup:    vfsSetup,
+		vfsTest:     vfsTest,
+		idm:         vfsTest.Idm(),
 		initUser:    initUser,
+		initDir:     initDir,
 		maxRace:     100,
 		canTestPerm: canTestPerm,
 	}
 
-	defer func() {
-		vfs = sfs.vfsTest
-		tb.Logf("VFS: Type=%s OSType=%s UMask=%03o Features=%s",
-			vfs.Type(), vfs.OSType(), vfs.UMask(), vfs.Features())
-	}()
+	ts.groups = ts.CreateGroups(tb, "")
+	ts.users = ts.CreateUsers(tb, "")
 
-	for _, opt := range opts {
-		opt(sfs)
-	}
+	tb.Logf("VFS: Type=%s OSType=%s UMask=%03o Idm=%s Features=%s",
+		vfs.Type(), vfs.OSType(), vfs.UMask(), vfs.Idm(), vfs.Features())
 
-	idm := vfs.Idm()
-	sfs.groups = CreateGroups(tb, idm, "")
-	sfs.users = CreateUsers(tb, idm, "")
-
-	return sfs
+	return ts
 }
 
-// Options
-
-// WithVFSTest returns an option function which sets the VFS used for running tests.
-func WithVFSTest(vfsTest avfs.VFS) Option {
-	return func(sfs *SuiteFS) {
-		sfs.vfsTest = vfsTest
-		if vfsTest.HasFeature(avfs.FeatReadOnly) {
-			sfs.canTestPerm = false
-		}
+// NewSuiteIdm creates a new test suite for an identity manager.
+func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
+	if idm == nil {
+		tb.Skip("NewSuiteIdm : vfsSetup must not be nil, skipping tests")
 	}
+
+	ts := &Suite{
+		idm:        idm,
+		canTestIdm: true,
+	}
+
+	ts.groups = ts.CreateGroups(tb, "")
+	ts.users = ts.CreateUsers(tb, "")
+
+	tb.Logf("Idm: Type=%s OSType=%s Features=%s", idm.Type(), idm.OSType(), idm.Features())
+
+	return ts
 }
 
 // AssertInvalid asserts that the error is fs.ErrInvalid.
@@ -148,30 +129,30 @@ func AssertPanic(tb testing.TB, funcName string, f func()) {
 }
 
 // BenchAll runs all benchmarks.
-func (sfs *SuiteFS) BenchAll(b *testing.B) {
-	sfs.RunBenchmarks(b, UsrTest,
-		sfs.BenchCreate,
-		sfs.BenchFileRead,
-		sfs.BenchFileWrite,
-		sfs.BenchMkdir,
-		sfs.BenchOpenFile,
-		sfs.BenchRemove,
+func (ts *Suite) BenchAll(b *testing.B) {
+	ts.RunBenchmarks(b, UsrTest,
+		ts.BenchCreate,
+		ts.BenchFileRead,
+		ts.BenchFileWrite,
+		ts.BenchMkdir,
+		ts.BenchOpenFile,
+		ts.BenchRemove,
 	)
 }
 
 // changeDir changes the current directory for the tests.
-func (sfs *SuiteFS) changeDir(tb testing.TB, dir string) {
-	vfs := sfs.vfsTest
+func (ts *Suite) changeDir(tb testing.TB, dir string) {
+	vfs := ts.vfsTest
 
 	err := vfs.Chdir(dir)
 	RequireNoError(tb, err, "Chdir %s", dir)
 }
 
 // closedFile returns a closed avfs.File.
-func (sfs *SuiteFS) closedFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
-	fileName = sfs.emptyFile(tb, testDir)
+func (ts *Suite) closedFile(tb testing.TB, testDir string) (f avfs.File, fileName string) {
+	fileName = ts.emptyFile(tb, testDir)
 
-	vfs := sfs.vfsTest
+	vfs := ts.vfsTest
 
 	f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 	RequireNoError(tb, err, "OpenFile %s", fileName)
@@ -183,8 +164,8 @@ func (sfs *SuiteFS) closedFile(tb testing.TB, testDir string) (f avfs.File, file
 }
 
 // createDir creates a directory for the tests.
-func (sfs *SuiteFS) createDir(tb testing.TB, dirName string, mode fs.FileMode) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) createDir(tb testing.TB, dirName string, mode fs.FileMode) {
+	vfs := ts.vfsSetup
 
 	err := vfs.MkdirAll(dirName, mode)
 	RequireNoError(tb, err, "MkdirAll %s", dirName)
@@ -194,22 +175,22 @@ func (sfs *SuiteFS) createDir(tb testing.TB, dirName string, mode fs.FileMode) {
 }
 
 // createFile creates an empty file for the tests.
-func (sfs *SuiteFS) createFile(tb testing.TB, fileName string, mode fs.FileMode) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) createFile(tb testing.TB, fileName string, mode fs.FileMode) {
+	vfs := ts.vfsSetup
 
 	err := vfs.WriteFile(fileName, nil, mode)
 	RequireNoError(tb, err, "WriteFile %s", fileName)
 }
 
 // createRootDir creates tests root directory.
-func (sfs *SuiteFS) createRootDir(tb testing.TB) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) createRootDir(tb testing.TB) {
+	vfs := ts.vfsSetup
 	rootDir := ""
 
 	if _, ok := tb.(*testing.B); ok && vfs.HasFeature(avfs.FeatRealFS) {
 		// run Benches on real disks, /tmp is usually an in memory file system.
 		rootDir = vfs.Join(vfs.HomeDirUser(vfs.User()), "tmp")
-		sfs.createDir(tb, rootDir, avfs.DefaultDirPerm)
+		ts.createDir(tb, rootDir, avfs.DefaultDirPerm)
 	}
 
 	rootDir, err := vfs.MkdirTemp(rootDir, "avfs")
@@ -225,14 +206,14 @@ func (sfs *SuiteFS) createRootDir(tb testing.TB) {
 		RequireNoError(tb, err, "EvalSymlinks %s", rootDir)
 	}
 
-	sfs.rootDir = rootDir
+	ts.rootDir = rootDir
 }
 
 // emptyFile returns an empty file name.
-func (sfs *SuiteFS) emptyFile(tb testing.TB, testDir string) string {
+func (ts *Suite) emptyFile(tb testing.TB, testDir string) string {
 	const emptyFile = "emptyFile"
 
-	vfs := sfs.vfsSetup
+	vfs := ts.vfsSetup
 	fileName := vfs.Join(testDir, emptyFile)
 
 	_, err := vfs.Stat(fileName)
@@ -248,8 +229,8 @@ func (sfs *SuiteFS) emptyFile(tb testing.TB, testDir string) string {
 }
 
 // existingDir returns an existing directory.
-func (sfs *SuiteFS) existingDir(tb testing.TB, testDir string) string {
-	vfs := sfs.vfsSetup
+func (ts *Suite) existingDir(tb testing.TB, testDir string) string {
+	vfs := ts.vfsSetup
 
 	dirName, err := vfs.MkdirTemp(testDir, "existingDir")
 	RequireNoError(tb, err, "MkdirTemp %s", testDir)
@@ -263,8 +244,8 @@ func (sfs *SuiteFS) existingDir(tb testing.TB, testDir string) string {
 }
 
 // existingFile returns an existing file name with the given content.
-func (sfs *SuiteFS) existingFile(tb testing.TB, testDir string, content []byte) string {
-	vfs := sfs.vfsSetup
+func (ts *Suite) existingFile(tb testing.TB, testDir string, content []byte) string {
+	vfs := ts.vfsSetup
 
 	f, err := vfs.CreateTemp(testDir, defaultFile)
 	RequireNoError(tb, err, "CreateTemp %s", testDir)
@@ -333,8 +314,8 @@ func formatArgs(msgAndArgs []any) string {
 }
 
 // nonExistingFile returns the name of a non-existing file.
-func (sfs *SuiteFS) nonExistingFile(tb testing.TB, testDir string) string {
-	vfs := sfs.vfsSetup
+func (ts *Suite) nonExistingFile(tb testing.TB, testDir string) string {
+	vfs := ts.vfsSetup
 	fileName := vfs.Join(testDir, defaultNonExisting)
 
 	_, err := vfs.Stat(fileName)
@@ -346,9 +327,9 @@ func (sfs *SuiteFS) nonExistingFile(tb testing.TB, testDir string) string {
 }
 
 // openedEmptyFile returns an opened empty avfs.File and its file name.
-func (sfs *SuiteFS) openedEmptyFile(tb testing.TB, testDir string) (fd avfs.File, fileName string) {
-	fileName = sfs.emptyFile(tb, testDir)
-	vfs := sfs.vfsTest
+func (ts *Suite) openedEmptyFile(tb testing.TB, testDir string) (fd avfs.File, fileName string) {
+	fileName = ts.emptyFile(tb, testDir)
+	vfs := ts.vfsTest
 
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
@@ -364,9 +345,9 @@ func (sfs *SuiteFS) openedEmptyFile(tb testing.TB, testDir string) (fd avfs.File
 }
 
 // openedNonExistingFile returns a non-existing avfs.File and its file name.
-func (sfs *SuiteFS) openedNonExistingFile(tb testing.TB, testDir string) (f avfs.File) {
-	fileName := sfs.nonExistingFile(tb, testDir)
-	vfs := sfs.vfsTest
+func (ts *Suite) openedNonExistingFile(tb testing.TB, testDir string) (f avfs.File) {
+	fileName := ts.nonExistingFile(tb, testDir)
+	vfs := ts.vfsTest
 
 	f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 	if !errors.Is(err, fs.ErrNotExist) {
@@ -377,8 +358,8 @@ func (sfs *SuiteFS) openedNonExistingFile(tb testing.TB, testDir string) (f avfs
 }
 
 // randomDir returns one directory with random empty subdirectories, files and symbolic links.
-func (sfs *SuiteFS) randomDir(tb testing.TB, testDir string) *avfs.RndTree {
-	vfs := sfs.vfsSetup
+func (ts *Suite) randomDir(tb testing.TB, testDir string) *avfs.RndTree {
+	vfs := ts.vfsSetup
 	RndParamsOneDir := avfs.RndTreeParams{
 		MinName:     4,
 		MaxName:     32,
@@ -403,15 +384,15 @@ func (sfs *SuiteFS) randomDir(tb testing.TB, testDir string) *avfs.RndTree {
 }
 
 // removeDir removes all files under testDir.
-func (sfs *SuiteFS) removeDir(tb testing.TB, testDir string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) removeDir(tb testing.TB, testDir string) {
+	vfs := ts.vfsSetup
 
-	err := vfs.Chdir(sfs.rootDir)
-	RequireNoError(tb, err, "Chdir %s", sfs.rootDir)
+	err := vfs.Chdir(ts.rootDir)
+	RequireNoError(tb, err, "Chdir %s", ts.rootDir)
 
 	// RemoveAll() should be executed as the user who started the tests, generally root,
 	// to clean up files with different permissions.
-	sfs.setUser(tb, sfs.initUser.Name())
+	ts.setUser(tb, ts.initUser.Name())
 
 	err = vfs.RemoveAll(testDir)
 	if err != nil && avfs.CurrentOSType() != avfs.OsWindows {
@@ -421,65 +402,67 @@ func (sfs *SuiteFS) removeDir(tb testing.TB, testDir string) {
 
 // RequireNoError require that a function returned no error.
 func RequireNoError(tb testing.TB, err error, msgAndArgs ...any) {
+	tb.Helper()
+
 	if !AssertNoError(tb, err, msgAndArgs...) {
 		tb.FailNow()
 	}
 }
 
 // RunBenchmarks runs all benchmark functions specified as user userName.
-func (sfs *SuiteFS) RunBenchmarks(b *testing.B, userName string, BenchFuncs ...func(b *testing.B, testDir string)) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) RunBenchmarks(b *testing.B, userName string, BenchFuncs ...func(b *testing.B, testDir string)) {
+	vfs := ts.vfsSetup
 
-	sfs.createRootDir(b)
+	ts.createRootDir(b)
 
 	for _, bf := range BenchFuncs {
-		sfs.setUser(b, userName)
+		ts.setUser(b, userName)
 
 		fn := funcName(bf)
-		testDir := vfs.Join(sfs.rootDir, fn)
+		testDir := vfs.Join(ts.rootDir, fn)
 
-		sfs.createDir(b, testDir, avfs.DefaultDirPerm)
-		sfs.changeDir(b, testDir)
+		ts.createDir(b, testDir, avfs.DefaultDirPerm)
+		ts.changeDir(b, testDir)
 
 		bf(b, testDir)
 
-		sfs.removeDir(b, testDir)
+		ts.removeDir(b, testDir)
 	}
 
-	sfs.removeDir(b, sfs.rootDir)
+	ts.removeDir(b, ts.rootDir)
 }
 
 // RunTests runs all test functions specified as user userName.
-func (sfs *SuiteFS) RunTests(t *testing.T, userName string, testFuncs ...func(t *testing.T, testDir string)) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) RunTests(t *testing.T, userName string, testFuncs ...func(t *testing.T, testDir string)) {
+	vfs := ts.vfsSetup
 
-	sfs.createRootDir(t)
+	ts.createRootDir(t)
 
 	for _, tf := range testFuncs {
-		sfs.setUser(t, userName)
+		ts.setUser(t, userName)
 
 		fn := funcName(tf)
-		testDir := vfs.Join(sfs.rootDir, fn)
+		testDir := vfs.Join(ts.rootDir, fn)
 
-		sfs.createDir(t, testDir, avfs.DefaultDirPerm)
-		sfs.changeDir(t, testDir)
+		ts.createDir(t, testDir, avfs.DefaultDirPerm)
+		ts.changeDir(t, testDir)
 
 		t.Run(fn, func(t *testing.T) {
 			tf(t, testDir)
 		})
 
-		sfs.removeDir(t, testDir)
+		ts.removeDir(t, testDir)
 	}
 
-	sfs.removeDir(t, sfs.rootDir)
+	ts.removeDir(t, ts.rootDir)
 }
 
 // setUser sets the test user to userName.
-func (sfs *SuiteFS) setUser(tb testing.TB, userName string) {
-	vfs := sfs.vfsSetup
+func (ts *Suite) setUser(tb testing.TB, userName string) {
+	vfs := ts.vfsTest
 
 	u := vfs.User()
-	if !sfs.canTestPerm || u.Name() == userName {
+	if !ts.canTestPerm || u.Name() == userName {
 		return
 	}
 
@@ -487,107 +470,19 @@ func (sfs *SuiteFS) setUser(tb testing.TB, userName string) {
 	RequireNoError(tb, err, "SetUser %s", userName)
 }
 
-// TestAll runs all tests.
-func (sfs *SuiteFS) TestAll(t *testing.T) {
-	sfs.RunTests(t, UsrTest,
-		// VFS tests
-		sfs.TestAbs,
-		sfs.TestBase,
-		sfs.TestClean,
-		sfs.TestDir,
-		sfs.TestClone,
-		sfs.TestChdir,
-		sfs.TestChtimes,
-		sfs.TestCreate,
-		sfs.TestCreateTemp,
-		sfs.TestEvalSymlink,
-		sfs.TestFromToSlash,
-		sfs.TestGlob,
-		sfs.TestIsAbs,
-		sfs.TestJoin,
-		sfs.TestLink,
-		sfs.TestLstat,
-		sfs.TestMatch,
-		sfs.TestMkdir,
-		sfs.TestMkdirTemp,
-		sfs.TestMkdirAll,
-		sfs.TestName,
-		sfs.TestOpen,
-		sfs.TestOpenFileWrite,
-		sfs.TestPathSeparator,
-		sfs.TestReadDir,
-		sfs.TestReadFile,
-		sfs.TestReadlink,
-		sfs.TestRel,
-		sfs.TestRemove,
-		sfs.TestRemoveAll,
-		sfs.TestRename,
-		sfs.TestSameFile,
-		sfs.TestSplit,
-		sfs.TestSplitAbs,
-		sfs.TestStat,
-		sfs.TestSymlink,
-		sfs.TestTempDir,
-		sfs.TestToSysStat,
-		sfs.TestTruncate,
-		sfs.TestUser,
-		sfs.TestWalkDir,
-		sfs.TestWriteFile,
-		sfs.TestWriteString,
-
-		// File tests
-		sfs.TestFileChdir,
-		sfs.TestFileCloseWrite,
-		sfs.TestFileCloseRead,
-		sfs.TestFileFd,
-		sfs.TestFileName,
-		sfs.TestFileRead,
-		sfs.TestFileReadAt,
-		sfs.TestFileReadDir,
-		sfs.TestFileReaddirnames,
-		sfs.TestFileSeek,
-		sfs.TestFileStat,
-		sfs.TestFileSync,
-		sfs.TestFileTruncate,
-		sfs.TestFileWrite,
-		sfs.TestFileWriteAt,
-		sfs.TestFileWriteString,
-		sfs.TestFileWriteTime,
-
-		// other functions
-		sfs.TestCopyFile,
-		sfs.TestDirExists,
-		sfs.TestExists,
-		sfs.TestHashFile,
-		sfs.TestIsDir,
-		sfs.TestIsEmpty,
-		sfs.TestIsPathSeparator,
-		sfs.TestRndTree,
-		sfs.TestUMask,
-	)
-
-	// Tests to be run as root
-	adminUser := sfs.vfsSetup.Idm().AdminUser()
-	sfs.RunTests(t, adminUser.Name(),
-		sfs.TestChmod,
-		sfs.TestChown,
-		sfs.TestChroot,
-		sfs.TestCreateSystemDirs,
-		sfs.TestCreateHomeDir,
-		sfs.TestLchown,
-		sfs.TestFileChmod,
-		sfs.TestFileChown,
-		sfs.TestVolume,
-		sfs.TestWriteOnReadOnlyFS,
-	)
+// TestVFSAll runs all file system tests.
+func (ts *Suite) TestVFSAll(t *testing.T) {
+	ts.TestVFS(t)
+	ts.TestFile(t)
+	ts.TestUtils(t)
 }
 
 // VFSSetup returns the file system used to set up the tests.
-func (sfs *SuiteFS) VFSSetup() avfs.VFSBase {
-	return sfs.vfsSetup
+func (ts *Suite) VFSSetup() avfs.VFSBase {
+	return ts.vfsSetup
 }
 
 // VFSTest returns the file system used to run the tests.
-func (sfs *SuiteFS) VFSTest() avfs.VFSBase {
-	return sfs.vfsTest
+func (ts *Suite) VFSTest() avfs.VFSBase {
+	return ts.vfsTest
 }

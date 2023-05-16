@@ -31,7 +31,7 @@ type dirInfo struct {
 }
 
 // sampleDirs returns the sample directories used by Mkdir function.
-func (sfs *SuiteFS) sampleDirs(testDir string) []*dirInfo {
+func (ts *Suite) sampleDirs(testDir string) []*dirInfo {
 	dirs := []*dirInfo{
 		{Path: "/A", Mode: 0o777, WantModes: []fs.FileMode{0o777}},
 		{Path: "/B", Mode: 0o755, WantModes: []fs.FileMode{0o755}},
@@ -48,14 +48,14 @@ func (sfs *SuiteFS) sampleDirs(testDir string) []*dirInfo {
 	}
 
 	for i, dir := range dirs {
-		dirs[i].Path = sfs.vfsTest.Join(testDir, dir.Path)
+		dirs[i].Path = ts.vfsTest.Join(testDir, dir.Path)
 	}
 
 	return dirs
 }
 
 // sampleDirsAll returns the sample directories used by MkdirAll function.
-func (sfs *SuiteFS) sampleDirsAll(testDir string) []*dirInfo {
+func (ts *Suite) sampleDirsAll(testDir string) []*dirInfo {
 	dirs := []*dirInfo{
 		{Path: "/H/6", Mode: 0o750, WantModes: []fs.FileMode{0o750, 0o750}},
 		{Path: "/H/6/I/7", Mode: 0o755, WantModes: []fs.FileMode{0o750, 0o750, 0o755, 0o755}},
@@ -63,20 +63,20 @@ func (sfs *SuiteFS) sampleDirsAll(testDir string) []*dirInfo {
 	}
 
 	for i, dir := range dirs {
-		dirs[i].Path = sfs.vfsTest.Join(testDir, dir.Path)
+		dirs[i].Path = ts.vfsTest.Join(testDir, dir.Path)
 	}
 
 	return dirs
 }
 
 // createSampleDirs creates and returns sample directories and testDir directory if necessary.
-func (sfs *SuiteFS) createSampleDirs(tb testing.TB, testDir string) []*dirInfo {
-	vfs := sfs.vfsSetup
+func (ts *Suite) createSampleDirs(tb testing.TB, testDir string) []*dirInfo {
+	vfs := ts.vfsSetup
 
 	err := vfs.MkdirAll(testDir, avfs.DefaultDirPerm)
 	RequireNoError(tb, err, "MkdirAll %s", testDir)
 
-	dirs := sfs.sampleDirs(testDir)
+	dirs := ts.sampleDirs(testDir)
 	for _, dir := range dirs {
 		err = vfs.Mkdir(dir.Path, dir.Mode)
 		RequireNoError(tb, err, "Mkdir %s", dir.Path)
@@ -93,7 +93,7 @@ type fileInfo struct {
 }
 
 // sampleFiles returns the sample files.
-func (sfs *SuiteFS) sampleFiles(testDir string) []*fileInfo {
+func (ts *Suite) sampleFiles(testDir string) []*fileInfo {
 	files := []*fileInfo{
 		{Path: "/file.txt", Mode: avfs.DefaultFilePerm, Content: []byte("file")},
 		{Path: "/A/afile1.txt", Mode: 0o777, Content: []byte("afile1")},
@@ -108,17 +108,17 @@ func (sfs *SuiteFS) sampleFiles(testDir string) []*fileInfo {
 	}
 
 	for i, file := range files {
-		files[i].Path = sfs.vfsTest.Join(testDir, file.Path)
+		files[i].Path = ts.vfsTest.Join(testDir, file.Path)
 	}
 
 	return files
 }
 
 // createSampleFiles creates and returns the sample files.
-func (sfs *SuiteFS) createSampleFiles(tb testing.TB, testDir string) []*fileInfo {
-	vfs := sfs.vfsSetup
+func (ts *Suite) createSampleFiles(tb testing.TB, testDir string) []*fileInfo {
+	vfs := ts.vfsSetup
 
-	files := sfs.sampleFiles(testDir)
+	files := ts.sampleFiles(testDir)
 	for _, file := range files {
 		err := vfs.WriteFile(file.Path, file.Content, file.Mode)
 		RequireNoError(tb, err, "WriteFile %s", file.Path)
@@ -134,8 +134,8 @@ type symlinkInfo struct {
 }
 
 // sampleSymlinks returns the sample symbolic links.
-func (sfs *SuiteFS) sampleSymlinks(testDir string) []*symlinkInfo {
-	vfs := sfs.vfsTest
+func (ts *Suite) sampleSymlinks(testDir string) []*symlinkInfo {
+	vfs := ts.vfsTest
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
 	}
@@ -168,8 +168,8 @@ type symlinkEvalInfo struct {
 }
 
 // sampleSymlinksEval returns the sample symbolic links to evaluate.
-func (sfs *SuiteFS) sampleSymlinksEval(testDir string) []*symlinkEvalInfo {
-	vfs := sfs.vfsTest
+func (ts *Suite) sampleSymlinksEval(testDir string) []*symlinkEvalInfo {
+	vfs := ts.vfsTest
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		return nil
 	}
@@ -196,10 +196,10 @@ func (sfs *SuiteFS) sampleSymlinksEval(testDir string) []*symlinkEvalInfo {
 }
 
 // createSampleSymlinks creates the sample symbolic links.
-func (sfs *SuiteFS) createSampleSymlinks(tb testing.TB, testDir string) []*symlinkInfo {
-	vfs := sfs.vfsSetup
+func (ts *Suite) createSampleSymlinks(tb testing.TB, testDir string) []*symlinkInfo {
+	vfs := ts.vfsSetup
 
-	symlinks := sfs.sampleSymlinks(testDir)
+	symlinks := ts.sampleSymlinks(testDir)
 	for _, sl := range symlinks {
 		err := vfs.Symlink(sl.OldPath, sl.NewPath)
 		RequireNoError(tb, err, "Symlink %s %s", sl.OldPath, sl.NewPath)
