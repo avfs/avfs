@@ -28,6 +28,7 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfs/osfs"
 )
 
 // NewSuiteFS creates a new test suite for a file system.
@@ -36,36 +37,9 @@ func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 		tb.Skip("NewSuiteFS : vfsSetup must not be nil, skipping tests")
 	}
 
-	if vfsTest == nil {
-		vfsTest = vfsSetup
-	}
+	ts := newSuite(tb, vfsSetup, vfsTest, nil)
 
-	vfs := vfsTest
-	if vfs.OSType() != avfs.CurrentOSType() {
-		tb.Skipf("NewSuiteFS : Current OSType = %s is different from %s OSType = %s, skipping tests",
-			avfs.CurrentOSType(), vfs.Type(), vfs.OSType())
-	}
-
-	initUser := vfs.User()
-	_, file, _, _ := runtime.Caller(0)
-	initDir := filepath.Dir(file)
-
-	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
-		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
-
-	ts := &Suite{
-		vfsSetup:    vfsSetup,
-		vfsTest:     vfsTest,
-		idm:         vfsTest.Idm(),
-		initUser:    initUser,
-		initDir:     initDir,
-		maxRace:     100,
-		canTestPerm: canTestPerm,
-	}
-
-	ts.groups = ts.CreateGroups(tb, "")
-	ts.users = ts.CreateUsers(tb, "")
-
+	vfs := ts.VFSTest()
 	tb.Logf("VFS: Type=%s OSType=%s UMask=%03o Idm=%s Features=%s",
 		vfs.Type(), vfs.OSType(), vfs.UMask(), vfs.Idm(), vfs.Features())
 
@@ -78,15 +52,50 @@ func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
 		tb.Skip("NewSuiteIdm : vfsSetup must not be nil, skipping tests")
 	}
 
+	ts := newSuite(tb, nil, nil, idm)
+
+	tb.Logf("Idm: Type=%s OSType=%s Features=%s", idm.Type(), idm.OSType(), idm.Features())
+
+	return ts
+}
+
+// newSuite creates a new test suite.
+func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdentityMgr) *Suite {
+	if vfsSetup == nil {
+		vfsSetup = osfs.New()
+	}
+
+	if vfsTest == nil {
+		vfsTest = vfsSetup
+	}
+
+	if idm == nil {
+		idm = vfsSetup.Idm()
+	}
+
+	vfs := vfsTest
+
+	if vfs.OSType() != avfs.CurrentOSType() {
+		tb.Skipf("NewSuite : Current OSType = %s is different from %s OSType = %s, skipping tests",
+			avfs.CurrentOSType(), vfs.Type(), vfs.OSType())
+	}
+
+	initUser := vfs.User()
+	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
+		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
+
 	ts := &Suite{
-		idm:        idm,
-		canTestIdm: true,
+		vfsSetup:    vfsSetup,
+		vfsTest:     vfsTest,
+		idm:         idm,
+		initUser:    initUser,
+		testDataDir: testDataDir(),
+		maxRace:     100,
+		canTestPerm: canTestPerm,
 	}
 
 	ts.groups = ts.CreateGroups(tb, "")
 	ts.users = ts.CreateUsers(tb, "")
-
-	tb.Logf("Idm: Type=%s OSType=%s Features=%s", idm.Type(), idm.OSType(), idm.Features())
 
 	return ts
 }
@@ -392,7 +401,7 @@ func (ts *Suite) removeDir(tb testing.TB, testDir string) {
 
 	// RemoveAll() should be executed as the user who started the tests, generally root,
 	// to clean up files with different permissions.
-	ts.setUser(tb, ts.initUser.Name())
+	ts.setInitUser(tb)
 
 	err = vfs.RemoveAll(testDir)
 	if err != nil && avfs.CurrentOSType() != avfs.OsWindows {
@@ -438,6 +447,8 @@ func (ts *Suite) RunTests(t *testing.T, userName string, testFuncs ...func(t *te
 
 	ts.createRootDir(t)
 
+	defer ts.setInitUser(t)
+
 	for _, tf := range testFuncs {
 		ts.setUser(t, userName)
 
@@ -468,6 +479,19 @@ func (ts *Suite) setUser(tb testing.TB, userName string) {
 
 	_, err := vfs.SetUser(userName)
 	RequireNoError(tb, err, "SetUser %s", userName)
+}
+
+// setInitUser reset the user to the initial user.
+func (ts *Suite) setInitUser(tb testing.TB) {
+	ts.setUser(tb, ts.initUser.Name())
+}
+
+// testDataDir return the testdata directory of the test package.
+func testDataDir() string {
+	_, file, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(file)
+
+	return filepath.Join(dir, "testdata")
 }
 
 // TestVFSAll runs all file system tests.

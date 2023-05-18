@@ -37,7 +37,7 @@ func (ts *Suite) NewPermTests(t *testing.T, testDir, funcName string) *PermTests
 // NewPermTestsWithOptions creates and returns a new environment for permissions test with options.
 func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string, options *PermOptions) *PermTests {
 	osName := avfs.CurrentOSType().String()
-	errFileName := filepath.Join(ts.initDir, "testdata", fmt.Sprintf("perm%s%s.golden", funcName, osName))
+	errFileName := filepath.Join(ts.testDataDir, fmt.Sprintf("perm%s%s.golden", funcName, osName))
 	permDir := filepath.Join(testDir, funcName)
 
 	pts := &PermTests{
@@ -50,9 +50,7 @@ func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string,
 	}
 
 	vfs := ts.vfsSetup
-	adminUser := vfs.Idm().AdminUser()
-
-	ts.setUser(t, adminUser.Name())
+	ts.setInitUser(t)
 	ts.createDir(t, pts.permDir, avfs.DefaultDirPerm)
 
 	for _, ui := range UserInfos() {
@@ -86,7 +84,7 @@ type PermFunc func(path string) error
 // load loads a permissions test file.
 func (pts *PermTests) load(t *testing.T) {
 	ts := pts.ts
-	ts.setUser(t, ts.initUser.Name())
+	ts.setInitUser(t)
 
 	b, err := os.ReadFile(pts.errFileName)
 	if err != nil {
@@ -113,7 +111,7 @@ func (pts *PermTests) save(t *testing.T) {
 	RequireNoError(t, err, "MarshalIndent %s", pts.errFileName)
 
 	ts := pts.ts
-	ts.setUser(t, ts.initUser.Name())
+	ts.setInitUser(t)
 
 	err = os.WriteFile(pts.errFileName, b, avfs.DefaultFilePerm)
 	RequireNoError(t, err, "WriteFile %s", pts.errFileName)

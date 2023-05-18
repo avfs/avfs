@@ -16,7 +16,9 @@
 
 package test
 
-import "github.com/avfs/avfs"
+import (
+	"github.com/avfs/avfs"
+)
 
 const (
 	defaultDir         = "defaultDir"
@@ -32,10 +34,9 @@ type Suite struct {
 	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
 	groups      []avfs.GroupReader // groups contains the test groups created with the identity manager.
 	users       []avfs.UserReader  // users contains the test users created with the identity manager.
-	initDir     string             // initDir is the initial directory of the tests.
+	testDataDir string             // testDataDir is the testdata directory of the test suite.
 	rootDir     string             // rootDir is the root directory for tests and benchmarks.
 	maxRace     int                // maxRace is the maximum number of concurrent goroutines used in race tests.
-	canTestIdm  bool               // canTestIdm indicates that the identity manager can be tested.
 	canTestPerm bool               // canTestPerm indicates if permissions can be tested.
 }
 

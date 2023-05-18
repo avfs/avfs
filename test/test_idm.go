@@ -28,6 +28,8 @@ import (
 
 // TestIdmAll runs all identity manager tests.
 func (ts *Suite) TestIdmAll(t *testing.T) {
+	defer ts.setInitUser(t)
+
 	ts.TestAdminGroupUser(t)
 	ts.TestGroupAddDel(t)
 	ts.TestUserAddDel(t)
@@ -106,10 +108,6 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 			t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
-		return
-	}
-
-	if !ts.canTestIdm {
 		return
 	}
 
@@ -210,10 +208,6 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 			t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
-		return
-	}
-
-	if !ts.canTestIdm {
 		return
 	}
 
@@ -367,10 +361,6 @@ func (ts *Suite) TestLookup(t *testing.T) {
 		}
 	}
 
-	if !ts.canTestIdm {
-		return
-	}
-
 	groups := ts.CreateGroups(t, suffix)
 	users := ts.CreateUsers(t, suffix)
 
@@ -397,7 +387,7 @@ func (ts *Suite) TestLookup(t *testing.T) {
 			}
 
 			if g.Gid() != wantGroup.Gid() {
-				t.Errorf("LookupGroup %s : want gid to be %d, got %d", wantGroup.Gid(), g.Gid())
+				t.Errorf("LookupGroup %s : want gid to be %d, got %d", groupName, wantGroup.Gid(), g.Gid())
 			}
 		}
 	})
@@ -425,7 +415,7 @@ func (ts *Suite) TestLookup(t *testing.T) {
 			}
 
 			if u.Uid() != wantUser.Uid() {
-				t.Errorf("LookupUser %s : want uid to be %d, got %d", wantUser.Uid(), u.Uid())
+				t.Errorf("LookupUser %s : want uid to be %d, got %d", userName, wantUser.Uid(), u.Uid())
 			}
 
 			if u.Gid() != wantUser.Gid() {
@@ -453,8 +443,9 @@ func (ts *Suite) TestSetUserFS(t *testing.T, _ string) {
 // testSetUser tests setUser and User functions.
 func (ts *Suite) testSetUser(t *testing.T, ust avfs.UserSetter) {
 	idm := ts.idm
+	vfs := ts.vfsTest
 
-	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) || vfs.HasFeature(avfs.FeatReadOnly) {
 		userName := ust.User().Name()
 
 		var wantErr error
