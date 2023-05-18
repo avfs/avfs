@@ -747,7 +747,7 @@ func (vfs *MemFS) SetUMask(mask fs.FileMode) {
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *MemFS) SetUser(name string) (avfs.UserReader, error) {
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return nil, vfs.err.PermDenied
+		return nil, avfs.ErrPermDenied
 	}
 
 	if vfs.user.Name() == name {

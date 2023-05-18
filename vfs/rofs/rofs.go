@@ -428,7 +428,7 @@ func (vfs *RoFS) SetUMask(mask fs.FileMode) {
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *RoFS) SetUser(name string) (avfs.UserReader, error) {
-	return nil, vfs.errPermDenied
+	return nil, avfs.ErrPermDenied
 }
 
 // Split splits path immediately following the final Separator,

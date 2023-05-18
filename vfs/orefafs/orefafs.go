@@ -759,7 +759,7 @@ func (vfs *OrefaFS) SetUMask(mask fs.FileMode) {
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OrefaFS) SetUser(name string) (avfs.UserReader, error) {
-	return nil, vfs.err.PermDenied
+	return nil, avfs.ErrPermDenied
 }
 
 // Stat returns a FileInfo describing the named file.

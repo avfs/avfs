@@ -41,7 +41,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 
 	vfs := ts.VFSTest()
 	tb.Logf("VFS: Type=%s OSType=%s UMask=%03o Idm=%s Features=%s",
-		vfs.Type(), vfs.OSType(), vfs.UMask(), vfs.Idm(), vfs.Features())
+		vfs.Type(), vfs.OSType(), vfs.UMask(), vfs.Idm().Type(), vfs.Features())
 
 	return ts
 }
