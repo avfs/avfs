@@ -30,6 +30,7 @@ jobs:
         run: avfs test
 
       - name: Run tests as root
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: avfs testAsRoot
 
       - name: Run tests as root with SetOsType

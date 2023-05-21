@@ -92,6 +92,7 @@ func main() {
 	info, _ := vfs.Stat(tmpFile)
 	vfs.SetUMask(0)
 	_, _ = vfs.SetUser("")
+	_, _ = vfs.Sub("")
 	_ = vfs.SystemDirs(tmpDir)
 	_ = vfs.TempDir()
 	_ = vfs.ToSlash(tmpDir)

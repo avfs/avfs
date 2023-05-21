@@ -313,7 +313,7 @@ func Race() error {
 	}
 
 	err := sh.RunV(goCmd, "test", "-v",
-		"-tags=datarace",
+		"-tags=avfs_race",
 		"-run=TestRace",
 		"-race",
 		"-count="+strconv.Itoa(raceCount),

@@ -46,7 +46,6 @@ func (ts *Suite) TestRace(t *testing.T) {
 		ts.RaceOpenFileExcl,
 		ts.RaceRemove,
 		ts.RaceRemoveAll,
-
 		ts.RaceMkdirRemoveAll)
 }
 

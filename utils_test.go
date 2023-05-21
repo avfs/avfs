@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build !datarace
+//go:build !avfs_race
 
 package avfs_test
 
