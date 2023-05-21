@@ -18,136 +18,182 @@ package avfs
 
 import (
 	"math/rand"
-	"strings"
+	"strconv"
 )
 
-// RndTreeError defines the generic error for out of range parameters RndTreeParams.
-type RndTreeError string
-
-// Error returns an RndTreeError error.
-func (e RndTreeError) Error() string {
-	return string(e) + " parameter out of range"
-}
-
-var (
-	// ErrNameOutOfRange is the error when MinName or MaxName are out of range.
-	ErrNameOutOfRange = RndTreeError("name")
-
-	// ErrDirsOutOfRange is the error when MinDirs or MaxDirs are out of range.
-	ErrDirsOutOfRange = RndTreeError("dirs")
-
-	// ErrFilesOutOfRange is the error when MinFiles or MaxFiles are out of range.
-	ErrFilesOutOfRange = RndTreeError("files")
-
-	// ErrFileSizeOutOfRange is the error when MinFileSize or MaxFileSize are out of range.
-	ErrFileSizeOutOfRange = RndTreeError("file size")
-
-	// ErrSymlinksOutOfRange is the error when MinSymlinks or MaxSymlinks are out of range.
-	ErrSymlinksOutOfRange = RndTreeError("symbolic links")
-)
-
-// RndTreeParams defines the parameters to generate a random file system tree
+// RndTreeOpts defines the parameters to generate a random file system tree
 // of directories, files and symbolic links.
-type RndTreeParams struct {
-	MinName     int   // MinName is the minimum length of a name (must be >= 1).
-	MaxName     int   // MaxName is the minimum length of a name (must be >= MinName).
-	MinDirs     int   // MinDirs is the minimum number of directories (must be >= 0).
-	MaxDirs     int   // MaxDirs is the maximum number of directories (must be >= MinDirs).
-	MinFiles    int   // MinFiles is the minimum number of files (must be >= 0).
-	MaxFiles    int   // MaxFiles is the maximum number of Files (must be >= MinFiles).
-	MinFileSize int   // MinFileSize is minimum size of a file (must be >= 0).
-	MaxFileSize int   // MaxFileSize is maximum size of a file (must be >= MinFileSize).
-	MinSymlinks int   // MinSymlinks is the minimum number of symbolic links (must be >= 0).
-	MaxSymlinks int   // MaxSymlinks is the maximum number of symbolic links (must be >= MinSymlinks).
-	OneLevel    bool  // OneLevel set tree depth to one level.
-	RandSeed    int64 // RandSeed is the seed used by random generating number functions.
+type RndTreeOpts struct {
+	NbDirs      int // MinDirs is the number of directories.
+	NbFiles     int // MinFiles is the number of files.
+	NbSymlinks  int // MinSymlinks is the number of symbolic links.
+	MaxFileSize int // MaxFileSize is maximum size of a file.
+	MaxDepth    int // MaxDepth is the maximum depth of the tree.
 }
 
-// FileParams contains parameters to create a file.
-type FileParams struct {
+// RndTreeDir contains parameters to create a directory.
+type RndTreeDir struct {
+	Name  string
+	Depth int
+}
+
+// RndTreeFile contains parameters to create a file.
+type RndTreeFile struct {
 	Name string
-	size int
+	Size int
 }
 
-// SymLinkParams contains parameters to create a symbolic link.
-type SymLinkParams struct {
+// RndTreeSymLink contains parameters to create a symbolic link.
+type RndTreeSymLink struct {
 	OldName, NewName string
 }
 
 // RndTree is a random file system tree generator of directories, files and symbolic links.
 type RndTree struct {
-	vfs           VFSBase          // vfs is the virtual file system.
-	rnd           *rand.Rand       // rnd is a source of random numbers.
-	baseDir       string           // baseDir is the base directory of the random tree.
-	Dirs          []string         // Dirs contains all directories.
-	Files         []*FileParams    // Files contains all files.
-	SymLinks      []*SymLinkParams // SymLinks contains all symbolic links.
-	RndTreeParams                  // RndTreeParams regroups the parameters of the tree.
+	vfs         VFSBase           // vfs is the virtual file system.
+	rnd         *rand.Rand        // rnd is a source of random numbers.
+	dirs        []*RndTreeDir     // Dirs contains all directories.
+	files       []*RndTreeFile    // Files contains all files.
+	symLinks    []*RndTreeSymLink // SymLinks contains all symbolic links.
+	RndTreeOpts                   // RndTreeOpts regroups the options of the tree.
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(vfs VFSBase, baseDir string, p *RndTreeParams) (*RndTree, error) {
-	if p.MinName < 1 || p.MinName > p.MaxName {
-		return nil, ErrNameOutOfRange
+func NewRndTree(vfs VFSBase) *RndTree {
+	opts := &RndTreeOpts{NbDirs: 100, NbFiles: 200, NbSymlinks: 20, MaxFileSize: 0, MaxDepth: 3}
+
+	return NewRndTreeWithOptions(vfs, opts)
+}
+
+func NewRndTreeOneLevel(vfs VFSBase) *RndTree {
+	opts := &RndTreeOpts{NbDirs: 3, NbFiles: 11, NbSymlinks: 4, MaxFileSize: 0, MaxDepth: 0}
+
+	return NewRndTreeWithOptions(vfs, opts)
+}
+
+// NewRndTreeWithOptions returns a new random tree generator.
+func NewRndTreeWithOptions(vfs VFSBase, opts *RndTreeOpts) *RndTree {
+	if opts.NbDirs < 0 {
+		opts.NbDirs = 0
 	}
 
-	if p.MinDirs < 0 || p.MinDirs > p.MaxDirs {
-		return nil, ErrDirsOutOfRange
+	if opts.NbFiles < 0 {
+		opts.NbFiles = 0
 	}
 
-	if p.MinFiles < 0 || p.MinFiles > p.MaxFiles {
-		return nil, ErrFilesOutOfRange
+	if opts.NbSymlinks < 0 {
+		opts.NbSymlinks = 0
 	}
 
-	if p.MinFileSize < 0 || p.MinFileSize > p.MaxFileSize {
-		return nil, ErrFileSizeOutOfRange
+	if opts.MaxDepth < 0 {
+		opts.MaxDepth = 0
 	}
 
-	if p.MinSymlinks < 0 || p.MinSymlinks > p.MaxSymlinks {
-		return nil, ErrSymlinksOutOfRange
-	}
-
-	if p.RandSeed == 0 {
-		p.RandSeed = 42
+	if opts.MaxFileSize < 0 {
+		opts.MaxFileSize = 0
 	}
 
 	rt := &RndTree{
-		vfs:           vfs,
-		baseDir:       baseDir,
-		rnd:           rand.New(rand.NewSource(p.RandSeed)),
-		RndTreeParams: *p,
+		vfs: vfs,
+		rnd: rand.New(rand.NewSource(42)),
+		RndTreeOpts: RndTreeOpts{
+			NbDirs:      opts.NbDirs,
+			NbFiles:     opts.NbFiles,
+			NbSymlinks:  opts.NbSymlinks,
+			MaxFileSize: opts.MaxFileSize,
+			MaxDepth:    opts.MaxDepth,
+		},
 	}
 
-	return rt, nil
+	return rt
 }
 
-// CreateTree creates a random tree structure.
-func (rt *RndTree) CreateTree() error {
-	return rt.CreateSymlinks()
+// GenTree generates a random tree and populates RndTree.Dirs, RndTree.Files and RndTree.SymLinks.
+func (rt *RndTree) GenTree() {
+	nameIdx := 0
+	name := func(prefix string) string {
+		nameIdx++
+
+		return prefix + "-" + strconv.Itoa(nameIdx)
+	}
+
+	if rt.dirs != nil {
+		return
+	}
+
+	nbDirs := rt.NbDirs
+	dirs := make([]*RndTreeDir, nbDirs)
+
+	parents := make([]*RndTreeDir, 1, 10)
+	parents[0] = &RndTreeDir{}
+
+	for i := 0; i < nbDirs; i++ {
+		parent := parents[rand.Intn(len(parents))]
+		path := parent.Name + "/" + name("dir")
+		depth := parent.Depth + 1
+
+		dir := &RndTreeDir{Name: path, Depth: depth}
+		dirs[i] = dir
+
+		if depth < rt.MaxDepth {
+			parents = append(parents, dir)
+		}
+	}
+
+	rt.dirs = dirs
+
+	if rt.NbFiles == 0 {
+		return
+	}
+
+	nbParents := len(parents)
+	nbFiles := rt.NbFiles
+	files := make([]*RndTreeFile, nbFiles)
+
+	for i := 0; i < nbFiles; i++ {
+		parent := parents[rand.Intn(nbParents)]
+		fileName := parent.Name + "/" + name("file")
+
+		size := 0
+		if rt.MaxFileSize > 0 {
+			size = rand.Intn(rt.MaxFileSize)
+		}
+
+		file := &RndTreeFile{Name: fileName, Size: size}
+		files[i] = file
+	}
+
+	rt.files = files
+
+	if !rt.vfs.HasFeature(FeatSymlink) {
+		return
+	}
+
+	nbSymlinks := rt.NbSymlinks
+	symLinks := make([]*RndTreeSymLink, nbSymlinks)
+
+	for i := 0; i < nbSymlinks; i++ {
+		oldName := files[rand.Intn(nbFiles)].Name
+		newDir := parents[rand.Intn(nbParents)].Name
+		newName := newDir + "/" + name("symlink")
+
+		sl := &RndTreeSymLink{OldName: oldName, NewName: newName}
+		symLinks[i] = sl
+	}
+
+	rt.symLinks = symLinks
 }
 
 // CreateDirs creates random directories.
-func (rt *RndTree) CreateDirs() error {
+func (rt *RndTree) CreateDirs(baseDir string) error {
 	vfs := rt.vfs
 
-	err := vfs.MkdirAll(rt.baseDir, DefaultDirPerm)
-	if err != nil {
-		return err
-	}
+	rt.GenTree()
 
-	if len(rt.Dirs) == 0 {
-		nbDirs := rt.randRange(rt.MinDirs, rt.MaxDirs)
-		rt.Dirs = make([]string, nbDirs)
-	}
+	for _, dir := range rt.dirs {
+		path := vfs.Join(baseDir, dir.Name)
 
-	for i, dirName := range rt.Dirs {
-		if dirName == "" {
-			parent := rt.randDir(i)
-			dirName = vfs.Join(parent, rt.randName())
-			rt.Dirs[i] = dirName
-		}
-
-		err = vfs.MkdirAll(dirName, DefaultDirPerm)
+		err := vfs.MkdirAll(path, DefaultDirPerm)
 		if err != nil {
 			return err
 		}
@@ -157,32 +203,21 @@ func (rt *RndTree) CreateDirs() error {
 }
 
 // CreateFiles creates random files.
-func (rt *RndTree) CreateFiles() error {
-	err := rt.CreateDirs()
+func (rt *RndTree) CreateFiles(baseDir string) error {
+	err := rt.CreateDirs(baseDir)
 	if err != nil {
 		return err
 	}
 
-	if len(rt.Files) == 0 {
-		nbFiles := rt.randRange(rt.MinFiles, rt.MaxFiles)
-		rt.Files = make([]*FileParams, nbFiles)
-	}
-
-	vfs := rt.vfs
-	nbDirs := len(rt.Dirs)
 	buf := make([]byte, rt.MaxFileSize)
 	rt.rnd.Read(buf)
 
-	for i, file := range rt.Files {
-		if file == nil {
-			parent := rt.randDir(nbDirs)
-			fileName := vfs.Join(parent, rt.randName())
-			size := rt.randRange(rt.MinFileSize, rt.MaxFileSize)
-			file = &FileParams{Name: fileName, size: size}
-			rt.Files[i] = file
-		}
+	vfs := rt.vfs
 
-		err = vfs.WriteFile(file.Name, buf[:file.size], DefaultFilePerm)
+	for _, file := range rt.files {
+		path := vfs.Join(baseDir, file.Name)
+
+		err = vfs.WriteFile(path, buf[:file.Size], DefaultFilePerm)
 		if err != nil {
 			return err
 		}
@@ -192,8 +227,8 @@ func (rt *RndTree) CreateFiles() error {
 }
 
 // CreateSymlinks creates random symbolic links.
-func (rt *RndTree) CreateSymlinks() error {
-	err := rt.CreateFiles()
+func (rt *RndTree) CreateSymlinks(baseDir string) error {
+	err := rt.CreateFiles(baseDir)
 	if err != nil {
 		return err
 	}
@@ -203,25 +238,11 @@ func (rt *RndTree) CreateSymlinks() error {
 		return nil
 	}
 
-	if len(rt.SymLinks) == 0 {
-		nbSymlinks := rt.randRange(rt.MinSymlinks, rt.MaxSymlinks)
-		rt.SymLinks = make([]*SymLinkParams, nbSymlinks)
-	}
+	for _, symlink := range rt.symLinks {
+		oldPath := vfs.Join(baseDir, symlink.OldName)
+		newPath := vfs.Join(baseDir, symlink.NewName)
 
-	for i, symlink := range rt.SymLinks {
-		if symlink == nil {
-			oldName := rt.randFile(len(rt.Files)).Name
-			newName := vfs.Join(rt.randDir(len(rt.Dirs)), rt.randName())
-			symlink = &SymLinkParams{OldName: oldName, NewName: newName}
-			rt.SymLinks[i] = symlink
-		}
-
-		oldName, err := vfs.EvalSymlinks(symlink.NewName)
-		if err == nil && oldName == symlink.OldName {
-			continue
-		}
-
-		err = vfs.Symlink(symlink.OldName, symlink.NewName)
+		err = vfs.Symlink(oldPath, newPath)
 		if err != nil {
 			return err
 		}
@@ -230,60 +251,19 @@ func (rt *RndTree) CreateSymlinks() error {
 	return nil
 }
 
-// randDir returns a random directory.
-func (rt *RndTree) randDir(max int) string {
-	if rt.OneLevel || max <= 0 {
-		return rt.baseDir
-	}
-
-	return rt.Dirs[rt.rnd.Intn(max)]
+// CreateTree creates a random tree structure.
+func (rt *RndTree) CreateTree(baseDir string) error {
+	return rt.CreateSymlinks(baseDir)
 }
 
-// randFile returns a random file.
-func (rt *RndTree) randFile(max int) *FileParams {
-	return rt.Files[rt.rnd.Intn(max)]
+func (rt *RndTree) Dirs() []*RndTreeDir {
+	return rt.dirs
 }
 
-// randName generates a random name using different sets of runes (ASCII, Cyrillic, Devanagari).
-func (rt *RndTree) randName() string {
-	const maxAlphabets = 4
-
-	var name strings.Builder
-
-	nbRunes := rt.randRange(rt.MinName, rt.MaxName)
-
-	for i := 0; i < nbRunes; i++ {
-		var s, e int
-
-		switch rt.rnd.Intn(maxAlphabets) {
-		case 0: // ASCII Uppercase
-			s = 65
-			e = 90
-		case 1: // ASCII Lowercase
-			s = 97
-			e = 122
-		case 2: // Cyrillic
-			s = 0x400
-			e = 0x4ff
-		case 3: // Devanagari
-			s = 0x900
-			e = 0x97f
-		}
-
-		r := rune(s + rt.rnd.Intn(e-s))
-
-		name.WriteRune(r)
-	}
-
-	return name.String()
+func (rt *RndTree) Files() []*RndTreeFile {
+	return rt.files
 }
 
-// randRange returns a random integer between min and max.
-func (rt *RndTree) randRange(min, max int) int {
-	val := min
-	if min < max {
-		val += rt.rnd.Intn(max - min)
-	}
-
-	return val
+func (rt *RndTree) SymLinks() []*RndTreeSymLink {
+	return rt.symLinks
 }

@@ -343,39 +343,33 @@ func (ts *Suite) TestClean(t *testing.T, _ string) {
 func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 	const copyFile = "CopyFile"
 
-	srcFs := ts.vfsSetup
-	dstFs := memfs.New()
+	srcFS := ts.vfsSetup
+	dstFS := memfs.New()
 
-	rtParams := &avfs.RndTreeParams{
-		MinName: 32, MaxName: 32,
-		MinFiles: 32, MaxFiles: 32,
-		MinFileSize: 0, MaxFileSize: 100 * 1024,
-	}
+	rt := avfs.NewRndTreeWithOptions(srcFS, &avfs.RndTreeOpts{NbFiles: 32, MaxFileSize: 100 * 1024})
 
-	rt, err := avfs.NewRndTree(srcFs, testDir, rtParams)
-	RequireNoError(t, err, "NewRndTree")
-
-	err = rt.CreateTree()
+	err := rt.CreateTree(testDir)
 	RequireNoError(t, err, "CreateTree %s")
 
 	h := sha512.New()
 
 	t.Run("CopyFile_WithHashSum", func(t *testing.T) {
-		dstDir, err := dstFs.MkdirTemp("", copyFile)
+		dstDir, err := dstFS.MkdirTemp("", copyFile)
 		RequireNoError(t, err, "MkdirTemp")
 
-		defer dstFs.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
+		defer dstFS.RemoveAll(dstDir) //nolint:errcheck // Ignore errors.
 
-		for _, srcFile := range rt.Files {
-			fileName := srcFs.Base(srcFile.Name)
-			dstPath := dstFs.Join(dstDir, fileName)
+		for _, srcFile := range rt.Files() {
+			srcPath := srcFS.Join(testDir, srcFile.Name)
+			fileName := srcFS.Base(srcFile.Name)
+			dstPath := dstFS.Join(dstDir, fileName)
 
-			wantSum, err := avfs.CopyFileHash(dstFs, srcFs, dstPath, srcFile.Name, h)
+			wantSum, err := avfs.CopyFileHash(dstFS, srcFS, dstPath, srcPath, h)
 			RequireNoError(t, err, "CopyFile (%s)%s, (%s)%s",
-				dstFs.Type(), dstPath, srcFs.Type(), srcFile.Name)
+				dstFS.Type(), dstPath, srcFS.Type(), srcFile.Name)
 
-			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
-			RequireNoError(t, err, "HashFile (%s)%s", dstFs.Type(), dstPath)
+			gotSum, err := avfs.HashFile(dstFS, dstPath, h)
+			RequireNoError(t, err, "HashFile (%s)%s", dstFS.Type(), dstPath)
 
 			if !bytes.Equal(wantSum, gotSum) {
 				t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
@@ -384,22 +378,23 @@ func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 	})
 
 	t.Run("CopyFile", func(t *testing.T) {
-		dstDir, err := dstFs.MkdirTemp("", copyFile)
+		dstDir, err := dstFS.MkdirTemp("", copyFile)
 		RequireNoError(t, err, "MkdirTemp %s", copyFile)
 
-		for _, srcFile := range rt.Files {
-			fileName := srcFs.Base(srcFile.Name)
-			dstPath := dstFs.Join(dstDir, fileName)
+		for _, srcFile := range rt.Files() {
+			srcPath := srcFS.Join(testDir, srcFile.Name)
+			fileName := srcFS.Base(srcFile.Name)
+			dstPath := dstFS.Join(dstDir, fileName)
 
-			err = avfs.CopyFile(dstFs, srcFs, dstPath, srcFile.Name)
+			err = avfs.CopyFile(dstFS, srcFS, dstPath, srcPath)
 			RequireNoError(t, err, "CopyFile (%s)%s, (%s)%s",
-				dstFs.Type(), dstPath, srcFs.Type(), srcFile.Name)
+				dstFS.Type(), dstPath, srcFS.Type(), srcFile.Name)
 
-			wantSum, err := avfs.HashFile(srcFs, srcFile.Name, h)
-			RequireNoError(t, err, "HashFile (%s)%s", srcFs.Type(), srcFile.Name)
+			wantSum, err := avfs.HashFile(srcFS, srcPath, h)
+			RequireNoError(t, err, "HashFile (%s)%s", srcFS.Type(), srcFile.Name)
 
-			gotSum, err := avfs.HashFile(dstFs, dstPath, h)
-			RequireNoError(t, err, "HashFile (%s)%s", dstFs.Type(), dstPath)
+			gotSum, err := avfs.HashFile(dstFS, dstPath, h)
+			RequireNoError(t, err, "HashFile (%s)%s", dstFS.Type(), dstPath)
 
 			if !bytes.Equal(wantSum, gotSum) {
 				t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", fileName, wantSum, gotSum)
@@ -701,37 +696,32 @@ func (ts *Suite) TestGlob(t *testing.T, testDir string) {
 // TestHashFile tests avfs.HashFile function.
 func (ts *Suite) TestHashFile(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
-	rtParams := &avfs.RndTreeParams{
-		MinName: 32, MaxName: 32,
-		MinFiles: 100, MaxFiles: 100,
-		MinFileSize: 16, MaxFileSize: 100 * 1024,
-	}
+	rt := avfs.NewRndTreeWithOptions(vfs, &avfs.RndTreeOpts{NbFiles: 100, MaxFileSize: 100 * 1024})
 
-	rt, err := avfs.NewRndTree(vfs, testDir, rtParams)
-	RequireNoError(t, err, "NewRndTree %s", testDir)
-
-	err = rt.CreateTree()
+	err := rt.CreateTree(testDir)
 	RequireNoError(t, err, "CreateTree %s", testDir)
 
 	defer vfs.RemoveAll(testDir) //nolint:errcheck // Ignore errors.
 
 	h := sha512.New()
 
-	for _, file := range rt.Files {
-		content, err := vfs.ReadFile(file.Name)
-		if !AssertNoError(t, err, "ReadFile %s", file.Name) {
+	for _, file := range rt.Files() {
+		path := vfs.Join(testDir, file.Name)
+
+		content, err := vfs.ReadFile(path)
+		if !AssertNoError(t, err, "ReadFile %s", path) {
 			continue
 		}
 
 		h.Reset()
 
 		_, err = h.Write(content)
-		RequireNoError(t, err, "Write %s", file.Name)
+		RequireNoError(t, err, "Write %s", path)
 
 		wantSum := h.Sum(nil)
 
-		gotSum, err := avfs.HashFile(vfs, file.Name, h)
-		RequireNoError(t, err, "HashFile %s", file.Name)
+		gotSum, err := avfs.HashFile(vfs, path, h)
+		RequireNoError(t, err, "HashFile %s", path)
 
 		if !bytes.Equal(wantSum, gotSum) {
 			t.Errorf("HashFile %s : \nwant : %x\ngot  : %x", file.Name, wantSum, gotSum)
@@ -1179,140 +1169,112 @@ func (ts *Suite) TestRel(t *testing.T, _ string) {
 func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
 
-	rtTests := []*avfs.RndTreeParams{
-		{
-			MinName: 5, MaxName: 10,
-			MinDirs: 10, MaxDirs: 30,
-			MinFiles: 10, MaxFiles: 30,
-			MinFileSize: 0, MaxFileSize: 2048,
-			MinSymlinks: 10, MaxSymlinks: 30,
-		},
-		{
-			MinName: 3, MaxName: 3,
-			MinDirs: 3, MaxDirs: 3,
-			MinFiles: 3, MaxFiles: 3,
-			MinFileSize: 3, MaxFileSize: 3,
-			MinSymlinks: 3, MaxSymlinks: 3,
-		},
+	rtOpts := []*avfs.RndTreeOpts{
+		{NbDirs: 3, NbFiles: 11, NbSymlinks: 4, MaxFileSize: 0, MaxDepth: 0},
+		{NbDirs: 0, NbFiles: 0, NbSymlinks: 0, MaxFileSize: 0},
+		{NbDirs: 0, NbFiles: 3, NbSymlinks: 3, MaxFileSize: 3},
+		{NbDirs: 3, NbFiles: 0, NbSymlinks: 3, MaxFileSize: 0},
+		{NbDirs: 3, NbFiles: 3, NbSymlinks: 0, MaxFileSize: 3},
+		{NbDirs: 3, NbFiles: 3, NbSymlinks: 3, MaxFileSize: 0},
+		{NbDirs: 20, NbFiles: 30, NbSymlinks: 10, MaxFileSize: 2048},
 	}
 
-	t.Run("RndTree", func(t *testing.T) {
-		for i, rtTest := range rtTests {
-			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
+	t.Run("RndTreeGenerate", func(t *testing.T) {
+		for i, rtOpt := range rtOpts {
+			rt := avfs.NewRndTreeWithOptions(vfs, rtOpt)
+
+			rt.GenTree()
+
+			nbDirs := len(rt.Dirs())
+			if nbDirs != rtOpt.NbDirs {
+				t.Errorf("Dirs %d : want nb Dirs to be %d, got %d", i, rtOpt.NbDirs, nbDirs)
+			}
+
+			maxDepth := 0
+			for _, file := range rt.Files() {
+				depth := strings.Count(file.Name, "/") - 1
+				if depth > maxDepth {
+					maxDepth = depth
+				}
+			}
+
+			if maxDepth > rt.MaxDepth {
+				t.Errorf("Dirs MaxDepth %d : want MaxDepth to be <= %d, got %d", i, rt.MaxDepth, maxDepth)
+			}
+
+			nbFiles := len(rt.Files())
+			if nbFiles != rtOpt.NbFiles {
+				t.Errorf("Files %d : want NbFiles to be %d, got %d", i, rtOpt.NbFiles, nbFiles)
+			}
+
+			maxDepth = 0
+			for _, file := range rt.Files() {
+				depth := strings.Count(file.Name, "/") - 1
+				if depth > maxDepth {
+					maxDepth = depth
+				}
+			}
+
+			if maxDepth > rt.MaxDepth {
+				t.Errorf("Files MaxDepth %d : want MaxDepth to be <= %d, got %d", i, rt.MaxDepth, maxDepth)
+			}
+
+			maxSize := 0
+			for _, file := range rt.Files() {
+				size := file.Size
+				if size > maxSize {
+					maxSize = size
+				}
+			}
+
+			if maxSize > rt.MaxFileSize {
+				t.Errorf("MaxFileSize %d : want MaxFileSize to be <= %d, got %d", i, rt.MaxFileSize, maxSize)
+			}
+
+			nbSymlinks := len(rt.SymLinks())
+			wantSymLinks := rtOpt.NbSymlinks
+			if rt.NbFiles == 0 || !vfs.HasFeature(avfs.FeatSymlink) {
+				wantSymLinks = 0
+			}
+
+			if nbSymlinks != wantSymLinks {
+				t.Errorf("Symlinks %d : want NbSymlinks to be %d, got %d", i, wantSymLinks, nbSymlinks)
+			}
+
+			maxDepth = 0
+			for _, symlink := range rt.SymLinks() {
+				depth := strings.Count(symlink.NewName, "/") - 1
+				if depth > maxDepth {
+					maxDepth = depth
+				}
+			}
+
+			if maxDepth > rt.MaxDepth {
+				t.Errorf("Symlinks MaxDepth %d : want MaxDepth to be <= %d, got %d", i, rt.MaxDepth, maxDepth)
+			}
+		}
+	})
+
+	t.Run("RndTreeCreate", func(t *testing.T) {
+		for i, rtOpt := range rtOpts {
+			path := vfs.Join(testDir, strconv.Itoa(i))
 
 			ts.createDir(t, path, avfs.DefaultDirPerm)
 
-			rt, err := avfs.NewRndTree(vfs, path, rtTest)
-			RequireNoError(t, err, "NewRndTree %s", path)
+			rt := avfs.NewRndTreeWithOptions(vfs, rtOpt)
 
-			err = rt.CreateTree()
-			if !AssertNoError(t, err, "CreateTree %s", path) {
+			err := rt.CreateDirs(testDir)
+			RequireNoError(t, err, "CreateDirs %s", path)
+
+			err = rt.CreateFiles(testDir)
+			RequireNoError(t, err, "CreateFiles %s", path)
+
+			if !vfs.HasFeature(avfs.FeatSymlink) {
 				continue
 			}
 
-			err = rt.CreateDirs()
-			RequireNoError(t, err, "CreateDirs %s", path)
-
-			err = rt.CreateFiles()
-			RequireNoError(t, err, "CreateFiles %s", path)
-
-			err = rt.CreateSymlinks()
+			err = rt.CreateSymlinks(testDir)
 			RequireNoError(t, err, "CreateSymlinks %s", path)
-
-			nbDirs := len(rt.Dirs)
-			if nbDirs < rtTest.MinDirs || nbDirs > rtTest.MaxDirs {
-				t.Errorf("Dirs %d : want nb Dirs to be between %d and %d, got %d",
-					i, rtTest.MinDirs, rtTest.MaxDirs, nbDirs)
-			}
-
-			nbFiles := len(rt.Files)
-			if nbFiles < rtTest.MinFiles || nbFiles > rtTest.MaxFiles {
-				t.Errorf("Files %d : want nb Files to be between %d and %d, got %d",
-					i, rtTest.MinFiles, rtTest.MaxFiles, nbFiles)
-			}
-
-			if vfs.HasFeature(avfs.FeatSymlink) {
-				nbSymlinks := len(rt.SymLinks)
-				if nbSymlinks < rtTest.MinSymlinks || nbSymlinks > rtTest.MaxSymlinks {
-					t.Errorf("Dirs %d : want nb Dirs to be between %d and %d, got %d",
-						i, rtTest.MinSymlinks, rtTest.MaxSymlinks, nbSymlinks)
-				}
-			}
-		}
-	})
-
-	t.Run("RndTreeAlreadyCreated", func(t *testing.T) {
-		for i, rtTest := range rtTests {
-			path := vfs.Join(testDir, "RndTree", strconv.Itoa(i))
-
-			rt, err := avfs.NewRndTree(vfs, path, rtTest)
-			RequireNoError(t, err, "NewRndTree %s", path)
-
-			err = rt.CreateDirs()
-			RequireNoError(t, err, "CreateDirs %s", path)
-
-			err = rt.CreateFiles()
-			RequireNoError(t, err, "CreateFiles %s", path)
-
-			if vfs.HasFeature(avfs.FeatSymlink) {
-				err = rt.CreateSymlinks()
-				RequireNoError(t, err, "CreateSymlinks %s", path)
-			}
-		}
-	})
-
-	t.Run("RndTreeErrors", func(t *testing.T) {
-		rtTests := []struct {
-			params  *avfs.RndTreeParams
-			wantErr error
-		}{
-			{
-				params:  &avfs.RndTreeParams{MinName: 0, MaxName: 0},
-				wantErr: avfs.ErrNameOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 0},
-				wantErr: avfs.ErrNameOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: -1, MaxDirs: 0},
-				wantErr: avfs.ErrDirsOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinDirs: 1, MaxDirs: 0},
-				wantErr: avfs.ErrDirsOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: -1, MaxFiles: 0},
-				wantErr: avfs.ErrFilesOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFiles: 1, MaxFiles: 0},
-				wantErr: avfs.ErrFilesOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFileSize: -1, MaxFileSize: 0},
-				wantErr: avfs.ErrFileSizeOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinFileSize: 1, MaxFileSize: 0},
-				wantErr: avfs.ErrFileSizeOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: -1, MaxSymlinks: 0},
-				wantErr: avfs.ErrSymlinksOutOfRange,
-			},
-			{
-				params:  &avfs.RndTreeParams{MinName: 1, MaxName: 1, MinSymlinks: 1, MaxSymlinks: 0},
-				wantErr: avfs.ErrSymlinksOutOfRange,
-			},
-		}
-
-		for i, rtTest := range rtTests {
-			_, err := avfs.NewRndTree(vfs, testDir, rtTest.params)
-			if rtTest.wantErr != err {
-				t.Errorf("NewRndTree %d : want error to be %v, got %v", i, rtTest.wantErr, err)
-			}
 		}
 	})
 }

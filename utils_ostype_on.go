@@ -90,10 +90,6 @@ func (ut *Utils[_]) Base(path string) string {
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
 func (ut *Utils[_]) Clean(path string) string {
-	if ut.osType == CurrentOSType() {
-		return filepath.Clean(path)
-	}
-
 	originalPath := path
 	volLen := ut.VolumeNameLen(path)
 

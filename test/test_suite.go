@@ -137,18 +137,6 @@ func AssertPanic(tb testing.TB, funcName string, f func()) {
 	f()
 }
 
-// BenchAll runs all benchmarks.
-func (ts *Suite) BenchAll(b *testing.B) {
-	ts.RunBenchmarks(b, UsrTest,
-		ts.BenchCreate,
-		ts.BenchFileRead,
-		ts.BenchFileWrite,
-		ts.BenchMkdir,
-		ts.BenchOpenFile,
-		ts.BenchRemove,
-	)
-}
-
 // changeDir changes the current directory for the tests.
 func (ts *Suite) changeDir(tb testing.TB, dir string) {
 	vfs := ts.vfsTest
@@ -369,24 +357,9 @@ func (ts *Suite) openedNonExistingFile(tb testing.TB, testDir string) (f avfs.Fi
 // randomDir returns one directory with random empty subdirectories, files and symbolic links.
 func (ts *Suite) randomDir(tb testing.TB, testDir string) *avfs.RndTree {
 	vfs := ts.vfsSetup
-	RndParamsOneDir := avfs.RndTreeParams{
-		MinName:     4,
-		MaxName:     32,
-		MinDirs:     10,
-		MaxDirs:     20,
-		MinFiles:    50,
-		MaxFiles:    100,
-		MinFileSize: 0,
-		MaxFileSize: 0,
-		MinSymlinks: 5,
-		MaxSymlinks: 10,
-		OneLevel:    true,
-	}
+	rt := avfs.NewRndTreeOneLevel(vfs)
 
-	rt, err := avfs.NewRndTree(vfs, testDir, &RndParamsOneDir)
-	RequireNoError(tb, err, "NewRndTree %s", testDir)
-
-	err = rt.CreateTree()
+	err := rt.CreateTree(testDir)
 	RequireNoError(tb, err, "rt.Create %s", testDir)
 
 	return rt

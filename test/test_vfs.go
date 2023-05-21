@@ -1606,17 +1606,22 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 	vfs := ts.vfsTest
 
 	rndTree := ts.randomDir(t, testDir)
-	wDirs := len(rndTree.Dirs)
-	wFiles := len(rndTree.Files)
-	wSymlinks := len(rndTree.SymLinks)
+	dirs := rndTree.Dirs()
+	files := rndTree.Files()
+	symLinks := rndTree.SymLinks()
 
-	existingFile := rndTree.Files[0].Name
+	wantDirs := len(dirs)
+	wantFiles := len(files)
+	wantSymlinks := len(symLinks)
+
+	existingFile := vfs.Join(testDir, files[0].Name)
 
 	t.Run("ReadDirAll", func(t *testing.T) {
 		dirEntries, err := vfs.ReadDir(testDir)
 		RequireNoError(t, err, "ReadDir %s", testDir)
 
-		var gDirs, gFiles, gSymlinks int
+		var gotDirs, gotFiles, gotSymlinks int
+
 		for _, dirEntry := range dirEntries {
 			_, err = dirEntry.Info()
 			if !AssertNoError(t, err, "Info") {
@@ -1625,37 +1630,39 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 
 			switch {
 			case dirEntry.IsDir():
-				gDirs++
+				gotDirs++
 			case dirEntry.Type()&fs.ModeSymlink != 0:
-				gSymlinks++
+				gotSymlinks++
 			default:
-				gFiles++
+				gotFiles++
 			}
 		}
 
-		if wDirs != gDirs {
-			t.Errorf("ReadDir : want number of dirs to be %d, got %d", wDirs, gDirs)
+		if gotDirs != wantDirs {
+			t.Errorf("ReadDir : want number of dirs to be %d, got %d", wantDirs, gotDirs)
 		}
 
-		if wFiles != gFiles {
-			t.Errorf("ReadDir : want number of files to be %d, got %d", wFiles, gFiles)
+		if gotFiles != wantFiles {
+			t.Errorf("ReadDir : want number of files to be %d, got %d", wantFiles, gotFiles)
 		}
 
-		if wSymlinks != gSymlinks {
-			t.Errorf("ReadDir : want number of symbolic links to be %d, got %d", wSymlinks, gSymlinks)
+		if gotSymlinks != wantSymlinks {
+			t.Errorf("ReadDir : want number of symbolic links to be %d, got %d", wantSymlinks, gotSymlinks)
 		}
 	})
 
 	t.Run("ReadDirEmptySubDirs", func(t *testing.T) {
-		for _, dir := range rndTree.Dirs {
-			infos, err := vfs.ReadDir(dir)
+		for _, dir := range dirs {
+			path := vfs.Join(testDir, dir.Name)
+
+			infos, err := vfs.ReadDir(path)
 			if !AssertNoError(t, err, "ReadDir %s", dir) {
 				continue
 			}
 
 			l := len(infos)
 			if l != 0 {
-				t.Errorf("ReadDir %s : want count to be O, got %d", dir, l)
+				t.Errorf("ReadDir %s : want count to be O, got %d", path, l)
 			}
 		}
 	})

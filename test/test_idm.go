@@ -461,8 +461,6 @@ func (ts *Suite) testSetUser(t *testing.T, ust avfs.UserSetter) {
 		return
 	}
 
-	t.Logf("CurrentUser = %v", ust.User())
-
 	t.Run("UserNotExists", func(t *testing.T) {
 		const userName = "notExistingUser"
 

@@ -495,9 +495,9 @@ func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 // TestFileReadDir tests File.ReadDir function.
 func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 	rndTree := ts.randomDir(t, testDir)
-	wDirs := len(rndTree.Dirs)
-	wFiles := len(rndTree.Files)
-	wSymlinks := len(rndTree.SymLinks)
+	wantDirs := len(rndTree.Dirs())
+	wantFiles := len(rndTree.Files())
+	wantSymlinks := len(rndTree.SymLinks())
 	vfs := ts.vfsTest
 
 	const maxRead = 7
@@ -521,28 +521,28 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 			dirEntries = append(dirEntries, dirEntriesN...)
 		}
 
-		var gDirs, gFiles, gSymlinks int
+		var gotDirs, gotFiles, gotSymlinks int
 		for _, dirEntry := range dirEntries {
 			switch {
 			case dirEntry.IsDir():
-				gDirs++
+				gotDirs++
 			case dirEntry.Type()&fs.ModeSymlink != 0:
-				gSymlinks++
+				gotSymlinks++
 			default:
-				gFiles++
+				gotFiles++
 			}
 		}
 
-		if wDirs != gDirs {
-			t.Errorf("ReadDirN : want number of dirs to be %d, got %d", wDirs, gDirs)
+		if wantDirs != gotDirs {
+			t.Errorf("ReadDirN : want number of dirs to be %d, got %d", wantDirs, gotDirs)
 		}
 
-		if wFiles != gFiles {
-			t.Errorf("ReadDirN : want number of files to be %d, got %d", wFiles, gFiles)
+		if wantFiles != gotFiles {
+			t.Errorf("ReadDirN : want number of files to be %d, got %d", wantFiles, gotFiles)
 		}
 
-		if wSymlinks != gSymlinks {
-			t.Errorf("ReadDirN : want number of symbolic links to be %d, got %d", wSymlinks, gSymlinks)
+		if wantSymlinks != gotSymlinks {
+			t.Errorf("ReadDirN : want number of symbolic links to be %d, got %d", wantSymlinks, gotSymlinks)
 		}
 	})
 
@@ -577,9 +577,10 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 // TestFileReaddirnames tests File.Readdirnames function.
 func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 	rndTree := ts.randomDir(t, testDir)
-	wAll := len(rndTree.Dirs) + len(rndTree.Files) + len(rndTree.SymLinks)
-	existingFile := rndTree.Files[0].Name
+	wantAll := len(rndTree.Dirs()) + len(rndTree.Files()) + len(rndTree.SymLinks())
+
 	vfs := ts.vfsTest
+	existingFile := vfs.Join(testDir, rndTree.Files()[0].Name)
 
 	t.Run("FileReaddirnamesAll", func(t *testing.T) {
 		f, err := vfs.OpenFile(testDir, os.O_RDONLY, 0)
@@ -590,8 +591,8 @@ func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 		names, err := f.Readdirnames(-1)
 		RequireNoError(t, err, "Readdirnames %s", testDir)
 
-		if wAll != len(names) {
-			t.Errorf("TestFileReaddirnames : want number of elements to be %d, got %d", wAll, len(names))
+		if wantAll != len(names) {
+			t.Errorf("TestFileReaddirnames : want number of elements to be %d, got %d", wantAll, len(names))
 		}
 	})
 
@@ -614,8 +615,9 @@ func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 			names = append(names, namesN...)
 		}
 
-		if wAll != len(names) {
-			t.Errorf("ReadDirNamesN : want number of elements to be %d, got %d", wAll, len(names))
+		gotAll := len(names)
+		if len(names) != wantAll {
+			t.Errorf("ReadDirNamesN : want number of elements to be %d, got %d", wantAll, gotAll)
 		}
 	})
 

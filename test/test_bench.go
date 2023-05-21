@@ -31,6 +31,18 @@ const (
 	maxFileSize = 1024 * bufSize
 )
 
+// BenchAll runs all benchmarks.
+func (ts *Suite) BenchAll(b *testing.B) {
+	ts.RunBenchmarks(b, UsrTest,
+		ts.BenchCreate,
+		ts.BenchFileRead,
+		ts.BenchFileWrite,
+		ts.BenchMkdir,
+		ts.BenchOpenFile,
+		ts.BenchRemove,
+	)
+}
+
 // benchOpenFlags returns the flags used to disable cache.
 func (ts *Suite) benchOpenFlags() int {
 	vfs := ts.vfsTest
@@ -145,6 +157,7 @@ func (ts *Suite) BenchMkdir(b *testing.B, testDir string) {
 
 	b.Run("Mkdir", func(b *testing.B) {
 		b.StopTimer()
+
 		dirs := make([]string, b.N)
 		dirs[0] = testDir
 
@@ -190,23 +203,20 @@ func (ts *Suite) BenchRemove(b *testing.B, testDir string) {
 	b.Run("Remove", func(b *testing.B) {
 		b.StopTimer()
 
-		rt, err := avfs.NewRndTree(vfs, testDir, &avfs.RndTreeParams{
-			MinName: 10,
-			MaxName: 10,
-			MinDirs: b.N,
-			MaxDirs: b.N,
-		})
+		rt := avfs.NewRndTreeWithOptions(vfs, &avfs.RndTreeOpts{NbDirs: b.N})
 
-		RequireNoError(b, err, "RndTree %s", testDir)
-
-		err = rt.CreateTree()
+		err := rt.CreateTree(testDir)
 		RequireNoError(b, err, "CreateTree %s", testDir)
+
+		dirs := rt.Dirs()
 
 		b.StartTimer()
 
 		for n := b.N - 1; n >= 0; n-- {
-			err = vfs.Remove(rt.Dirs[n])
-			RequireNoError(b, err, "Remove %s", rt.Dirs[n])
+			path := dirs[n].Name
+
+			err = vfs.Remove(path)
+			RequireNoError(b, err, "Remove %s", path)
 		}
 	})
 }
