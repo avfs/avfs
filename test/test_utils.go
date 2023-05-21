@@ -276,65 +276,66 @@ func (ts *Suite) TestClean(t *testing.T, _ string) {
 		{"abc/../../././../def", "../../def"},
 	}
 
-	switch vfs.OSType() {
-	case avfs.OsWindows:
-		for i := range cleanTests {
-			cleanTests[i].result = vfs.FromSlash(cleanTests[i].result)
-		}
-
-		winCleantests := []*pathTest{
-			{`c:`, `c:.`},
-			{`c:\`, `c:\`},
-			{`c:\abc`, `c:\abc`},
-			{`c:abc\..\..\.\.\..\def`, `c:..\..\def`},
-			{`c:\abc\def\..\..`, `c:\`},
-			{`c:\..\abc`, `c:\abc`},
-			{`c:..\abc`, `c:..\abc`},
-			{`\`, `\`},
-			{`/`, `\`},
-			{`\\i\..\c$`, `\\i\..\c$`},
-			{`\\i\..\i\c$`, `\\i\..\i\c$`},
-			{`\\i\..\I\c$`, `\\i\..\I\c$`},
-			{`\\host\share\foo\..\bar`, `\\host\share\bar`},
-			{`//host/share/foo/../baz`, `\\host\share\baz`},
-			{`\\host\share\foo\..\..\..\..\bar`, `\\host\share\bar`},
-			{`\\.\C:\a\..\..\..\..\bar`, `\\.\C:\bar`},
-			{`\\.\C:\\\\a`, `\\.\C:\a`},
-			{`\\a\b\..\c`, `\\a\b\c`},
-			{`\\a\b`, `\\a\b`},
-			{`.\c:`, `.\c:`},
-			{`.\c:\foo`, `.\c:\foo`},
-			{`.\c:foo`, `.\c:foo`},
-			{`//abc`, `\\abc`},
-			{`///abc`, `\\\abc`},
-			{`//abc//`, `\\abc\\`},
-
-			// Don't allow cleaning to move an element with a colon to the start of the path.
-			{`a/../c:`, `.\c:`},
-			{`a\..\c:`, `.\c:`},
-			{`a/../c:/a`, `.\c:\a`},
-			{`a/../../c:`, `..\c:`},
-			{`foo:bar`, `foo:bar`},
-		}
-
-		cleanTests = append(cleanTests, winCleantests...)
-	default:
-		nonWinCleantests := []*pathTest{
-			// Remove leading doubled slash
-			{"//abc", "/abc"},
-			{"///abc", "/abc"},
-			{"//abc//", "/abc"},
-		}
-
-		cleanTests = append(cleanTests, nonWinCleantests...)
+	nonWinCleanTests := []*pathTest{
+		// Remove leading doubled slash
+		{"//abc", "/abc"},
+		{"///abc", "/abc"},
+		{"//abc//", "/abc"},
 	}
 
-	for _, test := range cleanTests {
-		p := vfs.Clean(test.path)
-		expected := vfs.FromSlash(test.result)
+	winCleanTests := []*pathTest{
+		{`c:`, `c:.`},
+		{`c:\`, `c:\`},
+		{`c:\abc`, `c:\abc`},
+		{`c:abc\..\..\.\.\..\def`, `c:..\..\def`},
+		{`c:\abc\def\..\..`, `c:\`},
+		{`c:\..\abc`, `c:\abc`},
+		{`c:..\abc`, `c:..\abc`},
+		{`\`, `\`},
+		{`/`, `\`},
+		{`\\i\..\c$`, `\\i\..\c$`},
+		{`\\i\..\i\c$`, `\\i\..\i\c$`},
+		{`\\i\..\I\c$`, `\\i\..\I\c$`},
+		{`\\host\share\foo\..\bar`, `\\host\share\bar`},
+		{`//host/share/foo/../baz`, `\\host\share\baz`},
+		{`\\host\share\foo\..\..\..\..\bar`, `\\host\share\bar`},
+		{`\\.\C:\a\..\..\..\..\bar`, `\\.\C:\bar`},
+		{`\\.\C:\\\\a`, `\\.\C:\a`},
+		{`\\a\b\..\c`, `\\a\b\c`},
+		{`\\a\b`, `\\a\b`},
+		{`.\c:`, `.\c:`},
+		{`.\c:\foo`, `.\c:\foo`},
+		{`.\c:foo`, `.\c:foo`},
+		{`//abc`, `\\abc`},
+		{`///abc`, `\\\abc`},
+		{`//abc//`, `\\abc\\`},
 
-		if p != expected {
-			t.Errorf("Clean(%q) = %q, want %q", test.path, p, expected)
+		// Don't allow cleaning to move an element with a colon to the start of the path.
+		{`a/../c:`, `.\c:`},
+		{`a\..\c:`, `.\c:`},
+		{`a/../c:/a`, `.\c:\a`},
+		{`a/../../c:`, `..\c:`},
+		{`foo:bar`, `foo:bar`},
+	}
+
+	tests := cleanTests
+	if vfs.OSType() == avfs.OsWindows {
+		for i := range tests {
+			tests[i].result = filepath.FromSlash(tests[i].result)
+		}
+
+		tests = append(tests, winCleanTests...)
+	} else {
+		tests = append(tests, nonWinCleanTests...)
+	}
+
+	for _, test := range tests {
+		if s := filepath.Clean(test.path); s != test.result {
+			t.Errorf("Clean(%q) = %q, want %q", test.path, s, test.result)
+		}
+
+		if s := filepath.Clean(test.result); s != test.result {
+			t.Errorf("Clean(%q) = %q, want %q", test.result, s, test.result)
 		}
 	}
 }
@@ -346,7 +347,7 @@ func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 	srcFS := ts.vfsSetup
 	dstFS := memfs.New()
 
-	rt := avfs.NewRndTreeWithOptions(srcFS, &avfs.RndTreeOpts{NbFiles: 32, MaxFileSize: 100 * 1024})
+	rt := avfs.NewRndTree(srcFS, &avfs.RndTreeOpts{NbFiles: 32, MaxFileSize: 100 * 1024})
 
 	err := rt.CreateTree(testDir)
 	RequireNoError(t, err, "CreateTree %s")
@@ -696,7 +697,7 @@ func (ts *Suite) TestGlob(t *testing.T, testDir string) {
 // TestHashFile tests avfs.HashFile function.
 func (ts *Suite) TestHashFile(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
-	rt := avfs.NewRndTreeWithOptions(vfs, &avfs.RndTreeOpts{NbFiles: 100, MaxFileSize: 100 * 1024})
+	rt := avfs.NewRndTree(vfs, &avfs.RndTreeOpts{NbFiles: 100, MaxFileSize: 100 * 1024})
 
 	err := rt.CreateTree(testDir)
 	RequireNoError(t, err, "CreateTree %s", testDir)
@@ -929,55 +930,52 @@ func (ts *Suite) TestJoin(t *testing.T, _ string) {
 		{[]string{"/", "a", "b"}, "/a/b"},
 	}
 
-	switch vfs.OSType() {
-	case avfs.OsWindows:
-		winJoinTests := []*joinTest{
-			{[]string{`directory`, `file`}, `directory\file`},
-			{[]string{`C:\Windows\`, `System32`}, `C:\Windows\System32`},
-			{[]string{`C:\Windows\`, ``}, `C:\Windows`},
-			{[]string{`C:\`, `Windows`}, `C:\Windows`},
-			{[]string{`C:`, `a`}, `C:a`},
-			{[]string{`C:`, `a\b`}, `C:a\b`},
-			{[]string{`C:`, `a`, `b`}, `C:a\b`},
-			{[]string{`C:`, ``, `b`}, `C:b`},
-			{[]string{`C:`, ``, ``, `b`}, `C:b`},
-			{[]string{`C:`, ``}, `C:.`},
-			{[]string{`C:`, ``, ``}, `C:.`},
-			{[]string{`C:`, `\a`}, `C:\a`},
-			{[]string{`C:`, ``, `\a`}, `C:\a`},
-			{[]string{`C:.`, `a`}, `C:a`},
-			{[]string{`C:a`, `b`}, `C:a\b`},
-			{[]string{`C:a`, `b`, `d`}, `C:a\b\d`},
-			{[]string{`\\host\share`, `foo`}, `\\host\share\foo`},
-			{[]string{`\\host\share\foo`}, `\\host\share\foo`},
-			{[]string{`//host/share`, `foo/bar`}, `\\host\share\foo\bar`},
-			{[]string{`\`}, `\`},
-			{[]string{`\`, ``}, `\`},
-			{[]string{`\`, `a`}, `\a`},
-			{[]string{`\\`, `a`}, `\\a`},
-			{[]string{`\`, `a`, `b`}, `\a\b`},
-			{[]string{`\\`, `a`, `b`}, `\\a\b`},
-			{[]string{`\`, `\\a\b`, `c`}, `\a\b\c`},
-			{[]string{`\\a`, `b`, `c`}, `\\a\b\c`},
-			{[]string{`\\a\`, `b`, `c`}, `\\a\b\c`},
-			{[]string{`//`, `a`}, `\\a`},
-		}
+	nonWinJoinTests := []*joinTest{
+		{[]string{"//", "a"}, "/a"},
+	}
 
+	winJoinTests := []*joinTest{
+		{[]string{`directory`, `file`}, `directory\file`},
+		{[]string{`C:\Windows\`, `System32`}, `C:\Windows\System32`},
+		{[]string{`C:\Windows\`, ``}, `C:\Windows`},
+		{[]string{`C:\`, `Windows`}, `C:\Windows`},
+		{[]string{`C:`, `a`}, `C:a`},
+		{[]string{`C:`, `a\b`}, `C:a\b`},
+		{[]string{`C:`, `a`, `b`}, `C:a\b`},
+		{[]string{`C:`, ``, `b`}, `C:b`},
+		{[]string{`C:`, ``, ``, `b`}, `C:b`},
+		{[]string{`C:`, ``}, `C:.`},
+		{[]string{`C:`, ``, ``}, `C:.`},
+		{[]string{`C:`, `\a`}, `C:\a`},
+		{[]string{`C:`, ``, `\a`}, `C:\a`},
+		{[]string{`C:.`, `a`}, `C:a`},
+		{[]string{`C:a`, `b`}, `C:a\b`},
+		{[]string{`C:a`, `b`, `d`}, `C:a\b\d`},
+		{[]string{`\\host\share`, `foo`}, `\\host\share\foo`},
+		{[]string{`\\host\share\foo`}, `\\host\share\foo`},
+		{[]string{`//host/share`, `foo/bar`}, `\\host\share\foo\bar`},
+		{[]string{`\`}, `\`},
+		{[]string{`\`, ``}, `\`},
+		{[]string{`\`, `a`}, `\a`},
+		{[]string{`\\`, `a`}, `\\a`},
+		{[]string{`\`, `a`, `b`}, `\a\b`},
+		{[]string{`\\`, `a`, `b`}, `\\a\b`},
+		{[]string{`\`, `\\a\b`, `c`}, `\a\b\c`},
+		{[]string{`\\a`, `b`, `c`}, `\\a\b\c`},
+		{[]string{`\\a\`, `b`, `c`}, `\\a\b\c`},
+		{[]string{`//`, `a`}, `\\a`},
+	}
+
+	if vfs.OSType() == avfs.OsWindows {
 		joinTests = append(joinTests, winJoinTests...)
-	default:
-		nonWinJoinTests := []*joinTest{
-			{elem: []string{"//", "a"}, path: "/a"},
-		}
-
+	} else {
 		joinTests = append(joinTests, nonWinJoinTests...)
 	}
 
 	for _, test := range joinTests {
-		p := vfs.Join(test.elem...)
-		expected := vfs.FromSlash(test.path)
-
-		if p != expected {
-			t.Errorf("Join(%q) = %q, want %q", test.elem, p, expected)
+		expected := filepath.FromSlash(test.path)
+		if p := filepath.Join(test.elem...); p != expected {
+			t.Errorf("join(%q) = %q, want %q", test.elem, p, expected)
 		}
 	}
 }
@@ -1170,18 +1168,19 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
 
 	rtOpts := []*avfs.RndTreeOpts{
+		{NbDirs: -1, NbFiles: -1, NbSymlinks: -1, MaxFileSize: -1, MaxDepth: -1},
+		{NbDirs: 0, NbFiles: 0, NbSymlinks: 0, MaxFileSize: 0, MaxDepth: 0},
+		{NbDirs: 0, NbFiles: 3, NbSymlinks: 3, MaxFileSize: 3, MaxDepth: 0},
+		{NbDirs: 3, NbFiles: 0, NbSymlinks: 3, MaxFileSize: 0, MaxDepth: 0},
+		{NbDirs: 3, NbFiles: 3, NbSymlinks: 0, MaxFileSize: 3, MaxDepth: 0},
+		{NbDirs: 3, NbFiles: 3, NbSymlinks: 3, MaxFileSize: 0, MaxDepth: 0},
 		{NbDirs: 3, NbFiles: 11, NbSymlinks: 4, MaxFileSize: 0, MaxDepth: 0},
-		{NbDirs: 0, NbFiles: 0, NbSymlinks: 0, MaxFileSize: 0},
-		{NbDirs: 0, NbFiles: 3, NbSymlinks: 3, MaxFileSize: 3},
-		{NbDirs: 3, NbFiles: 0, NbSymlinks: 3, MaxFileSize: 0},
-		{NbDirs: 3, NbFiles: 3, NbSymlinks: 0, MaxFileSize: 3},
-		{NbDirs: 3, NbFiles: 3, NbSymlinks: 3, MaxFileSize: 0},
-		{NbDirs: 20, NbFiles: 30, NbSymlinks: 10, MaxFileSize: 2048},
+		{NbDirs: 20, NbFiles: 30, NbSymlinks: 10, MaxFileSize: 2048, MaxDepth: 3},
 	}
 
 	t.Run("RndTreeGenerate", func(t *testing.T) {
 		for i, rtOpt := range rtOpts {
-			rt := avfs.NewRndTreeWithOptions(vfs, rtOpt)
+			rt := avfs.NewRndTree(vfs, rtOpt)
 
 			rt.GenTree()
 
@@ -1261,7 +1260,7 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 
 			ts.createDir(t, path, avfs.DefaultDirPerm)
 
-			rt := avfs.NewRndTreeWithOptions(vfs, rtOpt)
+			rt := avfs.NewRndTree(vfs, rtOpt)
 
 			err := rt.CreateDirs(testDir)
 			RequireNoError(t, err, "CreateDirs %s", path)

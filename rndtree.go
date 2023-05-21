@@ -24,9 +24,9 @@ import (
 // RndTreeOpts defines the parameters to generate a random file system tree
 // of directories, files and symbolic links.
 type RndTreeOpts struct {
-	NbDirs      int // MinDirs is the number of directories.
-	NbFiles     int // MinFiles is the number of files.
-	NbSymlinks  int // MinSymlinks is the number of symbolic links.
+	NbDirs      int // NbDirs is the number of directories.
+	NbFiles     int // NbFiles is the number of files.
+	NbSymlinks  int // NbSymlinks is the number of symbolic links.
 	MaxFileSize int // MaxFileSize is maximum size of a file.
 	MaxDepth    int // MaxDepth is the maximum depth of the tree.
 }
@@ -59,20 +59,7 @@ type RndTree struct {
 }
 
 // NewRndTree returns a new random tree generator.
-func NewRndTree(vfs VFSBase) *RndTree {
-	opts := &RndTreeOpts{NbDirs: 100, NbFiles: 200, NbSymlinks: 20, MaxFileSize: 0, MaxDepth: 3}
-
-	return NewRndTreeWithOptions(vfs, opts)
-}
-
-func NewRndTreeOneLevel(vfs VFSBase) *RndTree {
-	opts := &RndTreeOpts{NbDirs: 3, NbFiles: 11, NbSymlinks: 4, MaxFileSize: 0, MaxDepth: 0}
-
-	return NewRndTreeWithOptions(vfs, opts)
-}
-
-// NewRndTreeWithOptions returns a new random tree generator.
-func NewRndTreeWithOptions(vfs VFSBase, opts *RndTreeOpts) *RndTree {
+func NewRndTree(vfs VFSBase, opts *RndTreeOpts) *RndTree {
 	if opts.NbDirs < 0 {
 		opts.NbDirs = 0
 	}

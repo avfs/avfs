@@ -357,7 +357,9 @@ func (ts *Suite) openedNonExistingFile(tb testing.TB, testDir string) (f avfs.Fi
 // randomDir returns one directory with random empty subdirectories, files and symbolic links.
 func (ts *Suite) randomDir(tb testing.TB, testDir string) *avfs.RndTree {
 	vfs := ts.vfsSetup
-	rt := avfs.NewRndTreeOneLevel(vfs)
+
+	opts := &avfs.RndTreeOpts{NbDirs: 3, NbFiles: 11, NbSymlinks: 4, MaxFileSize: 0, MaxDepth: 0}
+	rt := avfs.NewRndTree(vfs, opts)
 
 	err := rt.CreateTree(testDir)
 	RequireNoError(tb, err, "rt.Create %s", testDir)

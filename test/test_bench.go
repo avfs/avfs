@@ -203,7 +203,7 @@ func (ts *Suite) BenchRemove(b *testing.B, testDir string) {
 	b.Run("Remove", func(b *testing.B) {
 		b.StopTimer()
 
-		rt := avfs.NewRndTreeWithOptions(vfs, &avfs.RndTreeOpts{NbDirs: b.N})
+		rt := avfs.NewRndTree(vfs, &avfs.RndTreeOpts{NbDirs: b.N})
 
 		err := rt.CreateTree(testDir)
 		RequireNoError(b, err, "CreateTree %s", testDir)
