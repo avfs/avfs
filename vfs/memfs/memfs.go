@@ -853,11 +853,11 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 
 	_, child, _, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists {
-		if vfs.OSType() != avfs.OsWindows {
-			return &fs.PathError{Op: op, Path: name, Err: err}
+		if vfs.OSType() == avfs.OsWindows {
+			op = "open"
 		}
 
-		return nil
+		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	c, ok := child.(*fileNode)
