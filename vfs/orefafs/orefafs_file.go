@@ -45,12 +45,13 @@ func (f *OrefaFile) Chdir() error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
-	if f.vfs.OSType() == avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinNotSupported}
-	}
-
 	if !f.nd.mode.IsDir() {
-		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
+		err := error(avfs.ErrNotADirectory)
+		if f.vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinDirNameInvalid
+		}
+
+		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	f.vfs.curDir = f.name
@@ -286,13 +287,9 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	}
 
 	if f.nd == nil {
-		var err error
-
-		switch f.vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinPathNotFound
-		default:
-			err = avfs.ErrFileClosing
+		err := error(avfs.ErrFileClosing)
+		if f.vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidHandle
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -369,7 +366,7 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	if f.nd == nil {
 		err = avfs.ErrFileClosing
 		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinPathNotFound
+			err = avfs.ErrWinInvalidHandle
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}

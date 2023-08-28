@@ -854,11 +854,11 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	vfs.mu.RUnlock()
 
 	if !childOk {
-		if vfs.OSType() != avfs.OsWindows {
-			return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+		if vfs.OSType() == avfs.OsWindows {
+			op = "open"
 		}
 
-		return nil
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	if child.mode.IsDir() {
