@@ -2395,13 +2395,9 @@ func (ts *Suite) TestTruncate(t *testing.T, testDir string) {
 		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Truncate(nonExistingFile, 0)
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			RequireNoError(t, err, "Truncate %s", nonExistingFile)
-		default:
-			AssertPathError(t, err).Op("truncate").Path(nonExistingFile).Err(avfs.ErrNoSuchFileOrDir)
-		}
+		AssertPathError(t, err).Path(nonExistingFile).
+			Op("truncate", avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
+			Op("open", avfs.OsWindows).Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
 	})
 
 	t.Run("TruncateOnDir", func(t *testing.T) {

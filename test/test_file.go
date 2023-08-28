@@ -69,14 +69,7 @@ func (ts *Suite) TestFileChdir(t *testing.T, testDir string) {
 			defer f.Close()
 
 			err = f.Chdir()
-			switch vfs.OSType() {
-			case avfs.OsWindows:
-				AssertPathError(t, err).Op("chdir").Path(dir.Path).Err(avfs.ErrWinNotSupported)
-
-				continue
-			default:
-				AssertNoError(t, err, "Chdir %s", dir.Path)
-			}
+			AssertNoError(t, err, "Chdir %s", dir.Path)
 
 			curDir, err := vfs.Getwd()
 			AssertNoError(t, err, "Getwd %s", dir.Path)
@@ -95,7 +88,7 @@ func (ts *Suite) TestFileChdir(t *testing.T, testDir string) {
 		err := f.Chdir()
 		AssertPathError(t, err).Op("chdir").Path(fileName).
 			Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinNotSupported, avfs.OsWindows)
+			Err(avfs.ErrWinDirNameInvalid, avfs.OsWindows)
 	})
 
 	t.Run("FileChdirClosed", func(t *testing.T) {
@@ -563,7 +556,7 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 		_, err := f.ReadDir(-1)
 		AssertPathError(t, err).Path(fileName).
 			Op("readdirent", avfs.OsLinux).Err(avfs.ErrFileClosing, avfs.OsLinux).
-			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
 	})
 
 	t.Run("FileReadDirNonExisting", func(t *testing.T) {
@@ -639,7 +632,7 @@ func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 		_, err := f.Readdirnames(-1)
 		AssertPathError(t, err).Path(fileName).
 			Op("readdirent", avfs.OsLinux).Err(avfs.ErrFileClosing, avfs.OsLinux).
-			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
 	})
 
 	t.Run("FileReaddirnamesNonExisting", func(t *testing.T) {
