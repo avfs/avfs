@@ -14,7 +14,7 @@
 ##	limitations under the License.
 ##
 
-FROM golang:bullseye AS base
+FROM golang:bookworm AS base
 USER root
 
 WORKDIR /go/bin
