@@ -34,18 +34,6 @@ const (
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
 
-// OSType defines the operating system type.
-type OSType uint16
-
-//go:generate stringer -type OSType -linecomment -output avfs_ostype.go
-
-const (
-	OsUnknown OSType = iota // Unknown
-	OsLinux                 // Linux
-	OsWindows               // Windows
-	OsDarwin                // Darwin
-)
-
 // OpenMode defines constants used by OpenFile and CheckPermission functions.
 type OpenMode uint16
 
@@ -458,12 +446,6 @@ type Cloner interface {
 // Namer is the interface that wraps the Name method.
 type Namer interface {
 	Name() string
-}
-
-// OSTyper is the interface that wraps the OSType method.
-type OSTyper interface {
-	// OSType returns the operating system type of the file system.
-	OSType() OSType
 }
 
 // Typer is the interface that wraps the Type method.

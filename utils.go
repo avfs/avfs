@@ -22,56 +22,18 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	_ "unsafe" // for go:linkname only.
 )
-
-var currentOSType = initOSsType() //nolint:gochecknoglobals // Store the current OS Type.
-
-// CurrentOSType returns the current OSType.
-func CurrentOSType() OSType {
-	return currentOSType
-}
-
-// initOSsType initialize the current OSType.
-func initOSsType() OSType {
-	switch runtime.GOOS {
-	case "linux":
-		return OsLinux
-	case "darwin":
-		return OsDarwin
-	case "windows":
-		return OsWindows
-	default:
-		return OsUnknown
-	}
-}
 
 // Utils regroups common functions used by emulated file systems.
 //
 // Most of these functions are extracted from Go standard library
 // and adapted to be used indifferently on Unix or Windows system.
 type Utils[T VFSBase] struct {
-	features      Features // features defines the list of features available for the file system.
-	osType        OSType   // OSType defines the operating system type.
-	pathSeparator uint8    // pathSeparator is the OS-specific path separator.
-}
-
-// Features returns the set of features provided by the file system or identity manager.
-func (ut *Utils[_]) Features() Features {
-	return ut.features
-}
-
-// HasFeature returns true if the file system or identity manager provides a given features.
-func (ut *Utils[_]) HasFeature(feature Features) bool {
-	return ut.features&feature == feature
-}
-
-// SetFeatures sets the features of the file system or identity manager.
-func (ut *Utils[_]) SetFeatures(feature Features) {
-	ut.features = feature
+	FeaturesFn // FeaturesFn provides features functions to a file system or an identity manager.
+	OSTypeFn   // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
 // Abs returns an absolute representation of path.
@@ -527,11 +489,6 @@ func (*Utils[_]) OpenMode(flag int) OpenMode {
 	return om
 }
 
-// OSType returns the operating system type of the file system.
-func (ut *Utils[_]) OSType() OSType {
-	return ut.osType
-}
-
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
 // returning prefix as the part before "*" and suffix as the part after "*".
 func (ut *Utils[_]) prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
@@ -620,25 +577,6 @@ func (*Utils[T]) ReadFile(vfs T, name string) ([]byte, error) {
 			return data, err
 		}
 	}
-}
-
-// SetOSType sets the osType.
-func (ut *Utils[_]) SetOSType(osType OSType) {
-	if osType == OsUnknown {
-		osType = CurrentOSType()
-	}
-
-	if buildFeatSetOSType == 0 && osType != CurrentOSType() {
-		panic("Can't set OS type, use build tag 'avfs_setostype' to set OS type")
-	}
-
-	sep := uint8('/')
-	if osType == OsWindows {
-		sep = '\\'
-	}
-
-	ut.pathSeparator = sep
-	ut.osType = osType
 }
 
 // SplitAbs splits an absolute path immediately preceding the final Separator,

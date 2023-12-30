@@ -45,8 +45,8 @@ func New(baseFS avfs.VFS, basePath string) *BasePathFS {
 		basePath: absPath,
 	}
 
-	vfs.SetFeatures(baseFS.Features() &^ avfs.FeatSymlink)
-	vfs.SetOSType(baseFS.OSType())
+	_ = vfs.SetFeatures(baseFS.Features() &^ avfs.FeatSymlink)
+	_ = vfs.SetOSType(baseFS.OSType())
 
 	if baseFS.HasFeature(avfs.FeatSystemDirs) {
 		err = vfs.baseFS.CreateSystemDirs(vfs.basePath)

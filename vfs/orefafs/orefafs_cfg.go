@@ -53,8 +53,8 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		fileMode: 0,
 	}
 
-	vfs.SetFeatures(features)
-	vfs.SetOSType(opts.OSType)
+	_ = vfs.SetFeatures(features)
+	_ = vfs.SetOSType(opts.OSType)
 	vfs.err.SetOSType(vfs.OSType())
 
 	volumeName := ""

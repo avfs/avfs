@@ -45,8 +45,8 @@ func NewWithOptions(opts *Options) *OsFS {
 		idm: opts.Idm,
 	}
 
-	vfs.SetFeatures(features)
-	vfs.SetOSType(avfs.CurrentOSType())
+	_ = vfs.SetFeatures(features)
+	_ = vfs.SetOSType(avfs.CurrentOSType())
 	vfs.setErrors()
 
 	return vfs

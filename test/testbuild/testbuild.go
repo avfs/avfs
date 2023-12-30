@@ -86,7 +86,7 @@ func main() {
 	_ = vfs.Remove(tmpDir)
 	_ = vfs.RemoveAll(tmpDir)
 	_ = vfs.Rename(tmpDir, tmpDir)
-	vfs.SetOSType(avfs.OsLinux)
+	_ = vfs.SetOSType(avfs.OsLinux)
 	_, _ = vfs.Split(tmpDir)
 	_, _ = vfs.SplitAbs(tmpDir)
 	info, _ := vfs.Stat(tmpFile)
