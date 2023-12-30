@@ -30,11 +30,6 @@ import (
 
 var currentOSType = initOSsType() //nolint:gochecknoglobals // Store the current OS Type.
 
-// BuildFeatures returns the features available depending on build tags.
-func BuildFeatures() Features {
-	return buildFeatSetOSType
-}
-
 // CurrentOSType returns the current OSType.
 func CurrentOSType() OSType {
 	return currentOSType

@@ -34,40 +34,6 @@ const (
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
 
-// Features defines the set of features available on a file system.
-type Features uint64
-
-//go:generate stringer -type Features -trimprefix Feat -bitmask -output avfs_features.go
-
-const (
-	// FeatHardlink indicates that the file system supports hard links (link(), readlink() functions).
-	FeatHardlink Features = 1 << iota
-
-	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
-	FeatIdentityMgr
-
-	// FeatSetOSType is set if the OS of the emulated file system can be changed (see MemFS).
-	FeatSetOSType
-
-	// FeatReadOnly is set for read only file systems (see RoFs).
-	FeatReadOnly
-
-	// FeatReadOnlyIdm is set when identity manager is read only (see OsIdm).
-	FeatReadOnlyIdm
-
-	// FeatRealFS indicates that the file system is a real one, not emulated (see OsFS).
-	FeatRealFS
-
-	// FeatSubFS allow to create a new file system from the subtree rooted at an arbitrary directory.
-	FeatSubFS
-
-	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).
-	FeatSymlink
-
-	// FeatSystemDirs is set when system directories  (/home, /root and /tmp for linux).
-	FeatSystemDirs
-)
-
 // OSType defines the operating system type.
 type OSType uint16
 
@@ -487,15 +453,6 @@ type ChRooter interface {
 type Cloner interface {
 	// Clone returns a shallow copy of the current file system (see MemFs).
 	Clone() VFS
-}
-
-// Featurer is the interface that wraps the Features and HasFeature methods.
-type Featurer interface {
-	// Features returns the set of features provided by the file system or identity manager.
-	Features() Features
-
-	// HasFeature returns true if the file system or identity manager provides a given feature.
-	HasFeature(feature Features) bool
 }
 
 // Namer is the interface that wraps the Name method.
