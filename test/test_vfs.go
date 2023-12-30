@@ -2452,7 +2452,7 @@ func (ts *Suite) TestUMask(t *testing.T, _ string) {
 	vfs := ts.vfsTest
 
 	saveUMask := vfs.UMask()
-	defer vfs.SetUMask(saveUMask)
+	defer func() { _ = vfs.SetUMask(saveUMask) }()
 
 	defaultUMask := linuxUMask
 	if vfs.OSType() == avfs.OsWindows {
@@ -2466,14 +2466,14 @@ func (ts *Suite) TestUMask(t *testing.T, _ string) {
 		t.Errorf("UMask : want OS umask %o, got %o", wantedUMask, umask)
 	}
 
-	vfs.SetUMask(testUMask)
+	_ = vfs.SetUMask(testUMask)
 
 	umask = vfs.UMask()
 	if umask != testUMask {
 		t.Errorf("UMask : want test umask %o, got %o", testUMask, umask)
 	}
 
-	vfs.SetUMask(defaultUMask)
+	_ = vfs.SetUMask(defaultUMask)
 
 	umask = vfs.UMask()
 	if umask != defaultUMask {

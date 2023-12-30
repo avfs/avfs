@@ -25,7 +25,6 @@ import (
 	"io/fs"
 	"os"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -751,11 +750,6 @@ func (vfs *OrefaFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return fs1.id == fs2.id
 }
 
-// SetUMask sets the file mode creation mask.
-func (vfs *OrefaFS) SetUMask(mask fs.FileMode) {
-	atomic.StoreUint32((*uint32)(&vfs.umask), uint32(mask))
-}
-
 // SetUser sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OrefaFS) SetUser(name string) (avfs.UserReader, error) {
@@ -878,13 +872,6 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	child.mu.Unlock()
 
 	return nil
-}
-
-// UMask returns the file mode creation mask.
-func (vfs *OrefaFS) UMask() fs.FileMode {
-	u := atomic.LoadUint32((*uint32)(&vfs.umask))
-
-	return fs.FileMode(u)
 }
 
 // User returns the current user.

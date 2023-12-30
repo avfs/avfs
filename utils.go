@@ -33,6 +33,7 @@ import (
 // and adapted to be used indifferently on Unix or Windows system.
 type Utils[T VFSBase] struct {
 	FeaturesFn // FeaturesFn provides features functions to a file system or an identity manager.
+	UMaskFn    // UMaskFn provides UMask functions to file systems.
 	OSTypeFn   // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
@@ -632,7 +633,7 @@ func (ut *Utils[_]) TempDir(userName string) string {
 
 	dir := ut.Join(DefaultVolume, `\Users\`, userName, `\AppData\Local\Temp`)
 
-	return ShortPathName(dir)
+	return dir
 }
 
 //go:linkname volumeNameLen path/filepath.volumeNameLen

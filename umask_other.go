@@ -1,5 +1,5 @@
 //
-//  Copyright 2021 The AVFS authors
+//  Copyright 2023 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,47 +14,24 @@
 //  limitations under the License.
 //
 
-//go:build windows
+//go:build !linux && !windows
 
 package avfs
 
 import (
 	"io/fs"
 	"sync/atomic"
-	"syscall"
 )
 
-// ShortPathName Retrieves the short path form of the specified path (Windows only).
-func ShortPathName(path string) string {
-	p, err := syscall.UTF16FromString(path)
-	if err != nil {
-		return path
-	}
-
-	b := p // GetShortPathName says we can reuse buffer
-	n := uint32(len(b))
-
-	for {
-		n, err = syscall.GetShortPathName(&p[0], &b[0], n)
-		if err != nil {
-			return path
-		}
-
-		if n <= uint32(len(b)) {
-			return syscall.UTF16ToString(b[:n])
-		}
-
-		b = make([]uint16, n)
-	}
-}
-
 // umask is the file mode creation mask.
-var umask fs.FileMode = 0o111 //nolint:gochecknoglobals // Used by UMask and SetUMask.
+var umask fs.FileMode = 0o022 //nolint:gochecknoglobals // Used by UMask and SetUMask.
 
 // SetUMask sets the file mode creation mask.
-func SetUMask(mask fs.FileMode) {
+func SetUMask(mask fs.FileMode) error {
 	m := uint32(mask & fs.ModePerm)
 	atomic.StoreUint32((*uint32)(&umask), m)
+
+	return nil
 }
 
 // UMask returns the file mode creation mask.

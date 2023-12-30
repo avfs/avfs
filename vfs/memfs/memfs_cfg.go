@@ -61,12 +61,12 @@ func NewWithOptions(opts *Options) *MemFS {
 	vfs := &MemFS{
 		memAttrs: ma,
 		curDir:   "/",
-		umask:    avfs.UMask(),
 		user:     user,
 	}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
+	_ = vfs.SetUMask(avfs.UMask())
 	vfs.err.SetOSType(vfs.OSType())
 	vfs.rootNode = vfs.createRootNode()
 
@@ -85,11 +85,11 @@ func NewWithOptions(opts *Options) *MemFS {
 	if vfs.HasFeature(avfs.FeatSystemDirs) {
 		// Save the current user and umask.
 		u := vfs.user
-		um := vfs.umask
+		um := vfs.UMask()
 
 		// Create system directories as administrator user without umask.
 		vfs.user = ma.idm.AdminUser()
-		vfs.umask = 0
+		_ = vfs.SetUMask(0)
 
 		err := vfs.CreateSystemDirs(volumeName)
 		if err != nil {
@@ -97,7 +97,7 @@ func NewWithOptions(opts *Options) *MemFS {
 		}
 
 		// Restore the previous user and umask.
-		vfs.umask = um
+		_ = vfs.SetUMask(um)
 		vfs.user = u
 		vfs.curDir = vfs.Utils.HomeDirUser(u)
 	}

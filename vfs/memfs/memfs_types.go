@@ -42,7 +42,6 @@ type MemFS struct {
 	err                avfs.Errors     // err regroups errors depending on the OS emulated.
 	volumes            volumes         // volumes contains the volume names (for Windows only).
 	curDir             string          // curDir is the current directory.
-	umask              fs.FileMode     // umask is the user file creation mode mask.
 	avfs.Utils[*MemFS]                 // utils regroups common functions used by emulated file systems.
 }
 

@@ -396,8 +396,8 @@ func (vfs *MountFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 }
 
 // SetUMask sets the file mode creation mask.
-func (vfs *MountFS) SetUMask(mask fs.FileMode) {
-	vfs.rootFS.SetUMask(mask)
+func (vfs *MountFS) SetUMask(mask fs.FileMode) error {
+	return vfs.rootFS.SetUMask(mask)
 }
 
 // SetUser sets and returns the current user.

@@ -1,5 +1,5 @@
 //
-//  Copyright 2021 The AVFS authors
+//  Copyright 2023 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,28 +14,29 @@
 //  limitations under the License.
 //
 
-//go:build !avfs_race
+//go:build windows
 
-package avfs_test
+package avfs
 
 import (
-	"testing"
-
-	"github.com/avfs/avfs/test"
-	"github.com/avfs/avfs/vfs/memfs"
-	"github.com/avfs/avfs/vfs/orefafs"
+	"io/fs"
+	"sync/atomic"
 )
 
-func TestUtilsMemFS(t *testing.T) {
-	vfs := memfs.New()
+// umask is the file mode creation mask.
+var umask fs.FileMode = 0o111 //nolint:gochecknoglobals // Used by UMask and SetUMask.
 
-	ts := test.NewSuiteFS(t, vfs, vfs)
-	ts.TestVFSAll(t)
+// SetUMask sets the file mode creation mask.
+func SetUMask(mask fs.FileMode) error {
+	m := uint32(mask & fs.ModePerm)
+	atomic.StoreUint32((*uint32)(&umask), m)
+
+	return nil
 }
 
-func TestUtilsOrefaFS(t *testing.T) {
-	vfs := orefafs.New()
+// UMask returns the file mode creation mask.
+func UMask() fs.FileMode {
+	um := atomic.LoadUint32((*uint32)(&umask))
 
-	ts := test.NewSuiteFS(t, vfs, vfs)
-	ts.TestVFSAll(t)
+	return fs.FileMode(um)
 }

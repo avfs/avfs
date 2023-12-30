@@ -90,7 +90,7 @@ func main() {
 	_, _ = vfs.Split(tmpDir)
 	_, _ = vfs.SplitAbs(tmpDir)
 	info, _ := vfs.Stat(tmpFile)
-	vfs.SetUMask(0)
+	_ = vfs.SetUMask(0)
 	_, _ = vfs.SetUser("")
 	_, _ = vfs.Sub("")
 	_ = vfs.SystemDirs(tmpDir)

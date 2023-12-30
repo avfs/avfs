@@ -48,13 +48,13 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		nodes:    make(nodes),
 		user:     user,
 		curDir:   "/",
-		umask:    avfs.UMask(),
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
 	}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
+	_ = vfs.SetUMask(avfs.UMask())
 	vfs.err.SetOSType(vfs.OSType())
 
 	volumeName := ""
@@ -70,10 +70,10 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 	if vfs.HasFeature(avfs.FeatSystemDirs) {
 		// Save the current umask.
-		um := vfs.umask
+		um := vfs.UMask()
 
 		// Create system directories without umask.
-		vfs.umask = 0
+		_ = vfs.SetUMask(0)
 
 		err := vfs.CreateSystemDirs(volumeName)
 		if err != nil {
@@ -81,7 +81,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		}
 
 		// Restore the previous umask.
-		vfs.umask = um
+		_ = vfs.SetUMask(um)
 	}
 
 	return vfs

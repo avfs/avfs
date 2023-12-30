@@ -403,8 +403,8 @@ func (vfs *OsFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 }
 
 // SetUMask sets the file mode creation mask.
-func (vfs *OsFS) SetUMask(mask fs.FileMode) {
-	avfs.SetUMask(mask)
+func (vfs *OsFS) SetUMask(mask fs.FileMode) error {
+	return avfs.SetUMask(mask)
 }
 
 // SetUser sets and returns the current user.

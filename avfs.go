@@ -80,6 +80,7 @@ type VFSBase interface {
 	SystemDirMgr
 	OSTyper
 	Typer
+	UMasker
 	UserSetter
 
 	// Abs returns an absolute representation of path.
@@ -358,9 +359,6 @@ type VFSBase interface {
 	// It returns false in other cases.
 	SameFile(fi1, fi2 fs.FileInfo) bool
 
-	// SetUMask sets the file mode creation mask.
-	SetUMask(mask fs.FileMode)
-
 	// Stat returns a FileInfo describing the named file.
 	// If there is an error, it will be of type *PathError.
 	Stat(name string) (fs.FileInfo, error)
@@ -406,9 +404,6 @@ type VFSBase interface {
 	// If the file is a symbolic link, it changes the size of the link's target.
 	// If there is an error, it will be of type *PathError.
 	Truncate(name string, size int64) error
-
-	// UMask returns the file mode creation mask.
-	UMask() fs.FileMode
 
 	// WalkDir walks the file tree rooted at root, calling fn for each file or
 	// directory in the tree, including root.

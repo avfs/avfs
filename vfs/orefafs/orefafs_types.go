@@ -32,7 +32,6 @@ type OrefaFS struct {
 	name                 string          // name is the name of the file system.
 	lastId               uint64          // lastId is the last unique id used to identify files uniquely.
 	mu                   sync.RWMutex    // mu is the RWMutex used to access nodes.
-	umask                fs.FileMode     // umask is the user file creation mode mask.
 	dirMode              fs.FileMode     // dirMode is the default fs.FileMode for a directory.
 	fileMode             fs.FileMode     // fileMode is de default fs.FileMode for a file.
 	avfs.Utils[*OrefaFS]                 // utils regroups common functions used by emulated file systems.

@@ -1,5 +1,5 @@
 //
-//  Copyright 2022 The AVFS authors
+//  Copyright 2023 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 //  limitations under the License.
 //
 
-//go:build !linux && !windows
-
 package avfs
 
 import (
@@ -23,23 +21,30 @@ import (
 	"sync/atomic"
 )
 
-// ShortPathName Retrieves the short path form of the specified path (Windows only).
-func ShortPathName(path string) string {
-	return path
+// UMasker is the interface that wraps umask related methods.
+type UMasker interface {
+	// SetUMask sets the file mode creation mask.
+	SetUMask(mask fs.FileMode) error
+
+	// UMask returns the file mode creation mask.
+	UMask() fs.FileMode
 }
 
-// umask is the file mode creation mask.
-var umask fs.FileMode = 0o022 //nolint:gochecknoglobals // Used by UMask and SetUMask.
+// UMaskFn provides UMask functions to file systems.
+type UMaskFn struct {
+	umask fs.FileMode // umask is the user file creation mode mask.
+}
 
 // SetUMask sets the file mode creation mask.
-func SetUMask(mask fs.FileMode) {
-	m := uint32(mask & fs.ModePerm)
-	atomic.StoreUint32((*uint32)(&umask), m)
+func (umf *UMaskFn) SetUMask(mask fs.FileMode) error {
+	atomic.StoreUint32((*uint32)(&umf.umask), uint32(mask))
+
+	return nil
 }
 
 // UMask returns the file mode creation mask.
-func UMask() fs.FileMode {
-	um := atomic.LoadUint32((*uint32)(&umask))
+func (umf *UMaskFn) UMask() fs.FileMode {
+	m := atomic.LoadUint32((*uint32)(&umf.umask))
 
-	return fs.FileMode(um)
+	return fs.FileMode(m)
 }
