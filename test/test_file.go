@@ -87,15 +87,15 @@ func (ts *Suite) TestFileChdir(t *testing.T, testDir string) {
 
 		err := f.Chdir()
 		AssertPathError(t, err).Op("chdir").Path(fileName).
-			Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinDirNameInvalid, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrNotADirectory).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinDirNameInvalid).Test()
 	})
 
 	t.Run("FileChdirClosed", func(t *testing.T) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Chdir()
-		AssertPathError(t, err).Op("chdir").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("chdir").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 
 	t.Run("FileChdirNonExisting", func(t *testing.T) {
@@ -116,7 +116,7 @@ func (ts *Suite) TestFileChmod(t *testing.T, testDir string) {
 		defer f.Close()
 
 		err := f.Chmod(0)
-		AssertPathError(t, err).Op("chmod").Path(fileName).ErrPermDenied()
+		AssertPathError(t, err).Op("chmod").Path(fileName).ErrPermDenied().Test()
 
 		return
 	}
@@ -125,7 +125,7 @@ func (ts *Suite) TestFileChmod(t *testing.T, testDir string) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Chmod(avfs.DefaultFilePerm)
-		AssertPathError(t, err).Op("chmod").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("chmod").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 
 	t.Run("FileChmodNonExisting", func(t *testing.T) {
@@ -146,13 +146,13 @@ func (ts *Suite) TestFileChown(t *testing.T, testDir string) {
 		defer f.Close()
 
 		err := f.Chown(0, 0)
-		AssertPathError(t, err).Op("chown").Path(fileName).ErrPermDenied()
+		AssertPathError(t, err).Op("chown").Path(fileName).ErrPermDenied().Test()
 
 		return
 	}
 
 	t.Run("FileChown", func(t *testing.T) {
-		f, fileName := ts.openedEmptyFile(t, testDir)
+		f, _ := ts.openedEmptyFile(t, testDir)
 
 		defer f.Close()
 
@@ -161,19 +161,16 @@ func (ts *Suite) TestFileChown(t *testing.T, testDir string) {
 
 		err := f.Chown(uid, gid)
 
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			AssertPathError(t, err).Op("chown").Path(f.Name()).Err(avfs.ErrWinNotSupported, avfs.OsWindows)
-		default:
-			RequireNoError(t, err, "Chown %s", fileName)
-		}
+		AssertPathError(t, err).Op("chown").
+			OSType(avfs.OsLinux).NoError().Test().
+			OSType(avfs.OsWindows).Path(f.Name()).Err(avfs.ErrWinNotSupported).Test()
 	})
 
 	t.Run("FileChownClosed", func(t *testing.T) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Chown(0, 0)
-		AssertPathError(t, err).Op("chown").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("chown").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 
 	t.Run("FileChownNonExisting", func(t *testing.T) {
@@ -208,7 +205,7 @@ func (ts *Suite) TestFileCloseRead(t *testing.T, testDir string) {
 		}
 
 		err = f.Close()
-		AssertPathError(t, err).Op("close").Path(path).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("close").Path(path).Err(fs.ErrClosed).Test()
 	})
 
 	t.Run("FileCloseNonExisting", func(t *testing.T) {
@@ -254,7 +251,7 @@ func (ts *Suite) TestFileCloseWrite(t *testing.T, testDir string) {
 		}
 
 		err = f.Close()
-		AssertPathError(t, err).Op("close").Path(path).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("close").Path(path).Err(fs.ErrClosed).Test()
 	})
 }
 
@@ -382,8 +379,8 @@ func (ts *Suite) TestFileRead(t *testing.T, testDir string) {
 
 		_, err = f.Read(b)
 		AssertPathError(t, err).Op("read").Path(testDir).
-			Err(avfs.ErrIsADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinIncorrectFunc, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrIsADirectory).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinIncorrectFunc).Test()
 	})
 
 	t.Run("FileReadClosed", func(t *testing.T) {
@@ -392,7 +389,7 @@ func (ts *Suite) TestFileRead(t *testing.T, testDir string) {
 		b := make([]byte, 1)
 
 		_, err := f.Read(b)
-		AssertPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 }
 
@@ -454,7 +451,7 @@ func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 		}
 
 		n, err = f.ReadAt(b, -1)
-		AssertPathError(t, err).Op("readat").Path(path).Err(avfs.ErrNegativeOffset)
+		AssertPathError(t, err).Op("readat").Path(path).Err(avfs.ErrNegativeOffset).Test()
 
 		if n != 0 {
 			t.Errorf("ReadAt : want bytes read to be 0, got %d", n)
@@ -471,8 +468,8 @@ func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 
 		_, err = f.ReadAt(b, 0)
 		AssertPathError(t, err).Op("read").Path(testDir).
-			Err(avfs.ErrIsADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinIncorrectFunc, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrIsADirectory).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinIncorrectFunc).Test()
 	})
 
 	t.Run("FileReadAtClosed", func(t *testing.T) {
@@ -481,7 +478,7 @@ func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 		b := make([]byte, 1)
 
 		_, err := f.ReadAt(b, 0)
-		AssertPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 }
 
@@ -546,8 +543,8 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 
 		_, err := f.ReadDir(-1)
 		AssertPathError(t, err).Path(fileName).
-			Op("readdirent", avfs.OsLinux).Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrNotADirectory).Test().
+			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinPathNotFound).Test()
 	})
 
 	t.Run("FileReadDirClosed", func(t *testing.T) {
@@ -555,8 +552,8 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 
 		_, err := f.ReadDir(-1)
 		AssertPathError(t, err).Path(fileName).
-			Op("readdirent", avfs.OsLinux).Err(avfs.ErrFileClosing, avfs.OsLinux).
-			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrFileClosing).Test().
+			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinInvalidHandle).Test()
 	})
 
 	t.Run("FileReadDirNonExisting", func(t *testing.T) {
@@ -622,8 +619,8 @@ func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 
 		_, err = f.Readdirnames(-1)
 		AssertPathError(t, err).Path(f.Name()).
-			Op("readdirent", avfs.OsLinux).Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrNotADirectory).Test().
+			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinPathNotFound).Test()
 	})
 
 	t.Run("FileReaddirnamesClosed", func(t *testing.T) {
@@ -631,8 +628,8 @@ func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 
 		_, err := f.Readdirnames(-1)
 		AssertPathError(t, err).Path(fileName).
-			Op("readdirent", avfs.OsLinux).Err(avfs.ErrFileClosing, avfs.OsLinux).
-			Op("readdir", avfs.OsWindows).Err(avfs.ErrWinInvalidHandle, avfs.OsWindows)
+			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrFileClosing).Test().
+			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinInvalidHandle).Test()
 	})
 
 	t.Run("FileReaddirnamesNonExisting", func(t *testing.T) {
@@ -692,8 +689,8 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 	t.Run("FileSeekInvalidStart", func(t *testing.T) {
 		pos, err = f.Seek(-1, io.SeekStart)
 		AssertPathError(t, err).Op("seek").Path(f.Name()).
-			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinNegativeSeek, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinNegativeSeek).Test()
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -720,8 +717,8 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 
 		pos, err = f.Seek(-lenData*2, io.SeekEnd)
 		AssertPathError(t, err).Op("seek").Path(f.Name()).
-			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinNegativeSeek, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinNegativeSeek).Test()
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -738,8 +735,8 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 
 		pos, err = f.Seek(-lenData, io.SeekCurrent)
 		AssertPathError(t, err).Op("seek").Path(f.Name()).
-			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinNegativeSeek, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinNegativeSeek).Test()
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -756,13 +753,9 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 	t.Run("FileSeekInvalidWhence", func(t *testing.T) {
 		pos, err = f.Seek(0, 10)
 
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			RequireNoError(t, err, "Seek %s", path)
-		default:
-			AssertPathError(t, err).Op("seek").Path(f.Name()).
-				Err(avfs.ErrInvalidArgument, avfs.OsLinux)
-		}
+		AssertPathError(t, err).Op("seek").Path(f.Name()).
+			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
+			OSType(avfs.OsWindows).NoError().Test()
 
 		if pos != 0 {
 			t.Errorf("Seek : want pos to be %d, got %d", 0, pos)
@@ -783,7 +776,7 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		_, err = f.Seek(0, io.SeekStart)
-		AssertPathError(t, err).Op("seek").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("seek").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 
 	t.Run("FileSeekNonExisting", func(t *testing.T) {
@@ -906,8 +899,8 @@ func (ts *Suite) TestFileStat(t *testing.T, testDir string) {
 
 		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 		AssertPathError(t, err).Op("open").Path(path).
-			Err(avfs.ErrNotADirectory, avfs.OsLinux).
-			Err(avfs.ErrWinPathNotFound, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrNotADirectory).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
 
 		_, err = f.Stat()
 		AssertInvalid(t, err, "Stat")
@@ -918,10 +911,8 @@ func (ts *Suite) TestFileStat(t *testing.T, testDir string) {
 
 		_, err := f.Stat()
 		AssertPathError(t, err).Path(fileName).
-			Err(avfs.ErrFileClosing, avfs.OsLinux).
-			Err(avfs.ErrWinInvalidHandle, avfs.OsWindows).
-			Op("stat", avfs.OsLinux).
-			Op("GetFileType", avfs.OsWindows)
+			OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrFileClosing).Test().
+			OSType(avfs.OsWindows).Op("GetFileType").Err(avfs.ErrWinInvalidHandle).Test()
 	})
 
 	t.Run("FileStatNonExisting", func(t *testing.T) {
@@ -940,7 +931,7 @@ func (ts *Suite) TestFileSync(t *testing.T, testDir string) {
 		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Sync()
-		AssertPathError(t, err).Op("sync").Path(avfs.NotImplemented).ErrPermDenied()
+		AssertPathError(t, err).Op("sync").Path(avfs.NotImplemented).ErrPermDenied().Test()
 
 		return
 	}
@@ -949,7 +940,7 @@ func (ts *Suite) TestFileSync(t *testing.T, testDir string) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Sync()
-		AssertPathError(t, err).Op("sync").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("sync").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 
 	t.Run("FileSyncNonExisting", func(t *testing.T) {
@@ -970,7 +961,7 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 		defer f.Close()
 
 		err := f.Truncate(0)
-		AssertPathError(t, err).Op("truncate").Path(fileName).ErrPermDenied()
+		AssertPathError(t, err).Op("truncate").Path(fileName).ErrPermDenied().Test()
 
 		return
 	}
@@ -1009,8 +1000,8 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 
 		err = f.Truncate(0)
 		AssertPathError(t, err).Op("truncate").Path(testDir).
-			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
 	})
 
 	t.Run("FileTruncateSizeNegative", func(t *testing.T) {
@@ -1023,8 +1014,8 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 
 		err = f.Truncate(-1)
 		AssertPathError(t, err).Op("truncate").Path(path).
-			Err(avfs.ErrInvalidArgument, avfs.OsLinux).
-			Err(avfs.ErrWinNegativeSeek, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinNegativeSeek).Test()
 	})
 
 	t.Run("FileTruncateSizeBiggerFileSize", func(t *testing.T) {
@@ -1068,7 +1059,7 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		err := f.Truncate(0)
-		AssertPathError(t, err).Op("truncate").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("truncate").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 }
 
@@ -1082,7 +1073,7 @@ func (ts *Suite) TestFileWrite(t *testing.T, testDir string) {
 		defer f.Close()
 
 		_, err := f.Write([]byte{})
-		AssertPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
+		AssertPathError(t, err).Op("write").Path(fileName).ErrPermDenied().Test()
 
 		return
 	}
@@ -1136,8 +1127,8 @@ func (ts *Suite) TestFileWrite(t *testing.T, testDir string) {
 		b := make([]byte, len(data)*2)
 		n, err := f.Write(b)
 		AssertPathError(t, err).Op("write").Path(path).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrBadFileDesc).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
 
 		if n != 0 {
 			t.Errorf("Write : want bytes written to be 0, got %d", n)
@@ -1161,8 +1152,8 @@ func (ts *Suite) TestFileWrite(t *testing.T, testDir string) {
 
 		_, err = f.Write(b)
 		AssertPathError(t, err).Op("write").Path(testDir).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrBadFileDesc).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
 	})
 
 	t.Run("FileWriteClosed", func(t *testing.T) {
@@ -1170,7 +1161,7 @@ func (ts *Suite) TestFileWrite(t *testing.T, testDir string) {
 
 		f, fileName := ts.closedFile(t, testDir)
 		_, err := f.Write(b)
-		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 }
 
@@ -1182,7 +1173,7 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 		f, fileName := ts.openedEmptyFile(t, testDir)
 
 		_, err := f.WriteAt([]byte{}, 0)
-		AssertPathError(t, err).Op("write").Path(fileName).ErrPermDenied()
+		AssertPathError(t, err).Op("write").Path(fileName).ErrPermDenied().Test()
 
 		return
 	}
@@ -1235,7 +1226,7 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 		defer f.Close()
 
 		n, err := f.WriteAt(data, -1)
-		AssertPathError(t, err).Op("writeat").Path(path).Err(avfs.ErrNegativeOffset)
+		AssertPathError(t, err).Op("writeat").Path(path).Err(avfs.ErrNegativeOffset).Test()
 
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes written to be 0, got %d", n)
@@ -1283,8 +1274,8 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 
 		n, err := f.WriteAt(b, 0)
 		AssertPathError(t, err).Op("write").Path(path).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrBadFileDesc).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
 
 		if n != 0 {
 			t.Errorf("WriteAt : want bytes read to be 0, got %d", n)
@@ -1310,8 +1301,8 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 
 		_, err = f.WriteAt(b, 0)
 		AssertPathError(t, err).Op("write").Path(testDir).
-			Err(avfs.ErrBadFileDesc, avfs.OsLinux).
-			Err(avfs.ErrWinAccessDenied, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrBadFileDesc).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
 	})
 
 	t.Run("FileWriteAtClosed", func(t *testing.T) {
@@ -1320,7 +1311,7 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 		f, fileName := ts.closedFile(t, testDir)
 
 		_, err := f.WriteAt(b, 0)
-		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed)
+		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed).Test()
 	})
 }
 
@@ -1332,7 +1323,7 @@ func (ts *Suite) TestFileWriteString(t *testing.T, testDir string) {
 		f := ts.openedNonExistingFile(t, testDir)
 
 		_, err := f.WriteString("")
-		AssertPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied()
+		AssertPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied().Test()
 
 		return
 	}

@@ -590,13 +590,9 @@ func (ts *Suite) TestExists(t *testing.T, testDir string) {
 
 		ok, err := avfs.Exists(vfs, invalidPath)
 
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			RequireNoError(t, err, "Stat %s", invalidPath)
-		default:
-			AssertPathError(t, err).OpStat().Path(invalidPath).
-				Err(avfs.ErrNotADirectory, avfs.OsLinux)
-		}
+		AssertPathError(t, err).
+			OSType(avfs.OsLinux).OpStat().Path(invalidPath).Err(avfs.ErrNotADirectory).Test().
+			OSType(avfs.OsWindows).NoError().Test()
 
 		if ok {
 			t.Error("Exists : want Exists to be false, got true")
@@ -810,8 +806,8 @@ func (ts *Suite) TestIsDir(t *testing.T, testDir string) {
 
 		ok, err := avfs.IsDir(vfs, nonExistingFile)
 		AssertPathError(t, err).OpStat().Path(nonExistingFile).
-			Err(avfs.ErrNoSuchFileOrDir, avfs.OsLinux).
-			Err(avfs.ErrWinFileNotFound, avfs.OsWindows)
+			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
 
 		if ok {
 			t.Error("IsDirNonExisting : want DirExists to be false, got true")
