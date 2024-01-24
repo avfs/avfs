@@ -74,10 +74,11 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 		// Create system directories without umask.
 		_ = vfs.SetUMask(0)
+		dirs := avfs.SystemDirs(vfs, volumeName)
 
-		err := vfs.CreateSystemDirs(volumeName)
+		err := avfs.MkSystemDirs(vfs, dirs)
 		if err != nil {
-			panic("CreateSystemDirs " + err.Error())
+			panic(err)
 		}
 
 		// Restore the previous umask.
@@ -95,17 +96,4 @@ func (vfs *OrefaFS) Name() string {
 // Type returns the type of the fileSystem or Identity manager.
 func (*OrefaFS) Type() string {
 	return "OrefaFS"
-}
-
-// Configuration functions.
-
-// CreateSystemDirs creates system directories of a file system.
-func (vfs *OrefaFS) CreateSystemDirs(basePath string) error {
-	return vfs.Utils.CreateSystemDirs(vfs, basePath)
-}
-
-// CreateHomeDir creates and returns the home directory of a user.
-// If there is an error, it will be of type *PathError.
-func (vfs *OrefaFS) CreateHomeDir(u avfs.UserReader) (string, error) {
-	return vfs.Utils.CreateHomeDir(vfs, u)
 }

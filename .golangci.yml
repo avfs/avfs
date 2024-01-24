@@ -44,7 +44,7 @@ linters-settings:
     rules:
       - name: cyclomatic
         severity: warning
-        arguments: [18]
+        arguments: [20]
       - name: line-length-limit
         severity: error
         arguments: [140]

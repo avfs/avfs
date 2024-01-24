@@ -404,14 +404,15 @@ func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 	})
 }
 
-// TestCreateSystemDirs tests CreateSystemDirs function.
-func (ts *Suite) TestCreateSystemDirs(t *testing.T, testDir string) {
+// TestMkSystemDirs tests CreateSystemDirs function.
+func (ts *Suite) TestMkSystemDirs(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
+	dirs := avfs.SystemDirs(vfs, testDir)
 
-	err := vfs.CreateSystemDirs(testDir)
-	RequireNoError(t, err, "CreateSystemDirs %s", testDir)
+	err := avfs.MkSystemDirs(vfs, dirs)
+	RequireNoError(t, err, "MkSystemDirs %s", testDir)
 
-	for _, dir := range vfs.SystemDirs(testDir) {
+	for _, dir := range avfs.SystemDirs(vfs, testDir) {
 		info, err := vfs.Stat(dir.Path)
 		if !AssertNoError(t, err, "Stat %s", dir.Path) {
 			continue
@@ -419,7 +420,7 @@ func (ts *Suite) TestCreateSystemDirs(t *testing.T, testDir string) {
 
 		gotMode := info.Mode() & fs.ModePerm
 		if gotMode != dir.Perm {
-			t.Errorf("CreateSystemDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
+			t.Errorf("MkSystemDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
 		}
 	}
 }
@@ -436,7 +437,7 @@ func (ts *Suite) TestCreateHomeDir(t *testing.T, _ string) {
 		u, err := vfs.Idm().LookupUser(ui.Name)
 		RequireNoError(t, err, "Can't find user %s", ui.Name)
 
-		homeDir, err := vfs.CreateHomeDir(u)
+		homeDir, err := avfs.MkHomeDir(vfs, u)
 		if !AssertNoError(t, err, "CreateHomeDir %s", ui.Name) {
 			continue
 		}

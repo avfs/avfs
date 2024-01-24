@@ -77,7 +77,6 @@ type IOFS interface {
 type VFSBase interface {
 	Featurer
 	Namer
-	SystemDirMgr
 	OSTyper
 	Typer
 	UMasker
@@ -517,23 +516,6 @@ type File interface {
 	// It does not change the I/O offset.
 	// If there is an error, it will be of type *PathError.
 	Truncate(size int64) error
-}
-
-// SystemDirMgr is the interface that wraps system directories functions.
-type SystemDirMgr interface {
-	// CreateHomeDir creates and returns the home directory of a user.
-	// If there is an error, it will be of type *PathError.
-	CreateHomeDir(u UserReader) (string, error)
-
-	// CreateSystemDirs creates the system directories of a file system.
-	CreateSystemDirs(basePath string) error
-
-	// HomeDirUser returns the home directory of the user.
-	// If the file system does not have an identity manager, the root directory is returned.
-	HomeDirUser(u UserReader) string
-
-	// SystemDirs returns the system directories of the file system.
-	SystemDirs(basePath string) []DirInfo
 }
 
 // IdentityMgr interface manages identities (users and groups).

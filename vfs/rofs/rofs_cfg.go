@@ -17,8 +17,6 @@
 package rofs
 
 import (
-	"io/fs"
-
 	"github.com/avfs/avfs"
 )
 
@@ -62,32 +60,4 @@ func (vfs *RoFS) OSType() avfs.OSType {
 // Type returns the type of the fileSystem or Identity manager.
 func (*RoFS) Type() string {
 	return "RoFS"
-}
-
-// Configuration functions.
-
-// CreateSystemDirs creates the system directories of a file system.
-func (vfs *RoFS) CreateSystemDirs(basePath string) error {
-	const op = "mkdir"
-
-	return &fs.PathError{Op: op, Path: basePath, Err: vfs.errPermDenied}
-}
-
-// CreateHomeDir creates and returns the home directory of a user.
-// If there is an error, it will be of type *PathError.
-func (vfs *RoFS) CreateHomeDir(u avfs.UserReader) (string, error) {
-	const op = "mkdir"
-
-	return "", &fs.PathError{Op: op, Path: u.Name(), Err: vfs.errPermDenied}
-}
-
-// HomeDirUser returns the home directory of the user.
-// If the file system does not have an identity manager, the root directory is returned.
-func (vfs *RoFS) HomeDirUser(u avfs.UserReader) string {
-	return vfs.baseFS.HomeDirUser(u)
-}
-
-// SystemDirs returns the system directories of the file system.
-func (vfs *RoFS) SystemDirs(basePath string) []avfs.DirInfo {
-	return vfs.baseFS.SystemDirs(basePath)
 }

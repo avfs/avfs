@@ -90,16 +90,17 @@ func NewWithOptions(opts *Options) *MemFS {
 		// Create system directories as administrator user without umask.
 		vfs.user = ma.idm.AdminUser()
 		_ = vfs.SetUMask(0)
+		dirs := avfs.SystemDirs(vfs, volumeName)
 
-		err := vfs.CreateSystemDirs(volumeName)
+		err := avfs.MkSystemDirs(vfs, dirs)
 		if err != nil {
-			panic("CreateSystemDirs " + err.Error())
+			panic(err)
 		}
 
 		// Restore the previous user and umask.
 		_ = vfs.SetUMask(um)
 		vfs.user = u
-		vfs.curDir = vfs.Utils.HomeDirUser(u)
+		vfs.curDir = avfs.HomeDirUser(vfs, u)
 	}
 
 	return vfs
@@ -113,19 +114,6 @@ func (vfs *MemFS) Name() string {
 // Type returns the type of the fileSystem or Identity manager.
 func (*MemFS) Type() string {
 	return "MemFS"
-}
-
-// Configuration functions.
-
-// CreateSystemDirs creates the system directories of a file system.
-func (vfs *MemFS) CreateSystemDirs(basePath string) error {
-	return vfs.Utils.CreateSystemDirs(vfs, basePath)
-}
-
-// CreateHomeDir creates and returns the home directory of a user.
-// If there is an error, it will be of type *PathError.
-func (vfs *MemFS) CreateHomeDir(u avfs.UserReader) (string, error) {
-	return vfs.Utils.CreateHomeDir(vfs, u)
 }
 
 // VolumeAdd adds a new volume to a Windows file system.

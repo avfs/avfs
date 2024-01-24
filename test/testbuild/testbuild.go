@@ -37,7 +37,6 @@ func main() {
 	}
 
 	tmpFile := vfs.Join(tmpDir, "file")
-	u := vfs.User()
 
 	_, _ = vfs.Abs(tmpDir)
 	_ = vfs.Base(tmpDir)
@@ -48,8 +47,6 @@ func main() {
 	_ = vfs.Chtimes(tmpDir, time.Now(), time.Now())
 	_ = vfs.Clean(tmpDir)
 	_, _ = vfs.Create(tmpFile)
-	_, _ = vfs.CreateHomeDir(u)
-	_ = vfs.CreateSystemDirs(tmpDir)
 	_, _ = vfs.CreateTemp(tmpDir, "")
 	_ = vfs.Dir(tmpDir)
 	_, _ = vfs.EvalSymlinks(tmpDir)
@@ -58,8 +55,6 @@ func main() {
 	_, _ = vfs.Getwd()
 	_, _ = vfs.Glob("")
 	_ = vfs.HasFeature(avfs.FeatSymlink)
-	_ = vfs.HomeDir()
-	_ = vfs.HomeDirUser(u)
 	_ = vfs.Idm()
 	_ = vfs.IsAbs(tmpDir)
 	_ = vfs.IsExist(err)
@@ -93,7 +88,6 @@ func main() {
 	_ = vfs.SetUMask(0)
 	_, _ = vfs.SetUser("")
 	_, _ = vfs.Sub("")
-	_ = vfs.SystemDirs(tmpDir)
 	_ = vfs.TempDir()
 	_ = vfs.ToSlash(tmpDir)
 	_ = vfs.ToSysStat(info)

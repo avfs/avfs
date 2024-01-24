@@ -49,7 +49,9 @@ func New(baseFS avfs.VFS, basePath string) *BasePathFS {
 	_ = vfs.SetOSType(baseFS.OSType())
 
 	if baseFS.HasFeature(avfs.FeatSystemDirs) {
-		err = vfs.baseFS.CreateSystemDirs(vfs.basePath)
+		dirs := avfs.SystemDirs(vfs.baseFS, vfs.basePath)
+
+		err = avfs.MkSystemDirs(vfs.baseFS, dirs)
 		if err != nil {
 			panic(err)
 		}
@@ -71,17 +73,4 @@ func (vfs *BasePathFS) OSType() avfs.OSType {
 // Type returns the type of the fileSystem or Identity manager.
 func (*BasePathFS) Type() string {
 	return "BasePathFS"
-}
-
-// Configuration functions.
-
-// CreateSystemDirs creates the system directories of a file system.
-func (vfs *BasePathFS) CreateSystemDirs(basePath string) error {
-	return vfs.Utils.CreateSystemDirs(vfs, basePath)
-}
-
-// CreateHomeDir creates and returns the home directory of a user.
-// If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) CreateHomeDir(u avfs.UserReader) (string, error) {
-	return vfs.Utils.CreateHomeDir(vfs, u)
 }
