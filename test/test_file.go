@@ -345,6 +345,7 @@ func (ts *Suite) TestFileRead(t *testing.T, testDir string) {
 		defer f.Close()
 
 		buf := make([]byte, bufSize)
+
 		for i := 0; ; i += bufSize {
 			n, err1 := f.Read(buf)
 			if err1 != nil {
@@ -408,6 +409,7 @@ func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 		defer f.Close()
 
 		var n int
+
 		rb := make([]byte, bufSize)
 		for i := len(data); i > 0; i -= bufSize {
 			n, err = f.ReadAt(rb, int64(i-bufSize))
@@ -512,6 +514,7 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 		}
 
 		var gotDirs, gotFiles, gotSymlinks int
+
 		for _, dirEntry := range dirEntries {
 			switch {
 			case dirEntry.IsDir():
@@ -875,6 +878,7 @@ func (ts *Suite) TestFileStat(t *testing.T, testDir string) {
 			}
 
 			wantMode := sl.Mode
+
 			if wantName != info.Name() {
 				t.Errorf("Stat %s : want name to be %s, got %s", sl.NewPath, wantName, info.Name())
 			}
@@ -977,6 +981,7 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 		defer f.Close()
 
 		b := make([]byte, len(data))
+
 		for i := len(data) - 1; i >= 0; i-- {
 			err = f.Truncate(int64(i))
 			RequireNoError(t, err, "Truncate %s", path)
@@ -1043,6 +1048,7 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 
 		wantAdded := bytes.Repeat([]byte{0}, len(data))
 		gotAdded := gotContent[len(data):]
+
 		if !bytes.Equal(wantAdded, gotAdded) {
 			t.Errorf("Bytes Added : want %v, got %v", wantAdded, gotAdded)
 		}
@@ -1090,6 +1096,7 @@ func (ts *Suite) TestFileWrite(t *testing.T, testDir string) {
 
 		for i := 0; i < len(data); i += 3 {
 			buf3 := data[i : i+3]
+
 			var n int
 
 			n, err = f.Write(buf3)

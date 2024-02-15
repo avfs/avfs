@@ -154,6 +154,7 @@ func TestPathIterator(t *testing.T) {
 			for pi.Next() {
 				if pi.Part() == c.part {
 					reset := pi.ReplacePart(c.newPart)
+
 					if pi.Path() != c.newPath {
 						t.Errorf("%s : want new path to be %s, got %s", c.path, c.newPath, pi.Path())
 					}

@@ -648,6 +648,7 @@ func (ts *Suite) TestGlob(t *testing.T, testDir string) {
 
 		if len(dirNames) != wantDirs {
 			t.Errorf("Glob %s : want dirs to be %d, got %d", pattern, wantDirs, len(dirNames))
+
 			for _, dirName := range dirNames {
 				t.Log(dirName)
 			}
@@ -661,6 +662,7 @@ func (ts *Suite) TestGlob(t *testing.T, testDir string) {
 
 		if len(dirNames) != 1 {
 			t.Errorf("Glob %s : want dirs to be %d, got %d", pattern, 1, len(dirNames))
+
 			for _, dirName := range dirNames {
 				t.Log(dirName)
 			}
@@ -669,6 +671,7 @@ func (ts *Suite) TestGlob(t *testing.T, testDir string) {
 
 	t.Run("GlobWithoutMetaNonExisting", func(t *testing.T) {
 		pattern := vfs.Join(testDir, "/NonExisting")
+
 		dirNames, err := vfs.Glob(pattern)
 		if dirNames != nil || err != nil {
 			t.Errorf("Glob %s : want error and result to be nil, got %s, %v", pattern, dirNames, err)
@@ -1186,6 +1189,7 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 			}
 
 			maxDepth := 0
+
 			for _, file := range rt.Files() {
 				depth := strings.Count(file.Name, "/") - 1
 				if depth > maxDepth {
@@ -1203,6 +1207,7 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 			}
 
 			maxDepth = 0
+
 			for _, file := range rt.Files() {
 				depth := strings.Count(file.Name, "/") - 1
 				if depth > maxDepth {
@@ -1215,6 +1220,7 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 			}
 
 			maxSize := 0
+
 			for _, file := range rt.Files() {
 				size := file.Size
 				if size > maxSize {
@@ -1228,6 +1234,7 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 
 			nbSymlinks := len(rt.SymLinks())
 			wantSymLinks := rtOpt.NbSymlinks
+
 			if rt.NbFiles == 0 || !vfs.HasFeature(avfs.FeatSymlink) {
 				wantSymLinks = 0
 			}
@@ -1237,6 +1244,7 @@ func (ts *Suite) TestRndTree(t *testing.T, testDir string) {
 			}
 
 			maxDepth = 0
+
 			for _, symlink := range rt.SymLinks() {
 				depth := strings.Count(symlink.NewName, "/") - 1
 				if depth > maxDepth {

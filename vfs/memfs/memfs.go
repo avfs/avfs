@@ -290,6 +290,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 
 	c.mu.Lock()
 	nParent.addChild(pi.Part(), c)
+
 	c.nlink++
 	c.mu.Unlock()
 

@@ -384,7 +384,7 @@ func (*Utils[_]) IsNotExist(err error) bool {
 }
 
 func (ut *Utils[_]) joinPath(dir, name string) string {
-	if len(dir) > 0 && ut.IsPathSeparator(dir[len(dir)-1]) {
+	if dir != "" && ut.IsPathSeparator(dir[len(dir)-1]) {
 		return dir + name
 	}
 

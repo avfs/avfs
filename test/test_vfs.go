@@ -2234,6 +2234,7 @@ func (ts *Suite) TestStat(t *testing.T, testDir string) {
 			}
 
 			wantMode := sl.Mode
+
 			if wantName != info.Name() {
 				t.Errorf("Stat %s : want name to be %s, got %s", sl.NewPath, wantName, info.Name())
 			}
@@ -2435,6 +2436,7 @@ func (ts *Suite) TestTruncate(t *testing.T, testDir string) {
 
 		wantAdded := bytes.Repeat([]byte{0}, len(data))
 		gotAdded := gotContent[len(data):]
+
 		if !bytes.Equal(wantAdded, gotAdded) {
 			t.Errorf("Bytes Added : want %v, got %v", wantAdded, gotAdded)
 		}

@@ -171,12 +171,14 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 
 			_, err = idm.LookupGroup(g.Name())
 			wantGroupErr := avfs.UnknownGroupError(groupName)
+
 			if err != wantGroupErr {
 				t.Errorf("LookupGroup %s : want error to be %v, got %v", groupName, wantGroupErr, err)
 			}
 
 			_, err = idm.LookupGroupId(g.Gid())
 			wantGroupIdErr := avfs.UnknownGroupIdError(g.Gid())
+
 			if err != wantGroupIdErr {
 				t.Errorf("LookupGroupId %s : want error to be %v, got %v", groupName, wantGroupIdErr, err)
 			}
@@ -307,12 +309,14 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 
 			_, err = idm.LookupUser(u.Name())
 			wantUserErr := avfs.UnknownUserError(userName)
+
 			if err != wantUserErr {
 				t.Errorf("LookupUser %s : want error to be %v, got %v", userName, wantUserErr, err)
 			}
 
 			_, err = idm.LookupUserId(u.Uid())
 			wantUserIdErr := avfs.UnknownUserIdError(u.Uid())
+
 			if err != wantUserIdErr {
 				t.Errorf("LookupUserId %s : want error to be %v, got %v", userName, wantUserIdErr, err)
 			}

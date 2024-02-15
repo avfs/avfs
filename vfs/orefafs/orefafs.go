@@ -326,6 +326,7 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	vfs.mu.Unlock()
 
 	nParent.addChild(nFileName, oChild)
+
 	oChild.nlink++
 
 	return nil
