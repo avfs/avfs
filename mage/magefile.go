@@ -194,7 +194,7 @@ func sudo(cmd string, args ...string) error {
 		return sh.RunV(cmd, args...)
 	}
 
-	sudoArgs := append([]string{"-n", "-E", "PATH=$PATH", cmd}, args...)
+	sudoArgs := append([]string{"-n", "-E", "env", "PATH=$PATH", cmd}, args...)
 
 	return sh.RunV(sudoCmd, sudoArgs...)
 }
