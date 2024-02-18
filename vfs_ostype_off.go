@@ -29,7 +29,7 @@ const buildFeatSetOSType = 0
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (ut *Utils[_]) Base(path string) string {
+func (*VFSFn[_]) Base(path string) string {
 	return filepath.Base(path)
 }
 
@@ -56,7 +56,7 @@ func (ut *Utils[_]) Base(path string) string {
 // See also Rob Pike, “Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
-func (ut *Utils[_]) Clean(path string) string {
+func (*VFSFn[_]) Clean(path string) string {
 	return filepath.Clean(path)
 }
 
@@ -66,24 +66,24 @@ func (ut *Utils[_]) Clean(path string) string {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (ut *Utils[_]) Dir(path string) string {
+func (*VFSFn[_]) Dir(path string) string {
 	return filepath.Dir(path)
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (ut *Utils[_]) FromSlash(path string) string {
+func (*VFSFn[_]) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
 // IsAbs reports whether the path is absolute.
-func (ut *Utils[_]) IsAbs(path string) bool {
+func (*VFSFn[_]) IsAbs(path string) bool {
 	return filepath.IsAbs(path)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (ut *Utils[_]) IsPathSeparator(c uint8) bool {
+func (*VFSFn[_]) IsPathSeparator(c uint8) bool {
 	return os.IsPathSeparator(c)
 }
 
@@ -94,7 +94,7 @@ func (ut *Utils[_]) IsPathSeparator(c uint8) bool {
 // an empty string.
 // On Windows, the result will only be a UNC path if the first
 // non-empty element is a UNC path.
-func (ut *Utils[_]) Join(elem ...string) string {
+func (*VFSFn[_]) Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
 
@@ -122,13 +122,8 @@ func (ut *Utils[_]) Join(elem ...string) string {
 //
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
-func (ut *Utils[_]) Match(pattern, name string) (matched bool, err error) {
+func (*VFSFn[_]) Match(pattern, name string) (matched bool, err error) {
 	return filepath.Match(pattern, name)
-}
-
-// PathSeparator return the OS-specific path separator.
-func (ut *Utils[_]) PathSeparator() uint8 {
-	return os.PathSeparator
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -139,7 +134,7 @@ func (ut *Utils[_]) PathSeparator() uint8 {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
+func (*VFSFn[_]) Rel(basepath, targpath string) (string, error) {
 	return filepath.Rel(basepath, targpath)
 }
 
@@ -148,27 +143,13 @@ func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (ut *Utils[_]) Split(path string) (dir, file string) {
+func (*VFSFn[_]) Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (ut *Utils[_]) ToSlash(path string) string {
+func (*VFSFn[_]) ToSlash(path string) string {
 	return filepath.ToSlash(path)
-}
-
-// VolumeName returns leading volume name.
-// Given "C:\foo\bar" it returns "C:" on Windows.
-// Given "\\host\share\foo" it returns "\\host\share".
-// On other platforms it returns "".
-func (ut *Utils[_]) VolumeName(path string) string {
-	return filepath.VolumeName(path)
-}
-
-// VolumeNameLen returns length of the leading volume name on Windows.
-// It returns 0 elsewhere.
-func (ut *Utils[_]) VolumeNameLen(path string) int {
-	return volumeNameLen(path)
 }

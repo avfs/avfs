@@ -1,5 +1,5 @@
 //
-//  Copyright 2020 The AVFS authors
+//  Copyright 2023 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 //  limitations under the License.
 //
 
-// Package avfs defines interfaces, errors types used by all file systems implementations.
 package avfs
 
 import (
@@ -34,6 +33,112 @@ const (
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
 
+// Cloner is the interface that wraps the Clone method.
+type Cloner interface {
+	// Clone returns a shallow copy of the current file system (see MemFs).
+	Clone() VFS
+}
+
+// ChRooter is the interface that wraps the Chroot method.
+type ChRooter interface {
+	// Chroot changes the root to that specified in path.
+	// If the user has not root privileges avfs.errPermDenied is returned.
+	// If there is an error, it will be of type *PathError.
+	Chroot(path string) error
+}
+
+// DirInfo contains information to create a directory.
+type DirInfo struct {
+	Path string
+	Perm fs.FileMode
+}
+
+// File represents a file in the file system.
+type File interface {
+	fs.File
+	fs.ReadDirFile
+	io.Reader
+	io.ReaderAt
+	io.StringWriter
+	io.Writer
+	io.WriterAt
+	io.WriteSeeker
+
+	// Chdir changes the current working directory to the file,
+	// which must be a directory.
+	// If there is an error, it will be of type *PathError.
+	Chdir() error
+
+	// Chmod changes the mode of the file to mode.
+	// If there is an error, it will be of type *PathError.
+	Chmod(mode fs.FileMode) error
+
+	// Chown changes the numeric uid and gid of the named file.
+	// If there is an error, it will be of type *PathError.
+	//
+	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
+	// in *PathError.
+	Chown(uid, gid int) error
+
+	// Fd returns the integer Unix file descriptor referencing the open file.
+	// The file descriptor is valid only until f.Close is called or f is garbage collected.
+	// On Unix systems this will cause the SetDeadline methods to stop working.
+	Fd() uintptr
+
+	// Name returns the name of the file as presented to Open.
+	Name() string
+
+	// Readdirnames reads and returns a slice of names from the directory f.
+	//
+	// If n > 0, Readdirnames returns at most n names. In this case, if
+	// Readdirnames returns an empty slice, it will return a non-nil error
+	// explaining why. At the end of a directory, the error is io.EOF.
+	//
+	// If n <= 0, Readdirnames returns all the names from the directory in
+	// a single slice. In this case, if Readdirnames succeeds (reads all
+	// the way to the end of the directory), it returns the slice and a
+	// nil error. If it encounters an error before the end of the
+	// directory, Readdirnames returns the names read until that point and
+	// a non-nil error.
+	Readdirnames(n int) (names []string, err error)
+
+	// Sync commits the current contents of the file to stable storage.
+	// Typically, this means flushing the file system's in-memory copy
+	// of recently written data to disk.
+	Sync() error
+
+	// Truncate changes the size of the file.
+	// It does not change the I/O offset.
+	// If there is an error, it will be of type *PathError.
+	Truncate(size int64) error
+}
+
+// Namer is the interface that wraps the Name method.
+type Namer interface {
+	Name() string
+}
+
+// SysStater is the interface returned by ToSysStat on all file systems.
+type SysStater interface {
+	GroupIdentifier
+	UserIdentifier
+	Nlink() uint64
+}
+
+// VolumeManager is the interface that manage volumes for Windows file systems.
+type VolumeManager interface {
+	// VolumeAdd adds a new volume to a Windows file system.
+	// If there is an error, it will be of type *PathError.
+	VolumeAdd(name string) error
+
+	// VolumeDelete deletes an existing volume and all its files from a Windows file system.
+	// If there is an error, it will be of type *PathError.
+	VolumeDelete(name string) error
+
+	// VolumeList returns the volumes of the file system.
+	VolumeList() []string
+}
+
 // OpenMode defines constants used by OpenFile and CheckPermission functions.
 type OpenMode uint16
 
@@ -46,6 +151,23 @@ const (
 	OpenCreateExcl                      // OpenCreateExcl creates a non existing file (os.O_EXCL).
 	OpenTruncate                        // OpenTruncate truncates a file (os.O_TRUNC).
 )
+
+// IOFS is the virtual file system interface implementing io/fs interfaces.
+type IOFS interface {
+	VFSBase
+	fs.FS
+	fs.GlobFS
+	fs.ReadDirFS
+	fs.ReadFileFS
+	fs.StatFS
+	fs.SubFS
+}
+
+// Typer is the interface that wraps the Type method.
+type Typer interface {
+	// Type returns the type of the fileSystem or Identity manager.
+	Type() string
+}
 
 // VFS is the virtual file system interface.
 // Any simulated or real file system should implement this interface.
@@ -62,25 +184,14 @@ type VFS interface {
 	Sub(dir string) (VFS, error)
 }
 
-// IOFS is the virtual file system interface implementing io/fs interfaces.
-type IOFS interface {
-	VFSBase
-	fs.FS
-	fs.GlobFS
-	fs.ReadDirFS
-	fs.ReadFileFS
-	fs.StatFS
-	fs.SubFS
-}
-
 // VFSBase regroups the common methods to VFS and IOFS.
 type VFSBase interface {
-	Featurer
+	CurUserMgr
+	IdmMgr
 	Namer
 	OSTyper
 	Typer
 	UMasker
-	UserSetter
 
 	// Abs returns an absolute representation of path.
 	// If the path is not absolute it will be joined with the current
@@ -358,10 +469,6 @@ type VFSBase interface {
 	// It returns false in other cases.
 	SameFile(fi1, fi2 fs.FileInfo) bool
 
-	// Stat returns a FileInfo describing the named file.
-	// If there is an error, it will be of type *PathError.
-	Stat(name string) (fs.FileInfo, error)
-
 	// Split splits path immediately following the final Separator,
 	// separating it into a directory and file name component.
 	// If there is no Separator in path, Split returns an empty dir
@@ -369,12 +476,9 @@ type VFSBase interface {
 	// The returned values have the property that path = dir+file.
 	Split(path string) (dir, file string)
 
-	// SplitAbs splits an absolute path immediately preceding the final Separator,
-	// separating it into a directory and file name component.
-	// If there is no Separator in path, splitPath returns an empty dir
-	// and file set to path.
-	// The returned values have the property that path = dir + PathSeparator + file.
-	SplitAbs(path string) (dir, file string)
+	// Stat returns a FileInfo describing the named file.
+	// If there is an error, it will be of type *PathError.
+	Stat(name string) (fs.FileInfo, error)
 
 	// Symlink creates newname as a symbolic link to oldname.
 	// If there is an error, it will be of type *LinkError.
@@ -423,190 +527,16 @@ type VFSBase interface {
 	WriteFile(filename string, data []byte, perm fs.FileMode) error
 }
 
-// ChRooter is the interface that wraps the Chroot method.
-type ChRooter interface {
-	// Chroot changes the root to that specified in path.
-	// If the user has not root privileges avfs.errPermDenied is returned.
-	// If there is an error, it will be of type *PathError.
-	Chroot(path string) error
-}
-
-// Cloner is the interface that wraps the Clone method.
-type Cloner interface {
-	// Clone returns a shallow copy of the current file system (see MemFs).
-	Clone() VFS
-}
-
-// Namer is the interface that wraps the Name method.
-type Namer interface {
-	Name() string
-}
-
-// Typer is the interface that wraps the Type method.
-type Typer interface {
-	// Type returns the type of the fileSystem or Identity manager.
-	Type() string
-}
-
-// UserSetter is the interface that wraps the SetUser and User methods.
-type UserSetter interface {
-	// SetUser sets and returns the current user.
-	// If the user is not found, the returned error is of type UnknownUserError.
-	SetUser(name string) (UserReader, error)
-
-	// User returns the current user.
-	User() UserReader
-}
-
-// File represents a file in the file system.
-type File interface {
-	fs.File
-	fs.ReadDirFile
-	io.Reader
-	io.ReaderAt
-	io.StringWriter
-	io.Writer
-	io.WriterAt
-	io.WriteSeeker
-
-	// Chdir changes the current working directory to the file,
-	// which must be a directory.
-	// If there is an error, it will be of type *PathError.
-	Chdir() error
-
-	// Chmod changes the mode of the file to mode.
-	// If there is an error, it will be of type *PathError.
-	Chmod(mode fs.FileMode) error
-
-	// Chown changes the numeric uid and gid of the named file.
-	// If there is an error, it will be of type *PathError.
-	//
-	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-	// in *PathError.
-	Chown(uid, gid int) error
-
-	// Fd returns the integer Unix file descriptor referencing the open file.
-	// The file descriptor is valid only until f.Close is called or f is garbage collected.
-	// On Unix systems this will cause the SetDeadline methods to stop working.
-	Fd() uintptr
-
-	// Name returns the name of the file as presented to Open.
-	Name() string
-
-	// Readdirnames reads and returns a slice of names from the directory f.
-	//
-	// If n > 0, Readdirnames returns at most n names. In this case, if
-	// Readdirnames returns an empty slice, it will return a non-nil error
-	// explaining why. At the end of a directory, the error is io.EOF.
-	//
-	// If n <= 0, Readdirnames returns all the names from the directory in
-	// a single slice. In this case, if Readdirnames succeeds (reads all
-	// the way to the end of the directory), it returns the slice and a
-	// nil error. If it encounters an error before the end of the
-	// directory, Readdirnames returns the names read until that point and
-	// a non-nil error.
-	Readdirnames(n int) (names []string, err error)
-
-	// Sync commits the current contents of the file to stable storage.
-	// Typically, this means flushing the file system's in-memory copy
-	// of recently written data to disk.
-	Sync() error
-
-	// Truncate changes the size of the file.
-	// It does not change the I/O offset.
-	// If there is an error, it will be of type *PathError.
-	Truncate(size int64) error
-}
-
-// IdentityMgr interface manages identities (users and groups).
-type IdentityMgr interface {
-	Featurer
-	OSTyper
-	Typer
-
-	// AdminGroup returns the administrator (root) group.
-	AdminGroup() GroupReader
-
-	// AdminUser returns the administrator (root) user.
-	AdminUser() UserReader
-
-	// GroupAdd adds a new group.
-	// If the group already exists, the returned error is of type AlreadyExistsGroupError.
-	GroupAdd(name string) (GroupReader, error)
-
-	// GroupDel deletes an existing group.
-	// If the group is not found, the returned error is of type UnknownGroupError.
-	GroupDel(name string) error
-
-	// LookupGroup looks up a group by name.
-	// If the group is not found, the returned error is of type UnknownGroupError.
-	LookupGroup(name string) (GroupReader, error)
-
-	// LookupGroupId looks up a group by groupid.
-	// If the group is not found, the returned error is of type UnknownGroupIdError.
-	LookupGroupId(gid int) (GroupReader, error)
-
-	// LookupUser looks up a user by username.
-	// If the user cannot be found, the returned error is of type UnknownUserError.
-	LookupUser(name string) (UserReader, error)
-
-	// LookupUserId looks up a user by userid.
-	// If the user cannot be found, the returned error is of type UnknownUserIdError.
-	LookupUserId(uid int) (UserReader, error)
-
-	// UserAdd adds a new user.
-	// If the user already exists, the returned error is of type AlreadyExistsUserError.
-	UserAdd(name, groupName string) (UserReader, error)
-
-	// UserDel deletes an existing user.
-	UserDel(name string) error
-}
-
-// GroupIdentifier is the interface that wraps the Gid method.
-type GroupIdentifier interface {
-	// Gid returns the primary group id.
-	Gid() int
-}
-
-// GroupReader interface reads group information.
-type GroupReader interface {
-	GroupIdentifier
-	Namer
-}
-
-// UserIdentifier is the interface that wraps the Uid method.
-type UserIdentifier interface {
-	// Uid returns the user id.
-	Uid() int
-}
-
-// UserReader reads user information.
-type UserReader interface {
-	GroupIdentifier
-	UserIdentifier
-	Namer
-
-	// IsAdmin returns true if the user has administrator (root) privileges.
-	IsAdmin() bool
-}
-
-// SysStater is the interface returned by ToSysStat on all file systems.
-type SysStater interface {
-	GroupIdentifier
-	UserIdentifier
-	Nlink() uint64
-}
-
-// VolumeManager is the interface that manage volumes for Windows file systems.
-type VolumeManager interface {
-	// VolumeAdd adds a new volume to a Windows file system.
-	// If there is an error, it will be of type *PathError.
-	VolumeAdd(name string) error
-
-	// VolumeDelete deletes an existing volume and all its files from a Windows file system.
-	// If there is an error, it will be of type *PathError.
-	VolumeDelete(name string) error
-
-	// VolumeList returns the volumes of the file system.
-	VolumeList() []string
+// VFSFn regroups standard functions used by emulated file systems.
+//
+// Most of these functions are extracted from Go standard library
+// and adapted to be used indifferently on Unix or Windows system.
+type VFSFn[T VFSBase] struct {
+	vfs        T //
+	CurDirFn     // CurDirFn provides current directory functions to a file system.
+	CurUserFn    // CurUserFn provides current user functions to a file system.
+	IdmFn        // IdmMgr is the interface that wraps Identity manager setting methods for file systems.
+	UMaskFn      // UMaskFn provides UMask functions to file systems.
+	FeaturesFn   // FeaturesFn provides features functions to a file system or an identity manager.
+	OSTypeFn     // OSTypeFn provides OS type functions to a file system or an identity manager.
 }

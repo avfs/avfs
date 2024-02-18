@@ -40,18 +40,19 @@ import "strings"
 //	|----- LeftPart ---------------|
 //	                     |----------- RightPart -------|
 type PathIterator[T VFSBase] struct {
+	vfs           T
 	path          string
 	start         int
 	end           int
 	volumeNameLen int
-	ut            Utils[T]
+	pathSeparator uint8
 }
 
 // NewPathIterator creates a new path iterator from an absolute path.
 func NewPathIterator[T VFSBase](vfs T, path string) *PathIterator[T] {
 	pi := PathIterator[T]{path: path}
-	_ = pi.ut.SetOSType(vfs.OSType())
-	pi.volumeNameLen = pi.ut.VolumeNameLen(path)
+	pi.volumeNameLen = VolumeNameLen(pi.vfs, path)
+	pi.pathSeparator = vfs.PathSeparator()
 	pi.Reset()
 
 	return &pi
@@ -87,7 +88,7 @@ func (pi *PathIterator[_]) Next() bool {
 		return false
 	}
 
-	pos := strings.IndexByte(pi.path[pi.start:], pi.ut.pathSeparator)
+	pos := strings.IndexByte(pi.path[pi.start:], pi.pathSeparator)
 	if pos == -1 {
 		pi.end = len(pi.path)
 	} else {
@@ -111,13 +112,13 @@ func (pi *PathIterator[_]) Path() string {
 // If the path iterator has been reset it returns true.
 // It can be used in symbolic link replacement.
 func (pi *PathIterator[_]) ReplacePart(newPath string) bool {
-	ut := pi.ut
+	vfs := pi.vfs
 	oldPath := pi.path
 
-	if ut.IsAbs(newPath) {
-		pi.path = ut.Join(newPath, oldPath[pi.end:])
+	if vfs.IsAbs(newPath) {
+		pi.path = vfs.Join(newPath, oldPath[pi.end:])
 	} else {
-		pi.path = ut.Join(oldPath[:pi.start], newPath, oldPath[pi.end:])
+		pi.path = vfs.Join(oldPath[:pi.start], newPath, oldPath[pi.end:])
 	}
 
 	// If the old path before the current part is different, the iterator must be reset.

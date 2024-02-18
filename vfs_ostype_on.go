@@ -1,5 +1,5 @@
 //
-//  Copyright 2023 The AVFS authors
+//  Copyright 2024 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -31,22 +31,22 @@ const buildFeatSetOSType = FeatSetOSType
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (ut *Utils[_]) Base(path string) string {
+func (vfn *VFSFn[T]) Base(path string) string {
 	if path == "" {
 		return "."
 	}
 
 	// Strip trailing slashes.
-	for len(path) > 0 && ut.IsPathSeparator(path[len(path)-1]) {
+	for len(path) > 0 && vfn.IsPathSeparator(path[len(path)-1]) {
 		path = path[0 : len(path)-1]
 	}
 
 	// Throw away volume name
-	path = path[len(ut.VolumeName(path)):]
+	path = path[len(VolumeName(vfn.vfs, path)):]
 
 	// Find the last element
 	i := len(path) - 1
-	for i >= 0 && !ut.IsPathSeparator(path[i]) {
+	for i >= 0 && !vfn.IsPathSeparator(path[i]) {
 		i--
 	}
 
@@ -56,7 +56,7 @@ func (ut *Utils[_]) Base(path string) string {
 
 	// If empty now, it had only slashes.
 	if path == "" {
-		return string(ut.pathSeparator)
+		return string(vfn.PathSeparator())
 	}
 
 	return path
@@ -89,21 +89,22 @@ func (ut *Utils[_]) Base(path string) string {
 // See also Rob Pike, “Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
-func (ut *Utils[_]) Clean(path string) string {
+func (vfn *VFSFn[T]) Clean(path string) string {
+	pathSeparator := vfn.PathSeparator()
 	originalPath := path
-	volLen := ut.VolumeNameLen(path)
+	volLen := VolumeNameLen(vfn.vfs, path)
 
 	path = path[volLen:]
 	if path == "" {
-		if volLen > 1 && ut.IsPathSeparator(originalPath[0]) && ut.IsPathSeparator(originalPath[1]) {
+		if volLen > 1 && vfn.IsPathSeparator(originalPath[0]) && vfn.IsPathSeparator(originalPath[1]) {
 			// should be UNC
-			return ut.FromSlash(originalPath)
+			return vfn.FromSlash(originalPath)
 		}
 
 		return originalPath + "."
 	}
 
-	rooted := ut.IsPathSeparator(path[0])
+	rooted := vfn.IsPathSeparator(path[0])
 
 	// Invariants:
 	//	reading from path; r is index of next byte to process.
@@ -115,20 +116,20 @@ func (ut *Utils[_]) Clean(path string) string {
 	r, dotdot := 0, 0
 
 	if rooted {
-		out.append(ut.pathSeparator)
+		out.append(pathSeparator)
 
 		r, dotdot = 1, 1
 	}
 
 	for r < n {
 		switch {
-		case ut.IsPathSeparator(path[r]):
+		case vfn.IsPathSeparator(path[r]):
 			// empty path element
 			r++
-		case path[r] == '.' && (r+1 == n || ut.IsPathSeparator(path[r+1])):
+		case path[r] == '.' && (r+1 == n || vfn.IsPathSeparator(path[r+1])):
 			// . element
 			r++
-		case path[r] == '.' && path[r+1] == '.' && (r+2 == n || ut.IsPathSeparator(path[r+2])):
+		case path[r] == '.' && path[r+1] == '.' && (r+2 == n || vfn.IsPathSeparator(path[r+2])):
 			// .. element: remove to last separator
 			r += 2
 
@@ -136,13 +137,13 @@ func (ut *Utils[_]) Clean(path string) string {
 			case out.w > dotdot:
 				// can backtrack
 				out.w--
-				for out.w > dotdot && !ut.IsPathSeparator(out.index(out.w)) {
+				for out.w > dotdot && !vfn.IsPathSeparator(out.index(out.w)) {
 					out.w--
 				}
 			case !rooted:
 				// cannot backtrack, but not rooted, so append .. element.
 				if out.w > 0 {
-					out.append(ut.pathSeparator)
+					out.append(pathSeparator)
 				}
 
 				out.append('.')
@@ -153,17 +154,17 @@ func (ut *Utils[_]) Clean(path string) string {
 			// real path element.
 			// add slash if needed
 			if rooted && out.w != 1 || !rooted && out.w != 0 {
-				out.append(ut.pathSeparator)
+				out.append(pathSeparator)
 			}
 
 			// If a ':' appears in the path element at the start of a Windows path,
 			// insert a .\ at the beginning to avoid converting relative paths
 			// like a/../c: into c:.
-			if ut.osType == OsWindows && out.w == 0 && out.volLen == 0 && r != 0 {
-				for i := r; i < n && !ut.IsPathSeparator(path[i]); i++ {
+			if vfn.OSType() == OsWindows && out.w == 0 && out.volLen == 0 && r != 0 {
+				for i := r; i < n && !vfn.IsPathSeparator(path[i]); i++ {
 					if path[i] == ':' {
 						out.append('.')
-						out.append(ut.pathSeparator)
+						out.append(pathSeparator)
 
 						break
 					}
@@ -171,7 +172,7 @@ func (ut *Utils[_]) Clean(path string) string {
 			}
 
 			// copy element
-			for ; r < n && !ut.IsPathSeparator(path[r]); r++ {
+			for ; r < n && !vfn.IsPathSeparator(path[r]); r++ {
 				out.append(path[r])
 			}
 		}
@@ -182,7 +183,7 @@ func (ut *Utils[_]) Clean(path string) string {
 		out.append('.')
 	}
 
-	return ut.FromSlash(out.string())
+	return vfn.FromSlash(out.string())
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -191,15 +192,15 @@ func (ut *Utils[_]) Clean(path string) string {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (ut *Utils[_]) Dir(path string) string {
-	vol := ut.VolumeName(path)
+func (vfn *VFSFn[T]) Dir(path string) string {
+	vol := VolumeName(vfn.vfs, path)
 
 	i := len(path) - 1
-	for i >= len(vol) && !ut.IsPathSeparator(path[i]) {
+	for i >= len(vol) && !vfn.IsPathSeparator(path[i]) {
 		i--
 	}
 
-	dir := ut.Clean(path[len(vol) : i+1])
+	dir := vfn.Clean(path[len(vol) : i+1])
 	if dir == "." && len(vol) > 2 {
 		// must be UNC
 		return vol
@@ -211,23 +212,25 @@ func (ut *Utils[_]) Dir(path string) string {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (ut *Utils[_]) FromSlash(path string) string {
-	if ut.osType != OsWindows {
+func (vfn *VFSFn[T]) FromSlash(path string) string {
+	pathSeparator := vfn.PathSeparator()
+
+	if vfn.OSType() != OsWindows {
 		return path
 	}
 
-	return strings.ReplaceAll(path, "/", string(ut.pathSeparator))
+	return strings.ReplaceAll(path, "/", string(pathSeparator))
 }
 
 // getEsc gets a possibly-escaped character from chunk, for a character class.
-func (ut *Utils[_]) getEsc(chunk string) (r rune, nchunk string, err error) {
+func (vfn *VFSFn[T]) getEsc(chunk string) (r rune, nchunk string, err error) {
 	if chunk == "" || chunk[0] == '-' || chunk[0] == ']' {
 		err = filepath.ErrBadPattern
 
 		return
 	}
 
-	if chunk[0] == '\\' && ut.osType != OsWindows {
+	if chunk[0] == '\\' && vfn.OSType() != OsWindows {
 		chunk = chunk[1:]
 		if chunk == "" {
 			err = filepath.ErrBadPattern
@@ -249,13 +252,21 @@ func (ut *Utils[_]) getEsc(chunk string) (r rune, nchunk string, err error) {
 	return
 }
 
+// Getwd returns a rooted name link corresponding to the
+// current directory. If the current directory can be
+// reached via multiple paths (due to symbolic links),
+// Getwd may return any one of them.
+func (vfn *VFSFn[T]) Getwd() (dir string, err error) {
+	return vfn.CurDir(), nil
+}
+
 // IsAbs reports whether the path is absolute.
-func (ut *Utils[_]) IsAbs(path string) bool {
-	if ut.osType != OsWindows {
+func (vfn *VFSFn[T]) IsAbs(path string) bool {
+	if vfn.OSType() != OsWindows {
 		return strings.HasPrefix(path, "/")
 	}
 
-	l := ut.VolumeNameLen(path)
+	l := VolumeNameLen(vfn.vfs, path)
 	if l == 0 {
 		return false
 	}
@@ -274,8 +285,8 @@ func (ut *Utils[_]) IsAbs(path string) bool {
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (ut *Utils[_]) IsPathSeparator(c uint8) bool {
-	if ut.osType != OsWindows {
+func (vfn *VFSFn[T]) IsPathSeparator(c uint8) bool {
+	if vfn.OSType() != OsWindows {
 		return c == '/'
 	}
 
@@ -285,26 +296,24 @@ func (ut *Utils[_]) IsPathSeparator(c uint8) bool {
 // Join joins any number of path elements into a single path, adding a
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
-func (ut *Utils[_]) Join(elem ...string) string {
-	if ut.osType != OsWindows {
+func (vfn *VFSFn[T]) Join(elem ...string) string {
+	pathSeparator := vfn.PathSeparator()
+
+	if vfn.OSType() != OsWindows {
 		// If there's a bug here, fix the logic in ./path_plan9.go too.
 		for i, e := range elem {
 			if e != "" {
-				return ut.Clean(strings.Join(elem[i:], string(ut.pathSeparator)))
+				return vfn.Clean(strings.Join(elem[i:], string(pathSeparator)))
 			}
 		}
 
 		return ""
 	}
 
-	return ut.joinWindows(elem)
+	return vfn.joinWindows(elem)
 }
 
-func isSlash(c uint8) bool {
-	return c == '\\' || c == '/'
-}
-
-func (ut *Utils[_]) joinWindows(elem []string) string {
+func (vfn *VFSFn[T]) joinWindows(elem []string) string {
 	var (
 		b        strings.Builder
 		lastChar byte
@@ -349,7 +358,7 @@ func (ut *Utils[_]) joinWindows(elem []string) string {
 		return ""
 	}
 
-	return ut.Clean(b.String())
+	return vfn.Clean(b.String())
 }
 
 // Match reports whether name matches the shell file name pattern.
@@ -376,20 +385,22 @@ func (ut *Utils[_]) joinWindows(elem []string) string {
 //
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
-func (ut *Utils[_]) Match(pattern, name string) (matched bool, err error) {
+func (vfn *VFSFn[T]) Match(pattern, name string) (matched bool, err error) {
+	pathSeparator := vfn.PathSeparator()
+
 Pattern:
 	for len(pattern) > 0 {
 		var star bool
 		var chunk string
 
-		star, chunk, pattern = ut.scanChunk(pattern)
+		star, chunk, pattern = vfn.scanChunk(pattern)
 		if star && chunk == "" {
 			// Trailing * matches rest of string unless it has a /.
-			return !strings.Contains(name, string(ut.pathSeparator)), nil
+			return !strings.Contains(name, string(pathSeparator)), nil
 		}
 
 		// Look for match at current position.
-		t, ok, err := ut.matchChunk(chunk, name)
+		t, ok, err := vfn.matchChunk(chunk, name)
 
 		// if we're the last chunk, make sure we've exhausted the name
 		// otherwise we'll give a false result even if we could still match
@@ -407,8 +418,8 @@ Pattern:
 		if star {
 			// Look for match skipping i+1 bytes.
 			// Cannot skip /.
-			for i := 0; i < len(name) && name[i] != ut.pathSeparator; i++ {
-				t, ok, err := ut.matchChunk(chunk, name[i+1:])
+			for i := 0; i < len(name) && name[i] != pathSeparator; i++ {
+				t, ok, err := vfn.matchChunk(chunk, name[i+1:])
 				if ok {
 					// if we're the last chunk, make sure we exhausted the name
 					if pattern == "" && len(t) > 0 {
@@ -433,7 +444,9 @@ Pattern:
 // matchChunk checks whether chunk matches the beginning of s.
 // If so, it returns the remainder of s (after the match).
 // Chunk is all single-character operators: literals, char classes, and ?.
-func (ut *Utils[_]) matchChunk(chunk, s string) (rest string, ok bool, err error) {
+func (vfn *VFSFn[T]) matchChunk(chunk, s string) (rest string, ok bool, err error) {
+	pathSeparator := vfn.PathSeparator()
+
 	// failed records whether the match has failed.
 	// After the match fails, the loop continues on processing chunk,
 	// checking that the pattern is well-formed but no longer reading s.
@@ -477,14 +490,14 @@ func (ut *Utils[_]) matchChunk(chunk, s string) (rest string, ok bool, err error
 
 				var lo, hi rune
 
-				if lo, chunk, err = ut.getEsc(chunk); err != nil {
+				if lo, chunk, err = vfn.getEsc(chunk); err != nil {
 					return "", false, err
 				}
 
 				hi = lo
 
 				if chunk[0] == '-' {
-					if hi, chunk, err = ut.getEsc(chunk[1:]); err != nil {
+					if hi, chunk, err = vfn.getEsc(chunk[1:]); err != nil {
 						return "", false, err
 					}
 				}
@@ -501,7 +514,7 @@ func (ut *Utils[_]) matchChunk(chunk, s string) (rest string, ok bool, err error
 			}
 		case '?':
 			if !failed {
-				if s[0] == ut.pathSeparator {
+				if s[0] == pathSeparator {
 					failed = true
 				}
 
@@ -511,7 +524,7 @@ func (ut *Utils[_]) matchChunk(chunk, s string) (rest string, ok bool, err error
 
 			chunk = chunk[1:]
 		case '\\':
-			if ut.osType != OsWindows {
+			if vfn.OSType() != OsWindows {
 				chunk = chunk[1:]
 				if chunk == "" {
 					return "", false, filepath.ErrBadPattern
@@ -539,11 +552,6 @@ func (ut *Utils[_]) matchChunk(chunk, s string) (rest string, ok bool, err error
 	return s, true, nil
 }
 
-// PathSeparator return the OS-specific path separator.
-func (ut *Utils[_]) PathSeparator() uint8 {
-	return ut.pathSeparator
-}
-
 // Rel returns a relative path that is lexically equivalent to targpath when
 // joined to basepath with an intervening separator. That is,
 // Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
@@ -552,13 +560,16 @@ func (ut *Utils[_]) PathSeparator() uint8 {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
-	baseVol := ut.VolumeName(basepath)
-	targVol := ut.VolumeName(targpath)
-	base := ut.Clean(basepath)
-	targ := ut.Clean(targpath)
+func (vfn *VFSFn[T]) Rel(basepath, targpath string) (string, error) {
+	pathSeparator := vfn.PathSeparator()
+	vfs := vfn.vfs
 
-	if ut.sameWord(targ, base) {
+	baseVol := VolumeName(vfs, basepath)
+	targVol := VolumeName(vfs, targpath)
+	base := vfn.Clean(basepath)
+	targ := vfn.Clean(targpath)
+
+	if vfn.sameWord(targ, base) {
 		return ".", nil
 	}
 
@@ -567,16 +578,16 @@ func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 
 	if base == "." {
 		base = ""
-	} else if base == "" && ut.VolumeNameLen(baseVol) > 2 /* isUNC */ {
+	} else if base == "" && VolumeNameLen(vfs, baseVol) > 2 /* isUNC */ {
 		// Treat any targetpath matching `\\host\share` basepath as absolute path.
-		base = string(ut.pathSeparator)
+		base = string(pathSeparator)
 	}
 
 	// Can't use IsAbs - `\a` and `a` are both relative in Windows.
-	baseSlashed := len(base) > 0 && base[0] == ut.pathSeparator
-	targSlashed := len(targ) > 0 && targ[0] == ut.pathSeparator
+	baseSlashed := len(base) > 0 && base[0] == pathSeparator
+	targSlashed := len(targ) > 0 && targ[0] == pathSeparator
 
-	if baseSlashed != targSlashed || !ut.sameWord(baseVol, targVol) {
+	if baseSlashed != targSlashed || !vfn.sameWord(baseVol, targVol) {
 		return "", errors.New("Rel: can't make " + targpath + " relative to " + basepath)
 	}
 
@@ -587,15 +598,15 @@ func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 	var b0, bi, t0, ti int
 
 	for {
-		for bi < bl && base[bi] != ut.pathSeparator {
+		for bi < bl && base[bi] != pathSeparator {
 			bi++
 		}
 
-		for ti < tl && targ[ti] != ut.pathSeparator {
+		for ti < tl && targ[ti] != pathSeparator {
 			ti++
 		}
 
-		if !ut.sameWord(targ[t0:ti], base[b0:bi]) {
+		if !vfn.sameWord(targ[t0:ti], base[b0:bi]) {
 			break
 		}
 
@@ -617,7 +628,7 @@ func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 
 	if b0 != bl {
 		// Base elements left. Must go up before going down.
-		seps := strings.Count(base[b0:bl], string(ut.pathSeparator))
+		seps := strings.Count(base[b0:bl], string(pathSeparator))
 		size := 2 + seps*3
 
 		if tl != t0 {
@@ -628,13 +639,13 @@ func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 		n := copy(buf, "..")
 
 		for i := 0; i < seps; i++ {
-			buf[n] = ut.pathSeparator
+			buf[n] = pathSeparator
 			copy(buf[n+1:], "..")
 			n += 3
 		}
 
 		if t0 != tl {
-			buf[n] = ut.pathSeparator
+			buf[n] = pathSeparator
 			copy(buf[n+1:], targ[t0:])
 		}
 
@@ -644,8 +655,8 @@ func (ut *Utils[_]) Rel(basepath, targpath string) (string, error) {
 	return targ[t0:], nil
 }
 
-func (ut *Utils[_]) sameWord(a, b string) bool {
-	if ut.osType != OsWindows {
+func (vfn *VFSFn[T]) sameWord(a, b string) bool {
+	if vfn.OSType() != OsWindows {
 		return a == b
 	}
 
@@ -654,7 +665,7 @@ func (ut *Utils[_]) sameWord(a, b string) bool {
 
 // scanChunk gets the next segment of pattern, which is a non-star string
 // possibly preceded by a star.
-func (ut *Utils[_]) scanChunk(pattern string) (star bool, chunk, rest string) {
+func (vfn *VFSFn[T]) scanChunk(pattern string) (star bool, chunk, rest string) {
 	for len(pattern) > 0 && pattern[0] == '*' {
 		pattern = pattern[1:]
 		star = true
@@ -668,7 +679,7 @@ Scan:
 	for i = 0; i < len(pattern); i++ {
 		switch pattern[i] {
 		case '\\':
-			if ut.osType != OsWindows {
+			if vfn.OSType() != OsWindows {
 				// error check handled in matchChunk: bad pattern.
 				if i+1 < len(pattern) {
 					i++
@@ -693,11 +704,11 @@ Scan:
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (ut *Utils[_]) Split(path string) (dir, file string) {
-	vol := ut.VolumeName(path)
+func (vfn *VFSFn[T]) Split(path string) (dir, file string) {
+	vol := VolumeName(vfn.vfs, path)
 
 	i := len(path) - 1
-	for i >= len(vol) && !ut.IsPathSeparator(path[i]) {
+	for i >= len(vol) && !vfn.IsPathSeparator(path[i]) {
 		i--
 	}
 
@@ -707,68 +718,14 @@ func (ut *Utils[_]) Split(path string) (dir, file string) {
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (ut *Utils[_]) ToSlash(path string) string {
-	if ut.pathSeparator == '/' {
+func (vfn *VFSFn[T]) ToSlash(path string) string {
+	pathSeparator := vfn.PathSeparator()
+
+	if pathSeparator == '/' {
 		return path
 	}
 
-	return strings.ReplaceAll(path, string(ut.pathSeparator), "/")
-}
-
-// VolumeName returns leading volume name.
-// Given "C:\foo\bar" it returns "C:" on Windows.
-// Given "\\host\share\foo" it returns "\\host\share".
-// On other platforms it returns "".
-func (ut *Utils[_]) VolumeName(path string) string {
-	return ut.FromSlash(path[:ut.VolumeNameLen(path)])
-}
-
-// VolumeNameLen returns length of the leading volume name on Windows.
-// It returns 0 elsewhere.
-func (ut *Utils[_]) VolumeNameLen(path string) int {
-	if ut.osType != OsWindows {
-		return 0
-	}
-
-	if len(path) < 2 {
-		return 0
-	}
-
-	// with drive letter
-	c := path[0]
-	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') {
-		return 2
-	}
-
-	// is it UNC? https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
-	if l := len(path); l >= 5 && isSlash(path[0]) && isSlash(path[1]) &&
-		!isSlash(path[2]) && path[2] != '.' {
-		// first, leading `\\` and next shouldn't be `\`. its server name.
-		for n := 3; n < l-1; n++ {
-			// second, next '\' shouldn't be repeated.
-			if isSlash(path[n]) {
-				n++
-				// third, following something characters. its share name.
-				if !isSlash(path[n]) {
-					if path[n] == '.' {
-						break
-					}
-
-					for ; n < l; n++ {
-						if isSlash(path[n]) {
-							break
-						}
-					}
-
-					return n
-				}
-
-				break
-			}
-		}
-	}
-
-	return 0
+	return strings.ReplaceAll(path, string(pathSeparator), "/")
 }
 
 // A lazybuf is a lazily constructed path buffer.

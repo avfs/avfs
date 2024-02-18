@@ -18,11 +18,27 @@ package avfs
 
 import (
 	"io/fs"
+	"path/filepath"
 )
+
+// FromUnixPath returns valid path for Unix or Windows from a unix path.
+// For Windows systems, absolute paths are prefixed with the default volume
+// and relative paths are preserved.
+func FromUnixPath[T VFSBase](vfs T, path string) string {
+	if vfs.OSType() != OsWindows {
+		return path
+	}
+
+	if path[0] != '/' {
+		return filepath.FromSlash(path)
+	}
+
+	return filepath.Join(DefaultVolume, filepath.FromSlash(path))
+}
 
 // HomeDirUser returns the home directory of the user.
 // If the file system does not have an identity manager, the root directory is returned.
-func HomeDirUser(vfs VFSBase, u UserReader) string {
+func HomeDirUser[T VFSBase](vfs T, u UserReader) string {
 	name := u.Name()
 	if vfs.OSType() == OsWindows {
 		return vfs.Join(HomeDir(vfs), name)
@@ -36,7 +52,7 @@ func HomeDirUser(vfs VFSBase, u UserReader) string {
 }
 
 // HomeDir returns the home directory of the file system.
-func HomeDir(vfs VFSBase) string {
+func HomeDir[T VFSBase](vfs T) string {
 	switch vfs.OSType() {
 	case OsWindows:
 		return DefaultVolume + `\Users`
@@ -56,7 +72,7 @@ func isSlash(c uint8) bool {
 
 // MkHomeDir creates and returns the home directory of a user.
 // If there is an error, it will be of type *PathError.
-func MkHomeDir(vfs VFSBase, u UserReader) (string, error) {
+func MkHomeDir[T VFSBase](vfs T, u UserReader) (string, error) {
 	userDir := HomeDirUser(vfs, u)
 
 	err := vfs.Mkdir(userDir, HomeDirPerm())
@@ -79,7 +95,7 @@ func MkHomeDir(vfs VFSBase, u UserReader) (string, error) {
 }
 
 // MkSystemDirs creates the system directories of a file system.
-func MkSystemDirs(vfs VFSBase, dirs []DirInfo) error {
+func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo) error {
 	for _, dir := range dirs {
 		err := vfs.MkdirAll(dir.Path, dir.Perm)
 		if err != nil {
@@ -114,7 +130,7 @@ func SplitAbs[T VFSBase](vfs T, path string) (dir, file string) {
 }
 
 // SystemDirs returns an array of system directories always present in the file system.
-func SystemDirs(vfs VFSBase, basePath string) []DirInfo {
+func SystemDirs[T VFSBase](vfs T, basePath string) []DirInfo {
 	const volumeNameLen = 2
 
 	switch vfs.OSType() {
