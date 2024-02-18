@@ -30,7 +30,7 @@ func (f *MountFile) Chdir() error {
 	}
 
 	f.vfs.curMnt = f.mount
-	f.vfs.curDir = f.file.Name()
+	_ = f.vfs.SetCurDir(f.file.Name())
 
 	return nil
 }

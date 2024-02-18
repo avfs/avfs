@@ -28,10 +28,9 @@ type MountFS struct {
 	mounts  mounts
 	rootMnt *mount
 	curMnt  *mount
-	curDir  string
 	name    string
 	mu      sync.RWMutex
-	avfs.Utils[*MountFS]
+	avfs.VFSFn[*MountFS]
 }
 
 // mounts are the mount points of the MountFS file system.

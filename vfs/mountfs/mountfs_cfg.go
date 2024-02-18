@@ -35,11 +35,11 @@ func New(rootFS avfs.VFS, basePath string) *MountFS {
 		mounts:  make(mounts),
 		rootMnt: rootMnt,
 		curMnt:  rootMnt,
-		curDir:  "/",
 	}
 
 	_ = vfs.SetFeatures(rootFS.Features() &^ (avfs.FeatSymlink | avfs.FeatIdentityMgr))
 	_ = vfs.SetOSType(avfs.CurrentOSType())
+	_ = vfs.SetCurDir("/")
 
 	return vfs
 }
