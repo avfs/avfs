@@ -73,6 +73,10 @@ func NewWithOptions(opts *Options) *MemFS {
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
 
+	if len(opts.SystemDirs) == 0 {
+		opts.SystemDirs = avfs.SystemDirs(vfs, volumeName)
+	}
+
 	_ = avfs.MkSystemDirs(vfs, opts.SystemDirs)
 
 	return vfs

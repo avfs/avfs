@@ -54,7 +54,7 @@ func (f *OrefaFile) Chdir() error {
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	f.vfs.curDir = f.name
+	_ = f.vfs.SetCurDir(f.name)
 
 	return nil
 }
@@ -501,7 +501,7 @@ func (f *OrefaFile) Stat() (info fs.FileInfo, err error) {
 		return &OrefaInfo{}, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	_, name := f.vfs.SplitAbs(f.name)
+	_, name := avfs.SplitAbs(f.vfs, f.name)
 	info = f.nd.fillStatFrom(name)
 
 	return info, nil

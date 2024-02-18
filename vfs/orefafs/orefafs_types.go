@@ -25,16 +25,14 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	nodes                nodes           // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	err                  avfs.Errors     // err regroups errors depending on the OS emulated.
-	user                 avfs.UserReader // user is the current user of the file system.
-	curDir               string          // curDir is the current directory.
-	name                 string          // name is the name of the file system.
-	lastId               uint64          // lastId is the last unique id used to identify files uniquely.
-	mu                   sync.RWMutex    // mu is the RWMutex used to access nodes.
-	dirMode              fs.FileMode     // dirMode is the default fs.FileMode for a directory.
-	fileMode             fs.FileMode     // fileMode is de default fs.FileMode for a file.
-	avfs.Utils[*OrefaFS]                 // utils regroups common functions used by emulated file systems.
+	nodes                nodes        // nodes is the map of nodes (files or directories) where the key is the absolute path.
+	err                  avfs.Errors  // err regroups errors depending on the OS emulated.
+	name                 string       // name is the name of the file system.
+	lastId               *uint64      // lastId is the last unique id used to identify files uniquely.
+	mu                   sync.RWMutex // mu is the RWMutex used to access nodes.
+	dirMode              fs.FileMode  // dirMode is the default fs.FileMode for a directory.
+	fileMode             fs.FileMode  // fileMode is de default fs.FileMode for a file.
+	avfs.VFSFn[*OrefaFS]              // utils regroups common functions used by emulated file systems.
 }
 
 // OrefaFile represents an open file descriptor.
@@ -52,10 +50,11 @@ type OrefaFile struct {
 
 // Options defines the initialization options of OrefaFS.
 type Options struct {
+	SystemDirs []avfs.DirInfo  // SystemDirs contains data to create system directories.
 	User       avfs.UserReader // User is the current user of the file system.
 	Name       string          // Name is the name of the file system.
+	UMask      fs.FileMode     // UMask is the initial UMask of the file system.
 	OSType     avfs.OSType     // OSType defines the operating system type.
-	SystemDirs bool            // SystemDirs must be true to create system directories.
 }
 
 // nodes is the map of nodes (files or directories) where the key is the absolute path.

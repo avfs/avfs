@@ -18,9 +18,9 @@ package orefafs
 
 import (
 	"io/fs"
+	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // New returns a new memory file system (OrefaFS) with the default Options.
@@ -31,59 +31,56 @@ func New() *OrefaFS {
 // NewWithOptions returns a new memory file system (OrefaFS) with the selected Options.
 func NewWithOptions(opts *Options) *OrefaFS {
 	if opts == nil {
-		opts = &Options{SystemDirs: true}
+		opts = &Options{UMask: avfs.UMask(), OSType: avfs.OsUnknown}
 	}
 
-	features := avfs.FeatHardlink
-	if opts.SystemDirs {
-		features |= avfs.FeatSystemDirs
-	}
+	features := avfs.FeatHardlink | avfs.BuildFeatures()
+	idm := avfs.NotImplementedIdm
 
 	user := opts.User
 	if opts.User == nil {
-		user = dummyidm.NotImplementedIdm.AdminUser()
+		user = idm.AdminUser()
 	}
 
 	vfs := &OrefaFS{
-		nodes:    make(nodes),
-		user:     user,
-		curDir:   "/",
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
+		lastId:   new(uint64),
+		name:     opts.Name,
 	}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
-	_ = vfs.SetUMask(avfs.UMask())
+	_ = vfs.SetUMask(opts.UMask)
+	_ = vfs.SetIdm(idm)
+	_ = vfs.SetUser(user)
+
 	vfs.err.SetOSType(vfs.OSType())
 
 	volumeName := ""
+	curDir := "/"
 
 	if vfs.OSType() == avfs.OsWindows {
-		volumeName = avfs.DefaultVolume
-		vfs.curDir = volumeName + string(vfs.PathSeparator())
 		vfs.dirMode |= avfs.DefaultDirPerm
 		vfs.fileMode |= avfs.DefaultFilePerm
+		volumeName = avfs.DefaultVolume
+		curDir = volumeName + string(vfs.PathSeparator())
 	}
 
-	vfs.nodes[volumeName] = createRootNode()
-
-	if vfs.HasFeature(avfs.FeatSystemDirs) {
-		// Save the current umask.
-		um := vfs.UMask()
-
-		// Create system directories without umask.
-		_ = vfs.SetUMask(0)
-		dirs := avfs.SystemDirs(vfs, volumeName)
-
-		err := avfs.MkSystemDirs(vfs, dirs)
-		if err != nil {
-			panic(err)
-		}
-
-		// Restore the previous umask.
-		_ = vfs.SetUMask(um)
+	vfs.nodes[volumeName] = &node{
+		mode:  fs.ModeDir | 0o755,
+		mtime: time.Now().UnixNano(),
+		uid:   0,
+		gid:   0,
 	}
+
+	_ = vfs.SetCurDir(curDir)
+
+	if len(opts.SystemDirs) == 0 {
+		opts.SystemDirs = avfs.SystemDirs(vfs, volumeName)
+	}
+
+	_ = avfs.MkSystemDirs(vfs, opts.SystemDirs)
 
 	return vfs
 }

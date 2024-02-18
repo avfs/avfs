@@ -35,16 +35,6 @@ func (nd *node) addChild(name string, child *node) {
 	nd.children[name] = child
 }
 
-// createRootNode creates a root node for a file system.
-func createRootNode() *node {
-	return &node{
-		mode:  fs.ModeDir | 0o755,
-		mtime: time.Now().UnixNano(),
-		uid:   0,
-		gid:   0,
-	}
-}
-
 // createDir creates a new directory.
 func (vfs *OrefaFS) createDir(parent *node, absPath, fileName string, perm fs.FileMode) *node {
 	mode := vfs.dirMode | (perm & avfs.FileModeMask &^ vfs.UMask())
@@ -65,11 +55,11 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.F
 	defer parent.mu.Unlock()
 
 	nd := &node{
-		id:    atomic.AddUint64(&vfs.lastId, 1),
+		id:    atomic.AddUint64(vfs.lastId, 1),
 		mtime: time.Now().UnixNano(),
 		mode:  mode,
-		uid:   vfs.user.Uid(),
-		gid:   vfs.user.Gid(),
+		uid:   vfs.User().Uid(),
+		gid:   vfs.User().Gid(),
 		nlink: 1,
 	}
 
