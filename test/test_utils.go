@@ -45,7 +45,6 @@ func (ts *Suite) TestUtils(t *testing.T) {
 		ts.TestIsEmpty,
 		ts.TestIsPathSeparator,
 		ts.TestRndTree,
-		ts.TestSetUserFS,
 		ts.TestUMask)
 }
 
@@ -1349,7 +1348,7 @@ func (ts *Suite) TestSplitAbs(t *testing.T, _ string) {
 			continue
 		}
 
-		dir, file := vfs.SplitAbs(c.path)
+		dir, file := avfs.SplitAbs(vfs, c.path)
 		if c.dir != dir {
 			t.Errorf("splitPath %s : want dir to be %s, got %s", c.path, c.dir, dir)
 		}

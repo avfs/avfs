@@ -34,7 +34,6 @@ func (ts *Suite) TestIdmAll(t *testing.T) {
 	ts.TestGroupAddDel(t)
 	ts.TestUserAddDel(t)
 	ts.TestLookup(t)
-	ts.TestSetUserIdm(t)
 }
 
 // TestAdminGroupUser tests AdminGroup and AdminUser.
@@ -428,102 +427,6 @@ func (ts *Suite) TestLookup(t *testing.T) {
 
 			if (u.Uid() != 0 && u.Gid() != 0) && u.IsAdmin() {
 				t.Errorf("LookupUser %s : want IsAdmin to be false, got true", userName)
-			}
-		}
-	})
-}
-
-func (ts *Suite) TestSetUserIdm(t *testing.T) {
-	ust, ok := ts.idm.(avfs.UserSetter)
-	if ok {
-		ts.testSetUser(t, ust)
-	}
-}
-
-func (ts *Suite) TestSetUserFS(t *testing.T, _ string) {
-	ts.testSetUser(t, ts.vfsTest)
-}
-
-// testSetUser tests setUser and User functions.
-func (ts *Suite) testSetUser(t *testing.T, ust avfs.UserSetter) {
-	idm := ts.idm
-	vfs := ts.vfsTest
-
-	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) || vfs.HasFeature(avfs.FeatReadOnly) {
-		userName := ust.User().Name()
-
-		var wantErr error
-		if !idm.HasFeature(avfs.FeatReadOnlyIdm) {
-			wantErr = avfs.ErrPermDenied
-		}
-
-		_, err := ust.SetUser(userName)
-		if err != wantErr {
-			t.Errorf("setUser : want error to be %v, got %v", wantErr, err)
-		}
-
-		return
-	}
-
-	t.Run("UserNotExists", func(t *testing.T) {
-		const userName = "notExistingUser"
-
-		wantErr := avfs.UnknownUserError(userName)
-
-		_, err := idm.LookupUser(userName)
-		if err != wantErr {
-			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
-		}
-
-		_, err = ust.SetUser(userName)
-		if err != wantErr {
-			t.Errorf("setUser %s : want error to be %v, got %v", userName, wantErr, err)
-		}
-	})
-
-	t.Run("UserExists", func(t *testing.T) {
-		for _, ui := range UserInfos() {
-			userName := ui.Name
-
-			lu, err := idm.LookupUser(userName)
-			if !AssertNoError(t, err, "LookupUser %s", userName) {
-				continue
-			}
-
-			uid := lu.Uid()
-			gid := lu.Gid()
-
-			// loop to test change with the same user
-			for i := 0; i < 2; i++ {
-				u, err := ust.SetUser(userName)
-				if !AssertNoError(t, err, "SetUser %s %d", userName, i) {
-					continue
-				}
-
-				if u.Name() != userName {
-					t.Errorf("setUser %s : want name to be %s, got %s", userName, userName, u.Name())
-				}
-
-				if u.Uid() != uid {
-					t.Errorf("setUser %s : want uid to be %d, got %d", userName, uid, u.Uid())
-				}
-
-				if u.Gid() != gid {
-					t.Errorf("setUser %s : want gid to be %d, got %d", userName, gid, u.Gid())
-				}
-
-				cu := ust.User()
-				if cu.Name() != userName {
-					t.Errorf("setUser %s : want name to be %s, got %s", userName, userName, cu.Name())
-				}
-
-				if cu.Uid() != uid {
-					t.Errorf("setUser %s : want uid to be %d, got %d", userName, uid, cu.Uid())
-				}
-
-				if cu.Gid() != gid {
-					t.Errorf("setUser %s : want gid to be %d, got %d", userName, gid, cu.Gid())
-				}
 			}
 		}
 	})

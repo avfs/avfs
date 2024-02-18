@@ -87,6 +87,7 @@ func (ts *Suite) TestVFS(t *testing.T) {
 		ts.TestMkSystemDirs,
 		ts.TestCreateHomeDir,
 		ts.TestLchown,
+		ts.TestSetUserByName,
 		ts.TestVolume,
 		ts.TestWriteOnReadOnlyFS,
 	)
@@ -2160,6 +2161,92 @@ func (ts *Suite) TestSameFile(t *testing.T, testDir string) {
 
 			err = vfs.Remove(path2)
 			RequireNoError(t, err, "Remove %s", path2)
+		}
+	})
+}
+
+func (ts *Suite) TestSetUserByName(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
+	idm := vfs.Idm()
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || vfs.HasFeature(avfs.FeatReadOnlyIdm) || vfs.HasFeature(avfs.FeatReadOnly) {
+		userName := vfs.User().Name()
+
+		var wantErr error
+		if !vfs.HasFeature(avfs.FeatReadOnlyIdm) {
+			wantErr = avfs.ErrPermDenied
+		}
+
+		err := vfs.SetUserByName(userName)
+		if err != wantErr {
+			t.Errorf("setUser : want error to be %v, got %v", wantErr, err)
+		}
+
+		return
+	}
+
+	t.Run("UserNotExists", func(t *testing.T) {
+		const userName = "notExistingUser"
+
+		wantErr := avfs.UnknownUserError(userName)
+
+		_, err := idm.LookupUser(userName)
+		if err != wantErr {
+			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
+		}
+
+		err = vfs.SetUserByName(userName)
+		if err != wantErr {
+			t.Errorf("setUser %s : want error to be %v, got %v", userName, wantErr, err)
+		}
+	})
+
+	t.Run("UserExists", func(t *testing.T) {
+		for _, ui := range UserInfos() {
+			userName := ui.Name
+
+			lu, err := idm.LookupUser(userName)
+			if !AssertNoError(t, err, "LookupUser %s", userName) {
+				continue
+			}
+
+			uid := lu.Uid()
+			gid := lu.Gid()
+
+			// loop to test change with the same user
+			for i := 0; i < 2; i++ {
+				err = vfs.SetUserByName(userName)
+				if !AssertNoError(t, err, "SetUserByName %s %d", userName, i) {
+					continue
+				}
+
+				u := vfs.User()
+
+				if u.Name() != userName {
+					t.Errorf("setUser %s : want name to be %s, got %s", userName, userName, u.Name())
+				}
+
+				if u.Uid() != uid {
+					t.Errorf("setUser %s : want uid to be %d, got %d", userName, uid, u.Uid())
+				}
+
+				if u.Gid() != gid {
+					t.Errorf("setUser %s : want gid to be %d, got %d", userName, gid, u.Gid())
+				}
+
+				cu := vfs.User()
+				if cu.Name() != userName {
+					t.Errorf("setUser %s : want name to be %s, got %s", userName, userName, cu.Name())
+				}
+
+				if cu.Uid() != uid {
+					t.Errorf("setUser %s : want uid to be %d, got %d", userName, uid, cu.Uid())
+				}
+
+				if cu.Gid() != gid {
+					t.Errorf("setUser %s : want gid to be %d, got %d", userName, gid, cu.Gid())
+				}
+			}
 		}
 	})
 }
