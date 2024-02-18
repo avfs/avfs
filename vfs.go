@@ -27,6 +27,10 @@ import (
 	_ "unsafe" // for go:linkname only.
 )
 
+func (vfn *VFSFn[T]) SetVFS(vfs T) {
+	vfn.vfs = vfs
+}
+
 // Abs returns an absolute representation of path.
 // If the path is not absolute it will be joined with the current
 // working directory to turn it into an absolute path. The absolute
@@ -143,15 +147,13 @@ func (vfn *VFSFn[T]) Getwd() (dir string, err error) {
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
 func (vfn *VFSFn[T]) Glob(pattern string) (matches []string, err error) {
-	vfs := vfn.vfs
-
 	// Check pattern is well-formed.
 	if _, err = vfn.Match(pattern, ""); err != nil {
 		return nil, err
 	}
 
 	if !vfn.hasMeta(pattern) {
-		if _, err = vfs.Lstat(pattern); err != nil {
+		if _, err = vfn.vfs.Lstat(pattern); err != nil {
 			return nil, nil
 		}
 
@@ -198,10 +200,9 @@ func (vfn *VFSFn[T]) Glob(pattern string) (matches []string, err error) {
 // opened, it returns the existing matches. New matches are
 // added in lexicographical order.
 func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e error) {
-	vfs := vfn.vfs
 	m = matches
 
-	fi, err := vfs.Stat(dir)
+	fi, err := vfn.vfs.Stat(dir)
 	if err != nil {
 		return // ignore I/O error
 	}
@@ -210,7 +211,7 @@ func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e 
 		return // ignore I/O error
 	}
 
-	d, err := vfs.OpenFile(dir, os.O_RDONLY, 0)
+	d, err := vfn.vfs.OpenFile(dir, os.O_RDONLY, 0)
 	if err != nil {
 		return // ignore I/O error
 	}
@@ -227,7 +228,7 @@ func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e 
 		}
 
 		if matched {
-			m = append(m, vfs.Join(dir, n))
+			m = append(m, vfn.Join(dir, n))
 		}
 	}
 
@@ -284,10 +285,8 @@ func (vfn *VFSFn[T]) joinPath(dir, name string) string {
 func (vfn *VFSFn[T]) MkdirTemp(dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
-	vfs := vfn.vfs
-
 	if dir == "" {
-		dir = TempDirUser(vfs, vfn.User().Name())
+		dir = vfn.TempDir()
 	}
 
 	prefix, suffix, err := vfn.prefixAndSuffix(pattern)
@@ -301,7 +300,7 @@ func (vfn *VFSFn[T]) MkdirTemp(dir, pattern string) (string, error) {
 	for {
 		name := prefix + nextRandom() + suffix
 
-		err := vfs.Mkdir(name, 0o700)
+		err := vfn.vfs.Mkdir(name, 0o700)
 		if err == nil {
 			return name, nil
 		}
@@ -316,7 +315,7 @@ func (vfn *VFSFn[T]) MkdirTemp(dir, pattern string) (string, error) {
 		}
 
 		if vfn.IsNotExist(err) {
-			_, err := vfs.Stat(dir) //nolint:govet // declaration of "err" shadows declaration
+			_, err := vfn.vfs.Stat(dir) //nolint:govet // declaration of "err" shadows declaration
 			if vfn.IsNotExist(err) {
 				return "", err
 			}
@@ -497,7 +496,26 @@ func (vfn *VFSFn[T]) SetUserByName(name string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfn *VFSFn[T]) TempDir() string {
-	return TempDir(vfn.vfs)
+	return vfn.TempDirUser(vfn.User().Name())
+}
+
+// TempDirUser returns the default directory to use for temporary files for a specific user.
+func (vfn *VFSFn[T]) TempDirUser(username string) string {
+	if vfn.OSType() != OsWindows {
+		return "/tmp"
+	}
+
+	dir := vfn.Join(DefaultVolume, `\Users\`, username, `\AppData\Local\Temp`)
+
+	return dir
+}
+
+// VolumeName returns leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func (vfn *VFSFn[T]) VolumeName(path string) string {
+	return vfn.FromSlash(path[:VolumeNameLen(vfn, path)])
 }
 
 //go:linkname volumeNameLen path/filepath.volumeNameLen
@@ -531,8 +549,6 @@ func (vfn *VFSFn[T]) WalkDir(root string, fn fs.WalkDirFunc) error {
 
 // walkDir recursively descends path, calling walkDirFn.
 func (vfn *VFSFn[T]) walkDir(path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
-	vfs := vfn.vfs
-
 	if err := walkDirFn(path, d, nil); err != nil || !d.IsDir() {
 		if err == filepath.SkipDir && d.IsDir() {
 			// Successfully skipped directory.
@@ -542,7 +558,7 @@ func (vfn *VFSFn[T]) walkDir(path string, d fs.DirEntry, walkDirFn fs.WalkDirFun
 		return err
 	}
 
-	dirs, err := vfs.ReadDir(path)
+	dirs, err := vfn.ReadDir(path)
 	if err != nil {
 		// Second call, to report ReadDir error.
 		err = walkDirFn(path, d, err)
@@ -552,7 +568,7 @@ func (vfn *VFSFn[T]) walkDir(path string, d fs.DirEntry, walkDirFn fs.WalkDirFun
 	}
 
 	for _, d1 := range dirs {
-		path1 := vfs.Join(path, d1.Name())
+		path1 := vfn.Join(path, d1.Name())
 		if err := vfn.walkDir(path1, d1, walkDirFn); err != nil {
 			if err == filepath.SkipDir {
 				break

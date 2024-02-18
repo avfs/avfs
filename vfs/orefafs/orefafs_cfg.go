@@ -49,6 +49,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		name:     opts.Name,
 	}
 
+	vfs.SetVFS(vfs)
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
 	_ = vfs.SetUMask(opts.UMask)
@@ -67,6 +68,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		curDir = volumeName + string(vfs.PathSeparator())
 	}
 
+	vfs.nodes = make(nodes)
 	vfs.nodes[volumeName] = &node{
 		mode:  fs.ModeDir | 0o755,
 		mtime: time.Now().UnixNano(),

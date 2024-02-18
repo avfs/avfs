@@ -42,7 +42,7 @@ func (vfn *VFSFn[T]) Base(path string) string {
 	}
 
 	// Throw away volume name
-	path = path[len(VolumeName(vfn.vfs, path)):]
+	path = path[len(vfn.VolumeName(path)):]
 
 	// Find the last element
 	i := len(path) - 1
@@ -92,7 +92,7 @@ func (vfn *VFSFn[T]) Base(path string) string {
 func (vfn *VFSFn[T]) Clean(path string) string {
 	pathSeparator := vfn.PathSeparator()
 	originalPath := path
-	volLen := VolumeNameLen(vfn.vfs, path)
+	volLen := VolumeNameLen(vfn, path)
 
 	path = path[volLen:]
 	if path == "" {
@@ -193,7 +193,7 @@ func (vfn *VFSFn[T]) Clean(path string) string {
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
 func (vfn *VFSFn[T]) Dir(path string) string {
-	vol := VolumeName(vfn.vfs, path)
+	vol := vfn.VolumeName(path)
 
 	i := len(path) - 1
 	for i >= len(vol) && !vfn.IsPathSeparator(path[i]) {
@@ -258,7 +258,7 @@ func (vfn *VFSFn[T]) IsAbs(path string) bool {
 		return strings.HasPrefix(path, "/")
 	}
 
-	l := VolumeNameLen(vfn.vfs, path)
+	l := VolumeNameLen(vfn, path)
 	if l == 0 {
 		return false
 	}
@@ -558,10 +558,9 @@ func (vfn *VFSFn[T]) matchChunk(chunk, s string) (rest string, ok bool, err erro
 // Rel calls Clean on the result.
 func (vfn *VFSFn[T]) Rel(basepath, targpath string) (string, error) {
 	pathSeparator := vfn.PathSeparator()
-	vfs := vfn.vfs
 
-	baseVol := VolumeName(vfs, basepath)
-	targVol := VolumeName(vfs, targpath)
+	baseVol := vfn.VolumeName(basepath)
+	targVol := vfn.VolumeName(targpath)
 	base := vfn.Clean(basepath)
 	targ := vfn.Clean(targpath)
 
@@ -574,7 +573,7 @@ func (vfn *VFSFn[T]) Rel(basepath, targpath string) (string, error) {
 
 	if base == "." {
 		base = ""
-	} else if base == "" && VolumeNameLen(vfs, baseVol) > 2 /* isUNC */ {
+	} else if base == "" && VolumeNameLen(vfn, baseVol) > 2 /* isUNC */ {
 		// Treat any targetpath matching `\\host\share` basepath as absolute path.
 		base = string(pathSeparator)
 	}
@@ -701,7 +700,7 @@ Scan:
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (vfn *VFSFn[T]) Split(path string) (dir, file string) {
-	vol := VolumeName(vfn.vfs, path)
+	vol := vfn.VolumeName(path)
 
 	i := len(path) - 1
 	for i >= len(vol) && !vfn.IsPathSeparator(path[i]) {
@@ -726,7 +725,7 @@ func (vfn *VFSFn[T]) ToSlash(path string) string {
 
 // VolumeNameLen returns length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func VolumeNameLen[T VFSBase](vfs T, path string) int {
+func VolumeNameLen[T OSTyper](vfs T, path string) int {
 	if vfs.OSType() != OsWindows {
 		return 0
 	}

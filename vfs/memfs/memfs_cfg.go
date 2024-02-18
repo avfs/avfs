@@ -53,6 +53,7 @@ func NewWithOptions(opts *Options) *MemFS {
 		name:     opts.Name,
 	}
 
+	vfs.SetVFS(vfs)
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
 	_ = vfs.SetUMask(opts.UMask)

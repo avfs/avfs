@@ -156,6 +156,6 @@ func (*VFSFn[_]) ToSlash(path string) string {
 
 // VolumeNameLen returns length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func VolumeNameLen[T VFSBase](vfs T, path string) int {
+func VolumeNameLen[T OSTyper](vfs T, path string) int {
 	return volumeNameLen(path)
 }

@@ -51,7 +51,8 @@ type PathIterator[T VFSBase] struct {
 // NewPathIterator creates a new path iterator from an absolute path.
 func NewPathIterator[T VFSBase](vfs T, path string) *PathIterator[T] {
 	pi := PathIterator[T]{path: path}
-	pi.volumeNameLen = VolumeNameLen(pi.vfs, path)
+	pi.vfs = vfs
+	pi.volumeNameLen = VolumeNameLen(vfs, path)
 	pi.pathSeparator = vfs.PathSeparator()
 	pi.Reset()
 

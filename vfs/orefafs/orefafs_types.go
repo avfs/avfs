@@ -32,7 +32,7 @@ type OrefaFS struct {
 	mu                   sync.RWMutex // mu is the RWMutex used to access nodes.
 	dirMode              fs.FileMode  // dirMode is the default fs.FileMode for a directory.
 	fileMode             fs.FileMode  // fileMode is de default fs.FileMode for a file.
-	avfs.VFSFn[*OrefaFS]              // utils regroups common functions used by emulated file systems.
+	avfs.VFSFn[*OrefaFS]              // VFSFn regroups common functions used by emulated file systems.
 }
 
 // OrefaFile represents an open file descriptor.
