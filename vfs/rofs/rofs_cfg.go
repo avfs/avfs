@@ -26,8 +26,9 @@ func New(baseFS avfs.VFS) *RoFS {
 		baseFS:            baseFS,
 		errOpNotPermitted: avfs.ErrOpNotPermitted,
 		errPermDenied:     avfs.ErrPermDenied,
-		features:          baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly,
 	}
+
+	_ = vfs.SetFeatures(baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly)
 
 	if baseFS.OSType() == avfs.OsWindows {
 		vfs.errOpNotPermitted = avfs.ErrWinNotSupported
@@ -35,16 +36,6 @@ func New(baseFS avfs.VFS) *RoFS {
 	}
 
 	return vfs
-}
-
-// Features returns the set of features provided by the file system or identity manager.
-func (vfs *RoFS) Features() avfs.Features {
-	return vfs.features
-}
-
-// HasFeature returns true if the file system or identity manager provides a given features.
-func (vfs *RoFS) HasFeature(feature avfs.Features) bool {
-	return vfs.features&feature == feature
 }
 
 // Name returns the name of the fileSystem.

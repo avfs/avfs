@@ -419,16 +419,28 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return vfs.baseFS.SameFile(fi1, fi2)
 }
 
+// SetIdm set the current identity manager.
+// If the identity manager provider is nil, the idm dummyidm.NotImplementedIdm is set.
+func (vfs *RoFS) SetIdm(idm avfs.IdentityMgr) error {
+	return avfs.ErrPermDenied
+}
+
 // SetUMask sets the file mode creation mask.
 // Setting Umask is disabled for read only file systems.
 func (vfs *RoFS) SetUMask(mask fs.FileMode) error {
 	return vfs.baseFS.SetUMask(mask)
 }
 
-// SetUser sets and returns the current user.
+// SetUser sets the current user.
+// If the user can't be changed an error is returned.
+func (vfs *RoFS) SetUser(user avfs.UserReader) error {
+	return avfs.ErrPermDenied
+}
+
+// SetUserByName sets the current user by name.
 // If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *RoFS) SetUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (vfs *RoFS) SetUserByName(name string) error {
+	return avfs.ErrPermDenied
 }
 
 // Split splits path immediately following the final Separator,
@@ -438,15 +450,6 @@ func (vfs *RoFS) SetUser(name string) (avfs.UserReader, error) {
 // The returned values have the property that path = dir+file.
 func (vfs *RoFS) Split(path string) (dir, file string) {
 	return vfs.baseFS.Split(path)
-}
-
-// SplitAbs splits an absolute path immediately preceding the final Separator,
-// separating it into a directory and file name component.
-// If there is no Separator in path, splitPath returns an empty dir
-// and file set to path.
-// The returned values have the property that path = dir + PathSeparator + file.
-func (vfs *RoFS) SplitAbs(path string) (dir, file string) {
-	return vfs.baseFS.SplitAbs(path)
 }
 
 // Stat returns a FileInfo describing the named file.
