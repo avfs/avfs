@@ -153,3 +153,9 @@ func (*VFSFn[_]) Split(path string) (dir, file string) {
 func (*VFSFn[_]) ToSlash(path string) string {
 	return filepath.ToSlash(path)
 }
+
+// VolumeNameLen returns length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func VolumeNameLen[T VFSBase](vfs T, path string) int {
+	return volumeNameLen(path)
+}
