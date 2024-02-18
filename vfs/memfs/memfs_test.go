@@ -118,7 +118,7 @@ func TestMemFSNilPtrFile(t *testing.T) {
 func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 
-	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatSystemDirs | avfs.FeatIdentityMgr |
+	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatIdentityMgr |
 		avfs.BuildFeatures()
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())

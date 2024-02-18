@@ -45,9 +45,6 @@ const (
 
 	// FeatSymlink indicates that the file system supports symbolic links (symlink(), evalSymlink() functions).
 	FeatSymlink
-
-	// FeatSystemDirs is set when system directories  (/home, /root and /tmp for linux).
-	FeatSystemDirs
 )
 
 // Featurer is the interface that wraps the Features and HasFeature methods.

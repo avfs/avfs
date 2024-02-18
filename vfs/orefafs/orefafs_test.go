@@ -47,7 +47,7 @@ var (
 func TestOrefaFS(t *testing.T) {
 	vfs := orefafs.New()
 
-	wantFeatures := avfs.FeatHardlink | avfs.FeatSystemDirs
+	wantFeatures := avfs.FeatHardlink
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures.String(), vfs.Features())
 	}

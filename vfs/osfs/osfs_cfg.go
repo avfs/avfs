@@ -39,7 +39,7 @@ func NewWithOptions(opts *Options) *OsFS {
 		opts = &Options{}
 	}
 
-	features := avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink | opts.Idm.Features()
+	features := avfs.FeatRealFS | avfs.FeatSymlink | avfs.FeatHardlink | opts.Idm.Features()
 	vfs := &OsFS{}
 
 	_ = vfs.SetFeatures(features)
