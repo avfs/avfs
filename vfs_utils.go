@@ -129,6 +129,14 @@ func TempDirUser(vfs VFSBase, username string) string {
 	return dir
 }
 
+// VolumeName returns leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func VolumeName[T VFSBase](vfs T, path string) string {
+	return vfs.FromSlash(path[:VolumeNameLen(vfs, path)])
+}
+
 // VolumeNameLen returns length of the leading volume name on Windows.
 // It returns 0 elsewhere.
 func VolumeNameLen[T VFSBase](vfs T, path string) int {
