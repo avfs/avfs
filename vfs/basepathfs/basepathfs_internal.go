@@ -20,12 +20,14 @@ import (
 	"io/fs"
 	"os"
 	"strings"
+
+	"github.com/avfs/avfs"
 )
 
 // toBasePath transforms a BasePathFS path to a BaseFS path.
 func (vfs *BasePathFS) toBasePath(path string) string {
 	if vfs.IsAbs(path) {
-		vl := vfs.Utils.VolumeNameLen(path)
+		vl := avfs.VolumeNameLen(vfs, path)
 
 		return vfs.basePath + path[vl:]
 	}
@@ -36,7 +38,7 @@ func (vfs *BasePathFS) toBasePath(path string) string {
 // fromBasePath returns a BasePathFS path from a BaseFs path.
 func (vfs *BasePathFS) fromBasePath(path string) string {
 	if strings.HasPrefix(path, vfs.basePath) {
-		vl := vfs.Utils.VolumeNameLen(path)
+		vl := avfs.VolumeNameLen(vfs, path)
 
 		return path[:vl] + path[len(vfs.basePath):]
 	}
