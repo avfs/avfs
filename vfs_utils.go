@@ -97,6 +97,22 @@ func MkSystemDirs(vfs VFSBase, dirs []DirInfo) error {
 	return nil
 }
 
+// SplitAbs splits an absolute path immediately preceding the final Separator,
+// separating it into a directory and file name component.
+// If there is no Separator in path, splitPath returns an empty dir
+// and file set to path.
+// The returned values have the property that path = dir + PathSeparator + file.
+func SplitAbs[T VFSBase](vfs T, path string) (dir, file string) {
+	l := VolumeNameLen(vfs, path)
+
+	i := len(path) - 1
+	for i >= l && !vfs.IsPathSeparator(path[i]) {
+		i--
+	}
+
+	return path[:i], path[i+1:]
+}
+
 // SystemDirs returns an array of system directories always present in the file system.
 func SystemDirs(vfs VFSBase, basePath string) []DirInfo {
 	const volumeNameLen = 2
@@ -118,8 +134,21 @@ func SystemDirs(vfs VFSBase, basePath string) []DirInfo {
 	}
 }
 
+// TempDir returns the default directory to use for temporary files.
+//
+// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
+// On Windows, it uses GetTempPath, returning the first non-empty
+// value from %TMP%, %TEMP%, %USERPROFILE%, or the Windows directory.
+// On Plan 9, it returns /tmp.
+//
+// The directory is neither guaranteed to exist nor have accessible
+// permissions.
+func TempDir[T VFSBase](vfs T) string {
+	return TempDirUser(vfs, vfs.User().Name())
+}
+
 // TempDirUser returns the default directory to use for temporary files for a specific user.
-func TempDirUser(vfs VFSBase, username string) string {
+func TempDirUser[T VFSBase](vfs T, username string) string {
 	if vfs.OSType() != OsWindows {
 		return "/tmp"
 	}
