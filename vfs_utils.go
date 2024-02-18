@@ -66,10 +66,6 @@ func HomeDirPerm() fs.FileMode {
 	return 0o700
 }
 
-func isSlash(c uint8) bool {
-	return c == '\\' || c == '/'
-}
-
 // MkHomeDir creates and returns the home directory of a user.
 // If there is an error, it will be of type *PathError.
 func MkHomeDir[T VFSBase](vfs T, u UserReader) (string, error) {

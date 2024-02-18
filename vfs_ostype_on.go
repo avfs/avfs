@@ -252,14 +252,6 @@ func (vfn *VFSFn[T]) getEsc(chunk string) (r rune, nchunk string, err error) {
 	return
 }
 
-// Getwd returns a rooted name link corresponding to the
-// current directory. If the current directory can be
-// reached via multiple paths (due to symbolic links),
-// Getwd may return any one of them.
-func (vfn *VFSFn[T]) Getwd() (dir string, err error) {
-	return vfn.CurDir(), nil
-}
-
 // IsAbs reports whether the path is absolute.
 func (vfn *VFSFn[T]) IsAbs(path string) bool {
 	if vfn.OSType() != OsWindows {
@@ -290,6 +282,10 @@ func (vfn *VFSFn[T]) IsPathSeparator(c uint8) bool {
 		return c == '/'
 	}
 
+	return c == '\\' || c == '/'
+}
+
+func isSlash(c uint8) bool {
 	return c == '\\' || c == '/'
 }
 

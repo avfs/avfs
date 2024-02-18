@@ -452,7 +452,7 @@ func (ts *Suite) setUser(tb testing.TB, userName string) {
 		return
 	}
 
-	_, err := vfs.SetUser(userName)
+	err := vfs.SetUserByName(userName)
 	RequireNoError(tb, err, "SetUser %s", userName)
 }
 

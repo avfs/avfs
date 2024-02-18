@@ -126,6 +126,14 @@ func (vfn *VFSFn[T]) CreateTemp(dir, pattern string) (File, error) {
 	}
 }
 
+// Getwd returns a rooted name link corresponding to the
+// current directory. If the current directory can be
+// reached via multiple paths (due to symbolic links),
+// Getwd may return any one of them.
+func (vfn *VFSFn[T]) Getwd() (dir string, err error) {
+	return vfn.CurDir(), nil
+}
+
 // Glob returns the names of all files matching pattern or nil
 // if there is no matching file. The syntax of patterns is the same
 // as in Match. The pattern may describe hierarchical names such as
