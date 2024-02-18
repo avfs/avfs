@@ -16,19 +16,15 @@
 
 package osfs
 
-import "github.com/avfs/avfs"
+import (
+	"github.com/avfs/avfs"
+)
 
 // OsFS represents the current file system.
 type OsFS struct {
-	err OsErrors
-	avfs.IdmFn
-	avfs.FeaturesFn
-}
-
-// OsErrors regroups the errors returned by OsFS functions.
-// They are changed depending on the OS.
-type OsErrors struct {
-	PermDenied error // Permission denied.
+	permDeniedError error // Permission denied error.
+	avfs.IdmFn            // IdmFn provides identity manager functions to a file system.
+	avfs.FeaturesFn       // FeaturesFn provides features functions to a file system or an identity manager.
 }
 
 // Options defines the initialization options of OsFS.

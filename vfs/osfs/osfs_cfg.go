@@ -53,9 +53,9 @@ func NewWithOptions(opts *Options) *OsFS {
 func (vfs *OsFS) setErrors() {
 	switch vfs.OSType() {
 	case avfs.OsWindows:
-		vfs.err.PermDenied = avfs.ErrWinAccessDenied
+		vfs.permDeniedError = avfs.ErrWinAccessDenied
 	default:
-		vfs.err.PermDenied = avfs.ErrPermDenied
+		vfs.permDeniedError = avfs.ErrPermDenied
 	}
 }
 

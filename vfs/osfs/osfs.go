@@ -445,7 +445,7 @@ func (vfs *OsFS) Split(path string) (dir, file string) {
 func (vfs *OsFS) Sub(dir string) (avfs.VFS, error) {
 	const op = "sub"
 
-	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
+	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.permDeniedError}
 }
 
 // Symlink creates newname as a symbolic link to oldname.
