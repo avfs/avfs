@@ -16,8 +16,6 @@
 
 package avfs
 
-import "github.com/avfs/avfs/idm/dummyidm"
-
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
 	Featurer
@@ -111,10 +109,10 @@ func (idf *IdmFn) Idm() IdentityMgr {
 }
 
 // SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm dummyidm.NotImplementedIdm is set.
+// If the identity manager provider is nil, the idm NotImplementedIdm is set.
 func (idf *IdmFn) SetIdm(idm IdentityMgr) error {
 	if idm == nil {
-		idm = dummyidm.NotImplementedIdm
+		idm = NotImplementedIdm
 	}
 
 	idf.idm = idm

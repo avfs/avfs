@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfs/osfs"
 )
 
@@ -37,7 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	u := &dummyidm.DummyUser{}
+	u := &avfs.DummyUser{}
 	tmpFile := vfs.Join(tmpDir, "file")
 
 	_, _ = vfs.Abs(tmpDir)

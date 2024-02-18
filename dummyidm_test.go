@@ -16,36 +16,35 @@
 
 //go:build !avfs_race
 
-package dummyidm_test
+package avfs_test
 
 import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/test"
 )
 
 var (
 	// Tests that avfs.DummyIdm implements avfs.IdentityMgr interface.
-	_ avfs.IdentityMgr = &dummyidm.DummyIdm{}
+	_ avfs.IdentityMgr = &avfs.DummyIdm{}
 
 	// Tests that avfs.DummyUser struct implements avfs.UserReader interface.
-	_ avfs.UserReader = &dummyidm.DummyUser{}
+	_ avfs.UserReader = &avfs.DummyUser{}
 
 	// Tests that avfs.DummyGroup struct implements avfs.GroupReader interface.
-	_ avfs.GroupReader = &dummyidm.DummyGroup{}
+	_ avfs.GroupReader = &avfs.DummyGroup{}
 )
 
 func TestDummyIdm(t *testing.T) {
-	idm := dummyidm.New()
+	idm := avfs.New()
 
 	ts := test.NewSuiteIdm(t, idm)
 	ts.TestIdmAll(t)
 }
 
 func TestDummyIdmFeatures(t *testing.T) {
-	idm := dummyidm.New()
+	idm := avfs.New()
 
 	if idm.Features() != 0 {
 		t.Errorf("Features : want Features to be 0, got %d", idm.Features())
@@ -58,7 +57,7 @@ func TestNewGroup(t *testing.T) {
 		gid       = 1
 	)
 
-	aGroup := dummyidm.NewGroup(groupName, gid)
+	aGroup := avfs.NewGroup(groupName, gid)
 	if aGroup.Name() != groupName {
 		t.Errorf("want group to be %s, got %s", groupName, aGroup.Name())
 	}
@@ -75,7 +74,7 @@ func TestNewUser(t *testing.T) {
 		gid      = 2
 	)
 
-	aUser := dummyidm.NewUser(userName, uid, gid)
+	aUser := avfs.NewUser(userName, uid, gid)
 	if aUser.Name() != userName {
 		t.Errorf("want user to be %s, got %s", userName, aUser.Name())
 	}

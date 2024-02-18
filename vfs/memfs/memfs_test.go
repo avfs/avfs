@@ -23,7 +23,6 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/idm/memidm"
 	"github.com/avfs/avfs/test"
 	"github.com/avfs/avfs/vfs/memfs"
@@ -57,7 +56,7 @@ func TestMemFS(t *testing.T) {
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: dummyidm.NotImplementedIdm})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.NotImplementedIdm})
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)

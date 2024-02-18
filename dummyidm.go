@@ -14,19 +14,39 @@
 //  limitations under the License.
 //
 
-package dummyidm
+package avfs
 
 import (
 	"math"
-
-	"github.com/avfs/avfs"
 )
+
+// NotImplementedIdm is the default identity manager for all file systems.
+var NotImplementedIdm = New() //nolint:gochecknoglobals // Used as default Idm for other file systems.
+
+// DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
+type DummyIdm struct {
+	adminGroup GroupReader
+	adminUser  UserReader
+}
+
+// DummyUser is the implementation of avfs.UserReader.
+type DummyUser struct {
+	name string
+	uid  int
+	gid  int
+}
+
+// DummyGroup is the implementation of avfs.GroupReader.
+type DummyGroup struct {
+	name string
+	gid  int
+}
 
 // New create a new identity manager.
 func New() *DummyIdm {
 	return &DummyIdm{
-		adminGroup: &DummyGroup{name: avfs.DefaultName, gid: math.MaxInt},
-		adminUser:  &DummyUser{name: avfs.DefaultName, uid: math.MaxInt, gid: math.MaxInt},
+		adminGroup: &DummyGroup{name: DefaultName, gid: math.MaxInt},
+		adminUser:  &DummyUser{name: DefaultName, uid: math.MaxInt, gid: math.MaxInt},
 	}
 }
 
@@ -44,72 +64,72 @@ func (idm *DummyIdm) Type() string {
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (idm *DummyIdm) Features() avfs.Features {
+func (idm *DummyIdm) Features() Features {
 	return 0
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (idm *DummyIdm) HasFeature(feature avfs.Features) bool {
+func (idm *DummyIdm) HasFeature(feature Features) bool {
 	return false
 }
 
 // AdminGroup returns the administrators (root) group.
-func (idm *DummyIdm) AdminGroup() avfs.GroupReader {
+func (idm *DummyIdm) AdminGroup() GroupReader {
 	return idm.adminGroup
 }
 
 // AdminUser returns the administrator (root) user.
-func (idm *DummyIdm) AdminUser() avfs.UserReader {
+func (idm *DummyIdm) AdminUser() UserReader {
 	return idm.adminUser
 }
 
 // GroupAdd adds a new group.
-func (idm *DummyIdm) GroupAdd(name string) (avfs.GroupReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *DummyIdm) GroupAdd(name string) (GroupReader, error) {
+	return nil, ErrPermDenied
 }
 
 // GroupDel deletes an existing group.
 func (idm *DummyIdm) GroupDel(name string) error {
-	return avfs.ErrPermDenied
+	return ErrPermDenied
 }
 
 // LookupGroup looks up a group by name.
 // If the group cannot be found, the returned error is of type UnknownGroupError.
-func (idm *DummyIdm) LookupGroup(name string) (avfs.GroupReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *DummyIdm) LookupGroup(name string) (GroupReader, error) {
+	return nil, ErrPermDenied
 }
 
 // LookupGroupId looks up a group by groupid.
 // If the group cannot be found, the returned error is of type UnknownGroupIdError.
-func (idm *DummyIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *DummyIdm) LookupGroupId(gid int) (GroupReader, error) {
+	return nil, ErrPermDenied
 }
 
 // LookupUser looks up a user by username.
 // If the user cannot be found, the returned error is of type UnknownUserError.
-func (idm *DummyIdm) LookupUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *DummyIdm) LookupUser(name string) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // LookupUserId looks up a user by userid.
 // If the user cannot be found, the returned error is of type UnknownUserIdError.
-func (idm *DummyIdm) LookupUserId(uid int) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *DummyIdm) LookupUserId(uid int) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // OSType returns the operating system type of the identity manager.
-func (idm *DummyIdm) OSType() avfs.OSType {
-	return avfs.CurrentOSType()
+func (idm *DummyIdm) OSType() OSType {
+	return CurrentOSType()
 }
 
 // UserAdd adds a new user.
-func (idm *DummyIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func (idm *DummyIdm) UserAdd(name, groupName string) (UserReader, error) {
+	return nil, ErrPermDenied
 }
 
 // UserDel deletes an existing group.
 func (idm *DummyIdm) UserDel(name string) error {
-	return avfs.ErrPermDenied
+	return ErrPermDenied
 }
 
 // DummyGroup

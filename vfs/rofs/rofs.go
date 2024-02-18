@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 )
 
 // file system functions.
@@ -201,7 +200,7 @@ func (vfs *RoFS) Glob(pattern string) (matches []string, err error) {
 // Idm returns the identity manager of the file system.
 // If the file system does not have an identity manager, avfs.DummyIdm is returned.
 func (vfs *RoFS) Idm() avfs.IdentityMgr {
-	return dummyidm.NotImplementedIdm
+	return avfs.NotImplementedIdm
 }
 
 // IsAbs reports whether the path is absolute.
