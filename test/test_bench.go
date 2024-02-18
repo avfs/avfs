@@ -212,7 +212,7 @@ func (ts *Suite) BenchRemove(b *testing.B, testDir string) {
 
 		b.StartTimer()
 
-		for n := b.N - 1; n >= 0; n-- {
+		for n := b.N - 1; n > 0; n-- {
 			path := dirs[n].Name
 
 			err = vfs.Remove(path)
