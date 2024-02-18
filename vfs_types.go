@@ -187,6 +187,7 @@ type VFS interface {
 // VFSBase regroups the common methods to VFS and IOFS.
 type VFSBase interface {
 	CurUserMgr
+	Featurer
 	IdmMgr
 	Namer
 	OSTyper

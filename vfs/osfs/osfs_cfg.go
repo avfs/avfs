@@ -18,7 +18,6 @@ package osfs
 
 import (
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/idm/osidm"
 )
 
@@ -40,16 +39,11 @@ func NewWithOptions(opts *Options) *OsFS {
 		opts = &Options{}
 	}
 
-	idm := opts.Idm
-	if idm == nil {
-		idm = dummyidm.NotImplementedIdm
-	}
-
 	features := avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink | opts.Idm.Features()
 	vfs := &OsFS{}
 
 	_ = vfs.SetFeatures(features)
-	_ = vfs.SetIdm(idm)
+	_ = vfs.SetIdm(opts.Idm)
 	vfs.setErrors()
 
 	return vfs

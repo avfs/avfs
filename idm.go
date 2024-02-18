@@ -16,8 +16,11 @@
 
 package avfs
 
+import "github.com/avfs/avfs/idm/dummyidm"
+
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
+	Featurer
 	OSTyper
 	Typer
 
@@ -87,8 +90,8 @@ type UserIdentifier interface {
 	Uid() int
 }
 
-// IdmSetter is the interface that wraps Identity manager setting methods for file systems.
-type IdmSetter interface {
+// IdmMgr is the interface that wraps Identity manager setting methods for file systems.
+type IdmMgr interface {
 	// Idm returns the identity manager of the file system.
 	Idm() IdentityMgr
 
@@ -111,7 +114,7 @@ func (idf *IdmFn) Idm() IdentityMgr {
 // If the identity manager provider is nil, the idm dummyidm.NotImplementedIdm is set.
 func (idf *IdmFn) SetIdm(idm IdentityMgr) error {
 	if idm == nil {
-
+		idm = dummyidm.NotImplementedIdm
 	}
 
 	idf.idm = idm
