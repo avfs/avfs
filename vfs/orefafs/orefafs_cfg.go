@@ -31,7 +31,7 @@ func New() *OrefaFS {
 // NewWithOptions returns a new memory file system (OrefaFS) with the selected Options.
 func NewWithOptions(opts *Options) *OrefaFS {
 	if opts == nil {
-		opts = &Options{UMask: avfs.UMask(), OSType: avfs.OsUnknown}
+		opts = &Options{OSType: avfs.OsUnknown}
 	}
 
 	features := avfs.FeatHardlink | avfs.BuildFeatures()
@@ -51,7 +51,6 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
-	_ = vfs.SetUMask(opts.UMask)
 	_ = vfs.SetIdm(idm)
 	_ = vfs.SetUser(user)
 
@@ -82,6 +81,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	}
 
 	_ = avfs.MkSystemDirs(vfs, opts.SystemDirs)
+	_ = vfs.SetUMask(avfs.UMask())
 
 	return vfs
 }

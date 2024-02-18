@@ -58,7 +58,6 @@ type Options struct {
 	SystemDirs []avfs.DirInfo  // SystemDirs contains data to create system directories.
 	User       avfs.UserReader // User is the current user of the file system.
 	Name       string          // Name is the name of the file system.
-	UMask      fs.FileMode     // UMask is the initial UMask of the file system.
 	OSType     avfs.OSType     // OSType defines the operating system type.
 }
 
