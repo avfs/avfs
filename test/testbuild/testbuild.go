@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/dummyidm"
 	"github.com/avfs/avfs/vfs/osfs"
 )
 
@@ -36,6 +37,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	u := &dummyidm.DummyUser{}
 	tmpFile := vfs.Join(tmpDir, "file")
 
 	_, _ = vfs.Abs(tmpDir)
@@ -57,8 +59,6 @@ func main() {
 	_ = vfs.HasFeature(avfs.FeatSymlink)
 	_ = vfs.Idm()
 	_ = vfs.IsAbs(tmpDir)
-	_ = vfs.IsExist(err)
-	_ = vfs.IsNotExist(err)
 	_ = vfs.IsPathSeparator('a')
 	_ = vfs.Join("", "")
 	_ = vfs.Lchown(tmpDir, 0, 0)
@@ -72,7 +72,6 @@ func main() {
 	f, _ := vfs.Open(tmpDir)
 	_, _ = vfs.OpenFile(tmpDir, os.O_RDONLY, avfs.DefaultDirPerm)
 	_ = vfs.OSType()
-	_ = vfs.OpenMode(os.O_RDONLY)
 	_ = vfs.PathSeparator()
 	_, _ = vfs.ReadDir(tmpDir)
 	_, _ = vfs.ReadFile(tmpDir)
@@ -81,12 +80,11 @@ func main() {
 	_ = vfs.Remove(tmpDir)
 	_ = vfs.RemoveAll(tmpDir)
 	_ = vfs.Rename(tmpDir, tmpDir)
-	_ = vfs.SetOSType(avfs.OsLinux)
 	_, _ = vfs.Split(tmpDir)
-	_, _ = vfs.SplitAbs(tmpDir)
 	info, _ := vfs.Stat(tmpFile)
 	_ = vfs.SetUMask(0)
-	_, _ = vfs.SetUser("")
+	_ = vfs.SetUser(u)
+	_ = vfs.SetUserByName("")
 	_, _ = vfs.Sub("")
 	_ = vfs.TempDir()
 	_ = vfs.ToSlash(tmpDir)
@@ -95,8 +93,6 @@ func main() {
 	_ = vfs.Type()
 	_ = vfs.User()
 	_ = vfs.UMask()
-	_ = vfs.VolumeName(tmpDir)
-	_ = vfs.VolumeNameLen(tmpDir)
 	_ = vfs.WalkDir(tmpDir, nil)
 	_ = vfs.WriteFile(tmpFile, nil, avfs.DefaultFilePerm)
 
