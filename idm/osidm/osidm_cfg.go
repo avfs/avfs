@@ -45,8 +45,9 @@ func New() *OsIdm {
 	idm := &OsIdm{
 		adminGroup: adminGroup,
 		adminUser:  adminUser,
-		features:   features,
 	}
+
+	_ = idm.SetFeatures(features)
 
 	return idm
 }
@@ -59,14 +60,4 @@ func (idm *OsIdm) OSType() avfs.OSType {
 // Type returns the type of the fileSystem or Identity manager.
 func (idm *OsIdm) Type() string {
 	return "OsIdm"
-}
-
-// Features returns the set of features provided by the file system or identity manager.
-func (idm *OsIdm) Features() avfs.Features {
-	return idm.features
-}
-
-// HasFeature returns true if the file system or identity manager provides a given feature.
-func (idm *OsIdm) HasFeature(feature avfs.Features) bool {
-	return (idm.features & feature) == feature
 }
