@@ -197,12 +197,6 @@ func (vfs *OsFS) Glob(pattern string) (matches []string, err error) {
 	return filepath.Glob(pattern)
 }
 
-// Idm returns the identity manager of the file system.
-// If the file system does not have an identity manager, avfs.DummyIdm is returned.
-func (vfs *OsFS) Idm() avfs.IdentityMgr {
-	return vfs.idm
-}
-
 // IsAbs reports whether the path is absolute.
 func (vfs *OsFS) IsAbs(path string) bool {
 	return filepath.IsAbs(path)
@@ -329,6 +323,11 @@ func (vfs *OsFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 	return os.OpenFile(name, flag, perm)
 }
 
+// OSType returns the operating system type of the file system.
+func (vfs *OsFS) OSType() avfs.OSType {
+	return avfs.CurrentOSType()
+}
+
 // PathSeparator return the OS-specific path separator.
 func (vfs *OsFS) PathSeparator() uint8 {
 	return os.PathSeparator
@@ -407,14 +406,24 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) error {
 	return avfs.SetUMask(mask)
 }
 
-// SetUser sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *OsFS) SetUser(name string) (avfs.UserReader, error) {
+// SetUser sets the current user.
+// If the user can't be changed an error is returned.
+func (vfs *OsFS) SetUser(user avfs.UserReader) error {
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return nil, avfs.ErrPermDenied
+		return avfs.ErrPermDenied
 	}
 
-	return osidm.SetUser(name)
+	return osidm.SetUser(user)
+}
+
+// SetUserByName sets and returns the current user.
+// If the user is not found, the returned error is of type UnknownUserError.
+func (vfs *OsFS) SetUserByName(name string) error {
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return avfs.ErrPermDenied
+	}
+
+	return osidm.SetUserByName(name)
 }
 
 // Stat returns a FileInfo describing the named file.

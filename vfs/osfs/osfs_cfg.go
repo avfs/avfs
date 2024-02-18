@@ -25,28 +25,31 @@ import (
 // New returns a new OS file system with the default Options.
 // Don't use this for a production environment, prefer NewWithNoIdm.
 func New() *OsFS {
-	return NewWithOptions(nil)
+	return NewWithOptions(&Options{Idm: osidm.New()})
 }
 
 // NewWithNoIdm returns a new OS file system with no identity management.
 // Use this for production environments.
 func NewWithNoIdm() *OsFS {
-	return NewWithOptions(&Options{Idm: dummyidm.NotImplementedIdm})
+	return NewWithOptions(&Options{})
 }
 
 // NewWithOptions returns a new memory file system (MemFS) with the selected Options.
 func NewWithOptions(opts *Options) *OsFS {
 	if opts == nil {
-		opts = &Options{Idm: osidm.New()}
+		opts = &Options{}
+	}
+
+	idm := opts.Idm
+	if idm == nil {
+		idm = dummyidm.NotImplementedIdm
 	}
 
 	features := avfs.FeatRealFS | avfs.FeatSystemDirs | avfs.FeatSymlink | avfs.FeatHardlink | opts.Idm.Features()
-	vfs := &OsFS{
-		idm: opts.Idm,
-	}
+	vfs := &OsFS{}
 
 	_ = vfs.SetFeatures(features)
-	_ = vfs.SetOSType(avfs.CurrentOSType())
+	_ = vfs.SetIdm(idm)
 	vfs.setErrors()
 
 	return vfs
