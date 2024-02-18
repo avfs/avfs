@@ -168,21 +168,18 @@ func getUser(nameOrId string, notFoundErr error) (*OsUser, error) {
 	return u, nil
 }
 
-func SetUser(name string) (avfs.UserReader, error) {
+// SetUser sets the current user.
+// If the user can't be changed an error is returned.
+func SetUser(user avfs.UserReader) error {
 	const op = "user"
-
-	u, err := lookupUser(name)
-	if err != nil {
-		return nil, err
-	}
 
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
 	// If the current user is the target user there is nothing to do.
 	curUid := syscall.Geteuid()
-	if curUid == u.Uid() {
-		return u, nil
+	if curUid == user.Uid() {
+		return nil
 	}
 
 	runtime.LockOSThread()
@@ -195,7 +192,7 @@ func SetUser(name string) (avfs.UserReader, error) {
 		runtime.LockOSThread()
 
 		if err := syscall.Setresgid(0, 0, 0); err != nil {
-			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
+			return avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
 		}
 	}
 
@@ -203,27 +200,38 @@ func SetUser(name string) (avfs.UserReader, error) {
 		runtime.LockOSThread()
 
 		if err := syscall.Setresuid(0, 0, 0); err != nil {
-			return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
+			return avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
 		}
 	}
 
-	if u.Uid() == 0 {
-		return u, nil
+	if user.Uid() == 0 {
+		return nil
 	}
 
 	runtime.LockOSThread()
 
-	if err := syscall.Setresgid(u.Gid(), u.Gid(), 0); err != nil {
-		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, u.Gid(), err))
+	if err := syscall.Setresgid(user.Gid(), user.Gid(), 0); err != nil {
+		return avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, user.Gid(), err))
 	}
 
 	runtime.LockOSThread()
 
-	if err := syscall.Setresuid(u.Uid(), u.Uid(), 0); err != nil {
-		return nil, avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, u.Uid(), err))
+	if err := syscall.Setresuid(user.Uid(), user.Uid(), 0); err != nil {
+		return avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, user.Uid(), err))
 	}
 
-	return u, nil
+	return nil
+}
+
+// SetUserByName sets the current user by name.
+// If the user is not found, the returned error is of type UnknownUserError.
+func SetUserByName(name string) error {
+	u, err := lookupUser(name)
+	if err != nil {
+		return err
+	}
+
+	return SetUser(u)
 }
 
 // User returns the current user of the OS.

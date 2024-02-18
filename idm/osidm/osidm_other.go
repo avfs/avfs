@@ -57,10 +57,16 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
-// SetUser sets and returns the current user.
+// SetUser sets the current user.
+// If the user can't be changed an error is returned.
+func SetUser(user avfs.UserReader) error {
+	return avfs.ErrPermDenied
+}
+
+// SetUserByName sets the current user by name.
 // If the user is not found, the returned error is of type UnknownUserError.
-func SetUser(name string) (avfs.UserReader, error) {
-	return nil, avfs.ErrPermDenied
+func SetUserByName(name string) error {
+	return avfs.ErrPermDenied
 }
 
 // User returns the current user of the OS.
