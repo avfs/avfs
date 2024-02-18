@@ -60,12 +60,12 @@ func TestSearchNode(t *testing.T) {
 	fa3 := vfs.createFile(da, "afile3", avfs.DefaultFilePerm)
 
 	// Symlinks
-	vfs.createSymlink(rn, "lroot", avfs.FromUnixPath("/"))
-	vfs.createSymlink(rn, "la", avfs.FromUnixPath("/a"))
-	vfs.createSymlink(db1b, "lb1", avfs.FromUnixPath("/b/b1"))
-	vfs.createSymlink(dc, "lafile3", avfs.FromUnixPath("../a/afile3"))
-	lloop1 := vfs.createSymlink(rn, "loop1", avfs.FromUnixPath("/loop2"))
-	vfs.createSymlink(rn, "loop2", avfs.FromUnixPath("/loop1"))
+	vfs.createSymlink(rn, "lroot", avfs.FromUnixPath(vfs, "/"))
+	vfs.createSymlink(rn, "la", avfs.FromUnixPath(vfs, "/a"))
+	vfs.createSymlink(db1b, "lb1", avfs.FromUnixPath(vfs, "/b/b1"))
+	vfs.createSymlink(dc, "lafile3", avfs.FromUnixPath(vfs, "../a/afile3"))
+	lloop1 := vfs.createSymlink(rn, "loop1", avfs.FromUnixPath(vfs, "/loop2"))
+	vfs.createSymlink(rn, "loop2", avfs.FromUnixPath(vfs, "/loop1"))
 
 	cases := []struct {
 		path        string
@@ -109,8 +109,8 @@ func TestSearchNode(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		path := avfs.FromUnixPath(c.path)
-		wantRest := vfs.Utils.FromSlash(c.rest)
+		path := avfs.FromUnixPath(vfs, c.path)
+		wantRest := vfs.FromSlash(c.rest)
 
 		parent, child, pi, err := vfs.searchNode(path, slmEval)
 		first := pi.Part()

@@ -57,7 +57,7 @@ func TestMemFS(t *testing.T) {
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: dummyidm.NotImplementedIdm, SystemDirs: true})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: dummyidm.NotImplementedIdm})
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)

@@ -36,22 +36,14 @@ type MemIOFS struct {
 
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
-	user               avfs.UserReader // user is the current user of the file system.
-	rootNode           *dirNode        // rootNode represent the root directory of the file system.
-	memAttrs           *memAttrs       // memAttrs represents the file system attributes.
-	err                avfs.Errors     // err regroups errors depending on the OS emulated.
-	volumes            volumes         // volumes contains the volume names (for Windows only).
-	curDir             string          // curDir is the current directory.
-	avfs.Utils[*MemFS]                 // utils regroups common functions used by emulated file systems.
-}
-
-// memAttrs represents the file system attributes for MemFS.
-type memAttrs struct {
-	idm      avfs.IdentityMgr // idm is the identity manager of the file system.
-	name     string           // name is the name of the file system.
-	lastId   uint64           // lastId is the last unique id used to identify files uniquely.
-	dirMode  fs.FileMode      // dirMode is the default fs.FileMode for a directory.
-	fileMode fs.FileMode      // fileMode is de default fs.FileMode for a file.
+	rootNode           *dirNode    // rootNode represent the root directory of the file system.
+	err                avfs.Errors // err regroups errors depending on the OS emulated.
+	volumes            volumes     // volumes contains the volume names (for Windows only).
+	dirMode            fs.FileMode // dirMode is the default fs.FileMode for a directory.
+	fileMode           fs.FileMode // fileMode is de default fs.FileMode for a file.
+	lastId             *uint64     // lastId is the last unique id used to identify files uniquely.
+	name               string      // name is the name of the file system.
+	avfs.VFSFn[*MemFS]             // utils regroups common functions used by emulated file systems.
 }
 
 // MemFile represents an open file descriptor.
@@ -72,8 +64,9 @@ type Options struct {
 	Idm        avfs.IdentityMgr // Idm is the identity manager of the file system.
 	User       avfs.UserReader  // User is the current user of the file system.
 	Name       string           // Name is the name of the file system.
+	UMask      fs.FileMode      // UMask is the initial UMask of the file system.
 	OSType     avfs.OSType      // OSType defines the operating system type.
-	SystemDirs bool             // SystemDirs must be true to create system directories.
+	SystemDirs []avfs.DirInfo   // SystemDirs contains data to create system directories.
 }
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.

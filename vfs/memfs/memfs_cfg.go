@@ -31,12 +31,7 @@ func New() *MemFS {
 // NewWithOptions returns a new memory file system (MemFS) with the selected Options.
 func NewWithOptions(opts *Options) *MemFS {
 	if opts == nil {
-		opts = &Options{SystemDirs: true}
-	}
-
-	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.BuildFeatures()
-	if opts.SystemDirs {
-		features |= avfs.FeatSystemDirs
+		opts = &Options{UMask: avfs.UMask(), OSType: avfs.OsUnknown}
 	}
 
 	idm := opts.Idm
@@ -44,71 +39,48 @@ func NewWithOptions(opts *Options) *MemFS {
 		idm = memidm.New()
 	}
 
-	features |= idm.Features()
+	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | idm.Features() | avfs.BuildFeatures()
 
 	user := opts.User
 	if opts.User == nil {
 		user = idm.AdminUser()
 	}
 
-	ma := &memAttrs{
-		idm:      idm,
+	vfs := &MemFS{
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
+		lastId:   new(uint64),
 		name:     opts.Name,
-	}
-
-	vfs := &MemFS{
-		memAttrs: ma,
-		curDir:   "/",
-		user:     user,
 	}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
-	_ = vfs.SetUMask(avfs.UMask())
+	_ = vfs.SetUMask(opts.UMask)
+	_ = vfs.SetIdm(idm)
+	_ = vfs.SetUser(user)
+
 	vfs.err.SetOSType(vfs.OSType())
 	vfs.rootNode = vfs.createRootNode()
 
-	volumeName := ""
+	var volumeName string
 
 	if vfs.OSType() == avfs.OsWindows {
-		ma.dirMode |= avfs.DefaultDirPerm
-		ma.fileMode |= avfs.DefaultFilePerm
+		vfs.dirMode |= avfs.DefaultDirPerm
+		vfs.fileMode |= avfs.DefaultFilePerm
 
 		volumeName = avfs.DefaultVolume
-		vfs.curDir = volumeName + string(vfs.PathSeparator())
 		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
 	}
 
-	if vfs.HasFeature(avfs.FeatSystemDirs) {
-		// Save the current user and umask.
-		u := vfs.user
-		um := vfs.UMask()
-
-		// Create system directories as administrator user without umask.
-		vfs.user = ma.idm.AdminUser()
-		_ = vfs.SetUMask(0)
-		dirs := avfs.SystemDirs(vfs, volumeName)
-
-		err := avfs.MkSystemDirs(vfs, dirs)
-		if err != nil {
-			panic(err)
-		}
-
-		// Restore the previous user and umask.
-		_ = vfs.SetUMask(um)
-		vfs.user = u
-		vfs.curDir = avfs.HomeDirUser(vfs, u)
-	}
+	_ = avfs.MkSystemDirs(vfs, opts.SystemDirs)
 
 	return vfs
 }
 
 // Name returns the name of the fileSystem.
 func (vfs *MemFS) Name() string {
-	return vfs.memAttrs.name
+	return vfs.name
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -125,7 +97,7 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeWindows}
 	}
 
-	vol := vfs.Utils.VolumeName(path)
+	vol := avfs.VolumeName(vfs, path)
 	if vol == "" {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
 	}
@@ -149,7 +121,7 @@ func (vfs *MemFS) VolumeDelete(path string) error {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeWindows}
 	}
 
-	vol := vfs.VolumeName(path)
+	vol := avfs.VolumeName(vfs, path)
 	if vol == "" {
 		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
 	}

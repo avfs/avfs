@@ -55,7 +55,7 @@ func (f *MemFile) Chdir() error {
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
-	f.vfs.curDir = f.name
+	_ = f.vfs.SetCurDir(f.name)
 
 	return nil
 }
@@ -85,7 +85,7 @@ func (f *MemFile) Chmod(mode fs.FileMode) error {
 	nd.Lock()
 	defer nd.Unlock()
 
-	if !nd.setMode(mode, f.vfs.user) {
+	if !nd.setMode(mode, f.vfs.User()) {
 		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.PermDenied}
 	}
 
@@ -124,7 +124,7 @@ func (f *MemFile) Chown(uid, gid int) error {
 	nd.Lock()
 	defer nd.Unlock()
 
-	if !nd.checkPermission(avfs.OpenWrite, f.vfs.user) {
+	if !nd.checkPermission(avfs.OpenWrite, f.vfs.User()) {
 		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.OpNotPermitted}
 	}
 

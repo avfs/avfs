@@ -90,7 +90,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			}
 
 			c.mu.RLock()
-			ok := c.checkPermission(avfs.OpenLookup, vfs.user)
+			ok := c.checkPermission(avfs.OpenLookup, vfs.User())
 			c.mu.RUnlock()
 
 			if !ok {
@@ -170,9 +170,9 @@ func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dir
 	child := &dirNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  vfs.memAttrs.dirMode | (perm & avfs.FileModeMask &^ vfs.UMask()),
-			uid:   vfs.user.Uid(),
-			gid:   vfs.user.Gid(),
+			mode:  vfs.dirMode | (perm & avfs.FileModeMask &^ vfs.UMask()),
+			uid:   vfs.User().Uid(),
+			gid:   vfs.User().Gid(),
 		},
 		children: nil,
 	}
@@ -187,11 +187,11 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fi
 	child := &fileNode{
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
-			mode:  vfs.memAttrs.fileMode | (perm & avfs.FileModeMask &^ vfs.UMask()),
-			uid:   vfs.user.Uid(),
-			gid:   vfs.user.Gid(),
+			mode:  vfs.fileMode | (perm & avfs.FileModeMask &^ vfs.UMask()),
+			uid:   vfs.User().Uid(),
+			gid:   vfs.User().Gid(),
 		},
-		id:    atomic.AddUint64(&vfs.memAttrs.lastId, 1),
+		id:    atomic.AddUint64(vfs.lastId, 1),
 		nlink: 1,
 	}
 
@@ -206,8 +206,8 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 		baseNode: baseNode{
 			mtime: time.Now().UnixNano(),
 			mode:  fs.ModeSymlink | fs.ModePerm,
-			uid:   vfs.user.Uid(),
-			gid:   vfs.user.Gid(),
+			uid:   vfs.User().Uid(),
+			gid:   vfs.User().Gid(),
 		},
 		link: link,
 	}

@@ -34,13 +34,13 @@ import (
 // ExampleNew should produce the same results independently of the host OS.
 func ExampleNew() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux, SystemDirs: true})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
 	fmt.Println(vfs.Features())
 	fmt.Println(vfs.User().Name())
 	fmt.Println(vfs.TempDir())
 
-	homeDir := vfs.HomeDirUser(vfs.User())
+	homeDir := avfs.HomeDirUser(vfs, vfs.User())
 	fmt.Println(homeDir)
 
 	_, err := vfs.Stat(homeDir)
@@ -76,7 +76,7 @@ func ExampleNewWithOptions_noIdm() {
 
 func ExampleMemFS_Sub() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
-	vfsSrc := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux, SystemDirs: true})
+	vfsSrc := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
 	_, err := vfsSrc.Idm().UserAdd(test.UsrTest, "root")
 	if err != nil {
@@ -88,7 +88,7 @@ func ExampleMemFS_Sub() {
 		log.Fatalf("Sub : want error to be nil, got %v", err)
 	}
 
-	_, err = vfsSub.SetUser(test.UsrTest)
+	err = vfsSub.SetUserByName(test.UsrTest)
 	if err != nil {
 		log.Fatalf("SetUser : want error to be nil, got %v", err)
 	}
@@ -101,9 +101,9 @@ func ExampleMemFS_Sub() {
 	// UsrTest
 }
 
-func ExampleMemFS_SetUser() {
+func ExampleMemFS_SetUserByName() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux, SystemDirs: true})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
 	_, err := vfs.Idm().UserAdd(test.UsrTest, idm.AdminGroup().Name())
 	if err != nil {
@@ -112,7 +112,7 @@ func ExampleMemFS_SetUser() {
 
 	fmt.Println(vfs.User().Name())
 
-	_, err = vfs.SetUser(test.UsrTest)
+	err = vfs.SetUserByName(test.UsrTest)
 	if err != nil {
 		log.Fatalf("SetUser : want error to be nil, got %v", err)
 	}
