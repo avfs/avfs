@@ -527,17 +527,3 @@ type VFSBase interface {
 	// otherwise WriteFile truncates it before writing.
 	WriteFile(filename string, data []byte, perm fs.FileMode) error
 }
-
-// VFSFn regroups standard functions used by emulated file systems.
-//
-// Most of these functions are extracted from Go standard library
-// and adapted to be used indifferently on Unix or Windows system.
-type VFSFn[T VFSBase] struct {
-	vfs        T //
-	CurDirFn     // CurDirFn provides current directory functions to a file system.
-	CurUserFn    // CurUserFn provides current user functions to a file system.
-	IdmFn        // IdmMgr is the interface that wraps Identity manager setting methods for file systems.
-	UMaskFn      // UMaskFn provides UMask functions to file systems.
-	FeaturesFn   // FeaturesFn provides features functions to a file system or an identity manager.
-	OSTypeFn     // OSTypeFn provides OS type functions to a file system or an identity manager.
-}

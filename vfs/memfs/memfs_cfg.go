@@ -31,7 +31,7 @@ func New() *MemFS {
 // NewWithOptions returns a new memory file system (MemFS) with the selected Options.
 func NewWithOptions(opts *Options) *MemFS {
 	if opts == nil {
-		opts = &Options{UMask: avfs.UMask(), OSType: avfs.OsUnknown}
+		opts = &Options{OSType: avfs.OsUnknown}
 	}
 
 	idm := opts.Idm
@@ -53,10 +53,8 @@ func NewWithOptions(opts *Options) *MemFS {
 		name:     opts.Name,
 	}
 
-	vfs.SetVFS(vfs)
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
-	_ = vfs.SetUMask(opts.UMask)
 	_ = vfs.SetIdm(idm)
 	_ = vfs.SetUser(user)
 
@@ -79,6 +77,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	}
 
 	_ = avfs.MkSystemDirs(vfs, opts.SystemDirs)
+	_ = vfs.SetUMask(avfs.UMask())
 
 	return vfs
 }

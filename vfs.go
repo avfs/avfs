@@ -27,26 +27,9 @@ import (
 	_ "unsafe" // for go:linkname only.
 )
 
-func (vfn *VFSFn[T]) SetVFS(vfs T) {
-	vfn.vfs = vfs
-}
-
-// Abs returns an absolute representation of path.
-// If the path is not absolute it will be joined with the current
-// working directory to turn it into an absolute path. The absolute
-// path name for a given file is not guaranteed to be unique.
-// Abs calls Clean on the result.
-func (vfn *VFSFn[T]) Abs(path string) (string, error) {
-	if vfn.IsAbs(path) {
-		return vfn.Clean(path), nil
-	}
-
-	return vfn.Join(vfn.CurDir(), path), nil
-}
-
 // cleanGlobPath prepares path for glob matching.
-func (vfn *VFSFn[T]) cleanGlobPath(path string) string {
-	pathSeparator := vfn.PathSeparator()
+func cleanGlobPath[T VFSBase](vfs T, path string) string {
+	pathSeparator := vfs.PathSeparator()
 
 	switch path {
 	case "":
@@ -60,13 +43,13 @@ func (vfn *VFSFn[T]) cleanGlobPath(path string) string {
 }
 
 // cleanGlobPathWindows is Windows version of cleanGlobPath.
-func (vfn *VFSFn[T]) cleanGlobPathWindows(path string) (prefixLen int, cleaned string) {
-	vollen := VolumeNameLen(vfn.vfs, path)
+func cleanGlobPathWindows[T VFSBase](vfs T, path string) (prefixLen int, cleaned string) {
+	vollen := VolumeNameLen(vfs, path)
 
 	switch {
 	case path == "":
 		return 0, "."
-	case vollen+1 == len(path) && vfn.IsPathSeparator(path[len(path)-1]): // /, \, C:\ and C:/
+	case vollen+1 == len(path) && IsPathSeparator(vfs, path[len(path)-1]): // /, \, C:\ and C:/
 		// do nothing to the path
 		return vollen + 1, path
 	case vollen == len(path) && len(path) == 2: // C:
@@ -85,8 +68,8 @@ func (vfn *VFSFn[T]) cleanGlobPathWindows(path string) (prefixLen int, cleaned s
 // (before umask). If successful, methods on the returned DummyFile can
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
-func (vfn *VFSFn[T]) Create(name string) (File, error) {
-	return vfn.vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, DefaultFilePerm)
+func Create[T VFSBase](vfs T, name string) (File, error) {
+	return vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, DefaultFilePerm)
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -97,45 +80,52 @@ func (vfn *VFSFn[T]) Create(name string) (File, error) {
 // Multiple programs or goroutines calling CreateTemp simultaneously will not choose the same file.
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
-func (vfn *VFSFn[T]) CreateTemp(dir, pattern string) (File, error) {
+func CreateTemp[T VFSBase](vfs T, dir, pattern string) (File, error) {
 	const op = "createtemp"
 
 	if dir == "" {
-		dir = vfn.TempDir()
+		dir = TempDir(vfs)
 	}
 
-	prefix, suffix, err := vfn.prefixAndSuffix(pattern)
+	prefix, suffix, err := prefixAndSuffix(vfs, pattern)
 	if err != nil {
 		return nil, &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
-	prefix = vfn.joinPath(dir, prefix)
+	prefix = joinPath(vfs, dir, prefix)
 
 	try := 0
 
 	for {
 		name := prefix + nextRandom() + suffix
 
-		f, err := vfn.vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
-		if vfn.IsExist(err) {
+		f, err := vfs.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
+		if IsExist(err) {
 			try++
 			if try < 10000 {
 				continue
 			}
 
-			return nil, &fs.PathError{Op: op, Path: dir + string(vfn.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
+			return nil, &fs.PathError{Op: op, Path: dir + string(vfs.PathSeparator()) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
 		return f, err
 	}
 }
 
-// Getwd returns a rooted name link corresponding to the
-// current directory. If the current directory can be
-// reached via multiple paths (due to symbolic links),
-// Getwd may return any one of them.
-func (vfn *VFSFn[T]) Getwd() (dir string, err error) {
-	return vfn.CurDir(), nil
+// FromUnixPath returns valid path for Unix or Windows from a unix path.
+// For Windows systems, absolute paths are prefixed with the default volume
+// and relative paths are preserved.
+func FromUnixPath[T VFSBase](vfs T, path string) string {
+	if vfs.OSType() != OsWindows {
+		return path
+	}
+
+	if path[0] != '/' {
+		return FromSlash(vfs, path)
+	}
+
+	return Join(vfs, DefaultVolume, FromSlash(vfs, path))
 }
 
 // Glob returns the names of all files matching pattern or nil
@@ -146,31 +136,31 @@ func (vfn *VFSFn[T]) Getwd() (dir string, err error) {
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
-func (vfn *VFSFn[T]) Glob(pattern string) (matches []string, err error) {
+func Glob[T VFSBase](vfs T, pattern string) (matches []string, err error) {
 	// Check pattern is well-formed.
-	if _, err = vfn.Match(pattern, ""); err != nil {
+	if _, err = Match(vfs, pattern, ""); err != nil {
 		return nil, err
 	}
 
-	if !vfn.hasMeta(pattern) {
-		if _, err = vfn.vfs.Lstat(pattern); err != nil {
+	if !hasMeta(vfs, pattern) {
+		if _, err = vfs.Lstat(pattern); err != nil {
 			return nil, nil
 		}
 
 		return []string{pattern}, nil
 	}
 
-	dir, file := vfn.Split(pattern)
+	dir, file := Split(vfs, pattern)
 	volumeLen := 0
 
-	if vfn.osType == OsWindows {
-		volumeLen, dir = vfn.cleanGlobPathWindows(dir)
+	if vfs.OSType() == OsWindows {
+		volumeLen, dir = cleanGlobPathWindows(vfs, dir)
 	} else {
-		dir = vfn.cleanGlobPath(dir)
+		dir = cleanGlobPath(vfs, dir)
 	}
 
-	if !vfn.hasMeta(dir[volumeLen:]) {
-		return vfn.glob(dir, file, nil)
+	if !hasMeta(vfs, dir[volumeLen:]) {
+		return glob(vfs, dir, file, nil)
 	}
 
 	// Prevent infinite recursion. See issue 15879.
@@ -180,13 +170,13 @@ func (vfn *VFSFn[T]) Glob(pattern string) (matches []string, err error) {
 
 	var m []string
 
-	m, err = vfn.Glob(dir)
+	m, err = Glob(vfs, dir)
 	if err != nil {
 		return
 	}
 
 	for _, d := range m {
-		matches, err = vfn.glob(d, file, matches)
+		matches, err = glob(vfs, d, file, matches)
 		if err != nil {
 			return
 		}
@@ -199,10 +189,10 @@ func (vfn *VFSFn[T]) Glob(pattern string) (matches []string, err error) {
 // and appends them to matches. If the directory cannot be
 // opened, it returns the existing matches. New matches are
 // added in lexicographical order.
-func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e error) {
+func glob[T VFSBase](vfs T, dir, pattern string, matches []string) (m []string, e error) {
 	m = matches
 
-	fi, err := vfn.vfs.Stat(dir)
+	fi, err := vfs.Stat(dir)
 	if err != nil {
 		return // ignore I/O error
 	}
@@ -211,7 +201,7 @@ func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e 
 		return // ignore I/O error
 	}
 
-	d, err := vfn.vfs.OpenFile(dir, os.O_RDONLY, 0)
+	d, err := vfs.OpenFile(dir, os.O_RDONLY, 0)
 	if err != nil {
 		return // ignore I/O error
 	}
@@ -222,13 +212,13 @@ func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e 
 	sort.Strings(names)
 
 	for _, n := range names {
-		matched, err := vfn.Match(pattern, n)
+		matched, err := Match(vfs, pattern, n)
 		if err != nil {
 			return m, err
 		}
 
 		if matched {
-			m = append(m, vfn.Join(dir, n))
+			m = append(m, Join(vfs, dir, n))
 		}
 	}
 
@@ -237,14 +227,44 @@ func (vfn *VFSFn[T]) glob(dir, pattern string, matches []string) (m []string, e 
 
 // hasMeta reports whether path contains any of the magic characters
 // recognized by Match.
-func (vfn *VFSFn[T]) hasMeta(path string) bool {
+func hasMeta[T VFSBase](vfs T, path string) bool {
 	magicChars := `*?[`
 
-	if vfn.osType != OsWindows {
+	if vfs.OSType() != OsWindows {
 		magicChars = `*?[\`
 	}
 
 	return strings.ContainsAny(path, magicChars)
+}
+
+// HomeDir returns the home directory of the file system.
+func HomeDir[T VFSBase](vfs T) string {
+	switch vfs.OSType() {
+	case OsWindows:
+		return DefaultVolume + `\Users`
+	default:
+		return "/home"
+	}
+}
+
+// HomeDirUser returns the home directory of the user.
+// If the file system does not have an identity manager, the root directory is returned.
+func HomeDirUser[T VFSBase](vfs T, u UserReader) string {
+	name := u.Name()
+	if vfs.OSType() == OsWindows {
+		return Join(vfs, HomeDir(vfs), name)
+	}
+
+	if name == AdminUserName(vfs.OSType()) {
+		return "/root"
+	}
+
+	return Join(vfs, HomeDir(vfs), name)
+}
+
+// HomeDirPerm return the default permission for home directories.
+func HomeDirPerm() fs.FileMode {
+	return 0o700
 }
 
 // IsExist returns a boolean indicating whether the error is known to report
@@ -253,7 +273,7 @@ func (vfn *VFSFn[T]) hasMeta(path string) bool {
 //
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrExist).
-func (*VFSFn[_]) IsExist(err error) bool {
+func IsExist(err error) bool {
 	return errors.Is(err, fs.ErrExist)
 }
 
@@ -263,16 +283,16 @@ func (*VFSFn[_]) IsExist(err error) bool {
 //
 // This function predates errors.Is. It only supports errors returned by
 // the os package. New code should use errors.Is(err, fs.ErrNotExist).
-func (*VFSFn[_]) IsNotExist(err error) bool {
+func IsNotExist(err error) bool {
 	return errors.Is(err, fs.ErrNotExist)
 }
 
-func (vfn *VFSFn[T]) joinPath(dir, name string) string {
-	if dir != "" && vfn.IsPathSeparator(dir[len(dir)-1]) {
+func joinPath[T VFSBase](vfs T, dir, name string) string {
+	if dir != "" && IsPathSeparator(vfs, dir[len(dir)-1]) {
 		return dir + name
 	}
 
-	return dir + string(vfn.pathSeparator) + name
+	return dir + string(vfs.PathSeparator()) + name
 }
 
 // MkdirTemp creates a new temporary directory in the directory dir
@@ -282,41 +302,41 @@ func (vfn *VFSFn[T]) joinPath(dir, name string) string {
 // If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by TempDir.
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
-func (vfn *VFSFn[T]) MkdirTemp(dir, pattern string) (string, error) {
+func MkdirTemp[T VFSBase](vfs T, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
-		dir = vfn.TempDir()
+		dir = TempDir(vfs)
 	}
 
-	prefix, suffix, err := vfn.prefixAndSuffix(pattern)
+	prefix, suffix, err := prefixAndSuffix(vfs, pattern)
 	if err != nil {
 		return "", &fs.PathError{Op: op, Path: pattern, Err: err}
 	}
 
-	prefix = vfn.joinPath(dir, prefix)
+	prefix = joinPath(vfs, dir, prefix)
 	try := 0
 
 	for {
 		name := prefix + nextRandom() + suffix
 
-		err := vfn.vfs.Mkdir(name, 0o700)
+		err := vfs.Mkdir(name, 0o700)
 		if err == nil {
 			return name, nil
 		}
 
-		if vfn.IsExist(err) {
+		if IsExist(err) {
 			try++
 			if try < 10000 {
 				continue
 			}
 
-			return "", &fs.PathError{Op: op, Path: dir + string(vfn.pathSeparator) + prefix + "*" + suffix, Err: fs.ErrExist}
+			return "", &fs.PathError{Op: op, Path: dir + string(vfs.PathSeparator()) + prefix + "*" + suffix, Err: fs.ErrExist}
 		}
 
-		if vfn.IsNotExist(err) {
-			_, err := vfn.vfs.Stat(dir) //nolint:govet // declaration of "err" shadows declaration
-			if vfn.IsNotExist(err) {
+		if IsNotExist(err) {
+			_, err := vfs.Stat(dir) //nolint:govet // declaration of "err" shadows declaration
+			if IsNotExist(err) {
 				return "", err
 			}
 		}
@@ -325,60 +345,59 @@ func (vfn *VFSFn[T]) MkdirTemp(dir, pattern string) (string, error) {
 	}
 }
 
+// MkHomeDir creates and returns the home directory of a user.
+// If there is an error, it will be of type *PathError.
+func MkHomeDir[T VFSBase](vfs T, u UserReader) (string, error) {
+	userDir := HomeDirUser(vfs, u)
+
+	err := vfs.Mkdir(userDir, HomeDirPerm())
+	if err != nil {
+		return "", err
+	}
+
+	switch vfs.OSType() {
+	case OsWindows:
+		err = vfs.MkdirAll(TempDirUser(vfs, u.Name()), DefaultDirPerm)
+	default:
+		err = vfs.Chown(userDir, u.Uid(), u.Gid())
+	}
+
+	if err != nil {
+		return "", err
+	}
+
+	return userDir, nil
+}
+
+// MkSystemDirs creates the system directories of a file system.
+func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo) error {
+	for _, dir := range dirs {
+		err := vfs.MkdirAll(dir.Path, dir.Perm)
+		if err != nil {
+			return err
+		}
+
+		if vfs.OSType() != OsWindows {
+			err = vfs.Chmod(dir.Path, dir.Perm)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 // nextRandom is used in Utils.CreateTemp and Utils.MkdirTemp.
 //
 //go:linkname nextRandom os.nextRandom
 func nextRandom() string
 
-// Open opens the named file for reading. If successful, methods on
-// the returned file can be used for reading; the associated file
-// descriptor has mode O_RDONLY.
-// If there is an error, it will be of type *PathError.
-func (vfn *VFSFn[T]) Open(name string) (File, error) {
-	return vfn.vfs.OpenFile(name, os.O_RDONLY, 0)
-}
-
-// OpenMode returns the open mode from the input flags.
-func (*VFSFn[_]) OpenMode(flag int) OpenMode {
-	var om OpenMode
-
-	// Mask flags that can be used in read only mode (syscall.O_DIRECT for example)
-	if flag&0xFFF == os.O_RDONLY {
-		return OpenRead
-	}
-
-	if flag&os.O_RDWR != 0 {
-		om = OpenRead | OpenWrite
-	}
-
-	if flag&(os.O_EXCL|os.O_CREATE) == (os.O_EXCL | os.O_CREATE) {
-		om |= OpenCreate | OpenCreateExcl | OpenWrite
-	}
-
-	if flag&os.O_CREATE != 0 {
-		om |= OpenCreate | OpenWrite
-	}
-
-	if flag&os.O_APPEND != 0 {
-		om |= OpenAppend | OpenWrite
-	}
-
-	if flag&os.O_TRUNC != 0 {
-		om |= OpenTruncate | OpenWrite
-	}
-
-	if flag&os.O_WRONLY != 0 {
-		om |= OpenWrite
-	}
-
-	return om
-}
-
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
 // returning prefix as the part before "*" and suffix as the part after "*".
-func (vfn *VFSFn[_]) prefixAndSuffix(pattern string) (prefix, suffix string, err error) {
+func prefixAndSuffix[T VFSBase](vfs T, pattern string) (prefix, suffix string, err error) {
 	for i := 0; i < len(pattern); i++ {
-		if vfn.IsPathSeparator(pattern[i]) {
+		if IsPathSeparator(vfs, pattern[i]) {
 			return "", "", ErrPatternHasSeparator
 		}
 	}
@@ -397,8 +416,8 @@ func (vfn *VFSFn[_]) prefixAndSuffix(pattern string) (prefix, suffix string, err
 // If an error occurs reading the directory,
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
-func (vfn *VFSFn[T]) ReadDir(name string) ([]fs.DirEntry, error) {
-	f, err := vfn.vfs.OpenFile(name, os.O_RDONLY, 0)
+func ReadDir[T VFSBase](vfs T, name string) ([]fs.DirEntry, error) {
+	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -416,8 +435,8 @@ func (vfn *VFSFn[T]) ReadDir(name string) ([]fs.DirEntry, error) {
 // A successful call returns err == nil, not err == EOF.
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
-func (vfn *VFSFn[T]) ReadFile(name string) ([]byte, error) {
-	f, err := vfn.vfs.OpenFile(name, os.O_RDONLY, 0)
+func ReadFile[T VFSBase](vfs T, name string) ([]byte, error) {
+	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -466,24 +485,60 @@ func (vfn *VFSFn[T]) ReadFile(name string) ([]byte, error) {
 
 // SetUserByName sets the current user by name.
 // If the user is not found, the returned error is of type UnknownUserError.
-func (vfn *VFSFn[T]) SetUserByName(name string) error {
-	if !vfn.HasFeature(FeatIdentityMgr) {
+func SetUserByName[T VFSBase](vfs T, name string) error {
+	if !vfs.HasFeature(FeatIdentityMgr) {
 		return ErrPermDenied
 	}
 
-	if vfn.User().Name() == name {
+	if vfs.User().Name() == name {
 		return nil
 	}
 
-	u, err := vfn.Idm().LookupUser(name)
+	u, err := vfs.Idm().LookupUser(name)
 	if err != nil {
 		return err
 	}
 
-	_ = vfn.SetUser(u)
-	_ = vfn.SetCurDir(HomeDirUser(vfn.vfs, u))
+	err = vfs.SetUser(u)
 
-	return nil
+	return err
+}
+
+// SplitAbs splits an absolute path immediately preceding the final Separator,
+// separating it into a directory and file name component.
+// If there is no Separator in path, splitPath returns an empty dir
+// and file set to path.
+// The returned values have the property that path = dir + PathSeparator + file.
+func SplitAbs[T VFSBase](vfs T, path string) (dir, file string) {
+	l := VolumeNameLen(vfs, path)
+
+	i := len(path) - 1
+	for i >= l && !IsPathSeparator(vfs, path[i]) {
+		i--
+	}
+
+	return path[:i], path[i+1:]
+}
+
+// SystemDirs returns an array of system directories always present in the file system.
+func SystemDirs[T VFSBase](vfs T, basePath string) []DirInfo {
+	const volumeNameLen = 2
+
+	switch vfs.OSType() {
+	case OsWindows:
+		return []DirInfo{
+			{Path: Join(vfs, basePath, HomeDir(vfs)[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: Join(vfs, basePath, TempDirUser(vfs, AdminUserName(vfs.OSType()))[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: Join(vfs, basePath, TempDirUser(vfs, DefaultName)[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: Join(vfs, basePath, `\Windows`), Perm: DefaultDirPerm},
+		}
+	default:
+		return []DirInfo{
+			{Path: Join(vfs, basePath, HomeDir(vfs)), Perm: HomeDirPerm()},
+			{Path: Join(vfs, basePath, "/root"), Perm: 0o700},
+			{Path: Join(vfs, basePath, "/tmp"), Perm: 0o777},
+		}
+	}
 }
 
 // TempDir returns the default directory to use for temporary files.
@@ -495,27 +550,63 @@ func (vfn *VFSFn[T]) SetUserByName(name string) error {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vfn *VFSFn[T]) TempDir() string {
-	return vfn.TempDirUser(vfn.User().Name())
+func TempDir[T VFSBase](vfs T) string {
+	return TempDirUser(vfs, vfs.User().Name())
 }
 
 // TempDirUser returns the default directory to use for temporary files for a specific user.
-func (vfn *VFSFn[T]) TempDirUser(username string) string {
-	if vfn.OSType() != OsWindows {
+func TempDirUser[T VFSBase](vfs T, username string) string {
+	if vfs.OSType() != OsWindows {
 		return "/tmp"
 	}
 
-	dir := vfn.Join(DefaultVolume, `\Users\`, username, `\AppData\Local\Temp`)
+	dir := Join(vfs, DefaultVolume, `\Users\`, username, `\AppData\Local\Temp`)
 
 	return dir
+}
+
+// ToOpenMode returns the open mode from the input flags.
+func ToOpenMode(flag int) OpenMode {
+	var om OpenMode
+
+	// Mask flags that can be used in read only mode (syscall.O_DIRECT for example)
+	if flag&0xFFF == os.O_RDONLY {
+		return OpenRead
+	}
+
+	if flag&os.O_RDWR != 0 {
+		om = OpenRead | OpenWrite
+	}
+
+	if flag&(os.O_EXCL|os.O_CREATE) == (os.O_EXCL | os.O_CREATE) {
+		om |= OpenCreate | OpenCreateExcl | OpenWrite
+	}
+
+	if flag&os.O_CREATE != 0 {
+		om |= OpenCreate | OpenWrite
+	}
+
+	if flag&os.O_APPEND != 0 {
+		om |= OpenAppend | OpenWrite
+	}
+
+	if flag&os.O_TRUNC != 0 {
+		om |= OpenTruncate | OpenWrite
+	}
+
+	if flag&os.O_WRONLY != 0 {
+		om |= OpenWrite
+	}
+
+	return om
 }
 
 // VolumeName returns leading volume name.
 // Given "C:\foo\bar" it returns "C:" on Windows.
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
-func (vfn *VFSFn[T]) VolumeName(path string) string {
-	return vfn.FromSlash(path[:VolumeNameLen(vfn, path)])
+func VolumeName[T VFSBase](vfs T, path string) string {
+	return FromSlash(vfs, path[:VolumeNameLen(vfs, path)])
 }
 
 //go:linkname volumeNameLen path/filepath.volumeNameLen
@@ -532,12 +623,12 @@ func volumeNameLen(path string) int
 // to walk that directory.
 //
 // WalkDir does not follow symbolic links.
-func (vfn *VFSFn[T]) WalkDir(root string, fn fs.WalkDirFunc) error {
-	info, err := vfn.vfs.Lstat(root)
+func WalkDir[T VFSBase](vfs T, root string, fn fs.WalkDirFunc) error {
+	info, err := vfs.Lstat(root)
 	if err != nil {
 		err = fn(root, nil, err)
 	} else {
-		err = vfn.walkDir(root, &statDirEntry{info}, fn)
+		err = walkDir(vfs, root, &statDirEntry{info}, fn)
 	}
 
 	if err == filepath.SkipDir {
@@ -548,7 +639,7 @@ func (vfn *VFSFn[T]) WalkDir(root string, fn fs.WalkDirFunc) error {
 }
 
 // walkDir recursively descends path, calling walkDirFn.
-func (vfn *VFSFn[T]) walkDir(path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
+func walkDir[T VFSBase](vfs T, path string, d fs.DirEntry, walkDirFn fs.WalkDirFunc) error {
 	if err := walkDirFn(path, d, nil); err != nil || !d.IsDir() {
 		if err == filepath.SkipDir && d.IsDir() {
 			// Successfully skipped directory.
@@ -558,7 +649,7 @@ func (vfn *VFSFn[T]) walkDir(path string, d fs.DirEntry, walkDirFn fs.WalkDirFun
 		return err
 	}
 
-	dirs, err := vfn.ReadDir(path)
+	dirs, err := ReadDir(vfs, path)
 	if err != nil {
 		// Second call, to report ReadDir error.
 		err = walkDirFn(path, d, err)
@@ -568,8 +659,8 @@ func (vfn *VFSFn[T]) walkDir(path string, d fs.DirEntry, walkDirFn fs.WalkDirFun
 	}
 
 	for _, d1 := range dirs {
-		path1 := vfn.Join(path, d1.Name())
-		if err := vfn.walkDir(path1, d1, walkDirFn); err != nil {
+		path1 := Join(vfs, path, d1.Name())
+		if err := walkDir(vfs, path1, d1, walkDirFn); err != nil {
 			if err == filepath.SkipDir {
 				break
 			}
@@ -593,8 +684,8 @@ func (d *statDirEntry) Info() (fs.FileInfo, error) { return d.info, nil }
 // WriteFile writes data to the named file, creating it if necessary.
 // If the file does not exist, WriteFile creates it with permissions perm (before umask);
 // otherwise WriteFile truncates it before writing, without changing permissions.
-func (vfn *VFSFn[T]) WriteFile(name string, data []byte, perm fs.FileMode) error {
-	f, err := vfn.vfs.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
+func WriteFile[T VFSBase](vfs T, name string, data []byte, perm fs.FileMode) error {
+	f, err := vfs.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}

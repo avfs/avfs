@@ -24,13 +24,18 @@ import (
 
 // MountFS implements a memory file system using the avfs.VFS interface.
 type MountFS struct {
-	rootFS  avfs.VFS
-	mounts  mounts
-	rootMnt *mount
-	curMnt  *mount
-	name    string
-	mu      sync.RWMutex
-	avfs.VFSFn[*MountFS]
+	rootFS          avfs.VFS     //
+	mounts          mounts       //
+	rootMnt         *mount       //
+	curMnt          *mount       //
+	name            string       //
+	mu              sync.RWMutex //
+	avfs.CurDirFn                // CurDirFn provides current directory functions to a file system.
+	avfs.CurUserFn               // CurUserFn provides current user functions to a file system.
+	avfs.IdmFn                   // IdmFn provides identity manager functions to a file system.
+	avfs.UMaskFn                 // UMaskFn provides UMask functions to file systems.
+	avfs.FeaturesFn              // FeaturesFn provides features functions to a file system or an identity manager.
+	avfs.OSTypeFn                // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
 // mounts are the mount points of the MountFS file system.

@@ -25,14 +25,19 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	nodes                nodes        // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	err                  avfs.Errors  // err regroups errors depending on the OS emulated.
-	name                 string       // name is the name of the file system.
-	lastId               *uint64      // lastId is the last unique id used to identify files uniquely.
-	mu                   sync.RWMutex // mu is the RWMutex used to access nodes.
-	dirMode              fs.FileMode  // dirMode is the default fs.FileMode for a directory.
-	fileMode             fs.FileMode  // fileMode is de default fs.FileMode for a file.
-	avfs.VFSFn[*OrefaFS]              // VFSFn regroups common functions used by emulated file systems.
+	nodes           nodes        // nodes is the map of nodes (files or directories) where the key is the absolute path.
+	err             avfs.Errors  // err regroups errors depending on the OS emulated.
+	name            string       // name is the name of the file system.
+	lastId          *uint64      // lastId is the last unique id used to identify files uniquely.
+	mu              sync.RWMutex // mu is the RWMutex used to access nodes.
+	dirMode         fs.FileMode  // dirMode is the default fs.FileMode for a directory.
+	fileMode        fs.FileMode  // fileMode is de default fs.FileMode for a file.
+	avfs.CurDirFn                // CurDirFn provides current directory functions to a file system.
+	avfs.CurUserFn               // CurUserFn provides current user functions to a file system.
+	avfs.IdmFn                   // IdmFn provides identity manager functions to a file system.
+	avfs.UMaskFn                 // UMaskFn provides UMask functions to file systems.
+	avfs.FeaturesFn              // FeaturesFn provides features functions to a file system or an identity manager.
+	avfs.OSTypeFn                // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
 // OrefaFile represents an open file descriptor.
