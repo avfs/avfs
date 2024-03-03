@@ -37,14 +37,14 @@ var (
 )
 
 func TestDummyIdm(t *testing.T) {
-	idm := avfs.New()
+	idm := avfs.NewDummyIdm()
 
 	ts := test.NewSuiteIdm(t, idm)
 	ts.TestIdmAll(t)
 }
 
 func TestDummyIdmFeatures(t *testing.T) {
-	idm := avfs.New()
+	idm := avfs.NewDummyIdm()
 
 	if idm.Features() != 0 {
 		t.Errorf("Features : want Features to be 0, got %d", idm.Features())

@@ -21,7 +21,7 @@ import (
 )
 
 // NotImplementedIdm is the default identity manager for all file systems.
-var NotImplementedIdm = New() //nolint:gochecknoglobals // Used as default Idm for other file systems.
+var NotImplementedIdm = NewDummyIdm() //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
 // DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
 type DummyIdm struct {
@@ -42,8 +42,8 @@ type DummyGroup struct {
 	gid  int
 }
 
-// New create a new identity manager.
-func New() *DummyIdm {
+// NewDummyIdm create a new identity manager.
+func NewDummyIdm() *DummyIdm {
 	return &DummyIdm{
 		adminGroup: &DummyGroup{name: DefaultName, gid: math.MaxInt},
 		adminUser:  &DummyUser{name: DefaultName, uid: math.MaxInt, gid: math.MaxInt},
