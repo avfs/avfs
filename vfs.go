@@ -238,28 +238,28 @@ func hasMeta[T VFSBase](vfs T, path string) bool {
 }
 
 // HomeDir returns the home directory of the file system.
-func HomeDir[T VFSBase](vfs T) string {
+func HomeDir[T VFSBase](vfs T, basePath string) string {
 	switch vfs.OSType() {
 	case OsWindows:
-		return DefaultVolume + `\Users`
+		return Join(vfs, basePath, `\Users`)
 	default:
-		return "/home"
+		return Join(vfs, "/home")
 	}
 }
 
 // HomeDirUser returns the home directory of the user.
 // If the file system does not have an identity manager, the root directory is returned.
-func HomeDirUser[T VFSBase](vfs T, u UserReader) string {
+func HomeDirUser[T VFSBase](vfs T, basePath string, u UserReader) string {
 	name := u.Name()
 	if vfs.OSType() == OsWindows {
-		return Join(vfs, HomeDir(vfs), name)
+		return Join(vfs, HomeDir(vfs, basePath), name)
 	}
 
 	if name == AdminUserName(vfs.OSType()) {
 		return "/root"
 	}
 
-	return Join(vfs, HomeDir(vfs), name)
+	return Join(vfs, HomeDir(vfs, basePath), name)
 }
 
 // HomeDirPerm return the default permission for home directories.
@@ -306,7 +306,7 @@ func MkdirTemp[T VFSBase](vfs T, dir, pattern string) (string, error) {
 	const op = "mkdirtemp"
 
 	if dir == "" {
-		dir = TempDir(vfs)
+		dir = vfs.TempDir()
 	}
 
 	prefix, suffix, err := prefixAndSuffix(vfs, pattern)
@@ -347,8 +347,8 @@ func MkdirTemp[T VFSBase](vfs T, dir, pattern string) (string, error) {
 
 // MkHomeDir creates and returns the home directory of a user.
 // If there is an error, it will be of type *PathError.
-func MkHomeDir[T VFSBase](vfs T, u UserReader) (string, error) {
-	userDir := HomeDirUser(vfs, u)
+func MkHomeDir[T VFSBase](vfs T, basePath string, u UserReader) (string, error) {
+	userDir := HomeDirUser(vfs, basePath, u)
 
 	err := vfs.Mkdir(userDir, HomeDirPerm())
 	if err != nil {
@@ -357,7 +357,7 @@ func MkHomeDir[T VFSBase](vfs T, u UserReader) (string, error) {
 
 	switch vfs.OSType() {
 	case OsWindows:
-		err = vfs.MkdirAll(TempDirUser(vfs, u.Name()), DefaultDirPerm)
+		err = vfs.MkdirAll(TempDirUser(vfs, basePath, u.Name()), DefaultDirPerm)
 	default:
 		err = vfs.Chown(userDir, u.Uid(), u.Gid())
 	}
@@ -522,19 +522,21 @@ func SplitAbs[T VFSBase](vfs T, path string) (dir, file string) {
 
 // SystemDirs returns an array of system directories always present in the file system.
 func SystemDirs[T VFSBase](vfs T, basePath string) []DirInfo {
-	const volumeNameLen = 2
-
 	switch vfs.OSType() {
 	case OsWindows:
+		if basePath == "" {
+			basePath = DefaultVolume
+		}
+
 		return []DirInfo{
-			{Path: Join(vfs, basePath, HomeDir(vfs)[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: Join(vfs, basePath, TempDirUser(vfs, AdminUserName(vfs.OSType()))[volumeNameLen:]), Perm: DefaultDirPerm},
-			{Path: Join(vfs, basePath, TempDirUser(vfs, DefaultName)[volumeNameLen:]), Perm: DefaultDirPerm},
+			{Path: HomeDir(vfs, basePath), Perm: DefaultDirPerm},
+			{Path: TempDirUser(vfs, basePath, AdminUserName(vfs.OSType())), Perm: DefaultDirPerm},
+			{Path: TempDirUser(vfs, basePath, DefaultName), Perm: DefaultDirPerm},
 			{Path: Join(vfs, basePath, `\Windows`), Perm: DefaultDirPerm},
 		}
 	default:
 		return []DirInfo{
-			{Path: Join(vfs, basePath, HomeDir(vfs)), Perm: HomeDirPerm()},
+			{Path: HomeDir(vfs, basePath), Perm: HomeDirPerm()},
 			{Path: Join(vfs, basePath, "/root"), Perm: 0o700},
 			{Path: Join(vfs, basePath, "/tmp"), Perm: 0o777},
 		}
@@ -551,16 +553,20 @@ func SystemDirs[T VFSBase](vfs T, basePath string) []DirInfo {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func TempDir[T VFSBase](vfs T) string {
-	return TempDirUser(vfs, vfs.User().Name())
+	return TempDirUser(vfs, "", vfs.User().Name())
 }
 
-// TempDirUser returns the default directory to use for temporary files for a specific user.
-func TempDirUser[T VFSBase](vfs T, username string) string {
+// TempDirUser returns the default directory to use for temporary files with for a specific user.
+func TempDirUser[T VFSBase](vfs T, basePath, username string) string {
 	if vfs.OSType() != OsWindows {
-		return "/tmp"
+		return Join(vfs, basePath, "/tmp")
 	}
 
-	dir := Join(vfs, DefaultVolume, `\Users\`, username, `\AppData\Local\Temp`)
+	if basePath == "" {
+		basePath = DefaultVolume
+	}
+
+	dir := Join(vfs, basePath, `\Users\`, username, `\AppData\Local\Temp`)
 
 	return dir
 }

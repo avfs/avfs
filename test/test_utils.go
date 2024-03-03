@@ -436,7 +436,7 @@ func (ts *Suite) TestCreateHomeDir(t *testing.T, _ string) {
 		u, err := vfs.Idm().LookupUser(ui.Name)
 		RequireNoError(t, err, "Can't find user %s", ui.Name)
 
-		homeDir, err := avfs.MkHomeDir(vfs, u)
+		homeDir, err := avfs.MkHomeDir(vfs, "", u)
 		if !AssertNoError(t, err, "CreateHomeDir %s", ui.Name) {
 			continue
 		}
