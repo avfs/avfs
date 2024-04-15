@@ -243,7 +243,7 @@ func HomeDir[T VFSBase](vfs T, basePath string) string {
 	case OsWindows:
 		return Join(vfs, basePath, `\Users`)
 	default:
-		return Join(vfs, "/home")
+		return Join(vfs, basePath, "/home")
 	}
 }
 
