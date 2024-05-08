@@ -31,6 +31,10 @@ import (
 	"github.com/avfs/avfs/vfs/osfs"
 )
 
+const (
+	umaskTest = 0o22 // umaskTest is the umask value used for the tests.
+)
+
 // NewSuiteFS creates a new test suite for a file system.
 func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 	if vfsSetup == nil {
@@ -83,6 +87,9 @@ func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdentityMg
 	initUser := vfs.User()
 	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
+
+	// All permission tests were recorded with
+	_ = vfs.SetUMask(umaskTest)
 
 	ts := &Suite{
 		vfsSetup:    vfsSetup,

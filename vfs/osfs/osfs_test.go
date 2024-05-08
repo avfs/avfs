@@ -31,6 +31,9 @@ var (
 	// Tests that osfs.OsFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &osfs.OsFS{}
 
+	// Tests that osfs.OsFS struct implements avfs.VFSBase interface.
+	_ avfs.VFSBase = &osfs.OsFS{}
+
 	// Tests that os.File struct implements avfs.File interface.
 	_ avfs.File = &os.File{}
 )

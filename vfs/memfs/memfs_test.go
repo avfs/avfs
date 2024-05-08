@@ -32,6 +32,9 @@ var (
 	// Tests that memfs.MemFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &memfs.MemFS{}
 
+	// Tests that memfs.MemFS struct implements avfs.VFSBase interface.
+	_ avfs.VFSBase = &memfs.MemFS{}
+
 	// Tests that memfs.MemFile struct implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}
 

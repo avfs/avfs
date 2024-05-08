@@ -31,6 +31,9 @@ var (
 	// Tests that orefafs.OrefaFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &orefafs.OrefaFS{}
 
+	// Tests that orefafs.OrefaFS struct implements avfs.VFSBase interface.
+	_ avfs.VFSBase = &orefafs.OrefaFS{}
+
 	// Tests that orefafs.OrefaFile struct implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
 

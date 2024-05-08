@@ -31,6 +31,9 @@ var (
 	// Tests that rofs.RoFS struct implements avfs.VFS interface.
 	_ avfs.VFS = &rofs.RoFS{}
 
+	// Tests that rofs.RoFS struct implements avfs.VFSBase interface.
+	_ avfs.VFSBase = &rofs.RoFS{}
+
 	// Tests that rofs.RoFile struct implements avfs.File interface.
 	_ avfs.File = &rofs.RoFile{}
 )
