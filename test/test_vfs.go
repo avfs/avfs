@@ -1487,8 +1487,9 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 			OSType(avfs.OsLinux).Err(avfs.ErrIsADirectory).Test().
 			OSType(avfs.OsWindows).Err(avfs.ErrWinIsADirectory).Test()
 
-		if !reflect.ValueOf(f).IsNil() {
-			t.Errorf("OpenFile : want file to be nil, got %v", f)
+		_, ok := f.(avfs.File)
+		if !ok {
+			t.Errorf("OpenFile : want file to implement avfs.File interface")
 		}
 	})
 
