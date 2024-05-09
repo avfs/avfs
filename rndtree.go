@@ -114,7 +114,7 @@ func (rt *RndTree) GenTree() {
 	parents := make([]*RndTreeDir, 1, 10)
 	parents[0] = &RndTreeDir{}
 
-	for i := 0; i < nbDirs; i++ {
+	for i := range nbDirs {
 		parent := parents[rand.Intn(len(parents))]
 		path := parent.Name + "/" + name("dir")
 		depth := parent.Depth + 1
@@ -137,7 +137,7 @@ func (rt *RndTree) GenTree() {
 	nbFiles := rt.NbFiles
 	files := make([]*RndTreeFile, nbFiles)
 
-	for i := 0; i < nbFiles; i++ {
+	for i := range nbFiles {
 		parent := parents[rand.Intn(nbParents)]
 		fileName := parent.Name + "/" + name("file")
 
@@ -159,7 +159,7 @@ func (rt *RndTree) GenTree() {
 	nbSymlinks := rt.NbSymlinks
 	symLinks := make([]*RndTreeSymLink, nbSymlinks)
 
-	for i := 0; i < nbSymlinks; i++ {
+	for i := range nbSymlinks {
 		oldName := files[rand.Intn(nbFiles)].Name
 		newDir := parents[rand.Intn(nbParents)].Name
 		newName := newDir + "/" + name("symlink")

@@ -247,7 +247,7 @@ func (ts *Suite) raceFunc(t *testing.T, rr RaceResult, testFuncs ...func() error
 
 	starter.Lock()
 
-	for i := 0; i < ts.maxRace; i++ {
+	for range ts.maxRace {
 		for _, testFunc := range testFuncs {
 			go func(f func() error) {
 				defer func() {

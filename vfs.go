@@ -396,7 +396,7 @@ func nextRandom() string
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
 // returning prefix as the part before "*" and suffix as the part after "*".
 func prefixAndSuffix[T VFSBase](vfs T, pattern string) (prefix, suffix string, err error) {
-	for i := 0; i < len(pattern); i++ {
+	for i := range len(pattern) {
 		if IsPathSeparator(vfs, pattern[i]) {
 			return "", "", ErrPatternHasSeparator
 		}

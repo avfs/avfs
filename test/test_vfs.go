@@ -2215,7 +2215,7 @@ func (ts *Suite) TestSetUserByName(t *testing.T, testDir string) {
 			gid := lu.Gid()
 
 			// loop to test change with the same user
-			for i := 0; i < 2; i++ {
+			for i := range 2 {
 				err = vfs.SetUserByName(userName)
 				if !AssertNoError(t, err, "SetUserByName %s %d", userName, i) {
 					continue

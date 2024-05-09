@@ -658,7 +658,7 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 	lenData := int64(len(data))
 
 	t.Run("TestFileSeek", func(t *testing.T) {
-		for i := 0; i < len(data); i++ {
+		for i := range len(data) {
 			pos, err = f.Seek(int64(i), io.SeekStart)
 			RequireNoError(t, err, "Seek %s", path)
 
@@ -667,7 +667,7 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 			}
 		}
 
-		for i := 0; i < len(data); i++ {
+		for i := range len(data) {
 			pos, err = f.Seek(-int64(i), io.SeekEnd)
 			RequireNoError(t, err, "Seek %s", path)
 
