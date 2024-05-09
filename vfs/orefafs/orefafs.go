@@ -36,11 +36,7 @@ import (
 // path name for a given file is not guaranteed to be unique.
 // Abs calls [Clean] on the result.
 func (vfs *OrefaFS) Abs(path string) (string, error) {
-	if vfs.IsAbs(path) {
-		return vfs.Clean(path), nil
-	}
-
-	return vfs.Join(vfs.CurDir(), path), nil
+	return avfs.Abs(vfs, path, vfs.CurDir())
 }
 
 // Base returns the last element of path.

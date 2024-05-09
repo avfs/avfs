@@ -54,8 +54,7 @@ func AssertLinkError(tb testing.TB, err error) *assertError {
 
 // Test runs the test.
 func (ae *assertError) Test() *assertError {
-	tb := ae.tb
-	tb.Helper()
+	ae.tb.Helper()
 
 	if len(ae.wantOsTypes) != 0 && !slices.Contains(ae.wantOsTypes, avfs.CurrentOSType()) {
 		return ae
@@ -72,7 +71,7 @@ func (ae *assertError) Test() *assertError {
 
 	if len(ae.wantErrs) == 0 {
 		if ae.err != nil {
-			tb.Errorf("want error to be nil got %v", ae.err)
+			ae.tb.Errorf("want error to be nil got %v", ae.err)
 		}
 
 		return ae
@@ -127,21 +126,21 @@ func (ae *assertError) testLinkError() *assertError {
 }
 
 func (ae *assertError) testPathError() *assertError {
-	tb := ae.tb
+	ae.tb.Helper()
 
 	e, ok := ae.err.(*fs.PathError)
 	if !ok {
-		tb.Errorf("want error type to be *fs.PathError, got %v : %v", reflect.TypeOf(ae.err), ae.err)
+		ae.tb.Errorf("want error type to be *fs.PathError, got %v : %v", reflect.TypeOf(ae.err), ae.err)
 
 		return ae
 	}
 
 	if len(ae.wantOps) != 0 && !slices.Contains(ae.wantOps, e.Op) {
-		tb.Errorf("want Op to be %s, got %s", ae.wantOps, e.Op)
+		ae.tb.Errorf("want Op to be %s, got %s", ae.wantOps, e.Op)
 	}
 
 	if ae.wantPath != "" && ae.wantPath != e.Path {
-		tb.Errorf("want Path to be %s, got %s", ae.wantPath, e.Path)
+		ae.tb.Errorf("want Path to be %s, got %s", ae.wantPath, e.Path)
 	}
 
 	te := reflect.ValueOf(e.Err)
@@ -157,7 +156,7 @@ func (ae *assertError) testPathError() *assertError {
 	}
 
 	if !foundOk {
-		tb.Errorf("want error to be %s, got %s", ae.wantErrs, e.Err.Error())
+		ae.tb.Errorf("want error to be %s, got %s", ae.wantErrs, e.Err.Error())
 	}
 
 	return ae

@@ -27,6 +27,19 @@ import (
 	_ "unsafe" // for go:linkname only.
 )
 
+// Abs returns an absolute representation of path.
+// If the path is not absolute it will be joined with the current
+// working directory to turn it into an absolute path. The absolute
+// path name for a given file is not guaranteed to be unique.
+// Abs calls [Clean] on the result.
+func Abs[T VFSBase](vfs T, path, curDir string) (string, error) {
+	if vfs.IsAbs(path) {
+		return vfs.Clean(path), nil
+	}
+
+	return vfs.Join(curDir, path), nil
+}
+
 // cleanGlobPath prepares path for glob matching.
 func cleanGlobPath[T VFSBase](vfs T, path string) string {
 	pathSeparator := vfs.PathSeparator()
