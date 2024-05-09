@@ -32,11 +32,8 @@ import (
 // Abs calls [Clean] on the result.
 func (vfs *BasePathFS) Abs(path string) (string, error) {
 	abs, err := vfs.baseFS.Abs(vfs.ToBasePath(path))
-	if err != nil {
-		return "", vfs.FromPathError(err)
-	}
 
-	return vfs.FromBasePath(abs), nil
+	return vfs.FromBasePath(abs), vfs.FromPathError(err)
 }
 
 // Base returns the last element of path.
