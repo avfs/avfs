@@ -316,20 +316,20 @@ func isSlash(c uint8) bool {
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
 func Join[T VFSBase](vfs T, elem ...string) string {
-	pathSeparator := vfs.PathSeparator()
-
-	if vfs.OSType() != OsWindows {
-		// If there's a bug here, fix the logic in ./path_plan9.go too.
-		for i, e := range elem {
-			if e != "" {
-				return Clean(vfs, strings.Join(elem[i:], string(pathSeparator)))
-			}
-		}
-
-		return ""
+	if vfs.OSType() == OsWindows {
+		return joinWindows(vfs, elem)
 	}
 
-	return joinWindows(vfs, elem)
+	pathSeparator := vfs.PathSeparator()
+
+	// If there's a bug here, fix the logic in ./path_plan9.go too.
+	for i, e := range elem {
+		if e != "" {
+			return Clean(vfs, strings.Join(elem[i:], string(pathSeparator)))
+		}
+	}
+
+	return ""
 }
 
 func joinWindows[T VFSBase](vfs T, elem []string) string {
@@ -353,6 +353,14 @@ func joinWindows[T VFSBase](vfs T, elem []string) string {
 			for len(e) > 0 && isSlash(e[0]) {
 				e = e[1:]
 			}
+
+			// If the path is \ and the next path element is ??,
+			// add an extra .\ to create \.\?? rather than \??\
+			// (a Root Local Device path).
+			if b.Len() == 1 && pathHasPrefixFold(e, "??") {
+				b.WriteString(`.\`)
+			}
+
 		case lastChar == ':':
 			// If the path ends in a colon, keep the path relative to the current directory
 			// on a drive and don't add a separator. Preserve leading slashes in the next
@@ -378,6 +386,39 @@ func joinWindows[T VFSBase](vfs T, elem []string) string {
 	}
 
 	return Clean(vfs, b.String())
+}
+
+// pathHasPrefixFold tests whether the path s begins with prefix,
+// ignoring case and treating all path separators as equivalent.
+// If s is longer than prefix, then s[len(prefix)] must be a path separator.
+func pathHasPrefixFold(s, prefix string) bool {
+	if len(s) < len(prefix) {
+		return false
+	}
+
+	for i := 0; i < len(prefix); i++ {
+		if isSlash(prefix[i]) {
+			if !isSlash(s[i]) {
+				return false
+			}
+		} else if toUpper(prefix[i]) != toUpper(s[i]) {
+			return false
+		}
+	}
+
+	if len(s) > len(prefix) && !isSlash(s[len(prefix)]) {
+		return false
+	}
+
+	return true
+}
+
+func toUpper(c byte) byte {
+	if 'a' <= c && c <= 'z' {
+		return c - ('a' - 'A')
+	}
+
+	return c
 }
 
 // Match reports whether name matches the shell file name pattern.
