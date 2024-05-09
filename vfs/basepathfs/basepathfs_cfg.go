@@ -19,25 +19,42 @@ package basepathfs
 import (
 	"errors"
 	"io/fs"
+	"os"
+	"strings"
 
 	"github.com/avfs/avfs"
 )
 
 // New returns a new base path file system (BasePathFS).
 func New(baseFS avfs.VFS, basePath string) *BasePathFS {
+	vfs, err := NewWithErr(baseFS, basePath)
+	if err != nil {
+		panic(err)
+	}
+
+	return vfs
+}
+
+// NewWithErr returns a new base path file system (BasePathFS).
+func NewWithErr(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
 	const op = "basepath"
 
-	absPath, _ := baseFS.Abs(basePath)
+	absPath, err := baseFS.Abs(basePath)
+	if err != nil {
+		return nil, err
+	}
 
 	info, err := baseFS.Stat(absPath)
 	if err != nil {
 		err = &fs.PathError{Op: op, Path: basePath, Err: errors.Unwrap(err)}
-		panic(err)
+
+		return nil, err
 	}
 
 	if !info.IsDir() {
 		err = &fs.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
-		panic(err)
+
+		return nil, err
 	}
 
 	vfs := &BasePathFS{
@@ -47,7 +64,55 @@ func New(baseFS avfs.VFS, basePath string) *BasePathFS {
 
 	_ = vfs.SetFeatures(baseFS.Features() &^ avfs.FeatSymlink)
 
-	return vfs
+	return vfs, nil
+}
+
+// FromBasePath returns a BasePathFS path from an internal path.
+// When the base path is "/base/path", FromBasePath("/base/path/tmp") returns "/tmp".
+func (vfs *BasePathFS) FromBasePath(path string) string {
+	if !strings.HasPrefix(path, vfs.basePath) {
+		panic("path must start with " + vfs.basePath + " : " + path)
+	}
+
+	vl := avfs.VolumeNameLen(vfs, path)
+
+	return vfs.Join(path[:vl], path[len(vfs.basePath):], string(vfs.PathSeparator()))
+}
+
+// FromPathError restore paths in fs.PathError if necessary.
+func (vfs *BasePathFS) FromPathError(err error) error {
+	e, ok := err.(*fs.PathError)
+	if !ok {
+		return err
+	}
+
+	return &fs.PathError{Op: e.Op, Path: vfs.FromBasePath(e.Path), Err: e.Err}
+}
+
+// FromLinkError restore paths in os.LinkError if necessary.
+func (vfs *BasePathFS) FromLinkError(err error) error {
+	e, ok := err.(*os.LinkError)
+	if !ok {
+		return err
+	}
+
+	return &os.LinkError{Op: e.Op, Old: vfs.FromBasePath(e.Old), New: vfs.FromBasePath(e.New), Err: e.Err}
+}
+
+// ToBasePath transforms a BasePathFS path to an internal path.
+// When the base path is "/base/path", ToBasePath("/tmp") returns "/base/path/tmp".
+func (vfs *BasePathFS) ToBasePath(path string) string {
+	if path == "" || path == "/" {
+		return vfs.basePath
+	}
+
+	if vfs.IsAbs(path) {
+		vl := avfs.VolumeNameLen(vfs, path)
+
+		return vfs.basePath + path[vl:]
+	}
+
+	return path
 }
 
 // Name returns the name of the fileSystem.

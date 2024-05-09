@@ -25,17 +25,18 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// file system functions.
-
 // Abs returns an absolute representation of path.
 // If the path is not absolute it will be joined with the current
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
-// Abs calls Clean on the result.
+// Abs calls [Clean] on the result.
 func (vfs *BasePathFS) Abs(path string) (string, error) {
-	abs, _ := vfs.baseFS.Abs(vfs.toBasePath(path))
+	abs, err := vfs.baseFS.Abs(vfs.ToBasePath(path))
+	if err != nil {
+		return "", vfs.FromPathError(err)
+	}
 
-	return vfs.fromBasePath(abs), nil
+	return vfs.FromBasePath(abs), nil
 }
 
 // Base returns the last element of path.
@@ -43,17 +44,15 @@ func (vfs *BasePathFS) Abs(path string) (string, error) {
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
 func (vfs *BasePathFS) Base(path string) string {
-	base := vfs.baseFS.Base(path)
-
-	return vfs.fromBasePath(base)
+	return avfs.Base(vfs, path)
 }
 
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Chdir(dir string) error {
-	err := vfs.baseFS.Chdir(vfs.toBasePath(dir))
+	err := vfs.baseFS.Chdir(vfs.ToBasePath(dir))
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // Chmod changes the mode of the named file to mode.
@@ -75,9 +74,9 @@ func (vfs *BasePathFS) Chdir(dir string) error {
 // On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
 // and ModeTemporary are used.
 func (vfs *BasePathFS) Chmod(name string, mode fs.FileMode) error {
-	err := vfs.baseFS.Chmod(vfs.toBasePath(name), mode)
+	err := vfs.baseFS.Chmod(vfs.ToBasePath(name), mode)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -88,9 +87,9 @@ func (vfs *BasePathFS) Chmod(name string, mode fs.FileMode) error {
 // On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
 // EPLAN9 error, wrapped in *PathError.
 func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
-	err := vfs.baseFS.Chown(vfs.toBasePath(name), uid, gid)
+	err := vfs.baseFS.Chown(vfs.ToBasePath(name), uid, gid)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // Chtimes changes the access and modification times of the named
@@ -100,9 +99,9 @@ func (vfs *BasePathFS) Chown(name string, uid, gid int) error {
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Chtimes(name string, atime, mtime time.Time) error {
-	err := vfs.baseFS.Chtimes(vfs.toBasePath(name), atime, mtime)
+	err := vfs.baseFS.Chtimes(vfs.ToBasePath(name), atime, mtime)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // Clean returns the shortest path name equivalent to path
@@ -129,7 +128,7 @@ func (vfs *BasePathFS) Chtimes(name string, atime, mtime time.Time) error {
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
 func (vfs *BasePathFS) Clean(path string) string {
-	return vfs.baseFS.Clean(path)
+	return avfs.Clean(vfs, path)
 }
 
 // Create creates or truncates the named file. If the file already exists,
@@ -138,7 +137,7 @@ func (vfs *BasePathFS) Clean(path string) string {
 // be used for I/O; the associated file descriptor has mode O_RDWR.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Create(name string) (avfs.File, error) {
-	return vfs.baseFS.Create(name)
+	return avfs.Create(vfs, name)
 }
 
 // CreateTemp creates a new temporary file in the directory dir,
@@ -150,7 +149,7 @@ func (vfs *BasePathFS) Create(name string) (avfs.File, error) {
 // The caller can use the file's Name method to find the pathname of the file.
 // It is the caller's responsibility to remove the file when it is no longer needed.
 func (vfs *BasePathFS) CreateTemp(dir, pattern string) (avfs.File, error) {
-	return vfs.baseFS.CreateTemp(dir, pattern)
+	return avfs.CreateTemp(vfs, dir, pattern)
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -160,7 +159,7 @@ func (vfs *BasePathFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
 func (vfs *BasePathFS) Dir(path string) string {
-	return vfs.baseFS.Dir(path)
+	return avfs.Dir(vfs, path)
 }
 
 // EvalSymlinks returns the path name after the evaluation of any symbolic
@@ -184,7 +183,7 @@ func (vfs *BasePathFS) EvalSymlinks(path string) (string, error) {
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
 func (vfs *BasePathFS) FromSlash(path string) string {
-	return vfs.baseFS.FromSlash(path)
+	return avfs.FromSlash(vfs, path)
 }
 
 // Getwd returns a rooted name link corresponding to the
@@ -194,7 +193,7 @@ func (vfs *BasePathFS) FromSlash(path string) string {
 func (vfs *BasePathFS) Getwd() (dir string, err error) {
 	dir, err = vfs.baseFS.Getwd()
 
-	return vfs.fromBasePath(dir), vfs.restoreError(err)
+	return vfs.FromBasePath(dir), vfs.FromPathError(err)
 }
 
 // Glob returns the names of all files matching pattern or nil
@@ -206,10 +205,10 @@ func (vfs *BasePathFS) Getwd() (dir string, err error) {
 // The only possible returned error is ErrBadPattern, when pattern
 // is malformed.
 func (vfs *BasePathFS) Glob(pattern string) (matches []string, err error) {
-	matches, err = vfs.baseFS.Glob(pattern)
+	matches, err = vfs.baseFS.Glob(vfs.ToBasePath(pattern))
 
 	for i, m := range matches {
-		matches[i] = vfs.fromBasePath(m)
+		matches[i] = vfs.FromBasePath(m)
 	}
 
 	return matches, err
@@ -223,7 +222,7 @@ func (vfs *BasePathFS) Idm() avfs.IdentityMgr {
 
 // IsAbs reports whether the path is absolute.
 func (vfs *BasePathFS) IsAbs(path string) bool {
-	return vfs.baseFS.IsAbs(path)
+	return avfs.IsAbs(vfs, path)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
@@ -235,7 +234,7 @@ func (vfs *BasePathFS) IsPathSeparator(c uint8) bool {
 // separating slash if necessary. The result is Cleaned; in particular,
 // all empty strings are ignored.
 func (vfs *BasePathFS) Join(elem ...string) string {
-	return vfs.baseFS.Join(elem...)
+	return avfs.Join(vfs, elem...)
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -245,17 +244,17 @@ func (vfs *BasePathFS) Join(elem ...string) string {
 // On Windows, it always returns the syscall.EWINDOWS error, wrapped
 // in *PathError.
 func (vfs *BasePathFS) Lchown(name string, uid, gid int) error {
-	err := vfs.baseFS.Lchown(vfs.toBasePath(name), uid, gid)
+	err := vfs.baseFS.Lchown(vfs.ToBasePath(name), uid, gid)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // Link creates newname as a hard link to the oldname file.
 // If there is an error, it will be of type *LinkError.
 func (vfs *BasePathFS) Link(oldname, newname string) error {
-	err := vfs.baseFS.Link(vfs.toBasePath(oldname), vfs.toBasePath(newname))
+	err := vfs.baseFS.Link(vfs.ToBasePath(oldname), vfs.ToBasePath(newname))
 
-	return vfs.restoreError(err)
+	return vfs.FromLinkError(err)
 }
 
 // Lstat returns a FileInfo describing the named file.
@@ -263,9 +262,9 @@ func (vfs *BasePathFS) Link(oldname, newname string) error {
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Lstat(path string) (fs.FileInfo, error) {
-	info, err := vfs.baseFS.Lstat(vfs.toBasePath(path))
+	info, err := vfs.baseFS.Lstat(vfs.ToBasePath(path))
 
-	return info, vfs.restoreError(err)
+	return info, vfs.FromPathError(err)
 }
 
 // Match reports whether name matches the shell file name pattern.
@@ -293,7 +292,7 @@ func (vfs *BasePathFS) Lstat(path string) (fs.FileInfo, error) {
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
 func (vfs *BasePathFS) Match(pattern, name string) (matched bool, err error) {
-	return vfs.baseFS.Match(pattern, name)
+	return avfs.Match(vfs, pattern, name)
 }
 
 // Mkdir creates a new directory with the specified name and permission
@@ -309,9 +308,9 @@ func (vfs *BasePathFS) Mkdir(name string, perm fs.FileMode) error {
 		return &fs.PathError{Op: "mkdir", Path: "", Err: err}
 	}
 
-	err := vfs.baseFS.Mkdir(vfs.toBasePath(name), perm)
+	err := vfs.baseFS.Mkdir(vfs.ToBasePath(name), perm)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // MkdirAll creates a directory named name,
@@ -322,9 +321,9 @@ func (vfs *BasePathFS) Mkdir(name string, perm fs.FileMode) error {
 // If name is already a directory, MkdirAll does nothing
 // and returns nil.
 func (vfs *BasePathFS) MkdirAll(path string, perm fs.FileMode) error {
-	err := vfs.baseFS.MkdirAll(vfs.toBasePath(path), perm)
+	err := vfs.baseFS.MkdirAll(vfs.ToBasePath(path), perm)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // MkdirTemp creates a new temporary directory in the directory dir
@@ -335,15 +334,15 @@ func (vfs *BasePathFS) MkdirAll(path string, perm fs.FileMode) error {
 // Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 // It is the caller's responsibility to remove the directory when it is no longer needed.
 func (vfs *BasePathFS) MkdirTemp(dir, prefix string) (name string, err error) {
-	return vfs.baseFS.MkdirTemp(dir, prefix)
+	return avfs.MkdirTemp(vfs, dir, prefix)
 }
 
 // Open opens the named file for reading. If successful, methods on
 // the returned file can be used for reading; the associated file
 // descriptor has mode O_RDONLY.
 // If there is an error, it will be of type *PathError.
-func (vfs *BasePathFS) Open(path string) (avfs.File, error) {
-	return vfs.baseFS.Open(path)
+func (vfs *BasePathFS) Open(name string) (avfs.File, error) {
+	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }
 
 // OpenFile is the generalized open call; most users will use Open
@@ -353,9 +352,9 @@ func (vfs *BasePathFS) Open(path string) (avfs.File, error) {
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
-	f, err := vfs.baseFS.OpenFile(vfs.toBasePath(name), flag, perm)
+	f, err := vfs.baseFS.OpenFile(vfs.ToBasePath(name), flag, perm)
 	if err != nil {
-		return f, vfs.restoreError(err)
+		return f, vfs.FromPathError(err)
 	}
 
 	bf := &BasePathFile{
@@ -374,7 +373,7 @@ func (vfs *BasePathFS) PathSeparator() uint8 {
 // ReadDir reads the directory named by dirname and returns
 // a list of directory entries sorted by filename.
 func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
-	return vfs.baseFS.ReadDir(dirname)
+	return avfs.ReadDir(vfs, dirname)
 }
 
 // ReadFile reads the file named by filename and returns the contents.
@@ -382,7 +381,7 @@ func (vfs *BasePathFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
 // reads the whole file, it does not treat an EOF from Read as an error
 // to be reported.
 func (vfs *BasePathFS) ReadFile(filename string) ([]byte, error) {
-	return vfs.baseFS.ReadFile(filename)
+	return avfs.ReadFile(vfs, filename)
 }
 
 // Readlink returns the destination of the named symbolic link.
@@ -406,15 +405,15 @@ func (vfs *BasePathFS) Readlink(name string) (string, error) {
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
 func (vfs *BasePathFS) Rel(basepath, targpath string) (string, error) {
-	return vfs.baseFS.Rel(basepath, targpath)
+	return avfs.Rel(vfs, basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Remove(name string) error {
-	err := vfs.baseFS.Remove(vfs.toBasePath(name))
+	err := vfs.baseFS.Remove(vfs.ToBasePath(name))
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // RemoveAll removes path and any children it contains.
@@ -423,9 +422,14 @@ func (vfs *BasePathFS) Remove(name string) error {
 // returns nil (no error).
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) RemoveAll(path string) error {
-	err := vfs.baseFS.RemoveAll(vfs.toBasePath(path))
+	if path == "" {
+		// fail silently to retain compatibility with previous behavior of RemoveAll.
+		return nil
+	}
 
-	return vfs.restoreError(err)
+	err := vfs.baseFS.RemoveAll(vfs.ToBasePath(path))
+
+	return vfs.FromPathError(err)
 }
 
 // Rename renames (moves) oldpath to newpath.
@@ -433,9 +437,9 @@ func (vfs *BasePathFS) RemoveAll(path string) error {
 // OS-specific restrictions may apply when oldpath and newpath are in different directories.
 // If there is an error, it will be of type *LinkError.
 func (vfs *BasePathFS) Rename(oldname, newname string) error {
-	err := vfs.baseFS.Rename(vfs.toBasePath(oldname), vfs.toBasePath(newname))
+	err := vfs.baseFS.Rename(vfs.ToBasePath(oldname), vfs.ToBasePath(newname))
 
-	return vfs.restoreError(err)
+	return vfs.FromLinkError(err)
 }
 
 // SameFile reports whether fi1 and fi2 describe the same file.
@@ -477,22 +481,22 @@ func (vfs *BasePathFS) SetUserByName(name string) error {
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (vfs *BasePathFS) Split(path string) (dir, file string) {
-	return vfs.baseFS.Split(path)
+	return avfs.Split(vfs, path)
 }
 
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Stat(path string) (fs.FileInfo, error) {
-	info, err := vfs.baseFS.Stat(vfs.toBasePath(path))
+	info, err := vfs.baseFS.Stat(vfs.ToBasePath(path))
 
-	return info, vfs.restoreError(err)
+	return info, vfs.FromPathError(err)
 }
 
 // Sub returns an FS corresponding to the subtree rooted at dir.
 func (vfs *BasePathFS) Sub(dir string) (avfs.VFS, error) {
-	subFS, err := vfs.baseFS.Sub(vfs.toBasePath(dir))
+	subFS, err := vfs.baseFS.Sub(vfs.ToBasePath(dir))
 
-	return subFS, vfs.restoreError(err)
+	return subFS, vfs.FromPathError(err)
 }
 
 // Symlink creates newname as a symbolic link to oldname.
@@ -517,14 +521,14 @@ func (vfs *BasePathFS) Symlink(oldname, newname string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfs *BasePathFS) TempDir() string {
-	return vfs.baseFS.TempDir()
+	return avfs.TempDir(vfs)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
 func (vfs *BasePathFS) ToSlash(path string) string {
-	return vfs.baseFS.ToSlash(path)
+	return avfs.ToSlash(vfs, path)
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
@@ -536,9 +540,9 @@ func (vfs *BasePathFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) Truncate(name string, size int64) error {
-	err := vfs.baseFS.Truncate(vfs.toBasePath(name), size)
+	err := vfs.baseFS.Truncate(vfs.ToBasePath(name), size)
 
-	return vfs.restoreError(err)
+	return vfs.FromPathError(err)
 }
 
 // UMask returns the file mode creation mask.
@@ -563,16 +567,12 @@ func (vfs *BasePathFS) User() avfs.UserReader {
 //
 // WalkDir does not follow symbolic links.
 func (vfs *BasePathFS) WalkDir(root string, fn fs.WalkDirFunc) error {
-	err := vfs.baseFS.WalkDir(root, fn)
-
-	return vfs.restoreError(err)
+	return avfs.WalkDir(vfs, root, fn)
 }
 
 // WriteFile writes data to a file named by filename.
 // If the file does not exist, WriteFile creates it with permissions perm;
 // otherwise WriteFile truncates it before writing.
 func (vfs *BasePathFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
-	err := vfs.baseFS.WriteFile(filename, data, perm)
-
-	return vfs.restoreError(err)
+	return avfs.WriteFile(vfs, filename, data, perm)
 }
