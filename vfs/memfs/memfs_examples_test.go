@@ -19,9 +19,7 @@
 package memfs_test
 
 import (
-	"errors"
 	"fmt"
-	"io/fs"
 	"log"
 
 	"github.com/avfs/avfs"
@@ -30,8 +28,8 @@ import (
 	"github.com/avfs/avfs/vfs/memfs"
 )
 
-// ExampleNew should produce the same results independently of the host OS.
-func ExampleNew() {
+// ExampleNewWithOptions should produce the same results independently of the host OS.
+func ExampleNewWithOptions() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
 	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
@@ -47,7 +45,8 @@ func ExampleNew() {
 		fmt.Printf("%s exists", homeDir)
 	}
 
-	// Features(Hardlink|IdentityMgr|SetOSType|SubFS|Symlink|SystemDirs)
+	// Output:
+	// Features(Hardlink|IdentityMgr|SetOSType|SubFS|Symlink)
 	// root
 	// /tmp
 	// /root
@@ -57,13 +56,14 @@ func ExampleNew() {
 func ExampleNewWithOptions_noSystemDirs() {
 	vfs := memfs.NewWithOptions(&memfs.Options{OSType: avfs.OsLinux})
 	tmpDir := vfs.TempDir()
+	fmt.Println(tmpDir)
 
 	_, err := vfs.Stat(tmpDir)
-	if errors.Is(err, fs.ErrNotExist) {
+	if err != nil {
 		fmt.Printf("%s does not exist", tmpDir)
 	}
 
-	// Output: /tmp does not exist
+	// Output: /tmp
 }
 
 func ExampleNewWithOptions_noIdm() {
