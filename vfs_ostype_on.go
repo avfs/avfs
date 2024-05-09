@@ -21,6 +21,7 @@ package avfs
 import (
 	"errors"
 	"path/filepath"
+	"slices"
 	"strings"
 	"unicode/utf8"
 )
@@ -66,7 +67,7 @@ func Base[T VFSBase](vfs T, path string) string {
 // by purely lexical processing. It applies the following rules
 // iteratively until no further processing can be done:
 //
-//  1. Replace multiple Separator elements with a single one.
+//  1. Replace multiple [Separator] elements with a single one.
 //  2. Eliminate each . path name element (the current directory).
 //  3. Eliminate each inner .. path name element (the parent directory)
 //     along with the non-.. element that precedes it.
@@ -157,20 +158,6 @@ func Clean[T VFSBase](vfs T, path string) string {
 				out.append(pathSeparator)
 			}
 
-			// If a ':' appears in the path element at the start of a Windows path,
-			// insert a .\ at the beginning to avoid converting relative paths
-			// like a/../c: into c:.
-			if vfs.OSType() == OsWindows && out.w == 0 && out.volLen == 0 && r != 0 {
-				for i := r; i < n && !IsPathSeparator(vfs, path[i]); i++ {
-					if path[i] == ':' {
-						out.append('.')
-						out.append(pathSeparator)
-
-						break
-					}
-				}
-			}
-
 			// copy element
 			for ; r < n && !IsPathSeparator(vfs, path[r]); r++ {
 				out.append(path[r])
@@ -183,7 +170,43 @@ func Clean[T VFSBase](vfs T, path string) string {
 		out.append('.')
 	}
 
+	if vfs.OSType() == OsWindows {
+		postClean(vfs, &out) // avoid creating absolute paths on Windows
+	}
+
 	return FromSlash(vfs, out.string())
+}
+
+// postClean adjusts the results of Clean to avoid turning a relative path
+// into an absolute or rooted one.
+func postClean[T VFSBase](vfs T, out *lazybuf) {
+	if out.volLen != 0 || out.buf == nil {
+		return
+	}
+
+	pathSeparator := vfs.PathSeparator()
+
+	// If a ':' appears in the path element at the start of a path,
+	// insert a .\ at the beginning to avoid converting relative paths
+	// like a/../c: into c:.
+	for _, c := range out.buf {
+		if IsPathSeparator(vfs, c) {
+			break
+		}
+
+		if c == ':' {
+			out.prepend('.', pathSeparator)
+
+			return
+		}
+	}
+
+	// If a path begins with \??\, insert a \. at the beginning
+	// to avoid converting paths like \a\..\??\c:\x into \??\c:\x
+	// (equivalent to c:\x).
+	if len(out.buf) >= 3 && IsPathSeparator(vfs, out.buf[0]) && out.buf[1] == '?' && out.buf[2] == '?' {
+		out.prepend(pathSeparator, '.')
+	}
 }
 
 // Dir returns all but the last element of path, typically the path's directory.
@@ -777,9 +800,9 @@ func VolumeNameLen[T VFSBase](vfs T, path string) int {
 // to hold the output until that output diverges from s.
 type lazybuf struct {
 	path       string
-	volAndPath string
 	buf        []byte
 	w          int
+	volAndPath string
 	volLen     int
 }
 
@@ -805,6 +828,11 @@ func (b *lazybuf) append(c byte) {
 
 	b.buf[b.w] = c
 	b.w++
+}
+
+func (b *lazybuf) prepend(prefix ...byte) {
+	b.buf = slices.Insert(b.buf, 0, prefix...)
+	b.w += len(prefix)
 }
 
 func (b *lazybuf) string() string {

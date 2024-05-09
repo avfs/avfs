@@ -39,7 +39,7 @@ func ExampleNew() {
 	fmt.Println(vfs.User().Name())
 	fmt.Println(vfs.TempDir())
 
-	homeDir := avfs.HomeDirUser(vfs, vfs.User())
+	homeDir := avfs.HomeDirUser(vfs, "", vfs.User())
 	fmt.Println(homeDir)
 
 	_, err := vfs.Stat(homeDir)

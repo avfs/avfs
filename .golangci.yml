@@ -99,6 +99,7 @@ linters:
     - inamedparam # reports interfaces with unnamed method parameters
     - intrange # intrange is a linter to find places where for loops could make use of an integer range.
     - ineffassign # Detects when assignments to existing variables are not used
+    - lll # Reports long lines
     - loggercheck # (logrlint) Checks key value pairs for common logger libraries (kitlog,klog,logr,zap).
     - makezero # Finds slice declarations with non-zero initial length
     - maintidx # maintidx measures the maintainability index of each function.
@@ -150,7 +151,6 @@ linters:
     - gosec # (gas): Inspects source code for security problems
     - interfacebloat # A linter that checks the number of methods inside an interface.
     - ireturn # Accept Interfaces, Return Concrete Types
-    - lll # Reports long lines
     - nakedret # Finds naked returns in functions greater than a specified function length
     - nestif # Reports deeply nested if statements
     - nilerr # Finds the code that returns nil even if it checks that the error is not nil.
@@ -186,4 +186,9 @@ issues:
     - text: "S1040: type assertion to the same type"
       linters:
         - gosimple
+    - path: "vfs_ostype_on.go"
+      linters:
+        - gocritic
+        - intrange
+        - revive
 
