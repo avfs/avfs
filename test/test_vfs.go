@@ -1510,10 +1510,15 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 	t.Run("OpenFileNonExistingPath", func(t *testing.T) {
 		nonExistingPath := vfs.Join(testDir, "non/existing/path")
 
-		_, err := vfs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
+		f, err := vfs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
 		AssertPathError(t, err).Op("open").Path(nonExistingPath).
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
 			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
+
+		_, ok := f.(avfs.File)
+		if !ok {
+			t.Errorf("OpenFile : want file to implement avfs.File interface")
+		}
 	})
 
 	t.Run("OpenFileInvalidSymlink", func(t *testing.T) {

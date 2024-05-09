@@ -157,7 +157,7 @@ linters:
     - nonamedreturns # Reports all named returns
     - paralleltest # paralleltest detects missing usage of t.Parallel() method in your Go test
     - thelper # thelper detects Go test helpers without t.Helper() call and checks the consistency of test helpers
-    #- varnamelen # checks that the length of a variable's name matches its scope
+    - varnamelen # checks that the length of a variable's name matches its scope
     - wrapcheck # Checks that errors returned from external packages are wrapped
 
 issues:
@@ -183,3 +183,7 @@ issues:
         - gocritic
         - gomnd
         - maintidx
+    - text: "S1040: type assertion to the same type"
+      linters:
+        - gosimple
+
