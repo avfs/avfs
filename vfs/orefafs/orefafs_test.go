@@ -50,13 +50,27 @@ var (
 func TestOrefaFS(t *testing.T) {
 	vfs := orefafs.New()
 
-	wantFeatures := avfs.FeatHardlink
+	ts := test.NewSuiteFS(t, vfs, vfs)
+	ts.TestVFSAll(t)
+}
+
+func TestOrefaFSConfig(t *testing.T) {
+	vfs := orefafs.New()
+
+	wantFeatures := avfs.FeatHardlink | avfs.BuildFeatures()
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures.String(), vfs.Features())
 	}
 
-	ts := test.NewSuiteFS(t, vfs, vfs)
-	ts.TestVFSAll(t)
+	name := vfs.Name()
+	if name != "" {
+		t.Errorf("Name : want name to be empty, got %v", name)
+	}
+
+	osType := vfs.OSType()
+	if osType != avfs.CurrentOSType() {
+		t.Errorf("OSType : want os type to be %v, got %v", avfs.CurrentOSType(), osType)
+	}
 }
 
 func TestOrefaFSNilPtrFile(t *testing.T) {
