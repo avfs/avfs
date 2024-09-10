@@ -628,9 +628,6 @@ func VolumeName[T VFSBase](vfs T, path string) string {
 	return FromSlash(vfs, path[:VolumeNameLen(vfs, path)])
 }
 
-//go:linkname volumeNameLen path/filepath.volumeNameLen
-func volumeNameLen(path string) int
-
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
