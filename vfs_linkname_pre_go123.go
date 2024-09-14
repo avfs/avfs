@@ -1,5 +1,5 @@
 //
-//  Copyright 2021 The AVFS authors
+//  Copyright 2024 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,4 +14,16 @@
 //  limitations under the License.
 //
 
-// Empty file to use go:linkname (See https://github.com/golang/go/issues/15006)
+//go:build !go1.23
+
+package avfs
+
+import _ "unsafe" // for go:linkname only.
+
+// nextRandom is used in avfs.CreateTemp and avfs.MkdirTemp.
+//
+//go:linkname nextRandom os.nextRandom
+func nextRandom() string
+
+//go:linkname volumeNameLen path/filepath.volumeNameLen
+func volumeNameLen(path string) int

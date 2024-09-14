@@ -24,7 +24,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	_ "unsafe" // for go:linkname only.
 )
 
 // Abs returns an absolute representation of path.
@@ -401,11 +400,6 @@ func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo) error {
 	return nil
 }
 
-// nextRandom is used in Utils.CreateTemp and Utils.MkdirTemp.
-//
-//go:linkname nextRandom os.nextRandom
-func nextRandom() string
-
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,
 // returning prefix as the part before "*" and suffix as the part after "*".
 func prefixAndSuffix[T VFSBase](vfs T, pattern string) (prefix, suffix string, err error) {
@@ -627,9 +621,6 @@ func ToOpenMode(flag int) OpenMode {
 func VolumeName[T VFSBase](vfs T, path string) string {
 	return FromSlash(vfs, path[:VolumeNameLen(vfs, path)])
 }
-
-//go:linkname volumeNameLen path/filepath.volumeNameLen
-func volumeNameLen(path string) int
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
