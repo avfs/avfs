@@ -23,18 +23,18 @@ import (
 )
 
 // GroupAdd adds a new group.
-func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
+func (idm *OsIdm) GroupAdd(groupName string) (avfs.GroupReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // GroupDel deletes an existing group.
-func (idm *OsIdm) GroupDel(name string) error {
+func (idm *OsIdm) GroupDel(groupName string) error {
 	return avfs.ErrPermDenied
 }
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
-func (idm *OsIdm) LookupGroup(name string) (avfs.GroupReader, error) {
+func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
@@ -46,7 +46,7 @@ func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
-func (idm *OsIdm) LookupUser(name string) (avfs.UserReader, error) {
+func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
@@ -64,7 +64,7 @@ func SetUser(user avfs.UserReader) error {
 
 // SetUserByName sets the current user by name.
 // If the user is not found, the returned error is of type UnknownUserError.
-func SetUserByName(name string) error {
+func SetUserByName(userName string) error {
 	return avfs.ErrPermDenied
 }
 
@@ -74,12 +74,12 @@ func User() avfs.UserReader {
 }
 
 // UserAdd adds a new user.
-func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
+func (idm *OsIdm) UserAdd(userName, groupName string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
 // UserDel deletes an existing user.
-func (idm *OsIdm) UserDel(name string) error {
+func (idm *OsIdm) UserDel(userName string) error {
 	return avfs.ErrPermDenied
 }
 

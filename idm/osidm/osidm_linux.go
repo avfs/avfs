@@ -36,7 +36,7 @@ import (
 // For details see https://github.com/golang/go/issues/1435
 
 // GroupAdd adds a new group.
-func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
+func (idm *OsIdm) GroupAdd(groupName string) (avfs.GroupReader, error) {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
 	}
@@ -44,7 +44,7 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("groupadd", name)
+	cmd := exec.Command("groupadd", groupName)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -53,14 +53,14 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case errStr == "groupadd: group '"+name+"' already exists":
-			return nil, avfs.AlreadyExistsGroupError(name)
+		case errStr == "groupadd: group '"+groupName+"' already exists":
+			return nil, avfs.AlreadyExistsGroupError(groupName)
 		default:
 			return nil, avfs.UnknownError(err.Error() + errStr)
 		}
 	}
 
-	g, err := idm.LookupGroup(name)
+	g, err := idm.LookupGroup(groupName)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (idm *OsIdm) GroupAdd(name string) (avfs.GroupReader, error) {
 }
 
 // GroupDel deletes an existing group.
-func (idm *OsIdm) GroupDel(name string) error {
+func (idm *OsIdm) GroupDel(groupName string) error {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
 	}
@@ -77,7 +77,7 @@ func (idm *OsIdm) GroupDel(name string) error {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("groupdel", name)
+	cmd := exec.Command("groupdel", groupName)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -86,8 +86,8 @@ func (idm *OsIdm) GroupDel(name string) error {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case errStr == "groupdel: group '"+name+"' does not exist":
-			return avfs.UnknownGroupError(name)
+		case errStr == "groupdel: group '"+groupName+"' does not exist":
+			return avfs.UnknownGroupError(groupName)
 		default:
 			return avfs.UnknownError(err.Error() + errStr)
 		}
@@ -98,8 +98,8 @@ func (idm *OsIdm) GroupDel(name string) error {
 
 // LookupGroup looks up a group by name. If the group cannot be found, the
 // returned error is of type UnknownGroupError.
-func (idm *OsIdm) LookupGroup(name string) (avfs.GroupReader, error) {
-	return getGroup(name, avfs.UnknownGroupError(name))
+func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
+	return getGroup(groupName, avfs.UnknownGroupError(groupName))
 }
 
 // LookupGroupId looks up a group by groupid. If the group cannot be found, the
@@ -129,12 +129,12 @@ func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
 
 // LookupUser looks up a user by username. If the user cannot be found, the
 // returned error is of type UnknownUserError.
-func (idm *OsIdm) LookupUser(name string) (avfs.UserReader, error) {
-	return lookupUser(name)
+func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
+	return lookupUser(userName)
 }
 
-func lookupUser(name string) (avfs.UserReader, error) {
-	return getUser(name, avfs.UnknownUserError(name))
+func lookupUser(userName string) (avfs.UserReader, error) {
+	return getUser(userName, avfs.UnknownUserError(userName))
 }
 
 // LookupUserId looks up a user by userid. If the user cannot be found, the
@@ -225,8 +225,8 @@ func SetUser(user avfs.UserReader) error {
 
 // SetUserByName sets the current user by name.
 // If the user is not found, the returned error is of type UnknownUserError.
-func SetUserByName(name string) error {
-	u, err := lookupUser(name)
+func SetUserByName(userName string) error {
+	u, err := lookupUser(userName)
 	if err != nil {
 		return err
 	}
@@ -250,7 +250,7 @@ func User() avfs.UserReader {
 }
 
 // UserAdd adds a new user.
-func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
+func (idm *OsIdm) UserAdd(userName, groupName string) (avfs.UserReader, error) {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
 	}
@@ -258,17 +258,18 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("useradd", "-M", "-g", groupName, name)
+	cmd := exec.Command("useradd", "-M", "-g", groupName, userName)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
-	if err := cmd.Run(); err != nil {
+	err := cmd.Run()
+	if err != nil {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case errStr == "useradd: user '"+name+"' already exists":
-			return nil, avfs.AlreadyExistsUserError(name)
+		case errStr == "useradd: user '"+userName+"' already exists":
+			return nil, avfs.AlreadyExistsUserError(userName)
 		case errStr == "useradd: group '"+groupName+"' does not exist":
 			return nil, avfs.UnknownGroupError(groupName)
 		default:
@@ -276,7 +277,7 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 		}
 	}
 
-	u, err := idm.LookupUser(name)
+	u, err := idm.LookupUser(userName)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +286,7 @@ func (idm *OsIdm) UserAdd(name, groupName string) (avfs.UserReader, error) {
 }
 
 // UserDel deletes an existing user.
-func (idm *OsIdm) UserDel(name string) error {
+func (idm *OsIdm) UserDel(userName string) error {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
 	}
@@ -293,17 +294,18 @@ func (idm *OsIdm) UserDel(name string) error {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	cmd := exec.Command("userdel", name)
+	cmd := exec.Command("userdel", userName)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
-	if err := cmd.Run(); err != nil {
+	err := cmd.Run()
+	if err != nil {
 		errStr := strings.TrimSpace(stderr.String())
 
 		switch {
-		case errStr == "userdel: user '"+name+"' does not exist":
-			return avfs.UnknownUserError(name)
+		case errStr == "userdel: user '"+userName+"' does not exist":
+			return avfs.UnknownUserError(userName)
 		default:
 			return avfs.UnknownError(err.Error() + errStr)
 		}
