@@ -520,19 +520,19 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 
 	parent, child, pi, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists && !vfs.isNotExist(err) || !pi.IsLast() {
-		return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: err}
+		return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	if vfs.isNotExist(err) {
 		if om&avfs.OpenCreate == 0 {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: err}
+			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: err}
 		}
 
 		parent.mu.Lock()
 		defer parent.mu.Unlock()
 
 		if om&avfs.OpenWrite == 0 || !parent.checkPermission(avfs.OpenWrite|avfs.OpenLookup, vfs.User()) {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
+			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 		part := pi.Part()
@@ -558,11 +558,11 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		defer c.mu.Unlock()
 
 		if !c.checkPermission(om, vfs.User()) {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
+			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 		if om&avfs.OpenCreateExcl != 0 {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
+			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 		}
 
 		if om&avfs.OpenTruncate != 0 {
@@ -582,7 +582,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		}
 
 		if !c.checkPermission(om, vfs.User()) {
-			return &MemFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
+			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 	}
 
