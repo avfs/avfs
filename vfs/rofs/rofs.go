@@ -329,14 +329,17 @@ func (vfs *RoFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 	const op = "open"
 
 	if flag != os.O_RDONLY {
-		return &RoFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
+		return (*RoFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
 	}
 
 	fBase, err := vfs.baseFS.OpenFile(name, os.O_RDONLY, 0)
+	if err != nil {
+		return (*RoFile)(nil), err
+	}
 
 	f := &RoFile{baseFile: fBase, vfs: vfs}
 
-	return f, err
+	return f, nil
 }
 
 // PathSeparator return the OS-specific path separator.

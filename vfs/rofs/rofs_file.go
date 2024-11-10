@@ -18,6 +18,7 @@ package rofs
 
 import (
 	"io/fs"
+	"reflect"
 
 	"github.com/avfs/avfs"
 )
@@ -26,6 +27,10 @@ import (
 // which must be a directory.
 // If there is an error, it will be of type *PathError.
 func (f *RoFile) Chdir() error {
+	if f == nil {
+		return fs.ErrInvalid
+	}
+
 	return f.baseFile.Chdir()
 }
 
@@ -34,7 +39,11 @@ func (f *RoFile) Chdir() error {
 func (f *RoFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
-	return &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
+	if f == nil {
+		return fs.ErrInvalid
+	}
+
+	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -45,13 +54,21 @@ func (f *RoFile) Chmod(mode fs.FileMode) error {
 func (f *RoFile) Chown(uid, gid int) error {
 	const op = "chown"
 
-	return &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
+	if f == nil {
+		return fs.ErrInvalid
+	}
+
+	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
 }
 
 // Close closes the RoFile, rendering it unusable for I/O.
 // On files that support SetDeadline, any pending I/O operations will
 // be canceled and return immediately with an error.
 func (f *RoFile) Close() error {
+	if f == nil {
+		return fs.ErrInvalid
+	}
+
 	return f.baseFile.Close()
 }
 
@@ -59,18 +76,41 @@ func (f *RoFile) Close() error {
 // The file descriptor is valid only until f.Close is called or f is garbage collected.
 // On Unix systems this will cause the SetDeadline methods to stop working.
 func (f *RoFile) Fd() uintptr {
+	if f == nil {
+		return ^(uintptr(0))
+	}
+
 	return f.baseFile.Fd()
 }
 
 // Name returns the name of the file as presented to Open.
 func (f *RoFile) Name() string {
-	return f.baseFile.Name()
+	if f == nil {
+		panic("")
+	}
+
+	return f.name()
+}
+
+// Name returns the name of the file or an empty string if not available.
+func (f *RoFile) name() string {
+	var name string
+
+	if !reflect.ValueOf(f.baseFile).IsNil() {
+		name = f.baseFile.Name()
+	}
+
+	return name
 }
 
 // Read reads up to len(b) bytes from the RoFile.
 // It returns the number of bytes read and any error encountered.
 // At end of file, Read returns 0, io.EOF.
 func (f *RoFile) Read(b []byte) (n int, err error) {
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
 	return f.baseFile.Read(b)
 }
 
@@ -79,6 +119,10 @@ func (f *RoFile) Read(b []byte) (n int, err error) {
 // ReadAt always returns a non-nil error when n < len(b).
 // At end of file, that error is io.EOF.
 func (f *RoFile) ReadAt(b []byte, off int64) (n int, err error) {
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
 	return f.baseFile.ReadAt(b, off)
 }
 
@@ -93,6 +137,10 @@ func (f *RoFile) ReadAt(b []byte, off int64) (n int, err error) {
 // If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
 // When it succeeds, it returns a nil error (not io.EOF).
 func (f *RoFile) ReadDir(n int) ([]fs.DirEntry, error) {
+	if f == nil {
+		return nil, fs.ErrInvalid
+	}
+
 	return f.baseFile.ReadDir(n)
 }
 
@@ -109,6 +157,10 @@ func (f *RoFile) ReadDir(n int) ([]fs.DirEntry, error) {
 // directory, Readdirnames returns the names read until that point and
 // a non-nil error.
 func (f *RoFile) Readdirnames(n int) (names []string, err error) {
+	if f == nil {
+		return nil, fs.ErrInvalid
+	}
+
 	return f.baseFile.Readdirnames(n)
 }
 
@@ -118,12 +170,20 @@ func (f *RoFile) Readdirnames(n int) (names []string, err error) {
 // It returns the new offset and an error, if any.
 // The behavior of Seek on a file opened with O_APPEND is not specified.
 func (f *RoFile) Seek(offset int64, whence int) (ret int64, err error) {
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
 	return f.baseFile.Seek(offset, whence)
 }
 
 // Stat returns the FileInfo structure describing file.
 // If there is an error, it will be of type *PathError.
 func (f *RoFile) Stat() (fs.FileInfo, error) {
+	if f == nil {
+		return nil, fs.ErrInvalid
+	}
+
 	return f.baseFile.Stat()
 }
 
@@ -131,6 +191,10 @@ func (f *RoFile) Stat() (fs.FileInfo, error) {
 // Typically, this means flushing the file system's in-memory copy
 // of recently written data to disk.
 func (f *RoFile) Sync() error {
+	if f == nil {
+		return fs.ErrInvalid
+	}
+
 	return &fs.PathError{Op: "sync", Path: avfs.NotImplemented, Err: f.vfs.errPermDenied}
 }
 
@@ -140,7 +204,11 @@ func (f *RoFile) Sync() error {
 func (f *RoFile) Truncate(size int64) error {
 	const op = "truncate"
 
-	return &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
+	if f == nil {
+		return fs.ErrInvalid
+	}
+
+	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
 }
 
 // Write writes len(b) bytes to the RoFile.
@@ -149,7 +217,11 @@ func (f *RoFile) Truncate(size int64) error {
 func (f *RoFile) Write(b []byte) (n int, err error) {
 	const op = "write"
 
-	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
+	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
 }
 
 // WriteAt writes len(b) bytes to the File starting at byte offset off.
@@ -158,7 +230,11 @@ func (f *RoFile) Write(b []byte) (n int, err error) {
 func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 	const op = "write"
 
-	return 0, &fs.PathError{Op: op, Path: f.Name(), Err: f.vfs.errPermDenied}
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
+	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
 }
 
 // WriteString is like Write, but writes the contents of string s rather than
