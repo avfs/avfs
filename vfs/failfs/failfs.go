@@ -411,15 +411,15 @@ func (vfs *FailFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File,
 
 	err := vfs.fail(avfs.FnOpenFile, &fp)
 	if err != nil {
-		return &FailFile{}, err
+		return (*FailFile)(nil), err
 	}
 
 	bf, err := vfs.baseFS.OpenFile(name, flag, perm)
-
-	f := &FailFile{
-		baseFile: bf,
-		vfs:      vfs,
+	if err != nil {
+		return (*FailFile)(nil), err
 	}
+
+	f := &FailFile{baseFile: bf, vfs: vfs}
 
 	return f, err
 }

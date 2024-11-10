@@ -18,6 +18,7 @@ package failfs
 
 import (
 	"io/fs"
+	"reflect"
 
 	"github.com/avfs/avfs"
 )
@@ -30,7 +31,7 @@ func (f *FailFile) Chdir() error {
 		return fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "chdir", Path: name}
 	vfs := f.vfs
 
@@ -49,7 +50,7 @@ func (f *FailFile) Chmod(mode fs.FileMode) error {
 		return fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "chmod", Path: name, Perm: mode}
 	vfs := f.vfs
 
@@ -71,7 +72,7 @@ func (f *FailFile) Chown(uid, gid int) error {
 		return fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "chown", Path: name, Uid: uid, Gid: gid}
 	vfs := f.vfs
 
@@ -91,7 +92,7 @@ func (f *FailFile) Close() error {
 		return fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Path: name}
 	vfs := f.vfs
 
@@ -107,16 +108,31 @@ func (f *FailFile) Close() error {
 // The file descriptor is valid only until f.Close is called or f is garbage collected.
 // On Unix systems this will cause the SetDeadline methods to stop working.
 func (f *FailFile) Fd() uintptr {
+	if f == nil {
+		return ^(uintptr(0))
+	}
+
 	return f.baseFile.Fd()
 }
 
 // Name returns the link of the file as presented to Open.
 func (f *FailFile) Name() string {
-	if f.baseFile == nil {
-		return ""
+	if f == nil {
+		panic("")
 	}
 
-	return f.baseFile.Name()
+	return f.name()
+}
+
+// name returns the name of the file or an empty string if not available.
+func (f *FailFile) name() string {
+	var name string
+
+	if !reflect.ValueOf(f.baseFile).IsNil() {
+		name = f.baseFile.Name()
+	}
+
+	return name
 }
 
 // Read reads up to len(b) bytes from the FailFile.
@@ -127,7 +143,7 @@ func (f *FailFile) Read(b []byte) (n int, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "read", Path: name}
 	vfs := f.vfs
 
@@ -148,7 +164,7 @@ func (f *FailFile) ReadAt(b []byte, off int64) (n int, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "read", Path: name}
 	vfs := f.vfs
 
@@ -175,7 +191,7 @@ func (f *FailFile) ReadDir(n int) ([]fs.DirEntry, error) {
 		return nil, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "readdir", Path: name}
 	vfs := f.vfs
 
@@ -204,7 +220,7 @@ func (f *FailFile) Readdirnames(n int) (names []string, err error) {
 		return nil, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Path: name}
 	vfs := f.vfs
 
@@ -226,7 +242,7 @@ func (f *FailFile) Seek(offset int64, whence int) (ret int64, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "seek", Path: name, Flag: whence}
 	vfs := f.vfs
 
@@ -245,7 +261,7 @@ func (f *FailFile) Stat() (info fs.FileInfo, err error) {
 		return nil, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "stat", Path: name}
 	vfs := f.vfs
 
@@ -284,7 +300,7 @@ func (f *FailFile) Truncate(size int64) error {
 		return fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "truncate", Path: name, Size: size}
 	vfs := f.vfs
 
@@ -304,7 +320,7 @@ func (f *FailFile) Write(b []byte) (n int, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "write", Path: name}
 	vfs := f.vfs
 
@@ -324,7 +340,7 @@ func (f *FailFile) WriteAt(b []byte, off int64) (n int, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	name := f.Name()
+	name := f.name()
 	fp := FailParam{Op: "write", Path: name}
 	vfs := f.vfs
 

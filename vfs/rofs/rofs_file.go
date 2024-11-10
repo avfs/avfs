@@ -92,7 +92,7 @@ func (f *RoFile) Name() string {
 	return f.name()
 }
 
-// Name returns the name of the file or an empty string if not available.
+// name returns the name of the file or an empty string if not available.
 func (f *RoFile) name() string {
 	var name string
 
