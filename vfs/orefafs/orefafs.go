@@ -577,19 +577,19 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 
 	if !childOk {
 		if !parentOk {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
+			return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
 		}
 
 		if !parent.mode.IsDir() {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
+			return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 		}
 
 		if om&avfs.OpenCreate == 0 {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+			return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 		}
 
 		if om&avfs.OpenWrite == 0 {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
+			return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.PermDenied}
 		}
 
 		vfs.mu.Lock()
@@ -598,7 +598,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 		// test for race conditions when opening file in exclusive mode.
 		_, childOk = vfs.nodes[absPath]
 		if childOk && om&avfs.OpenCreateExcl != 0 {
-			return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
+			return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 		}
 
 		child = vfs.createFile(parent, absPath, fileName, perm)
@@ -609,7 +609,7 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 			}
 		} else {
 			if om&avfs.OpenCreateExcl != 0 {
-				return &OrefaFile{}, &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
+				return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 			}
 
 			if om&avfs.OpenTruncate != 0 {
