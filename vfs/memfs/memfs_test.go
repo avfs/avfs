@@ -112,12 +112,6 @@ func TestMemFSOptionName(t *testing.T) {
 	}
 }
 
-func TestMemFSNilPtrFile(t *testing.T) {
-	f := (*memfs.MemFile)(nil)
-
-	test.FileNilPtr(t, f)
-}
-
 func TestMemFSConfig(t *testing.T) {
 	vfs := memfs.New()
 

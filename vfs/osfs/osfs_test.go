@@ -52,12 +52,6 @@ func TestOsFSWithNoIdm(t *testing.T) {
 	ts.TestVFSAll(t)
 }
 
-func TestOsFSNilPtrFile(t *testing.T) {
-	f := (*os.File)(nil)
-
-	test.FileNilPtr(t, f)
-}
-
 func TestOsFSConfig(t *testing.T) {
 	vfs := osfs.New()
 

@@ -936,7 +936,7 @@ func (ts *Suite) TestFileSync(t *testing.T, testDir string) {
 		f := ts.openedNonExistingFile(t, testDir)
 
 		err := f.Sync()
-		AssertPathError(t, err).Op("sync").Path(avfs.NotImplemented).ErrPermDenied().Test()
+		AssertInvalid(t, err, "FileSync")
 
 		return
 	}
@@ -1330,8 +1330,12 @@ func (ts *Suite) TestFileWriteString(t *testing.T, testDir string) {
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		f := ts.openedNonExistingFile(t, testDir)
 
+		if !reflect.ValueOf(f).IsNil() {
+			t.Errorf("File.WriteString : want file to be created, got nil")
+		}
+
 		_, err := f.WriteString("")
-		AssertPathError(t, err).Op("write").Path(f.Name()).ErrPermDenied().Test()
+		AssertInvalid(t, err, "File.WriteString")
 
 		return
 	}

@@ -1326,10 +1326,18 @@ func (ts *Suite) TestOpen(t *testing.T, testDir string) {
 	t.Run("OpenNonExistingFile", func(t *testing.T) {
 		fileName := ts.nonExistingFile(t, testDir)
 
-		_, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
+		f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
 		AssertPathError(t, err).Op("open").Path(fileName).
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
 			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+
+		// all file systems should return a typed nil file on error
+		if !reflect.ValueOf(f).IsNil() {
+			t.Errorf("OpenFile : want nil, got %v", f)
+		}
+
+		// test file method calls on a nil file
+		FileNilPtr(t, f)
 	})
 }
 

@@ -73,12 +73,6 @@ func TestOrefaFSConfig(t *testing.T) {
 	}
 }
 
-func TestOrefaFSNilPtrFile(t *testing.T) {
-	f := (*orefafs.OrefaFile)(nil)
-
-	test.FileNilPtr(t, f)
-}
-
 func BenchmarkOrefaFSAll(b *testing.B) {
 	vfs := orefafs.New()
 
