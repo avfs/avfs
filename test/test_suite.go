@@ -88,8 +88,10 @@ func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdentityMg
 	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
 
-	// All permission tests were recorded with
-	_ = vfs.SetUMask(umaskTest)
+	// All permission tests were recorded with umaskTest umask on Linux
+	if vfs.OSType() == avfs.OsLinux {
+		_ = vfs.SetUMask(umaskTest)
+	}
 
 	ts := &Suite{
 		vfsSetup:    vfsSetup,
