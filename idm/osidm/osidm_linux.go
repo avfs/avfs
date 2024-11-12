@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -39,6 +40,10 @@ import (
 func (idm *OsIdm) GroupAdd(groupName string) (avfs.GroupReader, error) {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
+	}
+
+	if !isValidLinuxName(groupName) {
+		return nil, avfs.InvalidNameError(groupName)
 	}
 
 	runtime.LockOSThread()
@@ -72,6 +77,10 @@ func (idm *OsIdm) GroupAdd(groupName string) (avfs.GroupReader, error) {
 func (idm *OsIdm) GroupDel(groupName string) error {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
+	}
+
+	if !isValidLinuxName(groupName) {
+		return avfs.InvalidNameError(groupName)
 	}
 
 	runtime.LockOSThread()
@@ -134,6 +143,10 @@ func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 }
 
 func lookupUser(userName string) (avfs.UserReader, error) {
+	if !isValidLinuxName(userName) {
+		return nil, avfs.InvalidNameError(userName)
+	}
+
 	return getUser(userName, avfs.UnknownUserError(userName))
 }
 
@@ -255,6 +268,14 @@ func (idm *OsIdm) UserAdd(userName, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
+	if !isValidLinuxName(userName) {
+		return nil, avfs.InvalidNameError(userName)
+	}
+
+	if !isValidLinuxName(groupName) {
+		return nil, avfs.InvalidNameError(groupName)
+	}
+
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
@@ -289,6 +310,10 @@ func (idm *OsIdm) UserAdd(userName, groupName string) (avfs.UserReader, error) {
 func (idm *OsIdm) UserDel(userName string) error {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
+	}
+
+	if !isValidLinuxName(userName) {
+		return avfs.InvalidNameError(userName)
 	}
 
 	runtime.LockOSThread()
@@ -339,4 +364,9 @@ func getent(database, key string, notFoundErr error) (string, error) {
 // IsUserAdmin returns true if the current user has admin privileges.
 func isUserAdmin() bool {
 	return os.Geteuid() == 0
+}
+
+// isValidLinuxName checks if the input string is a valid username or group name.
+func isValidLinuxName(name string) bool {
+	return regexp.MustCompile("^[a-zA-Z0-9_-]+$").MatchString(name)
 }

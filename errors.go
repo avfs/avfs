@@ -36,6 +36,11 @@ func (e AlreadyExistsUserError) Error() string {
 	return "user: user " + string(e) + " already exists"
 }
 
+// InvalidNameError is return when a username or a group name is invalid.
+type InvalidNameError string
+
+func (e InvalidNameError) Error() string { return "name: invalid name " + string(e) }
+
 // UnknownError is returned when there is an unknown error.
 type UnknownError string
 

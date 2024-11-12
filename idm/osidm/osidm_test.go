@@ -27,14 +27,14 @@ import (
 )
 
 var (
+	// OsGroup implements avfs.GroupReader interface.
+	_ avfs.GroupReader = &osidm.OsGroup{}
+
 	// OsIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &osidm.OsIdm{}
 
 	// OsUser implements avfs.UserReader interface.
 	_ avfs.UserReader = &osidm.OsUser{}
-
-	// OsGroup implements avfs.GroupReader interface.
-	_ avfs.GroupReader = &osidm.OsGroup{}
 )
 
 func TestOsIdmAll(t *testing.T) {
