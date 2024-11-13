@@ -332,12 +332,12 @@ func (vfs *RoFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, e
 		return (*RoFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.errPermDenied}
 	}
 
-	fBase, err := vfs.baseFS.OpenFile(name, os.O_RDONLY, 0)
+	bf, err := vfs.baseFS.OpenFile(name, os.O_RDONLY, 0)
 	if err != nil {
 		return (*RoFile)(nil), err
 	}
 
-	f := &RoFile{baseFile: fBase, vfs: vfs}
+	f := &RoFile{baseFile: bf, vfs: vfs}
 
 	return f, nil
 }

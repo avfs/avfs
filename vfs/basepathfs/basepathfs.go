@@ -349,17 +349,14 @@ func (vfs *BasePathFS) Open(name string) (avfs.File, error) {
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
-	f, err := vfs.baseFS.OpenFile(vfs.ToBasePath(name), flag, perm)
+	bf, err := vfs.baseFS.OpenFile(vfs.ToBasePath(name), flag, perm)
 	if err != nil {
-		return f, vfs.FromPathError(err)
+		return bf, vfs.FromPathError(err)
 	}
 
-	bf := &BasePathFile{
-		vfs:      vfs,
-		baseFile: f,
-	}
+	f := &BasePathFile{vfs: vfs, baseFile: bf}
 
-	return bf, nil
+	return f, nil
 }
 
 // PathSeparator return the OS-specific path separator.

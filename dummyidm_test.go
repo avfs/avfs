@@ -26,14 +26,14 @@ import (
 )
 
 var (
+	// Tests that avfs.DummyGroup struct implements avfs.GroupReader interface.
+	_ avfs.GroupReader = &avfs.DummyGroup{}
+
 	// Tests that avfs.DummyIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &avfs.DummyIdm{}
 
 	// Tests that avfs.DummyUser struct implements avfs.UserReader interface.
 	_ avfs.UserReader = &avfs.DummyUser{}
-
-	// Tests that avfs.DummyGroup struct implements avfs.GroupReader interface.
-	_ avfs.GroupReader = &avfs.DummyGroup{}
 )
 
 func TestDummyIdm(t *testing.T) {

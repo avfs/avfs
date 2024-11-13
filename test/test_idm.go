@@ -89,7 +89,7 @@ func (ts *Suite) TestAdminGroupUser(t *testing.T) {
 	})
 }
 
-// TestGroupAddDel tests GroupAdd and GroupDel functions.
+// TestGroupAddDel tests AddGroup and DelGroup functions.
 func (ts *Suite) TestGroupAddDel(t *testing.T) {
 	idm := ts.idm
 	suffix := fmt.Sprintf("GroupAddDel%x", rand.Uint32())
@@ -97,14 +97,14 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		groupName := "AGroup" + suffix
 
-		_, err := idm.GroupAdd(groupName)
+		_, err := idm.AddGroup(groupName)
 		if err != avfs.ErrPermDenied {
-			t.Errorf("GroupAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("AddGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
-		err = idm.GroupDel(groupName)
+		err = idm.DelGroup(groupName)
 		if err != avfs.ErrPermDenied {
-			t.Errorf("GroupDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("DelGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		return
@@ -113,7 +113,7 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 	gis := GroupInfos()
 	prevGid := 0
 
-	t.Run("GroupAdd", func(t *testing.T) {
+	t.Run("AddGroup", func(t *testing.T) {
 		for _, gi := range gis {
 			groupName := gi.Name + suffix
 			wantGroupErr := avfs.UnknownGroupError(groupName)
@@ -123,17 +123,17 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 				t.Errorf("LookupGroupName %s : want error to be %v, got %v", groupName, wantGroupErr, err)
 			}
 
-			g, err := idm.GroupAdd(groupName)
-			if !AssertNoError(t, err, "GroupAdd %s", groupName) {
+			g, err := idm.AddGroup(groupName)
+			if !AssertNoError(t, err, "AddGroup %s", groupName) {
 				continue
 			}
 
 			if g.Name() != groupName {
-				t.Errorf("GroupAdd %s : want Name to be %s, got %s", groupName, groupName, g.Name())
+				t.Errorf("AddGroup %s : want Name to be %s, got %s", groupName, groupName, g.Name())
 			}
 
 			if g.Gid() <= prevGid {
-				t.Errorf("GroupAdd %s : want gid to be > %d, got %d", groupName, prevGid, g.Gid())
+				t.Errorf("AddGroup %s : want gid to be > %d, got %d", groupName, prevGid, g.Gid())
 			} else {
 				prevGid = g.Gid()
 			}
@@ -146,27 +146,27 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 		}
 	})
 
-	t.Run("GroupAddExists", func(t *testing.T) {
+	t.Run("AddGroupExists", func(t *testing.T) {
 		for _, gi := range gis {
 			groupName := gi.Name + suffix
 
-			_, err := idm.GroupAdd(groupName)
+			_, err := idm.AddGroup(groupName)
 			if err != avfs.AlreadyExistsGroupError(groupName) {
-				t.Errorf("GroupAdd %s : want error to be %v, got %v",
+				t.Errorf("AddGroup %s : want error to be %v, got %v",
 					groupName, avfs.AlreadyExistsGroupError(groupName), err)
 			}
 		}
 	})
 
-	t.Run("GroupDel", func(t *testing.T) {
+	t.Run("DelGroup", func(t *testing.T) {
 		for _, gi := range gis {
 			groupName := gi.Name + suffix
 
 			g, err := idm.LookupGroup(groupName)
 			RequireNoError(t, err, "LookupGroup %s", groupName)
 
-			err = idm.GroupDel(groupName)
-			RequireNoError(t, err, "GroupDel %s", groupName)
+			err = idm.DelGroup(groupName)
+			RequireNoError(t, err, "DelGroup %s", groupName)
 
 			_, err = idm.LookupGroup(g.Name())
 			wantGroupErr := avfs.UnknownGroupError(groupName)
@@ -182,15 +182,15 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 				t.Errorf("LookupGroupId %s : want error to be %v, got %v", groupName, wantGroupIdErr, err)
 			}
 
-			err = idm.GroupDel(groupName)
+			err = idm.DelGroup(groupName)
 			if err != wantGroupErr {
-				t.Errorf("GroupDel %s : want error to be %v, got %v", groupName, wantGroupErr, err)
+				t.Errorf("DelGroup %s : want error to be %v, got %v", groupName, wantGroupErr, err)
 			}
 		}
 	})
 }
 
-// TestUserAddDel tests UserAdd and UserDel functions.
+// TestUserAddDel tests AddUser and DelUser functions.
 func (ts *Suite) TestUserAddDel(t *testing.T) {
 	idm := ts.idm
 	suffix := fmt.Sprintf("UserAddDel%x", rand.Uint32())
@@ -199,14 +199,14 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 		groupName := "InvalidGroup" + suffix
 		userName := "InvalidUser" + suffix
 
-		_, err := idm.UserAdd(userName, groupName)
+		_, err := idm.AddUser(userName, groupName)
 		if err != avfs.ErrPermDenied {
-			t.Errorf("UserAdd : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("AddUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
-		err = idm.UserDel(userName)
+		err = idm.DelUser(userName)
 		if err != avfs.ErrPermDenied {
-			t.Errorf("UserDel : want error to be %v, got %v", avfs.ErrPermDenied, err)
+			t.Errorf("DelUser : want error to be %v, got %v", avfs.ErrPermDenied, err)
 		}
 
 		return
@@ -217,7 +217,7 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 	prevUid := 0
 	uis := UserInfos()
 
-	t.Run("UserAdd", func(t *testing.T) {
+	t.Run("AddUser", func(t *testing.T) {
 		for _, ui := range uis {
 			groupName := ui.GroupName + suffix
 
@@ -232,27 +232,27 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 				t.Errorf("LookupUser %s : want error to be %v, got %v", userName, wantUserErr, err)
 			}
 
-			u, err := idm.UserAdd(userName, groupName)
-			RequireNoError(t, err, "UserAdd %s", userName)
+			u, err := idm.AddUser(userName, groupName)
+			RequireNoError(t, err, "AddUser %s", userName)
 
 			if u == nil {
-				t.Errorf("UserAdd %s : want user to be not nil, got nil", userName)
+				t.Errorf("AddUser %s : want user to be not nil, got nil", userName)
 
 				continue
 			}
 
 			if u.Name() != userName {
-				t.Errorf("UserAdd %s : want Name to be %s, got %s", userName, userName, u.Name())
+				t.Errorf("AddUser %s : want Name to be %s, got %s", userName, userName, u.Name())
 			}
 
 			if u.Uid() <= prevUid {
-				t.Errorf("UserAdd %s : want uid to be > %d, got %d", userName, prevUid, u.Uid())
+				t.Errorf("AddUser %s : want uid to be > %d, got %d", userName, prevUid, u.Uid())
 			} else {
 				prevUid = u.Uid()
 			}
 
 			if u.Gid() != g.Gid() {
-				t.Errorf("UserAdd %s : want gid to be %d, got %d", userName, g.Gid(), u.Gid())
+				t.Errorf("AddUser %s : want gid to be %d, got %d", userName, g.Gid(), u.Gid())
 			}
 
 			if u.IsAdmin() {
@@ -272,39 +272,39 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 			groupName := ui.GroupName + suffix
 			userName := ui.Name + suffix
 
-			_, err := idm.UserAdd(userName, groupName)
+			_, err := idm.AddUser(userName, groupName)
 			if err != avfs.AlreadyExistsUserError(userName) {
-				t.Errorf("UserAdd %s : want error to be %v, got %v", userName,
+				t.Errorf("AddUser %s : want error to be %v, got %v", userName,
 					avfs.AlreadyExistsUserError(userName), err)
 			}
 
 			groupNameNotFound := ui.GroupName + "NotFound"
 
-			_, err = idm.UserAdd(userName, groupNameNotFound)
+			_, err = idm.AddUser(userName, groupNameNotFound)
 			if err != avfs.UnknownGroupError(groupNameNotFound) {
-				t.Errorf("UserAdd %s : want error to be %v, got %v", userName,
+				t.Errorf("AddUser %s : want error to be %v, got %v", userName,
 					avfs.UnknownGroupError(groupNameNotFound), err)
 			}
 
 			userNameNotFound := ui.Name + "NotFound"
 
-			err = idm.UserDel(userNameNotFound)
+			err = idm.DelUser(userNameNotFound)
 			if err != avfs.UnknownUserError(userNameNotFound) {
-				t.Errorf("UserDel %s : want error to be %v, got %v", userName,
+				t.Errorf("DelUser %s : want error to be %v, got %v", userName,
 					avfs.UnknownUserError(userNameNotFound), err)
 			}
 		}
 	})
 
-	t.Run("UserDel", func(t *testing.T) {
+	t.Run("DelUser", func(t *testing.T) {
 		for _, ui := range uis {
 			userName := ui.Name + suffix
 
 			u, err := idm.LookupUser(userName)
 			RequireNoError(t, err, "LookupUser %s", userName)
 
-			err = idm.UserDel(userName)
-			RequireNoError(t, err, "UserDel %s", userName)
+			err = idm.DelUser(userName)
+			RequireNoError(t, err, "DelUser %s", userName)
 
 			_, err = idm.LookupUser(u.Name())
 			wantUserErr := avfs.UnknownUserError(userName)
@@ -465,9 +465,9 @@ func (ts *Suite) CreateGroups(tb testing.TB, suffix string) (groups []avfs.Group
 	for _, group := range GroupInfos() {
 		groupName := group.Name + suffix
 
-		g, err := idm.GroupAdd(groupName)
+		g, err := idm.AddGroup(groupName)
 		if err != avfs.AlreadyExistsGroupError(groupName) {
-			RequireNoError(tb, err, "GroupAdd %s", groupName)
+			RequireNoError(tb, err, "AddGroup %s", groupName)
 		}
 
 		groups = append(groups, g)
@@ -511,16 +511,16 @@ func (ts *Suite) CreateUsers(tb testing.TB, suffix string) (users []avfs.UserRea
 		userName := ui.Name + suffix
 		groupName := ui.GroupName + suffix
 
-		u, err := idm.UserAdd(userName, groupName)
+		u, err := idm.AddUser(userName, groupName)
 		if err != nil {
 			switch e := err.(type) {
 			case *fs.PathError:
 				if e.Op != "mkdir" || e.Err != avfs.ErrFileExists {
-					tb.Fatalf("UserAdd %s : want Mkdir error, got %v", userName, err)
+					tb.Fatalf("AddUser %s : want Mkdir error, got %v", userName, err)
 				}
 			default:
 				if err != avfs.AlreadyExistsUserError(userName) {
-					tb.Fatalf("UserAdd %s : want error to be nil, got %v", userName, err)
+					tb.Fatalf("AddUser %s : want error to be nil, got %v", userName, err)
 				}
 			}
 

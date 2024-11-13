@@ -69,12 +69,12 @@ func TestMemFSOptionUser(t *testing.T) {
 	idm := memidm.New()
 
 	groupName := "aGroup"
-	_, err := idm.GroupAdd(groupName)
-	test.RequireNoError(t, err, "GroupAdd %s", groupName)
+	_, err := idm.AddGroup(groupName)
+	test.RequireNoError(t, err, "AddGroup %s", groupName)
 
 	userName := "aUser"
-	u, err := idm.UserAdd(userName, groupName)
-	test.RequireNoError(t, err, "UserAdd %s", userName)
+	u, err := idm.AddUser(userName, groupName)
+	test.RequireNoError(t, err, "AddUser %s", userName)
 
 	vfs := memfs.NewWithOptions(&memfs.Options{User: u})
 

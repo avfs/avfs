@@ -36,8 +36,9 @@ import (
 // the current goroutine is locked to the operating system thread just before calling the function.
 // For details see https://github.com/golang/go/issues/1435
 
-// GroupAdd adds a new group.
-func (idm *OsIdm) GroupAdd(groupName string) (avfs.GroupReader, error) {
+// AddGroup creates a new group with the specified name.
+// If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
+func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return nil, avfs.ErrPermDenied
 	}
@@ -73,8 +74,54 @@ func (idm *OsIdm) GroupAdd(groupName string) (avfs.GroupReader, error) {
 	return g, nil
 }
 
-// GroupDel deletes an existing group.
-func (idm *OsIdm) GroupDel(groupName string) error {
+// AddUser creates a new user with the specified userName and the specified primary group groupName.
+// If the user already exists, the returned error is of type avfs.AlreadyExistsUserError.
+func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return nil, avfs.ErrPermDenied
+	}
+
+	if !isValidLinuxName(userName) {
+		return nil, avfs.InvalidNameError(userName)
+	}
+
+	if !isValidLinuxName(groupName) {
+		return nil, avfs.InvalidNameError(groupName)
+	}
+
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	cmd := exec.Command("useradd", "-M", "-g", groupName, userName)
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		errStr := strings.TrimSpace(stderr.String())
+
+		switch {
+		case errStr == "useradd: user '"+userName+"' already exists":
+			return nil, avfs.AlreadyExistsUserError(userName)
+		case errStr == "useradd: group '"+groupName+"' does not exist":
+			return nil, avfs.UnknownGroupError(groupName)
+		default:
+			return nil, avfs.UnknownError(err.Error() + errStr)
+		}
+	}
+
+	u, err := idm.LookupUser(userName)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
+
+// DelGroup deletes an existing group with the specified name.
+// If the group is not found, the returned error is of type avfs.UnknownGroupError.
+func (idm *OsIdm) DelGroup(groupName string) error {
 	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		return avfs.ErrPermDenied
 	}
@@ -105,20 +152,56 @@ func (idm *OsIdm) GroupDel(groupName string) error {
 	return nil
 }
 
-// LookupGroup looks up a group by name. If the group cannot be found, the
-// returned error is of type UnknownGroupError.
+// DelUser deletes an existing user with the specified name.
+// If the user is not found, the returned error is of type avfs.UnknownUserError.
+func (idm *OsIdm) DelUser(userName string) error {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return avfs.ErrPermDenied
+	}
+
+	if !isValidLinuxName(userName) {
+		return avfs.InvalidNameError(userName)
+	}
+
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	cmd := exec.Command("userdel", userName)
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		errStr := strings.TrimSpace(stderr.String())
+
+		switch {
+		case errStr == "userdel: user '"+userName+"' does not exist":
+			return avfs.UnknownUserError(userName)
+		default:
+			return avfs.UnknownError(err.Error() + errStr)
+		}
+	}
+
+	return nil
+}
+
+// LookupGroup looks up a group by name.
+// If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 	return getGroup(groupName, avfs.UnknownGroupError(groupName))
 }
 
-// LookupGroupId looks up a group by groupid. If the group cannot be found, the
-// returned error is of type UnknownGroupIdError.
+// LookupGroupId looks up a group by groupid.
+// If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 	sGid := strconv.Itoa(gid)
 
 	return getGroup(sGid, avfs.UnknownGroupIdError(gid))
 }
 
+// getGroup retrieves a group based on the provided name or ID.
+// It returns an OsGroup struct or an error if the group is not found.
 func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
 	line, err := getent("group", nameOrId, notFoundErr)
 	if err != nil {
@@ -136,8 +219,8 @@ func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
 	return g, nil
 }
 
-// LookupUser looks up a user by username. If the user cannot be found, the
-// returned error is of type UnknownUserError.
+// LookupUser looks up a user by username.
+// If the user is not found, the returned error is of type avfs.UnknownUserError.
 func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 	return lookupUser(userName)
 }
@@ -150,18 +233,21 @@ func lookupUser(userName string) (avfs.UserReader, error) {
 	return getUser(userName, avfs.UnknownUserError(userName))
 }
 
-// LookupUserId looks up a user by userid. If the user cannot be found, the
-// returned error is of type UnknownUserIdError.
+// LookupUserId looks up a user by userid.
+// If the user is not found, the returned error is of type avfs.UnknownUserIdError.
 func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return lookupUserId(uid)
 }
 
+// lookupUserId retrieves user information by user ID. It returns an avfs.UserReader and an error if the user is not found.
 func lookupUserId(uid int) (avfs.UserReader, error) {
 	sUid := strconv.Itoa(uid)
 
 	return getUser(sUid, avfs.UnknownUserIdError(uid))
 }
 
+// getUser retrieves user information based on either a username or user ID.
+// It returns an OsUser pointer and an error if any occurs during retrieval.
 func getUser(nameOrId string, notFoundErr error) (*OsUser, error) {
 	line, err := getent("passwd", nameOrId, notFoundErr)
 	if err != nil {
@@ -262,83 +348,13 @@ func User() avfs.UserReader {
 	return user
 }
 
-// UserAdd adds a new user.
-func (idm *OsIdm) UserAdd(userName, groupName string) (avfs.UserReader, error) {
-	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
-		return nil, avfs.ErrPermDenied
-	}
-
-	if !isValidLinuxName(userName) {
-		return nil, avfs.InvalidNameError(userName)
-	}
-
-	if !isValidLinuxName(groupName) {
-		return nil, avfs.InvalidNameError(groupName)
-	}
-
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("useradd", "-M", "-g", groupName, userName)
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
-	if err != nil {
-		errStr := strings.TrimSpace(stderr.String())
-
-		switch {
-		case errStr == "useradd: user '"+userName+"' already exists":
-			return nil, avfs.AlreadyExistsUserError(userName)
-		case errStr == "useradd: group '"+groupName+"' does not exist":
-			return nil, avfs.UnknownGroupError(groupName)
-		default:
-			return nil, avfs.UnknownError(err.Error() + errStr)
-		}
-	}
-
-	u, err := idm.LookupUser(userName)
-	if err != nil {
-		return nil, err
-	}
-
-	return u, nil
-}
-
-// UserDel deletes an existing user.
-func (idm *OsIdm) UserDel(userName string) error {
-	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
-		return avfs.ErrPermDenied
-	}
-
-	if !isValidLinuxName(userName) {
-		return avfs.InvalidNameError(userName)
-	}
-
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("userdel", userName)
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
-	if err != nil {
-		errStr := strings.TrimSpace(stderr.String())
-
-		switch {
-		case errStr == "userdel: user '"+userName+"' does not exist":
-			return avfs.UnknownUserError(userName)
-		default:
-			return avfs.UnknownError(err.Error() + errStr)
-		}
-	}
-
-	return nil
-}
-
+// getent retrieves an entry from the specified database using the `getent` command.
+// If the entry is not found or if there's an error, it returns a corresponding error.
+// Parameters:
+// - database: The name of the database to query (e.g., "passwd", "group").
+// - key: The key to look up in the database.
+// - notFoundErr: The error to return if the key is not found.
+// Returns the retrieved entry as a string or an error if any occurs.
 func getent(database, key string, notFoundErr error) (string, error) {
 	cmd := exec.Command("getent", database, key)
 

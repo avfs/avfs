@@ -77,9 +77,9 @@ func ExampleMemFS_Sub() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
 	vfsSrc := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
-	_, err := vfsSrc.Idm().UserAdd(test.UsrTest, "root")
+	_, err := vfsSrc.Idm().AddUser(test.UsrTest, "root")
 	if err != nil {
-		log.Fatalf("UserAdd : want error to be nil, got %v", err)
+		log.Fatalf("AddUser : want error to be nil, got %v", err)
 	}
 
 	vfsSub, err := vfsSrc.Sub("/")
@@ -104,9 +104,9 @@ func ExampleMemFS_SetUserByName() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
 	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
-	_, err := vfs.Idm().UserAdd(test.UsrTest, idm.AdminGroup().Name())
+	_, err := vfs.Idm().AddUser(test.UsrTest, idm.AdminGroup().Name())
 	if err != nil {
-		log.Fatalf("UserAdd : want error to be nil, got %v", err)
+		log.Fatalf("AddUser : want error to be nil, got %v", err)
 	}
 
 	fmt.Println(vfs.User().Name())

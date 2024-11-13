@@ -16,9 +16,7 @@
 
 package avfs
 
-import (
-	"math"
-)
+import "math"
 
 // NotImplementedIdm is the default identity manager for all file systems.
 var NotImplementedIdm = NewDummyIdm() //nolint:gochecknoglobals // Used as default Idm for other file systems.
@@ -50,12 +48,14 @@ func NewDummyIdm() *DummyIdm {
 	}
 }
 
-func NewGroup(name string, gid int) *DummyGroup {
-	return &DummyGroup{name: name, gid: gid}
+// NewGroup creates and returns a pointer to a DummyGroup with the specified group name and group ID.
+func NewGroup(groupName string, gid int) *DummyGroup {
+	return &DummyGroup{name: groupName, gid: gid}
 }
 
-func NewUser(name string, uid, gid int) *DummyUser {
-	return &DummyUser{name: name, uid: uid, gid: gid}
+// NewUser creates a new instance of DummyUser with the specified username, user ID (uid), and group ID (gid).
+func NewUser(userName string, uid, gid int) *DummyUser {
+	return &DummyUser{name: userName, uid: uid, gid: gid}
 }
 
 // Type returns the type of the fileSystem or Identity manager.
@@ -83,36 +83,50 @@ func (idm *DummyIdm) AdminUser() UserReader {
 	return idm.adminUser
 }
 
-// GroupAdd adds a new group.
-func (idm *DummyIdm) GroupAdd(name string) (GroupReader, error) {
+// AddGroup creates a new group with the specified name.
+// If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
+func (idm *DummyIdm) AddGroup(groupName string) (GroupReader, error) {
 	return nil, ErrPermDenied
 }
 
-// GroupDel deletes an existing group.
-func (idm *DummyIdm) GroupDel(name string) error {
+// AddUser creates a new user with the specified userName and the specified primary group groupName.
+// If the user already exists, the returned error is of type avfs.AlreadyExistsUserError.
+func (idm *DummyIdm) AddUser(userName, groupName string) (UserReader, error) {
+	return nil, ErrPermDenied
+}
+
+// DelGroup deletes an existing group with the specified name.
+// If the group is not found, the returned error is of type avfs.UnknownGroupError.
+func (idm *DummyIdm) DelGroup(groupName string) error {
+	return ErrPermDenied
+}
+
+// DelUser deletes an existing user with the specified name.
+// If the user is not found, the returned error is of type avfs.UnknownUserError.
+func (idm *DummyIdm) DelUser(userName string) error {
 	return ErrPermDenied
 }
 
 // LookupGroup looks up a group by name.
-// If the group cannot be found, the returned error is of type UnknownGroupError.
-func (idm *DummyIdm) LookupGroup(name string) (GroupReader, error) {
+// If the group is not found, the returned error is of type avfs.UnknownGroupError.
+func (idm *DummyIdm) LookupGroup(groupName string) (GroupReader, error) {
 	return nil, ErrPermDenied
 }
 
 // LookupGroupId looks up a group by groupid.
-// If the group cannot be found, the returned error is of type UnknownGroupIdError.
+// If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *DummyIdm) LookupGroupId(gid int) (GroupReader, error) {
 	return nil, ErrPermDenied
 }
 
 // LookupUser looks up a user by username.
-// If the user cannot be found, the returned error is of type UnknownUserError.
-func (idm *DummyIdm) LookupUser(name string) (UserReader, error) {
+// If the user is not found, the returned error is of type avfs.UnknownUserError.
+func (idm *DummyIdm) LookupUser(userName string) (UserReader, error) {
 	return nil, ErrPermDenied
 }
 
 // LookupUserId looks up a user by userid.
-// If the user cannot be found, the returned error is of type UnknownUserIdError.
+// If the user cannot be found, the returned error is of type avfs.UnknownUserIdError.
 func (idm *DummyIdm) LookupUserId(uid int) (UserReader, error) {
 	return nil, ErrPermDenied
 }
@@ -120,16 +134,6 @@ func (idm *DummyIdm) LookupUserId(uid int) (UserReader, error) {
 // OSType returns the operating system type of the identity manager.
 func (idm *DummyIdm) OSType() OSType {
 	return CurrentOSType()
-}
-
-// UserAdd adds a new user.
-func (idm *DummyIdm) UserAdd(name, groupName string) (UserReader, error) {
-	return nil, ErrPermDenied
-}
-
-// UserDel deletes an existing group.
-func (idm *DummyIdm) UserDel(name string) error {
-	return ErrPermDenied
 }
 
 // DummyGroup
