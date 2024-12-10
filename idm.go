@@ -36,6 +36,10 @@ type IdentityMgr interface {
 	// If the user already exists, the returned error is of type avfs.AlreadyExistsUserError.
 	AddUser(userName, groupName string) (UserReader, error)
 
+	// AddUserToGroup adds the user to the group.
+	// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+	AddUserToGroup(userName, groupName string) error
+
 	// DelGroup deletes an existing group with the specified name.
 	// If the group is not found, the returned error is of type avfs.UnknownGroupError.
 	DelGroup(groupName string) error
@@ -43,6 +47,11 @@ type IdentityMgr interface {
 	// DelUser deletes an existing user with the specified name.
 	// If the user is not found, the returned error is of type avfs.UnknownUserError.
 	DelUser(userName string) error
+
+	// DelUserFromGroup removes the user from the group.
+	// If the user or group is not found, the returned error is of type avfs.UnknownUserError
+	// or avfs.UnknownGroupError respectively.
+	DelUserFromGroup(userName, groupName string) error
 
 	// LookupGroup looks up a group by name.
 	// If the group is not found, the returned error is of type avfs.UnknownGroupError.
@@ -59,6 +68,11 @@ type IdentityMgr interface {
 	// LookupUserId looks up a user by userid.
 	// If the user is not found, the returned error is of type avfs.UnknownUserIdError.
 	LookupUserId(uid int) (UserReader, error)
+
+	// SetUserPrimaryGroup sets the primary group of a user to the specified group name.
+	// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+	// If the operation fails, the returned error is of type avfs.UnknownError.
+	SetUserPrimaryGroup(userName, groupName string) error
 }
 
 // UserReader reads user information.
@@ -67,8 +81,26 @@ type UserReader interface {
 	UserIdentifier
 	Namer
 
+	// Groups returns a slice of strings representing the group names that the user belongs to.
+	// If an error occurs while fetching the group names, it returns nil.
+	Groups() []string
+
+	// GroupsId returns a slice group IDs that the user belongs to.
+	// If an error occurs while fetching the group IDs, it returns nil.
+	GroupsId() []int
+
+	// IsInGroupId returns true if the user is in the specified group ID.
+	IsInGroupId(gid int) bool
+
 	// IsAdmin returns true if the user has administrator (root) privileges.
 	IsAdmin() bool
+
+	// PrimaryGroup returns the primary group name of the user.
+	PrimaryGroup() string
+
+	// PrimaryGroupId returns the primary group ID of the OsUser.
+	// If an error occurs, it returns the maximum integer value.
+	PrimaryGroupId() int
 }
 
 // GroupIdentifier is the interface that wraps the Gid method.
