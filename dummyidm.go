@@ -95,6 +95,12 @@ func (idm *DummyIdm) AddUser(userName, groupName string) (UserReader, error) {
 	return nil, ErrPermDenied
 }
 
+// AddUserToGroup adds the user to the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+func (idm *DummyIdm) AddUserToGroup(userName, groupName string) error {
+	return ErrPermDenied
+}
+
 // DelGroup deletes an existing group with the specified name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func (idm *DummyIdm) DelGroup(groupName string) error {
@@ -104,6 +110,13 @@ func (idm *DummyIdm) DelGroup(groupName string) error {
 // DelUser deletes an existing user with the specified name.
 // If the user is not found, the returned error is of type avfs.UnknownUserError.
 func (idm *DummyIdm) DelUser(userName string) error {
+	return ErrPermDenied
+}
+
+// DelUserFromGroup removes the user from the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError
+// or avfs.UnknownGroupError respectively.
+func (idm *DummyIdm) DelUserFromGroup(userName, groupName string) error {
 	return ErrPermDenied
 }
 
@@ -131,6 +144,13 @@ func (idm *DummyIdm) LookupUserId(uid int) (UserReader, error) {
 	return nil, ErrPermDenied
 }
 
+// SetUserPrimaryGroup sets the primary group of a user to the specified group name.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+// If the operation fails, the returned error is of type avfs.UnknownError.
+func (idm *DummyIdm) SetUserPrimaryGroup(userName, groupName string) error {
+	return ErrPermDenied
+}
+
 // OSType returns the operating system type of the identity manager.
 func (idm *DummyIdm) OSType() OSType {
 	return CurrentOSType()
@@ -155,6 +175,23 @@ func (u *DummyUser) Gid() int {
 	return u.gid
 }
 
+// Groups returns a slice of strings representing the group names that the user belongs to.
+// If an error occurs while fetching the group names, it returns nil.
+func (u *DummyUser) Groups() []string {
+	return nil
+}
+
+// GroupsId returns a slice group IDs that the user belongs to.
+// If an error occurs while fetching the group IDs, it returns nil.
+func (u *DummyUser) GroupsId() []int {
+	return nil
+}
+
+// IsInGroupId returns true if the user is in the specified group ID.
+func (u *DummyUser) IsInGroupId(gid int) bool {
+	return false
+}
+
 // IsAdmin returns true if the user has administrator (root) privileges.
 func (u *DummyUser) IsAdmin() bool {
 	return u.uid == 0 || u.gid == 0
@@ -163,6 +200,17 @@ func (u *DummyUser) IsAdmin() bool {
 // Name returns the username.
 func (u *DummyUser) Name() string {
 	return u.name
+}
+
+// PrimaryGroup returns the primary group name of the user.
+func (u *DummyUser) PrimaryGroup() string {
+	return ""
+}
+
+// PrimaryGroupId returns the primary group ID of the OsUser.
+// If an error occurs, it returns the maximum integer value.
+func (u *DummyUser) PrimaryGroupId() int {
+	return math.MaxInt
 }
 
 // Uid returns the User ID.
