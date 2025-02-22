@@ -1,6 +1,5 @@
 run:
   timeout: 1m
-  max-same-issues: 0
 
 linters-settings:
   dupl:
@@ -56,7 +55,6 @@ linters:
     - errcheck # errcheck is a program for checking for unchecked errors in Go code. These unchecked errors can be critical bugs in some cases
     - errchkjson # Checks types passed to the json encoding functions. Reports unsupported types and optionally reports occasions, where the check for the returned error can be omitted.
     - errname # Checks that sentinel errors are prefixed with the `Err` and error types are suffixed with the `Error`.
-    - exportloopref # checks for pointers to enclosing loop variables
     - fatcontext # detects nested contexts in loops
     - forbidigo # Forbids identifiers
     - forcetypeassert # finds forced type assertions
@@ -82,6 +80,7 @@ linters:
     - gosmopolitan # Report certain i18n/l10n anti-patterns in your Go codebase
     - govet # (vet, vetshadow) Vet examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
     - grouper # An analyzer to analyze expression groups.
+    - iface # Detect the incorrect use of interfaces, helping developers avoid interface pollution. [auto-fix]
     - importas # Enforces consistent import aliases
     - inamedparam # reports interfaces with unnamed method parameters
     - intrange # intrange is a linter to find places where for loops could make use of an integer range.
@@ -93,6 +92,7 @@ linters:
     - mirror # reports wrong mirror patterns of bytes/strings usage
     - misspell # Finds commonly misspelled English words in comments
     - musttag # enforce field tags in (un)marshaled structs
+    - nilnesserr # Reports constructs that checks for err != nil, but returns a different nil value error.
     - nilnil # Checks that there is no simultaneous return of `nil` error and an invalid value.
     - nlreturn # nlreturn checks for a new line before return and branch statements to increase code clarity
     - noctx # noctx finds sending http request without context.Context
@@ -111,7 +111,6 @@ linters:
     - stylecheck # Stylecheck is a replacement for golint
     - tagalign # check that struct tags are well aligned
     - tagliatelle # Checks the struct tags.
-    - tenv # tenv is analyzer that detects using os.Setenv instead of t.Setenv since Go1.17
     - testableexamples # linter checks if examples are testable (have an expected output)
     - testpackage # linter that makes you use a separate _test package
     - tparallel # tparallel detects inappropriate usage of t.Parallel() method in your Go test codes
@@ -128,16 +127,15 @@ linters:
     - cyclop # checks function and package cyclomatic complexity
     - depguard # Go linter that checks if package imports are in a list of acceptable packages
     - dupl # Tool for code clone detection
+    - err113 # Go linter to check the errors handling expressions
     - errorlint # errorlint is a linter for that can be used to find code that will cause problems with the error wrapping scheme introduced in Go 1.13.
     - exhaustive # check exhaustiveness of enum switch statements
-    - exhaustruct # Checks if all structure fields are initialized
     - gocognit # Computes and checks the cognitive complexity of functions
     - gocyclo # Computes and checks the cyclomatic complexity of functions
-    - goerr113 # Go linter to check the errors handling expressions
-    - gomnd # An analyzer to detect magic numbers.
     - gosec # (gas): Inspects source code for security problems
     - interfacebloat # A linter that checks the number of methods inside an interface.
     - ireturn # Accept Interfaces, Return Concrete Types
+    - mnd # An analyzer to detect magic numbers. [fast]
     - nakedret # Finds naked returns in functions greater than a specified function length
     - nestif # Reports deeply nested if statements
     - nilerr # Finds the code that returns nil even if it checks that the error is not nil.
@@ -168,7 +166,6 @@ issues:
         - funlen
         - goconst
         - gocritic
-        - gomnd
         - maintidx
     - text: "S1040: type assertion to the same type"
       linters:
