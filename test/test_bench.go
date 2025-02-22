@@ -62,14 +62,14 @@ func (ts *Suite) BenchCreate(b *testing.B, testDir string) {
 
 		files := make([]string, b.N)
 
-		for n := 0; n < b.N; n++ {
+		for n := range b.N {
 			path := vfs.Join(testDir, strconv.FormatUint(uint64(n), 10))
 			files[n] = path
 		}
 
 		b.StartTimer()
 
-		for n := 0; n < b.N; n++ {
+		for n := range b.N {
 			fileName := files[n]
 
 			f, err := vfs.Create(fileName)
@@ -104,7 +104,7 @@ func (ts *Suite) BenchFileRead(b *testing.B, testDir string) {
 
 		s := 0
 
-		for n := 0; n < b.N; n++ {
+		for range b.N {
 			if s >= maxFileSize {
 				s = 0
 				_, err = f.Seek(0, io.SeekStart)
@@ -137,7 +137,7 @@ func (ts *Suite) BenchFileWrite(b *testing.B, testDir string) {
 	b.Run("FileWrite", func(b *testing.B) {
 		s := 0
 
-		for n := 0; n < b.N; n++ {
+		for range b.N {
 			s += bufSize
 			if s >= maxFileSize {
 				s = 0
@@ -172,7 +172,7 @@ func (ts *Suite) BenchMkdir(b *testing.B, testDir string) {
 
 		b.StartTimer()
 
-		for n := 0; n < b.N; n++ {
+		for n := range b.N {
 			err = vfs.Mkdir(dirs[n], avfs.DefaultDirPerm)
 			RequireNoError(b, err, "Mkdir %s", dirs[n])
 		}
