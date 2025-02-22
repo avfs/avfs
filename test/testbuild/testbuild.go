@@ -23,14 +23,77 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/idm/memidm"
+	"github.com/avfs/avfs/idm/osidm"
+	"github.com/avfs/avfs/vfs/basepathfs"
+	"github.com/avfs/avfs/vfs/failfs"
+	"github.com/avfs/avfs/vfs/memfs"
+	"github.com/avfs/avfs/vfs/orefafs"
 	"github.com/avfs/avfs/vfs/osfs"
+	"github.com/avfs/avfs/vfs/rofs"
 )
 
 // This code is used by gox to generate an executable for all operating systems (see mage/magefile.go).
 // It should use all functions that depend on OS specific syscalls to make sure every system can be built.
 func main() {
-	vfs := osfs.New()
+	runOsFs()
+	runFailFs()
+	runBasePathFs()
+	runMemFs()
+	runOrefaFs()
+	runRoFs()
+	runDummyIdm()
+	runOsIdm()
+	runMemIdm()
+}
 
+func runOsFs() {
+	vfs := osfs.New()
+	vfsFuncs(vfs)
+	_ = vfs.Chroot("")
+}
+
+func runMemFs() {
+	vfs := memfs.New()
+	vfsFuncs(vfs)
+}
+
+func runOrefaFs() {
+	vfs := orefafs.New()
+	vfsFuncs(vfs)
+}
+
+func runRoFs() {
+	vfs := rofs.New(memfs.New())
+	vfsFuncs(vfs)
+}
+
+func runFailFs() {
+	vfs := failfs.New(memfs.New())
+	vfsFuncs(vfs)
+}
+
+func runBasePathFs() {
+	vfs := basepathfs.New(memfs.New(), "")
+	vfsFuncs(vfs)
+}
+
+func runOsIdm() {
+	idm := osidm.New()
+	idmFuncs(idm)
+}
+
+func runDummyIdm() {
+	idm := avfs.NewDummyIdm()
+	idmFuncs(idm)
+}
+
+func runMemIdm() {
+	idm := memidm.New()
+	idmFuncs(idm)
+}
+
+func vfsFuncs(vfs avfs.VFS) {
 	tmpDir, err := vfs.MkdirTemp("", "gox")
 	if err != nil {
 		log.Fatal(err)
@@ -44,7 +107,6 @@ func main() {
 	_ = vfs.Chdir(tmpDir)
 	_ = vfs.Chmod(tmpDir, avfs.DefaultDirPerm)
 	_ = vfs.Chown(tmpDir, 0, 0)
-	_ = vfs.Chroot(tmpDir)
 	_ = vfs.Chtimes(tmpDir, time.Now(), time.Now())
 	_ = vfs.Clean(tmpDir)
 	_, _ = vfs.Create(tmpFile)
@@ -111,4 +173,32 @@ func main() {
 	_, _ = f.Write(nil)
 	_, _ = f.WriteAt(nil, 0)
 	_, _ = f.WriteString("")
+}
+
+func idmFuncs(idm avfs.IdentityMgr) {
+	_ = idm.AdminGroup()
+	_ = idm.AdminUser()
+	_, _ = idm.AddGroup("")
+	_, _ = idm.AddUser("", "")
+	_ = idm.AddUserToGroup("", "")
+	_ = idm.DelGroup("")
+	_ = idm.DelUser("")
+	_ = idm.DelUserFromGroup("", "")
+	g, _ := idm.LookupGroup("")
+	_, _ = idm.LookupGroupId(0)
+	u, _ := idm.LookupUser("")
+	_, _ = idm.LookupUserId(0)
+	_ = idm.SetUserPrimaryGroup("", "")
+
+	_ = g.Gid()
+	_ = g.Name()
+
+	_ = u.Groups()
+	_ = u.GroupsId()
+	_ = u.IsAdmin()
+	_ = u.IsInGroupId(0)
+	_ = u.Name()
+	_ = u.PrimaryGroup()
+	_ = u.PrimaryGroupId()
+	_ = u.Uid()
 }
