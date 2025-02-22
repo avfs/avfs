@@ -18,7 +18,11 @@
 
 package osidm
 
-import "github.com/avfs/avfs"
+import (
+	"math"
+
+	"github.com/avfs/avfs"
+)
 
 // AddGroup creates a new group with the specified name.
 // If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
@@ -32,6 +36,12 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
 }
 
+// AddUserToGroup adds the user to the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
+	return avfs.ErrPermDenied
+}
+
 // DelGroup deletes an existing group with the specified name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func (idm *OsIdm) DelGroup(groupName string) error {
@@ -41,6 +51,13 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 // DelUser deletes an existing user with the specified name.
 // If the user is not found, the returned error is of type avfs.UnknownUserError.
 func (idm *OsIdm) DelUser(userName string) error {
+	return avfs.ErrPermDenied
+}
+
+// DelUserFromGroup removes the user from the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError
+// or avfs.UnknownGroupError respectively.
+func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 	return avfs.ErrPermDenied
 }
 
@@ -66,6 +83,41 @@ func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 // If the user is not found, the returned error is of type avfs.UnknownUserIdError.
 func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return nil, avfs.ErrPermDenied
+}
+
+// SetUserPrimaryGroup sets the primary group of a user to the specified group name.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+// If the operation fails, the returned error is of type avfs.UnknownError.
+func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
+	return avfs.ErrPermDenied
+}
+
+// Groups returns a slice of strings representing the group names that the user belongs to.
+// If an error occurs while fetching the group names, it returns nil.
+func (u *OsUser) Groups() []string {
+	return nil
+}
+
+// GroupsId returns a slice group IDs that the user belongs to.
+// If an error occurs while fetching the group IDs, it returns nil.
+func (u *OsUser) GroupsId() []int {
+	return nil
+}
+
+// IsInGroupId returns true if the user is in the specified group ID.
+func (u *OsUser) IsInGroupId(gid int) bool {
+	return false
+}
+
+// PrimaryGroup returns the primary group name of the user.
+func (u *OsUser) PrimaryGroup() string {
+	return ""
+}
+
+// PrimaryGroupId returns the primary group ID of the OsUser.
+// If an error occurs, it returns the maximum integer value.
+func (u *OsUser) PrimaryGroupId() int {
+	return math.MaxInt
 }
 
 // SetUser sets the current user.

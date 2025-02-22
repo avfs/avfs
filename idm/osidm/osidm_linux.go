@@ -21,6 +21,7 @@ package osidm
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"regexp"
@@ -111,12 +112,37 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		}
 	}
 
-	u, err := idm.LookupUser(userName)
+	u, err := lookupUser(userName)
 	if err != nil {
 		return nil, err
 	}
 
 	return u, nil
+}
+
+// AddUserToGroup adds the user to the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return avfs.ErrPermDenied
+	}
+
+	u, err := lookupUser(userName)
+	if err != nil {
+		return err
+	}
+
+	g, err := lookupGroup(groupName)
+	if err != nil {
+		return err
+	}
+
+	err = usermod(u.Name(), g.Name(), "-aG")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // DelGroup deletes an existing group with the specified name.
@@ -186,9 +212,41 @@ func (idm *OsIdm) DelUser(userName string) error {
 	return nil
 }
 
+// DelUserFromGroup removes the user from the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError
+// or avfs.UnknownGroupError respectively.
+func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return avfs.ErrPermDenied
+	}
+
+	u, err := lookupUser(userName)
+	if err != nil {
+		return err
+	}
+
+	g, err := lookupGroup(groupName)
+	if err != nil {
+		return err
+	}
+
+	err = usermod(u.Name(), g.Name(), "-rG")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // LookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
+	return lookupGroup(groupName)
+}
+
+// lookupGroup looks up a group by name.
+// If the group is not found, the returned error is of type avfs.UnknownGroupError.
+func lookupGroup(groupName string) (avfs.GroupReader, error) {
 	return getGroup(groupName, avfs.UnknownGroupError(groupName))
 }
 
@@ -211,10 +269,7 @@ func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
 	cols := strings.Split(line, ":")
 	gid, _ := strconv.Atoi(cols[2])
 
-	g := &OsGroup{
-		name: cols[0],
-		gid:  gid,
-	}
+	g := &OsGroup{name: cols[0], gid: gid}
 
 	return g, nil
 }
@@ -258,13 +313,115 @@ func getUser(nameOrId string, notFoundErr error) (*OsUser, error) {
 	uid, _ := strconv.Atoi(cols[2])
 	gid, _ := strconv.Atoi(cols[3])
 
-	u := &OsUser{
-		name: cols[0],
-		uid:  uid,
-		gid:  gid,
-	}
+	u := &OsUser{name: cols[0], uid: uid, gid: gid}
 
 	return u, nil
+}
+
+// SetUserPrimaryGroup sets the primary group of a user to the specified group name.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+// If the operation fails, the returned error is of type avfs.UnknownError.
+func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
+	if idm.HasFeature(avfs.FeatReadOnlyIdm) {
+		return avfs.ErrPermDenied
+	}
+
+	u, err := idm.LookupUser(userName)
+	if err != nil {
+		return err
+	}
+
+	g, err := idm.LookupGroup(groupName)
+	if err != nil {
+		return err
+	}
+
+	err = usermod(u.Name(), g.Name(), "-G")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Groups returns a slice of strings representing the group names that the user belongs to.
+// If an error occurs while fetching the group names, it returns nil.
+func (u *OsUser) Groups() []string {
+	groupNames, err := id(u.name, "-Gn")
+	if err != nil {
+		return nil
+	}
+
+	return strings.Split(groupNames, " ")
+}
+
+// GroupsId returns a slice group IDs that the user belongs to.
+// If an error occurs while fetching the group IDs, it returns nil.
+func (u *OsUser) GroupsId() []int {
+	groupIds, err := id(u.name, "-G")
+	if err != nil {
+		return nil
+	}
+
+	var (
+		gids []int
+		pos  int
+	)
+
+	for s := groupIds; ; s = s[pos+1:] {
+		pos = strings.IndexByte(s, ' ')
+		if pos == -1 {
+			gid, err := strconv.Atoi(s)
+			if err == nil {
+				gids = append(gids, gid)
+			}
+
+			return gids
+		}
+
+		gid, err := strconv.Atoi(s[:pos])
+		if err == nil {
+			gids = append(gids, gid)
+		}
+	}
+}
+
+// IsInGroupId returns true if the user is in the specified group ID.
+func (u *OsUser) IsInGroupId(gid int) bool {
+	sGids, err := id(u.name, "-G")
+	if err != nil {
+		return false
+	}
+
+	sGid := strconv.Itoa(gid) + " "
+
+	return strings.Contains(sGids+" ", sGid)
+}
+
+// PrimaryGroup returns the primary group name of the user.
+func (u *OsUser) PrimaryGroup() string {
+	groupName, err := id(u.name, "-gn")
+	if err != nil {
+		return ""
+	}
+
+	return groupName
+}
+
+// PrimaryGroupId returns the primary group ID of the OsUser.
+// If an error occurs, it returns the maximum integer value.
+func (u *OsUser) PrimaryGroupId() int {
+	sGid, err := id(u.name, "-g")
+	if err != nil {
+		return math.MaxInt
+	}
+
+	gid, err := strconv.Atoi(sGid)
+	if err != nil {
+		return math.MaxInt
+	}
+
+	return gid
 }
 
 // SetUser sets the current user.
@@ -375,6 +532,31 @@ func getent(database, key string, notFoundErr error) (string, error) {
 	}
 
 	return string(buf), nil
+}
+
+// id returns the result of the "id" command for the given username and options.
+// The result is returned as a string, and an error is returned if the command fails.
+func id(username, options string) (string, error) {
+	cmd := exec.Command("id", options, username)
+
+	buf, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	return string(buf), nil
+}
+
+// usermod executes the "usermod" command with the given options and user name.
+func usermod(userName, groupName, options string) error {
+	cmd := exec.Command("usermod", options, groupName, userName)
+
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.
