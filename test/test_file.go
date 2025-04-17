@@ -915,8 +915,9 @@ func (ts *Suite) TestFileStat(t *testing.T, testDir string) {
 
 		_, err := f.Stat()
 		AssertPathError(t, err).Path(fileName).
-			OSType(avfs.OsLinux).Op("stat").GoVersion("go1.22").Err(avfs.ErrFileClosing).Test().
-			// TODO: Add test for Go >= 1.23
+			OSType(avfs.OsLinux).Op("stat").
+			GoVersion("", "1.23").Err(avfs.ErrFileClosing).Test().
+			GoVersion("1.24", "").Err(fs.ErrClosed).Test().
 			OSType(avfs.OsWindows).Op("GetFileType").Err(avfs.ErrWinInvalidHandle).Test()
 	})
 

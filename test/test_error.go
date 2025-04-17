@@ -18,153 +18,85 @@ package test
 
 import (
 	"io/fs"
+	"math"
 	"os"
 	"reflect"
 	"regexp"
 	"runtime"
-	"slices"
+	"strconv"
 	"testing"
 
 	"github.com/avfs/avfs"
 )
 
+var goVersion = goVerNum(runtime.Version()) //nolint:gochecknoglobals // Stores the current Go version
+
 // assertError stores the current fs.PathError or the os.LinkError test data.
 type assertError struct {
-	tb             testing.TB
-	err            error
-	wantOsTypes    []avfs.OSType
-	wantGoVersions []string
-	wantOps        []string
-	wantPath       string
-	wantOld        string
-	wantNew        string
-	wantErrs       []error
-	IsLinkError    bool
+	tb           testing.TB  // tb is the interface common to T, B, and F for the current test.
+	err          error       // err is the error to test.
+	wantOsType   avfs.OSType // wantOsType is the OS
+	wantMinGoVer int         // wantMinGoVer is the minimum go version returned by goVerNum function, 0 if not defined.
+	wantMaxGoVer int         // wantMaxGoVer is the minimum go version returned by goVerNum function, math.MaxInt if not defined.
+	wantPath     string      // wantPath is the expected Path for a fs.PathError.
+	wantOld      string      // wantOld is the expected Old for a os.LinkError.
+	wantNew      string      // wantNew is the expected New for a os.LinkError.
+	wantOp       string      // wantOp is the expected Op for the error.
+	wantErr      error       // wantErr is the expected Err of the fs.PathError or the os.LinkError.
+	isLinkError  bool        // isLinkError is true if the expected error is a os.LinkError.
+}
+
+func assertPLError(tb testing.TB, err error, isLinkError bool) *assertError {
+	return &assertError{tb: tb, err: err, wantMaxGoVer: math.MaxInt, isLinkError: isLinkError}
 }
 
 // AssertPathError checks an error of type fs.PathError.
 func AssertPathError(tb testing.TB, err error) *assertError {
-	return &assertError{tb: tb, err: err, IsLinkError: false}
+	return assertPLError(tb, err, false)
 }
 
 // AssertLinkError checks an error of type os.LinkError.
 func AssertLinkError(tb testing.TB, err error) *assertError {
-	return &assertError{tb: tb, err: err, IsLinkError: true}
-}
-
-// Test runs the test.
-func (ae *assertError) Test() *assertError {
-	ae.tb.Helper()
-
-	if len(ae.wantOsTypes) != 0 && !slices.Contains(ae.wantOsTypes, avfs.CurrentOSType()) {
-		return ae
-	}
-
-	if len(ae.wantGoVersions) != 0 {
-		re := regexp.MustCompile(`go\d+\.\d+`)
-		version := re.FindString(runtime.Version())
-
-		if !slices.Contains(ae.wantGoVersions, version) {
-			return ae
-		}
-	}
-
-	if len(ae.wantErrs) == 0 {
-		if ae.err != nil {
-			ae.tb.Errorf("want error to be nil got %v", ae.err)
-		}
-
-		return ae
-	}
-
-	if ae.IsLinkError {
-		return ae.testLinkError()
-	}
-
-	return ae.testPathError()
-}
-
-func (ae *assertError) testLinkError() *assertError {
-	tb := ae.tb
-
-	e, ok := ae.err.(*os.LinkError)
-	if !ok {
-		tb.Errorf("want error type to be *os.LinkError, got %v : %v", reflect.TypeOf(ae.err), ae.err)
-
-		return ae
-	}
-
-	if len(ae.wantOps) != 0 && !slices.Contains(ae.wantOps, e.Op) {
-		tb.Errorf("want Op to be %s, got %s", ae.wantOps, e.Op)
-	}
-
-	if ae.wantOld != "" && ae.wantOld != e.Old {
-		tb.Errorf("want Old to be %s, got %s", ae.wantOld, e.Old)
-	}
-
-	if ae.wantNew != "" && ae.wantNew != e.New {
-		tb.Errorf("want New to be %s, got %s", ae.wantNew, e.New)
-	}
-
-	te := reflect.ValueOf(e.Err)
-	foundOk := false
-
-	for _, wantErr := range ae.wantErrs {
-		we := reflect.ValueOf(wantErr)
-		if (te.CanUint() && we.CanUint() && te.Uint() == we.Uint()) || (e.Err.Error() == wantErr.Error()) {
-			foundOk = true
-
-			break
-		}
-	}
-
-	if !foundOk {
-		tb.Errorf("want error to be %s, got %s", ae.wantErrs, e.Err.Error())
-	}
-
-	return ae
-}
-
-func (ae *assertError) testPathError() *assertError {
-	ae.tb.Helper()
-
-	e, ok := ae.err.(*fs.PathError)
-	if !ok {
-		ae.tb.Errorf("want error type to be *fs.PathError, got %v : %v", reflect.TypeOf(ae.err), ae.err)
-
-		return ae
-	}
-
-	if len(ae.wantOps) != 0 && !slices.Contains(ae.wantOps, e.Op) {
-		ae.tb.Errorf("want Op to be %s, got %s", ae.wantOps, e.Op)
-	}
-
-	if ae.wantPath != "" && ae.wantPath != e.Path {
-		ae.tb.Errorf("want Path to be %s, got %s", ae.wantPath, e.Path)
-	}
-
-	te := reflect.ValueOf(e.Err)
-	foundOk := false
-
-	for _, wantErr := range ae.wantErrs {
-		we := reflect.ValueOf(wantErr)
-		if (te.CanUint() && we.CanUint() && te.Uint() == we.Uint()) || (e.Err.Error() == wantErr.Error()) {
-			foundOk = true
-
-			break
-		}
-	}
-
-	if !foundOk {
-		ae.tb.Errorf("want error to be %s, got %s", ae.wantErrs, e.Err.Error())
-	}
-
-	return ae
+	return assertPLError(tb, err, true)
 }
 
 // GoVersion sets the expected Go version.
-func (ae *assertError) GoVersion(goVersions ...string) *assertError {
-	ae.wantGoVersions = goVersions
+func (ae *assertError) GoVersion(minGoVer, maxGoVer string) *assertError {
+	ae.wantMinGoVer = goVerNum(minGoVer)
+	ae.wantMaxGoVer = goVerNum(maxGoVer)
+
+	if ae.wantMaxGoVer == 0 {
+		ae.wantMaxGoVer = math.MaxInt
+	}
+
+	return ae
+}
+
+// goVerNum returns a comparable Go version number derived from major.minor version string.
+func goVerNum(version string) int {
+	re := regexp.MustCompile(`\d+`)
+
+	v := re.FindAllString(version, 2)
+	if len(v) != 2 {
+		return 0
+	}
+
+	vMaj, err := strconv.Atoi(v[0])
+	if err != nil {
+		return 0
+	}
+
+	vMin, err := strconv.Atoi(v[1])
+	if err != nil {
+		return 0
+	}
+
+	return vMaj<<16 + vMin
+}
+
+// Err sets the expected error.
+func (ae *assertError) Err(wantErr error) *assertError {
+	ae.wantErr = wantErr
 
 	return ae
 }
@@ -178,7 +110,7 @@ func (ae *assertError) New(wantNew string) *assertError {
 
 // NoError set the expected error to nil.
 func (ae *assertError) NoError() *assertError {
-	ae.wantErrs = nil
+	ae.wantErr = nil
 
 	return ae
 }
@@ -191,8 +123,8 @@ func (ae *assertError) Old(WantOld string) *assertError {
 }
 
 // Op sets the expected Op.
-func (ae *assertError) Op(ops ...string) *assertError {
-	ae.wantOps = ops
+func (ae *assertError) Op(op string) *assertError {
+	ae.wantOp = op
 
 	return ae
 }
@@ -218,8 +150,8 @@ func (ae *assertError) OpStat() *assertError {
 }
 
 // OSType sets at least one expected OSType.
-func (ae *assertError) OSType(ost ...avfs.OSType) *assertError {
-	ae.wantOsTypes = ost
+func (ae *assertError) OSType(ost avfs.OSType) *assertError {
+	ae.wantOsType = ost
 
 	return ae
 }
@@ -231,9 +163,52 @@ func (ae *assertError) Path(path string) *assertError {
 	return ae
 }
 
-// Err sets the expected error.
-func (ae *assertError) Err(wantErr ...error) *assertError {
-	ae.wantErrs = wantErr
+func (ae *assertError) Test() *assertError {
+	ae.tb.Helper()
+
+	if !ae.cantTest() {
+		return ae
+	}
+
+	var (
+		op  string
+		err error
+	)
+
+	if e, ok := ae.err.(*fs.PathError); ok && !ae.isLinkError {
+		op = e.Op
+		err = e.Err
+
+		if ae.wantPath != "" && ae.wantPath != e.Path {
+			ae.errorf("want Path to be %s, got %s", ae.wantPath, e.Path)
+		}
+	} else if e, ok := ae.err.(*os.LinkError); ok && ae.isLinkError {
+		op = e.Op
+		err = e.Err
+
+		if ae.wantOld != "" && ae.wantOld != e.Old {
+			ae.errorf("want Old to be %s, got %s", ae.wantOld, e.Old)
+		}
+
+		if ae.wantNew != "" && ae.wantNew != e.New {
+			ae.errorf("want New to be %s, got %s", ae.wantNew, e.New)
+		}
+	} else {
+		ae.errorf("want error type to be %v, got %v", reflect.TypeOf(ae.wantErr), reflect.TypeOf(ae.err))
+
+		return ae
+	}
+
+	if ae.wantOp != "" && ae.wantOp != op {
+		ae.errorf("want Op to be %s, got %s", ae.wantOp, op)
+	}
+
+	wantErr := reflect.ValueOf(ae.wantErr)
+	gotErr := reflect.ValueOf(err)
+
+	if !(wantErr.CanUint() && gotErr.CanUint() && wantErr.Uint() == gotErr.Uint() || ae.wantErr.Error() == err.Error()) {
+		ae.errorf("want error to be %s, got %s", ae.wantErr, err)
+	}
 
 	return ae
 }
@@ -248,4 +223,37 @@ func (ae *assertError) ErrPermDenied() *assertError {
 	}
 
 	return ae
+}
+
+// cantTest returns if the test can be done.
+func (ae *assertError) cantTest() bool {
+	if goVersion < ae.wantMinGoVer || goVersion > ae.wantMaxGoVer {
+		return false
+	}
+
+	if ae.wantOsType != avfs.OsUnknown && ae.wantOsType != avfs.CurrentOSType() {
+		return false
+	}
+
+	if ae.wantErr == nil {
+		if ae.err != nil {
+			ae.errorf("want error to be nil, got %v", ae.err)
+		}
+
+		return false
+	}
+
+	return true
+}
+
+// errorf generates an error if the Go max version is undefined, a warning otherwise.
+func (ae *assertError) errorf(format string, args ...any) {
+	tb := ae.tb
+	tb.Helper()
+
+	if ae.wantMaxGoVer == math.MaxInt {
+		tb.Errorf(format, args...)
+	} else {
+		tb.Logf("WARN: "+format, args...)
+	}
 }

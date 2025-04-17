@@ -1685,7 +1685,9 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 	t.Run("ReadDirExistingFile", func(t *testing.T) {
 		_, err := vfs.ReadDir(existingFile)
 		AssertPathError(t, err).Path(existingFile).
-			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrNotADirectory).Test().
+			OSType(avfs.OsLinux).Err(avfs.ErrNotADirectory).
+			GoVersion("", "1.23").Op("readdirent").Test().
+			GoVersion("1.24", "").Op("open").Test().
 			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinPathNotFound).Test()
 	})
 }
@@ -2012,10 +2014,9 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 
 			_, err = vfs.Stat(file.Path)
 
-			switch {
-			case file.Path == newPath:
+			if file.Path == newPath {
 				RequireNoError(t, err, "Stat %s", file.Path)
-			default:
+			} else {
 				AssertPathError(t, err).OpStat().Path(file.Path).
 					OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
 					OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
