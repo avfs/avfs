@@ -493,7 +493,7 @@ func (f *OrefaFile) Stat() (info fs.FileInfo, err error) {
 	}
 
 	if f.nd == nil {
-		err = avfs.ErrFileClosing
+		err = fs.ErrClosed
 		if f.vfs.OSType() == avfs.OsWindows {
 			err = avfs.ErrWinInvalidHandle
 		}
