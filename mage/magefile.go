@@ -201,11 +201,10 @@ func sudo(cmd string, args ...string) error {
 
 // testArgs returns the arguments of the go command used for tests.
 func testArgs() []string {
-	args := []string{
-		"test", "-v", "-run=.",
-		"-covermode=atomic", "-coverprofile=" + coverFile,
-		"./...",
-	}
+	pkgs := goPackages("/test")
+	args := []string{"test", "-v", "-covermode=atomic", "-coverprofile=" + coverFile}
+	args = append(args, pkgs...)
+
 	if cgoEnabled {
 		args = append(args, "-race")
 	}
@@ -270,6 +269,35 @@ func goOSArch(exclude string) [][]string {
 	}
 
 	return result[:i]
+}
+
+// goPackages list packages excluding those containing exclude text.
+func goPackages(exclude string) []string {
+	out, err := sh.Output(goCmd, "list", "./...")
+	if err != nil {
+		return nil
+	}
+
+	var lines []string
+	var start int
+
+	for i, r := range out {
+		if r == '\n' {
+			line := out[start:i]
+			if !strings.Contains(line, exclude) {
+				lines = append(lines, line)
+			}
+
+			start = i + 1
+		}
+	}
+
+	line := out[start:]
+	if !strings.Contains(line, exclude) {
+		lines = append(lines, line)
+	}
+
+	return lines
 }
 
 // TestBuild builds a test executable on all architectures (except Android/*)
