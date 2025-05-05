@@ -58,9 +58,8 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 
 	if err := cmd.Run(); err != nil {
 		errStr := strings.TrimSpace(stderr.String())
-
-		switch {
-		case errStr == "groupadd: group '"+groupName+"' already exists":
+		switch errStr {
+		case "groupadd: group '" + groupName + "' already exists":
 			return nil, avfs.AlreadyExistsGroupError(groupName)
 		default:
 			return nil, avfs.UnknownError(err.Error() + errStr)
@@ -101,11 +100,10 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 	err := cmd.Run()
 	if err != nil {
 		errStr := strings.TrimSpace(stderr.String())
-
-		switch {
-		case errStr == "useradd: user '"+userName+"' already exists":
+		switch errStr {
+		case "useradd: user '" + userName + "' already exists":
 			return nil, avfs.AlreadyExistsUserError(userName)
-		case errStr == "useradd: group '"+groupName+"' does not exist":
+		case "useradd: group '" + groupName + "' does not exist":
 			return nil, avfs.UnknownGroupError(groupName)
 		default:
 			return nil, avfs.UnknownError(err.Error() + errStr)
@@ -166,9 +164,8 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 
 	if err := cmd.Run(); err != nil {
 		errStr := strings.TrimSpace(stderr.String())
-
-		switch {
-		case errStr == "groupdel: group '"+groupName+"' does not exist":
+		switch errStr {
+		case "groupdel: group '" + groupName + "' does not exist":
 			return avfs.UnknownGroupError(groupName)
 		default:
 			return avfs.UnknownError(err.Error() + errStr)
@@ -200,9 +197,8 @@ func (idm *OsIdm) DelUser(userName string) error {
 	err := cmd.Run()
 	if err != nil {
 		errStr := strings.TrimSpace(stderr.String())
-
-		switch {
-		case errStr == "userdel: user '"+userName+"' does not exist":
+		switch errStr {
+		case "userdel: user '" + userName + "' does not exist":
 			return avfs.UnknownUserError(userName)
 		default:
 			return avfs.UnknownError(err.Error() + errStr)
