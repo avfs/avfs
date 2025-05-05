@@ -37,10 +37,6 @@ func (f *OrefaFile) Chdir() error {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -71,10 +67,6 @@ func (f *OrefaFile) Chmod(mode fs.FileMode) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -98,10 +90,6 @@ func (f *OrefaFile) Chown(uid, gid int) error {
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
-
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -130,10 +118,6 @@ func (f *OrefaFile) Close() error {
 	defer f.mu.Unlock()
 
 	if f.nd == nil {
-		if f.name == "" {
-			return fs.ErrInvalid
-		}
-
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
@@ -168,10 +152,6 @@ func (f *OrefaFile) Read(b []byte) (n int, err error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -217,10 +197,6 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -276,10 +252,6 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return nil, fs.ErrInvalid
-	}
 
 	op := "readdirent"
 	if f.vfs.OSType() == avfs.OsWindows {
@@ -354,10 +326,6 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	if f.name == "" {
-		return nil, fs.ErrInvalid
-	}
-
 	op := "readdirent"
 	if f.vfs.OSType() == avfs.OsWindows {
 		op = "readdir"
@@ -426,10 +394,6 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -483,10 +447,6 @@ func (f *OrefaFile) Stat() (info fs.FileInfo, err error) {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	if f.name == "" {
-		return &OrefaInfo{}, fs.ErrInvalid
-	}
-
 	op := "stat"
 	if f.vfs.OSType() == avfs.OsWindows {
 		op = "GetFileType"
@@ -520,10 +480,6 @@ func (f *OrefaFile) Sync() error {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -543,10 +499,6 @@ func (f *OrefaFile) Truncate(size int64) error {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -597,10 +549,6 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -658,10 +606,6 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}

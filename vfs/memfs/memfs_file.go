@@ -37,10 +37,6 @@ func (f *MemFile) Chdir() error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -72,10 +68,6 @@ func (f *MemFile) Chmod(mode fs.FileMode) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -106,10 +98,6 @@ func (f *MemFile) Chown(uid, gid int) error {
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
-
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -147,10 +135,6 @@ func (f *MemFile) Close() error {
 	defer f.mu.Unlock()
 
 	if f.nd == nil {
-		if f.name == "" {
-			return fs.ErrInvalid
-		}
-
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
@@ -193,10 +177,6 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -242,10 +222,6 @@ func (f *MemFile) ReadAt(b []byte, off int64) (n int, err error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -301,10 +277,6 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
-
-	if f.name == "" {
-		return nil, fs.ErrInvalid
-	}
 
 	op := "readdirent"
 	if f.vfs.OSType() == avfs.OsWindows {
@@ -379,10 +351,6 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if f.name == "" {
-		return nil, fs.ErrInvalid
-	}
-
 	op := "readdirent"
 	if f.vfs.OSType() == avfs.OsWindows {
 		op = "readdir"
@@ -451,10 +419,6 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -508,10 +472,6 @@ func (f *MemFile) Stat() (info fs.FileInfo, err error) {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	if f.name == "" {
-		return nil, fs.ErrInvalid
-	}
-
 	op := "stat"
 	if f.vfs.OSType() == avfs.OsWindows {
 		op = "GetFileType"
@@ -545,10 +505,6 @@ func (f *MemFile) Sync() error {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
-
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
@@ -568,10 +524,6 @@ func (f *MemFile) Truncate(size int64) error {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return fs.ErrInvalid
-	}
 
 	if size < 0 {
 		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
@@ -622,10 +574,6 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 
 	f.mu.Lock()
 	defer f.mu.Unlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
@@ -683,10 +631,6 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	f.mu.RLock()
 	defer f.mu.RUnlock()
-
-	if f.name == "" {
-		return 0, fs.ErrInvalid
-	}
 
 	if f.nd == nil {
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
