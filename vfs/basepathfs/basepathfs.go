@@ -349,6 +349,12 @@ func (vfs *BasePathFS) Open(name string) (avfs.File, error) {
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
+	const op = "open"
+
+	if name == "" {
+		return (*BasePathFile)(nil), &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+	}
+
 	bf, err := vfs.baseFS.OpenFile(vfs.ToBasePath(name), flag, perm)
 	if err != nil {
 		return bf, vfs.FromPathError(err)

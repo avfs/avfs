@@ -564,6 +564,10 @@ func (vfs *OrefaFS) Open(name string) (avfs.File, error) {
 func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	const op = "open"
 
+	if name == "" {
+		return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+	}
+
 	at := int64(0)
 	om := avfs.ToOpenMode(flag)
 

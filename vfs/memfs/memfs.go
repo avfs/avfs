@@ -515,6 +515,10 @@ func (vfs *MemFS) Open(name string) (avfs.File, error) {
 func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	const op = "open"
 
+	if name == "" {
+		return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+	}
+
 	at := int64(0)
 	om := avfs.ToOpenMode(flag)
 
