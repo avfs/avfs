@@ -1339,6 +1339,18 @@ func (ts *Suite) TestOpen(t *testing.T, testDir string) {
 		// test file method calls on a nil file
 		FileNilPtr(t, f)
 	})
+
+	t.Run("OpenFileNoName", func(t *testing.T) {
+		f, err := vfs.OpenFile("", os.O_RDONLY, 0)
+		AssertPathError(t, err).Op("open").Path("").
+			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
+
+		_, ok := f.(avfs.File)
+		if !ok {
+			t.Errorf("OpenFile : want file to implement avfs.File interface")
+		}
+	})
 }
 
 // TestOpenFileWrite tests OpenFile function for write.
@@ -1520,6 +1532,18 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 
 		f, err := vfs.OpenFile(nonExistingPath, os.O_CREATE, avfs.DefaultFilePerm)
 		AssertPathError(t, err).Op("open").Path(nonExistingPath).
+			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
+
+		_, ok := f.(avfs.File)
+		if !ok {
+			t.Errorf("OpenFile : want file to implement avfs.File interface")
+		}
+	})
+
+	t.Run("OpenFileNoName", func(t *testing.T) {
+		f, err := vfs.OpenFile("", os.O_CREATE, avfs.DefaultFilePerm)
+		AssertPathError(t, err).Op("open").Path("").
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
 			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
 
