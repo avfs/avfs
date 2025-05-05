@@ -612,6 +612,10 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 				return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.FileExists}
 			}
 
+			if om&avfs.OpenDir != 0 {
+				return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
+			}
+
 			if om&avfs.OpenTruncate != 0 {
 				child.mu.Lock()
 				child.truncate(0)

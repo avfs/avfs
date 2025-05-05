@@ -16,7 +16,7 @@ func OkFunc(_ avfs.VFSBase, _ avfs.FnVFS, _ *FailParam) error {
 func ReadOnlyFunc(_ avfs.VFSBase, fn avfs.FnVFS, fp *FailParam) error {
 	switch fn {
 	case avfs.FnOpenFile:
-		if fp.Flag != os.O_RDONLY {
+		if fp.Flag != avfs.O_DIRECTORY && fp.Flag != os.O_RDONLY {
 			return &fs.PathError{Op: fp.Op, Path: fp.Path, Err: avfs.ErrPermDenied}
 		}
 

@@ -140,7 +140,7 @@ type VolumeManager interface {
 }
 
 // OpenMode defines constants used by OpenFile and CheckPermission functions.
-type OpenMode uint16
+type OpenMode int
 
 const (
 	OpenLookup     OpenMode = 0o001     // OpenLookup checks for lookup permission on a directory.
@@ -150,6 +150,7 @@ const (
 	OpenCreate                          // OpenCreate creates a file (os.O_CREATE).
 	OpenCreateExcl                      // OpenCreateExcl creates a non existing file (os.O_EXCL).
 	OpenTruncate                        // OpenTruncate truncates a file (os.O_TRUNC).
+	OpenDir                             // OpenDir opens a directory (syscall.O_DIRECTORY) returns error otherwise.
 )
 
 // IOFS is the virtual file system interface implementing io/fs interfaces.

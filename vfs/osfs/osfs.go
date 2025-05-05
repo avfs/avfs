@@ -29,8 +29,6 @@ import (
 	"github.com/avfs/avfs/idm/osidm"
 )
 
-// file system functions.
-
 // Abs returns an absolute representation of path.
 // If the path is not absolute it will be joined with the current
 // working directory to turn it into an absolute path. The absolute
@@ -444,6 +442,8 @@ func (vfs *OsFS) Split(path string) (dir, file string) {
 // Sub returns an FS corresponding to the subtree rooted at dir.
 func (vfs *OsFS) Sub(dir string) (avfs.VFS, error) {
 	const op = "sub"
+
+	// TODO:
 
 	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.permDeniedError}
 }

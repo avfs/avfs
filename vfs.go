@@ -182,7 +182,7 @@ func Glob[T VFSBase](vfs T, pattern string) (matches []string, err error) {
 
 	var m []string
 
-	m, err = Glob(vfs, dir)
+	m, err = Glob[T](vfs, dir)
 	if err != nil {
 		return
 	}
@@ -424,7 +424,7 @@ func prefixAndSuffix[T VFSBase](vfs T, pattern string) (prefix, suffix string, e
 // ReadDir returns the entries it was able to read before the error,
 // along with the error.
 func ReadDir[T VFSBase](vfs T, name string) ([]fs.DirEntry, error) {
-	f, err := vfs.OpenFile(name, os.O_RDONLY, 0)
+	f, err := vfs.OpenFile(name, os.O_RDONLY|O_DIRECTORY, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -582,8 +582,11 @@ func TempDirUser[T VFSBase](vfs T, basePath, username string) string {
 func ToOpenMode(flag int) OpenMode {
 	var om OpenMode
 
-	// Mask flags that can be used in read only mode (syscall.O_DIRECT for example)
-	if flag&0xFFF == os.O_RDONLY {
+	if flag&O_DIRECTORY != 0 {
+		return OpenDir | OpenRead
+	}
+
+	if flag == os.O_RDONLY {
 		return OpenRead
 	}
 
@@ -670,7 +673,7 @@ func walkDir[T VFSBase](vfs T, path string, d fs.DirEntry, walkDirFn fs.WalkDirF
 
 	for _, d1 := range dirs {
 		path1 := Join(vfs, path, d1.Name())
-		if err := walkDir(vfs, path1, d1, walkDirFn); err != nil {
+		if err := walkDir[T](vfs, path1, d1, walkDirFn); err != nil {
 			if err == filepath.SkipDir {
 				break
 			}
