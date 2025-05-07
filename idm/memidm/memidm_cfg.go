@@ -30,12 +30,15 @@ func NewWithOptions(opts *Options) *MemIdm {
 	}
 
 	idm := &MemIdm{
-		groupsByName: make(groupsByName),
-		groupsById:   make(groupsById),
-		usersByName:  make(usersByName),
-		usersById:    make(usersById),
-		maxGid:       minGid,
-		maxUid:       minUid,
+		adminGroup:      nil,
+		adminUser:       nil,
+		groupsByName:    make(groupsByName),
+		groupsById:      make(groupsById),
+		usersByName:     make(usersByName),
+		usersById:       make(usersById),
+		IsValidNameFunc: avfs.IsValidName, // TODO: Add option to change function
+		maxGid:          minGid,
+		maxUid:          minUid,
 	}
 
 	_ = idm.SetFeatures(avfs.FeatIdentityMgr)

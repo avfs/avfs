@@ -16,11 +16,7 @@
 
 package memidm
 
-import (
-	"sync"
-
-	"github.com/avfs/avfs"
-)
+import "github.com/avfs/avfs"
 
 const (
 	// minUid is the minimum uid for a user.
@@ -32,18 +28,17 @@ const (
 
 // MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
 type MemIdm struct {
-	adminGroup      *MemGroup    // adminGroup is the Administrator Group.
-	adminUser       *MemUser     // adminUser is the Administrator User.
-	groupsByName    groupsByName // groupsByName is the groups map by Name.
-	groupsById      groupsById   // groupsById is the groups map by Id.
-	usersByName     usersByName  // usersByName is the users map by Name.
-	usersById       usersById    // usersById is users map by Id.
-	maxGid          int          // maxGid is the current maximum Gid.
-	maxUid          int          // maxUid is the current maximum Uid.
-	grpMu           sync.RWMutex // grpMu is the groups mutex.
-	usrMu           sync.RWMutex // usrMu is the users mutex.
-	avfs.FeaturesFn              // FeaturesFn provides features functions to a file system or an identity manager.
-	avfs.OSTypeFn                // OSTypeFn provides OS type functions to a file system or an identity manager.
+	adminGroup      *MemGroup            // adminGroup is the Administrator Group.
+	adminUser       *MemUser             // adminUser is the Administrator User.
+	groupsByName    groupsByName         // groupsByName is the groups map by Name.
+	groupsById      groupsById           // groupsById is the groups map by Id.
+	usersByName     usersByName          // usersByName is the users map by Name.
+	usersById       usersById            // usersById is users map by Id.
+	IsValidNameFunc avfs.IsValidNameFunc // IsValidNameFunc is a function that checks if the input string is a valid username or group name.
+	maxGid          int                  // maxGid is the current maximum Gid.
+	maxUid          int                  // maxUid is the current maximum Uid.
+	avfs.FeaturesFn                      // FeaturesFn provides features functions to a file system or an identity manager.
+	avfs.OSTypeFn                        // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
 // groupsByName is the map of groups by group name.
@@ -60,15 +55,19 @@ type usersById map[int]*MemUser
 
 // MemUser is the implementation of avfs.UserReader.
 type MemUser struct {
-	name string
-	uid  int
-	gid  int
+	idm        *MemIdm // idm is the identity manager.
+	groupsById         // groupsById is the groups map by Id.
+	name       string  // name is the username.
+	uid        int     // uid is the user id.
+	gid        int     // gid is the primary group ID of the user.
 }
 
 // MemGroup is the implementation of avfs.GroupReader.
 type MemGroup struct {
-	name string
-	gid  int
+	idm       *MemIdm // idm is the identity manager.
+	name      string  // name is the group name.
+	gid       int     // gid is the group id.
+	usersById         // usersById is the users map by Id.
 }
 
 // Options defines the initialization options of MemIdm.

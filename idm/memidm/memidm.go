@@ -15,6 +15,8 @@
 //
 
 // Package memidm implements an in memory identity manager.
+//
+// functions updating users or groups aren't safe for concurrent use
 package memidm
 
 import "github.com/avfs/avfs"
@@ -31,19 +33,20 @@ func (idm *MemIdm) AdminUser() avfs.UserReader {
 
 // AddGroup creates a new group with the specified name.
 // If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
-func (idm *MemIdm) AddGroup(name string) (avfs.GroupReader, error) {
-	idm.grpMu.Lock()
-	defer idm.grpMu.Unlock()
+func (idm *MemIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
+	if !idm.IsValidNameFunc(groupName) {
+		return nil, avfs.InvalidNameError(groupName)
+	}
 
-	if _, ok := idm.groupsByName[name]; ok {
-		return nil, avfs.AlreadyExistsGroupError(name)
+	if _, ok := idm.groupsByName[groupName]; ok {
+		return nil, avfs.AlreadyExistsGroupError(groupName)
 	}
 
 	idm.maxGid++
 	gid := idm.maxGid
 
-	g := &MemGroup{name: name, gid: gid}
-	idm.groupsByName[name] = g
+	g := &MemGroup{idm: idm, name: groupName, gid: gid}
+	idm.groupsByName[groupName] = g
 	idm.groupsById[gid] = g
 
 	return g, nil
@@ -51,43 +54,74 @@ func (idm *MemIdm) AddGroup(name string) (avfs.GroupReader, error) {
 
 // AddUser creates a new user with the specified userName and the specified primary group groupName.
 // If the user already exists, the returned error is of type avfs.AlreadyExistsUserError.
-func (idm *MemIdm) AddUser(name, groupName string) (avfs.UserReader, error) {
-	g, err := idm.LookupGroup(groupName)
+func (idm *MemIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
+	if !idm.IsValidNameFunc(userName) {
+		return nil, avfs.InvalidNameError(userName)
+	}
+
+	if !idm.IsValidNameFunc(groupName) {
+		return nil, avfs.InvalidNameError(groupName)
+	}
+
+	g, err := idm.lookupGroup(groupName)
 	if err != nil {
 		return nil, err
 	}
 
-	idm.usrMu.Lock()
-	defer idm.usrMu.Unlock()
-
-	if _, ok := idm.usersByName[name]; ok {
-		return nil, avfs.AlreadyExistsUserError(name)
+	if _, ok := idm.usersByName[userName]; ok {
+		return nil, avfs.AlreadyExistsUserError(userName)
 	}
 
 	idm.maxUid++
 	uid := idm.maxUid
+	gid := g.Gid()
 
-	u := &MemUser{
-		name: name,
-		uid:  uid,
-		gid:  g.Gid(),
-	}
+	u := &MemUser{idm: idm, name: userName, uid: uid, gid: gid, groupsById: make(groupsById)}
 
-	idm.usersByName[name] = u
+	idm.usersByName[userName] = u
 	idm.usersById[uid] = u
+
+	u.addGroup(g)
 
 	return u, nil
 }
 
+// AddUserToGroup adds the user to the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+func (idm *MemIdm) AddUserToGroup(userName, groupName string) error {
+	if !idm.IsValidNameFunc(userName) {
+		return avfs.InvalidNameError(userName)
+	}
+
+	if !idm.IsValidNameFunc(groupName) {
+		return avfs.InvalidNameError(groupName)
+	}
+
+	u, err := idm.lookupUser(userName)
+	if err != nil {
+		return err
+	}
+
+	g, err := idm.lookupGroup(groupName)
+	if err != nil {
+		return err
+	}
+
+	u.addGroup(g)
+
+	return nil
+}
+
 // DelGroup deletes an existing group with the specified name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
-func (idm *MemIdm) DelGroup(name string) error {
-	idm.grpMu.Lock()
-	defer idm.grpMu.Unlock()
+func (idm *MemIdm) DelGroup(groupName string) error {
+	if !idm.IsValidNameFunc(groupName) {
+		return avfs.InvalidNameError(groupName)
+	}
 
-	g, ok := idm.groupsByName[name]
+	g, ok := idm.groupsByName[groupName]
 	if !ok {
-		return avfs.UnknownGroupError(name)
+		return avfs.UnknownGroupError(groupName)
 	}
 
 	delete(idm.groupsByName, g.name)
@@ -98,14 +132,17 @@ func (idm *MemIdm) DelGroup(name string) error {
 
 // DelUser deletes an existing user with the specified name.
 // If the user is not found, the returned error is of type avfs.UnknownUserError.
-func (idm *MemIdm) DelUser(name string) error {
-	idm.usrMu.Lock()
-	defer idm.usrMu.Unlock()
-
-	u, ok := idm.usersByName[name]
-	if !ok {
-		return avfs.UnknownUserError(name)
+func (idm *MemIdm) DelUser(userName string) error {
+	if !idm.IsValidNameFunc(userName) {
+		return avfs.InvalidNameError(userName)
 	}
+
+	u, ok := idm.usersByName[userName]
+	if !ok {
+		return avfs.UnknownUserError(userName)
+	}
+
+	u.groupsById = nil
 
 	delete(idm.usersByName, u.name)
 	delete(idm.usersById, u.uid)
@@ -113,15 +150,47 @@ func (idm *MemIdm) DelUser(name string) error {
 	return nil
 }
 
+// DelUserFromGroup removes the user from the group.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError
+// or avfs.UnknownGroupError respectively.
+func (idm *MemIdm) DelUserFromGroup(userName, groupName string) error {
+	if !idm.IsValidNameFunc(userName) {
+		return avfs.InvalidNameError(userName)
+	}
+
+	if !idm.IsValidNameFunc(groupName) {
+		return avfs.InvalidNameError(groupName)
+	}
+
+	g, err := idm.lookupGroup(groupName)
+	if err != nil {
+		return err
+	}
+
+	u, err := idm.lookupUser(userName)
+	if err != nil {
+		return err
+	}
+
+	u.delGroup(g)
+
+	return nil
+}
+
 // LookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
-func (idm *MemIdm) LookupGroup(name string) (avfs.GroupReader, error) {
-	idm.grpMu.RLock()
-	defer idm.grpMu.RUnlock()
+func (idm *MemIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
+	if !idm.IsValidNameFunc(groupName) {
+		return nil, avfs.InvalidNameError(groupName)
+	}
 
-	g, ok := idm.groupsByName[name]
+	return idm.lookupGroup(groupName)
+}
+
+func (idm *MemIdm) lookupGroup(groupName string) (*MemGroup, error) {
+	g, ok := idm.groupsByName[groupName]
 	if !ok {
-		return nil, avfs.UnknownGroupError(name)
+		return nil, avfs.UnknownGroupError(groupName)
 	}
 
 	return g, nil
@@ -130,9 +199,6 @@ func (idm *MemIdm) LookupGroup(name string) (avfs.GroupReader, error) {
 // LookupGroupId looks up a group by groupid.
 // If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *MemIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	idm.grpMu.RLock()
-	defer idm.grpMu.RUnlock()
-
 	g, ok := idm.groupsById[gid]
 	if !ok {
 		return nil, avfs.UnknownGroupIdError(gid)
@@ -143,13 +209,18 @@ func (idm *MemIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 
 // LookupUser looks up a user by username.
 // If the user is not found, the returned error is of type avfs.UnknownUserError.
-func (idm *MemIdm) LookupUser(name string) (avfs.UserReader, error) {
-	idm.usrMu.RLock()
-	defer idm.usrMu.RUnlock()
+func (idm *MemIdm) LookupUser(userName string) (avfs.UserReader, error) {
+	if !idm.IsValidNameFunc(userName) {
+		return nil, avfs.InvalidNameError(userName)
+	}
 
-	u, ok := idm.usersByName[name]
+	return idm.lookupUser(userName)
+}
+
+func (idm *MemIdm) lookupUser(userName string) (*MemUser, error) {
+	u, ok := idm.usersByName[userName]
 	if !ok {
-		return nil, avfs.UnknownUserError(name)
+		return nil, avfs.UnknownUserError(userName)
 	}
 
 	return u, nil
@@ -158,9 +229,6 @@ func (idm *MemIdm) LookupUser(name string) (avfs.UserReader, error) {
 // LookupUserId looks up a user by userid.
 // If the user is not found, the returned error is of type avfs.UnknownUserIdError.
 func (idm *MemIdm) LookupUserId(uid int) (avfs.UserReader, error) {
-	idm.usrMu.RLock()
-	defer idm.usrMu.RUnlock()
-
 	u, ok := idm.usersById[uid]
 	if !ok {
 		return nil, avfs.UnknownUserIdError(uid)
@@ -169,11 +237,41 @@ func (idm *MemIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 	return u, nil
 }
 
+// SetUserPrimaryGroup sets the primary group of a user to the specified group name.
+// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
+// If the operation fails, the returned error is of type avfs.UnknownError.
+func (idm *MemIdm) SetUserPrimaryGroup(userName, groupName string) error {
+	if !idm.IsValidNameFunc(userName) {
+		return avfs.InvalidNameError(userName)
+	}
+
+	if !idm.IsValidNameFunc(groupName) {
+		return avfs.InvalidNameError(groupName)
+	}
+
+	g, err := idm.lookupGroup(groupName)
+	if err != nil {
+		return err
+	}
+
+	u, err := idm.lookupUser(userName)
+	if err != nil {
+		return err
+	}
+
+	u.gid = g.Gid()
+
+	return nil
+}
+
 // MemUser
 
-// Name returns the user name.
-func (u *MemUser) Name() string {
-	return u.name
+func (u *MemUser) addGroup(g *MemGroup) {
+	u.groupsById[g.gid] = g
+}
+
+func (u *MemUser) delGroup(g *MemGroup) {
+	delete(u.groupsById, g.gid)
 }
 
 // Gid returns the primary group ID of the user.
@@ -181,9 +279,61 @@ func (u *MemUser) Gid() int {
 	return u.gid
 }
 
+// Groups returns a slice of strings representing the group names that the user belongs to.
+// If an error occurs while fetching the group names, it returns nil.
+func (u *MemUser) Groups() []string {
+	groups := make([]string, len(u.groupsById))
+
+	for i, g := range u.groupsById {
+		groups[i] = g.Name()
+	}
+
+	return groups
+}
+
+// GroupsId returns a slice group IDs that the user belongs to.
+// If an error occurs while fetching the group IDs, it returns nil.
+func (u *MemUser) GroupsId() []int {
+	gids := make([]int, len(u.groupsById))
+
+	for i, g := range u.groupsById {
+		gids[i] = g.Gid()
+	}
+
+	return gids
+}
+
 // IsAdmin returns true if the user has administrator (root) privileges.
 func (u *MemUser) IsAdmin() bool {
-	return u.uid == 0 || u.gid == 0
+	return u.uid == 0 || u.IsInGroupId(0)
+}
+
+// IsInGroupId returns true if the user is in the specified group ID.
+func (u *MemUser) IsInGroupId(gid int) bool {
+	_, ok := u.groupsById[gid]
+
+	return ok
+}
+
+// Name returns the username.
+func (u *MemUser) Name() string {
+	return u.name
+}
+
+// PrimaryGroup returns the primary group name of the user.
+func (u *MemUser) PrimaryGroup() string {
+	g, err := u.idm.LookupGroupId(u.gid)
+	if err != nil {
+		return ""
+	}
+
+	return g.Name()
+}
+
+// PrimaryGroupId returns the primary group ID of the OsUser.
+// If an error occurs, it returns the maximum integer value.
+func (u *MemUser) PrimaryGroupId() int {
+	return u.gid
 }
 
 // Uid returns the user ID.
