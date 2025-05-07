@@ -536,6 +536,9 @@ func User() avfs.UserReader {
 // - notFoundErr: The error to return if the key is not found.
 // Returns the retrieved entry as a string or an error if any occurs.
 func getent(database, key string, notFoundErr error) (string, error) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	cmd := exec.Command("getent", database, key)
 
 	buf, err := cmd.Output()
@@ -560,6 +563,9 @@ func getent(database, key string, notFoundErr error) (string, error) {
 // id returns the result of the "id" command for the given username and options.
 // The result is returned as a string, and an error is returned if the command fails.
 func id(username, options string) (string, error) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	cmd := exec.Command("id", options, username)
 
 	buf, err := cmd.Output()
@@ -567,11 +573,16 @@ func id(username, options string) (string, error) {
 		return "", err
 	}
 
-	return string(buf), nil
+	r := strings.TrimRight(string(buf), "\n ")
+
+	return r, nil
 }
 
 // usermod executes the "usermod" command with the given options and user name.
 func usermod(userName, groupName, options string) error {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	cmd := exec.Command("usermod", options, groupName, userName)
 
 	err := cmd.Run()
@@ -584,5 +595,8 @@ func usermod(userName, groupName, options string) error {
 
 // IsUserAdmin returns true if the current user has admin privileges.
 func isUserAdmin() bool {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	return os.Geteuid() == 0
 }
