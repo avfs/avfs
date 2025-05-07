@@ -43,8 +43,9 @@ func New() *OsIdm {
 	adminUser := &OsUser{name: UserName, uid: uid, gid: gid}
 
 	idm := &OsIdm{
-		adminGroup: adminGroup,
-		adminUser:  adminUser,
+		adminGroup:      adminGroup,
+		adminUser:       adminUser,
+		IsValidNameFunc: avfs.IsValidName, // TODO: Add option to change function
 	}
 
 	_ = idm.SetFeatures(features)
