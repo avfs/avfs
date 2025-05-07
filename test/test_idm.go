@@ -26,6 +26,8 @@ import (
 	"github.com/avfs/avfs"
 )
 
+var ErrInvalidName = avfs.InvalidNameError("")
+
 // TestIdmAll runs all identity manager tests.
 func (ts *Suite) TestIdmAll(t *testing.T) {
 	defer ts.setInitUser(t)
@@ -146,6 +148,13 @@ func (ts *Suite) TestIdmGroup(t *testing.T) {
 		}
 	})
 
+	t.Run("AddGroupInvalid", func(t *testing.T) {
+		_, err := idm.AddGroup("")
+		if err != ErrInvalidName {
+			t.Errorf("AddGroup '' : want error to be %v, got %v", ErrInvalidName, err)
+		}
+	})
+
 	t.Run("AddGroupExists", func(t *testing.T) {
 		for _, gi := range gis {
 			groupName := gi.Name + suffix
@@ -155,6 +164,13 @@ func (ts *Suite) TestIdmGroup(t *testing.T) {
 				t.Errorf("AddGroup %s : want error to be %v, got %v",
 					groupName, avfs.AlreadyExistsGroupError(groupName), err)
 			}
+		}
+	})
+
+	t.Run("DelGroupInvalid", func(t *testing.T) {
+		err := idm.DelGroup("")
+		if err != ErrInvalidName {
+			t.Errorf("DelGroup '' : want error to be %v, got %v", ErrInvalidName, err)
 		}
 	})
 
@@ -217,6 +233,18 @@ func (ts *Suite) TestIdmUser(t *testing.T) {
 	prevUid := 0
 	uis := UserInfos()
 
+	t.Run("AddUserInvalid", func(t *testing.T) {
+		_, err := idm.AddUser("", avfs.DefaultName)
+		if err != ErrInvalidName {
+			t.Errorf("AddUser : want error to be %v, got %v", ErrInvalidName, err)
+		}
+
+		_, err = idm.AddUser(avfs.DefaultName, "")
+		if err != ErrInvalidName {
+			t.Errorf("AddUser : want error to be %v, got %v", ErrInvalidName, err)
+		}
+	})
+
 	t.Run("AddUser", func(t *testing.T) {
 		for _, ui := range uis {
 			groupName := ui.GroupName + suffix
@@ -267,7 +295,7 @@ func (ts *Suite) TestIdmUser(t *testing.T) {
 		}
 	})
 
-	t.Run("UserAddDelErrors", func(t *testing.T) {
+	t.Run("UserAddDelNotFound", func(t *testing.T) {
 		for _, ui := range uis {
 			groupName := ui.GroupName + suffix
 			userName := ui.Name + suffix
@@ -293,6 +321,13 @@ func (ts *Suite) TestIdmUser(t *testing.T) {
 				t.Errorf("DelUser %s : want error to be %v, got %v", userName,
 					avfs.UnknownUserError(userNameNotFound), err)
 			}
+		}
+	})
+
+	t.Run("DelUserInvalid", func(t *testing.T) {
+		err := idm.DelUser("")
+		if err != ErrInvalidName {
+			t.Errorf("DelUser '' : want error to be %v, got %v", ErrInvalidName, err)
 		}
 	})
 
@@ -367,6 +402,13 @@ func (ts *Suite) TestIdmLookup(t *testing.T) {
 	groups := ts.CreateGroups(t, suffix)
 	users := ts.CreateUsers(t, suffix)
 
+	t.Run("LookupGroupInvalid", func(t *testing.T) {
+		_, err := idm.LookupGroup("")
+		if err != ErrInvalidName {
+			t.Errorf("LookupGroup '' : want error to be %v, got %v", ErrInvalidName, err)
+		}
+	})
+
 	t.Run("LookupGroup", func(t *testing.T) {
 		for _, wantGroup := range groups {
 			groupName := wantGroup.Name()
@@ -392,6 +434,13 @@ func (ts *Suite) TestIdmLookup(t *testing.T) {
 			if g.Gid() != wantGroup.Gid() {
 				t.Errorf("LookupGroup %s : want gid to be %d, got %d", groupName, wantGroup.Gid(), g.Gid())
 			}
+		}
+	})
+
+	t.Run("LookupUserInvalid", func(t *testing.T) {
+		_, err := idm.LookupUser("")
+		if err != ErrInvalidName {
+			t.Errorf("LookupUser '' : want error to be %v, got %v", ErrInvalidName, err)
 		}
 	})
 
