@@ -30,14 +30,14 @@ import (
 func (ts *Suite) TestIdmAll(t *testing.T) {
 	defer ts.setInitUser(t)
 
-	ts.TestAdminGroupUser(t)
-	ts.TestGroupAddDel(t)
-	ts.TestUserAddDel(t)
-	ts.TestLookup(t)
+	ts.TestIdmAdmin(t)
+	ts.TestIdmGroup(t)
+	ts.TestIdmUser(t)
+	ts.TestIdmLookup(t)
 }
 
-// TestAdminGroupUser tests AdminGroup and AdminUser.
-func (ts *Suite) TestAdminGroupUser(t *testing.T) {
+// TestIdmAdmin tests AdminGroup and AdminUser.
+func (ts *Suite) TestIdmAdmin(t *testing.T) {
 	idm := ts.idm
 
 	if !idm.HasFeature(avfs.FeatIdentityMgr) {
@@ -89,8 +89,8 @@ func (ts *Suite) TestAdminGroupUser(t *testing.T) {
 	})
 }
 
-// TestGroupAddDel tests AddGroup and DelGroup functions.
-func (ts *Suite) TestGroupAddDel(t *testing.T) {
+// TestIdmGroup tests group related functions.
+func (ts *Suite) TestIdmGroup(t *testing.T) {
 	idm := ts.idm
 	suffix := fmt.Sprintf("GroupAddDel%x", rand.Uint32())
 
@@ -190,8 +190,8 @@ func (ts *Suite) TestGroupAddDel(t *testing.T) {
 	})
 }
 
-// TestUserAddDel tests AddUser and DelUser functions.
-func (ts *Suite) TestUserAddDel(t *testing.T) {
+// TestIdmUser tests user related functions.
+func (ts *Suite) TestIdmUser(t *testing.T) {
 	idm := ts.idm
 	suffix := fmt.Sprintf("UserAddDel%x", rand.Uint32())
 
@@ -323,8 +323,8 @@ func (ts *Suite) TestUserAddDel(t *testing.T) {
 	})
 }
 
-// TestLookup tests Lookup* functions.
-func (ts *Suite) TestLookup(t *testing.T) {
+// TestIdmLookup tests Lookup* functions.
+func (ts *Suite) TestIdmLookup(t *testing.T) {
 	idm := ts.idm
 	suffix := fmt.Sprintf("Lookup%x", rand.Uint32())
 
