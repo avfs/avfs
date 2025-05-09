@@ -34,8 +34,9 @@ func (ts *Suite) TestIdmAll(t *testing.T) {
 
 	ts.TestIdmAdmin(t)
 	ts.TestIdmGroup(t)
-	ts.TestIdmUser(t)
 	ts.TestIdmLookup(t)
+	ts.TestIdmUser(t)
+	ts.TestIdmUserGroups(t)
 }
 
 // TestIdmAdmin tests AdminGroup and AdminUser.
@@ -158,11 +159,11 @@ func (ts *Suite) TestIdmGroup(t *testing.T) {
 	t.Run("AddGroupExists", func(t *testing.T) {
 		for _, gi := range gis {
 			groupName := gi.Name + suffix
+			wantErr := avfs.AlreadyExistsGroupError(groupName)
 
 			_, err := idm.AddGroup(groupName)
-			if err != avfs.AlreadyExistsGroupError(groupName) {
-				t.Errorf("AddGroup %s : want error to be %v, got %v",
-					groupName, avfs.AlreadyExistsGroupError(groupName), err)
+			if err != wantErr {
+				t.Errorf("AddGroup %s : want error to be %v, got %v", groupName, wantErr)
 			}
 		}
 	})
@@ -290,8 +291,18 @@ func (ts *Suite) TestIdmUser(t *testing.T) {
 			_, err = idm.LookupUser(userName)
 			RequireNoError(t, err, "LookupUser %s", userName)
 
-			_, err = idm.LookupUserId(u.Uid())
+			lu, err := idm.LookupUserId(u.Uid())
 			RequireNoError(t, err, "LookupUserId %s", userName)
+
+			lpg := lu.PrimaryGroup()
+			if lpg != groupName {
+				t.Errorf("PrimaryGroup %s : want group to be '%s', got '%s'", userName, groupName, lpg)
+			}
+
+			lgid := lu.PrimaryGroupId()
+			if lgid != g.Gid() {
+				t.Errorf("PrimaryGroupId %s : want gid to be %d, got %d", userName, g.Gid(), lgid)
+			}
 		}
 	})
 
@@ -479,6 +490,110 @@ func (ts *Suite) TestIdmLookup(t *testing.T) {
 			}
 		}
 	})
+}
+
+func (ts *Suite) TestIdmUserGroups(t *testing.T) {
+	idm := ts.idm
+	suffix := fmt.Sprintf("UserGroups%x", rand.Uint32())
+
+	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+		err := idm.AddUserToGroup("", "")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("AddUserToGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		err = idm.DelUserFromGroup("", "")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("DelUserFromGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		err = idm.SetUserPrimaryGroup("", "")
+		if err != avfs.ErrPermDenied {
+			t.Errorf("SetUserPrimaryGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
+		}
+
+		return
+	}
+
+	_ = ts.CreateGroups(t, suffix)
+	users := ts.CreateUsers(t, suffix)
+
+	t.Run("UserGroupsInvalid", func(t *testing.T) {
+		err := idm.AddUserToGroup(UsrTest, "")
+		if err != ErrInvalidName {
+			t.Errorf("AddUserToGroup %s, '' : want error to be %v, got %v", UsrTest, ErrInvalidName, err)
+		}
+
+		err = idm.AddUserToGroup("", grpTest)
+		if err != ErrInvalidName {
+			t.Errorf("AddUserToGroup '', %s : want error to be %v, got %v", grpTest, ErrInvalidName, err)
+		}
+
+		err = idm.DelUserFromGroup(UsrTest, "")
+		if err != ErrInvalidName {
+			t.Errorf("DelUserFromGroup %s, '' : want error to be %v, got %v", UsrTest, ErrInvalidName, err)
+		}
+
+		err = idm.DelUserFromGroup("", grpTest)
+		if err != ErrInvalidName {
+			t.Errorf("DelUserFromGroup '', %s : want error to be %v, got %v", grpTest, ErrInvalidName, err)
+		}
+
+		err = idm.SetUserPrimaryGroup(UsrTest, "")
+		if err != ErrInvalidName {
+			t.Errorf("SetUserPrimaryGroup %s, '' : want error to be %v, got %v", UsrTest, ErrInvalidName, err)
+		}
+
+		err = idm.SetUserPrimaryGroup("", grpTest)
+		if err != ErrInvalidName {
+			t.Errorf("SetUserPrimaryGroup '', %s : want error to be %v, got %v", grpTest, ErrInvalidName, err)
+		}
+	})
+
+	t.Run("UserGroupsNotFound", func(t *testing.T) {
+		for _, u := range users {
+			userNameNotFound := u.Name() + "NotFound"
+			groupNameNotFound := u.PrimaryGroup() + "NotFound"
+
+			err := idm.AddUserToGroup(u.Name(), groupNameNotFound)
+			if err != avfs.UnknownGroupError(groupNameNotFound) {
+				t.Errorf("AddUserToGroup %s : want error to be %v, got %v", u.Name(),
+					avfs.UnknownGroupError(groupNameNotFound), err)
+			}
+
+			err = idm.AddUserToGroup(userNameNotFound, u.PrimaryGroup())
+			if err != avfs.UnknownUserError(userNameNotFound) {
+				t.Errorf("AddUserToGroup %s : want error to be %v, got %v", u.PrimaryGroup(),
+					avfs.UnknownGroupError(groupNameNotFound), err)
+			}
+
+			err = idm.DelUserFromGroup(u.Name(), groupNameNotFound)
+			if err != avfs.UnknownGroupError(groupNameNotFound) {
+				t.Errorf("DelUserFromGroup %s : want error to be %v, got %v", u.Name(),
+					avfs.UnknownGroupError(groupNameNotFound), err)
+			}
+
+			err = idm.DelUserFromGroup(userNameNotFound, u.PrimaryGroup())
+			if err != avfs.UnknownUserError(userNameNotFound) {
+				t.Errorf("DelUserFromGroup %s : want error to be %v, got %v", u.PrimaryGroup(),
+					avfs.UnknownGroupError(groupNameNotFound), err)
+			}
+
+			err = idm.SetUserPrimaryGroup(u.Name(), groupNameNotFound)
+			if err != avfs.UnknownGroupError(groupNameNotFound) {
+				t.Errorf("SetUserPrimaryGroup %s : want error to be %v, got %v", u.Name(),
+					avfs.UnknownGroupError(groupNameNotFound), err)
+			}
+
+			err = idm.SetUserPrimaryGroup(userNameNotFound, u.PrimaryGroup())
+			if err != avfs.UnknownUserError(userNameNotFound) {
+				t.Errorf("SetUserPrimaryGroup %s : want error to be %v, got %v", u.PrimaryGroup(),
+					avfs.UnknownGroupError(groupNameNotFound), err)
+			}
+		}
+	})
+
+	// TODO : Add real tests AddUserToGroup and DelUserFromGroup
 }
 
 const (
