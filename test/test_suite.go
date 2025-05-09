@@ -457,7 +457,7 @@ func (ts *Suite) setUser(tb testing.TB, userName string) {
 	vfs := ts.vfsTest
 
 	u := vfs.User()
-	if !ts.canTestPerm || u.Name() == userName {
+	if !ts.canTestPerm || u.Name() == userName || userName == "" {
 		return
 	}
 

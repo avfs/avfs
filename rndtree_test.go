@@ -27,5 +27,5 @@ func TestRndTree(t *testing.T) {
 	vfs := memfs.New()
 	ts := test.NewSuiteFS(t, vfs, vfs)
 
-	ts.RunTests(t, test.UsrTest, ts.TestRndTree)
+	ts.RunTests(t, "", ts.TestRndTree)
 }
