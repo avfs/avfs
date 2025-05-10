@@ -614,15 +614,10 @@ func (ts *Suite) TestIdmUserGroups(t *testing.T) {
 		}
 
 		for _, u := range users {
-			fmt.Println("groupsid before", u.GroupsId())
-			fmt.Println("newgroup", g.Gid())
-
 			err = idm.AddUserToGroup(u.Name(), newGroup)
 			if err != nil {
 				t.Errorf("AddUserToGroup %s %s : want error to be nil, got %v", u.Name(), newGroup, err)
 			}
-
-			fmt.Println("groupsid after", u.GroupsId())
 
 			if !u.IsInGroupId(g.Gid()) {
 				t.Errorf("AddUserToGroup %s %s : want user to be in group, got false", u.Name(), newGroup)
