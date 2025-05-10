@@ -28,13 +28,13 @@ type OsIdm struct {
 
 // OsGroup is the implementation of avfs.GroupReader.
 type OsGroup struct {
-	name string
-	gid  int
+	name string // name is the name of the group.
+	gid  int    // gid represents the group ID of the OsGroup.
 }
 
 // OsUser is the implementation of avfs.UserReader.
 type OsUser struct {
-	name string
-	uid  int
-	gid  int
+	name string // name is the name of the user.
+	uid  int    // uid represents the user ID of the OsUser.
+	gid  int    // gid represents the primary group ID of the OsUser.
 }

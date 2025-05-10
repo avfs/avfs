@@ -147,6 +147,10 @@ func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
 		return err
 	}
 
+	if u.IsInGroupId(g.Gid()) {
+		return avfs.AlreadyExistsGroupError(groupName)
+	}
+
 	return nil
 }
 
@@ -239,6 +243,10 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 	g, err := lookupGroup(groupName)
 	if err != nil {
 		return err
+	}
+
+	if !u.IsInGroupId(g.Gid()) {
+		return avfs.UnknownGroupError(groupName)
 	}
 
 	err = usermod(u.Name(), g.Name(), "-rG")
