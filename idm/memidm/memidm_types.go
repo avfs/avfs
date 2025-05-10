@@ -64,10 +64,9 @@ type MemUser struct {
 
 // MemGroup is the implementation of avfs.GroupReader.
 type MemGroup struct {
-	idm       *MemIdm // idm is the identity manager.
-	name      string  // name is the group name.
-	gid       int     // gid is the group id.
-	usersById         // usersById is the users map by Id.
+	idm  *MemIdm // idm is the identity manager.
+	name string  // name is the group name.
+	gid  int     // gid is the group id.
 }
 
 // Options defines the initialization options of MemIdm.

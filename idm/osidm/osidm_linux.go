@@ -142,13 +142,13 @@ func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
 		return err
 	}
 
+	if u.IsInGroupId(g.Gid()) {
+		return avfs.AlreadyExistsGroupError(groupName)
+	}
+
 	err = usermod(u.Name(), g.Name(), "-aG")
 	if err != nil {
 		return err
-	}
-
-	if u.IsInGroupId(g.Gid()) {
-		return avfs.AlreadyExistsGroupError(groupName)
 	}
 
 	return nil
@@ -586,7 +586,7 @@ func id(username, options string) (string, error) {
 	return r, nil
 }
 
-// usermod executes the "usermod" command with the given options and user name.
+// usermod executes the "usermod" command with the given options and username.
 func usermod(userName, groupName, options string) error {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()

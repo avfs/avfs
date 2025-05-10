@@ -81,7 +81,10 @@ func (idm *MemIdm) AddUser(userName, groupName string) (avfs.UserReader, error) 
 	idm.usersByName[userName] = u
 	idm.usersById[uid] = u
 
-	u.addGroup(g)
+	err = u.addGroup(g)
+	if err != nil {
+		return nil, err
+	}
 
 	return u, nil
 }
@@ -107,7 +110,10 @@ func (idm *MemIdm) AddUserToGroup(userName, groupName string) error {
 		return err
 	}
 
-	u.addGroup(g)
+	err = u.addGroup(g)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -172,7 +178,10 @@ func (idm *MemIdm) DelUserFromGroup(userName, groupName string) error {
 		return err
 	}
 
-	u.delGroup(g)
+	err = u.delGroup(g)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -266,12 +275,26 @@ func (idm *MemIdm) SetUserPrimaryGroup(userName, groupName string) error {
 
 // MemUser
 
-func (u *MemUser) addGroup(g *MemGroup) {
+func (u *MemUser) addGroup(g *MemGroup) error {
+	_, ok := u.groupsById[g.gid]
+	if ok {
+		return avfs.AlreadyExistsGroupError(g.name)
+	}
+
 	u.groupsById[g.gid] = g
+
+	return nil
 }
 
-func (u *MemUser) delGroup(g *MemGroup) {
+func (u *MemUser) delGroup(g *MemGroup) error {
+	_, ok := u.groupsById[g.gid]
+	if !ok {
+		return avfs.UnknownGroupError(g.name)
+	}
+
 	delete(u.groupsById, g.gid)
+
+	return nil
 }
 
 // Gid returns the primary group ID of the user.
@@ -282,10 +305,10 @@ func (u *MemUser) Gid() int {
 // Groups returns a slice of strings representing the group names that the user belongs to.
 // If an error occurs while fetching the group names, it returns nil.
 func (u *MemUser) Groups() []string {
-	groups := make([]string, len(u.groupsById))
+	groups := make([]string, 0, len(u.groupsById))
 
-	for i, g := range u.groupsById {
-		groups[i] = g.Name()
+	for _, g := range u.groupsById {
+		groups = append(groups, g.Name())
 	}
 
 	return groups
@@ -294,10 +317,10 @@ func (u *MemUser) Groups() []string {
 // GroupsId returns a slice group IDs that the user belongs to.
 // If an error occurs while fetching the group IDs, it returns nil.
 func (u *MemUser) GroupsId() []int {
-	gids := make([]int, len(u.groupsById))
+	gids := make([]int, 0, len(u.groupsById))
 
-	for i, g := range u.groupsById {
-		gids[i] = g.Gid()
+	for _, g := range u.groupsById {
+		gids = append(gids, g.Gid())
 	}
 
 	return gids

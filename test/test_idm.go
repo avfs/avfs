@@ -75,7 +75,7 @@ func (ts *Suite) TestIdmAdmin(t *testing.T) {
 		return
 	}
 
-	t.Run("Admin", func(t *testing.T) {
+	t.Run("AdminGroupUserName", func(t *testing.T) {
 		wantGroupName := avfs.AdminGroupName(avfs.CurrentOSType())
 		ag := idm.AdminGroup()
 
@@ -115,6 +115,18 @@ func (ts *Suite) TestIdmGroup(t *testing.T) {
 
 	gis := GroupInfos()
 	prevGid := 0
+
+	t.Run("DelGroupNotExists", func(t *testing.T) {
+		for _, gi := range gis {
+			groupName := gi.Name + suffix
+			wantErr := avfs.UnknownGroupError(groupName)
+
+			err := idm.DelGroup(groupName)
+			if err != wantErr {
+				t.Errorf("DelGroup %s : want error to be %v, got %v", groupName, wantErr, err)
+			}
+		}
+	})
 
 	t.Run("AddGroup", func(t *testing.T) {
 		for _, gi := range gis {
@@ -163,7 +175,7 @@ func (ts *Suite) TestIdmGroup(t *testing.T) {
 
 			_, err := idm.AddGroup(groupName)
 			if err != wantErr {
-				t.Errorf("AddGroup %s : want error to be %v, got %v", groupName, wantErr)
+				t.Errorf("AddGroup %s : want error to be %v, got %v", groupName, wantErr, err)
 			}
 		}
 	})
@@ -593,7 +605,39 @@ func (ts *Suite) TestIdmUserGroups(t *testing.T) {
 		}
 	})
 
-	// TODO : Add real tests AddUserToGroup and DelUserFromGroup
+	t.Run("UserGroupsAddDel", func(t *testing.T) {
+		newGroup := "newGroup" + suffix
+
+		g, err := idm.AddGroup(newGroup)
+		if err != nil {
+			t.Errorf("AddGroup %s : want error to be nil, got %v", newGroup, err)
+		}
+
+		for _, u := range users {
+			fmt.Println("groupsid before", u.GroupsId())
+			fmt.Println("newgroup", g.Gid())
+
+			err = idm.AddUserToGroup(u.Name(), newGroup)
+			if err != nil {
+				t.Errorf("AddUserToGroup %s %s : want error to be nil, got %v", u.Name(), newGroup, err)
+			}
+
+			fmt.Println("groupsid after", u.GroupsId())
+
+			if !u.IsInGroupId(g.Gid()) {
+				t.Errorf("AddUserToGroup %s %s : want user to be in group, got false", u.Name(), newGroup)
+			}
+
+			err = idm.DelUserFromGroup(u.Name(), newGroup)
+			if err != nil {
+				t.Errorf("DelUserFromGroup %s %s : want error to be nil, got %v", u.Name(), newGroup, err)
+			}
+
+			if u.IsInGroupId(g.Gid()) {
+				t.Errorf("DelUserFromGroup %s %s : want user to be out of group, got true", u.Name(), newGroup)
+			}
+		}
+	})
 }
 
 const (
