@@ -508,7 +508,7 @@ func (ts *Suite) TestIdmUserGroups(t *testing.T) {
 	idm := ts.idm
 	suffix := fmt.Sprintf("UserGroups%x", rand.Uint32())
 
-	if !idm.HasFeature(avfs.FeatIdentityMgr) {
+	if !idm.HasFeature(avfs.FeatIdentityMgr) || idm.HasFeature(avfs.FeatReadOnlyIdm) {
 		err := idm.AddUserToGroup("", "")
 		if err != avfs.ErrPermDenied {
 			t.Errorf("AddUserToGroup : want error to be %v, got %v", avfs.ErrPermDenied, err)
