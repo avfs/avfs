@@ -173,7 +173,8 @@ const (
 	ErrWinFileExists       WindowsError = 80         // The file exists.
 	ErrWinFileNotFound     WindowsError = 2          // The system cannot find the file specified.
 	ErrWinIncorrectFunc    WindowsError = 1          // Incorrect function.
-	ErrWinIsADirectory     WindowsError = 21         // is a directory
+	ErrWinInvalidParameter WindowsError = 0x57       // The parameter is incorrect.
+	ErrWinIsADirectory     WindowsError = 0x2000002A // is a directory
 	ErrWinNegativeSeek     WindowsError = 0x83       // An attempt was made to move the file pointer before the beginning of the file.
 	ErrWinNotReparsePoint  WindowsError = 4390       // The file or directory is not a reparse point.
 	ErrWinInvalidHandle    WindowsError = 6          // The handle is invalid.

@@ -556,7 +556,7 @@ func (ts *Suite) TestFileReadDir(t *testing.T, testDir string) {
 		_, err := f.ReadDir(-1)
 		AssertPathError(t, err).Path(fileName).
 			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrFileClosing).Test().
-			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinInvalidHandle).Test()
+			OSType(avfs.OsWindows).Op("GetFileInformationByHandleEx").Err(avfs.ErrWinInvalidHandle).Test()
 	})
 
 	t.Run("FileReadDirNonExisting", func(t *testing.T) {
@@ -632,7 +632,7 @@ func (ts *Suite) TestFileReaddirnames(t *testing.T, testDir string) {
 		_, err := f.Readdirnames(-1)
 		AssertPathError(t, err).Path(fileName).
 			OSType(avfs.OsLinux).Op("readdirent").Err(avfs.ErrFileClosing).Test().
-			OSType(avfs.OsWindows).Op("readdir").Err(avfs.ErrWinInvalidHandle).Test()
+			OSType(avfs.OsWindows).Op("GetFileInformationByHandleEx").Err(avfs.ErrWinInvalidHandle).Test()
 	})
 
 	t.Run("FileReaddirnamesNonExisting", func(t *testing.T) {
@@ -1022,7 +1022,9 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 		err = f.Truncate(-1)
 		AssertPathError(t, err).Op("truncate").Path(path).
 			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinNegativeSeek).Test()
+			OSType(avfs.OsWindows).
+			GoVersion("", "1.23").Err(avfs.ErrWinNegativeSeek).Test().
+			GoVersion("1.24", "").Err(avfs.ErrWinInvalidParameter).Test()
 	})
 
 	t.Run("FileTruncateSizeBiggerFileSize", func(t *testing.T) {

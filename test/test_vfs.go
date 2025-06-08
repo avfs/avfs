@@ -1344,7 +1344,7 @@ func (ts *Suite) TestOpen(t *testing.T, testDir string) {
 		f, err := vfs.OpenFile("", os.O_RDONLY, 0)
 		AssertPathError(t, err).Op("open").Path("").
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
+			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
 
 		_, ok := f.(avfs.File)
 		if !ok {
@@ -1545,7 +1545,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 		f, err := vfs.OpenFile("", os.O_CREATE, avfs.DefaultFilePerm)
 		AssertPathError(t, err).Op("open").Path("").
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
+			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
 
 		_, ok := f.(avfs.File)
 		if !ok {
@@ -2540,7 +2540,9 @@ func (ts *Suite) TestTruncate(t *testing.T, testDir string) {
 		err := vfs.Truncate(path, -1)
 		AssertPathError(t, err).Op("truncate").Path(path).
 			OSType(avfs.OsLinux).Err(avfs.ErrInvalidArgument).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinNegativeSeek).Test()
+			OSType(avfs.OsWindows).
+			GoVersion("", "1.23").Err(avfs.ErrWinNegativeSeek).Test().
+			GoVersion("1.24", "").Err(avfs.ErrWinInvalidParameter).Test()
 	})
 
 	t.Run("TruncateSizeBiggerFileSize", func(t *testing.T) {
