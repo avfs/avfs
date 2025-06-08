@@ -206,8 +206,10 @@ func (ae *assertError) Test() *assertError {
 	wantErr := reflect.ValueOf(ae.wantErr)
 	gotErr := reflect.ValueOf(err)
 
-	if !(wantErr.CanUint() && gotErr.CanUint() && wantErr.Uint() == gotErr.Uint() || ae.wantErr.Error() == err.Error()) {
-		ae.errorf("want error to be %s, got %s", ae.wantErr, err)
+	if wantErr.CanUint() && gotErr.CanUint() && wantErr.Uint() != gotErr.Uint() {
+		ae.errorf("want error to be %s (0x%X), got %s (0x%X)", wantErr, wantErr.Uint(), gotErr, gotErr.Uint())
+	} else if ae.wantErr.Error() != err.Error() {
+		ae.errorf("want error to be %s, got %s", wantErr, gotErr)
 	}
 
 	return ae
