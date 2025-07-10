@@ -26,8 +26,8 @@ import (
 // dirInfo contains the sample directories.
 type dirInfo struct {
 	Path      string
-	Mode      fs.FileMode
 	WantModes []fs.FileMode
+	Mode      fs.FileMode
 }
 
 // sampleDirs returns the sample directories used by Mkdir function.
@@ -88,8 +88,8 @@ func (ts *Suite) createSampleDirs(tb testing.TB, testDir string) []*dirInfo {
 // fileInfo contains the sample files.
 type fileInfo struct {
 	Path    string
-	Mode    fs.FileMode
 	Content []byte
+	Mode    fs.FileMode
 }
 
 // sampleFiles returns the sample files.

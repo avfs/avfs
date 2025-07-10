@@ -32,10 +32,10 @@ type Suite struct {
 	vfsTest     avfs.VFSBase       // vfsTest is the file system used to run the tests.
 	idm         avfs.IdentityMgr   // idm is the identity manager to be tested.
 	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
-	groups      []avfs.GroupReader // groups contains the test groups created with the identity manager.
-	users       []avfs.UserReader  // users contains the test users created with the identity manager.
-	testDataDir string             // testDataDir is the testdata directory of the test suite.
 	rootDir     string             // rootDir is the root directory for tests and benchmarks.
+	testDataDir string             // testDataDir is the testdata directory of the test suite.
+	users       []avfs.UserReader  // users contains the test users created with the identity manager.
+	groups      []avfs.GroupReader // groups contains the test groups created with the identity manager.
 	maxRace     int                // maxRace is the maximum number of concurrent goroutines used in race tests.
 	canTestPerm bool               // canTestPerm indicates if permissions can be tested.
 }

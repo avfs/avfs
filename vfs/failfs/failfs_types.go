@@ -44,14 +44,14 @@ type FailFunc func(vfs avfs.VFSBase, fn avfs.FnVFS, failParam *FailParam) error
 
 // FailParam regroups all possible parameters passed to the functions of a file system.
 type FailParam struct {
+	ATime   time.Time   // ATime is used in the Chtimes functions.
+	MTime   time.Time   // MTime is used in the Chtimes functions.
 	Op      string      // Op is the operation used for fs.PathError or os.LinkError.
 	Path    string      // Path is the Path parameter (or old path for link functions).
 	NewPath string      // NewPath is the New parameter for link functions.
-	Perm    fs.FileMode // Perm represents the permission mode parameter.
 	Flag    int         // Flag is the opening flag for Open function.
 	Uid     int         // Uid is used in the Chown and Lchown functions.
 	Gid     int         // Gid is used in the Chown and Lchown functions.
 	Size    int64       // Size is used in Truncate functions.
-	ATime   time.Time   // ATime is used in the Chtimes functions.
-	MTime   time.Time   // MTime is used in the Chtimes functions.
+	Perm    fs.FileMode // Perm represents the permission mode parameter.
 }

@@ -30,9 +30,9 @@ type (
 
 type treeInfo struct {
 	vfs     VFSBase
-	builder strings.Builder
 	users   userCache
 	groups  groupCache
+	builder strings.Builder
 	nbDirs  int
 	nbFiles int
 }

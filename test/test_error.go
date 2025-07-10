@@ -35,15 +35,15 @@ var goVersion = goVerNum(runtime.Version()) //nolint:gochecknoglobals // Stores 
 type assertError struct {
 	tb           testing.TB  // tb is the interface common to T, B, and F for the current test.
 	err          error       // err is the error to test.
-	wantOsType   avfs.OSType // wantOsType is the OS
+	wantErr      error       // wantErr is the expected Err of the fs.PathError or the os.LinkError.
+	wantPath     string      // wantPath is the expected Path for a fs.PathError.
+	wantOld      string      // wantOld is the expected Old for an os.LinkError.
+	wantNew      string      // wantNew is the expected New for an os.LinkError.
+	wantOp       string      // wantOp is the expected Op for the error.
 	wantMinGoVer int         // wantMinGoVer is the minimum go version returned by goVerNum function, 0 if not defined.
 	wantMaxGoVer int         // wantMaxGoVer is the minimum go version returned by goVerNum function, math.MaxInt if not defined.
-	wantPath     string      // wantPath is the expected Path for a fs.PathError.
-	wantOld      string      // wantOld is the expected Old for a os.LinkError.
-	wantNew      string      // wantNew is the expected New for a os.LinkError.
-	wantOp       string      // wantOp is the expected Op for the error.
-	wantErr      error       // wantErr is the expected Err of the fs.PathError or the os.LinkError.
-	isLinkError  bool        // isLinkError is true if the expected error is a os.LinkError.
+	wantOsType   avfs.OSType // wantOsType is the OS wanted to perform the test.
+	isLinkError  bool        // isLinkError is true if the expected error is an os.LinkError.
 }
 
 func assertPLError(tb testing.TB, err error, isLinkError bool) *assertError {

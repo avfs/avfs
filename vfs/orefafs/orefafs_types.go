@@ -25,18 +25,18 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	nodes           nodes        // nodes is the map of nodes (files or directories) where the key is the absolute path.
 	err             avfs.Errors  // err regroups errors depending on the OS emulated.
-	name            string       // name is the name of the file system.
+	avfs.CurUserFn               // CurUserFn provides current user functions to a file system.
+	avfs.IdmFn                   // IdmFn provides identity manager functions to a file system.
+	nodes           nodes        // nodes is the map of nodes (files or directories) where the key is the absolute path.
 	lastId          *uint64      // lastId is the last unique id used to identify files uniquely.
+	name            string       // name is the name of the file system.
+	avfs.CurDirFn                // CurDirFn provides current directory functions to a file system.
+	avfs.FeaturesFn              // FeaturesFn provides features functions to a file system or an identity manager.
 	mu              sync.RWMutex // mu is the RWMutex used to access nodes.
 	dirMode         fs.FileMode  // dirMode is the default fs.FileMode for a directory.
 	fileMode        fs.FileMode  // fileMode is de default fs.FileMode for a file.
-	avfs.CurDirFn                // CurDirFn provides current directory functions to a file system.
-	avfs.CurUserFn               // CurUserFn provides current user functions to a file system.
-	avfs.IdmFn                   // IdmFn provides identity manager functions to a file system.
 	avfs.UMaskFn                 // UMaskFn provides UMask functions to file systems.
-	avfs.FeaturesFn              // FeaturesFn provides features functions to a file system or an identity manager.
 	avfs.OSTypeFn                // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
@@ -55,9 +55,9 @@ type OrefaFile struct {
 
 // Options defines the initialization options of OrefaFS.
 type Options struct {
-	SystemDirs []avfs.DirInfo  // SystemDirs contains data to create system directories.
 	User       avfs.UserReader // User is the current user of the file system.
 	Name       string          // Name is the name of the file system.
+	SystemDirs []avfs.DirInfo  // SystemDirs contains data to create system directories.
 	OSType     avfs.OSType     // OSType defines the operating system type.
 }
 
