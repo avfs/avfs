@@ -128,7 +128,7 @@ type symlinkNode struct {
 // baseNode is the common structure of directories, files and symbolic links.
 type baseNode struct {
 	mu    sync.RWMutex // mu is the RWMutex used to access the content of the node.
-	mtime int64        // mtime is the modification time.
+	mtime time.Time    // mtime is the modification time.
 	mode  fs.FileMode  // mode represents a file's mode and permission bits.
 	uid   int          // uid is the user id.
 	gid   int          // gid is the group id.
@@ -148,7 +148,7 @@ type MemInfo struct {
 	name  string      // name is the name of the file.
 	id    uint64      // id is a unique id to identify a file (used by SameFile function).
 	size  int64       // size is the size of the file.
-	mtime int64       // mtime is the modification time.
+	mtime time.Time   // mtime is the modification time.
 	uid   int         // uid is the user id.
 	gid   int         // gid is the group id.
 	nlink int         // nlink is the number of hardlinks to this fileNode.

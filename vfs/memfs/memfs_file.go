@@ -577,7 +577,7 @@ func (f *MemFile) Truncate(size int64) error {
 	nd.mu.Lock()
 
 	nd.truncate(size)
-	nd.mtime = time.Now().UnixNano()
+	nd.mtime = time.Now()
 
 	nd.mu.Unlock()
 
@@ -628,7 +628,7 @@ func (f *MemFile) Write(b []byte) (n int, err error) {
 		n = len(b)
 	}
 
-	nd.mtime = time.Now().UnixNano()
+	nd.mtime = time.Now()
 
 	nd.mu.Unlock()
 
@@ -686,7 +686,7 @@ func (f *MemFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	n = copy(nd.data[off:], b)
 
-	nd.mtime = time.Now().UnixNano()
+	nd.mtime = time.Now()
 
 	nd.mu.Unlock()
 
@@ -723,7 +723,7 @@ func (info *MemInfo) Mode() fs.FileMode {
 
 // ModTime returns the modification time.
 func (info *MemInfo) ModTime() time.Time {
-	return time.Unix(0, info.mtime)
+	return info.mtime
 }
 
 // Name returns the base name of the file.

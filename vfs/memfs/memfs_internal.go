@@ -155,7 +155,7 @@ func (vfs *MemFS) createRootNode() *dirNode {
 	u := vfs.User()
 	dn := &dirNode{
 		baseNode: baseNode{
-			mtime: time.Now().UnixNano(),
+			mtime: time.Now(),
 			mode:  fs.ModeDir | 0o755,
 			uid:   u.Uid(),
 			gid:   u.Gid(),
@@ -169,7 +169,7 @@ func (vfs *MemFS) createRootNode() *dirNode {
 func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dirNode {
 	child := &dirNode{
 		baseNode: baseNode{
-			mtime: time.Now().UnixNano(),
+			mtime: time.Now(),
 			mode:  vfs.dirMode | (perm & avfs.FileModeMask &^ vfs.UMask()),
 			uid:   vfs.User().Uid(),
 			gid:   vfs.User().Gid(),
@@ -186,7 +186,7 @@ func (vfs *MemFS) createDir(parent *dirNode, name string, perm fs.FileMode) *dir
 func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fileNode {
 	child := &fileNode{
 		baseNode: baseNode{
-			mtime: time.Now().UnixNano(),
+			mtime: time.Now(),
 			mode:  vfs.fileMode | (perm & avfs.FileModeMask &^ vfs.UMask()),
 			uid:   vfs.User().Uid(),
 			gid:   vfs.User().Gid(),
@@ -204,7 +204,7 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fi
 func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode {
 	child := &symlinkNode{
 		baseNode: baseNode{
-			mtime: time.Now().UnixNano(),
+			mtime: time.Now(),
 			mode:  fs.ModeSymlink | fs.ModePerm,
 			uid:   vfs.User().Uid(),
 			gid:   vfs.User().Gid(),
@@ -255,7 +255,7 @@ func (bn *baseNode) setModTime(mtime time.Time, u avfs.UserReader) bool {
 		return false
 	}
 
-	bn.mtime = mtime.UnixNano()
+	bn.mtime = mtime
 
 	return true
 }
