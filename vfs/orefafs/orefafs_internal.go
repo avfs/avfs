@@ -56,7 +56,7 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.F
 
 	nd := &node{
 		id:    atomic.AddUint64(vfs.lastId, 1),
-		mtime: time.Now().UnixNano(),
+		mtime: time.Now(),
 		mode:  mode,
 		uid:   vfs.User().Uid(),
 		gid:   vfs.User().Gid(),
@@ -148,7 +148,7 @@ func (nd *node) setMode(mode fs.FileMode) {
 
 // setModTime sets the modification time of the node.
 func (nd *node) setModTime(mtime time.Time) {
-	nd.mtime = mtime.UnixNano()
+	nd.mtime = mtime
 }
 
 // setOwner sets the user and group id.

@@ -530,7 +530,7 @@ func (f *OrefaFile) Truncate(size int64) error {
 	nd.mu.Lock()
 
 	nd.truncate(size)
-	nd.mtime = time.Now().UnixNano()
+	nd.mtime = time.Now()
 
 	nd.mu.Unlock()
 
@@ -581,7 +581,7 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 		n = len(b)
 	}
 
-	nd.mtime = time.Now().UnixNano()
+	nd.mtime = time.Now()
 
 	nd.mu.Unlock()
 
@@ -639,7 +639,7 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	n = copy(nd.data[off:], b)
 
-	nd.mtime = time.Now().UnixNano()
+	nd.mtime = time.Now()
 
 	nd.mu.Unlock()
 
@@ -676,7 +676,7 @@ func (info *OrefaInfo) Mode() fs.FileMode {
 
 // ModTime returns the modification time.
 func (info *OrefaInfo) ModTime() time.Time {
-	return time.Unix(0, info.mtime)
+	return info.mtime
 }
 
 // Name returns the base name of the file.

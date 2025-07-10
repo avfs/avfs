@@ -69,7 +69,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	vfs.nodes = make(nodes)
 	vfs.nodes[volumeName] = &node{
 		mode:  fs.ModeDir | 0o755,
-		mtime: time.Now().UnixNano(),
+		mtime: time.Now(),
 		uid:   0,
 		gid:   0,
 	}

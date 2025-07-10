@@ -19,6 +19,7 @@ package orefafs
 import (
 	"io/fs"
 	"sync"
+	"time"
 
 	"github.com/avfs/avfs"
 )
@@ -69,11 +70,11 @@ type children nodes
 
 // node is the common structure of directories and files.
 type node struct {
+	mtime    time.Time
 	children children
 	data     []byte
 	uid      int
 	id       uint64
-	mtime    int64
 	gid      int
 	nlink    int
 	mu       sync.RWMutex
@@ -82,10 +83,10 @@ type node struct {
 
 // OrefaInfo is the implementation of fs.FileInfo returned by Stat and Lstat.
 type OrefaInfo struct {
+	mtime time.Time
 	name  string
 	id    uint64
 	size  int64
-	mtime int64
 	uid   int
 	gid   int
 	nlink int
