@@ -2241,6 +2241,12 @@ func (ts *Suite) TestSetUserByName(t *testing.T, testDir string) {
 	})
 
 	t.Run("UserExists", func(t *testing.T) {
+		curUser := vfs.User()
+		defer func() {
+			err := vfs.SetUserByName(curUser.Name())
+			RequireNoError(t, err, "SetUserByName %s", curUser.Name())
+		}()
+
 		for _, ui := range UserInfos() {
 			userName := ui.Name
 
