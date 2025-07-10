@@ -278,15 +278,16 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	op := "readdirent"
-	if f.vfs.OSType() == avfs.OsWindows {
-		op = "readdir"
-	}
+	var op string
 
 	if f.nd == nil {
-		err = avfs.ErrFileClosing
-		if f.vfs.OSType() == avfs.OsWindows {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "GetFileInformationByHandleEx"
 			err = avfs.ErrWinInvalidHandle
+		default:
+			op = "readdirent"
+			err = avfs.ErrFileClosing
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -294,7 +295,16 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "readdir"
+			err = avfs.ErrWinPathNotFound
+		default:
+			op = "readdirent"
+			err = avfs.ErrNotADirectory
+		}
+
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	if n <= 0 || f.dirEntries == nil {
@@ -351,15 +361,16 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	op := "readdirent"
-	if f.vfs.OSType() == avfs.OsWindows {
-		op = "readdir"
-	}
+	var op string
 
 	if f.nd == nil {
-		err = avfs.ErrFileClosing
-		if f.vfs.OSType() == avfs.OsWindows {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "GetFileInformationByHandleEx"
 			err = avfs.ErrWinInvalidHandle
+		default:
+			op = "readdirent"
+			err = avfs.ErrFileClosing
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -367,7 +378,16 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 
 	nd, ok := f.nd.(*dirNode)
 	if !ok {
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "readdir"
+			err = avfs.ErrWinPathNotFound
+		default:
+			op = "readdirent"
+			err = avfs.ErrNotADirectory
+		}
+
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	if n <= 0 || f.dirNames == nil {
@@ -432,32 +452,35 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 	size := int64(len(nd.data))
 	nd.mu.RUnlock()
 
+	var at int64
+
 	switch whence {
 	case io.SeekStart:
-		if offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
-		}
-
-		f.at = offset
+		at = offset
 	case io.SeekCurrent:
-		if f.at+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
-		}
-
-		f.at += offset
+		at = f.at + offset
 	case io.SeekEnd:
-		if size+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
-		}
-
-		f.at = size + offset
+		at = size + offset
 	default:
-		if f.vfs.OSType() != avfs.OsWindows {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
+		if f.vfs.OSType() == avfs.OsWindows {
+			return 0, nil
 		}
 
-		return 0, nil
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
+
+	if at < 0 {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			err = avfs.ErrWinNegativeSeek
+		default:
+			err = avfs.ErrInvalidArgument
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+	}
+
+	f.at = at
 
 	return f.at, nil
 }
@@ -526,29 +549,28 @@ func (f *MemFile) Truncate(size int64) error {
 	defer f.mu.RUnlock()
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
 
 	if f.nd == nil {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
+	var err error
+
+	switch f.vfs.OSType() {
+	case avfs.OsWindows:
+		err = avfs.ErrWinAccessDenied
+	default:
+		err = avfs.ErrInvalidArgument
+	}
+
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		err := error(avfs.ErrInvalidArgument)
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 
 	if f.openMode&avfs.OpenWrite == 0 {
-		err := error(avfs.ErrInvalidArgument)
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
 	}
 

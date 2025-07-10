@@ -513,7 +513,7 @@ func (vfs *MemFS) Open(name string) (avfs.File, error) {
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
-	const op = "open"
+	op := "open"
 
 	if name == "" {
 		return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
@@ -570,6 +570,10 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 		}
 
 		if om&avfs.OpenDir != 0 {
+			if vfs.OSType() == avfs.OsWindows {
+				op = "readdir"
+			}
+
 			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 		}
 
@@ -976,7 +980,12 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 	}
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
+		err = error(avfs.ErrInvalidArgument)
+		if vfs.OSType() == avfs.OsWindows {
+			err = avfs.ErrWinInvalidParameter
+		}
+
+		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	c.mu.Lock()
