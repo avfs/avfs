@@ -5,6 +5,7 @@ linters:
     - cyclop
     - depguard
     - dupl
+    - embeddedstructfieldcheck
     - err113
     - errorlint
     - exhaustruct
@@ -18,11 +19,13 @@ linters:
     - nakedret
     - nestif
     - nilerr
+    - noinlineerr
     - nonamedreturns
     - paralleltest
     - thelper
     - varnamelen
     - wrapcheck
+    - wsl_v5
   settings:
     dupl:
       threshold: 100
@@ -42,8 +45,8 @@ linters:
         - performance
         - style
     govet:
-      disable:
-        - fieldalignment
+      #disable:
+      #  - fieldalignment
       enable-all: true
     lll:
       line-length: 140
