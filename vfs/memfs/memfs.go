@@ -62,9 +62,11 @@ func (vfs *MemFS) Chdir(dir string) error {
 
 	c, ok := child.(*dirNode)
 	if !ok {
-		err = vfs.err.NotADirectory
-		if vfs.OSType() == avfs.OsWindows {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinDirNameInvalid
+		default:
+			err = avfs.ErrNotADirectory
 		}
 
 		return &fs.PathError{Op: op, Path: dir, Err: err}
@@ -343,9 +345,13 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 
 	c, ok := oChild.(*fileNode)
 	if !ok {
-		err := error(avfs.ErrOpNotPermitted)
-		if vfs.OSType() == avfs.OsWindows {
+		var err error
+
+		switch vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinAccessDenied
+		default:
+			err = avfs.ErrOpNotPermitted
 		}
 
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
@@ -638,9 +644,11 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 
 	sl, ok := child.(*symlinkNode)
 	if !ok {
-		err = avfs.ErrInvalidArgument
-		if vfs.OSType() == avfs.OsWindows {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinNotReparsePoint
+		default:
+			err = avfs.ErrInvalidArgument
 		}
 
 		return "", &fs.PathError{Op: op, Path: name, Err: err}
@@ -980,9 +988,11 @@ func (vfs *MemFS) Truncate(name string, size int64) error {
 	}
 
 	if size < 0 {
-		err = error(avfs.ErrInvalidArgument)
-		if vfs.OSType() == avfs.OsWindows {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinInvalidParameter
+		default:
+			err = avfs.ErrInvalidArgument
 		}
 
 		return &fs.PathError{Op: op, Path: name, Err: err}

@@ -248,3 +248,8 @@ func (e *Errors) SetOSType(osType OSType) {
 		e.TooManySymlinks = ErrTooManySymlinks
 	}
 }
+
+// Operation constants (most used).
+const (
+	OpReaddirent = "readdirent"
+)

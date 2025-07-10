@@ -43,9 +43,13 @@ func (f *MemFile) Chdir() error {
 
 	_, ok := f.nd.(*dirNode)
 	if !ok {
-		err := error(avfs.ErrNotADirectory)
-		if f.vfs.OSType() == avfs.OsWindows {
+		var err error
+
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinDirNameInvalid
+		default:
+			err = avfs.ErrNotADirectory
 		}
 
 		return &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -184,9 +188,11 @@ func (f *MemFile) Read(b []byte) (n int, err error) {
 
 	nd, ok := f.nd.(*fileNode)
 	if !ok {
-		err = avfs.ErrIsADirectory
-		if f.vfs.OSType() == avfs.OsWindows {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinIncorrectFunc
+		default:
+			err = avfs.ErrIsADirectory
 		}
 
 		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -286,7 +292,7 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 			op = "GetFileInformationByHandleEx"
 			err = avfs.ErrWinInvalidHandle
 		default:
-			op = "readdirent"
+			op = avfs.OpReaddirent
 			err = avfs.ErrFileClosing
 		}
 
@@ -300,7 +306,7 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 			op = "readdir"
 			err = avfs.ErrWinPathNotFound
 		default:
-			op = "readdirent"
+			op = avfs.OpReaddirent
 			err = avfs.ErrNotADirectory
 		}
 
@@ -369,7 +375,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 			op = "GetFileInformationByHandleEx"
 			err = avfs.ErrWinInvalidHandle
 		default:
-			op = "readdirent"
+			op = avfs.OpReaddirent
 			err = avfs.ErrFileClosing
 		}
 
@@ -383,7 +389,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 			op = "readdir"
 			err = avfs.ErrWinPathNotFound
 		default:
-			op = "readdirent"
+			op = avfs.OpReaddirent
 			err = avfs.ErrNotADirectory
 		}
 
