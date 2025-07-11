@@ -250,7 +250,7 @@ func getEsc[T VFSBase](vfs T, chunk string) (r rune, nchunk string, err error) {
 	if chunk == "" || chunk[0] == '-' || chunk[0] == ']' {
 		err = filepath.ErrBadPattern
 
-		return
+		return r, nchunk, err
 	}
 
 	if chunk[0] == '\\' && vfs.OSType() != OsWindows {
@@ -258,7 +258,7 @@ func getEsc[T VFSBase](vfs T, chunk string) (r rune, nchunk string, err error) {
 		if chunk == "" {
 			err = filepath.ErrBadPattern
 
-			return
+			return r, nchunk, err
 		}
 	}
 
@@ -272,7 +272,7 @@ func getEsc[T VFSBase](vfs T, chunk string) (r rune, nchunk string, err error) {
 		err = filepath.ErrBadPattern
 	}
 
-	return
+	return r, nchunk, err
 }
 
 // IsAbs reports whether the path is absolute.

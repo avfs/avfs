@@ -184,17 +184,17 @@ func Glob[T VFSBase](vfs T, pattern string) (matches []string, err error) {
 
 	m, err = Glob[T](vfs, dir)
 	if err != nil {
-		return
+		return matches, err
 	}
 
 	for _, d := range m {
 		matches, err = glob(vfs, d, file, matches)
 		if err != nil {
-			return
+			return matches, err
 		}
 	}
 
-	return //nolint:nakedret // Adapted from standard library.
+	return matches, err //nolint:nakedret // Adapted from standard library.
 }
 
 // glob searches for files matching pattern in the directory dir
@@ -206,16 +206,16 @@ func glob[T VFSBase](vfs T, dir, pattern string, matches []string) (m []string, 
 
 	fi, err := vfs.Stat(dir)
 	if err != nil {
-		return // ignore I/O error
+		return m, e // ignore I/O error
 	}
 
 	if !fi.IsDir() {
-		return // ignore I/O error
+		return m, e // ignore I/O error
 	}
 
 	d, err := vfs.OpenFile(dir, os.O_RDONLY, 0)
 	if err != nil {
-		return // ignore I/O error
+		return m, e // ignore I/O error
 	}
 
 	defer d.Close()
@@ -234,7 +234,7 @@ func glob[T VFSBase](vfs T, dir, pattern string, matches []string) (m []string, 
 		}
 	}
 
-	return //nolint:nakedret // Adapted from standard library.
+	return m, e //nolint:nakedret // Adapted from standard library.
 }
 
 // hasMeta reports whether path contains any of the magic characters

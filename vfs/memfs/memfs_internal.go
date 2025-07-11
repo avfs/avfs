@@ -57,7 +57,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 		if !ok {
 			err = vfs.err.NoSuchDir
 
-			return
+			return parent, child, pi, err
 		}
 
 		volNode = nd
@@ -78,7 +78,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 				err = vfs.err.NoSuchFile
 			}
 
-			return
+			return parent, child, pi, err
 		}
 
 		switch c := child.(type) {
@@ -86,7 +86,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			if pi.IsLast() {
 				err = vfs.err.FileExists
 
-				return
+				return parent, child, pi, err
 			}
 
 			c.mu.RLock()
@@ -96,7 +96,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			if !ok {
 				err = vfs.err.PermDenied
 
-				return
+				return parent, child, pi, err
 			}
 
 			parent = c
@@ -106,12 +106,12 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			if pi.IsLast() {
 				err = vfs.err.FileExists
 
-				return
+				return parent, child, pi, err
 			}
 
 			err = vfs.err.NotADirectory
 
-			return
+			return parent, child, pi, err
 
 		case *symlinkNode:
 			// Symlinks mode is always 0o777, no need to check permissions.
@@ -119,14 +119,14 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 			if slCount > slCountMax {
 				err = vfs.err.TooManySymlinks
 
-				return
+				return parent, child, pi, err
 			}
 
 			if pi.IsLast() {
 				if slMode == slmLstat {
 					err = vfs.err.FileExists
 
-					return
+					return parent, child, pi, err
 				}
 
 				// if the last part of the path is a symbolic link

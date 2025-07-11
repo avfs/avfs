@@ -130,5 +130,5 @@ func copyBufPool(dst io.Writer, src io.Reader) (written int64, err error) { //no
 
 	written, err = io.CopyBuffer(dst, src, *buf)
 
-	return
+	return written, err
 }
