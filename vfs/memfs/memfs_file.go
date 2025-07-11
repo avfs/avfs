@@ -290,13 +290,11 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
 			op = "GetFileInformationByHandleEx"
-			err = avfs.ErrWinInvalidHandle
 		default:
 			op = avfs.OpReaddirent
-			err = avfs.ErrFileClosing
 		}
 
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.FileClosing}
 	}
 
 	nd, ok := f.nd.(*dirNode)
@@ -304,13 +302,11 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
 			op = "readdir"
-			err = avfs.ErrWinPathNotFound
 		default:
 			op = avfs.OpReaddirent
-			err = avfs.ErrNotADirectory
 		}
 
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
 	}
 
 	if n <= 0 || f.dirEntries == nil {
@@ -373,13 +369,11 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
 			op = "GetFileInformationByHandleEx"
-			err = avfs.ErrWinInvalidHandle
 		default:
 			op = avfs.OpReaddirent
-			err = avfs.ErrFileClosing
 		}
 
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.FileClosing}
 	}
 
 	nd, ok := f.nd.(*dirNode)
@@ -476,14 +470,7 @@ func (f *MemFile) Seek(offset int64, whence int) (ret int64, err error) {
 	}
 
 	if at < 0 {
-		switch f.vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinNegativeSeek
-		default:
-			err = avfs.ErrInvalidArgument
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NegativeSeek}
 	}
 
 	f.at = at
@@ -555,7 +542,7 @@ func (f *MemFile) Truncate(size int64) error {
 	defer f.mu.RUnlock()
 
 	if size < 0 {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 	}
 
 	if f.nd == nil {

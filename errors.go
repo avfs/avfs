@@ -208,9 +208,11 @@ func (i WindowsError) Is(target error) bool {
 type ErrorsForOS struct {
 	BadFileDesc     error // bad file descriptor.
 	DirNotEmpty     error // Directory not empty.
+	FileClosing     error // use of closed file.
 	FileExists      error // File exists.
-	InvalidArgument error // invalid argument
+	InvalidArgument error // invalid argument.
 	IsADirectory    error // File Is a directory.
+	NegativeSeek    error // Negative seek invalid argument.
 	NoSuchDir       error // No such directory.
 	NoSuchFile      error // No such file.
 	NotADirectory   error // Not a directory.
@@ -224,9 +226,11 @@ var errorsForOS = map[OSType]*ErrorsForOS{ //nolint:gochecknoglobals // Should b
 	OsLinux: {
 		BadFileDesc:     ErrBadFileDesc,
 		DirNotEmpty:     ErrDirNotEmpty,
+		FileClosing:     ErrFileClosing,
 		FileExists:      ErrFileExists,
 		InvalidArgument: ErrInvalidArgument,
 		IsADirectory:    ErrIsADirectory,
+		NegativeSeek:    ErrInvalidArgument,
 		NoSuchDir:       ErrNoSuchFileOrDir,
 		NoSuchFile:      ErrNoSuchFileOrDir,
 		NotADirectory:   ErrNotADirectory,
@@ -237,9 +241,11 @@ var errorsForOS = map[OSType]*ErrorsForOS{ //nolint:gochecknoglobals // Should b
 	OsWindows: {
 		BadFileDesc:     ErrWinAccessDenied,
 		DirNotEmpty:     ErrWinDirNotEmpty,
+		FileClosing:     ErrWinInvalidHandle,
 		FileExists:      ErrWinFileExists,
-		InvalidArgument: ErrWinNegativeSeek,
+		InvalidArgument: ErrWinInvalidParameter,
 		IsADirectory:    ErrWinIsADirectory,
+		NegativeSeek:    ErrWinNegativeSeek,
 		NoSuchDir:       ErrWinPathNotFound,
 		NoSuchFile:      ErrWinFileNotFound,
 		NotADirectory:   ErrWinPathNotFound,
