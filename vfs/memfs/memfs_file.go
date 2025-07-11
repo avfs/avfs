@@ -301,7 +301,7 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 	if !ok {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
-			op = "readdir"
+			op = avfs.OpReaddir
 		default:
 			op = avfs.OpReaddirent
 		}
@@ -380,14 +380,12 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 	if !ok {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
-			op = "readdir"
-			err = avfs.ErrWinPathNotFound
+			op = avfs.OpReaddir
 		default:
 			op = avfs.OpReaddirent
-			err = avfs.ErrNotADirectory
 		}
 
-		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
 	}
 
 	if n <= 0 || f.dirNames == nil {

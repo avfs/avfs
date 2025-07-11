@@ -253,10 +253,7 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	op := "readdirent"
-	if f.vfs.OSType() == avfs.OsWindows {
-		op = "readdir"
-	}
+	var op string
 
 	if f.nd == nil {
 		switch f.vfs.OSType() {
@@ -273,7 +270,7 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	if !nd.mode.IsDir() {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
-			op = "readdir"
+			op = avfs.OpReaddir
 		default:
 			op = avfs.OpReaddirent
 		}
@@ -352,7 +349,7 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	if !nd.mode.IsDir() {
 		switch f.vfs.OSType() {
 		case avfs.OsWindows:
-			op = "readdir"
+			op = avfs.OpReaddir
 		default:
 			op = avfs.OpReaddirent
 		}

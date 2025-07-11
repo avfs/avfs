@@ -262,4 +262,5 @@ func ErrorsFor(osType OSType) *ErrorsForOS {
 // Operation constants (most used).
 const (
 	OpReaddirent = "readdirent"
+	OpReaddir    = "readdir"
 )

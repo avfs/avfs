@@ -577,7 +577,7 @@ func (vfs *MemFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, 
 
 		if om&avfs.OpenDir != 0 {
 			if vfs.OSType() == avfs.OsWindows {
-				op = "readdir"
+				op = avfs.OpReaddir
 			}
 
 			return (*MemFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
