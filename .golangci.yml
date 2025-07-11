@@ -45,8 +45,8 @@ linters:
         - performance
         - style
     govet:
-      #disable:
-      #  - fieldalignment
+      disable:
+        - fieldalignment
       enable-all: true
     lll:
       line-length: 140

@@ -259,9 +259,15 @@ func (f *OrefaFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	}
 
 	if f.nd == nil {
-		err := error(avfs.ErrFileClosing)
-		if f.vfs.OSType() == avfs.OsWindows {
+		var err error
+
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "GetFileInformationByHandleEx"
 			err = avfs.ErrWinInvalidHandle
+		default:
+			op = avfs.OpReaddirent
+			err = avfs.ErrFileClosing
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -326,15 +332,16 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 	f.mu.RLock()
 	defer f.mu.RUnlock()
 
-	op := "readdirent"
-	if f.vfs.OSType() == avfs.OsWindows {
-		op = "readdir"
-	}
+	var op string
 
 	if f.nd == nil {
-		err = avfs.ErrFileClosing
-		if f.vfs.OSType() == avfs.OsWindows {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "GetFileInformationByHandleEx"
 			err = avfs.ErrWinInvalidHandle
+		default:
+			op = avfs.OpReaddirent
+			err = avfs.ErrFileClosing
 		}
 
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: err}
@@ -342,6 +349,15 @@ func (f *OrefaFile) Readdirnames(n int) (names []string, err error) {
 
 	nd := f.nd
 	if !nd.mode.IsDir() {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			op = "readdir"
+			err = avfs.ErrWinPathNotFound
+		default:
+			op = avfs.OpReaddirent
+			err = avfs.ErrNotADirectory
+		}
+
 		return nil, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.NotADirectory}
 	}
 
@@ -407,32 +423,35 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 	size := int64(len(nd.data))
 	nd.mu.RUnlock()
 
+	var at int64
+
 	switch whence {
 	case io.SeekStart:
-		if offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
-		}
-
-		f.at = offset
+		at = offset
 	case io.SeekCurrent:
-		if f.at+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
-		}
-
-		f.at += offset
+		at = f.at + offset
 	case io.SeekEnd:
-		if size+offset < 0 {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
-		}
-
-		f.at = size + offset
+		at = size + offset
 	default:
-		if f.vfs.OSType() != avfs.OsWindows {
-			return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
+		if f.vfs.OSType() == avfs.OsWindows {
+			return 0, nil
 		}
 
-		return 0, nil
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
 	}
+
+	if at < 0 {
+		switch f.vfs.OSType() {
+		case avfs.OsWindows:
+			err = avfs.ErrWinNegativeSeek
+		default:
+			err = avfs.ErrInvalidArgument
+		}
+
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+	}
+
+	f.at = at
 
 	return f.at, nil
 }
