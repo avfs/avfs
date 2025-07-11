@@ -562,7 +562,7 @@ func (vfs *OrefaFS) Open(name string) (avfs.File, error) {
 // methods on the returned File can be used for I/O.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
-	const op = "open"
+	op := "open"
 
 	if name == "" {
 		return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
@@ -617,6 +617,10 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 			}
 
 			if om&avfs.OpenDir != 0 {
+				if vfs.OSType() == avfs.OsWindows {
+					op = "readdir"
+				}
+
 				return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 			}
 
@@ -929,12 +933,7 @@ func (vfs *OrefaFS) Sub(dir string) (avfs.VFS, error) {
 func (vfs *OrefaFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	err := error(avfs.ErrPermDenied)
-	if vfs.OSType() == avfs.OsWindows {
-		err = avfs.ErrWinPrivilegeNotHeld
-	}
-
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 }
 
 // TempDir returns the default directory to use for temporary files.
