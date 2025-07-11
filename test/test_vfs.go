@@ -2406,9 +2406,7 @@ func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Symlink(testDir, testDir)
-		AssertLinkError(t, err).Op("symlink").Old(testDir).New(testDir).
-			OSType(avfs.OsLinux).Err(avfs.ErrPermDenied).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPrivilegeNotHeld).Test()
+		AssertLinkError(t, err).Op("symlink").Old(testDir).New(testDir).ErrPermDenied().Test()
 
 		return
 	}

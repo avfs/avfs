@@ -470,12 +470,7 @@ func (vfs *RoFS) Sub(dir string) (avfs.VFS, error) {
 func (vfs *RoFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	err := vfs.err.PermDenied
-	if vfs.OSType() == avfs.OsWindows {
-		err = avfs.ErrWinPrivilegeNotHeld
-	}
-
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 }
 
 // TempDir returns the default directory to use for temporary files.
