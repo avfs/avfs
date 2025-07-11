@@ -43,7 +43,7 @@ func (f *RoFile) Chmod(mode fs.FileMode) error {
 		return fs.ErrInvalid
 	}
 
-	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
+	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
 }
 
 // Chown changes the numeric uid and gid of the named file.
@@ -58,7 +58,7 @@ func (f *RoFile) Chown(uid, gid int) error {
 		return fs.ErrInvalid
 	}
 
-	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
+	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
 }
 
 // Close closes the RoFile, rendering it unusable for I/O.
@@ -195,7 +195,7 @@ func (f *RoFile) Sync() error {
 		return fs.ErrInvalid
 	}
 
-	return &fs.PathError{Op: "sync", Path: avfs.NotImplemented, Err: f.vfs.errPermDenied}
+	return &fs.PathError{Op: "sync", Path: avfs.NotImplemented, Err: f.vfs.err.PermDenied}
 }
 
 // Truncate changes the size of the file.
@@ -208,7 +208,7 @@ func (f *RoFile) Truncate(size int64) error {
 		return fs.ErrInvalid
 	}
 
-	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
+	return &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
 }
 
 // Write writes len(b) bytes to the RoFile.
@@ -221,7 +221,7 @@ func (f *RoFile) Write(b []byte) (n int, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
 }
 
 // WriteAt writes len(b) bytes to the File starting at byte offset off.
@@ -234,7 +234,7 @@ func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 		return 0, fs.ErrInvalid
 	}
 
-	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.errPermDenied}
+	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
 }
 
 // WriteString is like Write, but writes the contents of string s rather than

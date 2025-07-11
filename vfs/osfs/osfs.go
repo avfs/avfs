@@ -445,7 +445,7 @@ func (vfs *OsFS) Sub(dir string) (avfs.VFS, error) {
 
 	// TODO:
 
-	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.permDeniedError}
+	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
 }
 
 // Symlink creates newname as a symbolic link to oldname.

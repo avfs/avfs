@@ -204,8 +204,8 @@ func (i WindowsError) Is(target error) bool {
 	return false
 }
 
-// Errors regroups errors depending on the OS emulated.
-type Errors struct {
+// ErrorsForOS regroups errors depending on the OS emulated.
+type ErrorsForOS struct {
 	BadFileDesc     error // bad file descriptor.
 	DirNotEmpty     error // Directory not empty.
 	FileExists      error // File exists.
@@ -219,34 +219,38 @@ type Errors struct {
 	TooManySymlinks error // Too many levels of symbolic links.
 }
 
-// SetOSType sets errors depending on the operating system.
-func (e *Errors) SetOSType(osType OSType) {
-	switch osType {
-	case OsWindows:
-		e.BadFileDesc = ErrWinAccessDenied
-		e.DirNotEmpty = ErrWinDirNotEmpty
-		e.FileExists = ErrWinFileExists
-		e.InvalidArgument = ErrWinNegativeSeek
-		e.IsADirectory = ErrWinIsADirectory
-		e.NoSuchDir = ErrWinPathNotFound
-		e.NoSuchFile = ErrWinFileNotFound
-		e.NotADirectory = ErrWinPathNotFound
-		e.OpNotPermitted = ErrWinNotSupported
-		e.PermDenied = ErrWinAccessDenied
-		e.TooManySymlinks = ErrTooManySymlinks
-	default:
-		e.BadFileDesc = ErrBadFileDesc
-		e.DirNotEmpty = ErrDirNotEmpty
-		e.FileExists = ErrFileExists
-		e.InvalidArgument = ErrInvalidArgument
-		e.IsADirectory = ErrIsADirectory
-		e.NoSuchDir = ErrNoSuchFileOrDir
-		e.NoSuchFile = ErrNoSuchFileOrDir
-		e.NotADirectory = ErrNotADirectory
-		e.OpNotPermitted = ErrOpNotPermitted
-		e.PermDenied = ErrPermDenied
-		e.TooManySymlinks = ErrTooManySymlinks
-	}
+// errorsForOS defines common errors for each OS.
+var errorsForOS = map[OSType]*ErrorsForOS{ //nolint:gochecknoglobals // Should be a const.
+	OsLinux: {
+		BadFileDesc:     ErrBadFileDesc,
+		DirNotEmpty:     ErrDirNotEmpty,
+		FileExists:      ErrFileExists,
+		InvalidArgument: ErrInvalidArgument,
+		IsADirectory:    ErrIsADirectory,
+		NoSuchDir:       ErrNoSuchFileOrDir,
+		NoSuchFile:      ErrNoSuchFileOrDir,
+		NotADirectory:   ErrNotADirectory,
+		OpNotPermitted:  ErrOpNotPermitted,
+		PermDenied:      ErrPermDenied,
+		TooManySymlinks: ErrTooManySymlinks,
+	},
+	OsWindows: {
+		BadFileDesc:     ErrWinAccessDenied,
+		DirNotEmpty:     ErrWinDirNotEmpty,
+		FileExists:      ErrWinFileExists,
+		InvalidArgument: ErrWinNegativeSeek,
+		IsADirectory:    ErrWinIsADirectory,
+		NoSuchDir:       ErrWinPathNotFound,
+		NoSuchFile:      ErrWinFileNotFound,
+		NotADirectory:   ErrWinPathNotFound,
+		OpNotPermitted:  ErrWinNotSupported,
+		PermDenied:      ErrWinAccessDenied,
+		TooManySymlinks: ErrTooManySymlinks,
+	},
+}
+
+func ErrorsFor(osType OSType) *ErrorsForOS {
+	return errorsForOS[osType]
 }
 
 // Operation constants (most used).

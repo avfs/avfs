@@ -49,19 +49,9 @@ func NewWithOptions(opts *Options) *OsFS {
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetIdm(idm)
-	vfs.setErrors()
+	vfs.err = avfs.ErrorsFor(vfs.OSType())
 
 	return vfs
-}
-
-// setErrors sets OsFS errors depending on the operating system.
-func (vfs *OsFS) setErrors() {
-	switch vfs.OSType() {
-	case avfs.OsWindows:
-		vfs.permDeniedError = avfs.ErrWinAccessDenied
-	default:
-		vfs.permDeniedError = avfs.ErrPermDenied
-	}
 }
 
 // Name returns the name of the fileSystem.

@@ -22,18 +22,10 @@ import (
 
 // New creates a new readonly file system (RoFS) from a base file system.
 func New(baseFS avfs.VFS) *RoFS {
-	vfs := &RoFS{
-		baseFS:            baseFS,
-		errOpNotPermitted: avfs.ErrOpNotPermitted,
-		errPermDenied:     avfs.ErrPermDenied,
-	}
+	vfs := &RoFS{baseFS: baseFS}
 
 	_ = vfs.SetFeatures(baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly)
-
-	if baseFS.OSType() == avfs.OsWindows {
-		vfs.errOpNotPermitted = avfs.ErrWinNotSupported
-		vfs.errPermDenied = avfs.ErrWinAccessDenied
-	}
+	vfs.err = avfs.ErrorsFor(vfs.OSType())
 
 	return vfs
 }

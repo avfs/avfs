@@ -22,9 +22,9 @@ import (
 
 // OsFS represents the current file system.
 type OsFS struct {
-	permDeniedError error // Permission denied error.
-	avfs.IdmFn            // IdmFn provides identity manager functions to a file system.
-	avfs.FeaturesFn       // FeaturesFn provides features functions to a file system or an identity manager.
+	err             *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
+	avfs.IdmFn                        // IdmFn provides identity manager functions to a file system.
+	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
 }
 
 // Options defines the initialization options of OsFS.

@@ -58,7 +58,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	_ = vfs.SetIdm(idm)
 	_ = vfs.SetUser(user)
 
-	vfs.err.SetOSType(vfs.OSType())
+	vfs.err = avfs.ErrorsFor(vfs.OSType())
 	vfs.rootNode = vfs.createRootNode()
 
 	var volumeName string
