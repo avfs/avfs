@@ -63,6 +63,7 @@ func NewWithErr(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
 	}
 
 	_ = vfs.SetFeatures(baseFS.Features() &^ avfs.FeatSymlink)
+	vfs.err = avfs.ErrorsFor(vfs.OSType())
 
 	return vfs, nil
 }
@@ -109,7 +110,7 @@ func (vfs *BasePathFS) ToBasePath(path string) string {
 	if vfs.IsAbs(path) {
 		vl := avfs.VolumeNameLen(vfs, path)
 
-		return vfs.basePath + path[vl:]
+		return vfs.Join(vfs.basePath, path[vl:])
 	}
 
 	return path

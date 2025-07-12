@@ -352,7 +352,7 @@ func (vfs *BasePathFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.F
 	const op = "open"
 
 	if name == "" {
-		return (*BasePathFile)(nil), &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return (*BasePathFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	bf, err := vfs.baseFS.OpenFile(vfs.ToBasePath(name), flag, perm)
@@ -504,11 +504,7 @@ func (vfs *BasePathFS) Sub(dir string) (avfs.VFS, error) {
 func (vfs *BasePathFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	if vfs.OSType() == avfs.OsWindows {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrWinPrivilegeNotHeld}
-	}
-
-	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrPermDenied}
+	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
 }
 
 // TempDir returns the default directory to use for temporary files.

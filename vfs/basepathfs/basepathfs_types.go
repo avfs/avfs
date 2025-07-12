@@ -22,9 +22,10 @@ import (
 
 // BasePathFS implements a base path file system.
 type BasePathFS struct {
-	baseFS          avfs.VFS // baseFS is the base file system.
-	basePath        string   // basePath is the absolute path prepended to all files of the base file system.
-	avfs.FeaturesFn          // FeaturesFn provides features functions to a file system or an identity manager.
+	err             *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
+	baseFS          avfs.VFS          // baseFS is the base file system.
+	basePath        string            // basePath is the absolute path prepended to all files of the base file system.
+	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
 }
 
 // BasePathFile represents an open file descriptor.

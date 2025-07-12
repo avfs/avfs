@@ -124,19 +124,21 @@ func TestBasePathFSOSType(t *testing.T) {
 func TestBasePathFSToBasePath(t *testing.T) {
 	vfs, basePath := initFS(t)
 
-	toTests := []struct{ Path, ToPath string }{
-		{Path: "", ToPath: basePath},
-		{Path: "/", ToPath: basePath},
-		{Path: "/tmp", ToPath: basePath + "/tmp"},
-		{Path: "/tmp/avfs", ToPath: basePath + "/tmp/avfs"},
+	toTests := []struct{ path, result string }{
+		{path: "", result: basePath},
+		{path: "/", result: basePath},
+		{path: "/tmp", result: basePath + "/tmp"},
+		{path: "/tmp/avfs", result: basePath + "/tmp/avfs"},
 	}
 
 	for _, tt := range toTests {
-		path := avfs.FromUnixPath(vfs, tt.Path)
+		path := avfs.FromUnixPath(vfs, tt.path)
 
-		toPath := vfs.ToBasePath(path)
-		if toPath != tt.ToPath {
-			t.Errorf("ToBasePath %s : want path to be %s, got %s", path, tt.ToPath, toPath)
+		want := avfs.FromUnixPath(vfs, tt.result)
+		got := vfs.ToBasePath(path)
+
+		if got != want {
+			t.Errorf("ToBasePath %s : want path to be %s, got %s", path, want, got)
 		}
 	}
 }
@@ -144,25 +146,26 @@ func TestBasePathFSToBasePath(t *testing.T) {
 func TestBasePathFSFromBasePath(t *testing.T) {
 	vfs, basePath := initFS(t)
 
-	fromTests := []struct{ FromPath, Path string }{
-		{FromPath: "/another/path", Path: ""},
-		{FromPath: basePath, Path: "/"},
-		{FromPath: basePath + "/tmp", Path: "/tmp"},
-		{FromPath: basePath + "/tmp/avfs", Path: "/tmp/avfs"},
+	fromTests := []struct{ path, result string }{
+		{path: "/another/path", result: ""},
+		{path: basePath, result: "/"},
+		{path: basePath + "/tmp", result: "/tmp"},
+		{path: basePath + "/tmp/avfs", result: "/tmp/avfs"},
 	}
 
 	for _, ft := range fromTests {
-		fromPath := avfs.FromUnixPath(vfs, ft.FromPath)
-		path := ""
+		path := avfs.FromUnixPath(vfs, ft.path)
 
-		if !strings.HasPrefix(fromPath, basePath) {
+		if !strings.HasPrefix(path, basePath) {
 			test.AssertPanic(t, "", func() {
-				path = vfs.FromBasePath(fromPath)
+				path = vfs.FromBasePath(path)
 			})
 		} else {
-			path = vfs.FromBasePath(fromPath)
-			if path != ft.Path {
-				t.Errorf("FromBasePath %s : want path to be %s, got %s", fromPath, ft.Path, path)
+			want := avfs.FromUnixPath(vfs, ft.result)
+			got := vfs.FromBasePath(path)
+
+			if got != want {
+				t.Errorf("FromBasePath %s : want path to be %s, got %s", ft.path, want, got)
 			}
 		}
 	}
