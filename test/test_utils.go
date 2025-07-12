@@ -40,6 +40,7 @@ func (ts *Suite) TestUtils(t *testing.T) {
 		ts.TestCopyFile,
 		ts.TestDirExists,
 		ts.TestExists,
+		ts.TestFromUnixPath,
 		ts.TestHashFile,
 		ts.TestIsDir,
 		ts.TestIsEmpty,
@@ -623,6 +624,32 @@ func (ts *Suite) TestFromToSlash(t *testing.T, _ string) {
 
 		if s := vfs.ToSlash(test.result); s != test.path {
 			t.Errorf("ToSlash(%q) = %q, want %q", test.result, s, test.path)
+		}
+	}
+}
+
+func (ts *Suite) TestFromUnixPath(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
+
+	windowsRoot := avfs.DefaultVolume + "\\"
+
+	upTests := []struct{ path, resultUnix, resultWindows string }{
+		{path: "", resultUnix: "/", resultWindows: windowsRoot},
+		{path: "/", resultUnix: "/", resultWindows: windowsRoot},
+		{path: "/tmp", resultUnix: "/tmp", resultWindows: vfs.Join(windowsRoot, "tmp")},
+		{path: "/tmp/subdir", resultUnix: "/tmp/subdir", resultWindows: vfs.Join(windowsRoot, "tmp/subdir")},
+		{path: "../tmp/subdir", resultUnix: "../tmp/subdir", resultWindows: `..\tmp\subdir`},
+	}
+
+	for _, upTest := range upTests {
+		want := upTest.resultUnix
+		if vfs.OSType() == avfs.OsWindows {
+			want = upTest.resultWindows
+		}
+
+		got := avfs.FromUnixPath(vfs, upTest.path)
+		if got != want {
+			t.Errorf("FromUnixPath(%q) = %q, want %q", upTest.path, got, want)
 		}
 	}
 }

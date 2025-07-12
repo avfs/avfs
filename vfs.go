@@ -133,11 +133,15 @@ func FromUnixPath[T VFSBase](vfs T, path string) string {
 		return path
 	}
 
+	if path == "" {
+		return Join(vfs, DefaultVolume, "\\")
+	}
+
 	if path[0] != '/' {
 		return FromSlash(vfs, path)
 	}
 
-	return Join(vfs, DefaultVolume, FromSlash(vfs, path))
+	return Join(vfs, DefaultVolume, path)
 }
 
 // Glob returns the names of all files matching pattern or nil
