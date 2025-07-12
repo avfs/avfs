@@ -633,15 +633,21 @@ func (ts *Suite) TestTempDir(t *testing.T, _ string) {
 	vfs := ts.vfsTest
 	tmpDir := vfs.TempDir()
 
-	if vfs.OSType() == avfs.OsWindows {
+	switch vfs.OSType() {
+	case avfs.OsWindows:
 		const wantRe = `(?i)^(c:\\windows\\temp|c:\\Users\\[^\\]+\\AppData\\Local\\Temp)$`
 
 		re := regexp.MustCompile(wantRe)
 		if !re.MatchString(tmpDir) {
 			t.Errorf("TempDir : want temp dir to match '%s', got %s", wantRe, tmpDir)
 		}
-	} else {
-		wantTmpDir := "/tmp"
+	case avfs.OsDarwin:
+		const wantTmpDir = "/var/folders/"
+		if !strings.HasPrefix(tmpDir, wantTmpDir) {
+			t.Errorf("TempDir : want temp dir to begin with %s, got %s", wantTmpDir, tmpDir)
+		}
+	default:
+		const wantTmpDir = "/tmp"
 		if tmpDir != wantTmpDir {
 			t.Errorf("TempDir : want temp dir to be %s, got %s", wantTmpDir, tmpDir)
 		}
