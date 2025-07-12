@@ -130,6 +130,10 @@ func CreateTemp[T VFSBase](vfs T, dir, pattern string) (File, error) {
 // and relative paths are preserved.
 func FromUnixPath[T VFSBase](vfs T, path string) string {
 	if vfs.OSType() != OsWindows {
+		if path == "" {
+			return "/"
+		}
+
 		return path
 	}
 
