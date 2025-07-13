@@ -24,4 +24,4 @@ COPY tmp/avfs.exe ./
 WORKDIR /go/src
 ADD tmp/avfs.tar ./
 
-CMD avfs test
+ENTRYPOINT ["avfs", "test"]
