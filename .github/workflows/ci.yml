@@ -8,6 +8,7 @@ jobs:
       matrix:
         go: [1.23.x, 1.24.x]
         os: [ubuntu-latest, windows-latest]
+        setostype: [setostype_on, setostype_off]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -29,6 +30,12 @@ jobs:
       - name: Run tests as an unprivileged user
         run: avfs test
 
+      - name: Run tests as an unprivileged user with SetOsType
+        env:
+          GOFLAGS: "-tags=avfs_setostype"
+        if: ${{ matrix.setostype == 'on' }}
+        run: avfs test
+
       - name: Run tests as root
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: avfs testAsRoot
@@ -36,7 +43,7 @@ jobs:
       - name: Run tests as root with SetOsType
         env:
           GOFLAGS: "-tags=avfs_setostype"
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.setostype == 'on' }}
         run: avfs testAsRoot
 
       - name: Run race tests
@@ -45,11 +52,12 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         env:
-          OS: ${{ matrix.os }}
-          GO: ${{ matrix.go }}
+          os: ${{ matrix.os }}
+          go: ${{ matrix.go }}
+          setostype: ${{ matrix.setostype }}
         with:
           files: tmp/avfs-cover-*.txt
-          env_vars: OS,GO
+          env_vars: os,go,setostype
           verbose: true
 
       - name: Run build tests on linux
