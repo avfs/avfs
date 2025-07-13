@@ -975,7 +975,11 @@ func (ts *Suite) TestLstat(t *testing.T, testDir string) {
 
 			if sl.IsSymlink {
 				wantName = vfs.Base(sl.NewPath)
+
 				wantMode = fs.ModeSymlink | fs.ModePerm
+				if vfs.OSType() == avfs.OsDarwin {
+					wantMode = fs.ModeSymlink | avfs.DefaultDirPerm&^vfs.UMask()
+				}
 			}
 
 			if wantName != info.Name() {
