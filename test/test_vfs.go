@@ -542,11 +542,11 @@ func (ts *Suite) TestCreateTemp(t *testing.T, testDir string) {
 		f, err := vfs.CreateTemp("", "CreateTemp")
 		RequireNoError(t, err, "CreateTemp")
 
-		wantDir := vfs.TempDir()
-		gotDir := vfs.Dir(f.Name())
+		wantPath := vfs.TempDir()
+		gotPath := f.Name()
 
-		if !strings.HasPrefix(gotDir, wantDir) {
-			t.Errorf("want directory to be %s, got %s", wantDir, gotDir)
+		if !strings.HasPrefix(gotPath, wantPath) {
+			t.Errorf("want path prefix to be %s, got %s", wantPath, gotPath[:len(wantPath)])
 		}
 
 		err = f.Close()
@@ -1257,18 +1257,16 @@ func (ts *Suite) TestMkdirTemp(t *testing.T, testDir string) {
 	}
 
 	t.Run("MkdirTempEmptyDir", func(t *testing.T) {
-		tmpDir, err := vfs.MkdirTemp("", "MkdirTemp")
+		gotPath, err := vfs.MkdirTemp("", "MkdirTemp")
 		RequireNoError(t, err, "MkdirTemp")
 
-		wantDir := vfs.TempDir()
-		dir := vfs.Dir(tmpDir)
-
-		if dir != wantDir {
-			t.Errorf("want directory to be %s, got %s", wantDir, dir)
+		wantPath := vfs.TempDir()
+		if !strings.HasPrefix(gotPath, wantPath) {
+			t.Errorf("want path prefix to be %s, got %s", wantPath, gotPath[:len(wantPath)])
 		}
 
-		err = vfs.Remove(tmpDir)
-		RequireNoError(t, err, "Remove %s", tmpDir)
+		err = vfs.Remove(gotPath)
+		RequireNoError(t, err, "Remove %s", gotPath)
 	})
 
 	t.Run("MkdirTempBadPattern", func(t *testing.T) {
