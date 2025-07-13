@@ -41,38 +41,12 @@ func main() {
 
 	os.Setenv("CGO_ENABLED", "0")
 
-	if isExecutable("mage") {
-		log.Printf("mage binary already exists")
-	} else {
-		tmpDir, err := os.MkdirTemp("", "mage")
-		if err != nil {
-			log.Fatalf("MkdirTemp : want error to be nil, got %v", err)
-		}
-
-		defer os.RemoveAll(tmpDir)
-
-		err = os.Chdir(tmpDir)
-		if err != nil {
-			log.Fatalf("Chdir : want error to be nil, got %v", err)
-		}
-
-		err = run(gitCmd, "clone", "--depth=1", mageGitUrl)
-		if err != nil {
-			log.Fatalf("Git : want error to be nil, got %v", err)
-		}
-
-		err = os.Chdir("mage")
-		if err != nil {
-			log.Fatalf("Chdir : want error to be nil, got %v", err)
-		}
-
-		err = run(goCmd, "run", "bootstrap.go")
-		if err != nil {
-			log.Fatalf("Bootstap : want error to be nil, got %v", err)
-		}
+	err := buildMage()
+	if err != nil {
+		log.Fatalf("buildMage : want error to be nil, got %v", err)
 	}
 
-	err := os.Chdir(mageDir)
+	err = os.Chdir(mageDir)
 	if err != nil {
 		log.Fatalf("Chdir : want error to be nil, got %v", err)
 	}
@@ -103,6 +77,44 @@ func main() {
 	if err != nil {
 		log.Fatalf("avfs : want error to be nil, got %v", err)
 	}
+}
+
+// buildMage builds the mage binary if it does not exist.
+func buildMage() error {
+	if isExecutable("mage") {
+		log.Printf("mage binary already exists")
+
+		return nil
+	}
+
+	tmpDir, err := os.MkdirTemp("", "mage")
+	if err != nil {
+		log.Fatalf("MkdirTemp : want error to be nil, got %v", err)
+	}
+
+	defer os.RemoveAll(tmpDir)
+
+	err = os.Chdir(tmpDir)
+	if err != nil {
+		log.Fatalf("Chdir : want error to be nil, got %v", err)
+	}
+
+	err = run(gitCmd, "clone", "--depth=1", mageGitUrl)
+	if err != nil {
+		log.Fatalf("Git : want error to be nil, got %v", err)
+	}
+
+	err = os.Chdir("mage")
+	if err != nil {
+		log.Fatalf("Chdir : want error to be nil, got %v", err)
+	}
+
+	err = run(goCmd, "run", "bootstrap.go")
+	if err != nil {
+		log.Fatalf("Bootstap : want error to be nil, got %v", err)
+	}
+
+	return err
 }
 
 // run executes a command cmd with arguments args.
