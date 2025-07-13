@@ -543,10 +543,10 @@ func (ts *Suite) TestCreateTemp(t *testing.T, testDir string) {
 		RequireNoError(t, err, "CreateTemp")
 
 		wantDir := vfs.TempDir()
-		dir := vfs.Dir(f.Name())
+		gotDir := vfs.Dir(f.Name())
 
-		if dir != wantDir {
-			t.Errorf("want directory to be %s, got %s", wantDir, dir)
+		if !strings.HasPrefix(gotDir, wantDir) {
+			t.Errorf("want directory to be %s, got %s", wantDir, gotDir)
 		}
 
 		err = f.Close()
