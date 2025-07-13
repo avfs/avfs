@@ -238,6 +238,21 @@ var errorsForOS = map[OSType]*ErrorsForOS{ //nolint:gochecknoglobals // Should b
 		PermDenied:      ErrPermDenied,
 		TooManySymlinks: ErrTooManySymlinks,
 	},
+	OsDarwin: {
+		BadFileDesc:     ErrBadFileDesc,
+		DirNotEmpty:     ErrDirNotEmpty,
+		FileClosing:     ErrFileClosing,
+		FileExists:      ErrFileExists,
+		InvalidArgument: ErrInvalidArgument,
+		IsADirectory:    ErrIsADirectory,
+		NegativeSeek:    ErrInvalidArgument,
+		NoSuchDir:       ErrNoSuchFileOrDir,
+		NoSuchFile:      ErrNoSuchFileOrDir,
+		NotADirectory:   ErrNotADirectory,
+		OpNotPermitted:  ErrOpNotPermitted,
+		PermDenied:      ErrPermDenied,
+		TooManySymlinks: ErrTooManySymlinks,
+	},
 	OsWindows: {
 		BadFileDesc:     ErrWinAccessDenied,
 		DirNotEmpty:     ErrWinDirNotEmpty,
@@ -256,7 +271,12 @@ var errorsForOS = map[OSType]*ErrorsForOS{ //nolint:gochecknoglobals // Should b
 }
 
 func ErrorsFor(osType OSType) *ErrorsForOS {
-	return errorsForOS[osType]
+	errors, ok := errorsForOS[osType]
+	if !ok {
+		panic("Unknown OS type : " + osType.String())
+	}
+
+	return errors
 }
 
 // Operation constants (most used).
