@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build !linux && !windows
+//go:build !unix && !windows
 
 package osfs
 
