@@ -19,7 +19,6 @@
 package osidm
 
 import (
-	"bytes"
 	"fmt"
 	"math"
 	"os"
@@ -47,21 +46,13 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("groupadd", groupName)
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errStr := strings.TrimSpace(stderr.String())
-		switch errStr {
-		case "groupadd: group '" + groupName + "' already exists":
+	err := run("groupadd", groupName)
+	if err != nil {
+		switch err.Error() {
+		case fmt.Sprintf("groupadd: group '%s' already exists", groupName):
 			return nil, avfs.AlreadyExistsGroupError(groupName)
 		default:
-			return nil, avfs.UnknownError(err.Error() + errStr)
+			return nil, err
 		}
 	}
 
@@ -88,24 +79,15 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("useradd", "-M", "-g", groupName, userName)
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
+	err := run("useradd", "-M", "-g", groupName, userName)
 	if err != nil {
-		errStr := strings.TrimSpace(stderr.String())
-		switch errStr {
-		case "useradd: user '" + userName + "' already exists":
+		switch err.Error() {
+		case fmt.Sprintf("useradd: user '%s' already exists", userName):
 			return nil, avfs.AlreadyExistsUserError(userName)
-		case "useradd: group '" + groupName + "' does not exist":
+		case fmt.Sprintf("useradd: group '%s' does not exist", groupName):
 			return nil, avfs.UnknownGroupError(groupName)
 		default:
-			return nil, avfs.UnknownError(err.Error() + errStr)
+			return nil, err
 		}
 	}
 
@@ -165,21 +147,13 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 		return avfs.InvalidNameError(groupName)
 	}
 
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("groupdel", groupName)
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errStr := strings.TrimSpace(stderr.String())
-		switch errStr {
-		case "groupdel: group '" + groupName + "' does not exist":
+	err := run("groupdel", groupName)
+	if err != nil {
+		switch err.Error() {
+		case fmt.Sprintf("groupdel: group '%s' does not exist", groupName):
 			return avfs.UnknownGroupError(groupName)
 		default:
-			return avfs.UnknownError(err.Error() + errStr)
+			return err
 		}
 	}
 
@@ -197,22 +171,13 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.InvalidNameError(userName)
 	}
 
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("userdel", userName)
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
+	err := run("userdel", userName)
 	if err != nil {
-		errStr := strings.TrimSpace(stderr.String())
-		switch errStr {
+		switch err.Error() {
 		case "userdel: user '" + userName + "' does not exist":
 			return avfs.UnknownUserError(userName)
 		default:
-			return avfs.UnknownError(err.Error() + errStr)
+			return err
 		}
 	}
 
@@ -571,34 +536,17 @@ func getent(database, key string, notFoundErr error) (string, error) {
 // id returns the result of the "id" command for the given username and options.
 // The result is returned as a string, and an error is returned if the command fails.
 func id(username, options string) (string, error) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("id", options, username)
-
-	buf, err := cmd.Output()
+	buf, err := output("id", options, username)
 	if err != nil {
 		return "", err
 	}
 
-	r := strings.TrimRight(string(buf), "\n ")
-
-	return r, nil
+	return buf, nil
 }
 
 // usermod executes the "usermod" command with the given options and username.
 func usermod(userName, groupName, options string) error {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("usermod", options, groupName, userName)
-
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return run("usermod", options, groupName, userName)
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.

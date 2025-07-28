@@ -19,7 +19,15 @@
 // For testing only, should not be used in a production environment.
 package osidm
 
-import "github.com/avfs/avfs"
+import (
+	"bytes"
+	"errors"
+	"os/exec"
+	"runtime"
+	"strings"
+
+	"github.com/avfs/avfs"
+)
 
 // AdminGroup returns the administrator (root) group.
 func (idm *OsIdm) AdminGroup() avfs.GroupReader {
@@ -63,4 +71,42 @@ func (u *OsUser) Name() string {
 // Uid returns the user ID.
 func (u *OsUser) Uid() int {
 	return u.uid
+}
+
+// run executes a command cmd with arguments args,
+// returns the text from os.Stderr as error.
+func run(cmd string, args ...string) error {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	c := exec.Command(cmd, args...)
+
+	var stderr bytes.Buffer
+	c.Stderr = &stderr
+
+	err := c.Run()
+	if err != nil {
+		return errors.New(strings.TrimSuffix(stderr.String(), "\n"))
+	}
+
+	return nil
+}
+
+// output executes a command cmd with arguments args,
+// returns the text from os.Stdout and the text from os.Stderr as error.
+func output(cmd string, args ...string) (string, error) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	c := exec.Command(cmd, args...)
+
+	var stderr bytes.Buffer
+	c.Stderr = &stderr
+
+	buf, err := c.Output()
+	if err != nil {
+		return "", errors.New(strings.TrimSuffix(stderr.String(), "\n"))
+	}
+
+	return strings.TrimSuffix(string(buf), "\n"), nil
 }
