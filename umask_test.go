@@ -32,6 +32,7 @@ func TestUMaskOS(t *testing.T) {
 	)
 
 	saveUMask := avfs.UMask()
+
 	defer func() { _ = avfs.SetUMask(saveUMask) }()
 
 	defaultUMask := linuxUMask

@@ -392,6 +392,7 @@ func (ts *Suite) TestChroot(t *testing.T, testDir string) {
 		RequireNoError(t, err, "Mkdir %s", chrootDir)
 
 		const chrootFile = "/file-within-the-chroot.txt"
+
 		chrootFilePath := vfs.Join(chrootDir, chrootFile)
 
 		err = vfs.WriteFile(chrootFilePath, nil, avfs.DefaultFilePerm)
@@ -2250,6 +2251,7 @@ func (ts *Suite) TestSetUserByName(t *testing.T, testDir string) {
 
 	t.Run("UserExists", func(t *testing.T) {
 		curUser := vfs.User()
+
 		defer func() {
 			err := vfs.SetUserByName(curUser.Name())
 			RequireNoError(t, err, "SetUserByName %s", curUser.Name())
@@ -2592,8 +2594,8 @@ func (ts *Suite) TestUMask(t *testing.T, _ string) {
 	)
 
 	vfs := ts.vfsTest
-
 	saveUMask := vfs.UMask()
+
 	defer func() { _ = vfs.SetUMask(saveUMask) }()
 
 	defaultUMask := linuxUMask

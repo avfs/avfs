@@ -19,13 +19,14 @@ linters:
     - nakedret
     - nestif
     - nilerr
+    - noctx
     - noinlineerr
     - nonamedreturns
     - paralleltest
     - thelper
     - varnamelen
     - wrapcheck
-    - wsl_v5
+    - wsl
   settings:
     dupl:
       threshold: 100

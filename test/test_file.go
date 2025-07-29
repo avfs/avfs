@@ -1201,6 +1201,7 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 
 		for i := len(data); i > 0; i -= 3 {
 			var n int
+
 			n, err = f.WriteAt(data[i-3:i], int64(i-3))
 			RequireNoError(t, err, "WriteAt %s", path)
 

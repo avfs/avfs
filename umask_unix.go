@@ -47,9 +47,11 @@ func initUMask() fs.FileMode {
 // so its value is cached and protected by a mutex.
 func SetUMask(mask fs.FileMode) error {
 	umLock.Lock()
+
 	m := int(mask & fs.ModePerm)
 	_ = syscall.Umask(m)
 	umask = fs.FileMode(m)
+
 	umLock.Unlock()
 
 	return nil
@@ -58,7 +60,9 @@ func SetUMask(mask fs.FileMode) error {
 // UMask returns the file mode creation mask.
 func UMask() fs.FileMode {
 	umLock.RLock()
+
 	um := umask
+
 	umLock.RUnlock()
 
 	return um
