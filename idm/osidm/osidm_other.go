@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 
-//go:build !linux
+//go:build !linux && !darwin
 
 package osidm
 
