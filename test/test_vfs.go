@@ -100,6 +100,30 @@ func (ts *Suite) TestChdir(t *testing.T, testDir string) {
 	dirs := ts.createSampleDirs(t, testDir)
 	existingFile := ts.emptyFile(t, testDir)
 
+	t.Run("ChdirNoName", func(t *testing.T) {
+		err := vfs.Chdir("")
+		AssertPathError(t, err).Op("chdir").Path("").ErrFileNotFound().Test()
+	})
+
+	t.Run("ChdirNonExisting", func(t *testing.T) {
+		for _, dir := range dirs {
+			path := vfs.Join(dir.Path, defaultNonExisting)
+
+			oldPath, err := vfs.Getwd()
+			RequireNoError(t, err, "Getwd")
+
+			err = vfs.Chdir(path)
+			AssertPathError(t, err).Op("chdir").Path(path).ErrFileNotFound().Test()
+
+			newPath, err := vfs.Getwd()
+			RequireNoError(t, err, "Getwd")
+
+			if newPath != oldPath {
+				t.Errorf("Getwd : want current dir to be %s, got %s", oldPath, newPath)
+			}
+		}
+	})
+
 	t.Run("ChdirAbsolute", func(t *testing.T) {
 		for _, dir := range dirs {
 			err := vfs.Chdir(dir.Path)
@@ -130,27 +154,6 @@ func (ts *Suite) TestChdir(t *testing.T, testDir string) {
 			path := vfs.Join(testDir, relPath)
 			if curDir != path {
 				t.Errorf("Getwd : want current directory to be %s, got %s", path, curDir)
-			}
-		}
-	})
-
-	t.Run("ChdirNonExisting", func(t *testing.T) {
-		for _, dir := range dirs {
-			path := vfs.Join(dir.Path, defaultNonExisting)
-
-			oldPath, err := vfs.Getwd()
-			RequireNoError(t, err, "Getwd")
-
-			err = vfs.Chdir(path)
-			AssertPathError(t, err).Op("chdir").Path(path).
-				OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
-
-			newPath, err := vfs.Getwd()
-			RequireNoError(t, err, "Getwd")
-
-			if newPath != oldPath {
-				t.Errorf("Getwd : want current dir to be %s, got %s", oldPath, newPath)
 			}
 		}
 	})
@@ -187,6 +190,11 @@ func (ts *Suite) TestChmod(t *testing.T, testDir string) {
 
 	existingDir := ts.existingDir(t, testDir)
 	existingFile := ts.emptyFile(t, testDir)
+
+	t.Run("ChmodNoName", func(t *testing.T) {
+		err := vfs.Chmod("", avfs.DefaultDirPerm)
+		AssertPathError(t, err).Op("chmod").Path("").ErrFileNotFound().Test()
+	})
 
 	t.Run("ChmodDir", func(t *testing.T) {
 		for mode := fs.FileMode(1); mode <= 0o777; mode++ {
@@ -240,9 +248,7 @@ func (ts *Suite) TestChmod(t *testing.T, testDir string) {
 		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Chmod(nonExistingFile, avfs.DefaultDirPerm)
-		AssertPathError(t, err).Op("chmod").Path(nonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).Op("chmod").Path(nonExistingFile).ErrFileNotFound().Test()
 	})
 
 	t.Run("ChmodPerm", func(t *testing.T) {
@@ -272,6 +278,11 @@ func (ts *Suite) TestChown(t *testing.T, testDir string) {
 
 		return
 	}
+
+	t.Run("ChownNoName", func(t *testing.T) {
+		err := vfs.Chown("", 0, 0)
+		AssertPathError(t, err).Op("chown").Path("").ErrFileNotFound().Test()
+	})
 
 	t.Run("ChownNonExistingFile", func(t *testing.T) {
 		nonExistingFile := ts.nonExistingFile(t, testDir)
@@ -446,6 +457,18 @@ func (ts *Suite) TestChtimes(t *testing.T, testDir string) {
 		return
 	}
 
+	t.Run("ChtimesNoName", func(t *testing.T) {
+		err := vfs.Chtimes("", time.Now(), time.Now())
+		AssertPathError(t, err).Op("chtimes").Path("").ErrFileNotFound().Test()
+	})
+
+	t.Run("ChtimesNonExistingFile", func(t *testing.T) {
+		nonExistingFile := ts.nonExistingFile(t, testDir)
+
+		err := vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
+		AssertPathError(t, err).Op("chtimes").Path(nonExistingFile).ErrFileNotFound().Test()
+	})
+
 	t.Run("Chtimes", func(t *testing.T) {
 		_ = ts.createSampleDirs(t, testDir)
 		files := ts.createSampleFiles(t, testDir)
@@ -462,15 +485,6 @@ func (ts *Suite) TestChtimes(t *testing.T, testDir string) {
 				t.Errorf("Chtimes %s : want modtime to bo %s, got %s", file.Path, tomorrow, infos.ModTime())
 			}
 		}
-	})
-
-	t.Run("ChtimesNonExistingFile", func(t *testing.T) {
-		nonExistingFile := ts.nonExistingFile(t, testDir)
-
-		err := vfs.Chtimes(nonExistingFile, time.Now(), time.Now())
-		AssertPathError(t, err).Op("chtimes").Path(nonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
 	})
 
 	t.Run("ChtimesPerm", func(t *testing.T) {
@@ -574,28 +588,6 @@ func (ts *Suite) TestCreateTemp(t *testing.T, testDir string) {
 	})
 }
 
-// TestUser tests User function.
-func (ts *Suite) TestUser(t *testing.T, _ string) {
-	vfs := ts.vfsTest
-
-	u := vfs.User()
-
-	name := u.Name()
-	if name == "" {
-		t.Errorf("Name : want name to be not empty, got empty")
-	}
-
-	uid := u.Uid()
-	if uid < 0 {
-		t.Errorf("Uid : want uid to be >= 0, got %d", uid)
-	}
-
-	gid := u.Gid()
-	if uid < 0 {
-		t.Errorf("Uid : want gid to be >= 0, got %d", gid)
-	}
-}
-
 // TestEvalSymlink tests EvalSymlink function.
 func (ts *Suite) TestEvalSymlink(t *testing.T, testDir string) {
 	vfs := ts.vfsTest
@@ -610,6 +602,15 @@ func (ts *Suite) TestEvalSymlink(t *testing.T, testDir string) {
 	_ = ts.createSampleDirs(t, testDir)
 	_ = ts.createSampleFiles(t, testDir)
 	_ = ts.createSampleSymlinks(t, testDir)
+
+	t.Run("EvalSymlinkNoName", func(t *testing.T) {
+		gotPath, err := vfs.EvalSymlinks("")
+		AssertNoError(t, err, "EvalSymlinks")
+
+		if gotPath != "." {
+			t.Errorf("EvalSymlinks : want Path to be '.', got %s", gotPath)
+		}
+	})
 
 	t.Run("EvalSymlink", func(t *testing.T) {
 		symlinks := ts.sampleSymlinksEval(testDir)
@@ -813,6 +814,27 @@ func (ts *Suite) TestLink(t *testing.T, testDir string) {
 	files := ts.createSampleFiles(t, testDir)
 	pathLinks := ts.existingDir(t, testDir)
 
+	t.Run("LinkNoName", func(t *testing.T) {
+		err := vfs.Link("", "")
+		AssertLinkError(t, err).Op("link").Old("").New("").ErrFileNotFound().Test()
+
+		name := files[0].Path
+
+		err = vfs.Link("", name)
+		AssertLinkError(t, err).Op("link").Old("").New(name).ErrFileNotFound().Test()
+
+		err = vfs.Link(name, "")
+		AssertLinkError(t, err).Op("link").Old(name).New("").ErrFileNotFound().Test()
+	})
+
+	t.Run("LinkNonExistingFile", func(t *testing.T) {
+		nonExistingFile := ts.nonExistingFile(t, testDir)
+		existingFile := ts.emptyFile(t, testDir)
+
+		err := vfs.Link(nonExistingFile, existingFile)
+		AssertLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).ErrFileNotFound().Test()
+	})
+
 	t.Run("LinkCreate", func(t *testing.T) {
 		for _, file := range files {
 			newPath := vfs.Join(pathLinks, vfs.Base(file.Path))
@@ -879,16 +901,6 @@ func (ts *Suite) TestLink(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("LinkNonExistingFile", func(t *testing.T) {
-		nonExistingFile := ts.nonExistingFile(t, testDir)
-		existingFile := ts.emptyFile(t, testDir)
-
-		err := vfs.Link(nonExistingFile, existingFile)
-		AssertLinkError(t, err).Op("link").Old(nonExistingFile).New(existingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
-	})
-
 	t.Run("LinkPerm", func(t *testing.T) {
 		if !ts.canTestPerm {
 			return
@@ -914,6 +926,22 @@ func (ts *Suite) TestLstat(t *testing.T, testDir string) {
 	ts.createSampleSymlinks(t, testDir)
 
 	vfs := ts.vfsTest
+
+	t.Run("LstatNoName", func(t *testing.T) {
+		info, err := vfs.Lstat("")
+		AssertPathError(t, err).Op("lstat").Path("").ErrFileNotFound().Test()
+
+		if info != nil {
+			t.Errorf("Lstat : want info to be nil got %v", info)
+		}
+	})
+
+	t.Run("LStatNonExistingFile", func(t *testing.T) {
+		nonExistingFile := ts.nonExistingFile(t, testDir)
+
+		_, err := vfs.Lstat(nonExistingFile)
+		AssertPathError(t, err).OpLstat().Path(nonExistingFile).ErrFileNotFound().Test()
+	})
 
 	t.Run("LstatDir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -993,15 +1021,6 @@ func (ts *Suite) TestLstat(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("LStatNonExistingFile", func(t *testing.T) {
-		nonExistingFile := ts.nonExistingFile(t, testDir)
-
-		_, err := vfs.Lstat(nonExistingFile)
-		AssertPathError(t, err).OpLstat().Path(nonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
-	})
-
 	t.Run("LStatSubDirOnFile", func(t *testing.T) {
 		subDirOnFile := vfs.Join(files[0].Path, "subDirOnFile")
 
@@ -1024,6 +1043,11 @@ func (ts *Suite) TestMkdir(t *testing.T, testDir string) {
 	}
 
 	dirs := ts.sampleDirs(testDir)
+
+	t.Run("MkdirNoName", func(t *testing.T) {
+		err := vfs.Mkdir("", avfs.DefaultDirPerm)
+		AssertPathError(t, err).Op("mkdir").Path("").ErrFileNotFound().Test()
+	})
 
 	t.Run("Mkdir", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -1106,13 +1130,6 @@ func (ts *Suite) TestMkdir(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("MkdirEmptyName", func(t *testing.T) {
-		err := vfs.Mkdir("", avfs.DefaultFilePerm)
-		AssertPathError(t, err).Op("mkdir").Path("").
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
-	})
-
 	t.Run("MkdirOnFile", func(t *testing.T) {
 		existingFile := ts.emptyFile(t, testDir)
 		subDirOnFile := vfs.Join(existingFile, defaultDir)
@@ -1150,6 +1167,11 @@ func (ts *Suite) TestMkdirAll(t *testing.T, testDir string) {
 
 	existingFile := ts.emptyFile(t, testDir)
 	dirs := ts.sampleDirsAll(testDir)
+
+	t.Run("MkdirAllNoName", func(t *testing.T) {
+		err := vfs.MkdirAll("", avfs.DefaultDirPerm)
+		AssertPathError(t, err).Op("mkdir").Path("").ErrFileNotFound().Test()
+	})
 
 	t.Run("MkdirAll", func(t *testing.T) {
 		for _, dir := range dirs {
@@ -1304,6 +1326,33 @@ func (ts *Suite) TestOpen(t *testing.T, testDir string) {
 
 	vfs := ts.vfsTest
 
+	t.Run("OpenFileNoName", func(t *testing.T) {
+		f, err := vfs.OpenFile("", os.O_RDONLY, 0)
+		AssertPathError(t, err).Op("open").Path("").
+			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+
+		_, ok := f.(avfs.File)
+		if !ok {
+			t.Errorf("OpenFile : want file to implement avfs.File interface")
+		}
+	})
+
+	t.Run("OpenNonExistingFile", func(t *testing.T) {
+		fileName := ts.nonExistingFile(t, testDir)
+
+		f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
+		AssertPathError(t, err).Op("open").Path(fileName).ErrFileNotFound().Test()
+
+		// all file systems should return a typed nil file on error
+		if !reflect.ValueOf(f).IsNil() {
+			t.Errorf("OpenFile : want nil, got %v", f)
+		}
+
+		// test file method calls on a nil file
+		FileNilPtr(t, f)
+	})
+
 	t.Run("OpenFileReadOnly", func(t *testing.T) {
 		f, err := vfs.OpenFile(existingFile, os.O_RDONLY, 0)
 		RequireNoError(t, err, "OpenFile %s", existingFile)
@@ -1331,35 +1380,6 @@ func (ts *Suite) TestOpen(t *testing.T, testDir string) {
 			t.Errorf("ReadDir : want number of directories to be 0, got %d", len(dirs))
 		}
 	})
-
-	t.Run("OpenNonExistingFile", func(t *testing.T) {
-		fileName := ts.nonExistingFile(t, testDir)
-
-		f, err := vfs.OpenFile(fileName, os.O_RDONLY, 0)
-		AssertPathError(t, err).Op("open").Path(fileName).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
-
-		// all file systems should return a typed nil file on error
-		if !reflect.ValueOf(f).IsNil() {
-			t.Errorf("OpenFile : want nil, got %v", f)
-		}
-
-		// test file method calls on a nil file
-		FileNilPtr(t, f)
-	})
-
-	t.Run("OpenFileNoName", func(t *testing.T) {
-		f, err := vfs.OpenFile("", os.O_RDONLY, 0)
-		AssertPathError(t, err).Op("open").Path("").
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
-
-		_, ok := f.(avfs.File)
-		if !ok {
-			t.Errorf("OpenFile : want file to implement avfs.File interface")
-		}
-	})
 }
 
 // TestOpenFileWrite tests OpenFile function for write.
@@ -1376,6 +1396,16 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 	data := []byte("AAABBBCCCDDD")
 	defaultData := []byte("Default data")
 	buf3 := make([]byte, 3)
+
+	t.Run("OpenFileNoName", func(t *testing.T) {
+		f, err := vfs.OpenFile("", os.O_CREATE, avfs.DefaultFilePerm)
+		AssertPathError(t, err).Op("open").Path("").ErrFileNotFound().Test()
+
+		_, ok := f.(avfs.File)
+		if !ok {
+			t.Errorf("OpenFile : want file to implement avfs.File interface")
+		}
+	})
 
 	t.Run("OpenFileWriteOnly", func(t *testing.T) {
 		existingFile := ts.existingFile(t, testDir, data)
@@ -1550,18 +1580,6 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 	})
 
-	t.Run("OpenFileNoName", func(t *testing.T) {
-		f, err := vfs.OpenFile("", os.O_CREATE, avfs.DefaultFilePerm)
-		AssertPathError(t, err).Op("open").Path("").
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
-
-		_, ok := f.(avfs.File)
-		if !ok {
-			t.Errorf("OpenFile : want file to implement avfs.File interface")
-		}
-	})
-
 	t.Run("OpenFileInvalidSymlink", func(t *testing.T) {
 		if !vfs.HasFeature(avfs.FeatSymlink) {
 			return
@@ -1574,9 +1592,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 		RequireNoError(t, err, "Invalid Symlink %s %s", nonExistingFile, InvalidSymlink)
 
 		_, err = vfs.OpenFile(InvalidSymlink, os.O_RDONLY, avfs.DefaultFilePerm)
-		AssertPathError(t, err).Op("open").Path(InvalidSymlink).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).Op("open").Path(InvalidSymlink).ErrFileNotFound().Test()
 	})
 
 	t.Run("OpenFileDirPerm", func(t *testing.T) {
@@ -1664,6 +1680,15 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 
 	existingFile := vfs.Join(testDir, files[0].Name)
 
+	t.Run("ReadDirNoName", func(t *testing.T) {
+		gotDirs, err := vfs.ReadDir("")
+		AssertPathError(t, err).Op("open").Path("").ErrFileNotFound().Test()
+
+		if gotDirs != nil {
+			t.Errorf("ReadDir : want error to be nil, got %v", gotDirs)
+		}
+	})
+
 	t.Run("ReadDirAll", func(t *testing.T) {
 		dirEntries, err := vfs.ReadDir(testDir)
 		RequireNoError(t, err, "ReadDir %s", testDir)
@@ -1729,6 +1754,15 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 func (ts *Suite) TestReadFile(t *testing.T, testDir string) {
 	vfs := ts.vfsTest
 
+	t.Run("ReadFileNoName", func(t *testing.T) {
+		rb, err := vfs.ReadFile("")
+		AssertPathError(t, err).Op("open").Path("").ErrFileNotFound().Test()
+
+		if rb != nil {
+			t.Errorf("ReadFile : want read buffer to be empty, got %v", rb)
+		}
+	})
+
 	t.Run("ReadFile", func(t *testing.T) {
 		data := []byte("AAABBBCCCDDD")
 		path := ts.existingFile(t, testDir, data)
@@ -1745,9 +1779,7 @@ func (ts *Suite) TestReadFile(t *testing.T, testDir string) {
 		path := ts.nonExistingFile(t, testDir)
 
 		rb, err := vfs.ReadFile(path)
-		AssertPathError(t, err).Op("open").Path(path).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).Op("open").Path(path).ErrFileNotFound().Test()
 
 		if len(rb) != 0 {
 			t.Errorf("ReadFile : want read bytes to be 0, got %d", len(rb))
@@ -1774,6 +1806,17 @@ func (ts *Suite) TestReadlink(t *testing.T, testDir string) {
 	symlinks := ts.createSampleSymlinks(t, testDir)
 
 	vfs = ts.vfsTest
+
+	t.Run("ReadLinkNoName", func(t *testing.T) {
+		gotPath, err := vfs.Readlink("")
+		AssertPathError(t, err).Op("readlink").Path("").
+			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+
+		if gotPath != "" {
+			t.Errorf("Readlink : want path to be empty, got %s", gotPath)
+		}
+	})
 
 	t.Run("ReadlinkLink", func(t *testing.T) {
 		for _, sl := range symlinks {
@@ -1808,9 +1851,7 @@ func (ts *Suite) TestReadlink(t *testing.T, testDir string) {
 		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		_, err := vfs.Readlink(nonExistingFile)
-		AssertPathError(t, err).Op("readlink").Path(nonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).Op("readlink").Path(nonExistingFile).ErrFileNotFound().Test()
 	})
 }
 
@@ -1829,6 +1870,11 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 	files := ts.createSampleFiles(t, testDir)
 	symlinks := ts.createSampleSymlinks(t, testDir)
 
+	t.Run("RemoveNoName", func(t *testing.T) {
+		err := vfs.Remove("")
+		AssertPathError(t, err).Op("remove").Path("").ErrFileNotFound().Test()
+	})
+
 	t.Run("RemoveFile", func(t *testing.T) {
 		for _, file := range files {
 			_, err := vfs.Stat(file.Path)
@@ -1840,9 +1886,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 			RequireNoError(t, err, "Remove %s", file.Path)
 
 			_, err = vfs.Stat(file.Path)
-			AssertPathError(t, err).OpStat().Path(file.Path).
-				OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+			AssertPathError(t, err).OpStat().Path(file.Path).ErrFileNotFound().Test()
 		}
 	})
 
@@ -1860,9 +1904,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 				RequireNoError(t, err, "Remove %s", dir.Path)
 
 				_, err = vfs.Stat(dir.Path)
-				AssertPathError(t, err).OpStat().Path(dir.Path).
-					OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-					OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+				AssertPathError(t, err).OpStat().Path(dir.Path).ErrFileNotFound().Test()
 
 				continue
 			}
@@ -1882,9 +1924,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 			RequireNoError(t, err, "Remove %s", sl.NewPath)
 
 			_, err = vfs.Stat(sl.NewPath)
-			AssertPathError(t, err).OpStat().Path(sl.NewPath).
-				OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+			AssertPathError(t, err).OpStat().Path(sl.NewPath).ErrFileNotFound().Test()
 		}
 	})
 
@@ -1892,9 +1932,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		err := vfs.Remove(nonExistingFile)
-		AssertPathError(t, err).Op("remove").Path(nonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).Op("remove").Path(nonExistingFile).ErrFileNotFound().Test()
 	})
 
 	t.Run("RemovePerm", func(t *testing.T) {
@@ -1924,6 +1962,13 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 	dirs := ts.createSampleDirs(t, baseDir)
 	files := ts.createSampleFiles(t, baseDir)
 	symlinks := ts.createSampleSymlinks(t, baseDir)
+
+	t.Run("RemoveAllNoName", func(t *testing.T) {
+		err := vfs.RemoveAll("")
+		if err != nil {
+			t.Errorf("RemoveAll : want error to be nil, got %v", err)
+		}
+	})
 
 	t.Run("RemoveAll", func(t *testing.T) {
 		err := vfs.RemoveAll(baseDir)
@@ -1955,9 +2000,7 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 		}
 
 		_, err = vfs.Stat(baseDir)
-		AssertPathError(t, err).OpStat().Path(baseDir).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).OpStat().Path(baseDir).ErrFileNotFound().Test()
 	})
 
 	t.Run("RemoveAllOneFile", func(t *testing.T) {
@@ -2026,9 +2069,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 			RequireNoError(t, err, "Rename %s %s", oldPath, newPath)
 
 			_, err = vfs.Stat(oldPath)
-			AssertPathError(t, err).OpStat().Path(oldPath).
-				OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+			AssertPathError(t, err).OpStat().Path(oldPath).ErrFileNotFound().Test()
 
 			_, err = vfs.Stat(newPath)
 			RequireNoError(t, err, "Stat %s", newPath)
@@ -2050,9 +2091,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 			if file.Path == newPath {
 				RequireNoError(t, err, "Stat %s", file.Path)
 			} else {
-				AssertPathError(t, err).OpStat().Path(file.Path).
-					OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-					OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+				AssertPathError(t, err).OpStat().Path(file.Path).ErrFileNotFound().Test()
 			}
 
 			_, err = vfs.Stat(newPath)
@@ -2066,8 +2105,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 
 		err := vfs.Rename(srcNonExistingFile, dstNonExistingFile)
 		AssertLinkError(t, err).Op("rename").Old(srcNonExistingFile).New(dstNonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+			ErrFileNotFound().Test()
 	})
 
 	t.Run("RenameDirToExistingDir", func(t *testing.T) {
@@ -2088,9 +2126,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 		RequireNoError(t, err, "Rename %s %s", srcExistingFile, dstExistingFile)
 
 		_, err = vfs.Stat(srcExistingFile)
-		AssertPathError(t, err).OpStat().Path(srcExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).OpStat().Path(srcExistingFile).ErrFileNotFound().Test()
 
 		info, err := vfs.Stat(dstExistingFile)
 		RequireNoError(t, err, "Stat %s", dstExistingFile)
@@ -2314,6 +2350,15 @@ func (ts *Suite) TestStat(t *testing.T, testDir string) {
 	files := ts.createSampleFiles(t, testDir)
 	_ = ts.createSampleSymlinks(t, testDir)
 
+	t.Run("StatNoName", func(t *testing.T) {
+		info, err := vfs.Stat("")
+		AssertPathError(t, err).Op("stat").Path("").ErrFileNotFound().Test()
+
+		if info != nil {
+			t.Errorf("Want info to be nil got %v", info)
+		}
+	})
+
 	t.Run("StatDir", func(t *testing.T) {
 		for _, dir := range dirs {
 			info, err := vfs.Stat(dir.Path)
@@ -2391,9 +2436,7 @@ func (ts *Suite) TestStat(t *testing.T, testDir string) {
 		nonExistingFile := ts.nonExistingFile(t, testDir)
 
 		_, err := vfs.Stat(nonExistingFile)
-		AssertPathError(t, err).OpStat().Path(nonExistingFile).
-			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinFileNotFound).Test()
+		AssertPathError(t, err).OpStat().Path(nonExistingFile).ErrFileNotFound().Test()
 
 		if !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("Stat %s : want errors.Is(err, fs.ErrNotExist) to be true, got false ", nonExistingFile)
@@ -2516,6 +2559,11 @@ func (ts *Suite) TestTruncate(t *testing.T, testDir string) {
 
 	data := []byte("AAABBBCCCDDD")
 
+	t.Run("TruncateNoName", func(t *testing.T) {
+		err := vfs.Truncate("", 0)
+		AssertPathError(t, err).Op("truncate").Path("").ErrFileNotFound().Test()
+	})
+
 	t.Run("Truncate", func(t *testing.T) {
 		path := ts.existingFile(t, testDir, data)
 
@@ -2625,6 +2673,28 @@ func (ts *Suite) TestUMask(t *testing.T, _ string) {
 	}
 }
 
+// TestUser tests User function.
+func (ts *Suite) TestUser(t *testing.T, _ string) {
+	vfs := ts.vfsTest
+
+	u := vfs.User()
+
+	name := u.Name()
+	if name == "" {
+		t.Errorf("Name : want name to be not empty, got empty")
+	}
+
+	uid := u.Uid()
+	if uid < 0 {
+		t.Errorf("Uid : want uid to be >= 0, got %d", uid)
+	}
+
+	gid := u.Gid()
+	if uid < 0 {
+		t.Errorf("Uid : want gid to be >= 0, got %d", gid)
+	}
+}
+
 // TestVolume tests VolumeAdd, VolumeDelete and VolumeList functions.
 func (ts *Suite) TestVolume(t *testing.T, _ string) {
 	const testVolume = "Z:"
@@ -2687,6 +2757,11 @@ func (ts *Suite) TestWriteFile(t *testing.T, testDir string) {
 	}
 
 	data := []byte("AAABBBCCCDDD")
+
+	t.Run("WriteFileNoName", func(t *testing.T) {
+		err := vfs.WriteFile("", nil, avfs.DefaultFilePerm)
+		AssertPathError(t, err).Op("open").Path("").ErrFileNotFound().Test()
+	})
 
 	t.Run("WriteFile", func(t *testing.T) {
 		path := vfs.Join(testDir, "WriteFile.txt")
