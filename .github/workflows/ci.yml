@@ -6,8 +6,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [1.23.x, 1.24.x]
-        os: [ubuntu-latest, windows-latest]
+        go: [1.24.x, 1.25.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         setostype: [setostype_on, setostype_off]
 
     runs-on: ${{ matrix.os }}
