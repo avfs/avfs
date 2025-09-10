@@ -818,7 +818,10 @@ func (ts *Suite) TestLink(t *testing.T, testDir string) {
 		err := vfs.Link("", "")
 		AssertLinkError(t, err).Op("link").Old("").New("").ErrFileNotFound().Test()
 
-		name := files[0].Path
+		name := ts.emptyFile(t, testDir)
+
+		err = vfs.Link(name, "")
+		AssertLinkError(t, err).Op("link").Old(name).New("").ErrFileNotFound().Test()
 
 		err = vfs.Link("", name)
 		AssertLinkError(t, err).Op("link").Old("").New(name).ErrFileNotFound().Test()
@@ -2049,6 +2052,8 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 func (ts *Suite) TestRename(t *testing.T, testDir string) {
 	vfs := ts.vfsTest
 
+	const op = "rename"
+
 	if vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Rename(testDir, testDir)
 		AssertLinkError(t, err).Op("rename").Old(testDir).New(testDir).ErrPermDenied().Test()
@@ -2057,6 +2062,19 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 	}
 
 	data := []byte("data")
+
+	t.Run("RenameNoName", func(t *testing.T) {
+		err := vfs.Rename("", "")
+		AssertLinkError(t, err).Op(op).Old("").New("").ErrFileNotFound().Test()
+
+		name := ts.emptyFile(t, testDir)
+
+		err = vfs.Rename("", name)
+		AssertLinkError(t, err).Op(op).Old("").New(name).ErrFileNotFound().Test()
+
+		err = vfs.Rename(name, "")
+		AssertLinkError(t, err).Op(op).Old(name).New("").ErrFileNotFound().Test()
+	})
 
 	t.Run("RenameDir", func(t *testing.T) {
 		dirs := ts.createSampleDirs(t, testDir)
@@ -2457,6 +2475,8 @@ func (ts *Suite) TestStat(t *testing.T, testDir string) {
 func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
 	vfs := ts.vfsTest
 
+	const op = "symlink"
+
 	if !vfs.HasFeature(avfs.FeatSymlink) || vfs.HasFeature(avfs.FeatReadOnly) {
 		err := vfs.Symlink(testDir, testDir)
 		AssertLinkError(t, err).Op("symlink").Old(testDir).New(testDir).ErrPermDenied().Test()
@@ -2466,6 +2486,19 @@ func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
 
 	_ = ts.createSampleDirs(t, testDir)
 	_ = ts.createSampleFiles(t, testDir)
+
+	t.Run("SymlinkNoName", func(t *testing.T) {
+		err := vfs.Symlink("", "")
+		AssertLinkError(t, err).Op(op).Old("").New("").ErrFileNotFound().Test()
+
+		name := ts.emptyFile(t, testDir)
+
+		err = vfs.Symlink("", name)
+		AssertLinkError(t, err).Op(op).Old("").New(name).ErrFileNotFound().Test()
+
+		err = vfs.Symlink(name, "")
+		AssertLinkError(t, err).Op(op).Old(name).New("").ErrFileNotFound().Test()
+	})
 
 	t.Run("Symlink", func(t *testing.T) {
 		symlinks := ts.sampleSymlinks(testDir)
