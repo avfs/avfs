@@ -236,6 +236,10 @@ func (vfs *MemFS) Dir(path string) string {
 func (vfs *MemFS) EvalSymlinks(path string) (string, error) {
 	const op = "lstat"
 
+	if path == "" {
+		return ".", nil
+	}
+
 	_, _, pi, err := vfs.searchNode(path, slmEval)
 	if err != vfs.err.FileExists {
 		return "", &fs.PathError{Op: op, Path: pi.LeftPart(), Err: err}
@@ -321,6 +325,10 @@ func (vfs *MemFS) Lchown(name string, uid, gid int) error {
 // If there is an error, it will be of type *LinkError.
 func (vfs *MemFS) Link(oldname, newname string) error {
 	const op = "link"
+
+	if oldname == "" || newname == "" {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+	}
 
 	_, oChild, _, oerr := vfs.searchNode(oldname, slmLstat)
 	if oerr != vfs.err.FileExists || oChild == nil {
@@ -777,6 +785,10 @@ func (vfs *MemFS) removeAll(parent *dirNode) error {
 func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	const op = "rename"
 
+	if oldpath == "" || newpath == "" {
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.NoSuchFile}
+	}
+
 	oParent, oChild, oPI, oErr := vfs.searchNode(oldpath, slmLstat)
 	if oErr != vfs.err.FileExists {
 		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: oErr}
@@ -918,6 +930,10 @@ func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
 // If there is an error, it will be of type *LinkError.
 func (vfs *MemFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
+
+	if oldname == "" || newname == "" {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+	}
 
 	parent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
 	if !vfs.isNotExist(nerr) {
