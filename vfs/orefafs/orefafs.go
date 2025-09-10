@@ -52,6 +52,10 @@ func (vfs *OrefaFS) Base(path string) string {
 func (vfs *OrefaFS) Chdir(dir string) error {
 	const op = "chdir"
 
+	if dir == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
+
 	absPath, _ := vfs.Abs(dir)
 
 	vfs.mu.RLock()
@@ -97,6 +101,10 @@ func (vfs *OrefaFS) Chdir(dir string) error {
 func (vfs *OrefaFS) Chmod(name string, mode fs.FileMode) error {
 	const op = "chmod"
 
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
+
 	absPath, _ := vfs.Abs(name)
 
 	vfs.mu.RLock()
@@ -128,6 +136,10 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
+
 	absPath, _ := vfs.Abs(name)
 
 	vfs.mu.RLock()
@@ -153,6 +165,10 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
+
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
 
 	absPath, _ := vfs.Abs(name)
 
@@ -326,6 +342,10 @@ func (vfs *OrefaFS) Lchown(name string, uid, gid int) error {
 func (vfs *OrefaFS) Link(oldname, newname string) error {
 	const op = "link"
 
+	if oldname == "" || newname == "" {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+	}
+
 	oAbsPath, _ := vfs.Abs(oldname)
 	nAbsPath, _ := vfs.Abs(newname)
 
@@ -402,6 +422,10 @@ func (vfs *OrefaFS) Lstat(name string) (fs.FileInfo, error) {
 	op := "lstat"
 	if vfs.OSType() == avfs.OsWindows {
 		op = "CreateFile"
+	}
+
+	if name == "" {
+		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
 	}
 
 	return vfs.stat(name, op)
@@ -489,6 +513,10 @@ func (vfs *OrefaFS) Mkdir(name string, perm fs.FileMode) error {
 // and returns nil.
 func (vfs *OrefaFS) MkdirAll(path string, perm fs.FileMode) error {
 	const op = "mkdir"
+
+	if path == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
 
 	absPath, _ := vfs.Abs(path)
 
@@ -694,6 +722,10 @@ func (vfs *OrefaFS) Rel(basepath, targpath string) (string, error) {
 func (vfs *OrefaFS) Remove(name string) error {
 	const op = "remove"
 
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
+
 	absPath, _ := vfs.Abs(name)
 	dirName, fileName := avfs.SplitAbs(vfs, absPath)
 
@@ -780,6 +812,10 @@ func (vfs *OrefaFS) removeAll(absPath string, rootNode *node) {
 // If there is an error, it will be of type *LinkError.
 func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	const op = "rename"
+
+	if oldname == "" || newname == "" {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+	}
 
 	oAbsPath, _ := vfs.Abs(oldname)
 	nAbsPath, _ := vfs.Abs(newname)
@@ -888,6 +924,10 @@ func (vfs *OrefaFS) Stat(path string) (fs.FileInfo, error) {
 		op = "CreateFile"
 	}
 
+	if path == "" {
+		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
+
 	return vfs.stat(path, op)
 }
 
@@ -966,6 +1006,10 @@ func (vfs *OrefaFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	op := "truncate"
+
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
 
 	absPath, _ := vfs.Abs(name)
 
