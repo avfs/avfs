@@ -71,6 +71,10 @@ func NewWithErr(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
 // FromBasePath returns a BasePathFS path from an internal path.
 // When the base path is "/base/path", FromBasePath("/base/path/tmp") returns "/tmp".
 func (vfs *BasePathFS) FromBasePath(path string) string {
+	if path == "" {
+		return ""
+	}
+
 	if !strings.HasPrefix(path, vfs.basePath) {
 		panic("path must start with " + vfs.basePath + " : " + path)
 	}
@@ -103,7 +107,11 @@ func (vfs *BasePathFS) FromLinkError(err error) error {
 // ToBasePath transforms a BasePathFS path to an internal path.
 // When the base path is "/base/path", ToBasePath("/tmp") returns "/base/path/tmp".
 func (vfs *BasePathFS) ToBasePath(path string) string {
-	if path == "" || path == "/" {
+	if path == "" {
+		return ""
+	}
+
+	if path == "/" {
 		return vfs.basePath
 	}
 
