@@ -14,7 +14,7 @@
 ##	limitations under the License.
 ##
 
-FROM golang:bookworm AS base
+FROM golang:trixie AS base
 USER root
 
 WORKDIR /go/bin
