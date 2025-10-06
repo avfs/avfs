@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -35,6 +35,11 @@ import (
 // the current goroutine is locked to the operating system thread just before calling the function.
 // For details see https://github.com/golang/go/issues/1435
 
+var (
+	groupReadRE = regexp.MustCompile(`PrimaryGroupID: (\d+)\nRecordName: (\s+)`)
+	userReadRE  = regexp.MustCompile(`PrimaryGroupID: (\d+)\nRecordName: (\s+)\nUniqueID: (\d+)`)
+)
+
 // AddGroup creates a new group with the specified name.
 // If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
 func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
@@ -46,14 +51,9 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	err := run("groupadd", groupName)
+	_, err := dsEditGroup("create", groupName)
 	if err != nil {
-		switch err.Error() {
-		case fmt.Sprintf("groupadd: group '%s' already exists", groupName):
-			return nil, avfs.AlreadyExistsGroupError(groupName)
-		default:
-			return nil, err
-		}
+		return nil, err
 	}
 
 	g, err := idm.LookupGroup(groupName)
@@ -79,16 +79,16 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	err := run("useradd", "-M", "-g", groupName, userName)
+	g, err := lookupGroup(groupName)
 	if err != nil {
-		switch err.Error() {
-		case fmt.Sprintf("useradd: user '%s' already exists", userName):
-			return nil, avfs.AlreadyExistsUserError(userName)
-		case fmt.Sprintf("useradd: group '%s' does not exist", groupName):
-			return nil, avfs.UnknownGroupError(groupName)
-		default:
-			return nil, err
-		}
+		return nil, err
+	}
+
+	sGid := strconv.Itoa(g.Gid())
+
+	_, err = sysAdminCtl("create", userName, "-GID", sGid)
+	if err != nil {
+		return nil, err
 	}
 
 	u, err := lookupUser(userName)
@@ -128,7 +128,7 @@ func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
 		return avfs.AlreadyExistsGroupError(groupName)
 	}
 
-	err = usermod(u.Name(), g.Name(), "-aG")
+	_, err = dsEditGroup("edit", "-a", u.Name(), "-t", "user", g.Name())
 	if err != nil {
 		return err
 	}
@@ -147,14 +147,9 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 		return avfs.InvalidNameError(groupName)
 	}
 
-	err := run("groupdel", groupName)
+	_, err := dsEditGroup("delete", groupName)
 	if err != nil {
-		switch err.Error() {
-		case fmt.Sprintf("groupdel: group '%s' does not exist", groupName):
-			return avfs.UnknownGroupError(groupName)
-		default:
-			return err
-		}
+		return err
 	}
 
 	return nil
@@ -171,14 +166,9 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.InvalidNameError(userName)
 	}
 
-	err := run("userdel", userName)
+	_, err := sysAdminCtl("delete", userName)
 	if err != nil {
-		switch err.Error() {
-		case "userdel: user '" + userName + "' does not exist":
-			return avfs.UnknownUserError(userName)
-		default:
-			return err
-		}
+		return err
 	}
 
 	return nil
@@ -214,7 +204,7 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 		return avfs.UnknownGroupError(groupName)
 	}
 
-	err = usermod(u.Name(), g.Name(), "-rG")
+	_, err = dsEditGroup("edit", "-d", u.Name(), "-t", "user", g.Name())
 	if err != nil {
 		return err
 	}
@@ -235,7 +225,22 @@ func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 // lookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func lookupGroup(groupName string) (avfs.GroupReader, error) {
-	return getGroup(groupName, avfs.UnknownGroupError(groupName))
+	buf, err := dscl("read", "Groups/"+groupName, "PrimaryGroupID", "RecordName")
+	if err != nil {
+		return nil, err
+	}
+
+	r := groupReadRE.FindStringSubmatch(buf)
+	if r == nil {
+		return nil, avfs.UnknownGroupError(groupName)
+	}
+
+	gid, _ := strconv.Atoi(r[1])
+	name := r[2]
+
+	g := &OsGroup{name: name, gid: gid}
+
+	return g, nil
 }
 
 // LookupGroupId looks up a group by groupid.
@@ -243,23 +248,14 @@ func lookupGroup(groupName string) (avfs.GroupReader, error) {
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 	sGid := strconv.Itoa(gid)
 
-	return getGroup(sGid, avfs.UnknownGroupIdError(gid))
-}
-
-// getGroup retrieves a group based on the provided name or ID.
-// It returns an OsGroup struct or an error if the group is not found.
-func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
-	line, err := getent("group", nameOrId, notFoundErr)
+	buf, err := dscl("search", "/Groups", "PrimaryGroupID", sGid)
 	if err != nil {
 		return nil, err
 	}
 
-	cols := strings.Split(line, ":")
-	gid, _ := strconv.Atoi(cols[2])
+	name := strings.Split(buf, "\t")[0]
 
-	g := &OsGroup{name: cols[0], gid: gid}
-
-	return g, nil
+	return lookupGroup(name)
 }
 
 // LookupUser looks up a user by username.
@@ -273,7 +269,23 @@ func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 }
 
 func lookupUser(userName string) (*OsUser, error) {
-	return getUser(userName, avfs.UnknownUserError(userName))
+	buf, err := dscl("read", "/Users/"+userName, "PrimaryGroupID", "RecordName", "UniqueID")
+	if err != nil {
+		return nil, err
+	}
+
+	r := userReadRE.FindStringSubmatch(buf)
+	if r == nil {
+		return nil, avfs.UnknownUserError(userName)
+	}
+
+	gid, _ := strconv.Atoi(r[1])
+	name := r[2]
+	uid, _ := strconv.Atoi(r[3])
+
+	u := &OsUser{name: name, uid: uid, gid: gid}
+
+	return u, nil
 }
 
 // LookupUserId looks up a user by userid.
@@ -286,24 +298,14 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 func lookupUserId(uid int) (avfs.UserReader, error) {
 	sUid := strconv.Itoa(uid)
 
-	return getUser(sUid, avfs.UnknownUserIdError(uid))
-}
-
-// getUser retrieves user information based on either a username or user ID.
-// It returns an OsUser pointer and an error if any occurs during retrieval.
-func getUser(nameOrId string, notFoundErr error) (*OsUser, error) {
-	line, err := getent("passwd", nameOrId, notFoundErr)
+	buf, err := dscl("search", "/Users", "UniqueID", sUid)
 	if err != nil {
 		return nil, err
 	}
 
-	cols := strings.Split(line, ":")
-	uid, _ := strconv.Atoi(cols[2])
-	gid, _ := strconv.Atoi(cols[3])
+	name := strings.Split(buf, "\t")[0]
 
-	u := &OsUser{name: cols[0], uid: uid, gid: gid}
-
-	return u, nil
+	return lookupUser(name)
 }
 
 // SetUserPrimaryGroup sets the primary group of a user to the specified group name.
@@ -332,7 +334,9 @@ func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
 		return err
 	}
 
-	err = usermod(u.Name(), g.Name(), "-G")
+	sGid := strconv.Itoa(g.Gid())
+
+	_, err = dscl("create", "/Users/"+u.Name(), "PrimaryGroupID", sGid)
 	if err != nil {
 		return err
 	}
@@ -501,38 +505,6 @@ func User() avfs.UserReader {
 	return user
 }
 
-// getent retrieves an entry from the specified database using the `getent` command.
-// If the entry is not found or if there's an error, it returns a corresponding error.
-// Parameters:
-// - database: The name of the database to query (e.g., "passwd", "group").
-// - key: The key to look up in the database.
-// - notFoundErr: The error to return if the key is not found.
-// Returns the retrieved entry as a string or an error if any occurs.
-func getent(database, key string, notFoundErr error) (string, error) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("getent", database, key)
-
-	buf, err := cmd.Output()
-	if err != nil {
-		if e, ok := err.(*exec.ExitError); ok {
-			switch e.ExitCode() {
-			case 1:
-				return "", avfs.UnknownError("Missing arguments, or database unknown.")
-			case 2:
-				return "", notFoundErr
-			case 3:
-				return "", avfs.UnknownError("Enumeration not supported on this database.")
-			}
-		}
-
-		return "", err
-	}
-
-	return string(buf), nil
-}
-
 // id returns the result of the "id" command for the given username and options.
 // The result is returned as a string, and an error is returned if the command fails.
 func id(username, options string) (string, error) {
@@ -544,9 +516,28 @@ func id(username, options string) (string, error) {
 	return buf, nil
 }
 
-// usermod executes the "usermod" command with the given options and username.
-func usermod(userName, groupName, options string) error {
-	return run("usermod", options, groupName, userName)
+// dscl calls the Directory Service command line utility.
+func dscl(command string, args ...string) (string, error) {
+	args = append([]string{"-q", ".", "-" + command}, args...)
+	buf, err := output("dscl", args...)
+
+	return buf, err
+}
+
+// dsEditGroup calls the Directory Service group record manipulation tool.
+func dsEditGroup(command string, args ...string) (string, error) {
+	args = append([]string{"-q", "-" + command}, args...)
+	buf, err := output("desedseditgrou", args...)
+
+	return buf, err
+}
+
+// sysAdminCtl calls the sysadminctl command line utility.
+func sysAdminCtl(command string, args ...string) (string, error) {
+	args = append([]string{"-" + command}, args...)
+	buf, err := output("sysadminctl", args...)
+
+	return buf, err
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.

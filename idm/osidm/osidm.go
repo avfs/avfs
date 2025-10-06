@@ -21,7 +21,6 @@ package osidm
 
 import (
 	"bytes"
-	"errors"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -84,13 +83,9 @@ func run(cmd string, args ...string) error {
 	var stderr bytes.Buffer
 
 	c.Stderr = &stderr
-
 	err := c.Run()
-	if err != nil {
-		return errors.New(strings.TrimSuffix(stderr.String(), "\n"))
-	}
 
-	return nil
+	return err
 }
 
 // output executes a command cmd with arguments args,
@@ -104,11 +99,7 @@ func output(cmd string, args ...string) (string, error) {
 	var stderr bytes.Buffer
 
 	c.Stderr = &stderr
-
 	buf, err := c.Output()
-	if err != nil {
-		return "", errors.New(strings.TrimSuffix(stderr.String(), "\n"))
-	}
 
-	return strings.TrimSuffix(string(buf), "\n"), nil
+	return strings.TrimSuffix(string(buf), "\n"), err
 }
