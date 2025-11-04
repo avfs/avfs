@@ -73,33 +73,17 @@ func (u *OsUser) Uid() int {
 }
 
 // run executes a command cmd with arguments args,
-// returns the text from os.Stderr as error.
-func run(cmd string, args ...string) error {
+// returns the text from os.Stdout and os.Stderr and the exit error.
+func run(cmd string, args ...string) (string, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
+	var out bytes.Buffer
+
 	c := exec.Command(cmd, args...)
-
-	var stderr bytes.Buffer
-
-	c.Stderr = &stderr
+	c.Stdout = &out
+	c.Stderr = &out
 	err := c.Run()
 
-	return err
-}
-
-// output executes a command cmd with arguments args,
-// returns the text from os.Stdout and the text from os.Stderr as error.
-func output(cmd string, args ...string) (string, error) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	c := exec.Command(cmd, args...)
-
-	var stderr bytes.Buffer
-
-	c.Stderr = &stderr
-	buf, err := c.Output()
-
-	return strings.TrimSuffix(string(buf), "\n"), err
+	return strings.TrimSuffix(out.String(), "\n"), err
 }

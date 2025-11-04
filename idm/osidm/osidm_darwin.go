@@ -31,10 +31,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// To avoid flaky tests when executing commands or making system calls as root,
-// the current goroutine is locked to the operating system thread just before calling the function.
-// For details see https://github.com/golang/go/issues/1435
-
 var (
 	groupReadRE = regexp.MustCompile(`PrimaryGroupID: (\d+)\nRecordName: (\s+)`)
 	userReadRE  = regexp.MustCompile(`PrimaryGroupID: (\d+)\nRecordName: (\s+)\nUniqueID: (\d+)`)
@@ -508,36 +504,36 @@ func User() avfs.UserReader {
 // id returns the result of the "id" command for the given username and options.
 // The result is returned as a string, and an error is returned if the command fails.
 func id(username, options string) (string, error) {
-	buf, err := output("id", options, username)
+	out, err := run("id", options, username)
 	if err != nil {
-		return "", err
+		return "", avfs.UnknownUserError(username)
 	}
 
-	return buf, nil
+	return out, nil
 }
 
 // dscl calls the Directory Service command line utility.
 func dscl(command string, args ...string) (string, error) {
 	args = append([]string{"-q", ".", "-" + command}, args...)
-	buf, err := output("dscl", args...)
+	out, err := run("dscl", args...)
 
-	return buf, err
+	return out, err
 }
 
 // dsEditGroup calls the Directory Service group record manipulation tool.
 func dsEditGroup(command string, args ...string) (string, error) {
 	args = append([]string{"-q", "-" + command}, args...)
-	buf, err := output("desedseditgrou", args...)
+	out, err := run("desedseditgrou", args...)
 
-	return buf, err
+	return out, err
 }
 
 // sysAdminCtl calls the sysadminctl command line utility.
 func sysAdminCtl(command string, args ...string) (string, error) {
 	args = append([]string{"-" + command}, args...)
-	buf, err := output("sysadminctl", args...)
+	out, err := run("sysadminctl", args...)
 
-	return buf, err
+	return out, err
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.

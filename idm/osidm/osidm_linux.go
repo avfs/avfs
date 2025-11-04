@@ -31,10 +31,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// To avoid flaky tests when executing commands or making system calls as root,
-// the current goroutine is locked to the operating system thread just before calling the function.
-// For details see https://github.com/golang/go/issues/1435
-
 // AddGroup creates a new group with the specified name.
 // If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
 func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
@@ -46,14 +42,13 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	err := run("groupadd", groupName)
+	out, err := run("groupadd", groupName)
 	if err != nil {
-		switch err.Error() {
-		case fmt.Sprintf("groupadd: group '%s' already exists", groupName):
+		if strings.Contains(out, "groupadd: group '"+groupName+"' already exists") {
 			return nil, avfs.AlreadyExistsGroupError(groupName)
-		default:
-			return nil, err
 		}
+
+		return nil, avfs.UnknownError(out)
 	}
 
 	g, err := idm.LookupGroup(groupName)
@@ -79,16 +74,17 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	err := run("useradd", "-M", "-g", groupName, userName)
+	out, err := run("useradd", "-M", "-g", groupName, userName)
 	if err != nil {
-		switch err.Error() {
-		case fmt.Sprintf("useradd: user '%s' already exists", userName):
+		if strings.Contains(out, "useradd: user '"+userName+"' already exists") {
 			return nil, avfs.AlreadyExistsUserError(userName)
-		case fmt.Sprintf("useradd: group '%s' does not exist", groupName):
-			return nil, avfs.UnknownGroupError(groupName)
-		default:
-			return nil, err
 		}
+
+		if strings.Contains(out, "useradd: group '"+groupName+"' does not exist") {
+			return nil, avfs.UnknownGroupError(groupName)
+		}
+
+		return nil, avfs.UnknownError(out)
 	}
 
 	u, err := lookupUser(userName)
@@ -147,14 +143,13 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 		return avfs.InvalidNameError(groupName)
 	}
 
-	err := run("groupdel", groupName)
+	out, err := run("groupdel", groupName)
 	if err != nil {
-		switch err.Error() {
-		case fmt.Sprintf("groupdel: group '%s' does not exist", groupName):
+		if strings.Contains(out, "groupdel: group '"+groupName+"' does not exist") {
 			return avfs.UnknownGroupError(groupName)
-		default:
-			return err
 		}
+
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -171,14 +166,13 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.InvalidNameError(userName)
 	}
 
-	err := run("userdel", userName)
+	out, err := run("userdel", userName)
 	if err != nil {
-		switch err.Error() {
-		case "userdel: user '" + userName + "' does not exist":
+		if strings.Contains(out, "userdel: user '"+userName+"' does not exist") {
 			return avfs.UnknownUserError(userName)
-		default:
-			return err
 		}
+
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -509,12 +503,7 @@ func User() avfs.UserReader {
 // - notFoundErr: The error to return if the key is not found.
 // Returns the retrieved entry as a string or an error if any occurs.
 func getent(database, key string, notFoundErr error) (string, error) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	cmd := exec.Command("getent", database, key)
-
-	buf, err := cmd.Output()
+	out, err := run("getent", database, key)
 	if err != nil {
 		if e, ok := err.(*exec.ExitError); ok {
 			switch e.ExitCode() {
@@ -527,26 +516,31 @@ func getent(database, key string, notFoundErr error) (string, error) {
 			}
 		}
 
-		return "", err
+		return "", avfs.UnknownError(out)
 	}
 
-	return string(buf), nil
+	return out, nil
 }
 
 // id returns the result of the "id" command for the given username and options.
 // The result is returned as a string, and an error is returned if the command fails.
 func id(username, options string) (string, error) {
-	buf, err := output("id", options, username)
+	out, err := run("id", options, username)
 	if err != nil {
-		return "", err
+		return "", avfs.UnknownUserError(username)
 	}
 
-	return buf, nil
+	return out, nil
 }
 
 // usermod executes the "usermod" command with the given options and username.
 func usermod(userName, groupName, options string) error {
-	return run("usermod", options, groupName, userName)
+	out, err := run("usermod", options, groupName, userName)
+	if err != nil {
+		return avfs.UnknownError(out)
+	}
+
+	return nil
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.
