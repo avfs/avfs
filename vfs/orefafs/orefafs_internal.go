@@ -17,7 +17,6 @@
 package orefafs
 
 import (
-	"bytes"
 	"io/fs"
 	"sort"
 	"sync/atomic"
@@ -185,7 +184,7 @@ func (nd *node) truncate(size int64) {
 
 	diff := int(size) - len(nd.data)
 	if diff > 0 {
-		nd.data = append(nd.data, bytes.Repeat([]byte{0}, diff)...)
+		nd.data = append(nd.data, make([]byte, diff)...)
 
 		return
 	}

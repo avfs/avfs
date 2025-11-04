@@ -18,7 +18,6 @@ package avfs
 
 import (
 	"io/fs"
-	"reflect"
 	"strconv"
 )
 
@@ -45,7 +44,7 @@ func (e InvalidNameError) Error() string { return "name: invalid name " + string
 type UnknownError string
 
 func (e UnknownError) Error() string {
-	return "unknown error " + reflect.TypeOf(e).String() + " : '" + string(e) + "'"
+	return "unknown error : '" + string(e) + "'"
 }
 
 // UnknownGroupError is returned by LookupGroup when a group cannot be found.

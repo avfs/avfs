@@ -333,11 +333,7 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 		return nil, io.EOF
 	}
 
-	end := start + n
-	if end > len(f.dirEntries) {
-		end = len(f.dirEntries)
-	}
-
+	end := min(start+n, len(f.dirEntries))
 	f.dirIndex = end
 
 	return f.dirEntries[start:end], nil
@@ -412,11 +408,7 @@ func (f *MemFile) Readdirnames(n int) (names []string, err error) {
 		return nil, io.EOF
 	}
 
-	end := start + n
-	if end > len(f.dirNames) {
-		end = len(f.dirNames)
-	}
-
+	end := min(start+n, len(f.dirNames))
 	f.dirIndex = end
 
 	return f.dirNames[start:end], nil

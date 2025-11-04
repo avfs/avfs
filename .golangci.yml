@@ -65,6 +65,9 @@ linters:
           severity: error
         - name: unused-parameter
           disabled: true
+    wsl_v5:
+      disable:
+        - defer
   exclusions:
     generated: lax
     presets:

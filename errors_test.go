@@ -19,7 +19,6 @@
 package avfs_test
 
 import (
-	"reflect"
 	"strconv"
 	"testing"
 
@@ -46,7 +45,7 @@ func TestErrors(t *testing.T) {
 	errStr := "whatever error"
 	uErr := avfs.UnknownError(errStr)
 
-	wantErrStr = "unknown error " + reflect.TypeOf(uErr).String() + " : '" + errStr + "'"
+	wantErrStr = "unknown error : '" + errStr + "'"
 	if uErr.Error() != wantErrStr {
 		t.Errorf("UnknownError : want error to be %s, got %s", wantErrStr, uErr.Error())
 	}
