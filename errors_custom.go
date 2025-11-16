@@ -8,21 +8,21 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[ErrNegativeOffset-2147483649]
-	_ = x[ErrFileClosing-2147483650]
-	_ = x[ErrPatternHasSeparator-2147483651]
-	_ = x[ErrVolumeAlreadyExists-2147483652]
-	_ = x[ErrVolumeNameInvalid-2147483653]
-	_ = x[ErrVolumeWindows-2147483654]
+	_ = x[ErrNegativeOffset-2147483646]
+	_ = x[ErrFileClosing-2147483645]
+	_ = x[ErrPatternHasSeparator-2147483644]
+	_ = x[ErrVolumeAlreadyExists-2147483643]
+	_ = x[ErrVolumeNameInvalid-2147483642]
+	_ = x[ErrVolumeWindows-2147483641]
 }
 
-const _CustomError_name = "negative offsetuse of closed filepattern contains path separatorVolume already exists.Volume name is invalid.Volumes are available for Windows only."
+const _CustomError_name = "Volumes are available for Windows only.Volume name is invalid.Volume already exists.pattern contains path separatoruse of closed filenegative offset"
 
-var _CustomError_index = [...]uint8{0, 15, 33, 64, 86, 109, 148}
+var _CustomError_index = [...]uint8{0, 39, 62, 84, 115, 133, 148}
 
 func (i CustomError) String() string {
-	idx := int(i) - 2147483649
-	if i < 2147483649 || idx >= len(_CustomError_index)-1 {
+	idx := int(i) - 2147483641
+	if i < 2147483641 || idx >= len(_CustomError_index)-1 {
 		return "CustomError(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _CustomError_name[_CustomError_index[idx]:_CustomError_index[idx+1]]

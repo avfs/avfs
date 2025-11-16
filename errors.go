@@ -18,6 +18,7 @@ package avfs
 
 import (
 	"io/fs"
+	"math"
 	"strconv"
 )
 
@@ -87,19 +88,19 @@ type SysError interface {
 	Is(target error) bool
 }
 
-const customErrorBase = 2 << 30
+const customErrorBase = math.MaxInt32
 
 type CustomError uintptr
 
 //go:generate stringer -type CustomError -linecomment -output errors_custom.go
 
 const (
-	ErrNegativeOffset      CustomError = customErrorBase + 1 // negative offset
-	ErrFileClosing         CustomError = customErrorBase + 2 // use of closed file
-	ErrPatternHasSeparator CustomError = customErrorBase + 3 // pattern contains path separator
-	ErrVolumeAlreadyExists CustomError = customErrorBase + 4 // Volume already exists.
-	ErrVolumeNameInvalid   CustomError = customErrorBase + 5 // Volume name is invalid.
-	ErrVolumeWindows       CustomError = customErrorBase + 6 // Volumes are available for Windows only.
+	ErrNegativeOffset      CustomError = customErrorBase - 1 // negative offset
+	ErrFileClosing         CustomError = customErrorBase - 2 // use of closed file
+	ErrPatternHasSeparator CustomError = customErrorBase - 3 // pattern contains path separator
+	ErrVolumeAlreadyExists CustomError = customErrorBase - 4 // Volume already exists.
+	ErrVolumeNameInvalid   CustomError = customErrorBase - 5 // Volume name is invalid.
+	ErrVolumeWindows       CustomError = customErrorBase - 6 // Volumes are available for Windows only.
 )
 
 func (i CustomError) Error() string {
