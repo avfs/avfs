@@ -21,13 +21,14 @@ func _() {
 	_ = x[ErrWinNegativeSeek-131]
 	_ = x[ErrWinNotReparsePoint-4390]
 	_ = x[ErrWinInvalidHandle-6]
+	_ = x[ErrWinInvalidName-123]
 	_ = x[ErrWinSharingViolation-32]
 	_ = x[ErrWinNotSupported-536871042]
 	_ = x[ErrWinPathNotFound-3]
 	_ = x[ErrWinPrivilegeNotHeld-1314]
 }
 
-const _WindowsError_name = "Incorrect function.The system cannot find the file specified.The system cannot find the path specified.Access is denied.The handle is invalid.The process cannot access the file because it is being used by another process.Bad network path.The file exists.The parameter is incorrect.An attempt was made to move the file pointer before the beginning of the file.The directory is not empty.Cannot create a file when that file already exists.The directory name is invalid.A required privilege is not held by the client.The file or directory is not a reparse point.is a directorynot supported by windows"
+const _WindowsError_name = "Incorrect function.The system cannot find the file specified.The system cannot find the path specified.Access is denied.The handle is invalid.The process cannot access the file because it is being used by another process.Bad network path.The file exists.The parameter is incorrect.The filename, directory name, or volume label syntax is incorrect.An attempt was made to move the file pointer before the beginning of the file.The directory is not empty.Cannot create a file when that file already exists.The directory name is invalid.A required privilege is not held by the client.The file or directory is not a reparse point.is a directorynot supported by windows"
 
 var _WindowsError_map = map[WindowsError]string{
 	1:         _WindowsError_name[0:19],
@@ -39,14 +40,15 @@ var _WindowsError_map = map[WindowsError]string{
 	53:        _WindowsError_name[221:238],
 	80:        _WindowsError_name[238:254],
 	87:        _WindowsError_name[254:281],
-	131:       _WindowsError_name[281:359],
-	145:       _WindowsError_name[359:386],
-	183:       _WindowsError_name[386:437],
-	267:       _WindowsError_name[437:467],
-	1314:      _WindowsError_name[467:514],
-	4390:      _WindowsError_name[514:559],
-	536870954: _WindowsError_name[559:573],
-	536871042: _WindowsError_name[573:597],
+	123:       _WindowsError_name[281:347],
+	131:       _WindowsError_name[347:425],
+	145:       _WindowsError_name[425:452],
+	183:       _WindowsError_name[452:503],
+	267:       _WindowsError_name[503:533],
+	1314:      _WindowsError_name[533:580],
+	4390:      _WindowsError_name[580:625],
+	536870954: _WindowsError_name[625:639],
+	536871042: _WindowsError_name[639:663],
 }
 
 func (i WindowsError) String() string {

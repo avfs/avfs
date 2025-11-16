@@ -21,9 +21,9 @@ const _CustomError_name = "negative offsetuse of closed filepattern contains pat
 var _CustomError_index = [...]uint8{0, 15, 33, 64, 86, 109, 148}
 
 func (i CustomError) String() string {
-	i -= 2147483649
-	if i >= CustomError(len(_CustomError_index)-1) {
-		return "CustomError(" + strconv.FormatInt(int64(i+2147483649), 10) + ")"
+	idx := int(i) - 2147483649
+	if i < 2147483649 || idx >= len(_CustomError_index)-1 {
+		return "CustomError(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _CustomError_name[_CustomError_index[i]:_CustomError_index[i+1]]
+	return _CustomError_name[_CustomError_index[idx]:_CustomError_index[idx+1]]
 }

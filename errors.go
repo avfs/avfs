@@ -185,6 +185,7 @@ const (
 	ErrWinNegativeSeek     WindowsError = 0x83       // An attempt was made to move the file pointer before the beginning of the file.
 	ErrWinNotReparsePoint  WindowsError = 4390       // The file or directory is not a reparse point.
 	ErrWinInvalidHandle    WindowsError = 6          // The handle is invalid.
+	ErrWinInvalidName      WindowsError = 0x7b       // The filename, directory name, or volume label syntax is incorrect.
 	ErrWinSharingViolation WindowsError = 32         // The process cannot access the file because it is being used by another process.
 	ErrWinNotSupported     WindowsError = 0x20000082 // not supported by windows
 	ErrWinPathNotFound     WindowsError = 3          // The system cannot find the path specified.
