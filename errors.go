@@ -75,9 +75,12 @@ func (e UnknownUserIdError) Error() string {
 	return "user: unknown userid " + strconv.Itoa(int(e))
 }
 
-// ErrorIdentifier is the interface that wraps the Is method of an error.
-type ErrorIdentifier interface {
+// SysError is an interface that wraps the underlying system error number.
+type SysError interface {
 	error
+
+	// No returns the underlying system error number.
+	No() uint
 
 	// Is returns true if the error can be treated as equivalent to a target error.
 	// target is one of fs.ErrPermission, fs.ErrExist, fs.ErrNotExist.
@@ -156,6 +159,11 @@ func (i LinuxError) Is(target error) bool {
 	return false
 }
 
+// No returns the underlying system error number.
+func (i LinuxError) No() uint {
+	return uint(i)
+}
+
 // WindowsError replaces syscall.Errno for Windows operating systems.
 type WindowsError uintptr
 
@@ -201,6 +209,10 @@ func (i WindowsError) Is(target error) bool {
 	}
 
 	return false
+}
+
+func (i WindowsError) No() uint {
+	return uint(i)
 }
 
 // ErrorsForOS regroups errors depending on the OS emulated.

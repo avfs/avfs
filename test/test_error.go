@@ -24,6 +24,7 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
+	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -226,13 +227,19 @@ func (ae *assertError) Test() *assertError {
 		ae.errorf("want Op to be %s, got %s", ae.wantOp, op)
 	}
 
-	wantErr := reflect.ValueOf(ae.wantErr)
-	gotErr := reflect.ValueOf(ae.gotErr)
+	e, ok := err.(syscall.Errno)
+	we, wok := ae.wantErr.(avfs.SysError)
 
-	if wantErr.CanUint() && gotErr.CanUint() && wantErr.Uint() != gotErr.Uint() {
-		ae.errorf("want error to be %s (0x%X), got %s (0x%X)", wantErr, wantErr.Uint(), gotErr, gotErr.Uint())
-	} else if ae.wantErr.Error() != err.Error() {
-		ae.errorf("want error to be %s, got %s", wantErr, gotErr)
+	if ok && wok {
+		if uint(e) != we.No() {
+			ae.errorf("want error to be %s (0x%X), got %s (0x%X)", we, we.No(), e, uint(e))
+		}
+
+		return ae
+	}
+
+	if ae.wantErr.Error() != err.Error() {
+		ae.errorf("want error to be %s, got %s", ae.wantErr, err)
 	}
 
 	return ae
