@@ -313,7 +313,7 @@ func TestBuild() error {
 
 	srcPath := filepath.Join(appDir, "test/testbuild")
 	outPath := filepath.Join(appDir, "tmp/{{.Dir}}/{{.Dir}}_{{.OS}}_{{.Arch}}")
-	osArch := goOSArch("android") // Exclude Android platforms : need additional tools to compile.
+	osArch := goOSArch("android") // Exclude Android platforms: need additional tools to compile.
 
 	var sb strings.Builder
 	for _, oa := range osArch {

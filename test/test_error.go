@@ -24,7 +24,6 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -199,16 +198,15 @@ func (ae *assertError) Test() *assertError {
 		err error
 	)
 
-	if e, ok := ae.gotErr.(*fs.PathError); ok && !ae.isLinkError {
-		op = e.Op
-		err = e.Err
+	switch e := ae.gotErr.(type) {
+	case *fs.PathError:
+		op, err = e.Op, e.Err
 
 		if ae.testPath && ae.wantPath != e.Path {
 			ae.errorf("want Path to be %s, got %s", ae.wantPath, e.Path)
 		}
-	} else if e, ok := ae.gotErr.(*os.LinkError); ok && ae.isLinkError {
-		op = e.Op
-		err = e.Err
+	case *os.LinkError:
+		op, err = e.Op, e.Err
 
 		if ae.testOld && ae.wantOld != e.Old {
 			ae.errorf("want Old to be %s, got %s", ae.wantOld, e.Old)
@@ -217,7 +215,7 @@ func (ae *assertError) Test() *assertError {
 		if ae.testNew && ae.wantNew != e.New {
 			ae.errorf("want New to be %s, got %s", ae.wantNew, e.New)
 		}
-	} else {
+	default:
 		ae.errorf("want error type to be %v, got %v", reflect.TypeOf(ae.wantErr), reflect.TypeOf(ae.gotErr))
 
 		return ae
@@ -227,12 +225,11 @@ func (ae *assertError) Test() *assertError {
 		ae.errorf("want Op to be %s, got %s", ae.wantOp, op)
 	}
 
-	e, ok := err.(syscall.Errno)
-	we, wok := ae.wantErr.(avfs.SysError)
-
-	if ok && wok {
-		if uint(e) != we.No() {
-			ae.errorf("want error to be %s (0x%X), got %s (0x%X)", we, we.No(), e, uint(e))
+	we, e := reflect.ValueOf(ae.wantErr), reflect.ValueOf(err)
+	if we.CanUint() && e.CanUint() {
+		weu, eu := we.Uint(), e.Uint()
+		if weu != eu {
+			ae.errorf("want error to be %s (0x%X), got %s (0x%X)", ae.wantErr, weu, err, eu)
 		}
 
 		return ae

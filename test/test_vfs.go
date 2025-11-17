@@ -2539,19 +2539,19 @@ func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
 		err := vfs.Symlink("", "")
 		AssertLinkError(t, err).Op(op).Old("").New("").
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPrivilegeNotHeld).Test()
+			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
 
 		name := ts.emptyFile(t, testDir)
 
 		err = vfs.Symlink("", name)
 		AssertLinkError(t, err).Op(op).Old("").New(name).
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPrivilegeNotHeld).Test()
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAlreadyExists).Test()
 
 		err = vfs.Symlink(name, "")
 		AssertLinkError(t, err).Op(op).Old(name).New("").
 			OSType(avfs.OsLinux).Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Err(avfs.ErrWinPrivilegeNotHeld).Test()
+			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).Test()
 	})
 
 	t.Run("Symlink", func(t *testing.T) {
