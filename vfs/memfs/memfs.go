@@ -151,6 +151,10 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
+	}
+
 	_, child, _, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
@@ -687,8 +691,8 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 
 	var err error
 
-	if name == "" && vfs.OSType() == avfs.OsWindows {
-		return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrWinPathNotFound}
+	if name == "" {
+		return "", &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	_, child, _, err := vfs.searchNode(name, slmLstat)
