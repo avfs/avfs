@@ -52,8 +52,17 @@ func (vfs *OrefaFS) Base(path string) string {
 func (vfs *OrefaFS) Chdir(dir string) error {
 	const op = "chdir"
 
+	var err error
+
 	if dir == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			err = avfs.ErrWinInvalidName
+		default:
+			err = avfs.ErrNoSuchFileOrDir
+		}
+
+		return &fs.PathError{Op: op, Path: "", Err: err}
 	}
 
 	absPath, _ := vfs.Abs(dir)
@@ -67,9 +76,11 @@ func (vfs *OrefaFS) Chdir(dir string) error {
 	}
 
 	if !nd.mode.IsDir() {
-		err := vfs.err.NotADirectory
-		if vfs.OSType() == avfs.OsWindows {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
 			err = avfs.ErrWinDirNameInvalid
+		default:
+			err = vfs.err.NotADirectory
 		}
 
 		return &fs.PathError{Op: op, Path: dir, Err: err}
@@ -102,7 +113,7 @@ func (vfs *OrefaFS) Chmod(name string, mode fs.FileMode) error {
 	const op = "chmod"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -133,11 +144,11 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	if vfs.OSType() == avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrWinNotSupported}
 	}
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		return &fs.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -147,7 +158,7 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	vfs.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
 	}
 
 	nd.mu.Lock()
@@ -167,7 +178,7 @@ func (vfs *OrefaFS) Chtimes(name string, atime, mtime time.Time) error {
 	const op = "chtimes"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -343,7 +354,7 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	const op = "link"
 
 	if oldname == "" || newname == "" {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchDir}
 	}
 
 	oAbsPath, _ := vfs.Abs(oldname)
@@ -419,13 +430,24 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Lstat(name string) (fs.FileInfo, error) {
-	op := "lstat"
-	if vfs.OSType() == avfs.OsWindows {
-		op = "CreateFile"
-	}
+	var op string
 
 	if name == "" {
-		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			op = "Lstat"
+		default:
+			op = "lstat"
+		}
+
+		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		op = "GetFileAttributesEx"
+	default:
+		op = "lstat"
 	}
 
 	return vfs.stat(name, op)
@@ -697,9 +719,13 @@ func (vfs *OrefaFS) ReadFile(name string) ([]byte, error) {
 func (vfs *OrefaFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	err := error(avfs.ErrPermDenied)
-	if vfs.OSType() == avfs.OsWindows {
+	var err error
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
 		err = avfs.ErrWinNotReparsePoint
+	default:
+		err = avfs.ErrPermDenied
 	}
 
 	return "", &fs.PathError{Op: op, Path: name, Err: err}
@@ -723,7 +749,7 @@ func (vfs *OrefaFS) Remove(name string) error {
 	const op = "remove"
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -814,7 +840,7 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	const op = "rename"
 
 	if oldname == "" || newname == "" {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchDir}
 	}
 
 	oAbsPath, _ := vfs.Abs(oldname)
@@ -919,13 +945,24 @@ func (vfs *OrefaFS) Split(path string) (dir, file string) {
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Stat(path string) (fs.FileInfo, error) {
-	op := "stat"
-	if vfs.OSType() == avfs.OsWindows {
-		op = "CreateFile"
-	}
+	var op string
 
 	if path == "" {
-		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			op = "Stat"
+		default:
+			op = "stat"
+		}
+
+		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		op = "GetFileAttributesEx"
+	default:
+		op = "stat"
 	}
 
 	return vfs.stat(path, op)
@@ -1005,7 +1042,14 @@ func (vfs *OrefaFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
 func (vfs *OrefaFS) Truncate(name string, size int64) error {
-	op := "truncate"
+	var op string
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		op = "open"
+	default:
+		op = "truncate"
+	}
 
 	if name == "" {
 		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
@@ -1018,22 +1062,18 @@ func (vfs *OrefaFS) Truncate(name string, size int64) error {
 	vfs.mu.RUnlock()
 
 	if !childOk {
-		if vfs.OSType() == avfs.OsWindows {
-			op = "open"
-		}
-
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	if child.mode.IsDir() {
-		if vfs.OSType() == avfs.OsWindows {
-			op = "open"
-		}
-
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 	}
 
 	if size < 0 {
+		if vfs.OSType() == avfs.OsWindows {
+			op = "truncate"
+		}
+
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
 	}
 
