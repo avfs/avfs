@@ -55,6 +55,19 @@ func (vfs *MemFS) Base(path string) string {
 func (vfs *MemFS) Chdir(dir string) error {
 	const op = "chdir"
 
+	var err error
+
+	if dir == "" {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			err = avfs.ErrWinInvalidName
+		default:
+			err = avfs.ErrNoSuchFileOrDir
+		}
+
+		return &fs.PathError{Op: op, Path: "", Err: err}
+	}
+
 	_, child, pi, err := vfs.searchNode(dir, slmLstat)
 	if err != vfs.err.FileExists {
 		return &fs.PathError{Op: op, Path: dir, Err: err}
@@ -105,6 +118,10 @@ func (vfs *MemFS) Chdir(dir string) error {
 func (vfs *MemFS) Chmod(name string, mode fs.FileMode) error {
 	const op = "chmod"
 
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
+
 	_, child, _, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists || child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: err}
@@ -154,6 +171,10 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Chtimes(name string, _, mtime time.Time) error {
 	const op = "chtimes"
+
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
 
 	_, child, _, err := vfs.searchNode(name, slmLstat)
 	if err != vfs.err.FileExists || child == nil {
@@ -327,7 +348,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	const op = "link"
 
 	if oldname == "" || newname == "" {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchDir}
 	}
 
 	_, oChild, _, oerr := vfs.searchNode(oldname, slmLstat)
@@ -378,15 +399,30 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 // If the file is a symbolic link, the returned FileInfo
 // describes the symbolic link. Lstat makes no attempt to follow the link.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFS) Lstat(path string) (fs.FileInfo, error) {
-	op := "lstat"
-	if vfs.OSType() == avfs.OsWindows {
-		op = "CreateFile"
+func (vfs *MemFS) Lstat(name string) (fs.FileInfo, error) {
+	var op string
+
+	if name == "" {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			op = "Lstat"
+		default:
+			op = "lstat"
+		}
+
+		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
-	_, child, pi, err := vfs.searchNode(path, slmLstat)
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		op = "GetFileAttributesEx"
+	default:
+		op = "lstat"
+	}
+
+	_, child, pi, err := vfs.searchNode(name, slmLstat)
 	if err != vfs.err.FileExists || child == nil {
-		return nil, &fs.PathError{Op: op, Path: path, Err: err}
+		return nil, &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	fst := child.fillStatFrom(pi.Part())
@@ -463,6 +499,10 @@ func (vfs *MemFS) Mkdir(name string, perm fs.FileMode) error {
 // and returns nil.
 func (vfs *MemFS) MkdirAll(path string, perm fs.FileMode) error {
 	const op = "mkdir"
+
+	if path == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
 
 	parent, child, pi, err := vfs.searchNode(path, slmEval)
 	switch child.(type) {
@@ -645,6 +685,12 @@ func (vfs *MemFS) ReadFile(name string) ([]byte, error) {
 func (vfs *MemFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
+	var err error
+
+	if name == "" && vfs.OSType() == avfs.OsWindows {
+		return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrWinPathNotFound}
+	}
+
 	_, child, _, err := vfs.searchNode(name, slmLstat)
 	if err != vfs.err.FileExists {
 		return "", &fs.PathError{Op: op, Path: name, Err: err}
@@ -681,6 +727,10 @@ func (vfs *MemFS) Rel(basepath, targpath string) (string, error) {
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Remove(name string) error {
 	const op = "remove"
+
+	if name == "" {
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchDir}
+	}
 
 	parent, child, pi, err := vfs.searchNode(name, slmLstat)
 	if err != vfs.err.FileExists || child == nil {
@@ -786,7 +836,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	const op = "rename"
 
 	if oldpath == "" || newpath == "" {
-		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.NoSuchFile}
+		return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.NoSuchDir}
 	}
 
 	oParent, oChild, oPI, oErr := vfs.searchNode(oldpath, slmLstat)
@@ -891,9 +941,24 @@ func (vfs *MemFS) Split(path string) (dir, file string) {
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
-	op := "stat"
-	if vfs.OSType() == avfs.OsWindows {
-		op = "CreateFile"
+	var op string
+
+	if path == "" {
+		switch vfs.OSType() {
+		case avfs.OsWindows:
+			op = "Stat"
+		default:
+			op = "stat"
+		}
+
+		return nil, &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
+	}
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		op = "GetFileAttributesEx"
+	default:
+		op = "stat"
 	}
 
 	_, child, pi, err := vfs.searchNode(path, slmStat)
@@ -931,8 +996,12 @@ func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
 func (vfs *MemFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
-	if oldname == "" || newname == "" {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchFile}
+	if newname == "" || (oldname == "" && vfs.OSType() == avfs.OsLinux) {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.NoSuchDir}
+	}
+
+	if oldname == "" && vfs.OSType() == avfs.OsWindows {
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrWinAlreadyExists}
 	}
 
 	parent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
@@ -983,35 +1052,35 @@ func (*MemFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 // If the file is a symbolic link, it changes the size of the link's target.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Truncate(name string, size int64) error {
-	op := "truncate"
+	var op string
+
+	switch vfs.OSType() {
+	case avfs.OsWindows:
+		op = "open"
+	default:
+		op = "truncate"
+	}
+
+	if name == "" {
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchFile}
+	}
 
 	_, child, _, err := vfs.searchNode(name, slmEval)
 	if err != vfs.err.FileExists {
-		if vfs.OSType() == avfs.OsWindows {
-			op = "open"
-		}
-
 		return &fs.PathError{Op: op, Path: name, Err: err}
 	}
 
 	c, ok := child.(*fileNode)
 	if !ok {
-		if vfs.OSType() == avfs.OsWindows {
-			op = "open"
-		}
-
 		return &fs.PathError{Op: op, Path: name, Err: vfs.err.IsADirectory}
 	}
 
 	if size < 0 {
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinInvalidParameter
-		default:
-			err = avfs.ErrInvalidArgument
+		if vfs.OSType() == avfs.OsWindows {
+			op = "truncate"
 		}
 
-		return &fs.PathError{Op: op, Path: name, Err: err}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.InvalidArgument}
 	}
 
 	c.mu.Lock()

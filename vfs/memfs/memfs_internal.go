@@ -43,10 +43,6 @@ import (
 func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	parent *dirNode, child node, pi *avfs.PathIterator[*MemFS], err error,
 ) {
-	if path == "" {
-		return vfs.rootNode, vfs.rootNode, nil, vfs.err.NoSuchFile
-	}
-
 	slCount := 0
 	slResolved := false
 
