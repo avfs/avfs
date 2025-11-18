@@ -600,7 +600,9 @@ func (ts *Suite) TestEvalSymlink(t *testing.T, testDir string) {
 
 	if !vfs.HasFeature(avfs.FeatSymlink) {
 		_, err := vfs.EvalSymlinks(testDir)
-		AssertPathError(t, err).OpLstat().Path(testDir).ErrPermDenied().Test()
+		AssertPathError(t, err).Path(testDir).
+			OSType(avfs.OsLinux).Op("lstat").Err(avfs.ErrPermDenied).Test().
+			OSType(avfs.OsWindows).Op("CreateFile").Err(avfs.ErrWinAccessDenied).Test()
 
 		return
 	}
@@ -2027,7 +2029,7 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 
 		for _, sl := range symlinks {
 			_, err = vfs.Stat(sl.NewPath)
-			AssertPathError(t, err).OpStat().Path(sl.NewPath).
+			AssertPathError(t, err).Path(sl.NewPath).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
 				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinPathNotFound).Test()
 		}

@@ -142,26 +142,6 @@ func (ae *assertError) Op(op string) *assertError {
 	return ae
 }
 
-// OpLstat sets the expected Lstat Op for the current OS.
-func (ae *assertError) OpLstat() *assertError {
-	switch avfs.CurrentOSType() {
-	case avfs.OsWindows:
-		return ae.Op("CreateFile")
-	default:
-		return ae.Op("lstat")
-	}
-}
-
-// OpStat sets the expected Stat Op for the current OS.
-func (ae *assertError) OpStat() *assertError {
-	switch avfs.CurrentOSType() {
-	case avfs.OsWindows:
-		return ae.Op("CreateFile")
-	default:
-		return ae.Op("stat")
-	}
-}
-
 // OSType sets at least one expected OSType.
 func (ae *assertError) OSType(ost avfs.OSType) *assertError {
 	ae.wantOsType = ost
