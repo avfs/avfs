@@ -41,7 +41,11 @@ func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 		tb.Skip("NewSuiteFS : vfsSetup must not be nil, skipping tests")
 	}
 
-	ts := newSuite(tb, vfsSetup, vfsTest, nil)
+	if vfsTest == nil {
+		tb.Skip("NewSuiteFS : vfsTest must not be nil, skipping tests")
+	}
+
+	ts := newSuite(tb, vfsSetup, vfsTest, vfsSetup.Idm())
 
 	vfs := ts.VFSTest()
 	tb.Logf("VFS: Type=%s OSType=%s UMask=%03o Idm=%s Features=%s, %s",
@@ -53,10 +57,11 @@ func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 // NewSuiteIdm creates a new test suite for an identity manager.
 func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
 	if idm == nil {
-		tb.Skip("NewSuiteIdm : vfsSetup must not be nil, skipping tests")
+		tb.Skip("NewSuiteIdm : idm must not be nil, skipping tests")
 	}
 
-	ts := newSuite(tb, nil, nil, idm)
+	vfs := osfs.NewWithOptions(&osfs.Options{Idm: idm})
+	ts := newSuite(tb, vfs, vfs, idm)
 
 	tb.Logf("Idm: Type=%s OSType=%s Features=%s", idm.Type(), idm.OSType(), idm.Features())
 
@@ -65,18 +70,6 @@ func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
 
 // newSuite creates a new test suite.
 func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdentityMgr) *Suite {
-	if vfsSetup == nil {
-		vfsSetup = osfs.New()
-	}
-
-	if vfsTest == nil {
-		vfsTest = vfsSetup
-	}
-
-	if idm == nil {
-		idm = vfsSetup.Idm()
-	}
-
 	vfs := vfsTest
 
 	if vfs.OSType() != avfs.CurrentOSType() {
