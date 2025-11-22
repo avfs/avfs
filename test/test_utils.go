@@ -837,7 +837,7 @@ func (ts *Suite) TestIsDir(t *testing.T, testDir string) {
 		ok, err := avfs.IsDir(vfs, nonExistingFile)
 		AssertPathError(t, err).Path(nonExistingFile).
 			OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 
 		if ok {
 			t.Error("IsDirNonExisting : want DirExists to be false, got true")

@@ -419,7 +419,7 @@ func (vfs *MemFS) Lstat(name string) (fs.FileInfo, error) {
 
 	switch vfs.OSType() {
 	case avfs.OsWindows:
-		op = "GetFileAttributesEx"
+		op = avfs.OpWinCreateFile
 	default:
 		op = "lstat"
 	}
@@ -960,7 +960,7 @@ func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
 
 	switch vfs.OSType() {
 	case avfs.OsWindows:
-		op = "GetFileAttributesEx"
+		op = avfs.OpWinCreateFile
 	default:
 		op = "stat"
 	}

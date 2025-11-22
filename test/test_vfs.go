@@ -963,7 +963,7 @@ func (ts *Suite) TestLstat(t *testing.T, testDir string) {
 		_, err := vfs.Lstat(nonExistingFile)
 		AssertPathError(t, err).Path(nonExistingFile).
 			OSType(avfs.OsLinux).Op("lstat").Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 	})
 
 	t.Run("LstatDir", func(t *testing.T) {
@@ -1050,7 +1050,7 @@ func (ts *Suite) TestLstat(t *testing.T, testDir string) {
 		_, err := vfs.Lstat(subDirOnFile)
 		AssertPathError(t, err).Path(subDirOnFile).
 			OSType(avfs.OsLinux).Op("lstat").Err(avfs.ErrNotADirectory).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinPathNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinPathNotFound).Test()
 	})
 }
 
@@ -1917,7 +1917,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 			_, err = vfs.Stat(file.Path)
 			AssertPathError(t, err).Path(file.Path).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+				OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 		}
 	})
 
@@ -1937,7 +1937,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 				_, err = vfs.Stat(dir.Path)
 				AssertPathError(t, err).Path(dir.Path).
 					OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-					OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+					OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 
 				continue
 			}
@@ -1959,7 +1959,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 			_, err = vfs.Stat(sl.NewPath)
 			AssertPathError(t, err).Path(sl.NewPath).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+				OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 		}
 	})
 
@@ -2017,27 +2017,27 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 			_, err = vfs.Stat(dir.Path)
 			AssertPathError(t, err).Path(dir.Path).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinPathNotFound).Test()
+				OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinPathNotFound).Test()
 		}
 
 		for _, file := range files {
 			_, err = vfs.Stat(file.Path)
 			AssertPathError(t, err).Path(file.Path).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinPathNotFound).Test()
+				OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinPathNotFound).Test()
 		}
 
 		for _, sl := range symlinks {
 			_, err = vfs.Stat(sl.NewPath)
 			AssertPathError(t, err).Path(sl.NewPath).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinPathNotFound).Test()
+				OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinPathNotFound).Test()
 		}
 
 		_, err = vfs.Stat(baseDir)
 		AssertPathError(t, err).Path(baseDir).
 			OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 	})
 
 	t.Run("RemoveAllOneFile", func(t *testing.T) {
@@ -2129,7 +2129,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 			_, err = vfs.Stat(oldPath)
 			AssertPathError(t, err).Path(oldPath).
 				OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-				OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+				OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 
 			_, err = vfs.Stat(newPath)
 			RequireNoError(t, err, "Stat %s", newPath)
@@ -2153,7 +2153,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 			} else {
 				AssertPathError(t, err).Path(file.Path).
 					OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-					OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+					OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 			}
 
 			_, err = vfs.Stat(newPath)
@@ -2190,7 +2190,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 		_, err = vfs.Stat(srcExistingFile)
 		AssertPathError(t, err).Path(srcExistingFile).
 			OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 
 		info, err := vfs.Stat(dstExistingFile)
 		RequireNoError(t, err, "Stat %s", dstExistingFile)
@@ -2504,7 +2504,7 @@ func (ts *Suite) TestStat(t *testing.T, testDir string) {
 		_, err := vfs.Stat(nonExistingFile)
 		AssertPathError(t, err).Path(nonExistingFile).
 			OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNoSuchFileOrDir).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinFileNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinFileNotFound).Test()
 
 		if !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("Stat %s : want errors.Is(err, fs.ErrNotExist) to be true, got false ", nonExistingFile)
@@ -2517,7 +2517,7 @@ func (ts *Suite) TestStat(t *testing.T, testDir string) {
 		_, err := vfs.Stat(subDirOnFile)
 		AssertPathError(t, err).Path(subDirOnFile).
 			OSType(avfs.OsLinux).Op("stat").Err(avfs.ErrNotADirectory).Test().
-			OSType(avfs.OsWindows).Op("GetFileAttributesEx").Err(avfs.ErrWinPathNotFound).Test()
+			OSType(avfs.OsWindows).Op(avfs.OpWinCreateFile).Err(avfs.ErrWinPathNotFound).Test()
 	})
 }
 

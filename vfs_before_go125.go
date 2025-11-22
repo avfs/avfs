@@ -1,5 +1,5 @@
 //
-//  Copyright 2024 The AVFS authors
+//  Copyright 2025 The AVFS authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,14 +14,9 @@
 //  limitations under the License.
 //
 
+//go:build !go1.25
+
 package avfs
 
-import _ "unsafe" // for go:linkname only.
-
-// nextRandom is used in avfs.CreateTemp and avfs.MkdirTemp.
-//
-//go:linkname nextRandom os.nextRandom
-func nextRandom() string
-
-//go:linkname volumeNameLen internal/filepathlite.volumeNameLen
-func volumeNameLen(path string) int
+// OpWinCreateFile is the name of the Windows CreateFile operation.
+const OpWinCreateFile = "CreateFile"
