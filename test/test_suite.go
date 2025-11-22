@@ -38,11 +38,11 @@ const (
 // NewSuiteFS creates a new test suite for a file system.
 func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 	if vfsSetup == nil {
-		tb.Skip("NewSuiteFS : vfsSetup must not be nil, skipping tests")
+		tb.Fatal("NewSuiteFS : vfsSetup must not be nil")
 	}
 
 	if vfsTest == nil {
-		tb.Skip("NewSuiteFS : vfsTest must not be nil, skipping tests")
+		tb.Fatal("NewSuiteFS : vfsTest must not be nil")
 	}
 
 	ts := newSuite(tb, vfsSetup, vfsTest, vfsSetup.Idm())
@@ -57,7 +57,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 // NewSuiteIdm creates a new test suite for an identity manager.
 func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
 	if idm == nil {
-		tb.Skip("NewSuiteIdm : idm must not be nil, skipping tests")
+		tb.Fatal("NewSuiteIdm : idm must not be nil")
 	}
 
 	vfs := osfs.NewWithOptions(&osfs.Options{Idm: idm})
@@ -73,11 +73,15 @@ func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdentityMg
 	vfs := vfsTest
 
 	if vfs.OSType() != avfs.CurrentOSType() {
-		tb.Skipf("NewSuite : Current OSType = %s is different from %s OSType = %s, skipping tests",
+		tb.Skipf("NewSuite : current OSType = %s is different from %s OSType = %s, skipping tests",
 			avfs.CurrentOSType(), vfs.Type(), vfs.OSType())
 	}
 
 	initUser := vfs.User()
+	if initUser == nil {
+		tb.Fatal("NewSuite : current user must not be nil")
+	}
+
 	canTestPerm := vfs.OSType() != avfs.OsWindows && initUser.IsAdmin() &&
 		vfs.HasFeature(avfs.FeatIdentityMgr) && !vfs.HasFeature(avfs.FeatReadOnlyIdm)
 
