@@ -94,21 +94,21 @@ func (*MemFS) Type() string {
 
 // VolumeAdd adds a new volume to a Windows file system.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFS) VolumeAdd(path string) error {
+func (vfs *MemFS) VolumeAdd(name string) error {
 	const op = "VolumeAdd"
 
 	if vfs.OSType() != avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeWindows}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeWindows}
 	}
 
-	vol := avfs.VolumeName(vfs, path)
+	vol := avfs.VolumeName(vfs, name)
 	if vol == "" {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
 	_, ok := vfs.volumes[vol]
 	if ok {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeAlreadyExists}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeAlreadyExists}
 	}
 
 	vfs.volumes[vol] = vfs.createRootNode()
@@ -118,21 +118,21 @@ func (vfs *MemFS) VolumeAdd(path string) error {
 
 // VolumeDelete deletes an existing volume and all its files from a Windows file system.
 // If there is an error, it will be of type *PathError.
-func (vfs *MemFS) VolumeDelete(path string) error {
+func (vfs *MemFS) VolumeDelete(name string) error {
 	const op = "VolumeDelete"
 
 	if vfs.OSType() != avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeWindows}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeWindows}
 	}
 
-	vol := avfs.VolumeName(vfs, path)
+	vol := avfs.VolumeName(vfs, name)
 	if vol == "" {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
 	_, ok := vfs.volumes[vol]
 	if !ok {
-		return &fs.PathError{Op: op, Path: path, Err: avfs.ErrVolumeNameInvalid}
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
 	err := vfs.RemoveAll(vol)
