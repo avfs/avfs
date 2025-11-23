@@ -206,7 +206,7 @@ func (vfs *OsFS) IsPathSeparator(c uint8) bool {
 }
 
 // Join joins any number of path elements into a single path,
-// separating them with an OS specific Separator. Empty elements
+// separating them with an OS specific [Separator]. Empty elements
 // are ignored. The result is Cleaned. However, if the argument
 // list is empty or all its elements are empty, Join returns
 // an empty string.
@@ -423,19 +423,19 @@ func (vfs *OsFS) SetUserByName(name string) error {
 	return osidm.SetUserByName(name)
 }
 
-// Stat returns a FileInfo describing the named file.
-// If there is an error, it will be of type *PathError.
-func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
-	return os.Stat(name)
-}
-
-// Split splits path immediately following the final Separator,
+// Split splits path immediately following the final [Separator],
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (vfs *OsFS) Split(path string) (dir, file string) {
 	return filepath.Split(path)
+}
+
+// Stat returns a FileInfo describing the named file.
+// If there is an error, it will be of type *PathError.
+func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
+	return os.Stat(name)
 }
 
 // Sub returns an FS corresponding to the subtree rooted at dir.

@@ -209,57 +209,58 @@ type VFSBase interface {
 	Base(path string) string
 
 	// Chdir changes the current working directory to the named directory.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Chdir(dir string) error
 
 	// Chmod changes the mode of the named file to mode.
 	// If the file is a symbolic link, it changes the mode of the link's target.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	//
 	// A different subset of the mode bits are used, depending on the
 	// operating system.
 	//
-	// On Unix, the mode's permission bits, ModeSetuid, ModeSetgid, and
-	// ModeSticky are used.
+	// On Unix, the mode's permission bits, [ModeSetuid], [ModeSetgid], and
+	// [ModeSticky] are used.
 	//
-	// On Windows, only the 0200 bit (owner writable) of mode is used; it
+	// On Windows, only the 0o200 bit (owner writable) of mode is used; it
 	// controls whether the file's read-only attribute is set or cleared.
 	// The other bits are currently unused. For compatibility with Go 1.12
-	// and earlier, use a non-zero mode. Use mode 0400 for a read-only
-	// file and 0600 for a readable+writable file.
+	// and earlier, use a non-zero mode. Use mode 0o400 for a read-only
+	// file and 0o600 for a readable+writable file.
 	//
-	// On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
-	// and ModeTemporary are used.
+	// On Plan 9, the mode's permission bits, [ModeAppend], [ModeExclusive],
+	// and [ModeTemporary] are used.
 	Chmod(name string, mode fs.FileMode) error
 
 	// Chown changes the numeric uid and gid of the named file.
 	// If the file is a symbolic link, it changes the uid and gid of the link's target.
 	// A uid or gid of -1 means to not change that value.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	//
-	// On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
-	// EPLAN9 error, wrapped in *PathError.
+	// On Windows or Plan 9, Chown always returns the [syscall.EWINDOWS] or
+	// [syscall.EPLAN9] error, wrapped in [*PathError].
 	Chown(name string, uid, gid int) error
 
 	// Chtimes changes the access and modification times of the named
 	// file, similar to the Unix utime() or utimes() functions.
+	// A zero [time.Time] value will leave the corresponding file time unchanged.
 	//
-	// The underlying file system may truncate or round the values to a
+	// The underlying filesystem may truncate or round the values to a
 	// less precise time unit.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Chtimes(name string, atime, mtime time.Time) error
 
 	// Clean returns the shortest path name equivalent to path
 	// by purely lexical processing. It applies the following rules
 	// iteratively until no further processing can be done:
 	//
-	//	1. Replace multiple Separator elements with a single one.
-	//	2. Eliminate each . path name element (the current directory).
-	//	3. Eliminate each inner .. path name element (the parent directory)
-	//	   along with the non-.. element that precedes it.
-	//	4. Eliminate .. elements that begin a rooted path:
-	//	   that is, replace "/.." by "/" at the beginning of a path,
-	//	   assuming Separator is '/'.
+	//  1. Replace multiple [Separator] elements with a single one.
+	//  2. Eliminate each . path name element (the current directory).
+	//  3. Eliminate each inner .. path name element (the parent directory)
+	//     along with the non-.. element that precedes it.
+	//  4. Eliminate .. elements that begin a rooted path:
+	//     that is, replace "/.." by "/" at the beginning of a path,
+	//     assuming Separator is '/'.
 	//
 	// The returned path ends in a slash only if it represents a root directory,
 	// such as "/" on Unix or `C:\` on Windows.
@@ -269,22 +270,28 @@ type VFSBase interface {
 	// If the result of this process is an empty string, Clean
 	// returns the string ".".
 	//
-	// See also Rob Pike, ``Lexical File Names in Plan 9 or
-	// Getting Dot-Dot Right,''
+	// On Windows, Clean does not modify the volume name other than to replace
+	// occurrences of "/" with `\`.
+	// For example, Clean("//host/share/../x") returns `\\host\share\x`.
+	//
+	// See also Rob Pike, “Lexical File Names in Plan 9 or
+	// Getting Dot-Dot Right,”
 	// https://9p.io/sys/doc/lexnames.html
 	Clean(path string) string
 
-	// Create creates the named file with mode 0666 (before umask), truncating
-	// it if it already exists. If successful, methods on the returned
-	// File can be used for I/O; the associated file descriptor has mode
-	// O_RDWR.
-	// If there is an error, it will be of type *PathError.
+	// Create creates or truncates the named file. If the file already exists,
+	// it is truncated. If the file does not exist, it is created with mode 0o666
+	// (before umask). If successful, methods on the returned File can
+	// be used for I/O; the associated file descriptor has mode [O_RDWR].
+	// The directory containing the file must already exist.
+	// If there is an error, it will be of type [*PathError].
 	Create(name string) (File, error)
 
 	// CreateTemp creates a new temporary file in the directory dir,
 	// opens the file for reading and writing, and returns the resulting file.
 	// The filename is generated by taking pattern and adding a random string to the end.
 	// If pattern includes a "*", the random string replaces the last "*".
+	// The file is created with mode 0o600 (before umask).
 	// If dir is the empty string, CreateTemp uses the default directory for temporary files, as returned by [TempDir].
 	// Multiple programs or goroutines calling CreateTemp simultaneously will not choose the same file.
 	// The caller can use the file's Name method to find the pathname of the file.
@@ -309,18 +316,25 @@ type VFSBase interface {
 	// FromSlash returns the result of replacing each slash ('/') character
 	// in path with a separator character. Multiple slashes are replaced
 	// by multiple separators.
+	//
+	// See also the Localize function, which converts a slash-separated path
+	// as used by the io/fs package to an operating system path.
 	FromSlash(path string) string
 
-	// Getwd returns a rooted path name corresponding to the
+	// Getwd returns an absolute path name corresponding to the
 	// current directory. If the current directory can be
 	// reached via multiple paths (due to symbolic links),
 	// Getwd may return any one of them.
+	//
+	// On Unix platforms, if the environment variable PWD
+	// provides an absolute name, and it is a name of the
+	// current directory, it is returned.
 	Getwd() (dir string, err error)
 
 	// Glob returns the names of all files matching pattern or nil
 	// if there is no matching file. The syntax of patterns is the same
 	// as in [Match]. The pattern may describe hierarchical names such as
-	// /usr/*/bin/ed (assuming the Separator is '/').
+	// /usr/*/bin/ed (assuming the [Separator] is '/').
 	//
 	// Glob ignores file system errors such as I/O errors reading directories.
 	// The only possible returned error is [ErrBadPattern], when pattern
@@ -348,20 +362,24 @@ type VFSBase interface {
 
 	// Lchown changes the numeric uid and gid of the named file.
 	// If the file is a symbolic link, it changes the uid and gid of the link itself.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	//
-	// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-	// in *PathError.
+	// On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
+	// in [*PathError].
 	Lchown(name string, uid, gid int) error
 
 	// Link creates newname as a hard link to the oldname file.
 	// If there is an error, it will be of type *LinkError.
 	Link(oldname, newname string) error
 
-	// Lstat returns a FileInfo describing the named file.
+	// Lstat returns a [FileInfo] describing the named file.
 	// If the file is a symbolic link, the returned FileInfo
 	// describes the symbolic link. Lstat makes no attempt to follow the link.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
+	//
+	// On Windows, if the file is a reparse point that is a surrogate for another
+	// named entity (such as a symbolic link or mounted folder), the returned
+	// FileInfo describes the reparse point, and makes no attempt to resolve it.
 	Lstat(name string) (fs.FileInfo, error)
 
 	// Match reports whether name matches the shell file name pattern.
@@ -392,7 +410,7 @@ type VFSBase interface {
 
 	// Mkdir creates a new directory with the specified name and permission
 	// bits (before umask).
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Mkdir(name string, perm fs.FileMode) error
 
 	// MkdirAll creates a directory named path,
@@ -408,16 +426,19 @@ type VFSBase interface {
 	// and returns the pathname of the new directory.
 	// The new directory's name is generated by adding a random string to the end of pattern.
 	// If pattern includes a "*", the random string replaces the last "*" instead.
-	// If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by [TempDir].
+	// The directory is created with mode 0o700 (before umask).
+	// If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by TempDir.
 	// Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
 	// It is the caller's responsibility to remove the directory when it is no longer needed.
 	MkdirTemp(dir, pattern string) (string, error)
 
 	// OpenFile is the generalized open call; most users will use Open
 	// or Create instead. It opens the named file with specified flag
-	// (O_RDONLY etc.) and perm (before umask), if applicable. If successful,
+	// ([O_RDONLY] etc.). If the file does not exist, and the [O_CREATE] flag
+	// is passed, it is created with mode perm (before umask);
+	// the containing directory must exist. If successful,
 	// methods on the returned File can be used for I/O.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	OpenFile(name string, flag int, perm fs.FileMode) (File, error)
 
 	// PathSeparator return the OS-specific path separator.
@@ -431,13 +452,16 @@ type VFSBase interface {
 	ReadDir(name string) ([]fs.DirEntry, error)
 
 	// ReadFile reads the named file and returns the contents.
-	// A successful call returns err == nil, not err == EOF. Because ReadFile
-	// reads the whole file, it does not treat an EOF from Read as an error
-	// to be reported.
+	// A successful call returns err == nil, not err == EOF.
+	// Because ReadFile reads the whole file, it does not treat an EOF from Read
+	// as an error to be reported.
 	ReadFile(name string) ([]byte, error)
 
 	// Readlink returns the destination of the named symbolic link.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
+	//
+	// If the link destination is relative, Readlink returns the relative path
+	// without resolving it to an absolute one.
 	Readlink(name string) (string, error)
 
 	// Rel returns a relative path that is lexically equivalent to targpath when
@@ -451,18 +475,21 @@ type VFSBase interface {
 	Rel(basepath, targpath string) (string, error)
 
 	// Remove removes the named file or (empty) directory.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Remove(name string) error
 
 	// RemoveAll removes path and any children it contains.
 	// It removes everything it can but returns the first error
 	// it encounters. If the path does not exist, RemoveAll
 	// returns nil (no error).
+	// If there is an error, it will be of type [*PathError].
 	RemoveAll(path string) error
 
 	// Rename renames (moves) oldpath to newpath.
 	// If newpath already exists and is not a directory, Rename replaces it.
+	// If newpath already exists and is a directory, Rename returns an error.
 	// OS-specific restrictions may apply when oldpath and newpath are in different directories.
+	// Even within the same directory, on non-Unix platforms Rename is not an atomic operation.
 	// If there is an error, it will be of type *LinkError.
 	Rename(oldpath, newpath string) error
 
@@ -474,18 +501,20 @@ type VFSBase interface {
 	// It returns false in other cases.
 	SameFile(fi1, fi2 fs.FileInfo) bool
 
-	// Split splits path immediately following the final Separator,
+	// Split splits path immediately following the final [Separator],
 	// separating it into a directory and file name component.
 	// If there is no Separator in path, Split returns an empty dir
 	// and file set to path.
 	// The returned values have the property that path = dir+file.
 	Split(path string) (dir, file string)
 
-	// Stat returns a FileInfo describing the named file.
-	// If there is an error, it will be of type *PathError.
+	// Stat returns a [FileInfo] describing the named file.
+	// If there is an error, it will be of type [*PathError].
 	Stat(name string) (fs.FileInfo, error)
 
 	// Symlink creates newname as a symbolic link to oldname.
+	// On Windows, a symlink to a non-existent oldname creates a file symlink;
+	// if oldname is later created as a directory the symlink will not work.
 	// If there is an error, it will be of type *LinkError.
 	Symlink(oldname, newname string) error
 
@@ -510,7 +539,7 @@ type VFSBase interface {
 
 	// Truncate changes the size of the named file.
 	// If the file is a symbolic link, it changes the size of the link's target.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Truncate(name string, size int64) error
 
 	// WalkDir walks the file tree rooted at root, calling fn for each file or
@@ -524,10 +553,16 @@ type VFSBase interface {
 	// to walk that directory.
 	//
 	// WalkDir does not follow symbolic links.
+	//
+	// WalkDir calls fn with paths that use the separator character appropriate
+	// for the operating system. This is unlike [io/fs.WalkDir], which always
+	// uses slash separated paths.
 	WalkDir(root string, fn fs.WalkDirFunc) error
 
 	// WriteFile writes data to the named file, creating it if necessary.
 	// If the file does not exist, WriteFile creates it with permissions perm (before umask);
 	// otherwise WriteFile truncates it before writing, without changing permissions.
+	// Since WriteFile requires multiple system calls to complete, a failure mid-operation
+	// can leave the file in a partially written state.
 	WriteFile(name string, data []byte, perm fs.FileMode) error
 }
