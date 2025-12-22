@@ -32,8 +32,8 @@ import (
 )
 
 var (
-	groupReadRE = regexp.MustCompile(`PrimaryGroupID: (\d+)\nRecordName: (\s+)`)
-	userReadRE  = regexp.MustCompile(`PrimaryGroupID: (\d+)\nRecordName: (\s+)\nUniqueID: (\d+)`)
+	groupReadRE = regexp.MustCompile(`PrimaryGroupID: (\d+)\s+RecordName: (\S+)`)
+	userReadRE  = regexp.MustCompile(`PrimaryGroupID: (\d+)\s+RecordName: (\S+).+UniqueID: (\d+)`)
 )
 
 // AddGroup creates a new group with the specified name.
@@ -82,7 +82,7 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 
 	sGid := strconv.Itoa(g.Gid())
 
-	_, err = sysAdminCtl("create", userName, "-GID", sGid)
+	_, err = sysAdminCtl("addUser", userName, "-GID", sGid)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.InvalidNameError(userName)
 	}
 
-	_, err := sysAdminCtl("delete", userName)
+	_, err := sysAdminCtl("delUser", userName)
 	if err != nil {
 		return err
 	}
@@ -221,7 +221,7 @@ func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 // lookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func lookupGroup(groupName string) (avfs.GroupReader, error) {
-	buf, err := dscl("read", "Groups/"+groupName, "PrimaryGroupID", "RecordName")
+	buf, err := dscl("read", "/Groups/"+groupName, "PrimaryGroupID", "RecordName")
 	if err != nil {
 		return nil, err
 	}
@@ -522,8 +522,8 @@ func dscl(command string, args ...string) (string, error) {
 
 // dsEditGroup calls the Directory Service group record manipulation tool.
 func dsEditGroup(command string, args ...string) (string, error) {
-	args = append([]string{"-q", "-" + command}, args...)
-	out, err := run("desedseditgrou", args...)
+	args = append([]string{"-q", "-o", command}, args...)
+	out, err := run("dseditgroup", args...)
 
 	return out, err
 }
