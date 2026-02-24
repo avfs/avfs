@@ -147,7 +147,7 @@ func (vfs *MemFS) VolumeDelete(name string) error {
 
 // VolumeList returns the volumes of the file system.
 func (vfs *MemFS) VolumeList() []string {
-	var l []string //nolint:prealloc // Consider preallocating `l`
+	var l []string
 
 	if vfs.OSType() != avfs.OsWindows {
 		return l
