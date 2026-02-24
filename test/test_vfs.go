@@ -1774,7 +1774,7 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 			GoVersion("", "1.23").Op("readdirent").Test().
 			GoVersion("1.24", "").Op("open").Test().
 			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).
-			GoVersion("", "1.25").Op("readdir").Test().
+			GoVersion("", "1.24").Op("readdir").Test().
 			GoVersion("1.25", "").Op("open").Test()
 	})
 }
