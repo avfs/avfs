@@ -667,10 +667,6 @@ func (vfs *OrefaFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File
 			}
 
 			if om&avfs.OpenDir != 0 {
-				if vfs.OSType() == avfs.OsWindows {
-					op = avfs.OpReaddir
-				}
-
 				return (*OrefaFile)(nil), &fs.PathError{Op: op, Path: name, Err: vfs.err.NotADirectory}
 			}
 

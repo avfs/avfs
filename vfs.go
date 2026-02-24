@@ -26,6 +26,9 @@ import (
 	"strings"
 )
 
+// OpWinCreateFile is the name of the Windows CreateFile operation.
+const OpWinCreateFile = "GetFileAttributesEx"
+
 // Abs returns an absolute representation of path.
 // If the path is not absolute it will be joined with the current
 // working directory to turn it into an absolute path. The absolute
