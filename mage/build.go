@@ -30,9 +30,9 @@ import (
 )
 
 const (
-	gitCmd     = "git"
 	goCmd      = "go"
-	mageGitUrl = "https://github.com/magefile/mage"
+	mageCmd    = "mage"
+	magePkgUrl = "github.com/magefile/mage@v1.17.2"
 )
 
 func main() {
@@ -68,7 +68,7 @@ func main() {
 		avfsBin += ".exe"
 	}
 
-	err = run("mage", "-ldflags", "-w -s", "-compile", avfsBin)
+	err = run(mageCmd, "-ldflags", "-w -s", "-compile", avfsBin)
 	if err != nil {
 		log.Fatalf("mage compile : want error to be nil, got %v", err)
 	}
@@ -81,37 +81,15 @@ func main() {
 
 // buildMage builds the mage binary if it does not exist.
 func buildMage() error {
-	if isExecutable("mage") {
+	if isExecutable(mageCmd) {
 		log.Printf("mage binary already exists")
 
 		return nil
 	}
 
-	tmpDir, err := os.MkdirTemp("", "mage")
+	err := run(goCmd, "install", magePkgUrl)
 	if err != nil {
-		log.Fatalf("MkdirTemp : want error to be nil, got %v", err)
-	}
-
-	defer os.RemoveAll(tmpDir)
-
-	err = os.Chdir(tmpDir)
-	if err != nil {
-		log.Fatalf("Chdir : want error to be nil, got %v", err)
-	}
-
-	err = run(gitCmd, "clone", "--depth=1", mageGitUrl)
-	if err != nil {
-		log.Fatalf("Git : want error to be nil, got %v", err)
-	}
-
-	err = os.Chdir("mage")
-	if err != nil {
-		log.Fatalf("Chdir : want error to be nil, got %v", err)
-	}
-
-	err = run(goCmd, "run", "bootstrap.go")
-	if err != nil {
-		log.Fatalf("Bootstap : want error to be nil, got %v", err)
+		log.Fatalf("go install %s : want error to be nil, got %v", magePkgUrl, err)
 	}
 
 	return err
