@@ -19,6 +19,7 @@
 package basepathfs_test
 
 import (
+	"io"
 	"strings"
 	"testing"
 
@@ -29,14 +30,20 @@ import (
 )
 
 var (
-	// Tests that basepathfs.BasePathFS struct implements avfs.VFS interface.
+	// Ensures that basepathfs.BasePathFS implements avfs.VFS interface.
 	_ avfs.VFS = &basepathfs.BasePathFS{}
 
-	// Tests that basepathfs.BasePathFS struct implements avfs.VFSBase interface.
+	// Ensures that basepathfs.BasePathFS implements avfs.VFSBase interface.
 	_ avfs.VFSBase = &basepathfs.BasePathFS{}
 
-	// Tests that basepathfs.BasePathFile struct implements avfs.File interface.
+	// Ensures that basepathfs.BasePathFile implements avfs.File interface.
 	_ avfs.File = &basepathfs.BasePathFile{}
+
+	// Ensures that basepathfs.BasePathFile implements the io.ReaderFrom interface.
+	_ io.ReaderFrom = &basepathfs.BasePathFile{}
+
+	// Ensures that basepathfs.BasePathFile implements the io.WriterTo interface.
+	_ io.WriterTo = &basepathfs.BasePathFile{}
 )
 
 func initFS(tb testing.TB) (vfs *basepathfs.BasePathFS, basePath string) {

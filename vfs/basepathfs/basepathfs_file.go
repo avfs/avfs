@@ -17,6 +17,7 @@
 package basepathfs
 
 import (
+	"io"
 	"io/fs"
 )
 
@@ -122,6 +123,15 @@ func (f *BasePathFile) Readdirnames(n int) (names []string, err error) {
 	return names, f.vfs.FromPathError(err)
 }
 
+// ReadFrom implements io.ReaderFrom.
+func (f *BasePathFile) ReadFrom(r io.Reader) (n int64, err error) {
+	if rf, ok := f.baseFile.(io.ReaderFrom); ok {
+		return rf.ReadFrom(r)
+	}
+
+	return io.Copy(f.baseFile, r)
+}
+
 // Seek sets the offset for the next Read or Write on file to offset, interpreted
 // according to whence: 0 means relative to the origin of the file, 1 means
 // relative to the current offset, and 2 means relative to the end.
@@ -175,6 +185,15 @@ func (f *BasePathFile) WriteAt(b []byte, off int64) (n int, err error) {
 	n, err = f.baseFile.WriteAt(b, off)
 
 	return n, f.vfs.FromPathError(err)
+}
+
+// WriteTo implements io.WriterTo.
+func (f *BasePathFile) WriteTo(w io.Writer) (n int64, err error) {
+	if wt, ok := f.baseFile.(io.WriterTo); ok {
+		return wt.WriteTo(w)
+	}
+
+	return io.Copy(w, f.baseFile)
 }
 
 // WriteString is like Write, but writes the contents of string s rather than
