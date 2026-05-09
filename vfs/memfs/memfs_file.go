@@ -153,7 +153,7 @@ func (f *MemFile) Close() error {
 // The file descriptor is valid only until f.Close is called or f is garbage collected.
 // On Unix systems this will cause the SetDeadline methods to stop working.
 func (f *MemFile) Fd() uintptr {
-	return ^(uintptr(0))
+	return ^uintptr(0)
 }
 
 // Name returns the link of the file as presented to Open.

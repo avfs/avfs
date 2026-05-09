@@ -29,25 +29,25 @@ import (
 )
 
 var (
-	// Tests that memfs.MemFS struct implements avfs.VFS interface.
+	// Ensures that memfs.MemFS implements avfs.VFS interface.
 	_ avfs.VFS = &memfs.MemFS{}
 
-	// Tests that memfs.MemFS struct implements avfs.VFSBase interface.
+	// Ensures that memfs.MemFS implements avfs.VFSBase interface.
 	_ avfs.VFSBase = &memfs.MemFS{}
 
-	// Tests that memfs.MemFile struct implements avfs.File interface.
+	// Ensures that memfs.MemFile implements avfs.File interface.
 	_ avfs.File = &memfs.MemFile{}
 
-	// Tests that memfs.MemInfo struct implements fs.DirEntry interface.
+	// Ensures that memfs.MemInfo implements fs.DirEntry interface.
 	_ fs.DirEntry = &memfs.MemInfo{}
 
-	// Tests that memfs.MemInfo struct implements fs.FileInfo interface.
+	// Ensures that memfs.MemInfo implements fs.FileInfo interface.
 	_ fs.FileInfo = &memfs.MemInfo{}
 
-	// Tests that memfs.MemInfo struct implements avfs.SysStater interface.
+	// Ensures that memfs.MemInfo implements avfs.SysStater interface.
 	_ avfs.SysStater = &memfs.MemInfo{}
 
-	// Tests that memfs.MemIOFS struct implements avfs.IOFS interface.
+	// Ensures that memfs.MemIOFS implements avfs.IOFS interface.
 	_ avfs.IOFS = &memfs.MemIOFS{}
 )
 

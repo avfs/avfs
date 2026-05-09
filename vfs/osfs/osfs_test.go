@@ -19,6 +19,7 @@
 package osfs_test
 
 import (
+	"io"
 	"os"
 	"testing"
 
@@ -28,14 +29,20 @@ import (
 )
 
 var (
-	// Tests that osfs.OsFS struct implements avfs.VFS interface.
+	// Ensures that osfs.OsFS implements avfs.VFS interface.
 	_ avfs.VFS = &osfs.OsFS{}
 
-	// Tests that osfs.OsFS struct implements avfs.VFSBase interface.
+	// Ensures that osfs.OsFS implements avfs.VFSBase interface.
 	_ avfs.VFSBase = &osfs.OsFS{}
 
-	// Tests that os.File struct implements avfs.File interface.
+	// Ensures that os.File implements avfs.File interface.
 	_ avfs.File = &os.File{}
+
+	// Ensures that os.File implements the io.ReaderFrom interface.
+	_ io.ReaderFrom = &os.File{}
+
+	// Ensures that os.File implements the io.WriterTo interface.
+	_ io.WriterTo = &os.File{}
 )
 
 func TestOsFS(t *testing.T) {

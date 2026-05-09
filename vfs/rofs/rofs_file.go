@@ -77,7 +77,7 @@ func (f *RoFile) Close() error {
 // On Unix systems this will cause the SetDeadline methods to stop working.
 func (f *RoFile) Fd() uintptr {
 	if f == nil {
-		return ^(uintptr(0))
+		return ^uintptr(0)
 	}
 
 	return f.baseFile.Fd()

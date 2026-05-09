@@ -109,7 +109,7 @@ func (f *FailFile) Close() error {
 // On Unix systems this will cause the SetDeadline methods to stop working.
 func (f *FailFile) Fd() uintptr {
 	if f == nil {
-		return ^(uintptr(0))
+		return ^uintptr(0)
 	}
 
 	return f.baseFile.Fd()

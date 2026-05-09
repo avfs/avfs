@@ -28,22 +28,22 @@ import (
 )
 
 var (
-	// Tests that orefafs.OrefaFS struct implements avfs.VFS interface.
+	// Ensures that orefafs.OrefaFS implements avfs.VFS interface.
 	_ avfs.VFS = &orefafs.OrefaFS{}
 
-	// Tests that orefafs.OrefaFS struct implements avfs.VFSBase interface.
+	// Ensures that orefafs.OrefaFS implements avfs.VFSBase interface.
 	_ avfs.VFSBase = &orefafs.OrefaFS{}
 
-	// Tests that orefafs.OrefaFile struct implements avfs.File interface.
+	// Ensures that orefafs.OrefaFile implements avfs.File interface.
 	_ avfs.File = &orefafs.OrefaFile{}
 
-	// Tests that orefafs.OrefaInfo struct implements fs.DirEntry interface.
+	// Ensures that orefafs.OrefaInfo implements fs.DirEntry interface.
 	_ fs.DirEntry = &orefafs.OrefaInfo{}
 
-	// Tests that orefafs.OrefaInfo struct implements fs.FileInfo interface.
+	// Ensures that orefafs.OrefaInfo implements fs.FileInfo interface.
 	_ fs.FileInfo = &orefafs.OrefaInfo{}
 
-	// Tests that orefafs.OrefaInfo struct implements avfs.SysStater interface.
+	// Ensures that orefafs.OrefaInfo implements avfs.SysStater interface.
 	_ avfs.SysStater = &orefafs.OrefaInfo{}
 )
 

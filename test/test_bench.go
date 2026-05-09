@@ -33,7 +33,8 @@ const (
 
 // BenchAll runs all benchmarks.
 func (ts *Suite) BenchAll(b *testing.B) {
-	ts.RunBenchmarks(b, UsrTest,
+	ts.RunBenchmarks(
+		b, UsrTest,
 		ts.BenchCreate,
 		ts.BenchFileRead,
 		ts.BenchFileWrite,

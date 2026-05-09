@@ -50,7 +50,8 @@ func (ts *Suite) TestFile(t *testing.T) {
 
 	// Tests to be run as root
 	adminUser := ts.idm.AdminUser()
-	ts.RunTests(t, adminUser.Name(),
+	ts.RunTests(
+		t, adminUser.Name(),
 		ts.TestFileChmod,
 		ts.TestFileChown,
 	)
@@ -260,8 +261,8 @@ func (ts *Suite) TestFileFd(t *testing.T, testDir string) {
 	f, fileName := ts.closedFile(t, testDir)
 
 	fd := f.Fd()
-	if fd != ^(uintptr(0)) {
-		t.Errorf("Fd %s : want Fd to be %d, got %d", fileName, ^(uintptr(0)), fd)
+	if fd != ^uintptr(0) {
+		t.Errorf("Fd %s : want Fd to be %d, got %d", fileName, ^uintptr(0), fd)
 	}
 }
 
@@ -292,7 +293,7 @@ func FileNilPtr(t *testing.T, f avfs.File) {
 	AssertPanic(t, "f.Name()", func() { _ = f.Name() })
 
 	fd := f.Fd()
-	if fd != ^(uintptr(0)) {
+	if fd != ^uintptr(0) {
 		t.Errorf("Fd : want fd to be %d, got %d", 0, fd)
 	}
 

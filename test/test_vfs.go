@@ -32,7 +32,8 @@ import (
 )
 
 func (ts *Suite) TestVFS(t *testing.T) {
-	ts.RunTests(t, UsrTest,
+	ts.RunTests(
+		t, UsrTest,
 		ts.TestAbs,
 		ts.TestBase,
 		ts.TestClean,
@@ -80,7 +81,8 @@ func (ts *Suite) TestVFS(t *testing.T) {
 
 	// Tests to be run as root
 	adminUser := ts.idm.AdminUser()
-	ts.RunTests(t, adminUser.Name(),
+	ts.RunTests(
+		t, adminUser.Name(),
 		ts.TestChmod,
 		ts.TestChown,
 		ts.TestChroot,
@@ -1774,8 +1776,8 @@ func (ts *Suite) TestReadDir(t *testing.T, testDir string) {
 			GoVersion("", "1.23").Op("readdirent").Test().
 			GoVersion("1.24", "").Op("open").Test().
 			OSType(avfs.OsWindows).Err(avfs.ErrWinPathNotFound).
-			GoVersion("", "1.24").Op("readdir").Test().
-			GoVersion("1.25", "").Op("open").Test()
+			GoVersion("", "1.25").Op("readdir").Test().
+			GoVersion("1.26", "").Op("open").Test()
 	})
 }
 
