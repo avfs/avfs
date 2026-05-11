@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -31,9 +30,11 @@ import (
 	"github.com/avfs/avfs"
 )
 
-var (
-	groupReadRE = regexp.MustCompile(`PrimaryGroupID: (\d+)\s+RecordName: (\S+)`)
-	userReadRE  = regexp.MustCompile(`PrimaryGroupID: (\d+)\s+RecordName: (\S+).+UniqueID: (\d+)`)
+// constants for macOS users and groups properties
+const (
+	sPrimaryGroupID = "PrimaryGroupID"
+	sRecordName     = "RecordName"
+	sUniqueID       = "UniqueID"
 )
 
 // AddGroup creates a new group with the specified name.
@@ -221,18 +222,37 @@ func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 // lookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func lookupGroup(groupName string) (avfs.GroupReader, error) {
-	buf, err := dscl("read", "/Groups/"+groupName, "PrimaryGroupID", "RecordName")
+	buf, err := dscl("read", "/Groups/"+groupName, sPrimaryGroupID, sRecordName)
 	if err != nil {
 		return nil, err
 	}
 
-	r := groupReadRE.FindStringSubmatch(buf)
-	if r == nil {
-		return nil, avfs.UnknownGroupError(groupName)
+	var (
+		gid  int
+		name string
+	)
+
+	lines := strings.Split(buf, "\n")
+	for _, line := range lines {
+		parts := strings.SplitN(line, ":", 2)
+		if len(parts) != 2 {
+			continue
+		}
+
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+
+		switch key {
+		case sRecordName:
+			name = value
+		case sPrimaryGroupID:
+			gid, _ = strconv.Atoi(value)
+		}
 	}
 
-	gid, _ := strconv.Atoi(r[1])
-	name := r[2]
+	if name == "" {
+		return nil, avfs.UnknownGroupError(groupName)
+	}
 
 	g := &OsGroup{name: name, gid: gid}
 
@@ -244,7 +264,7 @@ func lookupGroup(groupName string) (avfs.GroupReader, error) {
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 	sGid := strconv.Itoa(gid)
 
-	buf, err := dscl("search", "/Groups", "PrimaryGroupID", sGid)
+	buf, err := dscl("search", "/Groups", sPrimaryGroupID, sGid)
 	if err != nil {
 		return nil, err
 	}
@@ -265,19 +285,39 @@ func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 }
 
 func lookupUser(userName string) (*OsUser, error) {
-	buf, err := dscl("read", "/Users/"+userName, "PrimaryGroupID", "RecordName", "UniqueID")
+	buf, err := dscl("read", "/Users/"+userName, sPrimaryGroupID, sRecordName, sUniqueID)
 	if err != nil {
 		return nil, err
 	}
 
-	r := userReadRE.FindStringSubmatch(buf)
-	if r == nil {
-		return nil, avfs.UnknownUserError(userName)
+	var (
+		uid, gid int
+		name     string
+	)
+
+	lines := strings.Split(buf, "\n")
+	for _, line := range lines {
+		parts := strings.SplitN(line, ":", 2)
+		if len(parts) != 2 {
+			continue
+		}
+
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+
+		switch key {
+		case sRecordName:
+			name = value
+		case sPrimaryGroupID:
+			gid, _ = strconv.Atoi(value)
+		case sUniqueID:
+			uid, _ = strconv.Atoi(value)
+		}
 	}
 
-	gid, _ := strconv.Atoi(r[1])
-	name := r[2]
-	uid, _ := strconv.Atoi(r[3])
+	if name == "" {
+		return nil, avfs.UnknownUserError(userName)
+	}
 
 	u := &OsUser{name: name, uid: uid, gid: gid}
 
@@ -294,12 +334,10 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 func lookupUserId(uid int) (avfs.UserReader, error) {
 	sUid := strconv.Itoa(uid)
 
-	buf, err := dscl("search", "/Users", "UniqueID", sUid)
+	name, err := id(sUid, "-F")
 	if err != nil {
 		return nil, err
 	}
-
-	name := strings.Split(buf, "\t")[0]
 
 	return lookupUser(name)
 }
@@ -332,7 +370,7 @@ func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
 
 	sGid := strconv.Itoa(g.Gid())
 
-	_, err = dscl("create", "/Users/"+u.Name(), "PrimaryGroupID", sGid)
+	_, err = dscl("create", "/Users/"+u.Name(), sPrimaryGroupID, sGid)
 	if err != nil {
 		return err
 	}
@@ -340,7 +378,7 @@ func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
 	return nil
 }
 
-// Groups returns a slice of strings representing the group names that the user belongs to.
+// Groups return a slice of strings representing the group names that the user belongs to.
 // If an error occurs while fetching the group names, it returns nil.
 func (u *OsUser) Groups() []string {
 	groupNames, err := id(u.name, "-Gn")
@@ -495,18 +533,20 @@ func User() avfs.UserReader {
 
 	user, err := lookupUserId(uid)
 	if err != nil {
-		return nil
+		panic(fmt.Sprintf("failed to lookup user by id %d: %v", uid, err))
 	}
 
 	return user
 }
 
-// id returns the result of the "id" command for the given username and options.
+// id returns the result of the "id" command for the given username or id and options.
 // The result is returned as a string, and an error is returned if the command fails.
-func id(username, options string) (string, error) {
-	out, err := run("id", options, username)
+func id(nameOrId string, args ...string) (string, error) {
+	args = append(args, nameOrId)
+
+	out, err := run("id", args...)
 	if err != nil {
-		return "", avfs.UnknownUserError(username)
+		return "", avfs.UnknownUserError(nameOrId)
 	}
 
 	return out, nil
