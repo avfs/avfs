@@ -1023,19 +1023,6 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	return nil
 }
 
-// TempDir returns the default directory to use for temporary files.
-//
-// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
-// On Windows, it uses GetTempPath, returning the first non-empty
-// value from %TMP%, %TEMP%, %USERPROFILE%, or the Windows directory.
-// On Plan 9, it returns /tmp.
-//
-// The directory is neither guaranteed to exist nor have accessible
-// permissions.
-func (vfs *MemFS) TempDir() string {
-	return avfs.TempDir(vfs)
-}
-
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.

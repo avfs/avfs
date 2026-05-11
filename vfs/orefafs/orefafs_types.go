@@ -32,7 +32,7 @@ type OrefaFS struct {
 	nodes           nodes             // nodes is the map of nodes (files or directories) where the key is the absolute path.
 	lastId          *uint64           // lastId is the last unique id used to identify files uniquely.
 	name            string            // name is the name of the file system.
-	avfs.CurDirFn                     // CurDirFn provides current directory functions to a file system.
+	avfs.DirFn                        // DirFn provides system directory functions to a file system.
 	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
 	mu              sync.RWMutex      // mu is the RWMutex used to access nodes.
 	dirMode         fs.FileMode       // dirMode is the default fs.FileMode for a directory.

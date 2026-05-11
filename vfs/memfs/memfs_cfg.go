@@ -57,6 +57,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	_ = vfs.SetOSType(opts.OSType)
 	_ = vfs.SetIdm(idm)
 	_ = vfs.SetUser(user)
+	_ = vfs.SetTempDir(avfs.TempDirUser(vfs, "", user))
 
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
 	vfs.rootNode = vfs.createRootNode()

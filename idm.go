@@ -155,7 +155,7 @@ func (idf *IdmFn) SetIdm(idm IdentityMgr) error {
 	return nil
 }
 
-// AdminGroupName returns the name of the administrator group of the file system.
+// AdminGroupName returns the default name of the administrator group of the file system.
 func AdminGroupName(osType OSType) string {
 	switch osType {
 	case OsWindows:
@@ -165,7 +165,7 @@ func AdminGroupName(osType OSType) string {
 	}
 }
 
-// AdminUserName returns the name of the administrator of the file system.
+// AdminUserName returns the default name of the administrator of the file system.
 func AdminUserName(osType OSType) string {
 	switch osType {
 	case OsWindows:

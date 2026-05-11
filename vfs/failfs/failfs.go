@@ -638,7 +638,7 @@ func (vfs *FailFS) Symlink(oldname, newname string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vfs *FailFS) TempDir() string {
-	return avfs.TempDir(vfs)
+	return vfs.baseFS.TempDir()
 }
 
 // ToSlash returns the result of replacing each separator character

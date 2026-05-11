@@ -174,7 +174,7 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 // The underlying file system may truncate or round the values to a
 // less precise time unit.
 // If there is an error, it will be of type *PathError.
-func (vfs *OrefaFS) Chtimes(name string, atime, mtime time.Time) error {
+func (vfs *OrefaFS) Chtimes(name string, _, mtime time.Time) error {
 	const op = "chtimes"
 
 	if name == "" {
@@ -1007,19 +1007,6 @@ func (vfs *OrefaFS) Symlink(oldname, newname string) error {
 	const op = "symlink"
 
 	return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.PermDenied}
-}
-
-// TempDir returns the default directory to use for temporary files.
-//
-// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
-// On Windows, it uses GetTempPath, returning the first non-empty
-// value from %TMP%, %TEMP%, %USERPROFILE%, or the Windows directory.
-// On Plan 9, it returns /tmp.
-//
-// The directory is neither guaranteed to exist nor have accessible
-// permissions.
-func (vfs *OrefaFS) TempDir() string {
-	return avfs.TempDir(vfs)
 }
 
 // ToSlash returns the result of replacing each separator character

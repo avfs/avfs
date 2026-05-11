@@ -43,7 +43,7 @@ type MemFS struct {
 	volumes         volumes           // volumes contains the volume names (for Windows only).
 	lastId          *uint64           // lastId is the last unique id used to identify files uniquely.
 	name            string            // name is the name of the file system.
-	avfs.CurDirFn                     // CurDirFn provides current directory functions to a file system.
+	avfs.DirFn                        // DirFn provides system directory functions to a file system.
 	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
 	dirMode         fs.FileMode       // dirMode is the default fs.FileMode for a directory.
 	fileMode        fs.FileMode       // fileMode is de default fs.FileMode for a file.
@@ -58,7 +58,7 @@ type MemFile struct {
 	name       string        // name is the name of the file.
 	dirEntries []fs.DirEntry // dirEntries stores the file information returned by ReadDir function.
 	dirNames   []string      // dirNames stores the names of the file returned by Readdirnames function.
-	at         int64         // at is current position in the file used by Read and Write functions.
+	at         int64         // at is the current position in the file used by Read and Write functions.
 	dirIndex   int           // dirIndex is the position of the current index for dirEntries ou dirNames slices.
 	mu         sync.RWMutex  // mu is the RWMutex used to access content of MemFile.
 	openMode   avfs.OpenMode // openMode defines the permissions to check for OpenFile and CheckPermission functions.
@@ -134,13 +134,13 @@ type baseNode struct {
 	mode  fs.FileMode  // mode represents a file's mode and permission bits.
 }
 
-// slMode defines the behavior of searchNode function relatively to symlinks.
+// slMode defines the behavior of the searchNode function relatively to symlinks.
 type slMode int
 
 const (
-	slmLstat slMode = iota + 1 // slmLstat makes searchNode function follow symbolic links like Lstat.
-	slmStat                    // slmStat makes searchNode function follow symbolic links like Stat.
-	slmEval                    // slmEval makes searchNode function follow symbolic links like EvalSymlink.
+	slmLstat slMode = iota + 1 // slmLstat makes the searchNode function follow symbolic links like Lstat.
+	slmStat                    // slmStat makes the searchNode function follow symbolic links like Stat.
+	slmEval                    // slmEval makes the searchNode function follow symbolic links like EvalSymlink.
 )
 
 // MemInfo is the implementation of fs.DirEntry (returned by ReadDir) and fs.FileInfo (returned by Stat and Lstat).
