@@ -63,7 +63,7 @@ func TestOsFSConfig(t *testing.T) {
 	vfs := osfs.New()
 
 	wantFeatures := avfs.FeatHardlink | avfs.FeatRealFS | avfs.FeatSymlink
-	if vfs.OSType() == avfs.OsLinux {
+	if vfs.OSType() != avfs.OsWindows {
 		wantFeatures |= avfs.FeatIdentityMgr
 	}
 
