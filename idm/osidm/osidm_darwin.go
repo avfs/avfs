@@ -222,37 +222,14 @@ func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 // lookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func lookupGroup(groupName string) (avfs.GroupReader, error) {
-	buf, err := dscl("read", "/Groups/"+groupName, sPrimaryGroupID, sRecordName)
+	out, err := dscl("read", "/Groups/"+groupName, sPrimaryGroupID, sRecordName)
 	if err != nil {
 		return nil, err
 	}
 
-	var (
-		gid  int
-		name string
-	)
-
-	lines := strings.Split(buf, "\n")
-	for _, line := range lines {
-		parts := strings.SplitN(line, ":", 2)
-		if len(parts) != 2 {
-			continue
-		}
-
-		key := strings.TrimSpace(parts[0])
-		value := strings.TrimSpace(parts[1])
-
-		switch key {
-		case sRecordName:
-			name = value
-		case sPrimaryGroupID:
-			gid, _ = strconv.Atoi(value)
-		}
-	}
-
-	if name == "" {
-		return nil, avfs.UnknownGroupError(groupName)
-	}
+	kv := readDscl(out)
+	name := kv[sRecordName]
+	gid, _ := strconv.Atoi(kv[sPrimaryGroupID])
 
 	g := &OsGroup{name: name, gid: gid}
 
@@ -285,39 +262,15 @@ func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 }
 
 func lookupUser(userName string) (*OsUser, error) {
-	buf, err := dscl("read", "/Users/"+userName, sPrimaryGroupID, sRecordName, sUniqueID)
+	out, err := dscl("read", "/Users/"+userName, sPrimaryGroupID, sRecordName, sUniqueID)
 	if err != nil {
 		return nil, err
 	}
 
-	var (
-		uid, gid int
-		name     string
-	)
-
-	lines := strings.Split(buf, "\n")
-	for _, line := range lines {
-		parts := strings.SplitN(line, ":", 2)
-		if len(parts) != 2 {
-			continue
-		}
-
-		key := strings.TrimSpace(parts[0])
-		value := strings.TrimSpace(parts[1])
-
-		switch key {
-		case sRecordName:
-			name = value
-		case sPrimaryGroupID:
-			gid, _ = strconv.Atoi(value)
-		case sUniqueID:
-			uid, _ = strconv.Atoi(value)
-		}
-	}
-
-	if name == "" {
-		return nil, avfs.UnknownUserError(userName)
-	}
+	kv := readDscl(out)
+	name := kv[sRecordName]
+	gid, _ := strconv.Atoi(kv[sPrimaryGroupID])
+	uid, _ := strconv.Atoi(kv[sUniqueID])
 
 	u := &OsUser{name: name, uid: uid, gid: gid}
 
@@ -334,7 +287,7 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 func lookupUserId(uid int) (avfs.UserReader, error) {
 	sUid := strconv.Itoa(uid)
 
-	name, err := id(sUid, "-F")
+	name, err := id(sUid, "-un")
 	if err != nil {
 		return nil, err
 	}
@@ -582,4 +535,36 @@ func isUserAdmin() bool {
 	defer runtime.UnlockOSThread()
 
 	return os.Geteuid() == 0
+}
+
+type dsclResult = map[string]string
+
+func readDscl(out string) dsclResult {
+	key, val := "", ""
+	kv := make(dsclResult)
+
+	lines := strings.Split(out, "\n")
+	for _, line := range lines {
+		if len(line) <= 1 {
+			continue
+		}
+
+		parts := strings.SplitN(line, ":", 2)
+		switch len(parts) {
+		case 2:
+			key = parts[0]
+
+			val = strings.TrimSpace(parts[1])
+			if val != "" {
+				kv[key] = val
+			}
+		case 1:
+			if parts[0][0] == ' ' && val == "" {
+				val = strings.TrimSpace(parts[0])
+				kv[key] = val
+			}
+		}
+	}
+
+	return kv
 }
