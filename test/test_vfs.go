@@ -654,7 +654,11 @@ func (ts *Suite) TestTempDir(t *testing.T, _ string) {
 			t.Errorf("TempDir : want temp dir to match '%s', got %s", wantRe, tmpDir)
 		}
 	case avfs.OsDarwin:
-		const wantTmpDir = "/var/folders/"
+		wantTmpDir := "/var/folders/"
+		if vfs.User().IsAdmin() {
+			wantTmpDir = "/tmp"
+		}
+
 		if !strings.HasPrefix(tmpDir, wantTmpDir) {
 			t.Errorf("TempDir : want temp dir to begin with %s, got %s", wantTmpDir, tmpDir)
 		}
