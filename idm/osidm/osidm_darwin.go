@@ -263,7 +263,7 @@ func lookupGroup(groupName string) (avfs.GroupReader, error) {
 // LookupGroupId looks up a group by groupid.
 // If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	out, err := dsCacheUtil("group", "name", strconv.Itoa(gid))
+	out, err := dsCacheUtil("group", "gid", strconv.Itoa(gid))
 	if err != nil {
 		return nil, avfs.UnknownError(out)
 	}
@@ -443,7 +443,7 @@ func (u *OsUser) PrimaryGroupId() int {
 }
 
 // SetUser sets the current user.
-// If the user can't be changed an error is returned.
+// If the user can't be changed, an error is returned.
 func SetUser(user avfs.UserReader) error {
 	const op = "user"
 
