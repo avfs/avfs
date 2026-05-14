@@ -20,7 +20,6 @@
 package osidm
 
 import (
-	"bytes"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -78,12 +77,9 @@ func run(cmd string, args ...string) (string, error) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	var out bytes.Buffer
-
 	c := exec.Command(cmd, args...)
-	c.Stdout = &out
-	c.Stderr = &out
-	err := c.Run()
+	buf, err := c.CombinedOutput()
+	bufStr := strings.TrimSuffix(string(buf), "\n")
 
-	return strings.TrimSuffix(out.String(), "\n"), err
+	return bufStr, err
 }

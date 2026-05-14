@@ -33,8 +33,6 @@ import (
 // constants for macOS users and groups properties
 const (
 	sPrimaryGroupID = "PrimaryGroupID"
-	sRecordName     = "RecordName"
-	sUniqueID       = "UniqueID"
 )
 
 // AddGroup creates a new group with the specified name.
@@ -48,12 +46,17 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
-	_, err := dsEditGroup("create", groupName)
+	g, err := idm.LookupGroup(groupName)
+	if err == nil {
+		return nil, avfs.AlreadyExistsGroupError(groupName)
+	}
+
+	_, err = dsEditGroup("create", groupName)
 	if err != nil {
 		return nil, err
 	}
 
-	g, err := idm.LookupGroup(groupName)
+	g, err = idm.LookupGroup(groupName)
 	if err != nil {
 		return nil, err
 	}
@@ -81,14 +84,23 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		return nil, err
 	}
 
-	sGid := strconv.Itoa(g.Gid())
-
-	_, err = sysAdminCtl("addUser", userName, "-GID", sGid)
-	if err != nil {
-		return nil, err
+	u, err := lookupUser(userName)
+	if err == nil {
+		return nil, avfs.AlreadyExistsUserError(userName)
 	}
 
-	u, err := lookupUser(userName)
+	sGid := strconv.Itoa(g.Gid())
+
+	out, err := sysAdminCtl("addUser", userName, "-GID", sGid)
+	if err != nil {
+		if strings.Contains(out, "User named '"+userName+"' already exists") {
+			return nil, avfs.AlreadyExistsUserError(userName)
+		}
+
+		return nil, avfs.UnknownError(out)
+	}
+
+	u, err = lookupUser(userName)
 	if err != nil {
 		return nil, err
 	}
@@ -125,9 +137,9 @@ func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
 		return avfs.AlreadyExistsGroupError(groupName)
 	}
 
-	_, err = dsEditGroup("edit", "-a", u.Name(), "-t", "user", g.Name())
+	out, err := dsEditGroup("edit", "-a", u.Name(), "-t", "user", g.Name())
 	if err != nil {
-		return err
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -144,9 +156,13 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 		return avfs.InvalidNameError(groupName)
 	}
 
-	_, err := dsEditGroup("delete", groupName)
+	out, err := dsEditGroup("delete", groupName)
 	if err != nil {
-		return err
+		if strings.Contains(out, "Group not found") {
+			return avfs.UnknownGroupError(groupName)
+		}
+
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -163,9 +179,13 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.InvalidNameError(userName)
 	}
 
-	_, err := sysAdminCtl("delUser", userName)
+	out, err := sysAdminCtl("deleteUser", userName)
 	if err != nil {
-		return err
+		if strings.Contains(out, "User "+userName+" not found") {
+			return avfs.UnknownUserError(userName)
+		}
+
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -201,9 +221,13 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 		return avfs.UnknownGroupError(groupName)
 	}
 
-	_, err = dsEditGroup("edit", "-d", u.Name(), "-t", "user", g.Name())
+	out, err := dsEditGroup("edit", "-d", u.Name(), "-t", "user", g.Name())
 	if err != nil {
-		return err
+		if strings.Contains(out, "zzz") {
+			return avfs.UnknownUserError(userName)
+		}
+
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -222,16 +246,16 @@ func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
 // lookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func lookupGroup(groupName string) (avfs.GroupReader, error) {
-	out, err := dscl("read", "/Groups/"+groupName, sPrimaryGroupID, sRecordName)
+	out, err := dsCacheUtil("group", "name", groupName)
 	if err != nil {
-		return nil, err
+		return nil, avfs.UnknownError(out)
 	}
 
-	kv := readDscl(out)
-	name := kv[sRecordName]
-	gid, _ := strconv.Atoi(kv[sPrimaryGroupID])
+	if out == "" {
+		return nil, avfs.UnknownGroupError(groupName)
+	}
 
-	g := &OsGroup{name: name, gid: gid}
+	g := readDsCacheGroup(out)
 
 	return g, nil
 }
@@ -239,16 +263,18 @@ func lookupGroup(groupName string) (avfs.GroupReader, error) {
 // LookupGroupId looks up a group by groupid.
 // If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
-	sGid := strconv.Itoa(gid)
-
-	buf, err := dscl("search", "/Groups", sPrimaryGroupID, sGid)
+	out, err := dsCacheUtil("group", "name", strconv.Itoa(gid))
 	if err != nil {
-		return nil, err
+		return nil, avfs.UnknownError(out)
 	}
 
-	name := strings.Split(buf, "\t")[0]
+	if out == "" {
+		return nil, avfs.UnknownGroupIdError(gid)
+	}
 
-	return lookupGroup(name)
+	g := readDsCacheGroup(out)
+
+	return g, nil
 }
 
 // LookupUser looks up a user by username.
@@ -262,17 +288,16 @@ func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
 }
 
 func lookupUser(userName string) (*OsUser, error) {
-	out, err := dscl("read", "/Users/"+userName, sPrimaryGroupID, sRecordName, sUniqueID)
+	out, err := dsCacheUtil("user", "name", userName)
 	if err != nil {
-		return nil, err
+		return nil, avfs.UnknownError(out)
 	}
 
-	kv := readDscl(out)
-	name := kv[sRecordName]
-	gid, _ := strconv.Atoi(kv[sPrimaryGroupID])
-	uid, _ := strconv.Atoi(kv[sUniqueID])
+	if out == "" {
+		return nil, avfs.UnknownUserError(userName)
+	}
 
-	u := &OsUser{name: name, uid: uid, gid: gid}
+	u := readDsCacheUser(out)
 
 	return u, nil
 }
@@ -287,12 +312,18 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 func lookupUserId(uid int) (avfs.UserReader, error) {
 	sUid := strconv.Itoa(uid)
 
-	name, err := id(sUid, "-un")
+	out, err := dsCacheUtil("user", "uid", sUid)
 	if err != nil {
-		return nil, err
+		return nil, avfs.UnknownError(out)
 	}
 
-	return lookupUser(name)
+	if out == "" {
+		return nil, avfs.UnknownUserIdError(uid)
+	}
+
+	u := readDsCacheUser(out)
+
+	return u, nil
 }
 
 // SetUserPrimaryGroup sets the primary group of a user to the specified group name.
@@ -323,9 +354,9 @@ func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
 
 	sGid := strconv.Itoa(g.Gid())
 
-	_, err = dscl("create", "/Users/"+u.Name(), sPrimaryGroupID, sGid)
+	out, err := dscl("create", "/Users/"+u.Name(), sPrimaryGroupID, sGid)
 	if err != nil {
-		return err
+		return avfs.UnknownError(out)
 	}
 
 	return nil
@@ -514,6 +545,13 @@ func dscl(command string, args ...string) (string, error) {
 }
 
 // dsEditGroup calls the Directory Service group record manipulation tool.
+func dsCacheUtil(category, key, value string) (string, error) {
+	out, err := run("dscacheutil", "-q", category, "-a", key, value)
+
+	return out, err
+}
+
+// dsEditGroup calls the Directory Service group record manipulation tool.
 func dsEditGroup(command string, args ...string) (string, error) {
 	args = append([]string{"-q", "-o", command}, args...)
 	out, err := run("dseditgroup", args...)
@@ -537,33 +575,45 @@ func isUserAdmin() bool {
 	return os.Geteuid() == 0
 }
 
-type dsclResult = map[string]string
+func readDsCacheGroup(out string) *OsGroup {
+	kv := readDsCache(out)
+	name := kv["name"]
+	gid, _ := strconv.Atoi(kv["gid"])
 
-func readDscl(out string) dsclResult {
-	key, val := "", ""
-	kv := make(dsclResult)
+	g := &OsGroup{name: name, gid: gid}
+
+	return g
+}
+
+func readDsCacheUser(out string) *OsUser {
+	kv := readDsCache(out)
+	name := kv["name"]
+	gid, _ := strconv.Atoi(kv["gid"])
+	uid, _ := strconv.Atoi(kv["uid"])
+
+	u := &OsUser{name: name, uid: uid, gid: gid}
+
+	return u
+}
+
+type dsCacheMap = map[string]string
+
+func readDsCache(out string) dsCacheMap {
+	kv := make(dsCacheMap)
 
 	lines := strings.Split(out, "\n")
 	for _, line := range lines {
-		if len(line) <= 1 {
+		parts := strings.SplitN(line, ": ", 2)
+		if len(parts) != 2 {
 			continue
 		}
 
-		parts := strings.SplitN(line, ":", 2)
-		switch len(parts) {
-		case 2:
-			key = parts[0]
-
-			val = strings.TrimSpace(parts[1])
-			if val != "" {
-				kv[key] = val
-			}
-		case 1:
-			if parts[0][0] == ' ' && val == "" {
-				val = strings.TrimSpace(parts[0])
-				kv[key] = val
-			}
+		key := parts[0]
+		if key != "name" && key != "uid" && key != "gid" {
+			continue
 		}
+
+		kv[key] = parts[1]
 	}
 
 	return kv
