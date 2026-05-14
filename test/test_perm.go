@@ -36,8 +36,7 @@ func (ts *Suite) NewPermTests(t *testing.T, testDir, funcName string) *PermTests
 
 // NewPermTestsWithOptions creates and returns a new environment for permissions test with options.
 func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string, options *PermOptions) *PermTests {
-	osName := avfs.CurrentOSType().String()
-	errFileName := filepath.Join(ts.testDataDir, fmt.Sprintf("perm%s%s.golden", funcName, osName))
+	errFileName := filepath.Join(ts.testDataDir, fmt.Sprintf("perm-%s.golden", funcName))
 	permDir := filepath.Join(testDir, funcName)
 
 	pts := &PermTests{

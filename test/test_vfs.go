@@ -175,7 +175,7 @@ func (ts *Suite) TestChdir(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Chdir")
+		pts := ts.NewPermTests(t, testDir, "chdir")
 		pts.Test(t, func(path string) error {
 			return vfs.Chdir(path)
 		})
@@ -263,7 +263,7 @@ func (ts *Suite) TestChmod(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Chmod")
+		pts := ts.NewPermTests(t, testDir, "chmod")
 		pts.Test(t, func(path string) error {
 			return vfs.Chmod(path, 0o777)
 		})
@@ -383,7 +383,7 @@ func (ts *Suite) TestChown(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Chown")
+		pts := ts.NewPermTests(t, testDir, "chown")
 		pts.Test(t, func(path string) error {
 			return vfs.Chown(path, 0, 0)
 		})
@@ -501,7 +501,7 @@ func (ts *Suite) TestChtimes(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Chtimes")
+		pts := ts.NewPermTests(t, testDir, "chtimes")
 		pts.Test(t, func(path string) error {
 			return vfs.Chtimes(path, time.Now(), time.Now())
 		})
@@ -537,7 +537,7 @@ func (ts *Suite) TestCreate(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Create")
+		pts := ts.NewPermTests(t, testDir, "create")
 		pts.Test(t, func(path string) error {
 			newFile := vfs.Join(path, defaultFile)
 
@@ -807,7 +807,7 @@ func (ts *Suite) TestLchown(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Lchown")
+		pts := ts.NewPermTests(t, testDir, "lchown")
 		pts.Test(t, func(path string) error {
 			return vfs.Lchown(path, 0, 0)
 		})
@@ -932,7 +932,7 @@ func (ts *Suite) TestLink(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "LinkNew")
+		pts := ts.NewPermTests(t, testDir, "link")
 
 		oldFile := vfs.Join(pts.permDir, "OldFile")
 		ts.createFile(t, oldFile, avfs.DefaultFilePerm)
@@ -1177,7 +1177,7 @@ func (ts *Suite) TestMkdir(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Mkdir")
+		pts := ts.NewPermTests(t, testDir, "mkdir")
 		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
@@ -1293,7 +1293,7 @@ func (ts *Suite) TestMkdirAll(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "MkdirAll")
+		pts := ts.NewPermTests(t, testDir, "mkdirall")
 		pts.Test(t, func(path string) error {
 			newDir := vfs.Join(path, "newDir")
 
@@ -1634,7 +1634,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "OpenFileDir")
+		pts := ts.NewPermTests(t, testDir, "openfile-dir")
 		pts.Test(t, func(path string) error {
 			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 			if err != nil {
@@ -1652,7 +1652,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTestsWithOptions(t, testDir, "OpenFileRead", &PermOptions{CreateFiles: true})
+		pts := ts.NewPermTestsWithOptions(t, testDir, "openfile-read", &PermOptions{CreateFiles: true})
 		pts.Test(t, func(path string) error {
 			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 			if err != nil {
@@ -1670,7 +1670,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTestsWithOptions(t, testDir, "OpenFileWrite", &PermOptions{CreateFiles: true})
+		pts := ts.NewPermTestsWithOptions(t, testDir, "openfile-write", &PermOptions{CreateFiles: true})
 		pts.Test(t, func(path string) error {
 			f, err := vfs.OpenFile(path, os.O_WRONLY, 0)
 			if err != nil {
@@ -1984,7 +1984,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Remove")
+		pts := ts.NewPermTests(t, testDir, "remove")
 		pts.Test(t, func(path string) error {
 			return vfs.Remove(path)
 		})
@@ -2084,7 +2084,7 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTestsWithOptions(t, testDir, "RemoveAll", &PermOptions{IgnoreOp: true})
+		pts := ts.NewPermTestsWithOptions(t, testDir, "removeall", &PermOptions{IgnoreOp: true})
 		pts.Test(t, func(path string) error {
 			return vfs.RemoveAll(path)
 		})
@@ -2224,7 +2224,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "RenameNew")
+		pts := ts.NewPermTests(t, testDir, "rename")
 		pts.Test(t, func(path string) error {
 			oldPath := vfs.Join(pts.permDir, vfs.Base(path))
 			newPath := vfs.Join(path, "New")
@@ -2585,7 +2585,7 @@ func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
 			return
 		}
 
-		pts := ts.NewPermTests(t, testDir, "Symlink")
+		pts := ts.NewPermTests(t, testDir, "symlink")
 		pts.Test(t, func(path string) error {
 			newName := vfs.Join(path, "Symlink")
 
