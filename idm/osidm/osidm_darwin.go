@@ -465,7 +465,7 @@ func SetUser(user avfs.UserReader) error {
 	if curGid != 0 {
 		runtime.LockOSThread()
 
-		if err := syscall.Setgid(0); err != nil {
+		if err := syscall.Setegid(0); err != nil {
 			return avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, 0, err))
 		}
 	}
@@ -473,7 +473,7 @@ func SetUser(user avfs.UserReader) error {
 	if curUid != 0 {
 		runtime.LockOSThread()
 
-		if err := syscall.Setuid(0); err != nil {
+		if err := syscall.Seteuid(0); err != nil {
 			return avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, 0, err))
 		}
 	}
@@ -484,13 +484,13 @@ func SetUser(user avfs.UserReader) error {
 
 	runtime.LockOSThread()
 
-	if err := syscall.Setgid(user.Gid()); err != nil {
+	if err := syscall.Setegid(user.Gid()); err != nil {
 		return avfs.UnknownError(fmt.Sprintf("%s : can't change gid to %d : %v", op, user.Gid(), err))
 	}
 
 	runtime.LockOSThread()
 
-	if err := syscall.Setuid(user.Uid()); err != nil {
+	if err := syscall.Seteuid(user.Uid()); err != nil {
 		return avfs.UnknownError(fmt.Sprintf("%s : can't change uid to %d : %v", op, user.Uid(), err))
 	}
 
