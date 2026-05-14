@@ -22,6 +22,7 @@ import (
 	"io/fs"
 	"os"
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
@@ -680,7 +681,7 @@ func (ts *Suite) TestFileSeek(t *testing.T, testDir string) {
 		_, err = f.Seek(0, io.SeekEnd)
 		RequireNoError(t, err, "Seek %s", path)
 
-		for i := len(data) - 1; i >= 0; i-- {
+		for i := range slices.Backward(data) {
 			pos, err = f.Seek(-1, io.SeekCurrent)
 			RequireNoError(t, err, "Seek %s", path)
 
@@ -985,7 +986,7 @@ func (ts *Suite) TestFileTruncate(t *testing.T, testDir string) {
 
 		b := make([]byte, len(data))
 
-		for i := len(data) - 1; i >= 0; i-- {
+		for i := range slices.Backward(data) {
 			err = f.Truncate(int64(i))
 			RequireNoError(t, err, "Truncate %s", path)
 

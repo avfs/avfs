@@ -24,6 +24,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -2127,8 +2128,8 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 	t.Run("RenameDir", func(t *testing.T) {
 		dirs := ts.createSampleDirs(t, testDir)
 
-		for i := len(dirs) - 1; i >= 0; i-- {
-			oldPath := dirs[i].Path
+		for _, d := range slices.Backward(dirs) {
+			oldPath := d.Path
 			newPath := oldPath + "New"
 
 			err := vfs.Rename(oldPath, newPath)
