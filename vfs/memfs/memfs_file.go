@@ -149,14 +149,30 @@ func (f *MemFile) Close() error {
 	return nil
 }
 
-// Fd returns the integer Unix file descriptor referencing the open file.
-// The file descriptor is valid only until f.Close is called or f is garbage collected.
-// On Unix systems this will cause the SetDeadline methods to stop working.
+// Fd returns the system file descriptor or handle referencing the open file.
+// If f is closed, the descriptor becomes invalid.
+// If f is garbage collected, a finalizer may close the descriptor,
+// making it invalid; see [runtime.SetFinalizer] for more information on when
+// a finalizer might be run.
+//
+// Do not close the returned descriptor; that could cause a later
+// close of f to close an unrelated descriptor.
+//
+// Fd's behavior differs on some platforms:
+//
+//   - On Unix and Windows, [File.SetDeadline] methods will stop working.
+//   - On Windows, the file descriptor will be disassociated from the
+//     Go runtime I/O completion port if there are no concurrent I/O
+//     operations on the file.
+//
+// For most uses prefer the f.SyscallConn method.
 func (f *MemFile) Fd() uintptr {
 	return ^uintptr(0)
 }
 
-// Name returns the link of the file as presented to Open.
+// Name returns the name of the file as presented to [Open].
+//
+// It is safe to call Name after [Close].
 func (f *MemFile) Name() string {
 	if f == nil {
 		panic("")
@@ -339,11 +355,14 @@ func (f *MemFile) ReadDir(n int) (entries []fs.DirEntry, err error) {
 	return f.dirEntries[start:end], nil
 }
 
-// Readdirnames reads and returns a slice of names from the directory f.
+// Readdirnames reads the contents of the directory associated with file
+// and returns a slice of up to n names of files in the directory,
+// in directory order. Subsequent calls on the same file will yield
+// further names.
 //
 // If n > 0, Readdirnames returns at most n names. In this case, if
 // Readdirnames returns an empty slice, it will return a non-nil error
-// explaining why. At the end of a directory, the error is io.EOF.
+// explaining why. At the end of a directory, the error is [io.EOF].
 //
 // If n <= 0, Readdirnames returns all the names from the directory in
 // a single slice. In this case, if Readdirnames succeeds (reads all

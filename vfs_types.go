@@ -64,35 +64,53 @@ type File interface {
 	io.WriterAt
 	io.WriteSeeker
 
-	// Chdir changes the current working directory to the file,
-	// which must be a directory.
-	// If there is an error, it will be of type *PathError.
+	// Chdir changes the current working directory to the named directory.
+	// If there is an error, it will be of type [*PathError].
 	Chdir() error
 
 	// Chmod changes the mode of the file to mode.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Chmod(mode fs.FileMode) error
 
 	// Chown changes the numeric uid and gid of the named file.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	//
 	// On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
-	// in *PathError.
+	// in [*PathError].
 	Chown(uid, gid int) error
 
-	// Fd returns the integer Unix file descriptor referencing the open file.
-	// The file descriptor is valid only until f.Close is called or f is garbage collected.
-	// On Unix systems this will cause the SetDeadline methods to stop working.
+	// Fd returns the system file descriptor or handle referencing the open file.
+	// If f is closed, the descriptor becomes invalid.
+	// If f is garbage collected, a finalizer may close the descriptor,
+	// making it invalid; see [runtime.SetFinalizer] for more information on when
+	// a finalizer might be run.
+	//
+	// Do not close the returned descriptor; that could cause a later
+	// close of f to close an unrelated descriptor.
+	//
+	// Fd's behavior differs on some platforms:
+	//
+	//   - On Unix and Windows, [File.SetDeadline] methods will stop working.
+	//   - On Windows, the file descriptor will be disassociated from the
+	//     Go runtime I/O completion port if there are no concurrent I/O
+	//     operations on the file.
+	//
+	// For most uses prefer the f.SyscallConn method.
 	Fd() uintptr
 
 	// Name returns the name of the file as presented to [Open].
+	//
+	// It is safe to call Name after [Close].
 	Name() string
 
-	// Readdirnames reads and returns a slice of names from the directory f.
+	// Readdirnames reads the contents of the directory associated with file
+	// and returns a slice of up to n names of files in the directory,
+	// in directory order. Subsequent calls on the same file will yield
+	// further names.
 	//
 	// If n > 0, Readdirnames returns at most n names. In this case, if
 	// Readdirnames returns an empty slice, it will return a non-nil error
-	// explaining why. At the end of a directory, the error is io.EOF.
+	// explaining why. At the end of a directory, the error is [io.EOF].
 	//
 	// If n <= 0, Readdirnames returns all the names from the directory in
 	// a single slice. In this case, if Readdirnames succeeds (reads all
@@ -109,7 +127,7 @@ type File interface {
 
 	// Truncate changes the size of the file.
 	// It does not change the I/O offset.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	Truncate(size int64) error
 }
 
@@ -177,8 +195,8 @@ type VFS interface {
 
 	// Open opens the named file for reading. If successful, methods on
 	// the returned file can be used for reading; the associated file
-	// descriptor has mode O_RDONLY.
-	// If there is an error, it will be of type *PathError.
+	// descriptor has mode [O_RDONLY].
+	// If there is an error, it will be of type [*PathError].
 	Open(name string) (File, error)
 
 	// Sub returns an FS corresponding to the subtree rooted at dir.
@@ -342,7 +360,7 @@ type VFSBase interface {
 	Glob(pattern string) (matches []string, err error)
 
 	// Idm returns the identity manager of the file system.
-	// if the file system does not have an identity manager, avfs.DummyIdm is returned.
+	// If the file system does not have an identity manager, avfs.DummyIdm is returned.
 	Idm() IdentityMgr
 
 	// IsAbs reports whether the path is absolute.
