@@ -28,17 +28,16 @@ const (
 
 // MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
 type MemIdm struct {
-	adminGroup      *MemGroup            // adminGroup is the Administrator Group.
-	adminUser       *MemUser             // adminUser is the Administrator User.
-	groupsByName    groupsByName         // groupsByName is the groups map by Name.
-	groupsById      groupsById           // groupsById is the groups map by Id.
-	usersByName     usersByName          // usersByName is the users map by Name.
-	usersById       usersById            // usersById is users map by Id.
-	IsValidNameFunc avfs.IsValidNameFunc // IsValidNameFunc is a function that checks if the input string is a valid username or group name.
-	maxGid          int                  // maxGid is the current maximum Gid.
-	maxUid          int                  // maxUid is the current maximum Uid.
-	avfs.FeaturesFn                      // FeaturesFn provides features functions to a file system or an identity manager.
-	avfs.OSTypeFn                        // OSTypeFn provides OS type functions to a file system or an identity manager.
+	adminGroup      *MemGroup    // adminGroup is the Administrator Group.
+	adminUser       *MemUser     // adminUser is the Administrator User.
+	groupsByName    groupsByName // groupsByName is the groups map by Name.
+	groupsById      groupsById   // groupsById is the groups map by Id.
+	usersByName     usersByName  // usersByName is the users map by Name.
+	usersById       usersById    // usersById is users map by Id.
+	maxGid          int          // maxGid is the current maximum Gid.
+	maxUid          int          // maxUid is the current maximum Uid.
+	avfs.FeaturesFn              // FeaturesFn provides features functions to a file system or an identity manager.
+	avfs.OSTypeFn                // OSTypeFn provides OS type functions to a file system or an identity manager.
 }
 
 // groupsByName is the map of groups by group name.

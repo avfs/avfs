@@ -38,7 +38,7 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
@@ -66,11 +66,11 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return nil, avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
@@ -102,11 +102,11 @@ func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -139,7 +139,7 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -162,7 +162,7 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
@@ -186,11 +186,11 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -219,7 +219,7 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 // LookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
@@ -235,6 +235,10 @@ func lookupGroup(groupName string) (avfs.GroupReader, error) {
 // LookupGroupId looks up a group by groupid.
 // If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
+	if gid < 0 {
+		return nil, avfs.UnknownGroupIdError(gid)
+	}
+
 	sGid := strconv.Itoa(gid)
 
 	return getGroup(sGid, avfs.UnknownGroupIdError(gid))
@@ -259,7 +263,7 @@ func getGroup(nameOrId string, notFoundErr error) (*OsGroup, error) {
 // LookupUser looks up a user by username.
 // If the user is not found, the returned error is of type avfs.UnknownUserError.
 func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return nil, avfs.InvalidNameError(userName)
 	}
 
@@ -308,11 +312,11 @@ func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -378,6 +382,10 @@ func (u *OsUser) GroupsId() []int {
 
 // IsInGroupId returns true if the user is in the specified group ID.
 func (u *OsUser) IsInGroupId(gid int) bool {
+	if gid < 0 {
+		return false
+	}
+
 	sGids, err := id(u.name, "-G")
 	if err != nil {
 		return false
@@ -417,6 +425,10 @@ func (u *OsUser) PrimaryGroupId() int {
 // SetUser sets the current user.
 // If the user can't be changed an error is returned.
 func SetUser(user avfs.UserReader) error {
+	if user == nil {
+		return avfs.UnknownUserError("user")
+	}
+
 	const op = "user"
 
 	runtime.LockOSThread()

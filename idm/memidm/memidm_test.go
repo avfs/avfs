@@ -30,10 +30,10 @@ var (
 	// MemIdm implements avfs.IdentityMgr interface.
 	_ avfs.IdentityMgr = &memidm.MemIdm{}
 
-	// MemUser implements avfs.UserReader interface.
+	// Ensures that MemUser implements avfs.UserReader interface.
 	_ avfs.UserReader = &memidm.MemUser{}
 
-	// MemGroup implements avfs.GroupReader interface.
+	// Ensures that MemGroup implements avfs.GroupReader interface.
 	_ avfs.GroupReader = &memidm.MemGroup{}
 )
 

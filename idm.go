@@ -18,6 +18,8 @@ package avfs
 
 import "regexp"
 
+var isValidNameRE = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
+
 // IdentityMgr interface manages identities (users and groups).
 type IdentityMgr interface {
 	Featurer
@@ -143,6 +145,11 @@ func (idf *IdmFn) Idm() IdentityMgr {
 	return idf.idm
 }
 
+// IsValidName checks if the input string is a valid username or group name.
+func IsValidName(name string) bool {
+	return isValidNameRE.MatchString(name)
+}
+
 // SetIdm set the current identity manager.
 // If the identity manager provider is nil, the idm NotImplementedIdm is set.
 func (idf *IdmFn) SetIdm(idm IdentityMgr) error {
@@ -173,14 +180,4 @@ func AdminUserName(osType OSType) string {
 	default:
 		return "root"
 	}
-}
-
-// IsValidNameFunc is a function that checks if the input string is a valid username or group name.
-type IsValidNameFunc func(string) bool
-
-var IsValidNameRE = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
-
-// IsValidName checks if the input string is a valid username or group name.
-func IsValidName(name string) bool {
-	return IsValidNameRE.MatchString(name)
 }

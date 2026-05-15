@@ -42,7 +42,7 @@ func (idm *OsIdm) AddGroup(groupName string) (avfs.GroupReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
@@ -71,11 +71,11 @@ func (idm *OsIdm) AddUser(userName, groupName string) (avfs.UserReader, error) {
 		return nil, avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return nil, avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
@@ -115,11 +115,11 @@ func (idm *OsIdm) AddUserToGroup(userName, groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -152,7 +152,7 @@ func (idm *OsIdm) DelGroup(groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -175,7 +175,7 @@ func (idm *OsIdm) DelUser(userName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
@@ -199,11 +199,11 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
@@ -236,7 +236,7 @@ func (idm *OsIdm) DelUserFromGroup(userName, groupName string) error {
 // LookupGroup looks up a group by name.
 // If the group is not found, the returned error is of type avfs.UnknownGroupError.
 func (idm *OsIdm) LookupGroup(groupName string) (avfs.GroupReader, error) {
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return nil, avfs.InvalidNameError(groupName)
 	}
 
@@ -280,7 +280,7 @@ func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
 // LookupUser looks up a user by username.
 // If the user is not found, the returned error is of type avfs.UnknownUserError.
 func (idm *OsIdm) LookupUser(userName string) (avfs.UserReader, error) {
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return nil, avfs.InvalidNameError(userName)
 	}
 
@@ -334,11 +334,11 @@ func (idm *OsIdm) SetUserPrimaryGroup(userName, groupName string) error {
 		return avfs.ErrPermDenied
 	}
 
-	if !idm.IsValidNameFunc(userName) {
+	if !avfs.IsValidName(userName) {
 		return avfs.InvalidNameError(userName)
 	}
 
-	if !idm.IsValidNameFunc(groupName) {
+	if !avfs.IsValidName(groupName) {
 		return avfs.InvalidNameError(groupName)
 	}
 
