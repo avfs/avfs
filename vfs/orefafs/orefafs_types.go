@@ -26,19 +26,16 @@ import (
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
 type OrefaFS struct {
-	err             *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
-	avfs.CurUserFn                    // CurUserFn provides current user functions to a file system.
-	avfs.IdmFn                        // IdmFn provides identity manager functions to a file system.
-	nodes           nodes             // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	lastId          *uint64           // lastId is the last unique id used to identify files uniquely.
-	name            string            // name is the name of the file system.
-	avfs.DirFn                        // DirFn provides system directory functions to a file system.
-	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
-	mu              sync.RWMutex      // mu is the RWMutex used to access nodes.
-	dirMode         fs.FileMode       // dirMode is the default fs.FileMode for a directory.
-	fileMode        fs.FileMode       // fileMode is de default fs.FileMode for a file.
-	avfs.UMaskFn                      // UMaskFn provides UMask functions to file systems.
-	avfs.OSTypeFn                     // OSTypeFn provides OS type functions to a file system or an identity manager.
+	err               *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
+	avfs.IdmFn                          // IdmFn provides identity manager functions to a file system.
+	nodes             nodes             // nodes is the map of nodes (files or directories) where the key is the absolute path.
+	lastId            *uint64           // lastId is the last unique id used to identify files uniquely.
+	name              string            // name is the name of the file system.
+	mu                sync.RWMutex      // mu is the RWMutex used to access nodes.
+	dirMode           fs.FileMode       // dirMode is the default fs.FileMode for a directory.
+	fileMode          fs.FileMode       // fileMode is de default fs.FileMode for a file.
+	avfs.UMaskFn                        // UMaskFn provides UMask functions to file systems.
+	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user in a virtual file system.
 }
 
 // OrefaFile represents an open file descriptor.
