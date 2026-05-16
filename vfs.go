@@ -29,19 +29,6 @@ import (
 // OpWinCreateFile is the name of the Windows CreateFile operation.
 const OpWinCreateFile = "GetFileAttributesEx"
 
-// Abs returns an absolute representation of path.
-// If the path is not absolute it will be joined with the current
-// working directory to turn it into an absolute path. The absolute
-// path name for a given file is not guaranteed to be unique.
-// Abs calls [Clean] on the result.
-func Abs[T VFSBase](vfs T, path, curDir string) (string, error) {
-	if vfs.IsAbs(path) {
-		return vfs.Clean(path), nil
-	}
-
-	return vfs.Join(curDir, path), nil
-}
-
 // cleanGlobPath prepares path for glob matching.
 func cleanGlobPath[T VFSBase](vfs T, path string) string {
 	pathSeparator := vfs.PathSeparator()
@@ -59,12 +46,12 @@ func cleanGlobPath[T VFSBase](vfs T, path string) string {
 
 // cleanGlobPathWindows is Windows version of cleanGlobPath.
 func cleanGlobPathWindows[T VFSBase](vfs T, path string) (prefixLen int, cleaned string) {
-	vollen := VolumeNameLen(vfs, path)
+	vollen := vfs.VolumeNameLen(path)
 
 	switch {
 	case path == "":
 		return 0, "."
-	case vollen+1 == len(path) && IsPathSeparator(vfs, path[len(path)-1]): // /, \, C:\ and C:/
+	case vollen+1 == len(path) && vfs.IsPathSeparator(path[len(path)-1]): // /, \, C:\ and C:/
 		// do nothing to the path
 		return vollen + 1, path
 	case vollen == len(path) && len(path) == 2: // C:
@@ -128,7 +115,7 @@ func CreateTemp[T VFSBase](vfs T, dir, pattern string) (File, error) {
 	}
 }
 
-// FromUnixPath returns valid path for Unix or Windows from a unix path.
+// FromUnixPath returns a valid path for Unix or Windows from a unix path.
 // For Windows systems, absolute paths are prefixed with the default volume
 // and relative paths are preserved.
 func FromUnixPath[T VFSBase](vfs T, path string) string {
@@ -141,14 +128,14 @@ func FromUnixPath[T VFSBase](vfs T, path string) string {
 	}
 
 	if path == "" {
-		return Join(vfs, DefaultVolume, "\\")
+		return vfs.Join(DefaultVolume, `\`)
 	}
 
 	if path[0] != '/' {
-		return FromSlash(vfs, path)
+		return vfs.FromSlash(path)
 	}
 
-	return Join(vfs, DefaultVolume, path)
+	return vfs.Join(DefaultVolume, path)
 }
 
 // Glob returns the names of all files matching pattern or nil
@@ -161,7 +148,7 @@ func FromUnixPath[T VFSBase](vfs T, path string) string {
 // is malformed.
 func Glob[T VFSBase](vfs T, pattern string) (matches []string, err error) {
 	// Check pattern is well-formed.
-	if _, err = Match(vfs, pattern, ""); err != nil {
+	if _, err = vfs.Match(pattern, ""); err != nil {
 		return nil, err
 	}
 
@@ -173,7 +160,7 @@ func Glob[T VFSBase](vfs T, pattern string) (matches []string, err error) {
 		return []string{pattern}, nil
 	}
 
-	dir, file := Split(vfs, pattern)
+	dir, file := vfs.Split(pattern)
 	volumeLen := 0
 
 	if vfs.OSType() == OsWindows {
@@ -235,13 +222,13 @@ func glob[T VFSBase](vfs T, dir, pattern string, matches []string) (m []string, 
 	sort.Strings(names)
 
 	for _, n := range names {
-		matched, err := Match(vfs, pattern, n)
+		matched, err := vfs.Match(pattern, n)
 		if err != nil {
 			return m, err
 		}
 
 		if matched {
-			m = append(m, Join(vfs, dir, n))
+			m = append(m, vfs.Join(dir, n))
 		}
 	}
 
@@ -281,7 +268,7 @@ func IsNotExist(err error) bool {
 }
 
 func joinPath[T VFSBase](vfs T, dir, name string) string {
-	if dir != "" && IsPathSeparator(vfs, dir[len(dir)-1]) {
+	if dir != "" && vfs.IsPathSeparator(dir[len(dir)-1]) {
 		return dir + name
 	}
 
@@ -342,7 +329,7 @@ func MkdirTemp[T VFSBase](vfs T, dir, pattern string) (string, error) {
 // returning prefix as the part before "*" and suffix as the part after "*".
 func prefixAndSuffix[T VFSBase](vfs T, pattern string) (prefix, suffix string, err error) {
 	for i := range len(pattern) {
-		if IsPathSeparator(vfs, pattern[i]) {
+		if vfs.IsPathSeparator(pattern[i]) {
 			return "", "", ErrPatternHasSeparator
 		}
 	}
@@ -455,10 +442,10 @@ func SetUserByName[T VFSBase](vfs T, name string) error {
 // and file set to path.
 // The returned values have the property that path = dir + PathSeparator + file.
 func SplitAbs[T VFSBase](vfs T, path string) (dir, file string) {
-	l := VolumeNameLen(vfs, path)
+	l := vfs.VolumeNameLen(path)
 
 	i := len(path) - 1
-	for i >= l && !IsPathSeparator(vfs, path[i]) {
+	for i >= l && !vfs.IsPathSeparator(path[i]) {
 		i--
 	}
 
@@ -502,14 +489,6 @@ func ToOpenMode(flag int) OpenMode {
 	}
 
 	return om
-}
-
-// VolumeName returns leading volume name.
-// Given "C:\foo\bar" it returns "C:" on Windows.
-// Given "\\host\share\foo" it returns "\\host\share".
-// On other platforms it returns "".
-func VolumeName[T VFSBase](vfs T, path string) string {
-	return FromSlash(vfs, path[:VolumeNameLen(vfs, path)])
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
@@ -559,7 +538,7 @@ func walkDir[T VFSBase](vfs T, path string, d fs.DirEntry, walkDirFn fs.WalkDirF
 	}
 
 	for _, d1 := range dirs {
-		path1 := Join(vfs, path, d1.Name())
+		path1 := vfs.Join(path, d1.Name())
 		if err := walkDir[T](vfs, path1, d1, walkDirFn); err != nil {
 			if err == filepath.SkipDir {
 				break

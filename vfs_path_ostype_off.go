@@ -29,7 +29,7 @@ const buildFeatSetOSType = 0
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func Base[T VFSBase](_ T, path string) string {
+func (vof *VFSPathFn) Base(path string) string {
 	return filepath.Base(path)
 }
 
@@ -56,7 +56,7 @@ func Base[T VFSBase](_ T, path string) string {
 // See also Rob Pike, “Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
-func Clean[T VFSBase](_ T, path string) string {
+func (vof *VFSPathFn) Clean(path string) string {
 	return filepath.Clean(path)
 }
 
@@ -66,24 +66,24 @@ func Clean[T VFSBase](_ T, path string) string {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func Dir[T VFSBase](_ T, path string) string {
+func (vof *VFSPathFn) Dir(path string) string {
 	return filepath.Dir(path)
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func FromSlash[T VFSBase](_ T, path string) string {
+func (vof *VFSPathFn) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
 // IsAbs reports whether the path is absolute.
-func IsAbs[T VFSBase](_ T, path string) bool {
+func (vof *VFSPathFn) IsAbs(path string) bool {
 	return filepath.IsAbs(path)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func IsPathSeparator[T VFSBase](_ T, c uint8) bool {
+func (vof *VFSPathFn) IsPathSeparator(c uint8) bool {
 	return os.IsPathSeparator(c)
 }
 
@@ -94,7 +94,7 @@ func IsPathSeparator[T VFSBase](_ T, c uint8) bool {
 // an empty string.
 // On Windows, the result will only be a UNC path if the first
 // non-empty element is a UNC path.
-func Join[T VFSBase](_ T, elem ...string) string {
+func (vof *VFSPathFn) Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
 
@@ -122,7 +122,7 @@ func Join[T VFSBase](_ T, elem ...string) string {
 //
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
-func Match[T VFSBase](_ T, pattern, name string) (matched bool, err error) {
+func (vof *VFSPathFn) Match(pattern, name string) (matched bool, err error) {
 	return filepath.Match(pattern, name)
 }
 
@@ -134,7 +134,7 @@ func Match[T VFSBase](_ T, pattern, name string) (matched bool, err error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func Rel[T VFSBase](_ T, basepath, targpath string) (string, error) {
+func (vof *VFSPathFn) Rel(basepath, targpath string) (string, error) {
 	return filepath.Rel(basepath, targpath)
 }
 
@@ -143,19 +143,19 @@ func Rel[T VFSBase](_ T, basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func Split[T VFSBase](_ T, path string) (dir, file string) {
+func (vof *VFSPathFn) Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func ToSlash[T VFSBase](_ T, path string) string {
+func (vof *VFSPathFn) ToSlash(path string) string {
 	return filepath.ToSlash(path)
 }
 
-// VolumeNameLen returns length of the leading volume name on Windows.
+// VolumeNameLen returns the length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func VolumeNameLen[T VFSBase](_ T, path string) int {
+func (vof *VFSPathFn) VolumeNameLen(path string) int {
 	return volumeNameLen(path)
 }

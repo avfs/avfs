@@ -205,20 +205,14 @@ type VFS interface {
 
 // VFSBase regroups the common methods to VFS and IOFS.
 type VFSBase interface {
-	CurUserMgr
 	Featurer
 	IdmMgr
 	Namer
 	OSTyper
 	Typer
 	UMasker
-
-	// Abs returns an absolute representation of path.
-	// If the path is not absolute it will be joined with the current
-	// working directory to turn it into an absolute path. The absolute
-	// path name for a given file is not guaranteed to be unique.
-	// Abs calls [Clean] on the result.
-	Abs(path string) (string, error)
+	VFSPath
+	VFSUserDir
 
 	// Base returns the last element of path.
 	// Trailing path separators are removed before extracting the last element.
@@ -268,35 +262,6 @@ type VFSBase interface {
 	// If there is an error, it will be of type [*PathError].
 	Chtimes(name string, atime, mtime time.Time) error
 
-	// Clean returns the shortest path name equivalent to path
-	// by purely lexical processing. It applies the following rules
-	// iteratively until no further processing can be done:
-	//
-	//  1. Replace multiple [Separator] elements with a single one.
-	//  2. Eliminate each . path name element (the current directory).
-	//  3. Eliminate each inner .. path name element (the parent directory)
-	//     along with the non-.. element that precedes it.
-	//  4. Eliminate .. elements that begin a rooted path:
-	//     that is, replace "/.." by "/" at the beginning of a path,
-	//     assuming Separator is '/'.
-	//
-	// The returned path ends in a slash only if it represents a root directory,
-	// such as "/" on Unix or `C:\` on Windows.
-	//
-	// Finally, any occurrences of slash are replaced by Separator.
-	//
-	// If the result of this process is an empty string, Clean
-	// returns the string ".".
-	//
-	// On Windows, Clean does not modify the volume name other than to replace
-	// occurrences of "/" with `\`.
-	// For example, Clean("//host/share/../x") returns `\\host\share\x`.
-	//
-	// See also Rob Pike, “Lexical File Names in Plan 9 or
-	// Getting Dot-Dot Right,”
-	// https://9p.io/sys/doc/lexnames.html
-	Clean(path string) string
-
 	// Create creates or truncates the named file. If the file already exists,
 	// it is truncated. If the file does not exist, it is created with mode 0o666
 	// (before umask). If successful, methods on the returned File can
@@ -316,38 +281,12 @@ type VFSBase interface {
 	// It is the caller's responsibility to remove the file when it is no longer needed.
 	CreateTemp(dir, pattern string) (File, error)
 
-	// Dir returns all but the last element of path, typically the path's directory.
-	// After dropping the final element, Dir calls [Clean] on the path and trailing
-	// slashes are removed.
-	// If the path is empty, Dir returns ".".
-	// If the path consists entirely of separators, Dir returns a single separator.
-	// The returned path does not end in a separator unless it is the root directory.
-	Dir(path string) string
-
 	// EvalSymlinks returns the path name after the evaluation of any symbolic
 	// links.
 	// If path is relative the result will be relative to the current directory,
 	// unless one of the components is an absolute symbolic link.
 	// EvalSymlinks calls [Clean] on the result.
 	EvalSymlinks(path string) (string, error)
-
-	// FromSlash returns the result of replacing each slash ('/') character
-	// in path with a separator character. Multiple slashes are replaced
-	// by multiple separators.
-	//
-	// See also the Localize function, which converts a slash-separated path
-	// as used by the io/fs package to an operating system path.
-	FromSlash(path string) string
-
-	// Getwd returns an absolute path name corresponding to the
-	// current directory. If the current directory can be
-	// reached via multiple paths (due to symbolic links),
-	// Getwd may return any one of them.
-	//
-	// On Unix platforms, if the environment variable PWD
-	// provides an absolute name, and it is a name of the
-	// current directory, it is returned.
-	Getwd() (dir string, err error)
 
 	// Glob returns the names of all files matching pattern or nil
 	// if there is no matching file. The syntax of patterns is the same
@@ -362,21 +301,6 @@ type VFSBase interface {
 	// Idm returns the identity manager of the file system.
 	// If the file system does not have an identity manager, avfs.DummyIdm is returned.
 	Idm() IdentityMgr
-
-	// IsAbs reports whether the path is absolute.
-	IsAbs(path string) bool
-
-	// IsPathSeparator reports whether c is a directory separator character.
-	IsPathSeparator(c uint8) bool
-
-	// Join joins any number of path elements into a single path,
-	// separating them with an OS specific Separator. Empty elements
-	// are ignored. The result is Cleaned. However, if the argument
-	// list is empty or all its elements are empty, Join returns
-	// an empty string.
-	// On Windows, the result will only be a UNC path if the first
-	// non-empty element is a UNC path.
-	Join(elem ...string) string
 
 	// Lchown changes the numeric uid and gid of the named file.
 	// If the file is a symbolic link, it changes the uid and gid of the link itself.
@@ -399,32 +323,6 @@ type VFSBase interface {
 	// named entity (such as a symbolic link or mounted folder), the returned
 	// FileInfo describes the reparse point, and makes no attempt to resolve it.
 	Lstat(name string) (fs.FileInfo, error)
-
-	// Match reports whether name matches the shell file name pattern.
-	// The pattern syntax is:
-	//
-	//	pattern:
-	//		{ term }
-	//	term:
-	//		'*'         matches any sequence of non-Separator characters
-	//		'?'         matches any single non-Separator character
-	//		'[' [ '^' ] { character-range } ']'
-	//		            character class (must be non-empty)
-	//		c           matches character c (c != '*', '?', '\\', '[')
-	//		'\\' c      matches character c
-	//
-	//	character-range:
-	//		c           matches character c (c != '\\', '-', ']')
-	//		'\\' c      matches character c
-	//		lo '-' hi   matches character c for lo <= c <= hi
-	//
-	// Match requires pattern to match all of name, not just a substring.
-	// The only possible returned error is [ErrBadPattern], when pattern
-	// is malformed.
-	//
-	// On Windows, escaping is disabled. Instead, '\\' is treated as
-	// path separator.
-	Match(pattern, name string) (matched bool, err error)
 
 	// Mkdir creates a new directory with the specified name and permission
 	// bits (before umask).
@@ -459,9 +357,6 @@ type VFSBase interface {
 	// If there is an error, it will be of type [*PathError].
 	OpenFile(name string, flag int, perm fs.FileMode) (File, error)
 
-	// PathSeparator return the OS-specific path separator.
-	PathSeparator() uint8
-
 	// ReadDir reads the named directory,
 	// returning all its directory entries sorted by filename.
 	// If an error occurs reading the directory,
@@ -481,16 +376,6 @@ type VFSBase interface {
 	// If the link destination is relative, Readlink returns the relative path
 	// without resolving it to an absolute one.
 	Readlink(name string) (string, error)
-
-	// Rel returns a relative path that is lexically equivalent to targpath when
-	// joined to basepath with an intervening separator. That is,
-	// [Join](basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-	// On success, the returned path will always be relative to basepath,
-	// even if basepath and targpath share no elements.
-	// An error is returned if targpath can't be made relative to basepath or if
-	// knowing the current working directory would be necessary to compute it.
-	// Rel calls [Clean] on the result.
-	Rel(basepath, targpath string) (string, error)
 
 	// Remove removes the named file or (empty) directory.
 	// If there is an error, it will be of type [*PathError].
@@ -519,13 +404,6 @@ type VFSBase interface {
 	// It returns false in other cases.
 	SameFile(fi1, fi2 fs.FileInfo) bool
 
-	// Split splits path immediately following the final [Separator],
-	// separating it into a directory and file name component.
-	// If there is no Separator in path, Split returns an empty dir
-	// and file set to path.
-	// The returned values have the property that path = dir+file.
-	Split(path string) (dir, file string)
-
 	// Stat returns a [FileInfo] describing the named file.
 	// If there is an error, it will be of type [*PathError].
 	Stat(name string) (fs.FileInfo, error)
@@ -535,25 +413,6 @@ type VFSBase interface {
 	// if oldname is later created as a directory the symlink will not work.
 	// If there is an error, it will be of type *LinkError.
 	Symlink(oldname, newname string) error
-
-	// TempDir returns the default directory to use for temporary files.
-	//
-	// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
-	// On Windows, it uses GetTempPath, returning the first non-empty
-	// value from %TMP%, %TEMP%, %USERPROFILE%, or the Windows directory.
-	// On Plan 9, it returns /tmp.
-	//
-	// The directory is neither guaranteed to exist nor have accessible
-	// permissions.
-	TempDir() string
-
-	// ToSlash returns the result of replacing each separator character
-	// in path with a slash ('/') character. Multiple separators are
-	// replaced by multiple slashes.
-	ToSlash(path string) string
-
-	// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-	ToSysStat(info fs.FileInfo) SysStater
 
 	// Truncate changes the size of the named file.
 	// If the file is a symbolic link, it changes the size of the link's target.
