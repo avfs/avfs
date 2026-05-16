@@ -516,6 +516,20 @@ func (vfs *OsFS) User() avfs.UserReader {
 	return osidm.User()
 }
 
+// VolumeName returns the leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func (vfs *OsFS) VolumeName(path string) string {
+	return filepath.FromSlash(path[:avfs.VolumeNameLen(path)])
+}
+
+// VolumeNameLen returns the length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func (vfs *OsFS) VolumeNameLen(path string) int {
+	return avfs.VolumeNameLen(path)
+}
+
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
