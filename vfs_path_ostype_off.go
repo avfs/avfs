@@ -157,5 +157,5 @@ func (vof *VFSPathFn) ToSlash(path string) string {
 // VolumeNameLen returns the length of the leading volume name on Windows.
 // It returns 0 elsewhere.
 func (vof *VFSPathFn) VolumeNameLen(path string) int {
-	return volumeNameLen(path)
+	return VolumeNameLen(path)
 }
