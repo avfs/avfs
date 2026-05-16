@@ -548,6 +548,20 @@ func (vfs *RoFS) User() avfs.UserReader {
 	return vfs.baseFS.User()
 }
 
+// VolumeName returns the leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func (vfs *RoFS) VolumeName(path string) string {
+	return vfs.baseFS.VolumeName(path)
+}
+
+// VolumeNameLen returns the length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func (vfs *RoFS) VolumeNameLen(path string) int {
+	return vfs.baseFS.VolumeNameLen(path)
+}
+
 // WalkDir walks the file tree rooted at root, calling fn for each file or
 // directory in the tree, including root.
 //
