@@ -57,7 +57,6 @@ func NewWithOptions(opts *Options) *MemFS {
 	_ = vfs.SetOSType(opts.OSType)
 	_ = vfs.SetIdm(idm)
 	_ = vfs.SetUser(user)
-	_ = vfs.SetTempDir(avfs.TempDirUser(vfs, "", user))
 
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
 	vfs.rootNode = vfs.createRootNode()
@@ -102,7 +101,7 @@ func (vfs *MemFS) VolumeAdd(name string) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeWindows}
 	}
 
-	vol := avfs.VolumeName(vfs, name)
+	vol := vfs.VolumeName(name)
 	if vol == "" {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
@@ -126,7 +125,7 @@ func (vfs *MemFS) VolumeDelete(name string) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeWindows}
 	}
 
-	vol := avfs.VolumeName(vfs, name)
+	vol := vfs.VolumeName(name)
 	if vol == "" {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}

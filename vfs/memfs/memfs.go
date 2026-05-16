@@ -33,23 +33,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// Abs returns an absolute representation of path.
-// If the path is not absolute it will be joined with the current
-// working directory to turn it into an absolute path. The absolute
-// path name for a given file is not guaranteed to be unique.
-// Abs calls [Clean] on the result.
-func (vfs *MemFS) Abs(path string) (string, error) {
-	return avfs.Abs(vfs, path, vfs.CurDir())
-}
-
-// Base returns the last element of path.
-// Trailing path separators are removed before extracting the last element.
-// If the path is empty, Base returns ".".
-// If the path consists entirely of separators, Base returns a single separator.
-func (vfs *MemFS) Base(path string) string {
-	return avfs.Base(vfs, path)
-}
-
 // Chdir changes the current working directory to the named directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Chdir(dir string) error {
@@ -196,37 +179,6 @@ func (vfs *MemFS) Chtimes(name string, _, mtime time.Time) error {
 	return nil
 }
 
-// Clean returns the shortest path name equivalent to path
-// by purely lexical processing. It applies the following rules
-// iteratively until no further processing can be done:
-//
-//  1. Replace multiple Separator elements with a single one.
-//  2. Eliminate each . path name element (the current directory).
-//  3. Eliminate each inner .. path name element (the parent directory)
-//     along with the non-.. element that precedes it.
-//  4. Eliminate .. elements that begin a rooted path:
-//     that is, replace "/.." by "/" at the beginning of a path,
-//     assuming Separator is '/'.
-//
-// The returned path ends in a slash only if it represents a root directory,
-// such as "/" on Unix or `C:\` on Windows.
-//
-// Finally, any occurrences of slash are replaced by Separator.
-//
-// If the result of this process is an empty string, Clean
-// returns the string ".".
-//
-// On Windows, Clean does not modify the volume name other than to replace
-// occurrences of "/" with `\`.
-// For example, Clean("//host/share/../x") returns `\\host\share\x`.
-//
-// See also Rob Pike, "Lexical File Names in Plan 9 or
-// Getting Dot-Dot Right,"
-// https://9p.io/sys/doc/lexnames.html
-func (vfs *MemFS) Clean(path string) string {
-	return avfs.Clean(vfs, path)
-}
-
 // Create creates or truncates the named file. If the file already exists,
 // it is truncated. If the file does not exist, it is created with mode 0666
 // (before umask). If successful, methods on the returned File can
@@ -250,16 +202,6 @@ func (vfs *MemFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 	return avfs.CreateTemp(vfs, dir, pattern)
 }
 
-// Dir returns all but the last element of path, typically the path's directory.
-// After dropping the final element, Dir calls Clean on the path and trailing
-// slashes are removed.
-// If the path is empty, Dir returns ".".
-// If the path consists entirely of separators, Dir returns a single separator.
-// The returned path does not end in a separator unless it is the root directory.
-func (vfs *MemFS) Dir(path string) string {
-	return avfs.Dir(vfs, path)
-}
-
 // EvalSymlinks returns the path name after the evaluation of any symbolic
 // links.
 // If path is relative the result will be relative to the current directory,
@@ -280,28 +222,6 @@ func (vfs *MemFS) EvalSymlinks(path string) (string, error) {
 	return pi.Path(), nil
 }
 
-// FromSlash returns the result of replacing each slash ('/') character
-// in path with a separator character. Multiple slashes are replaced
-// by multiple separators.
-//
-// See also the Localize function, which converts a slash-separated path
-// as used by the io/fs package to an operating system path.
-func (vfs *MemFS) FromSlash(path string) string {
-	return avfs.FromSlash(vfs, path)
-}
-
-// Getwd returns an absolute path name corresponding to the
-// current directory. If the current directory can be
-// reached via multiple paths (due to symbolic links),
-// Getwd may return any one of them.
-//
-// On Unix platforms, if the environment variable PWD
-// provides an absolute name, and it is a name of the
-// current directory, it is returned.
-func (vfs *MemFS) Getwd() (dir string, err error) {
-	return vfs.CurDir(), nil
-}
-
 // Glob returns the names of all files matching pattern or nil
 // if there is no matching file. The syntax of patterns is the same
 // as in Match. The pattern may describe hierarchical names such as
@@ -312,27 +232,6 @@ func (vfs *MemFS) Getwd() (dir string, err error) {
 // is malformed.
 func (vfs *MemFS) Glob(pattern string) (matches []string, err error) {
 	return avfs.Glob(vfs, pattern)
-}
-
-// IsAbs reports whether the path is absolute.
-func (vfs *MemFS) IsAbs(path string) bool {
-	return avfs.IsAbs(vfs, path)
-}
-
-// IsPathSeparator reports whether c is a directory separator character.
-func (vfs *MemFS) IsPathSeparator(c uint8) bool {
-	return avfs.IsPathSeparator(vfs, c)
-}
-
-// Join joins any number of path elements into a single path,
-// separating them with an OS specific Separator. Empty elements
-// are ignored. The result is Cleaned. However, if the argument
-// list is empty or all its elements are empty, Join returns
-// an empty string.
-// On Windows, the result will only be a UNC path if the first
-// non-empty element is a UNC path.
-func (vfs *MemFS) Join(elem ...string) string {
-	return avfs.Join(vfs, elem...)
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -450,34 +349,6 @@ func (vfs *MemFS) Lstat(name string) (fs.FileInfo, error) {
 	fst := child.fillStatFrom(pi.Part())
 
 	return fst, nil
-}
-
-// Match reports whether name matches the shell file name pattern.
-// The pattern syntax is:
-//
-//	pattern:
-//		{ term }
-//	term:
-//		'*'         matches any sequence of non-Separator characters
-//		'?'         matches any single non-Separator character
-//		'[' [ '^' ] { character-range } ']'
-//		            character class (must be non-empty)
-//		c           matches character c (c != '*', '?', '\\', '[')
-//		'\\' c      matches character c
-//
-//	character-range:
-//		c           matches character c (c != '\\', '-', ']')
-//		'\\' c      matches character c
-//		lo '-' hi   matches character c for lo <= c <= hi
-//
-// Match requires pattern to match all of name, not just a substring.
-// The only possible returned error is ErrBadPattern, when pattern
-// is malformed.
-//
-// On Windows, escaping is disabled. Instead, '\\' is treated as
-// path separator.
-func (vfs *MemFS) Match(pattern, name string) (matched bool, err error) {
-	return avfs.Match(vfs, pattern, name)
 }
 
 // Mkdir creates a new directory with the specified name and permission
@@ -734,18 +605,6 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 	return sl.link, nil
 }
 
-// Rel returns a relative path that is lexically equivalent to targpath when
-// joined to basepath with an intervening separator. That is,
-// Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-// On success, the returned path will always be relative to basepath,
-// even if basepath and targpath share no elements.
-// An error is returned if targpath can't be made relative to basepath or if
-// knowing the current working directory would be necessary to compute it.
-// Rel calls Clean on the result.
-func (vfs *MemFS) Rel(basepath, targpath string) (string, error) {
-	return avfs.Rel(vfs, basepath, targpath)
-}
-
 // Remove removes the named file or (empty) directory.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Remove(name string) error {
@@ -948,21 +807,6 @@ func (*MemFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return fs1.id == fs2.id
 }
 
-// SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *MemFS) SetUserByName(name string) error {
-	return avfs.SetUserByName(vfs, name)
-}
-
-// Split splits path immediately following the final Separator,
-// separating it into a directory and file name component.
-// If there is no Separator in path, Split returns an empty dir
-// and file set to path.
-// The returned values have the property that path = dir+file.
-func (vfs *MemFS) Split(path string) (dir, file string) {
-	return avfs.Split(vfs, path)
-}
-
 // Stat returns a FileInfo describing the named file.
 // If there is an error, it will be of type *PathError.
 func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
@@ -1048,18 +892,6 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	vfs.createSymlink(parent, pi.Part(), link)
 
 	return nil
-}
-
-// ToSlash returns the result of replacing each separator character
-// in path with a slash ('/') character. Multiple separators are
-// replaced by multiple slashes.
-func (vfs *MemFS) ToSlash(path string) string {
-	return avfs.ToSlash(vfs, path)
-}
-
-// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func (*MemFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
-	return info.Sys().(avfs.SysStater) //nolint:forcetypeassert // type assertion must be checked
 }
 
 // Truncate changes the size of the named file.
