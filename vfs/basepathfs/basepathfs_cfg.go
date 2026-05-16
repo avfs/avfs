@@ -79,7 +79,7 @@ func (vfs *BasePathFS) FromBasePath(path string) string {
 		panic("path must start with " + vfs.basePath + " : " + path)
 	}
 
-	vl := avfs.VolumeNameLen(vfs, path)
+	vl := vfs.VolumeNameLen(path)
 
 	return vfs.Join(path[:vl], path[len(vfs.basePath):], string(vfs.PathSeparator()))
 }
@@ -116,7 +116,7 @@ func (vfs *BasePathFS) ToBasePath(path string) string {
 	}
 
 	if vfs.IsAbs(path) {
-		vl := avfs.VolumeNameLen(vfs, path)
+		vl := vfs.VolumeNameLen(path)
 
 		return vfs.Join(vfs.basePath, path[vl:])
 	}
