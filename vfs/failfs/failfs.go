@@ -158,7 +158,7 @@ func (vfs *FailFS) Chtimes(name string, atime, mtime time.Time) error {
 // Getting Dot-Dot Right,"
 // https://9p.io/sys/doc/lexnames.html
 func (vfs *FailFS) Clean(path string) string {
-	return avfs.Clean(vfs, path)
+	return vfs.baseFS.Clean(path)
 }
 
 // Create creates or truncates the named file. If the file already exists,
@@ -198,7 +198,7 @@ func (vfs *FailFS) CreateTemp(dir, pattern string) (avfs.File, error) {
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
 func (vfs *FailFS) Dir(path string) string {
-	return avfs.Dir(vfs, path)
+	return vfs.baseFS.Dir(path)
 }
 
 // EvalSymlinks returns the path name after the evaluation of any symbolic
@@ -224,7 +224,7 @@ func (vfs *FailFS) EvalSymlinks(path string) (string, error) {
 // See also the Localize function, which converts a slash-separated path
 // as used by the io/fs package to an operating system path.
 func (vfs *FailFS) FromSlash(path string) string {
-	return avfs.FromSlash(vfs, path)
+	return vfs.baseFS.FromSlash(path)
 }
 
 // Getwd returns an absolute path name corresponding to the
@@ -264,12 +264,12 @@ func (vfs *FailFS) Idm() avfs.IdentityMgr {
 
 // IsAbs reports whether the path is absolute.
 func (vfs *FailFS) IsAbs(path string) bool {
-	return avfs.IsAbs(vfs, path)
+	return vfs.baseFS.IsAbs(path)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
 func (vfs *FailFS) IsPathSeparator(c uint8) bool {
-	return avfs.IsPathSeparator(vfs, c)
+	return vfs.baseFS.IsPathSeparator(c)
 }
 
 // Join joins any number of path elements into a single path,
@@ -280,7 +280,7 @@ func (vfs *FailFS) IsPathSeparator(c uint8) bool {
 // On Windows, the result will only be a UNC path if the first
 // non-empty element is a UNC path.
 func (vfs *FailFS) Join(elem ...string) string {
-	return avfs.Join(vfs, elem...)
+	return vfs.baseFS.Join(elem...)
 }
 
 // Lchown changes the numeric uid and gid of the named file.
@@ -357,7 +357,7 @@ func (vfs *FailFS) Lstat(name string) (fs.FileInfo, error) {
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
 func (vfs *FailFS) Match(pattern, name string) (matched bool, err error) {
-	return avfs.Match(vfs, pattern, name)
+	return vfs.baseFS.Match(pattern, name)
 }
 
 // Mkdir creates a new directory with the specified name and permission
@@ -508,7 +508,7 @@ func (vfs *FailFS) Readlink(name string) (string, error) {
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
 func (vfs *FailFS) Rel(basepath, targpath string) (string, error) {
-	return avfs.Rel(vfs, basepath, targpath)
+	return vfs.baseFS.Rel(basepath, targpath)
 }
 
 // Remove removes the named file or (empty) directory.
@@ -612,7 +612,7 @@ func (vfs *FailFS) SetUserByName(name string) error {
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (vfs *FailFS) Split(path string) (dir, file string) {
-	return avfs.Split(vfs, path)
+	return vfs.baseFS.Split(path)
 }
 
 // Stat returns a FileInfo describing the named file.
@@ -672,7 +672,7 @@ func (vfs *FailFS) TempDir() string {
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
 func (vfs *FailFS) ToSlash(path string) string {
-	return avfs.ToSlash(vfs, path)
+	return vfs.baseFS.ToSlash(path)
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
@@ -700,6 +700,20 @@ func (vfs *FailFS) UMask() fs.FileMode {
 
 func (vfs *FailFS) User() avfs.UserReader {
 	return vfs.baseFS.User()
+}
+
+// VolumeName returns the leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func (vfs *FailFS) VolumeName(path string) string {
+	return vfs.baseFS.VolumeName(path)
+}
+
+// VolumeNameLen returns the length of the leading volume name on Windows.
+// It returns 0 elsewhere.
+func (vfs *FailFS) VolumeNameLen(path string) int {
+	return vfs.baseFS.VolumeNameLen(path)
 }
 
 // WalkDir walks the file tree rooted at root, calling fn for each file or
