@@ -36,11 +36,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 	features := avfs.FeatHardlink | avfs.BuildFeatures()
 	idm := avfs.NotImplementedIdm
-
 	user := opts.User
-	if opts.User == nil {
-		user = idm.AdminUser()
-	}
 
 	vfs := &OrefaFS{
 		dirMode:  fs.ModeDir,

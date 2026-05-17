@@ -182,7 +182,7 @@ func homeDir(ost OSType) string {
 // HomeDirUser returns the home directory of the user.
 // If the file system does not have an identity manager, the root directory is returned.
 func HomeDirUser[T VFSBase](vfs T, basePath string, u UserReader) string {
-	if basePath == "" && vfs.OSType() != OsWindows {
+	if basePath == "" && vfs.OSType() == OsWindows {
 		basePath = DefaultVolume
 	}
 

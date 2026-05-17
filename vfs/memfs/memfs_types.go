@@ -37,15 +37,14 @@ type MemIOFS struct {
 // MemFS implements a memory file system using the avfs.VFS interface.
 type MemFS struct {
 	err               *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
-	avfs.IdmFn                          // IdmFn provides identity manager functions to a file system.
 	rootNode          *dirNode          // rootNode represent the root directory of the file system.
 	volumes           volumes           // volumes contains the volume names (for Windows only).
 	lastId            *uint64           // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
 	dirMode           fs.FileMode       // dirMode is the default fs.FileMode for a directory.
 	fileMode          fs.FileMode       // fileMode is de default fs.FileMode for a file.
-	avfs.UMaskFn                        // UMaskFn provides UMask functions to file systems.
 	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user in a virtual file system.
+	avfs.UMaskFn                        // UMaskFn provides UMask functions to file systems.
 }
 
 // MemFile represents an open file descriptor.

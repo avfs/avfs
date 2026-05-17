@@ -40,11 +40,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	}
 
 	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | idm.Features() | avfs.BuildFeatures()
-
 	user := opts.User
-	if opts.User == nil {
-		user = idm.AdminUser()
-	}
 
 	vfs := &MemFS{
 		dirMode:  fs.ModeDir,
