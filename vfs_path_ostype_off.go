@@ -154,8 +154,16 @@ func (vof *VFSPathFn) ToSlash(path string) string {
 	return filepath.ToSlash(path)
 }
 
+// VolumeName returns the leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func (vof *VFSPathFn) VolumeName(path string) string {
+	return filepath.VolumeName(path)
+}
+
 // VolumeNameLen returns the length of the leading volume name on Windows.
 // It returns 0 elsewhere.
 func (vof *VFSPathFn) VolumeNameLen(path string) int {
-	return VolumeNameLen(path)
+	return len(vof.VolumeName(path))
 }

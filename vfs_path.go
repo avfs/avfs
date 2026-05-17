@@ -162,14 +162,6 @@ func (vof *VFSPathFn) ToSysStat(info fs.FileInfo) SysStater {
 	return info.Sys().(SysStater) //nolint:forcetypeassert // type assertion must be checked
 }
 
-// VolumeName returns the leading volume name.
-// Given "C:\foo\bar" it returns "C:" on Windows.
-// Given "\\host\share\foo" it returns "\\host\share".
-// On other platforms it returns "".
-func (vof *VFSPathFn) VolumeName(path string) string {
-	return vof.FromSlash(path[:vof.VolumeNameLen(path)])
-}
-
 // VolumeManager is the interface that manage volumes for Windows file systems.
 type VolumeManager interface {
 	// VolumeAdd adds a new volume to a Windows file system.

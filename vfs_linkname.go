@@ -22,6 +22,3 @@ import _ "unsafe" // for go:linkname only.
 //
 //go:linkname nextRandom os.nextRandom
 func nextRandom() string
-
-//go:linkname VolumeNameLen internal/filepathlite.volumeNameLen
-func VolumeNameLen(path string) int

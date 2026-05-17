@@ -105,6 +105,10 @@ func (vuf *VFSUserDirFn) Getwd() (dir string, err error) {
 
 // SetUser sets the current user.
 func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
+	if user == nil {
+		user = vuf.Idm().AdminUser()
+	}
+
 	vuf.user = user
 	vuf.curDir = homeDirUser(vuf.osType, vuf.user)
 	vuf.tempDir = tempDirUser(vuf.osType, vuf.user)

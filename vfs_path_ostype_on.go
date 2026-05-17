@@ -787,6 +787,14 @@ func ToSlash[T VFSBase](vfs T, path string) string {
 	return strings.ReplaceAll(path, string(pathSeparator), "/")
 }
 
+// VolumeName returns the leading volume name.
+// Given "C:\foo\bar" it returns "C:" on Windows.
+// Given "\\host\share\foo" it returns "\\host\share".
+// On other platforms it returns "".
+func (vof *VFSPathFn) VolumeName(path string) string {
+	return vof.FromSlash(path[:vof.VolumeNameLen(path)])
+}
+
 // VolumeNameLen returns the length of the leading volume name on Windows.
 // It returns 0 elsewhere.
 func (vof *VFSPathFn) VolumeNameLen(path string) int {
