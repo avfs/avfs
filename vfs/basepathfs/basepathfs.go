@@ -510,7 +510,7 @@ func (vfs *BasePathFS) SetUserByName(name string) error {
 // and file set to path.
 // The returned values have the property that path = dir+file.
 func (vfs *BasePathFS) Split(path string) (dir, file string) {
-	return vfs.Split(path)
+	return vfs.baseFS.Split(path)
 }
 
 // Stat returns a FileInfo describing the named file.
