@@ -26,6 +26,7 @@ type IdentityMgr interface {
 	Featurer
 	OSTyper
 	Typer
+	UserMgr
 
 	// AdminGroup returns the administrator (root) group.
 	AdminGroup() GroupReader
@@ -37,10 +38,6 @@ type IdentityMgr interface {
 	// If the group already exists, the returned error is of type avfs.AlreadyExistsGroupError.
 	AddGroup(groupName string) (GroupReader, error)
 
-	// AddUser creates a new user with the specified userName and the specified primary group groupName.
-	// If the user already exists, the returned error is of type avfs.AlreadyExistsUserError.
-	AddUser(userName, groupName string) (UserReader, error)
-
 	// AddUserToGroup adds the user to the group.
 	// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
 	AddUserToGroup(userName, groupName string) error
@@ -48,10 +45,6 @@ type IdentityMgr interface {
 	// DelGroup deletes an existing group with the specified name.
 	// If the group is not found, the returned error is of type avfs.UnknownGroupError.
 	DelGroup(groupName string) error
-
-	// DelUser deletes an existing user with the specified name.
-	// If the user is not found, the returned error is of type avfs.UnknownUserError.
-	DelUser(userName string) error
 
 	// DelUserFromGroup removes the user from the group.
 	// If the user or group is not found, the returned error is of type avfs.UnknownUserError
@@ -78,6 +71,17 @@ type IdentityMgr interface {
 	// If the user or group is not found, the returned error is of type avfs.UnknownUserError or avfs.UnknownGroupError respectively.
 	// If the operation fails, the returned error is of type avfs.UnknownError.
 	SetUserPrimaryGroup(userName, groupName string) error
+}
+
+// UserMgr is an interface that defines methods to create and delete user accounts in the identity managers and file systems.
+type UserMgr interface {
+	// AddUser creates a new user with the specified userName and the specified primary group groupName.
+	// If the user already exists, the returned error is of type avfs.AlreadyExistsUserError.
+	AddUser(userName, groupName string) (UserReader, error)
+
+	// DelUser deletes an existing user with the specified name.
+	// If the user is not found, the returned error is of type avfs.UnknownUserError.
+	DelUser(userName string) error
 }
 
 // UserReader reads user information.
