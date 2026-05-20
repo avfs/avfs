@@ -151,7 +151,7 @@ type VFSPath interface {
 	VolumeNameLen(path string) int
 }
 
-// VFSPathFn provides OS-specific path operations.
+// VFSPathFn provides OS-specific path functions.
 type VFSPathFn struct {
 	FeaturesFn
 	OSTypeFn

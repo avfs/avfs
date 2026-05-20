@@ -548,6 +548,18 @@ func (vfs *RoFS) User() avfs.UserReader {
 	return vfs.baseFS.User()
 }
 
+// UserHomeDir returns the current user's home directory.
+//
+// On Unix, including macOS, it returns the $HOME environment variable.
+// On Windows, it returns %USERPROFILE%.
+// On Plan 9, it returns the $home environment variable.
+//
+// If the expected variable is not set in the environment, UserHomeDir
+// returns either a platform-specific default value or a non-nil error.
+func (vfs *RoFS) UserHomeDir() (string, error) {
+	return vfs.baseFS.UserHomeDir()
+}
+
 // VolumeName returns the leading volume name.
 // Given "C:\foo\bar" it returns "C:" on Windows.
 // Given "\\host\share\foo" it returns "\\host\share".

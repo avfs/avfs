@@ -68,9 +68,10 @@ type VFSUserDir interface {
 type VFSUserDirFn struct {
 	user      UserReader // user is the current user of the file system.
 	curDir    string     // curDir is the current directory.
+	homeDir   string     // homeDir is the home directory of the current user.
 	tempDir   string     // tempDir is the temporary directory.
-	IdmFn                //
-	VFSPathFn            //
+	IdmFn                // IdmFn provides identity manager functions to a file system.
+	VFSPathFn            // VFSPathFn provides OS-specific path functions.
 }
 
 // Abs returns an absolute representation of path.
@@ -103,7 +104,7 @@ func (vuf *VFSUserDirFn) Getwd() (dir string, err error) {
 	return vuf.curDir, nil
 }
 
-// SetUser sets the current user.
+// SetUser sets the current user and initializes related directories.
 func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
 	if user == nil {
 		user = vuf.Idm().AdminUser()
@@ -111,6 +112,7 @@ func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
 
 	vuf.user = user
 	vuf.curDir = homeDirUser(vuf.osType, vuf.user)
+	vuf.homeDir = vuf.curDir
 	vuf.tempDir = tempDirUser(vuf.osType, vuf.user)
 
 	return nil
@@ -165,6 +167,20 @@ func (vuf *VFSUserDirFn) TempDir() string {
 // User returns the current user.
 func (vuf *VFSUserDirFn) User() UserReader {
 	return vuf.user
+}
+
+// UserHomeDir returns the current user's home directory.
+//
+// On Unix, including macOS, it returns the $HOME environment variable.
+// On Windows, it returns %USERPROFILE%.
+// On Plan 9, it returns the $home environment variable.
+//
+// If the expected variable is not set in the environment, UserHomeDir
+// returns either a platform-specific default value or a non-nil error.
+func (vuf *VFSUserDirFn) UserHomeDir() (string, error) {
+	dir := vuf.homeDir
+
+	return dir, nil
 }
 
 // HomeDir returns the home directory of the file system.

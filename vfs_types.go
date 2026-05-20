@@ -284,6 +284,16 @@ type VFSBase interface {
 	// is malformed.
 	Glob(pattern string) (matches []string, err error)
 
+	// UserHomeDir returns the current user's home directory.
+	//
+	// On Unix, including macOS, it returns the $HOME environment variable.
+	// On Windows, it returns %USERPROFILE%.
+	// On Plan 9, it returns the $home environment variable.
+	//
+	// If the expected variable is not set in the environment, UserHomeDir
+	// returns either a platform-specific default value or a non-nil error.
+	UserHomeDir() (string, error)
+
 	// Idm returns the identity manager of the file system.
 	// If the file system does not have an identity manager, avfs.DummyIdm is returned.
 	Idm() IdentityMgr

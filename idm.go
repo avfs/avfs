@@ -18,6 +18,7 @@ package avfs
 
 import "regexp"
 
+// isValidNameRE is a regular expression that validates if a string is a valid username or group name.
 var isValidNameRE = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
 
 // IdentityMgr interface manages identities (users and groups).
