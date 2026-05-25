@@ -88,7 +88,6 @@ func (ts *Suite) TestVFS(t *testing.T) {
 		ts.TestChown,
 		ts.TestChroot,
 		ts.TestMkSystemDirs,
-		ts.TestCreateHomeDir,
 		ts.TestLchown,
 		ts.TestSetUserByName,
 		ts.TestVolume,

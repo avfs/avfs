@@ -18,7 +18,6 @@ package avfs
 
 import (
 	"crypto/sha256"
-	"io/fs"
 	"strconv"
 )
 
@@ -64,7 +63,7 @@ type VFSUserDir interface {
 	User() UserReader
 }
 
-// VFSUserDirFn provides functionalities to manage directories and current user in a virtual file system.
+// VFSUserDirFn provides functionalities to manage directories and current user.
 type VFSUserDirFn struct {
 	user      UserReader // user is the current user of the file system.
 	curDir    string     // curDir is the current directory.
@@ -104,6 +103,13 @@ func (vuf *VFSUserDirFn) Getwd() (dir string, err error) {
 	return vuf.curDir, nil
 }
 
+// SetCurDir sets the current directory.
+func (vuf *VFSUserDirFn) SetCurDir(curDir string) error {
+	vuf.curDir = curDir
+
+	return nil
+}
+
 // SetUser sets the current user and initializes related directories.
 func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
 	if user == nil {
@@ -114,13 +120,6 @@ func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
 	vuf.curDir = homeDirUser(vuf.osType, vuf.user)
 	vuf.homeDir = vuf.curDir
 	vuf.tempDir = tempDirUser(vuf.osType, vuf.user)
-
-	return nil
-}
-
-// SetCurDir sets the current directory.
-func (vuf *VFSUserDirFn) SetCurDir(curDir string) error {
-	vuf.curDir = curDir
 
 	return nil
 }
@@ -195,73 +194,40 @@ func homeDir(ost OSType) string {
 	}
 }
 
-// HomeDirUser returns the home directory of the user.
-// If the file system does not have an identity manager, the root directory is returned.
-func HomeDirUser[T VFSBase](vfs T, basePath string, u UserReader) string {
-	if basePath == "" && vfs.OSType() == OsWindows {
-		basePath = DefaultVolume
-	}
-
-	dir := vfs.Join(basePath, homeDirUser(vfs.OSType(), u))
-
-	return dir
-}
-
 func homeDirUser(ost OSType, u UserReader) string {
 	var dir string
 
 	switch ost {
 	case OsWindows:
-		dir = homeDir(OsWindows) + "/" + u.Name()
+		dir = `\Users\` + u.Name()
 	case OsDarwin:
-		dir = homeDir(OsDarwin) + "/" + u.Name()
+		dir = "/Users/" + u.Name()
 	default:
 		if u.Name() == AdminUserName(OsLinux) {
 			dir = "/root"
 		} else {
-			dir = homeDir(OsLinux) + "/" + u.Name()
+			dir = "/home/" + u.Name()
 		}
 	}
 
 	return dir
 }
 
-// HomeDirPerm return the default permission for home directories.
-func HomeDirPerm() fs.FileMode {
-	return 0o755
-}
-
-// MkHomeDir creates and returns the home directory of a user.
-// If there is an error, it will be of type *PathError.
-func MkHomeDir[T VFSBase](vfs T, basePath string, u UserReader) (string, error) {
-	userDir := HomeDirUser(vfs, basePath, u)
-
-	switch vfs.OSType() {
-	case OsWindows:
-		err := vfs.MkdirAll(userDir, DefaultDirPerm)
-		if err != nil {
-			return userDir, err
-		}
-
-	default:
-		err := vfs.Mkdir(userDir, HomeDirPerm())
-		if err != nil {
-			return userDir, err
-		}
-
-		err = vfs.Chown(userDir, u.Uid(), u.Gid())
-		if err != nil {
-			return userDir, err
-		}
+// MkSystemDirs creates a set of system directories with specified permissions, ownership, and base path.
+func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo, basePath string) error {
+	if vfs.OSType() == OsWindows && basePath == "" {
+		basePath = DefaultVolume
 	}
 
-	return userDir, nil
-}
-
-// MkSystemDirs creates the system directories of a file system.
-func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo) error {
 	for _, dir := range dirs {
-		err := vfs.MkdirAll(dir.Path, dir.Perm)
+		path := vfs.Join(basePath, dir.Path)
+
+		_, err := vfs.Stat(path)
+		if err == nil {
+			continue
+		}
+
+		err = vfs.Mkdir(path, dir.Perm)
 		if err != nil {
 			return err
 		}
@@ -270,9 +236,16 @@ func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo) error {
 		case OsWindows:
 
 		default:
-			err = vfs.Chmod(dir.Path, dir.Perm)
+			err = vfs.Chmod(path, dir.Perm)
 			if err != nil {
 				return err
+			}
+
+			if vfs.User().IsAdmin() {
+				err = vfs.Chown(path, dir.Uid, dir.Gid)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -281,38 +254,39 @@ func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo) error {
 }
 
 // SystemDirs returns an array of system directories always present in the file system.
-func SystemDirs[T VFSBase](vfs T, basePath string) []DirInfo {
+func SystemDirs[T VFSBase](vfs T) []DirInfo {
 	var dis []DirInfo
+
+	admin := vfs.Idm().AdminUser()
+	u := vfs.User()
 
 	switch vfs.OSType() {
 	case OsWindows:
-		if basePath == "" {
-			basePath = DefaultVolume
-		}
-
 		dis = []DirInfo{
-			{Path: homeDir(OsWindows), Perm: DefaultDirPerm},
-			{Path: tempDirUserWindows(AdminUserName(OsWindows)), Perm: DefaultDirPerm},
-			{Path: tempDirUserWindows(DefaultName), Perm: DefaultDirPerm},
+			{Path: homeDir(OsWindows), Perm: DefaultDirPerm, Uid: admin.Uid(), Gid: admin.Gid()},
+			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: tempDirUserWindows(AdminUserName(OsWindows)), Perm: DefaultDirPerm, Uid: admin.Uid(), Gid: admin.Gid()},
+			{Path: tempDirUserWindows(DefaultName), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()},
 			{Path: `\Windows`, Perm: DefaultDirPerm},
 		}
 
 	case OsDarwin:
 		dis = []DirInfo{
-			{Path: homeDir(OsDarwin), Perm: HomeDirPerm()},
-			{Path: tempDirUserDarwin(vfs.User()), Perm: 0o777},
+			{Path: homeDir(OsDarwin), Perm: 0o755, Uid: admin.Uid(), Gid: admin.Gid()},
+			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: tempDirUserDarwin(vfs.User()), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()},
 		}
 
 	default:
 		dis = []DirInfo{
-			{Path: homeDir(OsLinux), Perm: HomeDirPerm()},
-			{Path: "/root", Perm: 0o700},
-			{Path: tempDirUserLinux(), Perm: 0o777},
+			{Path: homeDir(OsLinux), Perm: 0o755, Uid: admin.Uid(), Gid: admin.Gid()},
+			{Path: "/root", Perm: 0o700, Uid: admin.Uid(), Gid: admin.Gid()},
+			{Path: tempDirUserLinux(), Perm: 0o777, Uid: admin.Uid(), Gid: admin.Gid()},
 		}
-	}
 
-	for i, di := range dis {
-		dis[i].Path = vfs.Join(basePath, di.Path)
+		if !vfs.User().IsAdmin() {
+			dis = append(dis, DirInfo{Path: homeDirUser(OsLinux, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()})
+		}
 	}
 
 	return dis

@@ -192,7 +192,9 @@ func (ts *Suite) createRootDir(tb testing.TB) {
 
 	if _, ok := tb.(*testing.B); ok && vfs.HasFeature(avfs.FeatRealFS) {
 		// run Benches on real disks, /tmp is usually an in memory file system.
-		rootDir = vfs.Join(avfs.HomeDirUser(vfs, "", vfs.User()), "tmp")
+		dir, _ := vfs.UserHomeDir()
+		rootDir = vfs.Join(dir, "tmp")
+
 		ts.createDir(tb, rootDir, avfs.DefaultDirPerm)
 	}
 

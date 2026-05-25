@@ -26,7 +26,7 @@ func New() *MemIdm {
 // NewWithOptions creates a new identity manager using Options.
 func NewWithOptions(opts *Options) *MemIdm {
 	if opts == nil {
-		opts = &Options{OSType: avfs.CurrentOSType()}
+		opts = &Options{}
 	}
 
 	idm := &MemIdm{

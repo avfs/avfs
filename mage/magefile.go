@@ -20,6 +20,8 @@
 package main
 
 import (
+	"archive/tar"
+	"compress/gzip"
 	"fmt"
 	"go/build"
 	"io"
@@ -46,7 +48,8 @@ const (
 	goFumptInst = "mvdan.cc/gofumpt@master"
 	golangCiCmd = "golangci-lint"
 	golangCiGit = "github.com/golangci/golangci-lint"
-	golangCiBin = "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh"
+	golangCiTgz = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-%s-%s.tar.gz"
+	golangCiChk = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-checksums.txt"
 	goxCmd      = "gox"
 	goxInst     = "github.com/mitchellh/gox@master"
 	sudoCmd     = "sudo"
@@ -62,6 +65,7 @@ var (
 	dockerCmd         string
 	dockerTestDataDir string
 	dockerTmpDir      string
+	goPathBinDir      string
 	tmpDir            string
 	testDataDir       string
 )
@@ -100,6 +104,13 @@ func init() {
 	if err == nil && ccPath != "" {
 		cgoEnabled = true
 	}
+
+	goPath := os.Getenv("GOPATH")
+	if goPath == "" {
+		goPath = build.Default.GOPATH
+	}
+
+	goPathBinDir = filepath.Join(goPath, "bin")
 }
 
 // tmpInit creates the temporary directory.
@@ -161,26 +172,103 @@ func Lint() error {
 			return err
 		}
 
-		fmt.Printf("version = %s\n", version)
+		golangCiBin := golangCiCmd
+		if runtime.GOOS == "windows" {
+			golangCiBin += ".exe"
+		}
 
-		script := filepath.Join(os.TempDir(), golangCiCmd+".sh")
+		golangCiPath := filepath.Join(goPathBinDir, golangCiBin)
+		tgzUrl := fmt.Sprintf(golangCiTgz, version, version[1:], runtime.GOOS, runtime.GOARCH)
+		tgzFile := filepath.Join("./tmp", golangCiCmd+".tar.gz")
+		chkUrl := fmt.Sprintf(golangCiChk, version, version[1:])
+		chkFile := "./tmp/golangci-lint-checksums.txt"
 
-		err = downloadFile(script, golangCiBin)
+		fmt.Printf("version = %s\ntgz url = %s\ntgz file = %s\nchk url = %s\nchk flle = %s\nbin = %s\n",
+			version, tgzUrl, tgzFile, chkUrl, chkFile, golangCiPath)
+		/*
+			err = downloadFile(tgzFile, tgzUrl)
+			if err != nil {
+				return err
+			}
+
+			defer os.Remove(tgzFile)
+		*/
+
+		err = gzipExtract(tgzFile, golangCiBin, golangCiPath)
 		if err != nil {
 			return err
 		}
 
-		defer os.Remove(script)
-
-		binDir := filepath.Join(build.Default.GOPATH, "bin")
-
-		err = sh.RunV("sh", script, "-b", binDir, version)
+		err = downloadFile(chkFile, chkUrl)
 		if err != nil {
 			return err
+		}
+
+		//defer os.Remove(chkFile)
+
+	}
+
+	// return sh.RunV(golangCiCmd, "run", "-v")
+
+	return nil
+}
+
+// gzipExtract extracts a specific file from a gzip-compressed tar archive and saves it to a given destination.
+// Parameters:
+//   - gzipName: The name of the gzip-compressed tar archive to be opened.
+//   - fileName: The name of the file to be extracted from the archive.
+//   - destName: The destination path where the extracted file will be saved.
+//
+// Returns an error if the file cannot be extracted or if any I/O operation fails.
+func gzipExtract(gzipName, fileName, destName string) error {
+	f, err := os.Open(gzipName)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	gzr, err := gzip.NewReader(f)
+	if err != nil {
+		return err
+	}
+
+	defer gzr.Close()
+
+	tr := tar.NewReader(gzr)
+
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return err
+		}
+
+		if strings.HasSuffix(header.Name, fileName) {
+			outFile, err := os.Create(destName)
+			if err != nil {
+				return err
+			}
+
+			defer outFile.Close()
+
+			_, err = io.Copy(outFile, tr)
+			if err != nil {
+				return err
+			}
+
+			return nil
 		}
 	}
 
-	return sh.RunV(golangCiCmd, "run", "-v")
+	return fmt.Errorf("file %s not found in archive %s", fileName, destName)
+}
+
+func CheckFile(fileName, chkFile string) error {
+	return nil
 }
 
 // sudo runs a command as root if possible, as an unprivileged user otherwise.

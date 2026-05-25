@@ -407,48 +407,17 @@ func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 // TestMkSystemDirs tests CreateSystemDirs function.
 func (ts *Suite) TestMkSystemDirs(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
-	dirs := avfs.SystemDirs(vfs, testDir)
+	dirs := avfs.SystemDirs(vfs)
+	isAdmin := vfs.User().IsAdmin()
 
-	err := avfs.MkSystemDirs(vfs, dirs)
+	err := avfs.MkSystemDirs(vfs, dirs, testDir)
 	RequireNoError(t, err, "MkSystemDirs %s", testDir)
 
-	for _, dir := range avfs.SystemDirs(vfs, testDir) {
-		info, err := vfs.Stat(dir.Path)
+	for _, dir := range dirs {
+		path := vfs.Join(testDir, dir.Path)
+
+		st, err := vfs.Stat(path)
 		if !AssertNoError(t, err, "Stat %s", dir.Path) {
-			continue
-		}
-
-		gotMode := info.Mode() & fs.ModePerm
-		if gotMode != dir.Perm {
-			t.Errorf("MkSystemDirs %s :  want mode to be %o, got %o", dir.Path, dir.Perm, gotMode)
-		}
-	}
-}
-
-// TestCreateHomeDir tests that the user home directory exists and has the correct permissions.
-func (ts *Suite) TestCreateHomeDir(t *testing.T, _ string) {
-	if !ts.canTestPerm {
-		return
-	}
-
-	vfs := ts.vfsSetup
-
-	for _, ui := range UserInfos() {
-		u, err := vfs.Idm().LookupUser(ui.Name)
-		RequireNoError(t, err, "Can't find user %s", ui.Name)
-
-		homeDir, err := avfs.MkHomeDir(vfs, "", u)
-		if !AssertNoError(t, err, "CreateHomeDir %s", ui.Name) {
-			continue
-		}
-
-		fst, err := vfs.Stat(homeDir)
-		if !AssertNoError(t, err, "Stat %s", homeDir) {
-			continue
-		}
-
-		err = vfs.Remove(homeDir)
-		if !AssertNoError(t, err, "Remove %s", homeDir) {
 			continue
 		}
 
@@ -456,16 +425,20 @@ func (ts *Suite) TestCreateHomeDir(t *testing.T, _ string) {
 			return
 		}
 
-		wantMode := fs.ModeDir | avfs.HomeDirPerm()&^vfs.UMask()
-		if fst.Mode() != wantMode {
-			t.Errorf("Stat %s : want mode to be %o, got %o", homeDir, wantMode, fst.Mode())
+		wantMode := fs.ModeDir | dir.Perm
+		if st.Mode() != wantMode {
+			t.Errorf("MkSystemDirs %s :  want mode to be %o, got %o", dir.Path, wantMode, st.Mode())
 		}
 
-		sst := vfs.ToSysStat(fst)
+		if !isAdmin {
+			continue
+		}
+
+		sst := vfs.ToSysStat(st)
 
 		uid, gid := sst.Uid(), sst.Gid()
-		if uid != u.Uid() || gid != u.Gid() {
-			t.Errorf("Stat %s : want uid=%d, gid=%d, got uid=%d, gid=%d", homeDir, u.Uid(), u.Gid(), uid, gid)
+		if uid != dir.Uid || gid != dir.Gid {
+			t.Errorf("Stat %s : want uid=%d, gid=%d, got uid=%d, gid=%d", path, dir.Uid, dir.Gid, uid, gid)
 		}
 	}
 }

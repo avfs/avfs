@@ -47,10 +47,12 @@ type ChRooter interface {
 	Chroot(path string) error
 }
 
-// DirInfo contains information to create a directory.
+// DirInfo represents metadata for a directory, including its path, permissions, and ownership identifiers.
 type DirInfo struct {
-	Path string
-	Perm fs.FileMode
+	Path string      // Path specifies the absolute path of the directory.
+	Perm fs.FileMode // Perm defines the permission bits for the directory as specified by the fs.FileMode type.
+	Uid  int         //
+	Gid  int         //
 }
 
 // File represents a file in the file system.

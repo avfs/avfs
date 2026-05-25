@@ -52,7 +52,7 @@ func (vfs *MemFS) Chdir(dir string) error {
 	}
 
 	_, child, pi, err := vfs.searchNode(dir, slmLstat)
-	if err != vfs.err.FileExists {
+	if err != vfs.err.FileExists || pi == nil {
 		return &fs.PathError{Op: op, Path: dir, Err: err}
 	}
 
