@@ -29,51 +29,51 @@ import (
 	"github.com/avfs/avfs/vfs/failfs"
 	"github.com/avfs/avfs/vfs/memfs"
 	"github.com/avfs/avfs/vfs/orefafs"
-	"github.com/avfs/avfs/vfs/osfs"
+	"github.com/avfs/avfs/vfs/ostestfs"
 	"github.com/avfs/avfs/vfs/rofs"
 )
 
 // This code is used by gox to generate an executable for all operating systems (see mage/magefile.go).
 // It should use all functions that depend on OS specific syscalls to make sure every system can be built.
 func main() {
-	runOsFs()
-	runFailFs()
-	runBasePathFs()
-	runMemFs()
-	runOrefaFs()
-	runRoFs()
+	runOsTestFS()
+	runFailFS()
+	runBasePathFS()
+	runMemFS()
+	runOrefaFS()
+	runRoFS()
 	runDummyIdm()
 	runOsIdm()
 	runMemIdm()
 }
 
-func runOsFs() {
-	vfs := osfs.New()
+func runOsTestFS() {
+	vfs := ostestfs.New()
 	vfsFuncs(vfs)
 	_ = vfs.Chroot("")
 }
 
-func runMemFs() {
+func runMemFS() {
 	vfs := memfs.New()
 	vfsFuncs(vfs)
 }
 
-func runOrefaFs() {
+func runOrefaFS() {
 	vfs := orefafs.New()
 	vfsFuncs(vfs)
 }
 
-func runRoFs() {
+func runRoFS() {
 	vfs := rofs.New(memfs.New())
 	vfsFuncs(vfs)
 }
 
-func runFailFs() {
+func runFailFS() {
 	vfs := failfs.New(memfs.New())
 	vfsFuncs(vfs)
 }
 
-func runBasePathFs() {
+func runBasePathFS() {
 	vfs := basepathfs.New(memfs.New(), "")
 	vfsFuncs(vfs)
 }
@@ -154,6 +154,8 @@ func vfsFuncs(vfs avfs.VFS) {
 	_ = vfs.Type()
 	_ = vfs.User()
 	_ = vfs.UMask()
+	_ = vfs.VolumeName("")
+	_ = vfs.VolumeNameLen("")
 	_ = vfs.WalkDir(tmpDir, nil)
 	_ = vfs.WriteFile(tmpFile, nil, avfs.DefaultFilePerm)
 
