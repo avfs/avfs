@@ -203,7 +203,7 @@ func homeDirUser(ost OSType, u UserReader) string {
 	case OsDarwin:
 		dir = "/Users/" + u.Name()
 	default:
-		if u.Name() == AdminUserName(OsLinux) {
+		if u.IsAdmin() {
 			dir = "/root"
 		} else {
 			dir = "/home/" + u.Name()

@@ -28,7 +28,7 @@ import (
 	"testing"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/vfs/osfs"
+	"github.com/avfs/avfs/vfs/ostestfs"
 )
 
 const (
@@ -60,7 +60,7 @@ func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
 		tb.Fatal("NewSuiteIdm : idm must not be nil")
 	}
 
-	vfs := osfs.NewWithOptions(&osfs.Options{Idm: idm})
+	vfs := ostestfs.NewWithOptions(&ostestfs.Options{Idm: idm})
 	ts := newSuite(tb, vfs, vfs, idm)
 
 	tb.Logf("Idm: Type=%s OSType=%s Features=%s", idm.Type(), idm.OSType(), idm.Features())
