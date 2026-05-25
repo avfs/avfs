@@ -22,11 +22,12 @@ package osfs
 import (
 	"io/fs"
 	"os"
+	"os/user"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/osidm"
 )
 
 // Abs returns an absolute representation of path.
@@ -430,22 +431,14 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) error {
 
 // SetUser sets the current user.
 // If the user can't be changed an error is returned.
-func (vfs *OsFS) SetUser(user avfs.UserReader) error {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return avfs.ErrPermDenied
-	}
-
-	return osidm.SetUser(user)
+func (vfs *OsFS) SetUser(_ avfs.UserReader) error {
+	return avfs.ErrPermDenied
 }
 
 // SetUserByName sets and returns the current user.
 // If the user is not found, the returned error is of type UnknownUserError.
 func (vfs *OsFS) SetUserByName(name string) error {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return avfs.ErrPermDenied
-	}
-
-	return osidm.SetUserByName(name)
+	return avfs.ErrPermDenied
 }
 
 // Split splits path immediately following the final [Separator],
@@ -466,8 +459,6 @@ func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
 // Sub returns an FS corresponding to the subtree rooted at dir.
 func (vfs *OsFS) Sub(dir string) (avfs.VFS, error) {
 	const op = "sub"
-
-	// TODO:
 
 	return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.PermDenied}
 }
@@ -513,7 +504,12 @@ func (vfs *OsFS) UMask() fs.FileMode {
 
 // User returns the current user.
 func (vfs *OsFS) User() avfs.UserReader {
-	return osidm.User()
+	ou, _ := user.Current()
+	uid, _ := strconv.Atoi(ou.Uid)
+	gid, _ := strconv.Atoi(ou.Gid)
+	u := avfs.NewUser(ou.Name, uid, gid)
+
+	return u
 }
 
 // UserHomeDir returns the current user's home directory.

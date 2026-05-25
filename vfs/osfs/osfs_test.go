@@ -52,25 +52,10 @@ func TestOsFS(t *testing.T) {
 	ts.TestVFSAll(t)
 }
 
-func TestOsFSWithNoIdm(t *testing.T) {
-	vfs := osfs.NewWithNoIdm()
-
-	ts := test.NewSuiteFS(t, vfs, vfs)
-	ts.TestVFSAll(t)
-}
-
 func TestOsFSConfig(t *testing.T) {
 	vfs := osfs.New()
 
 	wantFeatures := avfs.FeatHardlink | avfs.FeatRealFS | avfs.FeatSymlink
-	if vfs.OSType() != avfs.OsWindows {
-		wantFeatures |= avfs.FeatIdentityMgr
-	}
-
-	if !vfs.User().IsAdmin() && vfs.OSType() != avfs.OsWindows {
-		wantFeatures |= avfs.FeatReadOnlyIdm
-	}
-
 	if vfs.Features() != wantFeatures {
 		t.Errorf("Features : want Features to be %s, got %s", wantFeatures, vfs.Features())
 	}

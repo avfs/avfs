@@ -25,14 +25,6 @@ import (
 	"github.com/avfs/avfs"
 )
 
-// Chroot changes the root to that specified in path.
-// If there is an error, it will be of type *PathError.
-func (vfs *OsFS) Chroot(path string) error {
-	const op = "chroot"
-
-	return &fs.PathError{Op: op, Path: path, Err: avfs.ErrWinNotSupported}
-}
-
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 func (vfs *OsFS) ToSysStat(info fs.FileInfo) avfs.SysStater {
 	return &WindowsSysStat{gid: math.MaxInt, uid: math.MaxInt}

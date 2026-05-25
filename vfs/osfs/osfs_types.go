@@ -16,18 +16,11 @@
 
 package osfs
 
-import (
-	"github.com/avfs/avfs"
-)
+import "github.com/avfs/avfs"
 
 // OsFS represents the current file system.
 type OsFS struct {
 	err             *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
 	avfs.IdmFn                        // IdmFn provides identity manager functions to a file system.
 	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
-}
-
-// Options defines the initialization options of OsFS.
-type Options struct {
-	Idm avfs.IdentityMgr // Idm is the identity manager of the file system.
 }

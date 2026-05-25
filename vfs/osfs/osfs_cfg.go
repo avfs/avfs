@@ -16,40 +16,16 @@
 
 package osfs
 
-import (
-	"github.com/avfs/avfs"
-	"github.com/avfs/avfs/idm/osidm"
-)
+import "github.com/avfs/avfs"
 
-// New returns a new OS file system with the default Options.
-// Don't use this for a production environment, prefer NewWithNoIdm.
+// New returns a new OS file system for a production environment.
 func New() *OsFS {
-	return NewWithOptions(&Options{Idm: osidm.New()})
-}
-
-// NewWithNoIdm returns a new OS file system with no identity management.
-// Use this for production environments.
-func NewWithNoIdm() *OsFS {
-	return NewWithOptions(&Options{})
-}
-
-// NewWithOptions returns a new memory file system (MemFS) with the selected Options.
-func NewWithOptions(opts *Options) *OsFS {
-	if opts == nil {
-		opts = &Options{}
-	}
-
-	idm := opts.Idm
-	if idm == nil {
-		idm = avfs.NotImplementedIdm
-	}
-
-	features := avfs.FeatRealFS | avfs.FeatSymlink | avfs.FeatHardlink | idm.Features()
+	features := avfs.FeatRealFS | avfs.FeatSymlink | avfs.FeatHardlink
 	vfs := &OsFS{}
 
 	_ = vfs.SetFeatures(features)
-	_ = vfs.SetIdm(idm)
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
+	_ = vfs.SetIdm(avfs.NotImplementedIdm)
 
 	return vfs
 }
