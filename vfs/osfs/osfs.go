@@ -21,6 +21,7 @@ package osfs
 
 import (
 	"io/fs"
+	"math"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -504,7 +505,11 @@ func (vfs *OsFS) UMask() fs.FileMode {
 
 // User returns the current user.
 func (vfs *OsFS) User() avfs.UserReader {
-	ou, _ := user.Current()
+	ou, err := user.Current()
+	if err != nil {
+		return avfs.NewUser(avfs.DefaultVolume, math.MaxInt, math.MaxInt)
+	}
+
 	uid, _ := strconv.Atoi(ou.Uid)
 	gid, _ := strconv.Atoi(ou.Gid)
 	u := avfs.NewUser(ou.Name, uid, gid)
