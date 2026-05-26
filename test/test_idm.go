@@ -450,6 +450,13 @@ func (ts *Suite) TestIdmLookup(t *testing.T) {
 		if err != ErrInvalidName {
 			t.Errorf("LookupGroup '' : want error to be %v, got %v", ErrInvalidName, err)
 		}
+
+		wantErr := avfs.UnknownGroupIdError(-1)
+		_, err = idm.LookupGroupId(-1)
+
+		if err != wantErr {
+			t.Errorf("LookupGroupId -1 : want error to be %v, got %v", wantErr, err)
+		}
 	})
 
 	t.Run("LookupGroup", func(t *testing.T) {
@@ -484,6 +491,13 @@ func (ts *Suite) TestIdmLookup(t *testing.T) {
 		_, err := idm.LookupUser("")
 		if err != ErrInvalidName {
 			t.Errorf("LookupUser '' : want error to be %v, got %v", ErrInvalidName, err)
+		}
+
+		wantErr := avfs.UnknownUserIdError(-1)
+		_, err = idm.LookupUserId(-1)
+
+		if err != wantErr {
+			t.Errorf("LookupUserId -1 : want error to be %v, got %v", wantErr, err)
 		}
 	})
 

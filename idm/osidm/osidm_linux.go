@@ -282,6 +282,10 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 
 // lookupUserId retrieves user information by user ID. It returns an avfs.UserReader and an error if the user is not found.
 func lookupUserId(uid int) (avfs.UserReader, error) {
+	if uid < 0 {
+		return nil, avfs.UnknownUserIdError(uid)
+	}
+
 	sUid := strconv.Itoa(uid)
 
 	return getUser(sUid, avfs.UnknownUserIdError(uid))
