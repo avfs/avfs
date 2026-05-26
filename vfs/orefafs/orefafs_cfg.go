@@ -41,7 +41,6 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	vfs := &OrefaFS{
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		lastId:   new(uint64),
 		name:     opts.Name,
 	}
 

@@ -19,6 +19,7 @@ package orefafs
 import (
 	"io/fs"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -28,7 +29,7 @@ import (
 type OrefaFS struct {
 	err               *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
 	nodes             nodes             // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	lastId            *uint64           // lastId is the last unique id used to identify files uniquely.
+	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
 	mu                sync.RWMutex      // mu is the RWMutex used to access nodes.
 	dirMode           fs.FileMode       // dirMode is the default fs.FileMode for a directory.

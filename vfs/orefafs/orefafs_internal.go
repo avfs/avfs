@@ -19,7 +19,6 @@ package orefafs
 import (
 	"io/fs"
 	"sort"
-	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -54,7 +53,7 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.F
 	defer parent.mu.Unlock()
 
 	nd := &node{
-		id:    atomic.AddUint64(vfs.lastId, 1),
+		id:    vfs.lastId.Add(1),
 		mtime: time.Now(),
 		mode:  mode,
 		uid:   vfs.User().Uid(),
