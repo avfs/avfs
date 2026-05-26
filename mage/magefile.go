@@ -185,14 +185,13 @@ func Lint() error {
 
 		fmt.Printf("version = %s\ntgz url = %s\ntgz file = %s\nchk url = %s\nchk flle = %s\nbin = %s\n",
 			version, tgzUrl, tgzFile, chkUrl, chkFile, golangCiPath)
-		/*
-			err = downloadFile(tgzFile, tgzUrl)
-			if err != nil {
-				return err
-			}
 
-			defer os.Remove(tgzFile)
-		*/
+		err = downloadFile(tgzFile, tgzUrl)
+		if err != nil {
+			return err
+		}
+
+		defer os.Remove(tgzFile)
 
 		err = gzipExtract(tgzFile, golangCiBin, golangCiPath)
 		if err != nil {
@@ -208,9 +207,7 @@ func Lint() error {
 
 	}
 
-	// return sh.RunV(golangCiCmd, "run", "-v")
-
-	return nil
+	return sh.RunV(golangCiCmd, "run", "-v")
 }
 
 // gzipExtract extracts a specific file from a gzip-compressed tar archive and saves it to a given destination.
@@ -338,25 +335,31 @@ func TestAsRoot() error {
 }
 
 // goOSArch returns an array of [goos/goarch, goos, goarch].
-func goOSArch(exclude string) [][]string {
-	osa, err := sh.Output(goCmd, "tool", "dist", "list")
+func goOSArch(exclusions ...string) []string {
+	buf, err := sh.Output(goCmd, "tool", "dist", "list")
 	if err != nil {
 		return nil
 	}
 
-	re := regexp.MustCompile("(\\S+)/(\\S+)")
-	matches := re.FindAllStringSubmatch(osa, -1)
-	result := make([][]string, len(matches))
-	i := 0
+	lines := strings.Split(buf, "\n")
+	result := make([]string, 0, len(lines))
 
-	for _, match := range matches {
-		if !strings.Contains(match[0], exclude) {
-			result[i] = match
-			i++
+mainLoop:
+	for _, line := range lines {
+		if !strings.Contains(line, "/") {
+			continue
 		}
+
+		for _, exclusion := range exclusions {
+			if strings.Contains(line, exclusion) {
+				continue mainLoop
+			}
+		}
+
+		result = append(result, line)
 	}
 
-	return result[:i]
+	return result
 }
 
 // goPackages list packages excluding those containing exclude text.
@@ -401,16 +404,12 @@ func TestBuild() error {
 
 	srcPath := filepath.Join(appDir, "test/testbuild")
 	outPath := filepath.Join(appDir, "tmp/{{.Dir}}/{{.Dir}}_{{.OS}}_{{.Arch}}")
-	osArch := goOSArch("android") // Exclude Android platforms: need additional tools to compile.
+	archArr := goOSArch("android/") // Exclude Android platforms: need additional tools to compile.
 
-	var sb strings.Builder
-	for _, oa := range osArch {
-		sb.WriteRune(' ')
-		sb.WriteString(oa[0])
-	}
+	fmt.Printf("\n archarr = %v\n", archArr)
 
 	err := sh.RunV(goxCmd, "-cgo",
-		"-osarch=\""+sb.String()[1:]+"\"",
+		"-osarch=\""+strings.Join(archArr, " ")+"\"",
 		"-output="+outPath,
 		srcPath)
 	if err != nil {
