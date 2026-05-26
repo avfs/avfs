@@ -42,8 +42,6 @@ type MemFS struct {
 	volumes           volumes           // volumes contains the volume names (for Windows only).
 	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
-	dirMode           fs.FileMode       // dirMode is the default fs.FileMode for a directory.
-	fileMode          fs.FileMode       // fileMode is de default fs.FileMode for a file.
 	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user.
 	avfs.UMaskFn                        // UMaskFn provides UMask functions to file systems.
 }

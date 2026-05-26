@@ -18,6 +18,7 @@ package avfs
 
 import (
 	"errors"
+	"io/fs"
 	"runtime"
 )
 
@@ -62,8 +63,20 @@ type OSTyper interface {
 
 // OSTypeFn provides OS type functions to a file system or an identity manager.
 type OSTypeFn struct {
-	osType        OSType // OSType defines the operating system type.
-	pathSeparator uint8  // pathSeparator is the OS-specific path separator.
+	dirMode       fs.FileMode // dirMode is the default fs.FileMode for a directory.
+	fileMode      fs.FileMode // fileMode is de default fs.FileMode for a file.
+	osType        OSType      // OSType defines the operating system type.
+	pathSeparator uint8       // pathSeparator is the OS-specific path separator.
+}
+
+// DirMode returns the default file mode for new directories.
+func (osf *OSTypeFn) DirMode() fs.FileMode {
+	return osf.dirMode
+}
+
+// FileMode returns the default file mode for new files.
+func (osf *OSTypeFn) FileMode() fs.FileMode {
+	return osf.fileMode
 }
 
 // OSType returns the operating system type of the file system.
@@ -79,22 +92,26 @@ func (osf *OSTypeFn) PathSeparator() uint8 {
 // SetOSType sets the operating system Type.
 // If the OS type can't be changed it returns an error.
 func (osf *OSTypeFn) SetOSType(osType OSType) error {
+	if BuildFeatures()&FeatSetOSType == 0 && osType != OsUnknown && osType != CurrentOSType() {
+		return ErrSetOSType
+	}
+
 	if osType == OsUnknown {
 		osType = CurrentOSType()
 	}
 
-	if BuildFeatures()&FeatSetOSType != 0 && osType != CurrentOSType() {
-		return ErrSetOSType
-	}
-
 	osf.osType = osType
 
-	sep := uint8('/')
-	if osType == OsWindows {
-		sep = '\\'
+	switch osType {
+	case OsWindows:
+		osf.pathSeparator = '\\'
+		osf.dirMode = fs.ModeDir | DefaultDirPerm
+		osf.fileMode = DefaultFilePerm
+	default:
+		osf.pathSeparator = uint8('/')
+		osf.dirMode = fs.ModeDir
+		osf.fileMode = 0
 	}
-
-	osf.pathSeparator = sep
 
 	return nil
 }

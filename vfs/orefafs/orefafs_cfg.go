@@ -38,11 +38,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	idm := avfs.NotImplementedIdm
 	user := opts.User
 
-	vfs := &OrefaFS{
-		dirMode:  fs.ModeDir,
-		fileMode: 0,
-		name:     opts.Name,
-	}
+	vfs := &OrefaFS{name: opts.Name}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
@@ -55,8 +51,6 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	curDir := "/"
 
 	if vfs.OSType() == avfs.OsWindows {
-		vfs.dirMode |= avfs.DefaultDirPerm
-		vfs.fileMode |= avfs.DefaultFilePerm
 		volumeName = avfs.DefaultVolume
 		curDir = volumeName + string(vfs.PathSeparator())
 	}

@@ -35,14 +35,14 @@ func (nd *node) addChild(name string, child *node) {
 
 // createDir creates a new directory.
 func (vfs *OrefaFS) createDir(parent *node, absPath, fileName string, perm fs.FileMode) *node {
-	mode := vfs.dirMode | (perm & avfs.FileModeMask &^ vfs.UMask())
+	mode := vfs.DirMode() | (perm & avfs.FileModeMask &^ vfs.UMask())
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }
 
 // createFile creates a new file.
 func (vfs *OrefaFS) createFile(parent *node, absPath, fileName string, perm fs.FileMode) *node {
-	mode := vfs.fileMode | (perm & avfs.FileModeMask &^ vfs.UMask())
+	mode := vfs.FileMode() | (perm & avfs.FileModeMask &^ vfs.UMask())
 
 	return vfs.createNode(parent, absPath, fileName, mode)
 }

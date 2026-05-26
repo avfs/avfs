@@ -42,11 +42,7 @@ func NewWithOptions(opts *Options) *MemFS {
 	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | idm.Features() | avfs.BuildFeatures()
 	user := opts.User
 
-	vfs := &MemFS{
-		dirMode:  fs.ModeDir,
-		fileMode: 0,
-		name:     opts.Name,
-	}
+	vfs := &MemFS{name: opts.Name}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
@@ -59,9 +55,6 @@ func NewWithOptions(opts *Options) *MemFS {
 	var volumeName string
 
 	if vfs.OSType() == avfs.OsWindows {
-		vfs.dirMode |= avfs.DefaultDirPerm
-		vfs.fileMode |= avfs.DefaultFilePerm
-
 		volumeName = avfs.DefaultVolume
 		vfs.volumes = make(volumes)
 		vfs.volumes[volumeName] = vfs.rootNode
