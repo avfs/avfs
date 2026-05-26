@@ -68,8 +68,28 @@ func (ts *Suite) TestIdmAdmin(t *testing.T) {
 			t.Errorf("AdminUser : want Gid to be %d, got %d", math.MaxInt, au.Gid())
 		}
 
+		if au.Groups() != nil {
+			t.Errorf("AdminUser : want Groups to be nil, got %d", au.Gid())
+		}
+
+		if au.GroupsId() != nil {
+			t.Errorf("AdminUser : want GroupsId to be nil, got %d", au.GroupsId())
+		}
+
 		if au.IsAdmin() {
 			t.Errorf("AdminUser : want IsAdmin to be false, got true")
+		}
+
+		if au.IsInGroupId(0) {
+			t.Errorf("AdminUser : want IsInGroupId to be false, got true")
+		}
+
+		if au.PrimaryGroup() != "" {
+			t.Errorf("AdminUser : want PrimaryGroup to be \", got %s", au.PrimaryGroup())
+		}
+
+		if au.PrimaryGroupId() != math.MaxInt {
+			t.Errorf("AdminUser : want GroupsId to be %d, got %d", math.MaxInt, au.PrimaryGroupId())
 		}
 
 		return
