@@ -12,6 +12,7 @@ linters:
     - exhaustive
     - gocognit
     - gocyclo
+    - gomodguard
     - gosec
     - interfacebloat
     - ireturn
