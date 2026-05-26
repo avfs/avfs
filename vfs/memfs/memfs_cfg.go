@@ -45,7 +45,6 @@ func NewWithOptions(opts *Options) *MemFS {
 	vfs := &MemFS{
 		dirMode:  fs.ModeDir,
 		fileMode: 0,
-		lastId:   new(uint64),
 		name:     opts.Name,
 	}
 

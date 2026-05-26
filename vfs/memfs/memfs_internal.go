@@ -19,7 +19,6 @@ package memfs
 import (
 	"io/fs"
 	"sort"
-	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -190,7 +189,7 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fi
 			uid:   vfs.User().Uid(),
 			gid:   vfs.User().Gid(),
 		},
-		id:    atomic.AddUint64(vfs.lastId, 1),
+		id:    vfs.lastId.Add(1),
 		nlink: 1,
 	}
 

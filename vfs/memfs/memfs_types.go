@@ -19,6 +19,7 @@ package memfs
 import (
 	"io/fs"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -39,7 +40,7 @@ type MemFS struct {
 	err               *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
 	rootNode          *dirNode          // rootNode represent the root directory of the file system.
 	volumes           volumes           // volumes contains the volume names (for Windows only).
-	lastId            *uint64           // lastId is the last unique id used to identify files uniquely.
+	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
 	dirMode           fs.FileMode       // dirMode is the default fs.FileMode for a directory.
 	fileMode          fs.FileMode       // fileMode is de default fs.FileMode for a file.
