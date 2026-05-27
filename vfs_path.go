@@ -153,8 +153,9 @@ type VFSPath interface {
 
 // VFSPathFn provides OS-specific path functions.
 type VFSPathFn struct {
-	FeaturesFn
-	OSTypeFn
+	FeaturesFn // FeaturesFn provides features functions to a file system or an identity manager.
+	UMaskFn    // UMaskFn provides UMask functions to file systems.
+	OSTypeFn   // OSTypeFn provides OS type functions to a file system.
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.

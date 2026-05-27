@@ -33,7 +33,6 @@ type OrefaFS struct {
 	name              string            // name is the name of the file system.
 	mu                sync.RWMutex      // mu is the RWMutex used to access nodes.
 	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user.
-	avfs.UMaskFn                        // UMaskFn provides UMask functions to file systems.
 }
 
 // OrefaFile represents an open file descriptor.

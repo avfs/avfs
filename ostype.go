@@ -61,7 +61,7 @@ type OSTyper interface {
 	OSType() OSType
 }
 
-// OSTypeFn provides OS type functions to a file system or an identity manager.
+// OSTypeFn provides OS type functions to a file system.
 type OSTypeFn struct {
 	dirMode       fs.FileMode // dirMode is the default fs.FileMode for a directory.
 	fileMode      fs.FileMode // fileMode is de default fs.FileMode for a file.

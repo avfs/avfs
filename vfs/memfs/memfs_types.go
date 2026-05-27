@@ -43,7 +43,6 @@ type MemFS struct {
 	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
 	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user.
-	avfs.UMaskFn                        // UMaskFn provides UMask functions to file systems.
 }
 
 // MemFile represents an open file descriptor.

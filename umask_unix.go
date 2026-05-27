@@ -26,7 +26,7 @@ import (
 
 var (
 	// umask is the file mode creation mask.
-	umask fs.FileMode = initUMask() //nolint:gochecknoglobals // Used by UMask and SetUMask.
+	umask = initUMask() //nolint:gochecknoglobals // Used by UMask and SetUMask.
 
 	// umLock lock access to the umask.
 	umLock sync.RWMutex //nolint:gochecknoglobals // Used by UMask and SetUMask.
@@ -34,10 +34,11 @@ var (
 
 func initUMask() fs.FileMode {
 	umLock.Lock()
-	defer umLock.Unlock()
 
 	m := syscall.Umask(0) // read mask.
 	syscall.Umask(m)      // restore mask after read.
+
+	umLock.Unlock()
 
 	return fs.FileMode(m)
 }
