@@ -325,7 +325,7 @@ func (ts *Suite) nonExistingFile(tb testing.TB, testDir string) string {
 
 	_, err := vfs.Stat(fileName)
 	if !errors.Is(err, fs.ErrNotExist) {
-		tb.Fatalf("Stat : want error to be %v, got %v", avfs.ErrNoSuchFileOrDir, err)
+		tb.Fatalf("Stat : want error to be %v, got %v", fs.ErrNotExist, err)
 	}
 
 	return fileName
