@@ -47,6 +47,7 @@ func (ts *Suite) TestFile(t *testing.T) {
 		ts.TestFileTruncate,
 		ts.TestFileWrite,
 		ts.TestFileWriteAt,
+		ts.TestFileWriterTo,
 		ts.TestFileWriteString,
 		ts.TestFileWriteTime)
 
@@ -1460,6 +1461,125 @@ func (ts *Suite) TestFileWriteAt(t *testing.T, testDir string) {
 
 		_, err := f.WriteAt(b, 0)
 		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed).Test()
+	})
+}
+
+// TestFileWriterTo tests the behavior of the io.WriterTo interface.
+func (ts *Suite) TestFileWriterTo(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
+	data := []byte("AAABBBCCCDDD")
+
+	t.Run("FileWriteTo", func(t *testing.T) {
+		path := ts.existingFile(t, testDir, data)
+
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
+		RequireNoError(t, err, "OpenFile %s", path)
+
+		defer f.Close()
+
+		wt, ok := f.(io.WriterTo)
+		if !ok {
+			return
+		}
+
+		buf := &bytes.Buffer{}
+
+		n, err := wt.WriteTo(buf)
+		RequireNoError(t, err, "WriteTo %s", path)
+
+		if n != int64(len(data)) {
+			t.Errorf("WriteTo : want bytes written to be %d, got %d", len(data), n)
+		}
+
+		if !bytes.Equal(buf.Bytes(), data) {
+			t.Errorf("WriteTo : want content to be %s, got %s", data, buf.Bytes())
+		}
+	})
+
+	t.Run("FileWriteToAfterSeek", func(t *testing.T) {
+		path := ts.existingFile(t, testDir, data)
+
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
+		RequireNoError(t, err, "OpenFile %s", path)
+
+		defer f.Close()
+
+		wt, ok := f.(io.WriterTo)
+		if !ok {
+			return
+		}
+
+		off := int64(len(data) / 2)
+		_, err = f.Seek(off, io.SeekStart)
+		RequireNoError(t, err, "Seek %s", path)
+
+		buf := &bytes.Buffer{}
+
+		want := data[off:]
+
+		n, err := wt.WriteTo(buf)
+		RequireNoError(t, err, "WriteTo %s", path)
+
+		if n != int64(len(want)) {
+			t.Errorf("WriteTo : want bytes written to be %d, got %d", len(want), n)
+		}
+
+		if !bytes.Equal(buf.Bytes(), want) {
+			t.Errorf("WriteTo : want content to be %s, got %s", want, buf.Bytes())
+		}
+	})
+
+	t.Run("FileWriteToWriteOnly", func(t *testing.T) {
+		if vfs.HasFeature(avfs.FeatReadOnly) {
+			return
+		}
+
+		path := ts.existingFile(t, testDir, data)
+
+		f, err := vfs.OpenFile(path, os.O_WRONLY, avfs.DefaultFilePerm)
+		RequireNoError(t, err, "OpenFile %s", path)
+
+		defer f.Close()
+
+		wt, ok := f.(io.WriterTo)
+		if !ok {
+			return
+		}
+
+		buf := &bytes.Buffer{}
+
+		_, err = wt.WriteTo(buf)
+		AssertPathError(t, err).Op("read").Path(path).
+			OSType(avfs.OsLinux).Err(avfs.ErrBadFileDesc).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
+	})
+
+	t.Run("FileWriteToClosed", func(t *testing.T) {
+		f, fileName := ts.closedFile(t, testDir)
+
+		wt, ok := f.(io.WriterTo)
+		if !ok {
+			return
+		}
+
+		buf := &bytes.Buffer{}
+
+		_, err := wt.WriteTo(buf)
+		AssertPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed).Test()
+	})
+
+	t.Run("FileWriteToNilFile", func(t *testing.T) {
+		f := ts.openedNonExistingFile(t, testDir)
+
+		wt, ok := f.(io.WriterTo)
+		if !ok {
+			return
+		}
+
+		buf := &bytes.Buffer{}
+
+		_, err := wt.WriteTo(buf)
+		AssertInvalid(t, err, "WriteTo")
 	})
 }
 
