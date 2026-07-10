@@ -39,6 +39,7 @@ func (ts *Suite) TestFile(t *testing.T) {
 		ts.TestFileRead,
 		ts.TestFileReadAt,
 		ts.TestFileReadDir,
+		ts.TestFileReaderFrom,
 		ts.TestFileReaddirnames,
 		ts.TestFileSeek,
 		ts.TestFileStat,
@@ -483,6 +484,139 @@ func (ts *Suite) TestFileReadAt(t *testing.T, testDir string) {
 
 		_, err := f.ReadAt(b, 0)
 		AssertPathError(t, err).Op("read").Path(fileName).Err(fs.ErrClosed).Test()
+	})
+}
+
+// TestFileReaderFrom tests the behavior of the io.ReaderFrom interface.
+func (ts *Suite) TestFileReaderFrom(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
+	data := []byte("AAABBBCCCDDD")
+
+	if vfs.HasFeature(avfs.FeatReadOnly) {
+		f, fileName := ts.openedEmptyFile(t, testDir)
+
+		defer f.Close()
+
+		rf, ok := f.(io.ReaderFrom)
+		if !ok {
+			return
+		}
+
+		_, err := rf.ReadFrom(bytes.NewReader(data))
+		AssertPathError(t, err).Op("write").Path(fileName).ErrPermDenied().Test()
+
+		return
+	}
+
+	t.Run("FileReadFrom", func(t *testing.T) {
+		path := ts.existingFile(t, testDir, nil)
+
+		f, err := vfs.OpenFile(path, os.O_WRONLY|os.O_APPEND, avfs.DefaultFilePerm)
+		RequireNoError(t, err, "OpenFile %s", path)
+
+		defer f.Close()
+
+		rf, ok := f.(io.ReaderFrom)
+		if !ok {
+			return
+		}
+
+		r := bytes.NewReader(data)
+		n, err := rf.ReadFrom(r)
+		RequireNoError(t, err, "ReadFrom %s", path)
+
+		if n != int64(len(data)) {
+			t.Errorf("ReadFrom : want bytes read to be %d, got %d", len(data), n)
+		}
+
+		rb, err := vfs.ReadFile(path)
+		RequireNoError(t, err, "ReadFile %s", path)
+
+		if !bytes.Equal(rb, data) {
+			t.Errorf("ReadFile : want content to be %s, got %s", data, rb)
+		}
+	})
+
+	t.Run("FileReadFromAfterSeek", func(t *testing.T) {
+		path := ts.existingFile(t, testDir, data)
+
+		f, err := vfs.OpenFile(path, os.O_WRONLY, avfs.DefaultFilePerm)
+		RequireNoError(t, err, "OpenFile %s", path)
+
+		defer f.Close()
+
+		rf, ok := f.(io.ReaderFrom)
+		if !ok {
+			return
+		}
+
+		off := int64(len(data) / 2)
+		_, err = f.Seek(off, io.SeekStart)
+		RequireNoError(t, err, "Seek %s", path)
+
+		extra := []byte("XXX")
+		n, err := rf.ReadFrom(bytes.NewReader(extra))
+		RequireNoError(t, err, "ReadFrom %s", path)
+
+		if n != int64(len(extra)) {
+			t.Errorf("ReadFrom : want bytes read to be %d, got %d", len(extra), n)
+		}
+
+		rb, err := vfs.ReadFile(path)
+		RequireNoError(t, err, "ReadFile %s", path)
+
+		iOff := int(off)
+		want := make([]byte, len(data))
+		copy(want, data[:iOff])
+		copy(want[iOff:], extra)
+		copy(want[iOff+len(extra):], data[iOff+len(extra):])
+
+		if !bytes.Equal(rb, want) {
+			t.Errorf("ReadFile : want content to be %s, got %s", want, rb)
+		}
+	})
+
+	t.Run("FileReadFromReadOnly", func(t *testing.T) {
+		path := ts.existingFile(t, testDir, data)
+
+		f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
+		RequireNoError(t, err, "OpenFile %s", path)
+
+		defer f.Close()
+
+		rf, ok := f.(io.ReaderFrom)
+		if !ok {
+			return
+		}
+
+		_, err = rf.ReadFrom(bytes.NewReader(data))
+		AssertPathError(t, err).Op("write").Path(path).
+			OSType(avfs.OsLinux).Err(avfs.ErrBadFileDesc).Test().
+			OSType(avfs.OsWindows).Err(avfs.ErrWinAccessDenied).Test()
+	})
+
+	t.Run("FileReadFromClosed", func(t *testing.T) {
+		f, fileName := ts.closedFile(t, testDir)
+
+		rf, ok := f.(io.ReaderFrom)
+		if !ok {
+			return
+		}
+
+		_, err := rf.ReadFrom(bytes.NewReader(data))
+		AssertPathError(t, err).Op("write").Path(fileName).Err(fs.ErrClosed).Test()
+	})
+
+	t.Run("FileReadFromNilFile", func(t *testing.T) {
+		f := ts.openedNonExistingFile(t, testDir)
+
+		rf, ok := f.(io.ReaderFrom)
+		if !ok {
+			return
+		}
+
+		_, err := rf.ReadFrom(bytes.NewReader(nil))
+		AssertInvalid(t, err, "ReadFrom")
 	})
 }
 

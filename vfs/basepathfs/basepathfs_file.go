@@ -160,11 +160,16 @@ func (f *BasePathFile) Readdirnames(n int) (names []string, err error) {
 
 // ReadFrom implements io.ReaderFrom.
 func (f *BasePathFile) ReadFrom(r io.Reader) (n int64, err error) {
-	if rf, ok := f.baseFile.(io.ReaderFrom); ok {
-		return rf.ReadFrom(r)
+	rf, ok := f.baseFile.(io.ReaderFrom)
+	if !ok {
+		n, err = io.Copy(f.baseFile, r)
+
+		return n, f.vfs.FromPathError(err)
 	}
 
-	return io.Copy(f.baseFile, r)
+	n, err = rf.ReadFrom(r)
+
+	return n, f.vfs.FromPathError(err)
 }
 
 // Seek sets the offset for the next Read or Write on file to offset, interpreted
