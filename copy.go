@@ -61,7 +61,7 @@ func CopyFileHash(dstFs, srcFs VFSBase, dstPath, srcPath string, hasher hash.Has
 
 	defer func() {
 		cerr := dst.Close()
-		if cerr == nil {
+		if err == nil {
 			err = cerr
 		}
 	}()
