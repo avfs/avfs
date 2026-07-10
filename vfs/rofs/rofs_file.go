@@ -17,6 +17,7 @@
 package rofs
 
 import (
+	"io"
 	"io/fs"
 	"reflect"
 	"syscall"
@@ -158,6 +159,17 @@ func (f *RoFile) ReadAt(b []byte, off int64) (n int, err error) {
 	return f.baseFile.ReadAt(b, off)
 }
 
+// ReadFrom implements io.ReaderFrom.
+func (f *RoFile) ReadFrom(r io.Reader) (n int64, err error) {
+	const op = "write"
+
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
+	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
+}
+
 // ReadDir reads the contents of the directory associated with the file f
 // and returns a slice of DirEntry values in directory order.
 // Subsequent calls on the same file will yield later DirEntry records in the directory.
@@ -270,6 +282,19 @@ func (f *RoFile) WriteAt(b []byte, off int64) (n int, err error) {
 	}
 
 	return 0, &fs.PathError{Op: op, Path: f.name(), Err: f.vfs.err.PermDenied}
+}
+
+// WriteTo implements io.WriterTo.
+func (f *RoFile) WriteTo(w io.Writer) (n int64, err error) {
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
+	if wt, ok := f.baseFile.(io.WriterTo); ok {
+		return wt.WriteTo(w)
+	}
+
+	return io.Copy(w, f.baseFile)
 }
 
 // WriteString is like Write, but writes the contents of string s rather than

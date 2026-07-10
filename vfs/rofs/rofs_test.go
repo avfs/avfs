@@ -19,6 +19,7 @@
 package rofs_test
 
 import (
+	"io"
 	"syscall"
 	"testing"
 
@@ -40,6 +41,12 @@ var (
 
 	// Ensures that rofs.RoFile implements the syscall.Conn interface.
 	_ syscall.Conn = &rofs.RoFile{}
+
+	// Ensures that rofs.RoFile implements the io.ReaderFrom interface.
+	_ io.ReaderFrom = &rofs.RoFile{}
+
+	// Ensures that rofs.RoFile implements the io.WriterTo interface.
+	_ io.WriterTo = &rofs.RoFile{}
 )
 
 func initTest(t *testing.T) *test.Suite {
