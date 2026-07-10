@@ -17,6 +17,7 @@
 package failfs
 
 import (
+	"io"
 	"io/fs"
 	"reflect"
 	"syscall"
@@ -208,6 +209,28 @@ func (f *FailFile) ReadAt(b []byte, off int64) (n int, err error) {
 	return f.baseFile.ReadAt(b, off)
 }
 
+// ReadFrom implements io.ReaderFrom.
+func (f *FailFile) ReadFrom(r io.Reader) (n int64, err error) {
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
+	name := f.name()
+	fp := FailParam{Op: "write", Path: name}
+	vfs := f.vfs
+
+	err = vfs.fail(avfs.FnFileWrite, &fp)
+	if err != nil {
+		return 0, err
+	}
+
+	if rf, ok := f.baseFile.(io.ReaderFrom); ok {
+		return rf.ReadFrom(r)
+	}
+
+	return io.Copy(f.baseFile, r)
+}
+
 // ReadDir reads the contents of the directory associated with the file f
 // and returns a slice of DirEntry values in directory order.
 // Subsequent calls on the same file will yield later DirEntry records in the directory.
@@ -385,6 +408,28 @@ func (f *FailFile) WriteAt(b []byte, off int64) (n int, err error) {
 	}
 
 	return f.baseFile.WriteAt(b, off)
+}
+
+// WriteTo implements io.WriterTo.
+func (f *FailFile) WriteTo(w io.Writer) (n int64, err error) {
+	if f == nil {
+		return 0, fs.ErrInvalid
+	}
+
+	name := f.name()
+	fp := FailParam{Op: "read", Path: name}
+	vfs := f.vfs
+
+	err = vfs.fail(avfs.FnFileRead, &fp)
+	if err != nil {
+		return 0, err
+	}
+
+	if wt, ok := f.baseFile.(io.WriterTo); ok {
+		return wt.WriteTo(w)
+	}
+
+	return io.Copy(w, f.baseFile)
 }
 
 // WriteString is like Write, but writes the contents of string s rather than

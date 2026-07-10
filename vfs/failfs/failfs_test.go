@@ -19,6 +19,7 @@
 package failfs_test
 
 import (
+	"io"
 	"syscall"
 	"testing"
 
@@ -40,6 +41,12 @@ var (
 
 	// Ensures that failfs.FailFile implements the syscall.Conn interface.
 	_ syscall.Conn = &failfs.FailFile{}
+
+	// Ensures that failfs.FailFile implements the io.ReaderFrom interface.
+	_ io.ReaderFrom = &failfs.FailFile{}
+
+	// Ensures that failfs.FailFile implements the io.WriterTo interface.
+	_ io.WriterTo = &failfs.FailFile{}
 )
 
 func TestFailFSNoFail(t *testing.T) {
