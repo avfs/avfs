@@ -21,6 +21,7 @@ package ostestfs_test
 import (
 	"io"
 	"os"
+	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -43,6 +44,9 @@ var (
 
 	// Ensures that os.File implements the io.WriterTo interface.
 	_ io.WriterTo = &os.File{}
+
+	// Ensures that os.File implements the syscall.Conn interface.
+	_ syscall.Conn = &os.File{}
 )
 
 func TestOsTestFS(t *testing.T) {

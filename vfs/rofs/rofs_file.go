@@ -19,6 +19,7 @@ package rofs
 import (
 	"io/fs"
 	"reflect"
+	"syscall"
 
 	"github.com/avfs/avfs"
 )
@@ -95,6 +96,21 @@ func (f *RoFile) Fd() uintptr {
 	}
 
 	return f.baseFile.Fd()
+}
+
+// SyscallConn returns a raw file.
+// This implements the [syscall.Conn] interface.
+func (f *RoFile) SyscallConn() (syscall.RawConn, error) {
+	if f == nil {
+		return nil, fs.ErrInvalid
+	}
+
+	sc, ok := f.baseFile.(syscall.Conn)
+	if ok {
+		return sc.SyscallConn()
+	}
+
+	return nil, fs.ErrInvalid
 }
 
 // Name returns the name of the file as presented to [Open].

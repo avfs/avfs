@@ -19,6 +19,7 @@
 package rofs_test
 
 import (
+	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -36,6 +37,9 @@ var (
 
 	// Tests that rofs.RoFile struct implements avfs.File interface.
 	_ avfs.File = &rofs.RoFile{}
+
+	// Ensures that rofs.RoFile implements the syscall.Conn interface.
+	_ syscall.Conn = &rofs.RoFile{}
 )
 
 func initTest(t *testing.T) *test.Suite {

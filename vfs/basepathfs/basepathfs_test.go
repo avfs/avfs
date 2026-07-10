@@ -21,6 +21,7 @@ package basepathfs_test
 import (
 	"io"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -44,6 +45,9 @@ var (
 
 	// Ensures that basepathfs.BasePathFile implements the io.WriterTo interface.
 	_ io.WriterTo = &basepathfs.BasePathFile{}
+
+	// Ensures that basepathfs.BasePathFile implements the syscall.Conn interface.
+	_ syscall.Conn = &basepathfs.BasePathFile{}
 )
 
 func initFS(tb testing.TB) (vfs *basepathfs.BasePathFS, basePath string) {

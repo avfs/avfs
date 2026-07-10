@@ -19,6 +19,7 @@
 package failfs_test
 
 import (
+	"syscall"
 	"testing"
 
 	"github.com/avfs/avfs"
@@ -28,14 +29,17 @@ import (
 )
 
 var (
-	// Tests that failfs.FailFS struct implements avfs.VFS interface.
+	// Ensures that failfs.FailFS implements avfs.VFS interface.
 	_ avfs.VFS = &failfs.FailFS{}
 
-	// Tests that failfs.FailFS struct implements avfs.VFSBase interface.
+	// Ensures that failfs.FailFS implements avfs.VFSBase interface.
 	_ avfs.VFSBase = &failfs.FailFS{}
 
-	// Tests that failfs.FailFile struct implements avfs.File interface.
+	// Ensures that failfs.FailFile implements avfs.File interface.
 	_ avfs.File = &failfs.FailFile{}
+
+	// Ensures that failfs.FailFile implements the syscall.Conn interface.
+	_ syscall.Conn = &failfs.FailFile{}
 )
 
 func TestFailFSNoFail(t *testing.T) {

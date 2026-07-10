@@ -19,6 +19,7 @@ package basepathfs
 import (
 	"io"
 	"io/fs"
+	"syscall"
 )
 
 // Chdir changes the current working directory to the file,
@@ -77,6 +78,21 @@ func (f *BasePathFile) Close() error {
 // For most uses prefer the f.SyscallConn method.
 func (f *BasePathFile) Fd() uintptr {
 	return f.baseFile.Fd()
+}
+
+// SyscallConn returns a raw file.
+// This implements the [syscall.Conn] interface.
+func (f *BasePathFile) SyscallConn() (syscall.RawConn, error) {
+	if f == nil {
+		return nil, fs.ErrInvalid
+	}
+
+	sc, ok := f.baseFile.(syscall.Conn)
+	if ok {
+		return sc.SyscallConn()
+	}
+
+	return nil, fs.ErrInvalid
 }
 
 // Name returns the name of the file as presented to [Open].
@@ -209,10 +225,14 @@ func (f *BasePathFile) WriteAt(b []byte, off int64) (n int, err error) {
 // WriteTo implements io.WriterTo.
 func (f *BasePathFile) WriteTo(w io.Writer) (n int64, err error) {
 	if wt, ok := f.baseFile.(io.WriterTo); ok {
-		return wt.WriteTo(w)
+		n, err = wt.WriteTo(w)
+
+		return n, f.vfs.FromPathError(err)
 	}
 
-	return io.Copy(w, f.baseFile)
+	n, err = io.Copy(w, f.baseFile)
+
+	return n, f.vfs.FromPathError(err)
 }
 
 // WriteString is like Write, but writes the contents of string s rather than
