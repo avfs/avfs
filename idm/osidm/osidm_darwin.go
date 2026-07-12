@@ -263,6 +263,10 @@ func lookupGroup(groupName string) (avfs.GroupReader, error) {
 // LookupGroupId looks up a group by groupid.
 // If the group is not found, the returned error is of type avfs.UnknownGroupIdError.
 func (idm *OsIdm) LookupGroupId(gid int) (avfs.GroupReader, error) {
+	if gid < 0 {
+		return nil, avfs.UnknownGroupIdError(gid)
+	}
+
 	out, err := dsCacheUtil("group", "gid", strconv.Itoa(gid))
 	if err != nil {
 		return nil, avfs.UnknownError(out)
@@ -310,6 +314,10 @@ func (idm *OsIdm) LookupUserId(uid int) (avfs.UserReader, error) {
 
 // lookupUserId retrieves user information by user ID. It returns an avfs.UserReader and an error if the user is not found.
 func lookupUserId(uid int) (avfs.UserReader, error) {
+	if uid < 0 {
+		return nil, avfs.UnknownUserIdError(uid)
+	}
+
 	sUid := strconv.Itoa(uid)
 
 	out, err := dsCacheUtil("user", "uid", sUid)
