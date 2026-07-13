@@ -1033,19 +1033,26 @@ func (ts *Suite) TestLstat(t *testing.T, testDir string) {
 
 			if sl.IsSymlink {
 				wantName = vfs.Base(sl.NewPath)
-
 				wantMode = fs.ModeSymlink | fs.ModePerm
-				if vfs.OSType() == avfs.OsDarwin {
-					wantMode = fs.ModeSymlink | avfs.DefaultDirPerm&^vfs.UMask()
-				}
 			}
 
 			if wantName != info.Name() {
 				t.Errorf("Lstat %s : want name to be %s, got %s", sl.NewPath, wantName, info.Name())
 			}
 
-			if vfs.OSType() != avfs.OsWindows && wantMode != info.Mode() {
-				t.Errorf("Lstat %s : want mode to be %s, got %s", sl.NewPath, wantMode, info.Mode())
+			switch vfs.OSType() {
+			case avfs.OsWindows:
+			case avfs.OsDarwin:
+				// On macOS the permission bits of a symbolic link are not settable and
+				// are reported differently depending on the underlying file system, so
+				// only the symbolic link type bit is checked.
+				if sl.IsSymlink && info.Mode()&fs.ModeSymlink == 0 {
+					t.Errorf("Lstat %s : want mode to be a symlink, got %s", sl.NewPath, info.Mode())
+				}
+			default:
+				if wantMode != info.Mode() {
+					t.Errorf("Lstat %s : want mode to be %s, got %s", sl.NewPath, wantMode, info.Mode())
+				}
 			}
 		}
 	})
