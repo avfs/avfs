@@ -227,7 +227,7 @@ func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo, basePath string) error {
 			continue
 		}
 
-		err = vfs.Mkdir(path, dir.Perm)
+		err = vfs.MkdirAll(path, dir.Perm)
 		if err != nil {
 			return err
 		}
