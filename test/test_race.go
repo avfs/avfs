@@ -235,9 +235,9 @@ func (ts *Suite) raceFunc(t *testing.T, rr RaceResult, testFuncs ...func() error
 		wgTeardown sync.WaitGroup
 		starter    sync.RWMutex
 		wantOk     uint32
-		gotOk      uint32
 		wantErr    uint32
-		gotErr     uint32
+		gotOk      atomic.Uint32
+		gotErr     atomic.Uint32
 	)
 
 	maxGo := ts.maxRace * len(testFuncs)
@@ -260,12 +260,12 @@ func (ts *Suite) raceFunc(t *testing.T, rr RaceResult, testFuncs ...func() error
 
 				err := f()
 				if err != nil {
-					atomic.AddUint32(&gotErr, 1)
+					gotErr.Add(1)
 
 					return
 				}
 
-				atomic.AddUint32(&gotOk, 1)
+				gotOk.Add(1)
 			}(testFunc)
 		}
 	}
@@ -287,18 +287,18 @@ func (ts *Suite) raceFunc(t *testing.T, rr RaceResult, testFuncs ...func() error
 	case RaceAllOk:
 		wantOk = uint32(maxGo)
 	case RaceUndefined:
-		t.Logf("ok = %d, error = %d", gotOk, gotErr)
+		t.Logf("ok = %d, error = %d", gotOk.Load(), gotErr.Load())
 
 		return
 	}
 
 	wantErr = uint32(maxGo) - wantOk
 
-	if gotOk != wantOk {
-		t.Errorf("want number of responses without error to be %d, got %d ", wantOk, gotOk)
+	if gotOk.Load() != wantOk {
+		t.Errorf("want number of responses without error to be %d, got %d ", wantOk, gotOk.Load())
 	}
 
-	if gotErr != wantErr {
-		t.Errorf("want number of responses with errors to be %d, got %d", wantErr, gotErr)
+	if gotErr.Load() != wantErr {
+		t.Errorf("want number of responses with errors to be %d, got %d", wantErr, gotErr.Load())
 	}
 }
