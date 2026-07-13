@@ -32,19 +32,19 @@ type UMasker interface {
 
 // UMaskFn provides UMask functions to file systems.
 type UMaskFn struct {
-	umask fs.FileMode // umask is the user file creation mode mask.
+	umask atomic.Uint32 // umask is the user file creation mode mask.
 }
 
 // SetUMask sets the file mode creation mask.
 func (umf *UMaskFn) SetUMask(mask fs.FileMode) error {
-	atomic.StoreUint32((*uint32)(&umf.umask), uint32(mask))
+	umf.umask.Store(uint32(mask))
 
 	return nil
 }
 
 // UMask returns the file mode creation mask.
 func (umf *UMaskFn) UMask() fs.FileMode {
-	m := atomic.LoadUint32((*uint32)(&umf.umask))
+	m := umf.umask.Load()
 
 	return fs.FileMode(m)
 }
