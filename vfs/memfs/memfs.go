@@ -854,10 +854,10 @@ func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
 		return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
 	}
 
-	subFS := *vfs
-	subFS.rootNode = c
+	// TODO : refactor MemFS
+	_ = c
 
-	return &subFS, nil
+	return nil, vfs.err.PermDenied
 }
 
 // Symlink creates newname as a symbolic link to oldname.
