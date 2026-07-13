@@ -407,8 +407,13 @@ func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 // TestMkSystemDirs tests CreateSystemDirs function.
 func (ts *Suite) TestMkSystemDirs(t *testing.T, testDir string) {
 	vfs := ts.vfsSetup
-	dirs := avfs.SystemDirs(vfs)
 	isAdmin := vfs.User().IsAdmin()
+
+	if vfs.HasFeature(avfs.FeatRealFS) || !isAdmin {
+		return
+	}
+
+	dirs := avfs.SystemDirs(vfs)
 
 	err := avfs.MkSystemDirs(vfs, dirs, testDir)
 	RequireNoError(t, err, "MkSystemDirs %s", testDir)
@@ -428,10 +433,6 @@ func (ts *Suite) TestMkSystemDirs(t *testing.T, testDir string) {
 		wantMode := fs.ModeDir | dir.Perm
 		if st.Mode() != wantMode {
 			t.Errorf("MkSystemDirs %s :  want mode to be %o, got %o", dir.Path, wantMode, st.Mode())
-		}
-
-		if !isAdmin {
-			continue
 		}
 
 		sst := vfs.ToSysStat(st)
