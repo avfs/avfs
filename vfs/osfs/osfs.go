@@ -512,7 +512,7 @@ func (vfs *OsFS) User() avfs.UserReader {
 
 	uid, _ := strconv.Atoi(ou.Uid)
 	gid, _ := strconv.Atoi(ou.Gid)
-	u := avfs.NewUser(ou.Name, uid, gid)
+	u := avfs.NewUser(ou.Username, uid, gid)
 
 	return u
 }
