@@ -34,8 +34,8 @@ var umask = func() *atomic.Uint32 {
 
 // SetUMask sets the file mode creation mask.
 func SetUMask(mask fs.FileMode) error {
-	m := uint32(mask & fs.ModePerm)
-	umask.Store(m)
+	um := uint32(mask & fs.ModePerm)
+	umask.Store(um)
 
 	return nil
 }
