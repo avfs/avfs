@@ -499,7 +499,7 @@ func (vfs *BasePathFS) SetUser(user avfs.UserReader) error {
 }
 
 // SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of type UnknownUserError.
+// If the user is not found, the returned error is of the type UnknownUserError.
 func (vfs *BasePathFS) SetUserByName(name string) error {
 	return vfs.baseFS.SetUserByName(name)
 }

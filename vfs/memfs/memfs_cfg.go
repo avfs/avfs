@@ -64,7 +64,7 @@ func NewWithOptions(opts *Options) *MemFS {
 		opts.SystemDirs = avfs.SystemDirs(vfs)
 	}
 
-	err := avfs.MkSystemDirs(vfs, opts.SystemDirs, "")
+	err := avfs.MkDirs(vfs, opts.SystemDirs, "")
 	if err != nil {
 		panic(err)
 	}

@@ -69,7 +69,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		opts.SystemDirs = avfs.SystemDirs(vfs)
 	}
 
-	_ = avfs.MkSystemDirs(vfs, opts.SystemDirs, "")
+	_ = avfs.MkDirs(vfs, opts.SystemDirs, "")
 	_ = vfs.SetUMask(avfs.UMask())
 
 	return vfs

@@ -90,7 +90,7 @@ func (osf *OSTypeFn) PathSeparator() uint8 {
 }
 
 // SetOSType sets the operating system Type.
-// If the OS type can't be changed it returns an error.
+// If the OS type can't be changed, it returns an error.
 func (osf *OSTypeFn) SetOSType(osType OSType) error {
 	if BuildFeatures()&FeatSetOSType == 0 && osType != OsUnknown && osType != CurrentOSType() {
 		return ErrSetOSType

@@ -125,7 +125,7 @@ func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
 }
 
 // SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of type UnknownUserError.
+// If the user is not found, the returned error is of the type UnknownUserError.
 func (vuf *VFSUserDirFn) SetUserByName(userName string) error {
 	idm := vuf.idm
 
@@ -213,8 +213,8 @@ func homeDirUser(ost OSType, u UserReader) string {
 	return dir
 }
 
-// MkSystemDirs creates a set of system directories with specified permissions, ownership, and base path.
-func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo, basePath string) error {
+// MkDirs creates a set of directories with specified permissions, ownership, and base path.
+func MkDirs[T VFSBase](vfs T, dirs []DirInfo, basePath string) error {
 	if vfs.OSType() == OsWindows && basePath == "" {
 		basePath = DefaultVolume
 	}
@@ -241,11 +241,9 @@ func MkSystemDirs[T VFSBase](vfs T, dirs []DirInfo, basePath string) error {
 				return err
 			}
 
-			if vfs.User().IsAdmin() {
-				err = vfs.Chown(path, dir.Uid, dir.Gid)
-				if err != nil {
-					return err
-				}
+			err = vfs.Chown(path, dir.Uid, dir.Gid)
+			if err != nil {
+				return err
 			}
 		}
 	}
@@ -258,23 +256,17 @@ func SystemDirs[T VFSBase](vfs T) []DirInfo {
 	var dis []DirInfo
 
 	admin := vfs.Idm().AdminUser()
-	u := vfs.User()
 
 	switch vfs.OSType() {
 	case OsWindows:
 		dis = []DirInfo{
 			{Path: homeDir(OsWindows), Perm: DefaultDirPerm, Uid: admin.Uid(), Gid: admin.Gid()},
-			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
 			{Path: tempDirUserWindows(AdminUserName(OsWindows)), Perm: DefaultDirPerm, Uid: admin.Uid(), Gid: admin.Gid()},
-			{Path: tempDirUserWindows(DefaultName), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()},
-			{Path: `\Windows`, Perm: DefaultDirPerm},
 		}
 
 	case OsDarwin:
 		dis = []DirInfo{
 			{Path: homeDir(OsDarwin), Perm: 0o755, Uid: admin.Uid(), Gid: admin.Gid()},
-			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
-			{Path: tempDirUserDarwin(vfs.User()), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()},
 		}
 
 	default:
@@ -283,9 +275,31 @@ func SystemDirs[T VFSBase](vfs T) []DirInfo {
 			{Path: "/root", Perm: 0o700, Uid: admin.Uid(), Gid: admin.Gid()},
 			{Path: tempDirUserLinux(), Perm: 0o777, Uid: admin.Uid(), Gid: admin.Gid()},
 		}
+	}
 
-		if !vfs.User().IsAdmin() {
-			dis = append(dis, DirInfo{Path: homeDirUser(OsLinux, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()})
+	return dis
+}
+
+// UserDirs retrieves metadata for all user directories from the provided virtual file system (vfs).
+func UserDirs[T VFSBase](vfs T, u UserReader) []DirInfo {
+	var dis []DirInfo
+
+	switch vfs.OSType() {
+	case OsWindows:
+		dis = []DirInfo{
+			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: tempDirUserWindows(DefaultName), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()},
+		}
+
+	case OsDarwin:
+		dis = []DirInfo{
+			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: tempDirUserDarwin(vfs.User()), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()},
+		}
+
+	default:
+		dis = []DirInfo{
+			{Path: homeDirUser(OsLinux, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
 		}
 	}
 
