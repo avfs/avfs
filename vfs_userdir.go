@@ -147,20 +147,7 @@ func (vuf *VFSUserDirFn) SetUserByName(userName string) error {
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
 func (vuf *VFSUserDirFn) TempDir() string {
-	var dir string
-
-	u := vuf.user
-
-	switch vuf.osType {
-	case OsWindows:
-		dir = tempDirUserWindows(u.Name())
-	case OsDarwin:
-		dir = tempDirUserDarwin(u)
-	default:
-		dir = tempDirUserLinux()
-	}
-
-	return dir
+	return vuf.tempDir
 }
 
 // User returns the current user.
@@ -194,6 +181,7 @@ func homeDir(ost OSType) string {
 	}
 }
 
+// HomeDirUser returns the home directory of the user.
 func homeDirUser(ost OSType, u UserReader) string {
 	var dir string
 
