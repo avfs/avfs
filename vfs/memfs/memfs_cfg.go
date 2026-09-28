@@ -40,14 +40,14 @@ func NewWithOptions(opts *Options) *MemFS {
 	}
 
 	features := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | idm.Features() | avfs.BuildFeatures()
-	user := opts.User
 
 	vfs := &MemFS{name: opts.Name}
 
 	_ = vfs.SetFeatures(features)
 	_ = vfs.SetOSType(opts.OSType)
 	_ = vfs.SetIdm(idm)
-	_ = vfs.SetUser(user)
+	_ = vfs.SetUMask(avfs.UMask())
+	_ = vfs.SetUser(idm.AdminUser())
 
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
 	vfs.rootNode = vfs.createRootNode()
@@ -69,7 +69,12 @@ func NewWithOptions(opts *Options) *MemFS {
 		panic(err)
 	}
 
-	_ = vfs.SetUMask(avfs.UMask())
+	u := opts.User
+	if u == nil {
+		u = idm.AdminUser()
+	}
+
+	_ = vfs.SetUser(u)
 
 	return vfs
 }
