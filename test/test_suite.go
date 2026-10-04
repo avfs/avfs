@@ -55,7 +55,7 @@ func NewSuiteFS(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase) *Suite {
 }
 
 // NewSuiteIdm creates a new test suite for an identity manager.
-func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
+func NewSuiteIdm(tb testing.TB, idm avfs.IdmMgr) *Suite {
 	if idm == nil {
 		tb.Fatal("NewSuiteIdm : idm must not be nil")
 	}
@@ -69,7 +69,7 @@ func NewSuiteIdm(tb testing.TB, idm avfs.IdentityMgr) *Suite {
 }
 
 // newSuite creates a new test suite.
-func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdentityMgr) *Suite {
+func newSuite(tb testing.TB, vfsSetup, vfsTest avfs.VFSBase, idm avfs.IdmMgr) *Suite {
 	vfs := vfsTest
 
 	if vfs.OSType() != avfs.CurrentOSType() {

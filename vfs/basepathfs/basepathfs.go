@@ -226,8 +226,8 @@ func (vfs *BasePathFS) Glob(pattern string) (matches []string, err error) {
 }
 
 // Idm returns the identity manager of the file system.
-// If the file system does not have an identity manager, avfs.DummyIdm is returned.
-func (vfs *BasePathFS) Idm() avfs.IdentityMgr {
+// If the file system does not have an identity manager, avfs.DefaultIdm is returned.
+func (vfs *BasePathFS) Idm() avfs.IdmMgr {
 	return vfs.baseFS.Idm()
 }
 
@@ -482,8 +482,8 @@ func (vfs *BasePathFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 }
 
 // SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm dummyidm.NotImplementedIdm is set.
-func (vfs *BasePathFS) SetIdm(idm avfs.IdentityMgr) error {
+// If the identity manager provider is nil, the idm avfs.DefaultIdm is set.
+func (vfs *BasePathFS) SetIdm(idm avfs.IdmMgr) error {
 	return vfs.baseFS.SetIdm(idm)
 }
 

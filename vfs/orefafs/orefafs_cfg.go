@@ -35,7 +35,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	}
 
 	features := avfs.FeatHardlink | avfs.BuildFeatures()
-	idm := avfs.NotImplementedIdm
+	idm := avfs.DefaultIdm
 	user := opts.User
 
 	vfs := &OrefaFS{name: opts.Name}

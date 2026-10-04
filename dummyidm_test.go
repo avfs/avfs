@@ -29,8 +29,8 @@ var (
 	// Tests that avfs.DummyGroup struct implements avfs.GroupReader interface.
 	_ avfs.GroupReader = &avfs.DummyGroup{}
 
-	// Tests that avfs.DummyIdm implements avfs.IdentityMgr interface.
-	_ avfs.IdentityMgr = &avfs.DummyIdm{}
+	// Tests that avfs.DummyIdm implements avfs.IdmMgr interface.
+	_ avfs.IdmMgr = &avfs.DummyIdm{}
 
 	// Tests that avfs.DummyUser struct implements avfs.UserReader interface.
 	_ avfs.UserReader = &avfs.DummyUser{}

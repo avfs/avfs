@@ -28,5 +28,5 @@ type OsTestFS struct {
 
 // Options defines the initialization options of OsFS.
 type Options struct {
-	Idm avfs.IdentityMgr // Idm is the identity manager of the file system.
+	Idm avfs.IdmMgr // Idm is the identity manager of the file system.
 }

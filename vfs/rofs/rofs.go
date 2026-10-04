@@ -212,9 +212,9 @@ func (vfs *RoFS) Glob(pattern string) (matches []string, err error) {
 }
 
 // Idm returns the identity manager of the file system.
-// If the file system does not have an identity manager, avfs.DummyIdm is returned.
-func (vfs *RoFS) Idm() avfs.IdentityMgr {
-	return avfs.NotImplementedIdm
+// If the file system does not have an identity manager, avfs.DefaultIdm is returned.
+func (vfs *RoFS) Idm() avfs.IdmMgr {
+	return avfs.DefaultIdm
 }
 
 // IsAbs reports whether the path is absolute.
@@ -451,8 +451,8 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 }
 
 // SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm dummyidm.NotImplementedIdm is set.
-func (vfs *RoFS) SetIdm(idm avfs.IdentityMgr) error {
+// If the identity manager provider is nil, the idm avfs.DefaultIdm is set.
+func (vfs *RoFS) SetIdm(idm avfs.IdmMgr) error {
 	return avfs.ErrPermDenied
 }
 

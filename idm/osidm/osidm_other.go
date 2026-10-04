@@ -134,7 +134,7 @@ func SetUserByName(userName string) error {
 
 // User returns the current user of the OS.
 func User() avfs.UserReader {
-	return avfs.NotImplementedIdm.AdminUser()
+	return avfs.DefaultIdm.AdminUser()
 }
 
 // IsUserAdmin returns true if the current user has admin privileges.

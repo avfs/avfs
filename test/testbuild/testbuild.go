@@ -177,7 +177,7 @@ func vfsFuncs(vfs avfs.VFS) {
 	_, _ = f.WriteString("")
 }
 
-func idmFuncs(idm avfs.IdentityMgr) {
+func idmFuncs(idm avfs.IdmMgr) {
 	_ = idm.AdminGroup()
 	_ = idm.AdminUser()
 	_, _ = idm.AddGroup("")

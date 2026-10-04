@@ -21,8 +21,8 @@ import "regexp"
 // isValidNameRE is a regular expression that validates if a string is a valid username or group name.
 var isValidNameRE = regexp.MustCompile("^[a-zA-Z0-9_-]+$")
 
-// IdentityMgr interface manages identities (users and groups).
-type IdentityMgr interface {
+// IdmMgr interface manages identities (users and groups).
+type IdmMgr interface {
 	Featurer
 	OSTyper
 	Typer
@@ -130,23 +130,23 @@ type UserIdentifier interface {
 	Uid() int
 }
 
-// IdmMgr is the interface that wraps Identity manager setting methods for file systems.
-type IdmMgr interface {
+// IdmProvider is the interface that wraps Identity manager setting methods for file systems.
+type IdmProvider interface {
 	// Idm returns the identity manager of the file system.
-	Idm() IdentityMgr
+	Idm() IdmMgr
 
 	// SetIdm set the current identity manager.
-	// If the identity manager provider is nil, the idm dummyidm.NotImplementedIdm is set.
-	SetIdm(idm IdentityMgr) error
+	// If the identity manager provider is nil, the idm avfs.DefaultIdm is set.
+	SetIdm(idm IdmMgr) error
 }
 
 // IdmFn provides identity manager functions to a file system.
 type IdmFn struct {
-	idm IdentityMgr // idm is the identity manager of the file system.
+	idm IdmMgr // idm is the identity manager of the file system.
 }
 
 // Idm returns the identity manager of the file system.
-func (idf *IdmFn) Idm() IdentityMgr {
+func (idf *IdmFn) Idm() IdmMgr {
 	return idf.idm
 }
 
@@ -156,10 +156,10 @@ func IsValidName(name string) bool {
 }
 
 // SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm NotImplementedIdm is set.
-func (idf *IdmFn) SetIdm(idm IdentityMgr) error {
+// If the identity manager provider is nil, the idm DefaultIdm is set.
+func (idf *IdmFn) SetIdm(idm IdmMgr) error {
 	if idm == nil {
-		idm = NotImplementedIdm
+		idm = DefaultIdm
 	}
 
 	idf.idm = idm

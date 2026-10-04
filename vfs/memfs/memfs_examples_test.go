@@ -67,7 +67,7 @@ func ExampleNewWithOptions_noSystemDirs() {
 }
 
 func ExampleNewWithOptions_noIdm() {
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.NotImplementedIdm, OSType: avfs.OsLinux})
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.DefaultIdm, OSType: avfs.OsLinux})
 	fmt.Println(vfs.User().Name())
 
 	// Output: Default

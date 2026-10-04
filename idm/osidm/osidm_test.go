@@ -30,8 +30,8 @@ var (
 	// OsGroup implements avfs.GroupReader interface.
 	_ avfs.GroupReader = &osidm.OsGroup{}
 
-	// OsIdm implements avfs.IdentityMgr interface.
-	_ avfs.IdentityMgr = &osidm.OsIdm{}
+	// OsIdm implements avfs.IdmMgr interface.
+	_ avfs.IdmMgr = &osidm.OsIdm{}
 
 	// OsUser implements avfs.UserReader interface.
 	_ avfs.UserReader = &osidm.OsUser{}

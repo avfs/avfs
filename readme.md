@@ -279,7 +279,7 @@ in `avfs` are just here to allow testing of functions related to users (Chown,
 Lchown) and access rights, so they just allow one default group per user.
 
 All file systems supporting identity manager implement by default the identity
-manager `DummyIdm`
+manager `avfs.DefaultIdm`, an instance of `DummyIdm`
 where all functions returns `avfs.ErrPermDenied`.
 
 Identity Manager |Comments
@@ -289,15 +289,18 @@ Identity Manager |Comments
 [OsIdm](idm/osidm)|Identity manager using os functions
 [SQLiteIdm](https://github.com/avfs/sqliteidm)|Identity manager backed by a SQLite database
 
-Identity Manager methods <br>`avfs.FS` <br> `avfs.IdentityMgr`|Comments
+Identity Manager methods <br>`avfs.IdmProvider` <br> `avfs.IdmMgr`|Comments
 --------------------------------------------------------------|--------
 `AdminGroup`|returns the administrator group (root for Linux)
 `AdminUser`|returns the administrator user (root for Linux)
-`GroupAdd`| adds a new group
-`GroupDel`| deletes an existing group
+`AddGroup`| adds a new group
+`AddUser`| adds a new user
+`AddUserToGroup`| adds a user to a group
+`DelGroup`| deletes an existing group
+`DelUser`| deletes an existing user
+`DelUserFromGroup`| removes a user from a group
 `LookupGroup`| looks up a group by name
 `LookupGroupId`| looks up a group by groupid
 `LookupUser`| looks up a user by username
 `LookupUserId`| looks up a user by userid
-`UserAdd`| adds a new user
-`UserDel`| deletes an existing user
+`SetUserPrimaryGroup`|sets the primary group of a user

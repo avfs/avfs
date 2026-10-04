@@ -35,7 +35,7 @@ func NewWithOptions(opts *Options) *OsTestFS {
 
 	idm := opts.Idm
 	if idm == nil {
-		idm = avfs.NotImplementedIdm
+		idm = avfs.DefaultIdm
 	}
 
 	features := avfs.FeatRealFS | avfs.FeatSymlink | avfs.FeatHardlink | idm.Features()

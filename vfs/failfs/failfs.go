@@ -258,7 +258,7 @@ func (vfs *FailFS) Glob(pattern string) (matches []string, err error) {
 	return avfs.Glob(vfs, pattern)
 }
 
-func (vfs *FailFS) Idm() avfs.IdentityMgr {
+func (vfs *FailFS) Idm() avfs.IdmMgr {
 	return vfs.baseFS.Idm()
 }
 
@@ -574,7 +574,7 @@ func (vfs *FailFS) SetFailFunc(ff FailFunc) error {
 	return nil
 }
 
-func (vfs *FailFS) SetIdm(idm avfs.IdentityMgr) error {
+func (vfs *FailFS) SetIdm(idm avfs.IdmMgr) error {
 	return vfs.baseFS.SetIdm(idm)
 }
 

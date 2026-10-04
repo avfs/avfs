@@ -18,10 +18,11 @@ package avfs
 
 import "math"
 
-// NotImplementedIdm is the default identity manager for all file systems.
-var NotImplementedIdm = NewDummyIdm() //nolint:gochecknoglobals // Used as default Idm for other file systems.
+// DefaultIdm is the default identity manager for all file systems.
+// It is a DummyIdm in which every function is not implemented.
+var DefaultIdm = NewDummyIdm() //nolint:gochecknoglobals // Used as default Idm for other file systems.
 
-// DummyIdm represent a non implemented identity manager using the avfs.IdentityMgr interface.
+// DummyIdm represent a non implemented identity manager using the avfs.IdmMgr interface.
 type DummyIdm struct {
 	adminGroup GroupReader
 	adminUser  UserReader

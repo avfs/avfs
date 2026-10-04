@@ -30,7 +30,7 @@ const (
 type Suite struct {
 	vfsSetup    avfs.VFSBase       // vfsSetup is the file system used to set up the tests (generally with read/write access).
 	vfsTest     avfs.VFSBase       // vfsTest is the file system used to run the tests.
-	idm         avfs.IdentityMgr   // idm is the identity manager to be tested.
+	idm         avfs.IdmMgr        // idm is the identity manager to be tested.
 	initUser    avfs.UserReader    // initUser is the initial user running the test suite.
 	rootDir     string             // rootDir is the root directory for tests and benchmarks.
 	testDataDir string             // testDataDir is the testdata directory of the test suite.

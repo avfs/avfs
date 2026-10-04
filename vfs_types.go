@@ -194,7 +194,7 @@ type VFS interface {
 // VFSBase regroups the common methods to VFS and IOFS.
 type VFSBase interface {
 	Featurer
-	IdmMgr
+	IdmProvider
 	Namer
 	OSTyper
 	Typer
@@ -297,8 +297,8 @@ type VFSBase interface {
 	UserHomeDir() (string, error)
 
 	// Idm returns the identity manager of the file system.
-	// If the file system does not have an identity manager, avfs.DummyIdm is returned.
-	Idm() IdentityMgr
+	// If the file system does not have an identity manager, avfs.DefaultIdm is returned.
+	Idm() IdmMgr
 
 	// Lchown changes the numeric uid and gid of the named file.
 	// If the file is a symbolic link, it changes the uid and gid of the link itself.

@@ -27,8 +27,8 @@ import (
 )
 
 var (
-	// MemIdm implements avfs.IdentityMgr interface.
-	_ avfs.IdentityMgr = &memidm.MemIdm{}
+	// MemIdm implements avfs.IdmMgr interface.
+	_ avfs.IdmMgr = &memidm.MemIdm{}
 
 	// Ensures that MemUser implements avfs.UserReader interface.
 	_ avfs.UserReader = &memidm.MemUser{}

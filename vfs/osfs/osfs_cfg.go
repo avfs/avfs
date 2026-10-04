@@ -25,7 +25,7 @@ func New() *OsFS {
 
 	_ = vfs.SetFeatures(features)
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
-	_ = vfs.SetIdm(avfs.NotImplementedIdm)
+	_ = vfs.SetIdm(avfs.DefaultIdm)
 
 	return vfs
 }

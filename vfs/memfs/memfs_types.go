@@ -60,11 +60,11 @@ type MemFile struct {
 
 // Options defines the initialization options of MemFS.
 type Options struct {
-	Idm        avfs.IdentityMgr // Idm is the identity manager of the file system.
-	User       avfs.UserReader  // User is the current user of the file system.
-	Name       string           // Name is the name of the file system.
-	SystemDirs []avfs.DirInfo   // SystemDirs contains data to create system directories.
-	OSType     avfs.OSType      // OSType defines the operating system type.
+	Idm        avfs.IdmMgr     // Idm is the identity manager of the file system.
+	User       avfs.UserReader // User is the current user of the file system.
+	Name       string          // Name is the name of the file system.
+	SystemDirs []avfs.DirInfo  // SystemDirs contains data to create system directories.
+	OSType     avfs.OSType     // OSType defines the operating system type.
 }
 
 // node is the interface implemented by dirNode, fileNode and symlinkNode.

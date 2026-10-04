@@ -26,7 +26,7 @@ const (
 	minGid = 1000
 )
 
-// MemIdm implements an in memory identity manager using the avfs.IdentityMgr interface.
+// MemIdm implements an in memory identity manager using the avfs.IdmMgr interface.
 type MemIdm struct {
 	adminGroup      *MemGroup    // adminGroup is the Administrator Group.
 	adminUser       *MemUser     // adminUser is the Administrator User.
