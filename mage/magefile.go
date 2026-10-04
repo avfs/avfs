@@ -42,29 +42,31 @@ import (
 )
 
 const (
-	dockerGoSrc = "/go/src"
-	dockerImage = "avfs-docker"
-	gitCmd      = "git"
-	goCmd       = "go"
-	goFumptCmd  = "gofumpt"
-	goFumptInst = "mvdan.cc/gofumpt@master"
-	golangCiCmd = "golangci-lint"
-	golangCiGit = "github.com/golangci/golangci-lint"
-	golangCiTgz = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-%s-%s.tar.gz"
-	golangCiPkg = "golangci-lint-%s-%s-%s.tar.gz"
-	golangCiChk = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-checksums.txt"
-	minigoxCmd  = "minigox"
-	minigoxInst = "github.com/psadac/minigox@main"
-	sudoCmd     = "sudo"
-	tarCmd      = "tar"
-	raceCount   = 12
-	benchCount  = 12
+	dockerGoSrc  = "/go/src"
+	dockerImage  = "avfs-docker"
+	gitCmd       = "git"
+	goCmd        = "go"
+	goFumptCmd   = "gofumpt"
+	goFumptInst  = "mvdan.cc/gofumpt@master"
+	golangCiCmd  = "golangci-lint"
+	golangCiGit  = "github.com/golangci/golangci-lint"
+	golangCiTgz  = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-%s-%s.tar.gz"
+	golangCiPkg  = "golangci-lint-%s-%s-%s.tar.gz"
+	golangCiChk  = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-checksums.txt"
+	minigoxCmd   = "minigox"
+	minigoxInst  = "github.com/psadac/minigox@main"
+	setOSTypeTag = "avfs_setostype"
+	sudoCmd      = "sudo"
+	tarCmd       = "tar"
+	raceCount    = 12
+	benchCount   = 12
 )
 
 var (
 	appDir            string
 	cgoEnabled        bool
 	coverFile         string
+	coverFileOSType   string
 	dockerCmd         string
 	dockerTestDataDir string
 	dockerTmpDir      string
@@ -82,6 +84,7 @@ func init() {
 
 	tmpDir = filepath.Join(appDir, "tmp")
 	coverFile = filepath.Join(tmpDir, "avfs-cover.txt")
+	coverFileOSType = filepath.Join(tmpDir, "avfs-cover-setostype.txt")
 	testDataDir = filepath.Join(appDir, "test/testdata")
 
 	dockerVolume := ""
@@ -139,8 +142,9 @@ testDataDir=%s
 dockerTmpDir=%s
 dockerTestDataDir=%s
 coverFile=%s
+coverFileOSType=%s
 cgoEnabled=%t
-`, appDir, tmpDir, testDataDir, dockerTmpDir, dockerTestDataDir, coverFile, cgoEnabled)
+`, appDir, tmpDir, testDataDir, dockerTmpDir, dockerTestDataDir, coverFile, coverFileOSType, cgoEnabled)
 }
 
 // Build builds the project.
@@ -356,10 +360,16 @@ func sudo(cmd string, args ...string) error {
 	return sh.RunV(sudoCmd, sudoArgs...)
 }
 
-// testArgs returns the arguments of the go command used for tests.
-func testArgs() []string {
+// testArgs returns the arguments of the go command used for tests with the
+// coverage file cover. The tests are built with the given build tags.
+func testArgs(cover string, buildTags ...string) []string {
 	pkgs := goPackages("/test")
-	args := []string{"test", "-v", "-covermode=atomic", "-coverprofile=" + coverFile}
+	args := []string{"test", "-v", "-covermode=atomic", "-coverprofile=" + cover}
+
+	if len(buildTags) > 0 {
+		args = append(args, "-tags="+strings.Join(buildTags, ","))
+	}
+
 	args = append(args, pkgs...)
 
 	if cgoEnabled {
@@ -372,38 +382,64 @@ func testArgs() []string {
 // CoverResult opens a web browser with the latest coverage file if used interactively,
 // or archive current coverage file when executed in CI mode.
 func CoverResult() error {
+	return coverResult(coverFile)
+}
+
+// coverResult opens a web browser with a coverage file if used interactively,
+// or archives it when executed in CI mode.
+func coverResult(file string) error {
 	if isCI() {
 		// Archive coverage file for code coverage upload.
 		coverArch := filepath.Join(tmpDir, time.Now().Format("avfs-cover-20060102-030405.txt"))
 
-		return os.Rename(coverFile, coverArch)
+		return os.Rename(file, coverArch)
 	}
 
-	return sh.RunV(goCmd, "tool", "cover", "-html="+coverFile)
+	return sh.RunV(goCmd, "tool", "cover", "-html="+file)
+}
+
+// goRun runs the go command with the given arguments.
+func goRun(args ...string) error {
+	return sh.RunV(goCmd, args...)
+}
+
+// goRunAsRoot runs the go command as root with the given arguments, using sudo
+// if necessary.
+func goRunAsRoot(args ...string) error {
+	return sudo(goCmd, args...)
+}
+
+// runTests runs a go command runner with the test arguments built by testArgs
+// and the given build tags, then displays the coverage result of the coverage file.
+func runTests(cover string, run func(args ...string) error, buildTags ...string) error {
+	err := run(testArgs(cover, buildTags...)...)
+	if err != nil {
+		return err
+	}
+
+	return coverResult(cover)
 }
 
 // Test runs tests with coverage as the current user.
 func Test() error {
 	mg.Deps(tmpInit)
 
-	err := sh.RunV(goCmd, testArgs()...)
-	if err != nil {
-		return err
-	}
+	return runTests(coverFile, goRun)
+}
 
-	return CoverResult()
+// TestSetOSType runs tests with coverage as the current user,
+// built with the avfs_setostype build tag.
+func TestSetOSType() error {
+	mg.Deps(tmpInit)
+
+	return runTests(coverFileOSType, goRun, setOSTypeTag)
 }
 
 // TestAsRoot runs tests as root with coverage (using sudo if necessary).
 func TestAsRoot() error {
 	mg.Deps(tmpInit)
 
-	err := sudo(goCmd, testArgs()...)
-	if err != nil {
-		return err
-	}
-
-	return CoverResult()
+	return runTests(coverFile, goRunAsRoot)
 }
 
 // goPackages list packages excluding those containing exclude text.
@@ -481,7 +517,7 @@ func Race() error {
 		return err
 	}
 
-	return CoverResult()
+	return coverResult(coverFile)
 }
 
 // Bench runs benchmarks.
