@@ -78,15 +78,22 @@ embeds the mixins rather than reimplementing them.
 | `OSTypeMixin` | `OSTyper` | OS type, separator, default modes | — |
 | `IdmMixin` | `IdmProvider` | identity manager | — |
 | `PathMixin` | `VFSPath` | — | `FeaturesMixin`, `UMaskMixin`, `OSTypeMixin` |
-| `UserDirMixin` | `VFSUserDir` | current user, cwd, home, temp dirs | `IdmMixin`, `PathMixin` |
+| `UserDirMixin` | `VFSUserDir` | current user, home and temp dirs (immutable), cwd (`atomic.Pointer[string]`) | `IdmMixin`, `PathMixin` |
 
-Because `PathMixin` transitively provides the other three, embedding
-`UserDirMixin` alone satisfies `VFSBase` — this is what `memfs` and `orefafs`
-do. Decorators (`RoFS`, `FailFS`, `BasePathFS`) embed only `FeaturesMixin`,
-since they delegate the rest to a wrapped base file system.
+`UserDirMixin.Init(ost, idm, user, curDir)` initialises the whole chain — OS
+type, identity manager, user, home and temporary directories, current directory
+— and must be called once, during construction. Every other setter of the chain
+(`SetFeatures`, `SetUMask`) is a constructor-level operation too; there is no
+way to change the identity of a live file system (see §3.3).
 
-A mixin is an implementation detail of a file system type: it is meant to be
-embedded and its methods promoted, not selected by name.
+`memfs` and `orefafs` hold their mixin in a **named `userDir` field** rather
+than embedding it, so that the state private to a file system is explicit and a
+clone is obviously a new value rather than a copy of a struct holding an atomic
+pointer. The `VFSPath`, `Featurer`, `UMasker`, `OSTyper`, `IdmProvider` and
+`VFSUserDir` methods are then written as one-line forwarders
+(`memfs_mixins.go`, `orefafs_mixins.go`) and must be kept in sync with those
+interfaces. Decorators (`RoFS`, `FailFS`, `BasePathFS`) embed only
+`FeaturesMixin`, since they delegate the rest to a wrapped base file system.
 
 ### 3.1 `VFS` and `VFSBase`
 
@@ -95,17 +102,17 @@ embedded and its methods promoted, not selected by name.
 | Embedded interface | Methods |
 |--------------------|---------|
 | `Featurer` | `Features() Features`, `HasFeature(Features) bool` |
-| `IdmProvider` | `Idm() IdmMgr`, `SetIdm(IdmMgr) error` |
+| `IdmProvider` | `Idm() IdmMgr`, `InitIdm(IdmMgr) error` (construction only) |
 | `Namer` | `Name() string` |
 | `OSTyper` | `OSType() OSType` |
 | `Typer` | `Type() string` |
 | `UMasker` | `SetUMask(fs.FileMode) error`, `UMask() fs.FileMode` |
 | `VFSPath` | path manipulation utilities (see §3.4) |
-| `VFSUserDir` | `Abs`, `Getwd`, `SetUser`, `SetUserByName`, `TempDir`, `User`, `UserHomeDir` |
+| `VFSUserDir` | `Abs`, `Getwd`, `TempDir`, `User` |
 
 `VFSBase` additionally declares the operating-system operations:
 `Base`, `Chdir`, `Chmod`, `Chown`, `Chtimes`, `Create`, `CreateTemp`,
-`EvalSymlinks`, `Glob`, `UserHomeDir`, `Idm`, `Lchown`, `Link`, `Lstat`,
+`EvalSymlinks`, `Glob`, `UserHomeDir`, `Lchown`, `Link`, `Lstat`,
 `Mkdir`, `MkdirAll`, `MkdirTemp`, `OpenFile`, `ReadDir`, `ReadFile`,
 `Readlink`, `Remove`, `RemoveAll`, `Rename`, `SameFile`, `Stat`, `Symlink`,
 `Truncate`, `WalkDir`, `WriteFile`.
@@ -130,9 +137,79 @@ path operations, `*os.LinkError` for `Link`/`Rename`/`Symlink`.
 
 Two small interfaces allow optional behaviour:
 
-- `Cloner` — `Clone() VFS`, a shallow copy of the file system.
+- `Cloner` — `CloneWithUser(user UserReader, ost OSType) (VFS, error)` and
+  `CloneWithUserName(userName string, ost OSType) (VFS, error)`.
 - `ChRooter` — `Chroot(path string) error`, changes the file system root
   (requires privileges; `ErrPermDenied` otherwise).
+
+#### Identity is immutable, cloning is how it varies
+
+A file system is built for one identity: one current user, one identity
+manager, one emulated OS type, and the home and temporary directories those
+imply. There is no `SetUser`, `SetUserByName` or `SetOSType` to change any of
+them afterwards. The reasons are:
+
+- **No TOCTOU on permissions.** Every operation resolves the user once. If the
+  user could be swapped mid-flight, a check could pass as one user and a write
+  land as another.
+- **No data race.** The user, home and temp directories are plain fields read
+  by every operation; making them immutable removes the need to lock them. The
+  only mutable part of an identity is the current directory, which is an
+  `atomic.Pointer[string]`, because `Chdir` is inherently a mutation.
+- **Reproducibility.** A file system built for a Windows user and a Linux user
+  are two values, not one value observed at two moments.
+
+Cloning is therefore the only way to obtain a file system acting as another
+user or emulating another OS. The rules:
+
+1. A clone **shares the content** of the file system it is copied from (its
+   nodes, its volumes, its name), so a file created through one view is visible
+   from all of them, and file identity (`SameFile`) stays consistent across
+   views: the unique-id counter is part of the shared state.
+2. A clone has **its own identity**: its own view of the user, home and
+   temporary directories, error table and umask.
+3. `memfs` and `orefafs` go one step further and **memoise the identity views**
+   of their storage, keyed by user (name *and* uid) and OS type. Cloning twice
+   for the same user and OS type returns two file systems sharing one identity
+   view, hence one current directory: `Chdir` on one is visible in the other.
+   The uid is part of the key because a deleted user may be created again with
+   the same name and a different uid, and must not inherit its predecessor's
+   directories.
+4. A clone **creates no directory**. The home and temporary directories of the
+   new user must already exist in the shared content, unless the user is the
+   administrator; otherwise operations in them fail with `ErrNoSuchDir`. A
+   clone never mutates the shared tree to accommodate an identity.
+5. Cloning with `OsUnknown` keeps the OS type of the source; with a `nil`
+   user it uses the administrator of the identity manager. Cloning with a
+   foreign OS type in a build without `avfs_setostype` returns
+   `ErrSetOSType`.
+6. The **content is not converted** to the new OS type. A view emulating
+   another OS resolves paths with the rules, and reports the errors, of that
+   OS, but the directories already created keep the names and the layout of the
+   OS the content was built for. A file system scoped to a path (`Sub`, a
+   decorator) may consequently fail to find its own base path in the new OS —
+   with a `*fs.PathError`, not with a refusal.
+7. A decorator implementing `Cloner` clones its base file system and re-wraps
+   the copy; if the base is not clonable it returns `ErrNotSupported`.
+8. A **real** file system (`FeatRealFS`) has no view to give: its user is the
+   user of the process running it, so it is never clonable and never has more
+   than one identity. `ostestfs` exposes `SetUser`/`SetUserByName` for the sole
+   purpose of changing the credentials of the process (a real `setresuid`/`setresgid`
+   through `osidm`); they are not file system operations, and that is why the
+   permission tests of the conformance suite — the reference the golden files
+   are recorded from — must run as root.
+
+The conformance suite runs its tests as a given user in one of two ways, chosen
+by what the file system under test supports:
+
+- a **clonable** file system is asked for a view acting as that user, for the
+  setup file system as well, so that fixtures are owned by the user that uses
+  them;
+- a **real** file system changes the credentials of the process
+  (`userSwitcher`, see rule 8).
+
+A file system that supports neither is a test setup error: permission tests
+would silently not run.
 
 ### 3.4 `VFSPath`
 
@@ -164,7 +241,7 @@ configuration; no method may be dropped or renamed by the tag. `ToSysStat` and
 |------|---------|
 | `FeatHardlink` | `Link` is supported |
 | `FeatIdentityMgr` | An identity manager exists; multiple users supported |
-| `FeatSetOSType` | The emulated OS can be changed at runtime (build tag `avfs_setostype`, see §3.6) |
+| `FeatSetOSType` | The emulated OS may differ from the host (build tag `avfs_setostype`, see §3.6) |
 | `FeatReadOnly` | The file system rejects every mutation |
 | `FeatReadOnlyIdm` | The identity manager rejects mutations |
 | `FeatRealFS` | The file system is a real one, not emulated |
@@ -178,14 +255,16 @@ configuration; no method may be dropped or renamed by the tag. `ToSysStat` and
 Feature flags are normative: the test suite uses them to decide which tests to
 run and which operations must succeed. `FeatSetOSType` is additionally bound to
 the build configuration — an implementation advertises it only when the binary
-was built with `avfs_setostype`, and then only if its `SetOSType` honours the
-derived-state rules of §3.6.
+was built with `avfs_setostype`, and then only if `InitOSType` and
+`CloneWithUser` honour the rules of §3.6.
 
 ### 3.6 Operating system emulation
 
 `OSType` is one of `OsUnknown`, `OsLinux`, `OsWindows`, `OsDarwin`.
-`OSTypeMixin` (embeddable) provides `OSType`, `SetOSType`, `PathSeparator`,
-`DirMode`, `FileMode`. `CurrentOSType()` reports the host OS.
+`OSTypeMixin` (embeddable) provides `OSType`, `InitOSType`, `PathSeparator`,
+`DirMode`, `FileMode`. `InitOSType` is a construction-time operation: the OS
+type of a file system never changes, and another one is obtained by cloning
+(§3.3). `CurrentOSType()` reports the host OS.
 
 #### The two build configurations
 
@@ -200,8 +279,9 @@ that, the capability is a build-time choice:
 | Path semantics | host OS | emulated `OSType`, re-read on every call |
 | `buildFeatSetOSType` / `BuildFeatures()` | `0` | `FeatSetOSType` |
 | `Features()` of an emulated FS | no `FeatSetOSType` | `FeatSetOSType` |
-| `SetOSType(foreignOS)` | `ErrSetOSType` | accepted |
-| `SetOSType(OsUnknown)` / `SetOSType(CurrentOSType())` | accepted | accepted |
+| `InitOSType(foreignOS)` | `ErrSetOSType` | accepted |
+| `InitOSType(OsUnknown)` / `InitOSType(CurrentOSType())` | accepted | accepted |
+| `CloneWithUser(u, foreignOS)` | `ErrSetOSType` | a view of the content for that OS |
 
 Rationale: the default build keeps path handling byte-identical to
 `os`/`path/filepath` — smaller, faster, and no chance of divergence from the
@@ -212,7 +292,7 @@ implementation is mandatory.
 
 `Options.OSType` is honoured identically in both configurations: under the
 default build a foreign value is **silently rejected** — constructors discard
-the `ErrSetOSType` from `SetOSType` — so the file system keeps the host OS.
+the `ErrSetOSType` from `InitOSType` — so the file system keeps the host OS.
 Callers who need a guarantee must check `HasFeature(FeatSetOSType)` first, or
 verify `OSType()` after construction.
 
@@ -220,30 +300,30 @@ verify `OSType()` after construction.
 
 1. `OSType()` is the single source of truth for path handling. No path method
    may consult the host `GOOS`, and none may cache the separator or the volume
-   syntax independently of `SetOSType`.
-2. `FeatSetOSType` is advertised **if and only if** `SetOSType` accepts a
-   foreign OS. `HasFeature(FeatSetOSType)` and `BuildFeatures()&FeatSetOSType != 0`
-   agree for every emulated implementation, and real file systems
-   (`FeatRealFS`) never advertise it — the host OS cannot change.
-3. A successful `SetOSType` must re-derive every value cached from the previous
-   OS **before returning**, and the change must be atomic with respect to
-   concurrent file operations. `OSTypeMixin` owns only what it can derive
-   itself — separator, `DirMode`, `FileMode`. Everything else belongs to the
-   file system, which must recompute:
+   syntax independently of `InitOSType`.
+2. `FeatSetOSType` is advertised **if and only if** a foreign OS type is
+   honoured, whether at construction or through `CloneWithUser`.
+   `HasFeature(FeatSetOSType)` and `BuildFeatures()&FeatSetOSType != 0` agree for
+   every emulated implementation, and real file systems (`FeatRealFS`) never
+   advertise it — the host OS cannot change.
+3. Every value derived from the OS type is derived **once, at construction**, so
+   that it can never be stale: `OSTypeMixin.InitOSType` computes the separator
+   and the default modes, and the file system computes
    - the error table (`avfs.ErrorsFor(os)`), since messages differ per OS;
-   - the current user's home and temporary directories, and the current
-     directory if it is no longer valid (`\Users\x` vs `/home/x`);
+   - the home and temporary directories of the current user, and the initial
+     current directory (`\Users\x` vs `/home/x`);
    - Windows volume state (`VolumeAdd`/`VolumeDelete`/`VolumeList`): the volume
-     table must exist for `OsWindows` and be absent otherwise;
-   - default permissions, where they differ (`dirMode` on Windows).
-   A bare `OSTypeMixin.SetOSType` that leaves stale derived state behind is
-   non-conforming even though the mixin itself is satisfied.
-4. `SetOSType` never converts existing content. Path *names* stored in the tree
-   are component-wise and remain valid, but absolute paths and symlink targets
-   written under the old OS are not rewritten; callers wanting a converted view
-   should build a new file system with `CloneWithOptions` (§4.1) rather than
-   mutate a populated one in place.
-5. `SetOSType(OsUnknown)` always resolves to `CurrentOSType()` and never fails.
+     table exists for `OsWindows` and is absent otherwise.
+
+   An emulated identity manager derives its administrator user and group names
+   from its own OS type (`avfs.AdminUserName`/`AdminGroupName`), so an idm whose
+   OS is out of sync with its file system yields a home directory
+   (`/Users/ContainerAdministrator` vs `\Users\root`) that does not exist.
+   `memidm` therefore includes `BuildFeatures()` in its features, so that
+   `FeatSetOSType` tells whether its OS type was honoured.
+4. Changing the OS type of a populated file system is not a mutation: it is a
+   clone (§3.3, rule 6), which never converts the content.
+5. `InitOSType(OsUnknown)` always resolves to `CurrentOSType()` and never fails.
 
 An emulated identity manager is subject to the same rules: `memidm` derives its
 administrator user and group names from its `OSType`
@@ -255,7 +335,7 @@ Build tags:
 
 | Tag | Effect |
 |-----|--------|
-| `avfs_setostype` | Enables runtime OS switching: `BuildFeatures()` includes `FeatSetOSType`, `PathMixin` is OS-parameterised, and emulated file systems advertise `FeatSetOSType` |
+| `avfs_setostype` | Enables emulating a foreign OS: `BuildFeatures()` includes `FeatSetOSType`, `PathMixin` is OS-parameterised, and emulated file systems and identity managers advertise `FeatSetOSType` |
 | `avfs_race` | Runs the concurrency test suite instead of the standard one |
 
 Both configurations are part of the contract: CI runs the whole suite on Linux,
@@ -290,7 +370,8 @@ Conventions:
 - The administrator is uid/gid `0`; the admin names are `root` on Unix and
   `ContainerAdministrator`/`Administrators` on Windows (`AdminUserName`,
   `AdminGroupName`).
-- `SetIdm(nil)` installs `avfs.DefaultIdm`.
+- `InitIdm(nil)` installs `avfs.DefaultIdm`. `InitIdm` is a construction-time
+  operation: the users a file system resolves never change under it.
 
 ### 3.9 Error model
 
@@ -331,7 +412,7 @@ Package-level generic helpers implement the derived operations once, on top of
 a `VFSBase`, so that every implementation shares identical behaviour:
 
 `Create`, `CreateTemp`, `FromUnixPath`, `Glob`, `IsExist`, `IsNotExist`,
-`MkdirTemp`, `ReadDir`, `ReadFile`, `SetUserByName`, `SplitAbs`, `ToOpenMode`,
+`MkdirTemp`, `ReadDir`, `ReadFile`, `SplitAbs`, `ToOpenMode`,
 `WalkDir`, `WriteFile`.
 
 Also provided: `MkDirs` (create a set of `DirInfo` directories), `SystemDirs`
@@ -374,23 +455,27 @@ select an operation to fail.
   (`ErrTooManySymlinks`).
 - Features: `FeatHardlink | FeatSubFS | FeatSymlink | BuildFeatures()` plus the
   identity manager's features.
-- **Runtime OS switching**: `SetOSType` is the promoted `OSTypeMixin` method,
-  and under `avfs_setostype` it accepts any `OSType`. On success it must
-  recompute `err` (`avfs.ErrorsFor`), the Windows volume table, and the user
-  directories before returning (§3.6, rule 3) — none of these are visible in
-  the mixin today, so in-place switching is currently incomplete.
-- **Copying with a different identity**: `CloneWithOptions(*Options)` (planned,
-  see §9) is the supported way to obtain a second view of the same tree with
-  another user and/or `OSType`; it shares the node tree and the unique-id
-  counter (so `SameFile` stays consistent across views) while giving the copy
-  its own user, working directory and derived state.
+- `Storage` holds everything shared with its clones: the node tree, the
+  unique-id counter (`lastId`), the Windows volume table (guarded by
+  `volMu`), the file system name, and the memoised identity views
+  (`userDirs`, guarded by `udMu`, keyed by user name, uid and OS type — see
+  §3.3, rule 3). `MemFS` itself holds only its error table and its `userDir`
+  view.
+- Implements `Cloner`: `CloneWithUser`, `CloneWithUserName`. The constructor
+  always builds the tree as the administrator (the system and user directories
+  need privileges to be created and chowned) and then hands it over with a
+  clone when `Options.User` is not the administrator.
+- The identity views are created with the features and the umask of the file
+  system they are cloned from: those describe the content and the creation
+  policy, not the identity.
 - **Permissions are genuinely enforced** (`checkPermission` on lookup, read and
   write), and umask is applied on creation.
 - Hard links share one `fileNode` (`nlink++`); `SameFile` compares the unique
-  node id.
+  node id, which is why the counter is part of the shared `Storage`.
+- `Sub(dir)` returns a `basepathfs` scoped to `dir`: the subtree shares the
+  content, and the identity of the file system. `MemIOFS.Sub` returns its
+  `io/fs` projection.
 - `Type() == "MemFS"`.
-- Known gap: `Sub` advertises `FeatSubFS` but currently returns `PermDenied`
-  (same for `MemIOFS.Sub`).
 
 ### 4.2 `orefafs` — simplified in-memory file system
 
@@ -399,12 +484,17 @@ select an operation to fail.
 - Exports `OrefaFS`, `OrefaFile`, `OrefaInfo`.
 - Internals: a flat `map[string]*node` keyed by absolute path plus per-node
   children maps, guarded by a single `sync.RWMutex`.
+- `Storage` holds what its clones share: the map of nodes, the unique-id
+  counter and that lock. `OrefaFS` holds its error table and its `userDir`
+  view. Unlike `memfs`, it does not memoise identity views: each clone gets a
+  fresh one, so clones of the same user have independent current directories.
 - Features: `FeatHardlink | BuildFeatures()` only — no symlinks, no identity
   manager (`DefaultIdm`).
-- Runtime OS switching follows the same rules as `memfs` (§3.6): accepted under
-  `avfs_setostype`, advertised through `BuildFeatures()`, and responsible for
-  refreshing its error table and user directories. It has no volume table, so
-  only the error table and user directories are at stake.
+- Implements `Cloner`. A Windows file system starts in its default volume,
+  which is what `Options.OSType == OsWindows` sets as the initial directory.
+- Emulating a foreign OS follows the same rules as `memfs` (§3.6). It has no
+  volume table, so only the error table and the user directories are derived
+  from the OS type.
 - Umask is applied at creation, but **no permission checks** are performed: it
   is the permissive base for decorators such as `failfs`.
 - `Symlink`, `Readlink`, `EvalSymlinks`, `Sub` fail with `PermDenied`.
@@ -417,8 +507,10 @@ select an operation to fail.
   returned as the `avfs.File`.
 - Features: `FeatRealFS | FeatSymlink | FeatHardlink`; identity manager is
   `DefaultIdm`.
-- `SetUser`/`SetUserByName` return `ErrPermDenied`; `Chown`/`Lchown` return
-  `ErrOpNotPermitted` unless an identity manager is installed.
+- The identity of a real file system is the identity of the process: there is
+  no way to change the user, so a real file system is never clonable.
+  `Chown`/`Lchown` return `ErrOpNotPermitted` unless an identity manager is
+  installed.
 - `Sub` returns `PermDenied`. No `Chroot`.
 - Exports per-OS `SysStat` adapters (`LinuxSysStat`, `WindowsSysStat`,
   `OtherSysStat`). `Type() == "OsFS"`.
@@ -427,8 +519,10 @@ select an operation to fail.
 
 - `New() *OsTestFS` (= `NewWithOptions(&Options{Idm: osidm.New()})`),
   `NewWithOptions(*Options) *Options{Idm avfs.IdmMgr}`.
-- Embeds `osfs.OsFS`; overrides `Chown`, `Lchown`, `SetUser`, `SetUserByName`,
-  `User`.
+- Embeds `osfs.OsFS`; overrides `Chown`, `Lchown` and `User`.
+- Not clonable: its user is the user of the process. `SetUser`/`SetUserByName`
+  change the credentials of the process through `osidm` and exist only to run
+  the permission tests (§3.3, rule 8).
 - Features: `FeatRealFS | FeatSymlink | FeatHardlink | idm.Features()`.
 - Implements `Chroot`: real `syscall.Chroot` on Unix (requires
   `FeatIdentityMgr`, else `ErrOpNotPermitted`), `ErrWinNotSupported` on
@@ -449,6 +543,8 @@ select an operation to fail.
   base feature set and `Symlink`/`Readlink`/`EvalSymlinks` fail with
   `PermDenied` (`ErrWinAccessDenied`/`ErrWinNotReparsePoint` on Windows).
 - `Sub` is forwarded to the base file system.
+- Implements `Cloner`: the base file system is cloned and the copy is scoped to
+  the same base path. If the base is not clonable, it returns `ErrNotSupported`.
 - `Type() == "BasePathFS"`.
 
 ### 4.6 `rofs` — read-only decorator
@@ -458,7 +554,7 @@ select an operation to fail.
 - All mutating operations return `PermDenied` (`*fs.PathError`, or
   `*os.LinkError` for `Link`/`Rename`/`Symlink`), including `File.Write`,
   `File.WriteAt`, `File.Truncate`, `File.Sync`, `File.Chmod`, `File.Chown`,
-  `File.Chdir`, and `SetIdm`/`SetUser`.
+  `File.Chdir`, and `InitIdm`.
 - `OpenFile` accepts only `os.O_RDONLY`.
 - Read operations are forwarded unchanged.
 - `Type() == "RoFS"`.
@@ -551,7 +647,7 @@ Suite invariants:
 - `TestVFSAll(t)` = `TestVFS` + `TestFile` + `TestUtils`.
 - `TestVFS(t)` runs the suite twice: once as the unprivileged user
   (`UsrTest`), and once as the administrator (root) for `Chmod`, `Chown`,
-  `Lchown`, `Chroot`, `MkSystemDirs`, `SetUserByName`, `Volume` and
+  `Lchown`, `Chroot`, `MkSystemDirs`, `Volume` and
   `WriteOnReadOnlyFS`.
 - `TestFile(t)` — per-file operation tests (read, write, seek, truncate, sync,
   `Fd`, `ReadDir`, `Readdirnames`, `ReaderFrom`/`WriterTo`, …).
@@ -616,9 +712,15 @@ Golden files exist for: `chdir`, `chmod`, `chown`, `chtimes`, `create`,
 ### 6.6 Concurrency tests
 
 `TestRace(t)` skips unless the emulated OS matches the host, then runs:
-`RaceCreate`, `RaceCreateTemp`, `RaceFileClose`, `RaceMkdir`, `RaceMkdirAll`,
-`RaceMkdirTemp`, `RaceOpen`, `RaceOpenFile`, `RaceOpenFileExcl`, `RaceRemove`,
-`RaceRemoveAll`, `RaceMkdirRemoveAll`.
+`RaceCloneWithUserName`, `RaceCreate`, `RaceCreateTemp`, `RaceFileClose`,
+`RaceMkdir`, `RaceMkdirAll`, `RaceMkdirTemp`, `RaceOpen`, `RaceOpenFile`,
+`RaceOpenFileExcl`, `RaceRemove`, `RaceRemoveAll`, `RaceMkdirRemoveAll`.
+
+`RaceCloneWithUserName` covers the concurrency of the identity views: goroutines
+cloning the *same* user (one shared view, so one current directory) and
+goroutines cloning *different* users (views created concurrently, with the
+identity manager populated beforehand, as `memidm` is not required to be safe
+for concurrent use).
 
 Each spawns 100 goroutines per function behind a `sync.RWMutex` start barrier,
 counts outcomes with `atomic.Uint32`, and asserts an exact
@@ -673,9 +775,16 @@ Any conforming implementation must satisfy:
 11. **Concurrency** — concurrent use of the same file system must be safe for
     implementations advertising concurrency (all in-memory implementations use
     mutexes; `memidm` is the documented exception).
-12. **Identity isolation** — each `VFS` instance carries its own current user,
-    working directory, home directory and temporary directory; `SetUser`
-    recomputes them.
+12. **Identity immutability** — the user, home directory, temporary directory,
+    identity manager and emulated OS type of a `VFS` are fixed at construction
+    and never change: there is no setter, so no operation can observe the
+    identity of a file system changing under it. Another identity is obtained by
+    cloning (§3.3). The current directory is the one exception and is safe to
+    change concurrently.
+13. **Clone transparency** — clones of a file system share its content, so a
+    change made through one is visible from all of them, and file identity
+    (`SameFile`) is consistent across clones. A clone changes nothing else: it
+    creates no directory and rewrites no path.
 
 ---
 
@@ -724,8 +833,17 @@ desired implementation and options.
 
 ## 9. Known gaps
 
-- `memfs` advertises `FeatSubFS` but `Sub` (and `MemIOFS.Sub`) returns
-  `PermDenied`.
+- Cloning with a foreign OS type does not convert the content: a Windows view of
+  a tree built for Linux resolves paths with Windows rules over a Unix-shaped
+  tree, and the home directory of the user generally does not exist. Building a
+  file system with `Options.OSType` is the supported way to get a consistent
+  one (§3.3, rule 6).
+- `memfs` clones memoise their identity views (one current directory per user
+  and OS type); `orefafs` clones do not, so their current directories are
+  independent. The two are not consistent with each other yet.
+- `CloneWithUserName` cannot tell an unknown user from a user the identity
+  manager refuses to disclose: both surface as the error of `LookupUser`
+  (`UnknownUserError` or `ErrPermDenied`).
 - `osfs.NewWithNoIdm()`, referenced by the readme and by `ostestfs`
   documentation, does not exist; use `osfs.New()`.
 - `memidm` is not safe for concurrent use.

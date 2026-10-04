@@ -109,7 +109,12 @@ func main() {
 
 The example below demonstrates the concurrent creation of subdirectories under a
 root directory by several users in different goroutines (works only with
-MemFS) :
+MemFS).
+
+A file system cannot change its user, so each user gets its own *view* of the
+same content with `CloneWithUserName`. The views share the content — so the
+directories they create end up in the same tree — but each has its own
+identity, which is what makes this safe to run concurrently :
 
 ```go
 package main
@@ -131,29 +136,43 @@ func main() {
 	)
 
 	idm := memidm.New()
-	vfs := memfs.New()
+	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm})
 
 	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	vfs.Chmod(rootDir, 0o777)
 
-	g, _ := idm.GroupAdd(groupName)
+	g, _ := idm.AddGroup(groupName)
+
+	// The users are created before the goroutines start: an identity manager is
+	// not required to be safe for concurrent use (memidm is not), the file
+	// systems are.
+	userNames := make([]string, 0, maxUsers)
+	for i := 0; i < maxUsers; i++ {
+		userName := fmt.Sprintf("user_%08d", i)
+		if _, err := idm.AddUser(userName, g.Name()); err != nil {
+			log.Fatalf("AddUser %s : %v", userName, err)
+		}
+
+		userNames = append(userNames, userName)
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(maxUsers)
 
-	for i := 0; i < maxUsers; i++ {
-		go func(i int) {
+	for _, userName := range userNames {
+		go func(userName string) {
 			defer wg.Done()
 
-			userName := fmt.Sprintf("user_%08d", i)
-			idm.UserAdd(userName, g.Name())
+			vfsU, err := vfs.CloneWithUserName(userName, vfs.OSType())
+			if err != nil {
+				log.Printf("CloneWithUserName %s : %v", userName, err)
 
-			vfsU, _ := vfs.Sub("/")
-			vfsU.SetUser(userName)
+				return
+			}
 
 			path := vfsU.Join(rootDir, userName)
 			vfsU.Mkdir(path, avfs.DefaultDirPerm)
-		}(i)
+		}(userName)
 	}
 
 	wg.Wait()
@@ -205,6 +224,8 @@ File system methods <br> `avfs.VFS`|Comments
 `Chown`|equivalent to `os.Chown`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
+`CloneWithUser`|returns a view of the file system acting as a user and emulating an OS type
+`CloneWithUserName`|same, by user name
 `Create`|equivalent to `os.Create`
 `CreateTemp`|equivalent to `os.CreateTemp`
 `Dir`|equivalent to `filepath.Dir`
@@ -238,7 +259,6 @@ File system methods <br> `avfs.VFS`|Comments
 `Rename`|equivalent to `os.Rename`
 `SameFile`|equivalent to `os.SameFile`
 `SetUMask`|sets the file mode creation mask
-`SetUser`|sets and returns the current user
 `Split`|equivalent to `filepath.Split`
 `Stat`|equivalent to `os.Stat`
 `Sub`|equivalent to `fs.Sub`
