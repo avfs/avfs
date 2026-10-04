@@ -38,7 +38,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	idm := avfs.DefaultIdm
 	user := opts.User
 
-	vfs := &OrefaFS{name: opts.Name, storage: &Storage{}}
+	vfs := &OrefaFS{storage: &Storage{name: opts.Name}}
 
 	_ = vfs.SetUMask(avfs.UMask())
 
@@ -75,7 +75,7 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 // Name returns the name of the fileSystem.
 func (vfs *OrefaFS) Name() string {
-	return vfs.name
+	return vfs.storage.name
 }
 
 // Type returns the type of the fileSystem or Identity manager.

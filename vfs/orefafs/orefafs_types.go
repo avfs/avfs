@@ -35,6 +35,7 @@ type Storage struct {
 	nodes  nodes         // nodes is the map of nodes (files or directories) where the key is the absolute path.
 	lastId atomic.Uint64 // lastId is the last unique id used to identify files uniquely.
 	mu     sync.RWMutex  // mu is the RWMutex used to access nodes.
+	name   string        // name is the name of the file system.
 }
 
 // OrefaFS implements a memory file system using the avfs.VFS interface.
@@ -46,7 +47,6 @@ type Storage struct {
 type OrefaFS struct {
 	err     *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
 	storage *Storage          // storage is the content shared with the clones of this file system.
-	name    string            // name is the name of the file system.
 	userDir avfs.UserDirMixin // userDir is the identity and the user directories of the file system.
 }
 

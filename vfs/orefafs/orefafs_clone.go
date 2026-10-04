@@ -64,7 +64,7 @@ func (vfs *OrefaFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*Orefa
 
 	// The clone is initialized from scratch, not copied: an OrefaFS holds an
 	// atomic pointer (its current directory), so copying one would copy a lock.
-	c := &OrefaFS{name: vfs.name, storage: vfs.storage}
+	c := &OrefaFS{storage: vfs.storage}
 
 	err := c.userDir.Init(ost, vfs.Idm(), user)
 	if err != nil {
