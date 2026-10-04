@@ -9,6 +9,7 @@ linters:
     - err113
     - errorlint
     - exhaustruct
+    - exhaustruct_v5
     - exhaustive
     - gocognit
     - gocyclo

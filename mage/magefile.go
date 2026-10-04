@@ -22,6 +22,8 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"go/build"
 	"io"
@@ -49,6 +51,7 @@ const (
 	golangCiCmd = "golangci-lint"
 	golangCiGit = "github.com/golangci/golangci-lint"
 	golangCiTgz = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-%s-%s.tar.gz"
+	golangCiPkg = "golangci-lint-%s-%s-%s.tar.gz"
 	golangCiChk = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-checksums.txt"
 	goxCmd      = "gox"
 	goxInst     = "github.com/mitchellh/gox@master"
@@ -166,25 +169,38 @@ func Fmt() error {
 
 // Lint runs golangci-lint (on Windows it must be run from a bash shell like git bash).
 func Lint() error {
-	if !isExecutable(golangCiCmd) {
+	mg.Deps(tmpInit)
+
+	golangCiBin := golangCiCmd
+	if runtime.GOOS == "windows" {
+		golangCiBin += ".exe"
+	}
+
+	// golangci-lint can be already installed in the current path or in $GOPATH/bin.
+	golangCiPath := executablePath(golangCiBin)
+	if golangCiPath == "" {
 		version, err := gitLastVersion(golangCiGit)
 		if err != nil {
 			return err
 		}
 
-		golangCiBin := golangCiCmd
-		if runtime.GOOS == "windows" {
-			golangCiBin += ".exe"
+		golangCiPath = filepath.Join(goPathBinDir, golangCiBin)
+		tgzUrl := fmt.Sprintf(golangCiTgz, version, version[1:], runtime.GOOS, runtime.GOARCH)
+		// The archive is named after the release asset so that its checksum can be
+		// found in the checksums file.
+		tgzFile := filepath.Join(tmpDir, golangCiTgzName(version))
+		chkUrl := fmt.Sprintf(golangCiChk, version, version[1:])
+		chkFile := filepath.Join(tmpDir, "golangci-lint-checksums.txt")
+
+		fmt.Printf("version = %s\ntgz url = %s\ntgz file = %s\nchk url = %s\nchk file = %s\nbin = %s\n",
+			version, tgzUrl, tgzFile, chkUrl, chkFile, golangCiPath)
+
+		err = downloadFile(chkFile, chkUrl)
+		if err != nil {
+			return err
 		}
 
-		golangCiPath := filepath.Join(goPathBinDir, golangCiBin)
-		tgzUrl := fmt.Sprintf(golangCiTgz, version, version[1:], runtime.GOOS, runtime.GOARCH)
-		tgzFile := filepath.Join("./tmp", golangCiCmd+".tar.gz")
-		chkUrl := fmt.Sprintf(golangCiChk, version, version[1:])
-		chkFile := "./tmp/golangci-lint-checksums.txt"
-
-		fmt.Printf("version = %s\ntgz url = %s\ntgz file = %s\nchk url = %s\nchk flle = %s\nbin = %s\n",
-			version, tgzUrl, tgzFile, chkUrl, chkFile, golangCiPath)
+		defer os.Remove(chkFile)
 
 		err = downloadFile(tgzFile, tgzUrl)
 		if err != nil {
@@ -193,21 +209,24 @@ func Lint() error {
 
 		defer os.Remove(tgzFile)
 
+		err = CheckFile(tgzFile, chkFile)
+		if err != nil {
+			return err
+		}
+
 		err = gzipExtract(tgzFile, golangCiBin, golangCiPath)
 		if err != nil {
 			return err
 		}
-
-		err = downloadFile(chkFile, chkUrl)
-		if err != nil {
-			return err
-		}
-
-		//defer os.Remove(chkFile)
-
 	}
 
-	return sh.RunV(golangCiCmd, "run", "-v")
+	return sh.RunV(golangCiPath, "run", "-v")
+}
+
+// golangCiTgzName returns the name of the golangci-lint archive for the current
+// platform at the given version.
+func golangCiTgzName(version string) string {
+	return fmt.Sprintf(golangCiPkg, version[1:], runtime.GOOS, runtime.GOARCH)
 }
 
 // gzipExtract extracts a specific file from a gzip-compressed tar archive and saves it to a given destination.
@@ -250,22 +269,72 @@ func gzipExtract(gzipName, fileName, destName string) error {
 				return err
 			}
 
-			defer outFile.Close()
-
 			_, err = io.Copy(outFile, tr)
 			if err != nil {
 				return err
 			}
 
-			return nil
+			err = outFile.Close()
+			if err != nil {
+				return err
+			}
+
+			return os.Chmod(destName, 0o755)
 		}
 	}
 
-	return fmt.Errorf("file %s not found in archive %s", fileName, destName)
+	return fmt.Errorf("file %s not found in archive %s", fileName, gzipName)
 }
 
+// CheckFile verifies the SHA256 checksum of a file against a golangci-lint checksums file.
 func CheckFile(fileName, chkFile string) error {
+	want, err := checksum(chkFile, fileName)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err = io.Copy(h, f); err != nil {
+		return err
+	}
+
+	got := hex.EncodeToString(h.Sum(nil))
+	if got != want {
+		return fmt.Errorf("invalid checksum for %s: got %s, want %s", fileName, got, want)
+	}
+
 	return nil
+}
+
+// checksum returns the expected checksum of fileName found in a checksums file
+// (in the "<sha256>  <filename>" format used by golangci-lint).
+func checksum(chkFile, fileName string) (string, error) {
+	content, err := os.ReadFile(chkFile)
+	if err != nil {
+		return "", err
+	}
+
+	base := filepath.Base(fileName)
+
+	for line := range strings.SplitSeq(string(content), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) != 2 {
+			continue
+		}
+
+		if filepath.Base(fields[1]) == base {
+			return fields[0], nil
+		}
+	}
+
+	return "", fmt.Errorf("checksum of %s not found in %s", fileName, chkFile)
 }
 
 // sudo runs a command as root if possible, as an unprivileged user otherwise.
@@ -546,9 +615,24 @@ func dockerTest(args ...string) error {
 
 // isExecutable checks if name is an executable in the current path.
 func isExecutable(name string) bool {
-	_, err := exec.LookPath(name)
+	return executablePath(name) != ""
+}
 
-	return err == nil
+// executablePath returns the full path of an executable found either in the current
+// path or in $GOPATH/bin. It returns an empty string if the executable is not found
+// or is not executable.
+func executablePath(name string) string {
+	path, err := exec.LookPath(name)
+	if err == nil && path != "" {
+		return path
+	}
+
+	path = filepath.Join(goPathBinDir, name)
+	if info, err := os.Stat(path); err == nil && !info.IsDir() && info.Mode()&0o111 != 0 {
+		return path
+	}
+
+	return ""
 }
 
 // isCI tests if we run in a CI environment.
