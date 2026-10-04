@@ -31,6 +31,7 @@ import (
 // ExampleNewWithOptions should produce the same results independently of the host OS.
 func ExampleNewWithOptions() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
+
 	vfs, err := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 	if err != nil {
 		log.Fatalf("NewWithOptions : want error to be nil, got %v", err)
@@ -43,7 +44,7 @@ func ExampleNewWithOptions() {
 	homeDir, _ := vfs.UserHomeDir()
 	fmt.Println(homeDir)
 
-	_, err := vfs.Stat(homeDir)
+	_, err = vfs.Stat(homeDir)
 	if err == nil {
 		fmt.Printf("%s exists", homeDir)
 	}
@@ -61,10 +62,11 @@ func ExampleNewWithOptions_noSystemDirs() {
 	if err != nil {
 		log.Fatalf("NewWithOptions : want error to be nil, got %v", err)
 	}
+
 	tmpDir := vfs.TempDir()
 	fmt.Println(tmpDir)
 
-	_, err := vfs.Stat(tmpDir)
+	_, err = vfs.Stat(tmpDir)
 	if err != nil {
 		fmt.Printf("%s does not exist", tmpDir)
 	}
@@ -77,6 +79,7 @@ func ExampleNewWithOptions_noIdm() {
 	if err != nil {
 		log.Fatalf("NewWithOptions : want error to be nil, got %v", err)
 	}
+
 	fmt.Println(vfs.User().Name())
 
 	// Output: Default
@@ -84,12 +87,13 @@ func ExampleNewWithOptions_noIdm() {
 
 func ExampleMemFS_Sub() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
+
 	vfsSrc, err := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 	if err != nil {
 		log.Fatalf("NewWithOptions : want error to be nil, got %v", err)
 	}
 
-	_, err := vfsSrc.Idm().AddUser(test.UsrTest, "root")
+	_, err = vfsSrc.Idm().AddUser(test.UsrTest, "root")
 	if err != nil {
 		log.Fatalf("AddUser : want error to be nil, got %v", err)
 	}
@@ -121,12 +125,13 @@ func ExampleMemFS_Sub() {
 
 func ExampleMemFS_CloneWithUserName() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
+
 	vfs, err := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 	if err != nil {
 		log.Fatalf("NewWithOptions : want error to be nil, got %v", err)
 	}
 
-	_, err := vfs.Idm().AddUser(test.UsrTest, idm.AdminGroup().Name())
+	_, err = vfs.Idm().AddUser(test.UsrTest, idm.AdminGroup().Name())
 	if err != nil {
 		log.Fatalf("AddUser : want error to be nil, got %v", err)
 	}
