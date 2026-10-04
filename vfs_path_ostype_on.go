@@ -697,7 +697,7 @@ func (pmx *PathMixin) Rel(basepath, targpath string) (string, error) {
 		buf := make([]byte, size)
 		n := copy(buf, "..")
 
-		for i := 0; i < seps; i++ {
+		for range seps {
 			buf[n] = pathSeparator
 			copy(buf[n+1:], "..")
 			n += 3
@@ -777,8 +777,8 @@ func (pmx *PathMixin) Split(path string) (dir, file string) {
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func ToSlash[T VFSBase](vfs T, path string) string {
-	pathSeparator := vfs.PathSeparator()
+func (pmx *PathMixin) ToSlash(path string) string {
+	pathSeparator := pmx.PathSeparator()
 
 	if pathSeparator == '/' {
 		return path
