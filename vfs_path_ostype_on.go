@@ -215,6 +215,10 @@ func (pmx *PathMixin) postClean(out *lazybuf) {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
+//
+// On Windows, given a volume-only name such as "C:", Dir returns "C:.",
+// the current directory on drive C. To obtain the drive's root "C:\",
+// use VolumeName combined with a separator.
 func (pmx *PathMixin) Dir(path string) string {
 	vol := pmx.VolumeName(path)
 
@@ -235,30 +239,27 @@ func (pmx *PathMixin) Dir(path string) string {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
+//
+// See also the Localize function, which converts a slash-separated path
+// as used by the io/fs package to an operating system path.
 func (pmx *PathMixin) FromSlash(path string) string {
-	pathSeparator := pmx.PathSeparator()
-
 	if pmx.OSType() != OsWindows {
 		return path
 	}
 
-	return strings.ReplaceAll(path, "/", string(pathSeparator))
+	return strings.ReplaceAll(path, "/", string(pmx.PathSeparator()))
 }
 
 // getEsc gets a possibly-escaped character from chunk, for a character class.
 func (pmx *PathMixin) getEsc(chunk string) (r rune, nchunk string, err error) {
 	if chunk == "" || chunk[0] == '-' || chunk[0] == ']' {
-		err = filepath.ErrBadPattern
-
-		return r, nchunk, err
+		return r, nchunk, filepath.ErrBadPattern
 	}
 
 	if chunk[0] == '\\' && pmx.OSType() != OsWindows {
 		chunk = chunk[1:]
 		if chunk == "" {
-			err = filepath.ErrBadPattern
-
-			return r, nchunk, err
+			return r, nchunk, filepath.ErrBadPattern
 		}
 	}
 
@@ -287,7 +288,7 @@ func (pmx *PathMixin) IsAbs(path string) bool {
 	}
 
 	// If the volume name starts with a double slash, this is an absolute path.
-	if isSlash(path[0]) && isSlash(path[1]) {
+	if pmx.IsPathSeparator(path[0]) && pmx.IsPathSeparator(path[1]) {
 		return true
 	}
 
@@ -296,7 +297,7 @@ func (pmx *PathMixin) IsAbs(path string) bool {
 		return false
 	}
 
-	return isSlash(path[0])
+	return pmx.IsPathSeparator(path[0])
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
@@ -308,13 +309,13 @@ func (pmx *PathMixin) IsPathSeparator(c uint8) bool {
 	return c == '\\' || c == '/'
 }
 
-func isSlash(c uint8) bool {
-	return c == '\\' || c == '/'
-}
-
-// Join joins any number of path elements into a single path, adding a
-// separating slash if necessary. The result is Cleaned; in particular,
-// all empty strings are ignored.
+// Join joins any number of path elements into a single path,
+// separating them with an OS specific Separator. Empty elements
+// are ignored. The result is Cleaned. However, if the argument
+// list is empty or all its elements are empty, Join returns
+// an empty string.
+// On Windows, the result will only be a UNC path if the first
+// non-empty element is a UNC path.
 func (pmx *PathMixin) Join(elem ...string) string {
 	if pmx.OSType() == OsWindows {
 		return pmx.joinWindows(elem)
@@ -342,7 +343,7 @@ func (pmx *PathMixin) joinWindows(elem []string) string {
 		switch {
 		case b.Len() == 0:
 			// Add the first non-empty path element unchanged.
-		case isSlash(lastChar):
+		case pmx.IsPathSeparator(lastChar):
 			// If the path ends in a slash, strip any leading slashes from the next
 			// path element to avoid creating a UNC path (any path starting with "\\")
 			// from non-UNC elements.
@@ -350,17 +351,16 @@ func (pmx *PathMixin) joinWindows(elem []string) string {
 			// The correct behavior for Join when the first element is an incomplete UNC
 			// path (for example, "\\") is underspecified. We currently join subsequent
 			// elements so Join("\\", "host", "share") produces "\\host\share".
-			for len(e) > 0 && isSlash(e[0]) {
+			for len(e) > 0 && pmx.IsPathSeparator(e[0]) {
 				e = e[1:]
 			}
 
 			// If the path is \ and the next path element is ??,
 			// add an extra .\ to create \.\?? rather than \??\
 			// (a Root Local Device path).
-			if b.Len() == 1 && pathHasPrefixFold(e, "??") {
+			if b.Len() == 1 && strings.HasPrefix(e, "??") && (len(e) == len("??") || pmx.IsPathSeparator(e[2])) {
 				b.WriteString(`.\`)
 			}
-
 		case lastChar == ':':
 			// If the path ends in a colon, keep the path relative to the current directory
 			// on a drive and don't add a separator. Preserve leading slashes in the next
@@ -388,39 +388,6 @@ func (pmx *PathMixin) joinWindows(elem []string) string {
 	return pmx.Clean(b.String())
 }
 
-// pathHasPrefixFold tests whether the path s begins with prefix,
-// ignoring case and treating all path separators as equivalent.
-// If s is longer than prefix, then s[len(prefix)] must be a path separator.
-func pathHasPrefixFold(s, prefix string) bool {
-	if len(s) < len(prefix) {
-		return false
-	}
-
-	for i := 0; i < len(prefix); i++ {
-		if isSlash(prefix[i]) {
-			if !isSlash(s[i]) {
-				return false
-			}
-		} else if toUpper(prefix[i]) != toUpper(s[i]) {
-			return false
-		}
-	}
-
-	if len(s) > len(prefix) && !isSlash(s[len(prefix)]) {
-		return false
-	}
-
-	return true
-}
-
-func toUpper(c byte) byte {
-	if 'a' <= c && c <= 'z' {
-		return c - ('a' - 'A')
-	}
-
-	return c
-}
-
 // Match reports whether name matches the shell file name pattern.
 // The pattern syntax is:
 //
@@ -432,12 +399,14 @@ func toUpper(c byte) byte {
 //		'[' [ '^' ] { character-range } ']'
 //		            character class (must be non-empty)
 //		c           matches character c (c != '*', '?', '\\', '[')
-//		'\\' c      matches character c
+//		'\\' c      matches character c (except on Windows)
 //
 //	character-range:
 //		c           matches character c (c != '\\', '-', ']')
-//		'\\' c      matches character c
+//		'\\' c      matches character c (except on Windows)
 //		lo '-' hi   matches character c for lo <= c <= hi
+//
+// Path segments in the pattern must be separated by Separator.
 //
 // Match requires pattern to match all of name, not just a substring.
 // The only possible returned error is ErrBadPattern, when pattern
@@ -485,6 +454,7 @@ Pattern:
 					if pattern == "" && len(t) > 0 {
 						continue
 					}
+
 					name = t
 
 					continue Pattern
@@ -513,10 +483,7 @@ func (pmx *PathMixin) matchChunk(chunk, s string) (rest string, ok bool, err err
 	failed := false
 
 	for len(chunk) > 0 {
-		if !failed && s == "" {
-			failed = true
-		}
-
+		failed = failed || s == ""
 		switch chunk[0] {
 		case '[':
 			// character class
@@ -524,6 +491,7 @@ func (pmx *PathMixin) matchChunk(chunk, s string) (rest string, ok bool, err err
 
 			if !failed {
 				var n int
+
 				r, n = utf8.DecodeRuneInString(s)
 				s = s[n:]
 			}
@@ -562,21 +530,14 @@ func (pmx *PathMixin) matchChunk(chunk, s string) (rest string, ok bool, err err
 					}
 				}
 
-				if lo <= r && r <= hi {
-					match = true
-				}
-
+				match = match || lo <= r && r <= hi
 				nrange++
 			}
 
-			if match == negated {
-				failed = true
-			}
+			failed = failed || match == negated
 		case '?':
 			if !failed {
-				if s[0] == pathSeparator {
-					failed = true
-				}
+				failed = s[0] == pathSeparator
 
 				_, n := utf8.DecodeRuneInString(s)
 				s = s[n:]
@@ -594,9 +555,7 @@ func (pmx *PathMixin) matchChunk(chunk, s string) (rest string, ok bool, err err
 			fallthrough
 		default:
 			if !failed {
-				if chunk[0] != s[0] {
-					failed = true
-				}
+				failed = chunk[0] != s[0]
 
 				s = s[1:]
 			}
@@ -615,11 +574,12 @@ func (pmx *PathMixin) matchChunk(chunk, s string) (rest string, ok bool, err err
 // Rel returns a relative path that is lexically equivalent to targpath when
 // joined to basepath with an intervening separator. That is,
 // Join(basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-// On success, the returned path will always be relative to basepath,
-// even if basepath and targpath share no elements.
+//
+// The returned path will always be relative to basepath, even if basepath and
+// targpath share no elements. Rel calls Clean on the result.
+//
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
-// Rel calls Clean on the result.
 func (pmx *PathMixin) Rel(basepath, targpath string) (string, error) {
 	pathSeparator := pmx.PathSeparator()
 
@@ -708,7 +668,7 @@ func (pmx *PathMixin) Rel(basepath, targpath string) (string, error) {
 			copy(buf[n+1:], targ[t0:])
 		}
 
-		return string(buf), nil
+		return pmx.Clean(string(buf)), nil
 	}
 
 	return targ[t0:], nil
@@ -732,17 +692,12 @@ func (pmx *PathMixin) scanChunk(pattern string) (star bool, chunk, rest string) 
 
 	inrange := false
 
-	var i int
-
-Scan:
-	for i = 0; i < len(pattern); i++ {
+	for i := 0; i < len(pattern); i++ {
 		switch pattern[i] {
 		case '\\':
-			if pmx.OSType() != OsWindows {
-				// error check handled in matchChunk: bad pattern.
-				if i+1 < len(pattern) {
-					i++
-				}
+			// error check handled in matchChunk: bad pattern.
+			if pmx.OSType() != OsWindows && i+1 < len(pattern) {
+				i++
 			}
 		case '[':
 			inrange = true
@@ -750,12 +705,12 @@ Scan:
 			inrange = false
 		case '*':
 			if !inrange {
-				break Scan
+				return star, pattern[:i], pattern[i:]
 			}
 		}
 	}
 
-	return star, pattern[0:i], pattern[i:]
+	return star, pattern, ""
 }
 
 // Split splits path immediately following the final Separator,
@@ -787,7 +742,7 @@ func (pmx *PathMixin) ToSlash(path string) string {
 	return strings.ReplaceAll(path, string(pathSeparator), "/")
 }
 
-// VolumeName returns the leading volume name.
+// VolumeName returns leading volume name.
 // Given "C:\foo\bar" it returns "C:" on Windows.
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
@@ -802,45 +757,129 @@ func (pmx *PathMixin) VolumeNameLen(path string) int {
 		return 0
 	}
 
-	if len(path) < 2 {
-		return 0
-	}
-
-	// with drive letter
-	c := path[0]
-	if path[1] == ':' && ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z') {
+	switch {
+	case len(path) >= 2 && path[1] == ':':
+		// Path starts with a drive letter.
+		//
+		// Not all Windows functions necessarily enforce the requirement that
+		// drive letters be in the set A-Z, and we don't try to here.
+		//
+		// We don't handle the case of a path starting with a non-ASCII character,
+		// in which case the "drive letter" might be multiple bytes long.
 		return 2
+
+	case len(path) == 0 || !pmx.IsPathSeparator(path[0]):
+		// Path does not have a volume component.
+		return 0
+
+	case pmx.pathHasPrefixFold(path, `\\.`) ||
+		pmx.pathHasPrefixFold(path, `\\?`) || pmx.pathHasPrefixFold(path, `\??`):
+		// Path starts with a device prefix: \\.\ for Local Device paths,
+		// or \\?\ or \??\ for Root Local Device paths.
+		switch {
+		case len(path) == 3:
+			return 3 // exactly \\., \\?, or \??
+		case pmx.pathHasPrefixFold(path[4:], `UNC`):
+			// We're going to treat the UNC host and share as part of the volume
+			// prefix for historical reasons, but this isn't really principled;
+			// Windows's own GetFullPathName will happily remove the first
+			// component of the path in this space, converting
+			// \\.\unc\a\b\..\c into \\.\unc\a\c.
+			return pmx.validVolumeNameLen(path, pmx.uncLen(path, len(`\\.\UNC\`)))
+		}
+		//
+		// We treat the next component after the device prefix as
+		// part of the volume name, which means Clean(`\\?\c:\`)
+		// won't remove the trailing \. (See #64028.)
+		_, rest, ok := pmx.cutPath(path[4:])
+		if !ok {
+			return pmx.validVolumeNameLen(path, len(path))
+		}
+
+		return pmx.validVolumeNameLen(path, len(path)-len(rest)-1)
+
+	case len(path) >= 2 && pmx.IsPathSeparator(path[1]):
+		// Path starts with \\, and is a UNC path.
+		return pmx.validVolumeNameLen(path, pmx.uncLen(path, 2))
 	}
 
-	// is it UNC? https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
-	if l := len(path); l >= 5 && isSlash(path[0]) && isSlash(path[1]) &&
-		!isSlash(path[2]) && path[2] != '.' {
-		// first, leading `\\` and next shouldn't be `\`. its server name.
-		for n := 3; n < l-1; n++ {
-			// second, next '\' shouldn't be repeated.
-			if isSlash(path[n]) {
-				n++
-				// third, following something characters. its share name.
-				if !isSlash(path[n]) {
-					if path[n] == '.' {
-						break
-					}
+	return 0
+}
 
-					for ; n < l; n++ {
-						if isSlash(path[n]) {
-							break
-						}
-					}
+// validVolumeNameLen returns n if path[:n] is a valid Windows volume name.
+// If the volume name contains a ".." path component, it returns 0.
+func (pmx *PathMixin) validVolumeNameLen(path string, n int) int {
+	for p := path[:n]; p != ""; {
+		var part string
 
-					return n
-				}
+		part, p, _ = pmx.cutPath(p)
+		if part == ".." {
+			return 0
+		}
+	}
 
-				break
+	return n
+}
+
+// pathHasPrefixFold tests whether the path s begins with prefix,
+// ignoring case and treating all path separators as equivalent.
+// If s is longer than prefix, then s[len(prefix)] must be a path separator.
+func (pmx *PathMixin) pathHasPrefixFold(s, prefix string) bool {
+	if len(s) < len(prefix) {
+		return false
+	}
+
+	for i := 0; i < len(prefix); i++ {
+		if pmx.IsPathSeparator(prefix[i]) {
+			if !pmx.IsPathSeparator(s[i]) {
+				return false
+			}
+		} else if toUpper(prefix[i]) != toUpper(s[i]) {
+			return false
+		}
+	}
+
+	if len(s) > len(prefix) && !pmx.IsPathSeparator(s[len(prefix)]) {
+		return false
+	}
+
+	return true
+}
+
+func toUpper(c byte) byte {
+	if 'a' <= c && c <= 'z' {
+		return c - ('a' - 'A')
+	}
+
+	return c
+}
+
+// uncLen returns the length of the volume prefix of a UNC path.
+// prefixLen is the prefix prior to the start of the UNC host;
+// for example, for "//host/share", the prefixLen is len("//")==2.
+func (pmx *PathMixin) uncLen(path string, prefixLen int) int {
+	count := 0
+	for i := prefixLen; i < len(path); i++ {
+		if pmx.IsPathSeparator(path[i]) {
+			count++
+			if count == 2 {
+				return i
 			}
 		}
 	}
 
-	return 0
+	return len(path)
+}
+
+// cutPath slices path around the first path separator.
+func (pmx *PathMixin) cutPath(path string) (before, after string, found bool) {
+	for i := range path {
+		if pmx.IsPathSeparator(path[i]) {
+			return path[:i], path[i+1:], true
+		}
+	}
+
+	return path, "", false
 }
 
 // A lazybuf is a lazily constructed path buffer.

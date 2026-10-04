@@ -61,6 +61,10 @@ type VFSPath interface {
 	// If the path is empty, Dir returns ".".
 	// If the path consists entirely of separators, Dir returns a single separator.
 	// The returned path does not end in a separator unless it is the root directory.
+	//
+	// On Windows, given a volume-only name such as "C:", Dir returns "C:.",
+	// the current directory on drive C. To obtain the drive's root "C:\",
+	// use VolumeName combined with a separator.
 	Dir(path string) string
 
 	// FromSlash returns the result of replacing each slash ('/') character
@@ -97,11 +101,11 @@ type VFSPath interface {
 	//		'[' [ '^' ] { character-range } ']'
 	//		            character class (must be non-empty)
 	//		c           matches character c (c != '*', '?', '\\', '[')
-	//		'\\' c      matches character c
+	//		'\\' c      matches character c (except on Windows)
 	//
 	//	character-range:
 	//		c           matches character c (c != '\\', '-', ']')
-	//		'\\' c      matches character c
+	//		'\\' c      matches character c (except on Windows)
 	//		lo '-' hi   matches character c for lo <= c <= hi
 	//
 	// Match requires pattern to match all of name, not just a substring.
@@ -118,11 +122,12 @@ type VFSPath interface {
 	// Rel returns a relative path that is lexically equivalent to targpath when
 	// joined to basepath with an intervening separator. That is,
 	// [Join](basepath, Rel(basepath, targpath)) is equivalent to targpath itself.
-	// On success, the returned path will always be relative to basepath,
-	// even if basepath and targpath share no elements.
+	//
+	// The returned path will always be relative to basepath, even if basepath and
+	// targpath share no elements. Rel calls Clean on the result.
+	//
 	// An error is returned if targpath can't be made relative to basepath or if
 	// knowing the current working directory would be necessary to compute it.
-	// Rel calls [Clean] on the result.
 	Rel(basepath, targpath string) (string, error)
 
 	// Split splits path immediately following the final [Separator],
@@ -140,7 +145,7 @@ type VFSPath interface {
 	// ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
 	ToSysStat(info fs.FileInfo) SysStater
 
-	// VolumeName returns the leading volume name.
+	// VolumeName returns leading volume name.
 	// Given "C:\foo\bar" it returns "C:" on Windows.
 	// Given "\\host\share\foo" it returns "\\host\share".
 	// On other platforms it returns "".

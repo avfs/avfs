@@ -239,6 +239,14 @@ Both provide the *same* method set, so `PathMixin` satisfies `VFSPath` in either
 configuration; no method may be dropped or renamed by the tag. `ToSysStat` and
 `VolumeManager` are tag-independent.
 
+The `avfs_setostype` implementation is a port of the standard library
+`path/filepath` and `internal/filepathlite` code of **Go 1.27**, where the
+compile-time `Separator`, `IsPathSeparator` and `volumeNameLen` decisions are
+replaced by the emulated `OSType`. It therefore recognizes the Windows device
+prefixes (`\\.\`, `\\?\`, `\??\`) and rejects a volume name containing a `..`
+path element, like the standard library does. It must be refreshed when a
+newer Go version fixes the ported functions.
+
 ### 3.5 Feature flags
 
 `Features` is a `uint64` bitmask:
