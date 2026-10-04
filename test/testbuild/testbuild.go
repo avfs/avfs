@@ -33,7 +33,7 @@ import (
 	"github.com/avfs/avfs/vfs/rofs"
 )
 
-// This code is used by gox to generate an executable for all operating systems (see mage/magefile.go).
+// This code is used by minigox to generate an executable for all operating systems (see mage/magefile.go).
 // It should use all functions that depend on OS specific syscalls to make sure every system can be built.
 func main() {
 	runOsTestFS()
@@ -94,7 +94,7 @@ func runMemIdm() {
 }
 
 func vfsFuncs(vfs avfs.VFS) {
-	tmpDir, err := vfs.MkdirTemp("", "gox")
+	tmpDir, err := vfs.MkdirTemp("", "minigox")
 	if err != nil {
 		log.Fatal(err)
 	}

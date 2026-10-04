@@ -59,7 +59,7 @@ The library provides:
 | `idm/osidm` | Identity manager backed by OS commands (testing only) |
 | `test` | Generic conformance test suite, benchmarks and fixtures |
 | `test/testbuild` | Cross-compilation smoke program referencing every OS-specific symbol |
-| `mage` | Build tooling (gox cross-compilation, lint, release) |
+| `mage` | Build tooling (minigox cross-compilation, lint, release) |
 
 ---
 
@@ -747,7 +747,7 @@ with 32 KiB buffers and up to 32 MiB files; `benchOpenFlags()` adds
 
 `test/testbuild` is a `package main` that references every `VFS`,
 `IdmMgr`, `UserReader` and `GroupReader` method for every implementation,
-so `gox` cross-compilation proves all OS-specific syscall paths compile.
+so `minigox` cross-compilation proves all OS-specific syscall paths compile.
 
 ---
 

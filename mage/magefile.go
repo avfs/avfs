@@ -53,8 +53,8 @@ const (
 	golangCiTgz = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-%s-%s.tar.gz"
 	golangCiPkg = "golangci-lint-%s-%s-%s.tar.gz"
 	golangCiChk = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-checksums.txt"
-	goxCmd      = "gox"
-	goxInst     = "github.com/mitchellh/gox@master"
+	minigoxCmd  = "minigox"
+	minigoxInst = "github.com/psadac/minigox@master"
 	sudoCmd     = "sudo"
 	tarCmd      = "tar"
 	raceCount   = 12
@@ -68,12 +68,15 @@ var (
 	dockerCmd         string
 	dockerTestDataDir string
 	dockerTmpDir      string
+	excludedPlatforms []string
 	goPathBinDir      string
 	tmpDir            string
 	testDataDir       string
 )
 
 func init() {
+	excludedPlatforms = []string{"android/*"}
+
 	appDir, _ = os.Getwd()
 	appDir = strings.TrimSuffix(appDir, "mage")
 
@@ -403,34 +406,6 @@ func TestAsRoot() error {
 	return CoverResult()
 }
 
-// goOSArch returns an array of [goos/goarch, goos, goarch].
-func goOSArch(exclusions ...string) []string {
-	buf, err := sh.Output(goCmd, "tool", "dist", "list")
-	if err != nil {
-		return nil
-	}
-
-	lines := strings.Split(buf, "\n")
-	result := make([]string, 0, len(lines))
-
-mainLoop:
-	for _, line := range lines {
-		if !strings.Contains(line, "/") {
-			continue
-		}
-
-		for _, exclusion := range exclusions {
-			if strings.Contains(line, exclusion) {
-				continue mainLoop
-			}
-		}
-
-		result = append(result, line)
-	}
-
-	return result
-}
-
 // goPackages list packages excluding those containing exclude text.
 func goPackages(exclude string) []string {
 	out, err := sh.Output(goCmd, "list", "./...")
@@ -464,22 +439,20 @@ func goPackages(exclude string) []string {
 func TestBuild() error {
 	mg.Deps(tmpInit)
 
-	if !isExecutable(goxCmd) {
-		err := sh.RunV(goCmd, "install", goxInst)
+	if !isExecutable(minigoxCmd) {
+		err := sh.RunV(goCmd, "install", minigoxInst)
 		if err != nil {
 			return err
 		}
 	}
 
 	srcPath := filepath.Join(appDir, "test/testbuild")
-	outPath := filepath.Join(appDir, "tmp/{{.Dir}}/{{.Dir}}_{{.OS}}_{{.Arch}}")
-	archArr := goOSArch("android/") // Exclude Android platforms: need additional tools to compile.
+	outPath := filepath.Join(appDir, "tmp/testbuild")
 
-	fmt.Printf("\n archarr = %v\n", archArr)
-
-	err := sh.RunV(goxCmd, "-cgo",
-		"-osarch=\""+strings.Join(archArr, " ")+"\"",
-		"-output="+outPath,
+	// Android platforms need additional tools to compile: they are reported as skipped.
+	err := sh.RunV(minigoxCmd,
+		"-out="+outPath,
+		"-exclude="+strings.Join(excludedPlatforms, " "),
 		srcPath)
 	if err != nil {
 		return err
