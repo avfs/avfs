@@ -23,12 +23,14 @@ import (
 
 // New returns a new OS file system with the default Options.
 // Don't use this for a production environment, prefer NewWithNoIdm.
-func New() *OsTestFS {
-	return NewWithOptions(&Options{Idm: osidm.New()})
+func New() (*OsTestFS, error) {
+	idm := osidm.New()
+
+	return NewWithOptions(&Options{Idm: idm})
 }
 
 // NewWithOptions returns a new memory file system (MemFS) with the selected Options.
-func NewWithOptions(opts *Options) *OsTestFS {
+func NewWithOptions(opts *Options) (*OsTestFS, error) {
 	if opts == nil {
 		opts = &Options{}
 	}
@@ -42,9 +44,13 @@ func NewWithOptions(opts *Options) *OsTestFS {
 	vfs := &OsTestFS{}
 
 	_ = vfs.SetFeatures(features)
-	_ = vfs.InitIdm(idm)
 
-	return vfs
+	err := vfs.InitIdm(idm)
+	if err != nil {
+		return nil, err
+	}
+
+	return vfs, nil
 }
 
 // Name returns the name of the fileSystem.

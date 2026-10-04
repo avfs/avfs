@@ -449,7 +449,7 @@ select an operation to fail.
 
 ### 4.1 `memfs` — full-featured in-memory reference
 
-- `New() *MemFS`, `NewWithOptions(*Options) *MemFS`
+- `New() (*MemFS, error)`, `NewWithOptions(*Options) (*MemFS, error)`
 - `Options{Idm, User, Name, SystemDirs []avfs.DirInfo, OSType}`; `nil` means
   defaults (`memidm.New()`, `idm.AdminUser()`, `avfs.SystemDirs(vfs)`, host
   umask, current OSType).
@@ -487,7 +487,8 @@ select an operation to fail.
 
 ### 4.2 `orefafs` — simplified in-memory file system
 
-- `New() *OrefaFS`, `NewWithOptions(*Options) *OrefaFS`
+- `New() (*OrefaFS, error)`,
+  `NewWithOptions(*Options) (*OrefaFS, error)`
 - `Options{User, Name, SystemDirs, OSType}` — no `Idm` field.
 - Exports `OrefaFS`, `OrefaFile`, `OrefaInfo`.
 - Internals: a flat `map[string]*node` keyed by absolute path plus per-node
@@ -510,7 +511,7 @@ select an operation to fail.
 
 ### 4.3 `osfs` — native file system
 
-- `New() *OsFS` (no options).
+- `New() (*OsFS, error)` (no options).
 - Every method is a direct `os.*`/`path/filepath.*` call; `*os.File` is
   returned as the `avfs.File`.
 - Features: `FeatRealFS | FeatSymlink | FeatHardlink`; identity manager is
@@ -525,8 +526,10 @@ select an operation to fail.
 
 ### 4.4 `ostestfs` — native file system with OS identity
 
-- `New() *OsTestFS` (= `NewWithOptions(&Options{Idm: osidm.New()})`),
-  `NewWithOptions(*Options) *Options{Idm avfs.IdmMgr}`.
+- `New() (*OsTestFS, error)`
+  (= `NewWithOptions(&Options{Idm: osidm.New()})`),
+  `NewWithOptions(*Options) (*OsTestFS, error)`;
+  `Options{Idm avfs.IdmMgr}`.
 - Embeds `osfs.OsFS`; overrides `Chown`, `Lchown` and `User`.
 - Not clonable: its user is the user of the process. `SetUser`/`SetUserByName`
   change the credentials of the process through `osidm` and exist only to run
@@ -539,8 +542,7 @@ select an operation to fail.
 
 ### 4.5 `basepathfs` — base-path decorator
 
-- `New(baseFS avfs.VFS, basePath string) *BasePathFS` (panics on error),
-  `NewWithErr(baseFS, basePath) (*BasePathFS, error)` — the base path must
+- `New(baseFS avfs.VFS, basePath string) (*BasePathFS, error)` — the base path must
   exist and be a directory, otherwise `*fs.PathError` with
   `ErrNotADirectory`.
 - Exports `BasePathFS`, `BasePathFile`, plus the translation helpers
@@ -559,7 +561,7 @@ select an operation to fail.
 
 ### 4.6 `rofs` — read-only decorator
 
-- `New(baseFS avfs.VFS) *RoFS`; exports `RoFS`, `RoFile`.
+- `New(baseFS avfs.VFS) (*RoFS, error)`; exports `RoFS`, `RoFile`.
 - Features: `base.Features() &^ FeatIdentityMgr | FeatReadOnly`.
 - All mutating operations return `PermDenied` (`*fs.PathError`, or
   `*os.LinkError` for `Link`/`Rename`/`Symlink`), including `File.Write`,
@@ -571,7 +573,7 @@ select an operation to fail.
 
 ### 4.7 `failfs` — fault-injection decorator
 
-- `New(baseFS avfs.VFS) *FailFS`;
+- `New(baseFS avfs.VFS) (*FailFS, error)`;
   `SetFailFunc(FailFunc) error`.
 - `type FailFunc func(vfs avfs.VFSBase, fn avfs.FnVFS, failParam *FailParam) error`
 - `FailParam{ATime, MTime, Op, Path, NewPath, Flag, Uid, Gid, Size, Perm}`.
@@ -805,6 +807,7 @@ Any conforming implementation must satisfy:
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/avfs/avfs"
@@ -813,13 +816,19 @@ import (
 )
 
 func main() {
-	var vfs avfs.VFS
+	var (
+		vfs avfs.VFS
+		err error
+	)
 
 	switch os.Getenv("ENV") {
 	case "PROD":
-		vfs = osfs.New()
+		vfs, err = osfs.New()
 	default:
-		vfs = memfs.New()
+		vfs, err = memfs.New()
+	}
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	rootDir, _ := vfs.MkdirTemp("", "avfs")

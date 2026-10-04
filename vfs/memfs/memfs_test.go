@@ -52,14 +52,16 @@ var (
 )
 
 func TestMemFS(t *testing.T) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	test.RequireNoError(t, err, "New")
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)
 }
 
 func TestMemFSWithNoIdm(t *testing.T) {
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: avfs.DefaultIdm})
+	vfs, err := memfs.NewWithOptions(&memfs.Options{Idm: avfs.DefaultIdm})
+	test.RequireNoError(t, err, "NewWithOptions")
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)
@@ -76,7 +78,8 @@ func TestMemFSOptionUser(t *testing.T) {
 	u, err := idm.AddUser(userName, groupName)
 	test.RequireNoError(t, err, "AddUser %s", userName)
 
-	vfs := memfs.NewWithOptions(&memfs.Options{User: u})
+	vfs, err := memfs.NewWithOptions(&memfs.Options{User: u})
+	test.RequireNoError(t, err, "NewWithOptions")
 
 	dir := "test"
 	err = vfs.Mkdir(dir, avfs.DefaultDirPerm)
@@ -99,12 +102,15 @@ func TestMemFSOptionUser(t *testing.T) {
 func TestMemFSOptionName(t *testing.T) {
 	const wantName = "whatever"
 
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	test.RequireNoError(t, err, "New")
+
 	if vfs.Name() != "" {
 		t.Errorf("New : want name to be '', got %s", vfs.Name())
 	}
 
-	vfs = memfs.NewWithOptions(&memfs.Options{Name: wantName})
+	vfs, err = memfs.NewWithOptions(&memfs.Options{Name: wantName})
+	test.RequireNoError(t, err, "NewWithOptions")
 
 	name := vfs.Name()
 	if name != wantName {
@@ -113,7 +119,8 @@ func TestMemFSOptionName(t *testing.T) {
 }
 
 func TestMemFSConfig(t *testing.T) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	test.RequireNoError(t, err, "New")
 
 	wantFeatures := avfs.FeatHardlink | avfs.FeatSubFS | avfs.FeatSymlink | avfs.FeatIdentityMgr |
 		avfs.BuildFeatures()
@@ -133,7 +140,10 @@ func TestMemFSConfig(t *testing.T) {
 }
 
 func BenchmarkMemFSAll(b *testing.B) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(b, vfs, vfs)
 	ts.BenchAll(b)

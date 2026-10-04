@@ -846,7 +846,7 @@ func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
 // The returned file system shares the content of vfs: a file created through
 // either of them is visible from both.
 func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
-	vfsSub, err := basepathfs.NewWithErr(vfs, dir)
+	vfsSub, err := basepathfs.New(vfs, dir)
 	if err != nil {
 		return nil, err
 	}

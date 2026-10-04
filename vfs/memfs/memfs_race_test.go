@@ -26,7 +26,10 @@ import (
 )
 
 func TestRaceMemFS(t *testing.T) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestRace(t)

@@ -77,9 +77,13 @@ func main() {
 
 	switch os.Getenv("ENV") {
 	case "PROD": // The real file system for production.
-		vfs = osfs.NewWithNoIdm()
+		vfs, err = osfs.New()
 	default: // in memory for tests.
-		vfs = memfs.New()
+		vfs, err = memfs.New()
+	}
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// From this point all references of 'os', 'path/filepath'
@@ -136,7 +140,10 @@ func main() {
 	)
 
 	idm := memidm.New()
-	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm})
+	vfs, err := memfs.NewWithOptions(&memfs.Options{Idm: idm})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rootDir, _ := vfs.MkdirTemp("", "avfs")
 	vfs.Chmod(rootDir, 0o777)

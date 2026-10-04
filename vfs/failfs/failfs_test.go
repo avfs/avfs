@@ -50,16 +50,30 @@ var (
 )
 
 func TestFailFSNoFail(t *testing.T) {
-	baseFS := orefafs.New()
-	vfs := failfs.New(baseFS)
+	baseFS, err := orefafs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	vfs, err := failfs.New(baseFS)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)
 }
 
 func TestFailFSReadOnly(t *testing.T) {
-	baseFS := orefafs.New()
-	vfs := failfs.New(baseFS)
+	baseFS, err := orefafs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	vfs, err := failfs.New(baseFS)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	features := baseFS.Features()
 	_ = vfs.SetFeatures(features&^avfs.FeatIdentityMgr | avfs.FeatReadOnly)

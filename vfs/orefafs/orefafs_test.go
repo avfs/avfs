@@ -48,14 +48,20 @@ var (
 )
 
 func TestOrefaFS(t *testing.T) {
-	vfs := orefafs.New()
+	vfs, err := orefafs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)
 }
 
 func TestOrefaFSConfig(t *testing.T) {
-	vfs := orefafs.New()
+	vfs, err := orefafs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	wantFeatures := avfs.FeatHardlink | avfs.BuildFeatures()
 	if vfs.Features() != wantFeatures {
@@ -74,7 +80,10 @@ func TestOrefaFSConfig(t *testing.T) {
 }
 
 func BenchmarkOrefaFSAll(b *testing.B) {
-	vfs := orefafs.New()
+	vfs, err := orefafs.New()
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(b, vfs, vfs)
 	ts.BenchAll(b)

@@ -60,7 +60,11 @@ func NewSuiteIdm(tb testing.TB, idm avfs.IdmMgr) *Suite {
 		tb.Fatal("NewSuiteIdm : idm must not be nil")
 	}
 
-	vfs := ostestfs.NewWithOptions(&ostestfs.Options{Idm: idm})
+	vfs, err := ostestfs.NewWithOptions(&ostestfs.Options{Idm: idm})
+	if err != nil {
+		tb.Fatal("NewSuiteIdm : ", err)
+	}
+
 	ts := newSuite(tb, vfs, vfs, idm)
 
 	tb.Logf("Idm: Type=%s OSType=%s Features=%s", idm.Type(), idm.OSType(), idm.Features())
@@ -397,6 +401,15 @@ func RequireNoError(tb testing.TB, err error, msgAndArgs ...any) {
 
 	if !AssertNoError(tb, err, msgAndArgs...) {
 		tb.FailNow()
+	}
+}
+
+// RequireError require that a function returned an error.
+func RequireError(tb testing.TB, err error, msgAndArgs ...any) {
+	tb.Helper()
+
+	if err == nil {
+		tb.Fatalf("RequireError : want an error, got nil, %s", fmt.Sprint(msgAndArgs...))
 	}
 }
 

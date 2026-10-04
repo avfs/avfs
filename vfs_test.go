@@ -27,14 +27,20 @@ import (
 )
 
 func TestUtilsMemFS(t *testing.T) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)
 }
 
 func TestUtilsOrefaFS(t *testing.T) {
-	vfs := orefafs.New()
+	vfs, err := orefafs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)

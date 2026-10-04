@@ -345,11 +345,12 @@ func (ts *Suite) TestCopyFile(t *testing.T, testDir string) {
 	const copyFile = "CopyFile"
 
 	srcFS := ts.vfsSetup
-	dstFS := memfs.New()
+	dstFS, err := memfs.New()
+	RequireNoError(t, err, "New dstFS")
 
 	rt := avfs.NewRndTree(srcFS, &avfs.RndTreeOpts{NbFiles: 32, MaxFileSize: 100 * 1024})
 
-	err := rt.CreateTree(testDir)
+	err = rt.CreateTree(testDir)
 	RequireNoError(t, err, "CreateTree %s")
 
 	h := sha512.New()

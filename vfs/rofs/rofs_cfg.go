@@ -21,13 +21,13 @@ import (
 )
 
 // New creates a new readonly file system (RoFS) from a base file system.
-func New(baseFS avfs.VFS) *RoFS {
+func New(baseFS avfs.VFS) (*RoFS, error) {
 	vfs := &RoFS{baseFS: baseFS}
 
 	_ = vfs.SetFeatures(baseFS.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly)
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
 
-	return vfs
+	return vfs, nil
 }
 
 // Name returns the name of the fileSystem.

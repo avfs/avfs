@@ -51,10 +51,14 @@ var (
 )
 
 func initFS(tb testing.TB) (vfs *basepathfs.BasePathFS, basePath string) {
-	baseFS := memfs.New()
+	baseFS, err := memfs.New()
+	if err != nil {
+		tb.Fatalf("Can't create base file system : %v", err)
+	}
+
 	basePath = avfs.FromUnixPath(baseFS, "/base/testpath")
 
-	err := baseFS.MkdirAll(basePath, avfs.DefaultDirPerm)
+	err = baseFS.MkdirAll(basePath, avfs.DefaultDirPerm)
 	if err != nil {
 		tb.Fatalf("Can't create base directory %s : %v", basePath, err)
 	}
@@ -66,7 +70,10 @@ func initFS(tb testing.TB) (vfs *basepathfs.BasePathFS, basePath string) {
 		tb.Fatalf("Can't create system directories %v", err)
 	}
 
-	vfs = basepathfs.New(baseFS, basePath)
+	vfs, err = basepathfs.New(baseFS, basePath)
+	if err != nil {
+		tb.Fatalf("Can't create base path file system : %v", err)
+	}
 
 	return vfs, basePath
 }
@@ -85,27 +92,30 @@ func TestBasePathFS(t *testing.T) {
 
 // TestBasePathFsOptions tests BasePathFS configuration options.
 func TestBasePathFSOptions(t *testing.T) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	test.RequireNoError(t, err, "New")
+
 	nonExistingDir := avfs.FromUnixPath(vfs, "/non/existing/dir")
 
-	test.AssertPanic(t, "", func() {
-		_ = basepathfs.New(vfs, nonExistingDir)
-	})
+	_, err = basepathfs.New(vfs, nonExistingDir)
+	test.RequireError(t, err, "New nonExistingDir")
 
 	existingFile := vfs.Join(vfs.TempDir(), "existing")
 
-	err := vfs.WriteFile(existingFile, []byte{}, avfs.DefaultFilePerm)
-	if err != nil {
-		t.Fatalf("WriteFile : want error to be nil, got %v", err)
-	}
+	err = vfs.WriteFile(existingFile, []byte{}, avfs.DefaultFilePerm)
+	test.RequireNoError(t, err, "WriteFile %s", existingFile)
 
-	test.AssertPanic(t, "", func() {
-		_ = basepathfs.New(vfs, existingFile)
-	})
+	_, err = basepathfs.New(vfs, existingFile)
+	test.RequireError(t, err, "New existingFile")
 }
 
 func TestBasePathFSFeatures(t *testing.T) {
-	vfs := basepathfs.New(memfs.New(), "/")
+	baseFS, err := memfs.New()
+	test.RequireNoError(t, err, "New")
+
+	vfs, err := basepathfs.New(baseFS, "/")
+	test.RequireNoError(t, err, "New basePathFS")
+
 	if vfs.HasFeature(avfs.FeatSymlink) {
 		t.Errorf("Features : want FeatSymlink missing, got present")
 	}
@@ -114,17 +124,23 @@ func TestBasePathFSFeatures(t *testing.T) {
 		t.Errorf("Features : want FeatIdentityMgr present, got missing")
 	}
 
-	mfs := memfs.New()
+	mfs, err := memfs.New()
+	test.RequireNoError(t, err, "New")
 
-	vfs = basepathfs.New(mfs, "/")
+	vfs, err = basepathfs.New(mfs, "/")
+	test.RequireNoError(t, err, "New basePathFS")
+
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 		t.Errorf("Features : want FeatIdentityMgr present, got missing")
 	}
 }
 
 func TestBasePathFSOSType(t *testing.T) {
-	vfsBase := memfs.New()
-	vfs := basepathfs.New(vfsBase, vfsBase.TempDir())
+	vfsBase, err := memfs.New()
+	test.RequireNoError(t, err, "New")
+
+	vfs, err := basepathfs.New(vfsBase, vfsBase.TempDir())
+	test.RequireNoError(t, err, "New basePathFS")
 
 	osType := vfs.OSType()
 	if osType != vfsBase.OSType() {

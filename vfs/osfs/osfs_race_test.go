@@ -26,7 +26,10 @@ import (
 )
 
 func TestRaceOsFS(t *testing.T) {
-	vfs := osfs.New()
+	vfs, err := osfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestRace(t)

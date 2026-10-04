@@ -40,7 +40,11 @@ var (
 )
 
 func TestSearchNode(t *testing.T) {
-	vfs := New()
+	vfs, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	rn := vfs.storage.rootNode
 
 	// Directories

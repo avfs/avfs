@@ -25,7 +25,10 @@ import (
 
 // TestPathIterator tests PathIterator methods.
 func TestPathIterator(t *testing.T) {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	t.Run("PathIterator", func(t *testing.T) {
 		cases := []struct {

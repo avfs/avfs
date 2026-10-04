@@ -50,8 +50,15 @@ var (
 )
 
 func initTest(t *testing.T) *test.Suite {
-	vfsSetup := memfs.New()
-	vfs := rofs.New(vfsSetup)
+	vfsSetup, err := memfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	vfs, err := rofs.New(vfsSetup)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfsSetup, vfs)
 
@@ -64,8 +71,15 @@ func TestRoFS(t *testing.T) {
 }
 
 func TestRoFSConfig(t *testing.T) {
-	vfsWrite := memfs.New()
-	vfs := rofs.New(vfsWrite)
+	vfsWrite, err := memfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	vfs, err := rofs.New(vfsWrite)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	wantFeatures := vfs.Features()&^avfs.FeatIdentityMgr | avfs.FeatReadOnly
 	if vfs.Features() != wantFeatures {

@@ -24,7 +24,7 @@ import (
 )
 
 // New returns a new memory file system (MemFS) with the default Options.
-func New() *MemFS {
+func New() (*MemFS, error) {
 	return NewWithOptions(nil)
 }
 
@@ -33,7 +33,7 @@ func New() *MemFS {
 // The tree is always built as the administrator of idm, because creating the
 // system and user directories requires privileges; the returned file system
 // then acts as Options.User.
-func NewWithOptions(opts *Options) *MemFS {
+func NewWithOptions(opts *Options) (*MemFS, error) {
 	if opts == nil {
 		opts = &Options{}
 	}
@@ -83,7 +83,7 @@ func NewWithOptions(opts *Options) *MemFS {
 
 	err := avfs.MkDirs(vfs, systemDirs, "")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	u := opts.User
@@ -96,19 +96,19 @@ func NewWithOptions(opts *Options) *MemFS {
 	// user. A file system cannot change user, so this is a clone.
 	err = avfs.MkDirs(vfs, avfs.UserDirs(vfs, u), "")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if u.Name() == admin.Name() {
-		return vfs
+		return vfs, nil
 	}
 
 	userVfs, err := vfs.cloneWithUser(u, vfs.OSType())
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return userVfs
+	return userVfs, nil
 }
 
 // Name returns the name of the fileSystem.

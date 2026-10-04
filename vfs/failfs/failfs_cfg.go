@@ -22,7 +22,7 @@ import (
 
 // New returns a new FailFS file system from a baseFS file system.
 // The failure function is initially set to OkFunc and should be set by FailFS.SetFailFunc.
-func New(baseFS avfs.VFS) *FailFS {
+func New(baseFS avfs.VFS) (*FailFS, error) {
 	vfs := &FailFS{
 		baseFS:   baseFS,
 		failFunc: OkFunc,
@@ -30,7 +30,7 @@ func New(baseFS avfs.VFS) *FailFS {
 
 	_ = vfs.SetFeatures(baseFS.Features())
 
-	return vfs
+	return vfs, nil
 }
 
 // fail calls the FailFunc function set by SetFailFunc.

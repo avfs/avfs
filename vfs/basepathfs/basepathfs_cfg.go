@@ -26,17 +26,7 @@ import (
 )
 
 // New returns a new base path file system (BasePathFS).
-func New(baseFS avfs.VFS, basePath string) *BasePathFS {
-	vfs, err := NewWithErr(baseFS, basePath)
-	if err != nil {
-		panic(err)
-	}
-
-	return vfs
-}
-
-// NewWithErr returns a new base path file system (BasePathFS).
-func NewWithErr(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
+func New(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
 	const op = "basepath"
 
 	absPath, err := baseFS.Abs(basePath)

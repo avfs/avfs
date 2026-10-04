@@ -50,14 +50,20 @@ var (
 )
 
 func TestOsFS(t *testing.T) {
-	vfs := osfs.New()
+	vfs, err := osfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestVFSAll(t)
 }
 
 func TestOsFSConfig(t *testing.T) {
-	vfs := osfs.New()
+	vfs, err := osfs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	wantFeatures := avfs.FeatHardlink | avfs.FeatRealFS | avfs.FeatSymlink
 	if vfs.Features() != wantFeatures {
@@ -76,7 +82,10 @@ func TestOsFSConfig(t *testing.T) {
 }
 
 func BenchmarkOsFSAll(b *testing.B) {
-	vfs := osfs.New()
+	vfs, err := osfs.New()
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(b, vfs, vfs)
 	ts.BenchAll(b)

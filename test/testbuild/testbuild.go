@@ -48,33 +48,72 @@ func main() {
 }
 
 func runOsTestFS() {
-	vfs := ostestfs.New()
+	vfs, err := ostestfs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	vfsFuncs(vfs)
 	_ = vfs.Chroot("")
 }
 
 func runMemFS() {
-	vfs := memfs.New()
+	vfs, err := memfs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	vfsFuncs(vfs)
 }
 
 func runOrefaFS() {
-	vfs := orefafs.New()
+	vfs, err := orefafs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	vfsFuncs(vfs)
 }
 
 func runRoFS() {
-	vfs := rofs.New(memfs.New())
+	baseFS, err := memfs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	vfs, err := rofs.New(baseFS)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	vfsFuncs(vfs)
 }
 
 func runFailFS() {
-	vfs := failfs.New(memfs.New())
+	baseFS, err := memfs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	vfs, err := failfs.New(baseFS)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	vfsFuncs(vfs)
 }
 
 func runBasePathFS() {
-	vfs := basepathfs.New(memfs.New(), "")
+	baseFS, err := memfs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	vfs, err := basepathfs.New(baseFS, "/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	vfsFuncs(vfs)
 }
 

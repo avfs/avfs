@@ -26,7 +26,10 @@ import (
 )
 
 func TestRaceOrefaFs(t *testing.T) {
-	vfs := orefafs.New()
+	vfs, err := orefafs.New()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ts := test.NewSuiteFS(t, vfs, vfs)
 	ts.TestRace(t)

@@ -24,12 +24,12 @@ import (
 )
 
 // New returns a new memory file system (OrefaFS) with the default Options.
-func New() *OrefaFS {
+func New() (*OrefaFS, error) {
 	return NewWithOptions(nil)
 }
 
 // NewWithOptions returns a new memory file system (OrefaFS) with the selected Options.
-func NewWithOptions(opts *Options) *OrefaFS {
+func NewWithOptions(opts *Options) (*OrefaFS, error) {
 	if opts == nil {
 		opts = &Options{}
 	}
@@ -68,9 +68,12 @@ func NewWithOptions(opts *Options) *OrefaFS {
 		opts.SystemDirs = avfs.SystemDirs(vfs)
 	}
 
-	_ = avfs.MkDirs(vfs, opts.SystemDirs, "")
+	err := avfs.MkDirs(vfs, opts.SystemDirs, "")
+	if err != nil {
+		return nil, err
+	}
 
-	return vfs
+	return vfs, nil
 }
 
 // Name returns the name of the fileSystem.

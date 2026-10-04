@@ -37,7 +37,7 @@ func (vfs *BasePathFS) CloneWithUser(user avfs.UserReader, ost avfs.OSType) (avf
 		return nil, err
 	}
 
-	return NewWithErr(baseFS, vfs.basePath)
+	return New(baseFS, vfs.basePath)
 }
 
 // CloneWithUserName returns a shallow copy of the current file system (see
@@ -57,5 +57,5 @@ func (vfs *BasePathFS) CloneWithUserName(userName string, ost avfs.OSType) (avfs
 		return nil, err
 	}
 
-	return NewWithErr(baseFS, vfs.basePath)
+	return New(baseFS, vfs.basePath)
 }

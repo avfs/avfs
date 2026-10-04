@@ -19,15 +19,19 @@ package osfs
 import "github.com/avfs/avfs"
 
 // New returns a new OS file system for a production environment.
-func New() *OsFS {
+func New() (*OsFS, error) {
 	features := avfs.FeatRealFS | avfs.FeatSymlink | avfs.FeatHardlink
 	vfs := &OsFS{}
 
 	_ = vfs.SetFeatures(features)
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
-	_ = vfs.InitIdm(avfs.DefaultIdm)
 
-	return vfs
+	err := vfs.InitIdm(avfs.DefaultIdm)
+	if err != nil {
+		return nil, err
+	}
+
+	return vfs, nil
 }
 
 // Name returns the name of the fileSystem.
