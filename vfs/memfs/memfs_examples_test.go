@@ -77,27 +77,29 @@ func ExampleMemFS_Sub() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
 	vfsSrc := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
-	_, err := vfsSrc.Idm().AddUser(test.UsrTest, "root")
-	if err != nil {
-		log.Fatalf("AddUser : want error to be nil, got %v", err)
-	}
-
 	vfsSub, err := vfsSrc.Sub("/")
 	if err != nil {
 		log.Fatalf("Sub : want error to be nil, got %v", err)
 	}
 
-	err = vfsSub.SetUserByName(test.UsrTest)
+	// The subtree shares the content of the file system it was taken from: a
+	// file created through one of them is visible from the other.
+	path := "/file.txt"
+
+	err = vfsSrc.WriteFile(path, []byte("content"), avfs.DefaultFilePerm)
 	if err != nil {
-		log.Fatalf("SetUser : want error to be nil, got %v", err)
+		log.Fatalf("WriteFile %s : want error to be nil, got %v", path, err)
 	}
 
-	fmt.Println(vfsSrc.User().Name())
-	fmt.Println(vfsSub.User().Name())
+	content, err := vfsSub.ReadFile(path)
+	if err != nil {
+		log.Fatalf("ReadFile %s : want error to be nil, got %v", path, err)
+	}
+
+	fmt.Println(string(content))
 
 	// Output:
-	// root
-	// UsrTest
+	// content
 }
 
 func ExampleMemFS_SetUserByName() {

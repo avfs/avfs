@@ -19,6 +19,8 @@ package memfs
 import (
 	"io/fs"
 	"os"
+
+	"github.com/avfs/avfs"
 )
 
 // Open opens the named file for reading. If successful, methods on
@@ -31,20 +33,21 @@ func (vfs *MemIOFS) Open(name string) (fs.File, error) {
 
 // Sub returns an FS corresponding to the subtree rooted at dir.
 func (vfs *MemIOFS) Sub(dir string) (fs.FS, error) {
-	const op = "sub"
-
-	_, child, _, err := vfs.searchNode(dir, slmEval)
-	if err != vfs.err.FileExists || child == nil {
-		return nil, &fs.PathError{Op: op, Path: dir, Err: err}
+	// vfs.MemFS.Sub, not vfs.Sub: this method shadows the embedded one.
+	vfsSub, err := vfs.MemFS.Sub(dir)
+	if err != nil {
+		return nil, err
 	}
 
-	c, ok := child.(*dirNode)
-	if !ok {
-		return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
-	}
+	return &memIOPathFS{vfs: vfsSub}, nil
+}
 
-	// TODO : refactor MemFS
-	_ = c
+// memIOPathFS is the io/fs projection of a file system returned by Sub.
+type memIOPathFS struct {
+	vfs avfs.VFS // vfs is the file system of the subtree.
+}
 
-	return nil, vfs.err.PermDenied
+// Open opens the named file for reading.
+func (pfs *memIOPathFS) Open(name string) (fs.File, error) {
+	return pfs.vfs.Open(name)
 }

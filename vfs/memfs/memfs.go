@@ -31,6 +31,7 @@ import (
 	"time"
 
 	"github.com/avfs/avfs"
+	"github.com/avfs/avfs/vfs/basepathfs"
 )
 
 // Chdir changes the current working directory to the named directory.
@@ -841,23 +842,16 @@ func (vfs *MemFS) Stat(path string) (fs.FileInfo, error) {
 }
 
 // Sub returns an FS corresponding to the subtree rooted at dir.
+//
+// The returned file system shares the content of vfs: a file created through
+// either of them is visible from both.
 func (vfs *MemFS) Sub(dir string) (avfs.VFS, error) {
-	const op = "sub"
-
-	_, child, _, err := vfs.searchNode(dir, slmEval)
-	if err != vfs.err.FileExists || child == nil {
-		return nil, &fs.PathError{Op: op, Path: dir, Err: err}
+	vfsSub, err := basepathfs.NewWithErr(vfs, dir)
+	if err != nil {
+		return nil, err
 	}
 
-	c, ok := child.(*dirNode)
-	if !ok {
-		return nil, &fs.PathError{Op: op, Path: dir, Err: vfs.err.NotADirectory}
-	}
-
-	// TODO : refactor MemFS
-	_ = c
-
-	return nil, vfs.err.PermDenied
+	return vfsSub, nil
 }
 
 // Symlink creates newname as a symbolic link to oldname.
