@@ -20,6 +20,7 @@ package basepathfs
 import (
 	"io/fs"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/avfs/avfs"
@@ -203,8 +204,19 @@ func (vfs *BasePathFS) FromSlash(path string) string {
 // current directory, it is returned.
 func (vfs *BasePathFS) Getwd() (dir string, err error) {
 	dir, err = vfs.baseFS.Getwd()
+	if err != nil {
+		return "", vfs.FromPathError(err)
+	}
 
-	return vfs.FromBasePath(dir), vfs.FromPathError(err)
+	// The base file system may stand outside the base path, in a directory
+	// this view does not name — a clone starts in the home directory of its
+	// user, which is rarely under the base path. This view then stands at the
+	// root of its own scope.
+	if !strings.HasPrefix(dir, vfs.basePath) {
+		return vfs.Dir(vfs.basePath), nil
+	}
+
+	return vfs.FromBasePath(dir), nil
 }
 
 // Glob returns the names of all files matching pattern or nil

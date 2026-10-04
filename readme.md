@@ -224,7 +224,7 @@ File system methods <br> `avfs.VFS`|Comments
 `Chown`|equivalent to `os.Chown`
 `Chtimes`|equivalent to `os.Chtimes`
 `Clean`|equivalent to `filepath.Clean`
-`CloneWithUser`|returns a view of the file system acting as a user and emulating an OS type
+`CloneWithUser`|returns a view of the file system acting as a user and emulating an OS type, starting in the home directory of that user
 `CloneWithUserName`|same, by user name
 `Create`|equivalent to `os.Create`
 `CreateTemp`|equivalent to `os.CreateTemp`

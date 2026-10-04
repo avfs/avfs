@@ -29,9 +29,8 @@ import (
 // file systems sharing the same identity view, hence the same current
 // directory: Chdir on one of them is visible in the other.
 //
-// The home and temporary directories of user are not created: a view only refers
-// to them, so they must already exist in the shared content, unless user is the
-// administrator.
+// The clone starts in the home directory of user, which is created in the
+// shared content if it does not exist yet.
 //
 // If user is nil, the administrator of the identity manager is used. If ost is
 // avfs.OsUnknown, the OS type of the current file system is kept. If ost can't
@@ -78,9 +77,47 @@ func (vfs *MemFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*MemFS, 
 		return nil, err
 	}
 
-	return &MemFS{
+	clone := &MemFS{
 		err:     avfs.ErrorsFor(userDir.OSType()),
 		storage: vfs.storage,
 		userDir: userDir,
-	}, nil
+	}
+
+	err = vfs.createHomeDir(user, userDir.OSType())
+	if err != nil {
+		return nil, err
+	}
+
+	return clone, nil
+}
+
+// createHomeDir creates the home directory of user in the shared content if it
+// does not exist yet, as a clone starts in it.
+//
+// The directory is created by the administrator of the identity manager, through
+// a view of the storage emulating ost: a view acting as user may have neither
+// the privileges to create it in its parent directory nor the right to own it.
+//
+// Nothing is created when ost is not the OS type of the file system it is
+// cloned from: the content is not converted to another OS (see the AVFS
+// specification), so the directories of that OS are not created either.
+func (vfs *MemFS) createHomeDir(user avfs.UserReader, ost avfs.OSType) error {
+	if ost != vfs.OSType() {
+		return nil
+	}
+
+	admin := vfs.Idm().AdminUser()
+
+	userDir, err := vfs.storage.userDirFor(vfs.Idm(), admin, ost, vfs.Features(), vfs.UMask())
+	if err != nil {
+		return err
+	}
+
+	adminVfs := &MemFS{
+		err:     avfs.ErrorsFor(ost),
+		storage: vfs.storage,
+		userDir: userDir,
+	}
+
+	return avfs.MkDirs(adminVfs, []avfs.DirInfo{avfs.HomeDirInfo(ost, user)}, "")
 }

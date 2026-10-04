@@ -82,13 +82,14 @@ type UserDirMixin struct {
 //
 // It must be called once, during construction, before any other method: it sets
 // the emulated OS type (ost), the identity manager (idm), the current user
-// (user, the identity manager administrator if nil) and the current directory
-// (curDir, the home directory of the user if empty).
+// (user, the identity manager administrator if nil) and the current directory,
+// which is the home directory of user.
 //
 // The home and temporary directories are derived from ost and user, so a file
 // system acting as another user, or emulating another OS, must be built with —
-// or cloned with — that identity.
-func (udmx *UserDirMixin) Init(ost OSType, idm IdmMgr, user UserReader, curDir string) error {
+// or cloned with — that identity. The home directory must exist in the file
+// system: it is the directory a clone starts in.
+func (udmx *UserDirMixin) Init(ost OSType, idm IdmMgr, user UserReader) error {
 	err := udmx.InitOSType(ost)
 	if err != nil {
 		return err
@@ -106,12 +107,7 @@ func (udmx *UserDirMixin) Init(ost OSType, idm IdmMgr, user UserReader, curDir s
 	udmx.user = user
 	udmx.homeDir = homeDirUser(udmx.OSType(), user)
 	udmx.tempDir = tempDirUser(udmx.OSType(), user)
-
-	if curDir == "" {
-		curDir = udmx.homeDir
-	}
-
-	udmx.curDir.Store(&curDir)
+	udmx.curDir.Store(&udmx.homeDir)
 
 	return nil
 }
@@ -292,27 +288,24 @@ func SystemDirs[T VFSBase](vfs T) []DirInfo {
 	return dis
 }
 
+// HomeDirInfo returns the metadata of the home directory of the user u,
+// emulating the operating system type ost.
+func HomeDirInfo(ost OSType, u UserReader) DirInfo {
+	return DirInfo{Path: homeDirUser(ost, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()}
+}
+
 // UserDirs retrieves metadata for all user directories from the provided virtual file system (vfs).
 func UserDirs[T VFSBase](vfs T, u UserReader) []DirInfo {
-	var dis []DirInfo
+	dis := []DirInfo{HomeDirInfo(vfs.OSType(), u)}
 
 	switch vfs.OSType() {
 	case OsWindows:
-		dis = []DirInfo{
-			{Path: homeDirUser(OsWindows, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
-			{Path: tempDirUserWindows(u.Name()), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()},
-		}
+		dis = append(dis, DirInfo{Path: tempDirUserWindows(u.Name()), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()})
 
 	case OsDarwin:
-		dis = []DirInfo{
-			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
-			{Path: tempDirUserDarwin(u), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()},
-		}
+		dis = append(dis, DirInfo{Path: tempDirUserDarwin(u), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()})
 
 	default:
-		dis = []DirInfo{
-			{Path: homeDirUser(OsLinux, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
-		}
 	}
 
 	return dis

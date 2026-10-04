@@ -42,15 +42,10 @@ func NewWithOptions(opts *Options) *OrefaFS {
 
 	_ = vfs.SetUMask(avfs.UMask())
 
-	// The current directory of a Windows file system is its default volume,
-	// which is where the file system must start. The separator of a Windows
-	// file system is a backslash (see avfs.OSTypeMixin.InitOSType).
-	curDir := "/"
-	if opts.OSType == avfs.OsWindows {
-		curDir = avfs.DefaultVolume + `\`
-	}
-
-	_ = vfs.userDir.Init(opts.OSType, idm, user, curDir)
+	// The current directory of a file system is the home directory of its
+	// user (see avfs.UserDirMixin.Init), which is created with the system
+	// directories below when it is the one of the administrator.
+	_ = vfs.userDir.Init(opts.OSType, idm, user)
 
 	_ = vfs.SetFeatures(features)
 

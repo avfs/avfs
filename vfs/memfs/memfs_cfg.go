@@ -56,7 +56,7 @@ func NewWithOptions(opts *Options) *MemFS {
 
 	// A foreign OS type is silently ignored in a build without the
 	// avfs_setostype tag: the file system then emulates the host OS.
-	_ = userDir.Init(opts.OSType, idm, admin, "")
+	_ = userDir.Init(opts.OSType, idm, admin)
 	vfs.userDir = userDir
 
 	_ = vfs.SetFeatures(features)

@@ -88,7 +88,7 @@ func (s *Storage) userDirFor(
 
 	// A view whose OS type can't be set is not registered: the next call must
 	// try again rather than hand out a view of the wrong OS.
-	err := ud.Init(ost, idm, user, "")
+	err := ud.Init(ost, idm, user)
 	if err != nil {
 		return nil, err
 	}

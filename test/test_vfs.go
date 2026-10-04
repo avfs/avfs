@@ -565,6 +565,31 @@ func (ts *Suite) TestCloneWithUser(t *testing.T, testDir string) {
 		}
 	})
 
+	t.Run("HomeDir", func(t *testing.T) {
+		if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+			return
+		}
+
+		for _, ui := range UserInfos() {
+			userName := ui.Name
+
+			vfsCloned, err := vfsClonable.CloneWithUserName(userName, vfs.OSType())
+			if !AssertNoError(t, err, "CloneWithUserName %s", userName) {
+				continue
+			}
+
+			// The clone starts in the home directory of its user, which it
+			// creates in the shared content if it does not exist yet.
+			homeDir, err := vfsCloned.UserHomeDir()
+			RequireNoError(t, err, "UserHomeDir %s", userName)
+
+			wantHomeDir := avfs.HomeDirInfo(vfs.OSType(), vfsCloned.User()).Path
+			if homeDir != wantHomeDir {
+				t.Errorf("CloneWithUserName %s : want the home directory to be %s, got %s", userName, wantHomeDir, homeDir)
+			}
+		}
+	})
+
 	t.Run("NilUser", func(t *testing.T) {
 		if !vfs.HasFeature(avfs.FeatIdentityMgr) {
 			return

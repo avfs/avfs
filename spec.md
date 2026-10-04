@@ -80,11 +80,12 @@ embeds the mixins rather than reimplementing them.
 | `PathMixin` | `VFSPath` | — | `FeaturesMixin`, `UMaskMixin`, `OSTypeMixin` |
 | `UserDirMixin` | `VFSUserDir` | current user, home and temp dirs (immutable), cwd (`atomic.Pointer[string]`) | `IdmMixin`, `PathMixin` |
 
-`UserDirMixin.Init(ost, idm, user, curDir)` initialises the whole chain — OS
-type, identity manager, user, home and temporary directories, current directory
-— and must be called once, during construction. Every other setter of the chain
-(`SetFeatures`, `SetUMask`) is a constructor-level operation too; there is no
-way to change the identity of a live file system (see §3.3).
+`UserDirMixin.Init(ost, idm, user)` initialises the whole chain — OS type,
+identity manager, user, home and temporary directories, current directory — and
+must be called once, during construction. The current directory is the home
+directory of the user, so that directory must exist. Every other setter of the
+chain (`SetFeatures`, `SetUMask`) is a constructor-level operation too; there is
+no way to change the identity of a live file system (see §3.3).
 
 `memfs` and `orefafs` hold their mixin in a **named `userDir` field** rather
 than embedding it, so that the state private to a file system is explicit and a
@@ -167,7 +168,9 @@ user or emulating another OS. The rules:
    from all of them, and file identity (`SameFile`) stays consistent across
    views: the unique-id counter is part of the shared state.
 2. A clone has **its own identity**: its own view of the user, home and
-   temporary directories, error table and umask.
+   temporary directories, error table and umask. It starts in the home
+   directory of the user it acts as, never in the current directory of the file
+   system it is cloned from.
 3. `memfs` and `orefafs` go one step further and **memoise the identity views**
    of their storage, keyed by user (name *and* uid) and OS type. Cloning twice
    for the same user and OS type returns two file systems sharing one identity
@@ -175,10 +178,13 @@ user or emulating another OS. The rules:
    The uid is part of the key because a deleted user may be created again with
    the same name and a different uid, and must not inherit its predecessor's
    directories.
-4. A clone **creates no directory**. The home and temporary directories of the
-   new user must already exist in the shared content, unless the user is the
-   administrator; otherwise operations in them fail with `ErrNoSuchDir`. A
-   clone never mutates the shared tree to accommodate an identity.
+4. A clone **creates no directory but the home directory of the user** it acts
+   as, and only if it does not exist yet: the clone starts in it, and a
+   directory that does not exist is not a working directory. Nothing is created
+   for the temporary directory, and nothing at all is created when the clone
+   emulates a foreign OS (rule 6). Since a view may have no privilege to
+   create its own home directory, nor the right to own it, the creation is done
+   by the administrator of the identity manager.
 5. Cloning with `OsUnknown` keeps the OS type of the source; with a `nil`
    user it uses the administrator of the identity manager. Cloning with a
    foreign OS type in a build without `avfs_setostype` returns
@@ -310,8 +316,9 @@ verify `OSType()` after construction.
    that it can never be stale: `OSTypeMixin.InitOSType` computes the separator
    and the default modes, and the file system computes
    - the error table (`avfs.ErrorsFor(os)`), since messages differ per OS;
-   - the home and temporary directories of the current user, and the initial
-     current directory (`\Users\x` vs `/home/x`);
+   - the home and temporary directories of the current user, the home
+     directory being also the initial current directory (`\Users\x` vs
+     `/home/x`);
    - Windows volume state (`VolumeAdd`/`VolumeDelete`/`VolumeList`): the volume
      table exists for `OsWindows` and is absent otherwise.
 
@@ -415,8 +422,8 @@ a `VFSBase`, so that every implementation shares identical behaviour:
 `MkdirTemp`, `ReadDir`, `ReadFile`, `SplitAbs`, `ToOpenMode`,
 `WalkDir`, `WriteFile`.
 
-Also provided: `MkDirs` (create a set of `DirInfo` directories), `SystemDirs`
-and `UserDirs` (OS-specific directory metadata), `homeDirUser`, `tempDirUser`,
+Also provided: `MkDirs` (create a set of `DirInfo` directories), `SystemDirs`,
+`UserDirs` and `HomeDirInfo` (OS-specific directory metadata), `homeDirUser`, `tempDirUser`,
 `ToSysStat`, `PathIterator[T]`, `CopyFile`, `CopyFileHash`, `HashFile`,
 `Tree`, `NewRndTree`.
 
@@ -467,7 +474,8 @@ select an operation to fail.
   clone when `Options.User` is not the administrator.
 - The identity views are created with the features and the umask of the file
   system they are cloned from: those describe the content and the creation
-  policy, not the identity.
+  policy, not the identity. The home directory of the cloned user is created by
+  the administrator, through a view of the storage emulating the same OS type.
 - **Permissions are genuinely enforced** (`checkPermission` on lookup, read and
   write), and umask is applied on creation.
 - Hard links share one `fileNode` (`nlink++`); `SameFile` compares the unique
@@ -490,8 +498,8 @@ select an operation to fail.
   fresh one, so clones of the same user have independent current directories.
 - Features: `FeatHardlink | BuildFeatures()` only — no symlinks, no identity
   manager (`DefaultIdm`).
-- Implements `Cloner`. A Windows file system starts in its default volume,
-  which is what `Options.OSType == OsWindows` sets as the initial directory.
+- Implements `Cloner`: a clone starts in the home directory of the user it
+  acts as, which it creates in the shared content if it does not exist yet.
 - Emulating a foreign OS follows the same rules as `memfs` (§3.6). It has no
   volume table, so only the error table and the user directories are derived
   from the OS type.
@@ -538,7 +546,9 @@ select an operation to fail.
 - Exports `BasePathFS`, `BasePathFile`, plus the translation helpers
   `ToBasePath`, `FromBasePath`, `FromPathError`, `FromLinkError`.
 - Every path is mapped into the base directory; returned errors are rewritten
-  back to the virtual namespace.
+  back to the virtual namespace. `Getwd` returns the base path itself when the
+  base file system stands outside the base path, which a clone does: it starts
+  in the home directory of its user (§3.3, rule 2).
 - Symlinks are disabled by construction: `FeatSymlink` is stripped from the
   base feature set and `Symlink`/`Readlink`/`EvalSymlinks` fail with
   `PermDenied` (`ErrWinAccessDenied`/`ErrWinNotReparsePoint` on Windows).
@@ -784,7 +794,8 @@ Any conforming implementation must satisfy:
 13. **Clone transparency** — clones of a file system share its content, so a
     change made through one is visible from all of them, and file identity
     (`SameFile`) is consistent across clones. A clone changes nothing else: it
-    creates no directory and rewrites no path.
+    rewrites no path, and creates nothing but the home directory of its user if
+    it is missing.
 
 ---
 
@@ -835,9 +846,8 @@ desired implementation and options.
 
 - Cloning with a foreign OS type does not convert the content: a Windows view of
   a tree built for Linux resolves paths with Windows rules over a Unix-shaped
-  tree, and the home directory of the user generally does not exist. Building a
-  file system with `Options.OSType` is the supported way to get a consistent
-  one (§3.3, rule 6).
+  tree, and creates no directory for it (§3.3, rules 4 and 6). Building a file
+  system with `Options.OSType` is the supported way to get a consistent one.
 - `memfs` clones memoise their identity views (one current directory per user
   and OS type); `orefafs` clones do not, so their current directories are
   independent. The two are not consistent with each other yet.

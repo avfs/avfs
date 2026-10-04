@@ -23,9 +23,8 @@ import (
 // CloneWithUser returns a shallow copy of the current file system (see OrefaFS)
 // acting as user and emulating ost.
 //
-// The home and temporary directories of user are not created: the clone only
-// refers to them, so they must already exist in the shared content, unless
-// user is the administrator.
+// The clone starts in the home directory of user, which is created in the
+// shared content if it does not exist yet.
 //
 // If user is nil, the administrator of the identity manager is used. If ost is
 // avfs.OsUnknown, the OS type of the current file system is kept. If ost can't
@@ -63,16 +62,11 @@ func (vfs *OrefaFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*Orefa
 		user = vfs.Idm().AdminUser()
 	}
 
-	// A clone of a Windows file system starts in the same directory as the
-	// file system it is copied from, as the default volume is where the paths
-	// of that file system start.
-	curDir := vfs.CurDir()
-
 	// The clone is initialized from scratch, not copied: an OrefaFS holds an
 	// atomic pointer (its current directory), so copying one would copy a lock.
 	c := &OrefaFS{name: vfs.name, storage: vfs.storage}
 
-	err := c.userDir.Init(ost, vfs.Idm(), user, curDir)
+	err := c.userDir.Init(ost, vfs.Idm(), user)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +78,17 @@ func (vfs *OrefaFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*Orefa
 	_ = c.SetUMask(vfs.UMask())
 
 	c.err = avfs.ErrorsFor(c.OSType())
+
+	// The clone starts in the home directory of user, which is created in the
+	// shared content if it does not exist yet. Nothing is created when the
+	// clone emulates another OS: the content is not converted to it (see the
+	// AVFS specification), so the directories of that OS are not either.
+	if c.OSType() == vfs.OSType() {
+		err = avfs.MkDirs(c, []avfs.DirInfo{avfs.HomeDirInfo(c.OSType(), user)}, "")
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return c, nil
 }
