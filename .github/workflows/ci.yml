@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [1.26.x, 1.27.x]
+        go: [stable, oldstable]
         os: [ubuntu-latest, windows-latest, macos-latest]
         setostype: [setostype_on, setostype_off]
 
