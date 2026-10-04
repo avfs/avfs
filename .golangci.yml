@@ -107,7 +107,8 @@ linters:
           - gocritic
           - intrange
           - revive
-        path: vfs_ostype_on.go
+          - wsl_v5
+        path: vfs_path_ostype_on.go
     paths:
       - third_party$
       - builtin$
