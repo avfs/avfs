@@ -25,8 +25,8 @@ import (
 
 // Open opens the named file for reading. If successful, methods on
 // the returned file can be used for reading; the associated file
-// descriptor has mode O_RDONLY.
-// If there is an error, it will be of type *PathError.
+// descriptor has mode [O_RDONLY].
+// If there is an error, it will be of type [*PathError].
 func (vfs *MemIOFS) Open(name string) (fs.File, error) {
 	return vfs.OpenFile(name, os.O_RDONLY, 0)
 }

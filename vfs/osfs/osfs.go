@@ -49,29 +49,29 @@ func (vfs *OsFS) Base(path string) string {
 }
 
 // Chdir changes the current working directory to the named directory.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Chdir(dir string) error {
 	return os.Chdir(dir)
 }
 
 // Chmod changes the mode of the named file to mode.
 // If the file is a symbolic link, it changes the mode of the link's target.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
 // A different subset of the mode bits are used, depending on the
 // operating system.
 //
-// On Unix, the mode's permission bits, ModeSetuid, ModeSetgid, and
-// ModeSticky are used.
+// On Unix, the mode's permission bits, [ModeSetuid], [ModeSetgid], and
+// [ModeSticky] are used.
 //
-// On Windows, only the 0200 bit (owner writable) of mode is used; it
+// On Windows, only the 0o200 bit (owner writable) of mode is used; it
 // controls whether the file's read-only attribute is set or cleared.
 // The other bits are currently unused. For compatibility with Go 1.12
-// and earlier, use a non-zero mode. Use mode 0400 for a read-only
-// file and 0600 for a readable+writable file.
+// and earlier, use a non-zero mode. Use mode 0o400 for a read-only
+// file and 0o600 for a readable+writable file.
 //
-// On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
-// and ModeTemporary are used.
+// On Plan 9, the mode's permission bits, [ModeAppend], [ModeExclusive],
+// and [ModeTemporary] are used.
 func (vfs *OsFS) Chmod(name string, mode fs.FileMode) error {
 	return os.Chmod(name, mode)
 }
@@ -79,10 +79,10 @@ func (vfs *OsFS) Chmod(name string, mode fs.FileMode) error {
 // Chown changes the numeric uid and gid of the named file.
 // If the file is a symbolic link, it changes the uid and gid of the link's target.
 // A uid or gid of -1 means to not change that value.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
-// On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
-// EPLAN9 error, wrapped in *PathError.
+// On Windows or Plan 9, Chown always returns the [syscall.EWINDOWS] or
+// [syscall.EPLAN9] error, wrapped in [*PathError].
 func (vfs *OsFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
@@ -99,7 +99,7 @@ func (vfs *OsFS) Chown(name string, uid, gid int) error {
 //
 // The underlying filesystem may truncate or round the values to a
 // less precise time unit.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Chtimes(name string, atime, mtime time.Time) error {
 	return os.Chtimes(name, atime, mtime)
 }
@@ -136,11 +136,11 @@ func (vfs *OsFS) Clean(path string) string {
 }
 
 // Create creates or truncates the named file. If the file already exists,
-// it is truncated. If the file does not exist, it is created with mode 0666
+// it is truncated. If the file does not exist, it is created with mode 0o666
 // (before umask). If successful, methods on the returned File can
-// be used for I/O; the associated file descriptor has mode O_RDWR.
+// be used for I/O; the associated file descriptor has mode [O_RDWR].
 // The directory containing the file must already exist.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Create(name string) (avfs.File, error) {
 	return os.Create(name)
 }
@@ -202,7 +202,7 @@ func (vfs *OsFS) Getwd() (dir string, err error) {
 // Glob returns the names of all files matching pattern or nil
 // if there is no matching file. The syntax of patterns is the same
 // as in [Match]. The pattern may describe hierarchical names such as
-// /usr/*/bin/ed (assuming the Separator is '/').
+// /usr/*/bin/ed (assuming the [Separator] is '/').
 //
 // Glob ignores file system errors such as I/O errors reading directories.
 // The only possible returned error is [ErrBadPattern], when pattern
@@ -234,10 +234,10 @@ func (vfs *OsFS) Join(elem ...string) string {
 
 // Lchown changes the numeric uid and gid of the named file.
 // If the file is a symbolic link, it changes the uid and gid of the link itself.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
-// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-// in *PathError.
+// On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
+// in [*PathError].
 func (vfs *OsFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
@@ -254,14 +254,14 @@ func (vfs *OsFS) Link(oldname, newname string) error {
 	return os.Link(oldname, newname)
 }
 
-// Lstat returns a FileInfo describing the named file.
-// If the file is a symbolic link, the returned FileInfo
+// Lstat returns a [FileInfo] describing the named file.
+// If the file is a symbolic link, the returned [FileInfo]
 // describes the symbolic link. Lstat makes no attempt to follow the link.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
 // On Windows, if the file is a reparse point that is a surrogate for another
 // named entity (such as a symbolic link or mounted folder), the returned
-// FileInfo describes the reparse point, and makes no attempt to resolve it.
+// [FileInfo] describes the reparse point, and makes no attempt to resolve it.
 func (vfs *OsFS) Lstat(name string) (fs.FileInfo, error) {
 	return os.Lstat(name)
 }
@@ -296,7 +296,7 @@ func (vfs *OsFS) Match(pattern, name string) (matched bool, err error) {
 
 // Mkdir creates a new directory with the specified name and permission
 // bits (before umask).
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Mkdir(name string, perm fs.FileMode) error {
 	return os.Mkdir(name, perm)
 }
@@ -326,8 +326,8 @@ func (vfs *OsFS) MkdirTemp(dir, pattern string) (name string, err error) {
 
 // Open opens the named file for reading. If successful, methods on
 // the returned file can be used for reading; the associated file
-// descriptor has mode O_RDONLY.
-// If there is an error, it will be of type *PathError.
+// descriptor has mode [O_RDONLY].
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Open(name string) (avfs.File, error) {
 	return os.Open(name)
 }
@@ -338,7 +338,7 @@ func (vfs *OsFS) Open(name string) (avfs.File, error) {
 // is passed, it is created with mode perm (before umask);
 // the containing directory must exist. If successful,
 // methods on the returned File can be used for I/O.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) OpenFile(name string, flag int, perm fs.FileMode) (avfs.File, error) {
 	return os.OpenFile(name, flag, perm)
 }
@@ -366,12 +366,13 @@ func (vfs *OsFS) ReadDir(name string) ([]fs.DirEntry, error) {
 // A successful call returns err == nil, not err == EOF.
 // Because ReadFile reads the whole file, it does not treat an EOF from Read
 // as an error to be reported.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) ReadFile(name string) ([]byte, error) {
 	return os.ReadFile(name)
 }
 
 // Readlink returns the destination of the named symbolic link.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
 // If the link destination is relative, Readlink returns the relative path
 // without resolving it to an absolute one.
@@ -392,7 +393,7 @@ func (vfs *OsFS) Rel(basepath, targpath string) (string, error) {
 }
 
 // Remove removes the named file or (empty) directory.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Remove(name string) error {
 	return os.Remove(name)
 }
@@ -439,8 +440,8 @@ func (vfs *OsFS) Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
-// Stat returns a FileInfo describing the named file.
-// If there is an error, it will be of type *PathError.
+// Stat returns a [FileInfo] describing the named file.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsFS) Stat(name string) (fs.FileInfo, error) {
 	return os.Stat(name)
 }

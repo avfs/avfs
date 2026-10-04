@@ -171,11 +171,11 @@ func (pmx *PathMixin) ToSysStat(info fs.FileInfo) SysStater {
 // VolumeManager is the interface that manage volumes for Windows file systems.
 type VolumeManager interface {
 	// VolumeAdd adds a new volume to a Windows file system.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	VolumeAdd(name string) error
 
 	// VolumeDelete deletes an existing volume and all its files from a Windows file system.
-	// If there is an error, it will be of type *PathError.
+	// If there is an error, it will be of type [*PathError].
 	VolumeDelete(name string) error
 
 	// VolumeList returns the volumes of the file system.

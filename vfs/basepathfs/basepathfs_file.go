@@ -24,7 +24,7 @@ import (
 
 // Chdir changes the current working directory to the file,
 // which must be a directory.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (f *BasePathFile) Chdir() error {
 	err := f.baseFile.Chdir()
 
@@ -32,7 +32,7 @@ func (f *BasePathFile) Chdir() error {
 }
 
 // Chmod changes the mode of the file to mode.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (f *BasePathFile) Chmod(mode fs.FileMode) error {
 	err := f.baseFile.Chmod(mode)
 
@@ -40,10 +40,10 @@ func (f *BasePathFile) Chmod(mode fs.FileMode) error {
 }
 
 // Chown changes the numeric uid and gid of the named file.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
-// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-// in *PathError.
+// On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
+// in [*PathError].
 func (f *BasePathFile) Chown(uid, gid int) error {
 	err := f.baseFile.Chown(uid, gid)
 
@@ -183,8 +183,8 @@ func (f *BasePathFile) Seek(offset int64, whence int) (ret int64, err error) {
 	return ret, f.vfs.FromPathError(err)
 }
 
-// Stat returns the FileInfo structure describing file.
-// If there is an error, it will be of type *PathError.
+// Stat returns the [FileInfo] structure describing file.
+// If there is an error, it will be of type [*PathError].
 func (f *BasePathFile) Stat() (fs.FileInfo, error) {
 	info, err := f.baseFile.Stat()
 
@@ -202,7 +202,7 @@ func (f *BasePathFile) Sync() error {
 
 // Truncate changes the size of the file.
 // It does not change the I/O offset.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (f *BasePathFile) Truncate(size int64) error {
 	err := f.baseFile.Truncate(size)
 

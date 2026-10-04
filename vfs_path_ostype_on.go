@@ -409,7 +409,7 @@ func (pmx *PathMixin) joinWindows(elem []string) string {
 // Path segments in the pattern must be separated by Separator.
 //
 // Match requires pattern to match all of name, not just a substring.
-// The only possible returned error is ErrBadPattern, when pattern
+// The only possible returned error is [ErrBadPattern], when pattern
 // is malformed.
 //
 // On Windows, escaping is disabled. Instead, '\\' is treated as

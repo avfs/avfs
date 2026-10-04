@@ -26,7 +26,7 @@ import (
 )
 
 // Chroot changes the root to that specified in path.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *OsTestFS) Chroot(path string) error {
 	const op = "chroot"
 

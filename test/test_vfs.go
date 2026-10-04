@@ -214,7 +214,7 @@ func (ts *Suite) TestChmod(t *testing.T, testDir string) {
 
 			gotMode := fst.Mode() & fs.ModePerm
 
-			// On Windows, only the 0200 bit (owner writable) of mode is used.
+			// On Windows, only the 0o200 bit (owner writable) of mode is used.
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode &= 0o200
 				gotMode &= 0o200
@@ -238,7 +238,7 @@ func (ts *Suite) TestChmod(t *testing.T, testDir string) {
 
 			gotMode := fst.Mode() & fs.ModePerm
 
-			// On Windows, only the 0200 bit (owner writable) of mode is used.
+			// On Windows, only the 0o200 bit (owner writable) of mode is used.
 			if vfs.OSType() == avfs.OsWindows {
 				wantMode &= 0o200
 				gotMode &= 0o200

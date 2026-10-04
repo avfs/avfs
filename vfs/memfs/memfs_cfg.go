@@ -126,7 +126,7 @@ func (*MemFS) Type() string {
 }
 
 // VolumeAdd adds a new volume to a Windows file system.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *MemFS) VolumeAdd(name string) error {
 	const op = "VolumeAdd"
 
@@ -153,7 +153,7 @@ func (vfs *MemFS) VolumeAdd(name string) error {
 }
 
 // VolumeDelete deletes an existing volume and all its files from a Windows file system.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (vfs *MemFS) VolumeDelete(name string) error {
 	const op = "VolumeDelete"
 

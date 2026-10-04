@@ -26,7 +26,7 @@ import (
 
 // Chdir changes the current working directory to the file,
 // which must be a directory.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (f *OrefaFile) Chdir() error {
 	const op = "chdir"
 
@@ -56,7 +56,7 @@ func (f *OrefaFile) Chdir() error {
 }
 
 // Chmod changes the mode of the file to mode.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (f *OrefaFile) Chmod(mode fs.FileMode) error {
 	const op = "chmod"
 
@@ -77,10 +77,10 @@ func (f *OrefaFile) Chmod(mode fs.FileMode) error {
 }
 
 // Chown changes the numeric uid and gid of the named file.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 //
-// On Windows, it always returns the syscall.EWINDOWS error, wrapped
-// in *PathError.
+// On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
+// in [*PathError].
 func (f *OrefaFile) Chown(uid, gid int) error {
 	const op = "chown"
 
@@ -456,8 +456,8 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 	return f.at, nil
 }
 
-// Stat returns the FileInfo structure describing file.
-// If there is an error, it will be of type *PathError.
+// Stat returns the [FileInfo] structure describing file.
+// If there is an error, it will be of type [*PathError].
 func (f *OrefaFile) Stat() (info fs.FileInfo, err error) {
 	if f == nil {
 		return nil, fs.ErrInvalid
@@ -508,7 +508,7 @@ func (f *OrefaFile) Sync() error {
 
 // Truncate changes the size of the file.
 // It does not change the I/O offset.
-// If there is an error, it will be of type *PathError.
+// If there is an error, it will be of type [*PathError].
 func (f *OrefaFile) Truncate(size int64) error {
 	const op = "truncate"
 
