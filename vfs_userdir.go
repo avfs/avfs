@@ -63,14 +63,14 @@ type VFSUserDir interface {
 	User() UserReader
 }
 
-// VFSUserDirFn provides functionalities to manage directories and current user.
-type VFSUserDirFn struct {
+// UserDirMixin is an embeddable default implementation of the VFSUserDir interface.
+type UserDirMixin struct {
 	user      UserReader // user is the current user of the file system.
 	curDir    string     // curDir is the current directory.
 	homeDir   string     // homeDir is the home directory of the current user.
 	tempDir   string     // tempDir is the temporary directory.
-	IdmFn                // IdmFn provides identity manager functions to a file system.
-	VFSPathFn            // VFSPathFn provides OS-specific path functions.
+	IdmMixin             // IdmMixin is an embeddable default implementation of the IdmProvider interface.
+	PathMixin            // PathMixin is an embeddable default implementation of the VFSPath interface.
 }
 
 // Abs returns an absolute representation of path.
@@ -78,17 +78,17 @@ type VFSUserDirFn struct {
 // working directory to turn it into an absolute path. The absolute
 // path name for a given file is not guaranteed to be unique.
 // Abs calls [Clean] on the result.
-func (vuf *VFSUserDirFn) Abs(path string) (string, error) {
-	if vuf.IsAbs(path) {
-		return vuf.Clean(path), nil
+func (udmx *UserDirMixin) Abs(path string) (string, error) {
+	if udmx.IsAbs(path) {
+		return udmx.Clean(path), nil
 	}
 
-	return vuf.Join(vuf.curDir, path), nil
+	return udmx.Join(udmx.curDir, path), nil
 }
 
 // CurDir returns the current directory.
-func (vuf *VFSUserDirFn) CurDir() string {
-	return vuf.curDir
+func (udmx *UserDirMixin) CurDir() string {
+	return udmx.curDir
 }
 
 // Getwd returns an absolute path name corresponding to the
@@ -99,42 +99,42 @@ func (vuf *VFSUserDirFn) CurDir() string {
 // On Unix platforms, if the environment variable PWD
 // provides an absolute name, and it is a name of the
 // current directory, it is returned.
-func (vuf *VFSUserDirFn) Getwd() (dir string, err error) {
-	return vuf.curDir, nil
+func (udmx *UserDirMixin) Getwd() (dir string, err error) {
+	return udmx.curDir, nil
 }
 
 // SetCurDir sets the current directory.
-func (vuf *VFSUserDirFn) SetCurDir(curDir string) error {
-	vuf.curDir = curDir
+func (udmx *UserDirMixin) SetCurDir(curDir string) error {
+	udmx.curDir = curDir
 
 	return nil
 }
 
 // SetUser sets the current user and initializes related directories.
-func (vuf *VFSUserDirFn) SetUser(user UserReader) error {
+func (udmx *UserDirMixin) SetUser(user UserReader) error {
 	if user == nil {
-		user = vuf.Idm().AdminUser()
+		user = udmx.Idm().AdminUser()
 	}
 
-	vuf.user = user
-	vuf.curDir = homeDirUser(vuf.osType, vuf.user)
-	vuf.homeDir = vuf.curDir
-	vuf.tempDir = tempDirUser(vuf.osType, vuf.user)
+	udmx.user = user
+	udmx.curDir = homeDirUser(udmx.osType, udmx.user)
+	udmx.homeDir = udmx.curDir
+	udmx.tempDir = tempDirUser(udmx.osType, udmx.user)
 
 	return nil
 }
 
 // SetUserByName sets the current user by name.
 // If the user is not found, the returned error is of the type UnknownUserError.
-func (vuf *VFSUserDirFn) SetUserByName(userName string) error {
-	idm := vuf.idm
+func (udmx *UserDirMixin) SetUserByName(userName string) error {
+	idm := udmx.idm
 
 	u, err := idm.LookupUser(userName)
 	if err != nil {
 		return err
 	}
 
-	return vuf.SetUser(u)
+	return udmx.SetUser(u)
 }
 
 // TempDir returns the default directory to use for temporary files.
@@ -146,13 +146,13 @@ func (vuf *VFSUserDirFn) SetUserByName(userName string) error {
 //
 // The directory is neither guaranteed to exist nor have accessible
 // permissions.
-func (vuf *VFSUserDirFn) TempDir() string {
-	return vuf.tempDir
+func (udmx *UserDirMixin) TempDir() string {
+	return udmx.tempDir
 }
 
 // User returns the current user.
-func (vuf *VFSUserDirFn) User() UserReader {
-	return vuf.user
+func (udmx *UserDirMixin) User() UserReader {
+	return udmx.user
 }
 
 // UserHomeDir returns the current user's home directory.
@@ -163,8 +163,8 @@ func (vuf *VFSUserDirFn) User() UserReader {
 //
 // If the expected variable is not set in the environment, UserHomeDir
 // returns either a platform-specific default value or a non-nil error.
-func (vuf *VFSUserDirFn) UserHomeDir() (string, error) {
-	dir := vuf.homeDir
+func (udmx *UserDirMixin) UserHomeDir() (string, error) {
+	dir := udmx.homeDir
 
 	return dir, nil
 }

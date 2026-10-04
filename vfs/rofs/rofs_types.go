@@ -20,9 +20,9 @@ import "github.com/avfs/avfs"
 
 // RoFS Represents the file system.
 type RoFS struct {
-	baseFS          avfs.VFS          // baseFS is the base file system.
-	err             *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
-	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
+	baseFS             avfs.VFS          // baseFS is the base file system.
+	err                *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
+	avfs.FeaturesMixin                   // FeaturesMixin is an embeddable default implementation of the Featurer interface.
 }
 
 // RoFile represents an open file descriptor.

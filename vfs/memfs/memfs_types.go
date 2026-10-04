@@ -42,7 +42,7 @@ type MemFS struct {
 	volumes           volumes           // volumes contains the volume names (for Windows only).
 	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
-	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user.
+	avfs.UserDirMixin                   // UserDirMixin is an embeddable default implementation of the VFSUserDir interface.
 }
 
 // MemFile represents an open file descriptor.

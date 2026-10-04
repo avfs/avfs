@@ -56,24 +56,24 @@ type Featurer interface {
 	HasFeature(feature Features) bool
 }
 
-// FeaturesFn provides features functions to a file system or an identity manager.
-type FeaturesFn struct {
+// FeaturesMixin is an embeddable default implementation of the Featurer interface.
+type FeaturesMixin struct {
 	features Features // features defines the list of features available.
 }
 
 // Features returns the set of features provided by the file system or identity manager.
-func (ftf *FeaturesFn) Features() Features {
-	return ftf.features
+func (fmx *FeaturesMixin) Features() Features {
+	return fmx.features
 }
 
 // HasFeature returns true if the file system or identity manager provides a given feature.
-func (ftf *FeaturesFn) HasFeature(feature Features) bool {
-	return ftf.features&feature == feature
+func (fmx *FeaturesMixin) HasFeature(feature Features) bool {
+	return fmx.features&feature == feature
 }
 
 // SetFeatures sets the features of the file system or identity manager.
-func (ftf *FeaturesFn) SetFeatures(feature Features) error {
-	ftf.features = feature
+func (fmx *FeaturesMixin) SetFeatures(feature Features) error {
+	fmx.features = feature
 
 	return nil
 }

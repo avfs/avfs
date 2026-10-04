@@ -29,7 +29,7 @@ const buildFeatSetOSType = 0
 // Trailing path separators are removed before extracting the last element.
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
-func (vof *VFSPathFn) Base(path string) string {
+func (pmx *PathMixin) Base(path string) string {
 	return filepath.Base(path)
 }
 
@@ -56,7 +56,7 @@ func (vof *VFSPathFn) Base(path string) string {
 // See also Rob Pike, “Lexical File Names in Plan 9 or
 // Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
-func (vof *VFSPathFn) Clean(path string) string {
+func (pmx *PathMixin) Clean(path string) string {
 	return filepath.Clean(path)
 }
 
@@ -66,24 +66,24 @@ func (vof *VFSPathFn) Clean(path string) string {
 // If the path is empty, Dir returns ".".
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
-func (vof *VFSPathFn) Dir(path string) string {
+func (pmx *PathMixin) Dir(path string) string {
 	return filepath.Dir(path)
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func (vof *VFSPathFn) FromSlash(path string) string {
+func (pmx *PathMixin) FromSlash(path string) string {
 	return filepath.FromSlash(path)
 }
 
 // IsAbs reports whether the path is absolute.
-func (vof *VFSPathFn) IsAbs(path string) bool {
+func (pmx *PathMixin) IsAbs(path string) bool {
 	return filepath.IsAbs(path)
 }
 
 // IsPathSeparator reports whether c is a directory separator character.
-func (vof *VFSPathFn) IsPathSeparator(c uint8) bool {
+func (pmx *PathMixin) IsPathSeparator(c uint8) bool {
 	return os.IsPathSeparator(c)
 }
 
@@ -94,7 +94,7 @@ func (vof *VFSPathFn) IsPathSeparator(c uint8) bool {
 // an empty string.
 // On Windows, the result will only be a UNC path if the first
 // non-empty element is a UNC path.
-func (vof *VFSPathFn) Join(elem ...string) string {
+func (pmx *PathMixin) Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
 
@@ -122,7 +122,7 @@ func (vof *VFSPathFn) Join(elem ...string) string {
 //
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
-func (vof *VFSPathFn) Match(pattern, name string) (matched bool, err error) {
+func (pmx *PathMixin) Match(pattern, name string) (matched bool, err error) {
 	return filepath.Match(pattern, name)
 }
 
@@ -134,7 +134,7 @@ func (vof *VFSPathFn) Match(pattern, name string) (matched bool, err error) {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result.
-func (vof *VFSPathFn) Rel(basepath, targpath string) (string, error) {
+func (pmx *PathMixin) Rel(basepath, targpath string) (string, error) {
 	return filepath.Rel(basepath, targpath)
 }
 
@@ -143,14 +143,14 @@ func (vof *VFSPathFn) Rel(basepath, targpath string) (string, error) {
 // If there is no Separator in path, Split returns an empty dir
 // and file set to path.
 // The returned values have the property that path = dir+file.
-func (vof *VFSPathFn) Split(path string) (dir, file string) {
+func (pmx *PathMixin) Split(path string) (dir, file string) {
 	return filepath.Split(path)
 }
 
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func (vof *VFSPathFn) ToSlash(path string) string {
+func (pmx *PathMixin) ToSlash(path string) string {
 	return filepath.ToSlash(path)
 }
 
@@ -158,12 +158,12 @@ func (vof *VFSPathFn) ToSlash(path string) string {
 // Given "C:\foo\bar" it returns "C:" on Windows.
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
-func (vof *VFSPathFn) VolumeName(path string) string {
+func (pmx *PathMixin) VolumeName(path string) string {
 	return filepath.VolumeName(path)
 }
 
 // VolumeNameLen returns the length of the leading volume name on Windows.
 // It returns 0 elsewhere.
-func (vof *VFSPathFn) VolumeNameLen(path string) int {
-	return len(vof.VolumeName(path))
+func (pmx *PathMixin) VolumeNameLen(path string) int {
+	return len(pmx.VolumeName(path))
 }

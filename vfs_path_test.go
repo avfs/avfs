@@ -18,5 +18,5 @@ package avfs_test
 
 import "github.com/avfs/avfs"
 
-// Ensures that avfs.VFSPathFn{} implements avfs.VFSPath interface.
-var _ avfs.VFSPath = &avfs.VFSPathFn{}
+// Ensures that avfs.PathMixin{} implements avfs.VFSPath interface.
+var _ avfs.VFSPath = &avfs.PathMixin{}

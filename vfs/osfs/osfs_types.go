@@ -20,7 +20,7 @@ import "github.com/avfs/avfs"
 
 // OsFS represents the current file system.
 type OsFS struct {
-	err             *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
-	avfs.IdmFn                        // IdmFn provides identity manager functions to a file system.
-	avfs.FeaturesFn                   // FeaturesFn provides features functions to a file system or an identity manager.
+	err                *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
+	avfs.IdmMixin                        // IdmMixin is an embeddable default implementation of the IdmProvider interface.
+	avfs.FeaturesMixin                   // FeaturesMixin is an embeddable default implementation of the Featurer interface.
 }

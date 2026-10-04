@@ -32,7 +32,7 @@ type OrefaFS struct {
 	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
 	name              string            // name is the name of the file system.
 	mu                sync.RWMutex      // mu is the RWMutex used to access nodes.
-	avfs.VFSUserDirFn                   // VFSUserDirFn provides functionalities to manage directories and current user.
+	avfs.UserDirMixin                   // UserDirMixin is an embeddable default implementation of the VFSUserDir interface.
 }
 
 // OrefaFile represents an open file descriptor.

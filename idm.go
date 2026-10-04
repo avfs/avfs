@@ -140,14 +140,14 @@ type IdmProvider interface {
 	SetIdm(idm IdmMgr) error
 }
 
-// IdmFn provides identity manager functions to a file system.
-type IdmFn struct {
+// IdmMixin is an embeddable default implementation of the IdmProvider interface.
+type IdmMixin struct {
 	idm IdmMgr // idm is the identity manager of the file system.
 }
 
 // Idm returns the identity manager of the file system.
-func (idf *IdmFn) Idm() IdmMgr {
-	return idf.idm
+func (idmx *IdmMixin) Idm() IdmMgr {
+	return idmx.idm
 }
 
 // IsValidName checks if the input string is a valid username or group name.
@@ -157,12 +157,12 @@ func IsValidName(name string) bool {
 
 // SetIdm set the current identity manager.
 // If the identity manager provider is nil, the idm DefaultIdm is set.
-func (idf *IdmFn) SetIdm(idm IdmMgr) error {
+func (idmx *IdmMixin) SetIdm(idm IdmMgr) error {
 	if idm == nil {
 		idm = DefaultIdm
 	}
 
-	idf.idm = idm
+	idmx.idm = idm
 
 	return nil
 }

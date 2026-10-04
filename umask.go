@@ -30,21 +30,21 @@ type UMasker interface {
 	UMask() fs.FileMode
 }
 
-// UMaskFn provides UMask functions to file systems.
-type UMaskFn struct {
+// UMaskMixin is an embeddable default implementation of the UMasker interface.
+type UMaskMixin struct {
 	umask atomic.Uint32 // umask is the user file creation mode mask.
 }
 
 // SetUMask sets the file mode creation mask.
-func (umf *UMaskFn) SetUMask(mask fs.FileMode) error {
-	umf.umask.Store(uint32(mask))
+func (umx *UMaskMixin) SetUMask(mask fs.FileMode) error {
+	umx.umask.Store(uint32(mask))
 
 	return nil
 }
 
 // UMask returns the file mode creation mask.
-func (umf *UMaskFn) UMask() fs.FileMode {
-	m := umf.umask.Load()
+func (umx *UMaskMixin) UMask() fs.FileMode {
+	m := umx.umask.Load()
 
 	return fs.FileMode(m)
 }

@@ -151,15 +151,15 @@ type VFSPath interface {
 	VolumeNameLen(path string) int
 }
 
-// VFSPathFn provides OS-specific path functions.
-type VFSPathFn struct {
-	FeaturesFn // FeaturesFn provides features functions to a file system or an identity manager.
-	UMaskFn    // UMaskFn provides UMask functions to file systems.
-	OSTypeFn   // OSTypeFn provides OS type functions to a file system.
+// PathMixin is an embeddable default implementation of the VFSPath interface.
+type PathMixin struct {
+	FeaturesMixin // FeaturesMixin is an embeddable default implementation of the Featurer interface.
+	UMaskMixin    // UMaskMixin is an embeddable default implementation of the UMasker interface.
+	OSTypeMixin   // OSTypeMixin is an embeddable default implementation of the OSTyper interface.
 }
 
 // ToSysStat takes a value from fs.FileInfo.Sys() and returns a value that implements interface avfs.SysStater.
-func (vof *VFSPathFn) ToSysStat(info fs.FileInfo) SysStater {
+func (pmx *PathMixin) ToSysStat(info fs.FileInfo) SysStater {
 	return info.Sys().(SysStater) //nolint:forcetypeassert // type assertion must be checked
 }
 

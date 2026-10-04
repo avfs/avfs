@@ -26,9 +26,9 @@ import (
 // FailFS implements a failing file system using the avfs.VFS interface.
 // It fails if the FailFunc function returns an error.
 type FailFS struct {
-	baseFS          avfs.VFS // baseFS is the base file system.
-	failFunc        FailFunc // failFunc is the function
-	avfs.FeaturesFn          // FeaturesFn provides features functions to a file system or an identity manager.
+	baseFS             avfs.VFS // baseFS is the base file system.
+	failFunc           FailFunc // failFunc is the function
+	avfs.FeaturesMixin          // FeaturesMixin is an embeddable default implementation of the Featurer interface.
 }
 
 // FailFile represents an open file descriptor.

@@ -61,8 +61,8 @@ type OSTyper interface {
 	OSType() OSType
 }
 
-// OSTypeFn provides OS type functions to a file system.
-type OSTypeFn struct {
+// OSTypeMixin is an embeddable default implementation of the OSTyper interface.
+type OSTypeMixin struct {
 	dirMode       fs.FileMode // dirMode is the default fs.FileMode for a directory.
 	fileMode      fs.FileMode // fileMode is de default fs.FileMode for a file.
 	osType        OSType      // OSType defines the operating system type.
@@ -70,28 +70,28 @@ type OSTypeFn struct {
 }
 
 // DirMode returns the default file mode for new directories.
-func (osf *OSTypeFn) DirMode() fs.FileMode {
-	return osf.dirMode
+func (osx *OSTypeMixin) DirMode() fs.FileMode {
+	return osx.dirMode
 }
 
 // FileMode returns the default file mode for new files.
-func (osf *OSTypeFn) FileMode() fs.FileMode {
-	return osf.fileMode
+func (osx *OSTypeMixin) FileMode() fs.FileMode {
+	return osx.fileMode
 }
 
 // OSType returns the operating system type of the file system.
-func (osf *OSTypeFn) OSType() OSType {
-	return osf.osType
+func (osx *OSTypeMixin) OSType() OSType {
+	return osx.osType
 }
 
 // PathSeparator return the OS-specific path separator.
-func (osf *OSTypeFn) PathSeparator() uint8 {
-	return osf.pathSeparator
+func (osx *OSTypeMixin) PathSeparator() uint8 {
+	return osx.pathSeparator
 }
 
 // SetOSType sets the operating system Type.
 // If the OS type can't be changed, it returns an error.
-func (osf *OSTypeFn) SetOSType(osType OSType) error {
+func (osx *OSTypeMixin) SetOSType(osType OSType) error {
 	if BuildFeatures()&FeatSetOSType == 0 && osType != OsUnknown && osType != CurrentOSType() {
 		return ErrSetOSType
 	}
@@ -100,17 +100,17 @@ func (osf *OSTypeFn) SetOSType(osType OSType) error {
 		osType = CurrentOSType()
 	}
 
-	osf.osType = osType
+	osx.osType = osType
 
 	switch osType {
 	case OsWindows:
-		osf.pathSeparator = '\\'
-		osf.dirMode = fs.ModeDir | DefaultDirPerm
-		osf.fileMode = DefaultFilePerm
+		osx.pathSeparator = '\\'
+		osx.dirMode = fs.ModeDir | DefaultDirPerm
+		osx.fileMode = DefaultFilePerm
 	default:
-		osf.pathSeparator = uint8('/')
-		osf.dirMode = fs.ModeDir
-		osf.fileMode = 0
+		osx.pathSeparator = uint8('/')
+		osx.dirMode = fs.ModeDir
+		osx.fileMode = 0
 	}
 
 	return nil
