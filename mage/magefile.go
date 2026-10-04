@@ -54,7 +54,7 @@ const (
 	golangCiPkg = "golangci-lint-%s-%s-%s.tar.gz"
 	golangCiChk = "https://github.com/golangci/golangci-lint/releases/download/%s/golangci-lint-%s-checksums.txt"
 	minigoxCmd  = "minigox"
-	minigoxInst = "github.com/psadac/minigox@master"
+	minigoxInst = "github.com/psadac/minigox@main"
 	sudoCmd     = "sudo"
 	tarCmd      = "tar"
 	raceCount   = 12
