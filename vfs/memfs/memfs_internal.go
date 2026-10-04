@@ -476,3 +476,45 @@ func (sn *symlinkNode) setMode(mode fs.FileMode, u avfs.UserReader) bool {
 func (sn *symlinkNode) size() int64 {
 	return 1
 }
+
+// userDirFor returns the identity view of the storage for user emulating ost,
+// building it if it does not exist yet.
+//
+// The views are shared: cloning twice for the same user and OS type returns two
+// file systems whose identity is the same object, so they also share their
+// current directory. Chdir on one of them is visible in the others.
+func (s *Storage) userDirFor(
+	idm avfs.IdmMgr, user avfs.UserReader, ost avfs.OSType, features avfs.Features, umask fs.FileMode,
+) (*avfs.UserDirMixin, error) {
+	key := userDirKey{name: user.Name(), uid: user.Uid(), ost: ost}
+
+	s.udMu.Lock()
+	defer s.udMu.Unlock()
+
+	ud, ok := s.userDirs[key]
+	if ok {
+		return ud, nil
+	}
+
+	ud = &avfs.UserDirMixin{}
+
+	// A view whose OS type can't be set is not registered: the next call must
+	// try again rather than hand out a view of the wrong OS.
+	err := ud.Init(ost, idm, user)
+	if err != nil {
+		return nil, err
+	}
+
+	// The features and the umask describe the content and the creation policy,
+	// not the identity: a view gets those of the file system it is cloned from.
+	_ = ud.SetFeatures(features)
+	_ = ud.SetUMask(umask)
+
+	if s.userDirs == nil {
+		s.userDirs = make(map[userDirKey]*avfs.UserDirMixin)
+	}
+
+	s.userDirs[key] = ud
+
+	return ud, nil
+}
