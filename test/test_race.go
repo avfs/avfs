@@ -17,6 +17,7 @@
 package test
 
 import (
+	"fmt"
 	"os"
 	"sync"
 	"sync/atomic"
@@ -35,6 +36,7 @@ func (ts *Suite) TestRace(t *testing.T) {
 	}
 
 	ts.RunTests(t, UsrTest,
+		ts.RaceCloneWithUserName,
 		ts.RaceCreate,
 		ts.RaceCreateTemp,
 		ts.RaceFileClose,
@@ -47,6 +49,78 @@ func (ts *Suite) TestRace(t *testing.T) {
 		ts.RaceRemove,
 		ts.RaceRemoveAll,
 		ts.RaceMkdirRemoveAll)
+}
+
+// RaceCloneWithUserName tests data race conditions for CloneWithUserName.
+//
+// Cloning is how a file system obtains the user it acts as, so clones of the
+// same user, of different users, and of the same file system must all be safe.
+func (ts *Suite) RaceCloneWithUserName(t *testing.T, testDir string) {
+	vfs := ts.vfsTest
+
+	vfsClonable, ok := vfs.(avfs.Cloner)
+	if !ok || !vfs.HasFeature(avfs.FeatIdentityMgr) {
+		return
+	}
+
+	// The same user, whose identity view is shared by every clone of it.
+	ts.raceFunc(t, RaceAllOk, func() error {
+		vfsCloned, err := vfsClonable.CloneWithUserName(vfs.User().Name(), vfs.OSType())
+		if err != nil {
+			return err
+		}
+
+		return vfsCloned.Chdir(testDir)
+	})
+
+	// A different user for each clone, so that the identity views are created
+	// concurrently. The users are created beforehand: an identity manager is
+	// not required to be safe for concurrent use (see memidm).
+	userNames := make([]string, 0, ts.maxRace)
+
+	for i := range ts.maxRace {
+		userName := fmt.Sprintf("user_%08d", i)
+
+		_, err := vfs.Idm().AddUser(userName, vfs.Idm().AdminGroup().Name())
+		if err != nil {
+			return
+		}
+
+		userNames = append(userNames, userName)
+	}
+
+	var next atomic.Uint32
+
+	var fileNames sync.Map
+
+	ts.raceFunc(t, RaceAllOk, func() error {
+		userName := userNames[next.Add(1)%uint32(len(userNames))]
+
+		vfsCloned, err := vfsClonable.CloneWithUserName(userName, vfs.OSType())
+		if err != nil {
+			return err
+		}
+
+		if u := vfsCloned.User(); u.Name() != userName {
+			return fmt.Errorf("want user to be %s, got %s", userName, u.Name())
+		}
+
+		err = vfsCloned.Chdir(testDir)
+		if err != nil {
+			return err
+		}
+
+		fileName, err := vfsCloned.CreateTemp(testDir, "RaceCloneWithUserName")
+		if err != nil {
+			return err
+		}
+
+		if _, exists := fileNames.LoadOrStore(fileName, nil); exists {
+			t.Errorf("file %s already exists", fileName)
+		}
+
+		return nil
+	})
 }
 
 // RaceCreate tests data race conditions for Create.

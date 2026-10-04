@@ -53,7 +53,7 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.F
 	defer parent.mu.Unlock()
 
 	nd := &node{
-		id:    vfs.lastId.Add(1),
+		id:    vfs.storage.lastId.Add(1),
 		mtime: time.Now(),
 		mode:  mode,
 		uid:   vfs.User().Uid(),
@@ -63,7 +63,7 @@ func (vfs *OrefaFS) createNode(parent *node, absPath, fileName string, mode fs.F
 
 	parent.addChild(fileName, nd)
 
-	vfs.nodes[absPath] = nd
+	vfs.storage.nodes[absPath] = nd
 
 	return nd
 }

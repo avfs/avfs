@@ -415,27 +415,6 @@ func ReadFile[T VFSBase](vfs T, name string) ([]byte, error) {
 	}
 }
 
-// SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of type UnknownUserError.
-func SetUserByName[T VFSBase](vfs T, name string) error {
-	if !vfs.HasFeature(FeatIdentityMgr) {
-		return ErrPermDenied
-	}
-
-	if vfs.User().Name() == name {
-		return nil
-	}
-
-	u, err := vfs.Idm().LookupUser(name)
-	if err != nil {
-		return err
-	}
-
-	err = vfs.SetUser(u)
-
-	return err
-}
-
 // SplitAbs splits an absolute path immediately preceding the final Separator,
 // separating it into a directory and file name component.
 // If there is no Separator in path, splitPath returns an empty dir

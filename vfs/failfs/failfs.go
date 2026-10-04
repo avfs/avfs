@@ -574,36 +574,12 @@ func (vfs *FailFS) SetFailFunc(ff FailFunc) error {
 	return nil
 }
 
-func (vfs *FailFS) SetIdm(idm avfs.IdmMgr) error {
-	return vfs.baseFS.SetIdm(idm)
+func (vfs *FailFS) InitIdm(idm avfs.IdmMgr) error {
+	return vfs.baseFS.InitIdm(idm)
 }
 
 func (vfs *FailFS) SetUMask(mask fs.FileMode) error {
 	return vfs.baseFS.SetUMask(mask)
-}
-
-func (vfs *FailFS) SetUser(user avfs.UserReader) error {
-	fp := FailParam{Path: user.Name()}
-
-	err := vfs.fail(avfs.FnSetUser, &fp)
-	if err != nil {
-		return err
-	}
-
-	return vfs.baseFS.SetUser(user)
-}
-
-// SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *FailFS) SetUserByName(name string) error {
-	fp := FailParam{Path: name}
-
-	err := vfs.fail(avfs.FnSetUserByName, &fp)
-	if err != nil {
-		return err
-	}
-
-	return vfs.baseFS.SetUserByName(name)
 }
 
 // Split splits path immediately following the final Separator,

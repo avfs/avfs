@@ -101,6 +101,7 @@ const (
 	ErrVolumeAlreadyExists CustomError = customErrorBase - 4 // Volume already exists.
 	ErrVolumeNameInvalid   CustomError = customErrorBase - 5 // Volume name is invalid.
 	ErrVolumeWindows       CustomError = customErrorBase - 6 // Volumes are available for Windows only.
+	ErrNotSupported        CustomError = customErrorBase - 7 // The operation is not supported.
 )
 
 func (i CustomError) Error() string {

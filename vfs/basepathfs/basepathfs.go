@@ -481,27 +481,15 @@ func (vfs *BasePathFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return vfs.baseFS.SameFile(fi1, fi2)
 }
 
-// SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm avfs.DefaultIdm is set.
-func (vfs *BasePathFS) SetIdm(idm avfs.IdmMgr) error {
-	return vfs.baseFS.SetIdm(idm)
+// InitIdm sets the identity manager of the file system.
+// It must be called once, during construction.
+func (vfs *BasePathFS) InitIdm(idm avfs.IdmMgr) error {
+	return vfs.baseFS.InitIdm(idm)
 }
 
 // SetUMask sets the file mode creation mask.
 func (vfs *BasePathFS) SetUMask(mask fs.FileMode) error {
 	return vfs.baseFS.SetUMask(mask)
-}
-
-// SetUser sets the current user.
-// If the user can't be changed an error is returned.
-func (vfs *BasePathFS) SetUser(user avfs.UserReader) error {
-	return vfs.baseFS.SetUser(user)
-}
-
-// SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of the type UnknownUserError.
-func (vfs *BasePathFS) SetUserByName(name string) error {
-	return vfs.baseFS.SetUserByName(name)
 }
 
 // Split splits path immediately following the final Separator,

@@ -57,8 +57,6 @@ const (
 	FnRemove
 	FnRemoveAll
 	FnRename
-	FnSetUser
-	FnSetUserByName
 	FnStat
 	FnSub
 	FnSymlink

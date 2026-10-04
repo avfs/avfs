@@ -41,7 +41,7 @@ var (
 
 func TestSearchNode(t *testing.T) {
 	vfs := New()
-	rn := vfs.rootNode
+	rn := vfs.storage.rootNode
 
 	// Directories
 	da := vfs.createDir(rn, "a", avfs.DefaultDirPerm)

@@ -60,23 +60,25 @@ func (vfs *OsTestFS) Lchown(name string, uid, gid int) error {
 	return os.Lchown(name, uid, gid)
 }
 
-// SetUser sets the current user.
-// If the user can't be changed an error is returned.
+// SetUser sets the user of the process running the file system.
+//
+// This is **not** a file system operation: OsTestFS is a real file system, so
+// its user is the user of the process, and there is no view of it acting as
+// another user. Changing the user changes the credentials of the whole process
+// (see osidm.SetUser), which is why this exists only to run tests, and why such
+// a file system is not an avfs.Cloner.
+//
+// If the user can't be changed, an error is returned.
 func (vfs *OsTestFS) SetUser(user avfs.UserReader) error {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return avfs.ErrPermDenied
-	}
-
 	return osidm.SetUser(user)
 }
 
-// SetUserByName sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
+// SetUserByName sets the user of the process running the file system.
+//
+// See SetUser: this changes the credentials of the process, not the identity of
+// a file system. If the user is not found, the returned error is of type
+// avfs.UnknownUserError.
 func (vfs *OsTestFS) SetUserByName(name string) error {
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) {
-		return avfs.ErrPermDenied
-	}
-
 	return osidm.SetUserByName(name)
 }
 

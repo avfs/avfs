@@ -40,8 +40,8 @@ func NewWithOptions(opts *Options) *MemIdm {
 		maxUid:       minUid,
 	}
 
-	_ = idm.SetFeatures(avfs.FeatIdentityMgr)
-	_ = idm.SetOSType(opts.OSType)
+	_ = idm.SetFeatures(avfs.FeatIdentityMgr | avfs.BuildFeatures())
+	_ = idm.InitOSType(opts.OSType)
 
 	adminGroupName := avfs.AdminGroupName(idm.OSType())
 	adminUserName := avfs.AdminUserName(idm.OSType())

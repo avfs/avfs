@@ -144,8 +144,6 @@ func vfsFuncs(vfs avfs.VFS) {
 	_, _ = vfs.Split(tmpDir)
 	info, _ := vfs.Stat(tmpFile)
 	_ = vfs.SetUMask(0)
-	_ = vfs.SetUser(u)
-	_ = vfs.SetUserByName("")
 	_, _ = vfs.Sub("")
 	_ = vfs.TempDir()
 	_ = vfs.ToSlash(tmpDir)
@@ -158,6 +156,11 @@ func vfsFuncs(vfs avfs.VFS) {
 	_ = vfs.VolumeNameLen("")
 	_ = vfs.WalkDir(tmpDir, nil)
 	_ = vfs.WriteFile(tmpFile, nil, avfs.DefaultFilePerm)
+
+	if cloner, ok := vfs.(avfs.Cloner); ok {
+		_, _ = cloner.CloneWithUser(u, vfs.OSType())
+		_, _ = cloner.CloneWithUserName("", vfs.OSType())
+	}
 
 	_ = f.Chdir()
 	_ = f.Chmod(0)

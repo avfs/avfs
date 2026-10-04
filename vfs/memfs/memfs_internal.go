@@ -48,10 +48,10 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	absPath, _ := vfs.Abs(path)
 	pi = avfs.NewPathIterator[*MemFS](vfs, absPath)
 
-	volNode := vfs.rootNode
+	volNode := vfs.storage.rootNode
 
 	if pi.VolumeNameLen() > 0 {
-		nd, ok := vfs.volumes[pi.VolumeName()]
+		nd, ok := vfs.lookupVolume(pi.VolumeName())
 		if !ok {
 			err = vfs.err.NoSuchDir
 
@@ -189,7 +189,7 @@ func (vfs *MemFS) createFile(parent *dirNode, name string, perm fs.FileMode) *fi
 			uid:   vfs.User().Uid(),
 			gid:   vfs.User().Gid(),
 		},
-		id:    vfs.lastId.Add(1),
+		id:    vfs.storage.lastId.Add(1),
 		nlink: 1,
 	}
 
@@ -213,6 +213,16 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 	parent.addChild(name, child)
 
 	return child
+}
+
+// lookupVolume returns the root node of the volume named name, and true if it exists.
+func (vfs *MemFS) lookupVolume(name string) (*dirNode, bool) {
+	vfs.storage.volMu.RLock()
+	defer vfs.storage.volMu.RUnlock()
+
+	dn, ok := vfs.storage.volumes[name]
+
+	return dn, ok
 }
 
 // isNotExist is IsNotExist without unwrapping.

@@ -42,7 +42,7 @@ func NewWithOptions(opts *Options) *OsTestFS {
 	vfs := &OsTestFS{}
 
 	_ = vfs.SetFeatures(features)
-	_ = vfs.SetIdm(idm)
+	_ = vfs.InitIdm(idm)
 
 	return vfs
 }

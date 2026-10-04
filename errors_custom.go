@@ -14,15 +14,16 @@ func _() {
 	_ = x[ErrVolumeAlreadyExists-2147483643]
 	_ = x[ErrVolumeNameInvalid-2147483642]
 	_ = x[ErrVolumeWindows-2147483641]
+	_ = x[ErrNotSupported-2147483640]
 }
 
-const _CustomError_name = "Volumes are available for Windows only.Volume name is invalid.Volume already exists.pattern contains path separatoruse of closed filenegative offset"
+const _CustomError_name = "The operation is not supported.Volumes are available for Windows only.Volume name is invalid.Volume already exists.pattern contains path separatoruse of closed filenegative offset"
 
-var _CustomError_index = [...]uint8{0, 39, 62, 84, 115, 133, 148}
+var _CustomError_index = [...]uint8{0, 31, 70, 93, 115, 146, 164, 179}
 
 func (i CustomError) String() string {
-	idx := int(i) - 2147483641
-	if i < 2147483641 || idx >= len(_CustomError_index)-1 {
+	idx := int(i) - 2147483640
+	if i < 2147483640 || idx >= len(_CustomError_index)-1 {
 		return "CustomError(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _CustomError_name[_CustomError_index[idx]:_CustomError_index[idx+1]]

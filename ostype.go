@@ -89,9 +89,12 @@ func (osx *OSTypeMixin) PathSeparator() uint8 {
 	return osx.pathSeparator
 }
 
-// SetOSType sets the operating system Type.
-// If the OS type can't be changed, it returns an error.
-func (osx *OSTypeMixin) SetOSType(osType OSType) error {
+// InitOSType sets the OS type. It must be called once, during construction:
+// the OS type of a file system is immutable, so a file system emulating
+// another OS is obtained by cloning it (see avfs.Cloner), never by switching
+// the OS of a live one.
+// If the OS type can't be set, it returns an error.
+func (osx *OSTypeMixin) InitOSType(osType OSType) error {
 	if BuildFeatures()&FeatSetOSType == 0 && osType != OsUnknown && osType != CurrentOSType() {
 		return ErrSetOSType
 	}

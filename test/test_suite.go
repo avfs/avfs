@@ -377,16 +377,15 @@ func (ts *Suite) randomDir(tb testing.TB, testDir string) *avfs.RndTree {
 
 // removeDir removes all files under testDir.
 func (ts *Suite) removeDir(tb testing.TB, testDir string) {
-	vfs := ts.vfsSetup
-
-	err := vfs.Chdir(ts.rootDir)
+	err := ts.vfsSetup.Chdir(ts.rootDir)
 	RequireNoError(tb, err, "Chdir %s", ts.rootDir)
 
 	// RemoveAll() should be executed as the user who started the tests, generally root,
-	// to clean up files with different permissions.
+	// to clean up files with different permissions. setInitUser replaces the file
+	// systems of the suite by clones, so ts.vfsSetup is read again afterwards.
 	ts.setInitUser(tb)
 
-	err = vfs.RemoveAll(testDir)
+	err = ts.vfsSetup.RemoveAll(testDir)
 	if err != nil && avfs.CurrentOSType() != avfs.OsWindows {
 		tb.Fatalf("RemoveAll %s : want error to be nil, got %v", testDir, err)
 	}
@@ -451,7 +450,16 @@ func (ts *Suite) RunTests(t *testing.T, userName string, testFuncs ...func(t *te
 	ts.removeDir(t, ts.rootDir)
 }
 
-// setUser sets the test user to userName.
+// setUser makes the tests run as userName, in one of two ways.
+//
+// The identity of a file system is immutable, so an emulated file system is
+// asked for a view of its content acting as userName (avfs.Cloner): the clone
+// is what the tests then run against.
+//
+// A real file system has no view to give: its user is the user of the process
+// running it, so the tests change the credentials of the process itself
+// (userSwitcher). That is why the reference implementation of the permission
+// tests needs to run as root.
 func (ts *Suite) setUser(tb testing.TB, userName string) {
 	vfs := ts.vfsTest
 
@@ -460,8 +468,42 @@ func (ts *Suite) setUser(tb testing.TB, userName string) {
 		return
 	}
 
-	err := vfs.SetUserByName(userName)
-	RequireNoError(tb, err, "SetUser %s", userName)
+	switch vfs := vfs.(type) {
+	case avfs.Cloner:
+		ts.setUserClone(tb, vfs, userName)
+
+	case userSwitcher:
+		// vfsSetup and vfsTest are the same file system for a real one, and it
+		// now acts as userName.
+		err := vfs.SetUserByName(userName)
+		RequireNoError(tb, err, "SetUserByName %s", userName)
+
+	default:
+		tb.Fatalf("setUser %s : %s must implement avfs.Cloner or change the user of the process to run permission tests",
+			userName, vfs.Type())
+	}
+}
+
+// setUserClone replaces the file systems of the suite by clones acting as
+// userName, sharing the content of the file systems they were cloned from.
+func (ts *Suite) setUserClone(tb testing.TB, cloner avfs.Cloner, userName string) {
+	vfsClone, err := cloner.CloneWithUserName(userName, ts.vfsTest.OSType())
+	RequireNoError(tb, err, "CloneWithUserName %s", userName)
+
+	ts.vfsTest = vfsClone
+
+	// The file system used to set up the fixtures must act as the same user,
+	// or the fixtures would be owned by the initial user and the tests would
+	// not be able to use them.
+	setupCloner, ok := ts.vfsSetup.(avfs.Cloner)
+	if !ok {
+		return
+	}
+
+	vfsSetupClone, err := setupCloner.CloneWithUserName(userName, ts.vfsSetup.OSType())
+	RequireNoError(tb, err, "CloneWithUserName %s (setup)", userName)
+
+	ts.vfsSetup = vfsSetupClone
 }
 
 // setInitUser reset the user to the initial user.

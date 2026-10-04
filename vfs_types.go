@@ -33,10 +33,36 @@ const (
 	FileModeMask = fs.ModePerm | fs.ModeSticky | fs.ModeSetuid | fs.ModeSetgid
 )
 
-// Cloner is the interface that wraps the Clone method.
+// Cloner is the interface that wraps the cloning methods of a file system.
+//
+// A clone shares the content (the nodes) of the file system it is copied from,
+// but has its own identity: its own current user, working directory, home and
+// temporary directories, and its own emulated OS type. Cloning is therefore the
+// only way to obtain a file system acting as another user or emulating another
+// OS — see [VFSUserDir] for why those are immutable.
+//
+// A clone is safe for concurrent use together with the file system it was
+// cloned from: the content is guarded by the locks of the shared storage, and
+// each identity is only mutated through Chdir.
 type Cloner interface {
-	// Clone returns a shallow copy of the current file system (see MemFs).
-	Clone() VFS
+	// CloneWithUser returns a shallow copy of the current file system (see
+	// MemFs) acting as user and emulating ost.
+	//
+	// The directories of user (home and temporary) are not created: the clone
+	// only refers to them, and they must already exist in the shared content
+	// unless user is the administrator.
+	//
+	// If user is nil, the administrator of the identity manager is used.
+	// If ost is [OsUnknown], the OS type of the current file system is kept.
+	// If ost can't be set (see [ErrSetOSType]), it returns that error.
+	CloneWithUser(user UserReader, ost OSType) (VFS, error)
+
+	// CloneWithUserName returns a shallow copy of the current file system
+	// (see MemFs) acting as the user userName and emulating ost.
+	//
+	// If the user is not found, the returned error is of type
+	// [UnknownUserError].
+	CloneWithUserName(userName string, ost OSType) (VFS, error)
 }
 
 // ChRooter is the interface that wraps the Chroot method.

@@ -77,32 +77,37 @@ func ExampleMemFS_Sub() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
 	vfsSrc := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
+	_, err := vfsSrc.Idm().AddUser(test.UsrTest, "root")
+	if err != nil {
+		log.Fatalf("AddUser : want error to be nil, got %v", err)
+	}
+
 	vfsSub, err := vfsSrc.Sub("/")
 	if err != nil {
 		log.Fatalf("Sub : want error to be nil, got %v", err)
 	}
 
-	// The subtree shares the content of the file system it was taken from: a
-	// file created through one of them is visible from the other.
-	path := "/file.txt"
-
-	err = vfsSrc.WriteFile(path, []byte("content"), avfs.DefaultFilePerm)
-	if err != nil {
-		log.Fatalf("WriteFile %s : want error to be nil, got %v", path, err)
+	// A file system cannot change user: the view of the subtree acting as
+	// UsrTest is a clone of it.
+	cloner, ok := vfsSub.(avfs.Cloner)
+	if !ok {
+		log.Fatalf("Sub : want a clonable file system, got %T", vfsSub)
 	}
 
-	content, err := vfsSub.ReadFile(path)
+	vfsUsr, err := cloner.CloneWithUserName(test.UsrTest, avfs.OsLinux)
 	if err != nil {
-		log.Fatalf("ReadFile %s : want error to be nil, got %v", path, err)
+		log.Fatalf("CloneWithUserName : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(string(content))
+	fmt.Println(vfsSrc.User().Name())
+	fmt.Println(vfsUsr.User().Name())
 
 	// Output:
-	// content
+	// root
+	// UsrTest
 }
 
-func ExampleMemFS_SetUserByName() {
+func ExampleMemFS_CloneWithUserName() {
 	idm := memidm.NewWithOptions(&memidm.Options{OSType: avfs.OsLinux})
 	vfs := memfs.NewWithOptions(&memfs.Options{Idm: idm, OSType: avfs.OsLinux})
 
@@ -113,12 +118,14 @@ func ExampleMemFS_SetUserByName() {
 
 	fmt.Println(vfs.User().Name())
 
-	err = vfs.SetUserByName(test.UsrTest)
+	// A file system cannot change user: the file system acting as UsrTest is a
+	// clone of vfs, sharing its content.
+	vfsUsr, err := vfs.CloneWithUserName(test.UsrTest, avfs.OsLinux)
 	if err != nil {
-		log.Fatalf("SetUser : want error to be nil, got %v", err)
+		log.Fatalf("CloneWithUserName : want error to be nil, got %v", err)
 	}
 
-	fmt.Println(vfs.User().Name())
+	fmt.Println(vfsUsr.User().Name())
 
 	// Output:
 	// root

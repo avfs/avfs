@@ -39,7 +39,6 @@ func (ts *Suite) TestVFS(t *testing.T) {
 		ts.TestBase,
 		ts.TestClean,
 		ts.TestDir,
-		ts.TestClone,
 		ts.TestChdir,
 		ts.TestChtimes,
 		ts.TestCreate,
@@ -89,7 +88,8 @@ func (ts *Suite) TestVFS(t *testing.T) {
 		ts.TestChroot,
 		ts.TestMkSystemDirs,
 		ts.TestLchown,
-		ts.TestSetUserByName,
+		ts.TestCloneWithUser,
+		ts.TestCloneWithUserName,
 		ts.TestVolume,
 		ts.TestWriteOnReadOnlyFS,
 	)
@@ -175,7 +175,7 @@ func (ts *Suite) TestChdir(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "chdir")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.Chdir(path)
 		})
 	})
@@ -263,7 +263,7 @@ func (ts *Suite) TestChmod(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "chmod")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.Chmod(path, 0o777)
 		})
 	})
@@ -383,7 +383,7 @@ func (ts *Suite) TestChown(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "chown")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.Chown(path, 0, 0)
 		})
 	})
@@ -501,23 +501,214 @@ func (ts *Suite) TestChtimes(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "chtimes")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.Chtimes(path, time.Now(), time.Now())
 		})
 	})
 }
 
-// TestClone tests Clone function.
-func (ts *Suite) TestClone(t *testing.T, _ string) {
+// TestCloneWithUser tests CloneWithUser function.
+func (ts *Suite) TestCloneWithUser(t *testing.T, testDir string) {
 	vfs := ts.vfsTest
 
-	if vfsClonable, ok := vfs.(avfs.Cloner); ok {
-		vfsCloned := vfsClonable.Clone()
+	vfsClonable, ok := vfs.(avfs.Cloner)
+	if !ok {
+		return
+	}
+
+	t.Run("Content", func(t *testing.T) {
+		vfsCloned, err := vfsClonable.CloneWithUser(vfs.User(), vfs.OSType())
+		if !AssertNoError(t, err, "CloneWithUser %s", vfs.User().Name()) {
+			return
+		}
 
 		if _, ok := vfsCloned.(avfs.Cloner); !ok {
-			t.Errorf("Clone : want cloned vfs to be of type VFS, got type %v", reflect.TypeOf(vfsCloned))
+			t.Errorf("CloneWithUser : want cloned vfs to be of type VFS, got type %v", reflect.TypeOf(vfsCloned))
 		}
+
+		if vfsCloned.OSType() != vfs.OSType() {
+			t.Errorf("CloneWithUser : want cloned vfs OSType to be %s, got %s", vfs.OSType(), vfsCloned.OSType())
+		}
+
+		if vfsCloned.User().Name() != vfs.User().Name() {
+			t.Errorf("CloneWithUser : want cloned vfs user to be %s, got %s", vfs.User().Name(), vfsCloned.User().Name())
+		}
+
+		// The clone shares the content of the file system it was cloned from.
+		fileName := vfs.Join(testDir, defaultFile)
+
+		const clonedContent = "written by the clone"
+
+		err = vfsCloned.WriteFile(fileName, []byte(clonedContent), avfs.DefaultFilePerm)
+		RequireNoError(t, err, "WriteFile %s (clone)", fileName)
+
+		content, err := vfs.ReadFile(fileName)
+		RequireNoError(t, err, "ReadFile %s (original)", fileName)
+
+		if string(content) != clonedContent {
+			t.Errorf("CloneWithUser : want content of %s to be %s, got %s", fileName, clonedContent, string(content))
+		}
+	})
+
+	t.Run("SameUser", func(t *testing.T) {
+		curUser := vfs.User()
+
+		vfsCloned, err := vfsClonable.CloneWithUser(curUser, vfs.OSType())
+		if !AssertNoError(t, err, "CloneWithUser %s", curUser.Name()) {
+			return
+		}
+
+		u := vfsCloned.User()
+		if u.Name() != curUser.Name() || u.Uid() != curUser.Uid() || u.Gid() != curUser.Gid() {
+			t.Errorf("CloneWithUser %s : want user to be %s/%d/%d, got %s/%d/%d",
+				curUser.Name(), curUser.Name(), curUser.Uid(), curUser.Gid(), u.Name(), u.Uid(), u.Gid())
+		}
+	})
+
+	t.Run("NilUser", func(t *testing.T) {
+		if !vfs.HasFeature(avfs.FeatIdentityMgr) {
+			return
+		}
+
+		vfsCloned, err := vfsClonable.CloneWithUser(nil, vfs.OSType())
+		if !AssertNoError(t, err, "CloneWithUser nil") {
+			return
+		}
+
+		adminName := vfs.Idm().AdminUser().Name()
+		if u := vfsCloned.User(); u.Name() != adminName {
+			t.Errorf("CloneWithUser nil : want user to be the administrator %s, got %s", adminName, u.Name())
+		}
+	})
+
+	t.Run("OsUnknown", func(t *testing.T) {
+		vfsCloned, err := vfsClonable.CloneWithUser(vfs.User(), avfs.OsUnknown)
+		if !AssertNoError(t, err, "CloneWithUser %s", avfs.OsUnknown) {
+			return
+		}
+
+		if vfsCloned.OSType() != vfs.OSType() {
+			t.Errorf("CloneWithUser %s : want cloned vfs OSType to be %s, got %s",
+				avfs.OsUnknown, vfs.OSType(), vfsCloned.OSType())
+		}
+	})
+
+	ts.testCloneWithOSType(t, vfsClonable)
+}
+
+// TestCloneWithUserName tests CloneWithUserName function.
+func (ts *Suite) TestCloneWithUserName(t *testing.T, _ string) {
+	const userNameNotFound = "notExistingUser"
+
+	vfs := ts.vfsTest
+
+	vfsClonable, ok := vfs.(avfs.Cloner)
+	if !ok {
+		return
 	}
+
+	if !vfs.HasFeature(avfs.FeatIdentityMgr) || vfs.HasFeature(avfs.FeatReadOnlyIdm) {
+		// The identity manager of the file system holds no user: it can only
+		// answer that the lookup is not permitted.
+		t.Run("UserNotExists", func(t *testing.T) {
+			_, err := vfsClonable.CloneWithUserName(userNameNotFound, vfs.OSType())
+
+			if !errors.Is(err, avfs.ErrPermDenied) {
+				t.Errorf("CloneWithUserName %s : want error to be %v, got %v", userNameNotFound, avfs.ErrPermDenied, err)
+			}
+		})
+
+		return
+	}
+
+	t.Run("UserNotExists", func(t *testing.T) {
+		wantErr := avfs.UnknownUserError(userNameNotFound)
+
+		_, err := vfs.Idm().LookupUser(userNameNotFound)
+		if err != wantErr {
+			t.Fatalf("LookupUser %s : want error to be %v, got %v", userNameNotFound, wantErr, err)
+		}
+
+		_, err = vfsClonable.CloneWithUserName(userNameNotFound, vfs.OSType())
+		if err != wantErr {
+			t.Errorf("CloneWithUserName %s : want error to be %v, got %v", userNameNotFound, wantErr, err)
+		}
+	})
+
+	t.Run("UserExists", func(t *testing.T) {
+		for _, ui := range UserInfos() {
+			userName := ui.Name
+
+			lu, err := vfs.Idm().LookupUser(userName)
+			if !AssertNoError(t, err, "LookupUser %s", userName) {
+				continue
+			}
+
+			uid := lu.Uid()
+			gid := lu.Gid()
+
+			// loop to test cloning twice with the same user.
+			for i := range 2 {
+				vfsCloned, err := vfsClonable.CloneWithUserName(userName, vfs.OSType())
+				if !AssertNoError(t, err, "CloneWithUserName %s %d", userName, i) {
+					continue
+				}
+
+				u := vfsCloned.User()
+				if u.Name() != userName || u.Uid() != uid || u.Gid() != gid {
+					t.Errorf("CloneWithUserName %s %d : want user to be %s/%d/%d, got %s/%d/%d",
+						userName, i, userName, uid, gid, u.Name(), u.Uid(), u.Gid())
+				}
+
+				// The original file system is left untouched.
+				if cu := vfs.User(); cu.Name() == userName && userName != vfs.Idm().AdminUser().Name() {
+					t.Errorf("CloneWithUserName %s %d : want the original vfs user to be %s, got %s",
+						userName, i, ts.initUser.Name(), cu.Name())
+				}
+			}
+		}
+	})
+}
+
+// testCloneWithOSType checks that a clone emulating another OS type is refused
+// unless the file system advertises FeatSetOSType.
+func (ts *Suite) testCloneWithOSType(t *testing.T, vfsClonable avfs.Cloner) {
+	vfs := ts.vfsTest
+
+	otherOSType := avfs.OsLinux
+	if vfs.OSType() == avfs.OsLinux {
+		otherOSType = avfs.OsWindows
+	}
+
+	t.Run("OsTypeNotSupported", func(t *testing.T) {
+		vfsCloned, err := vfsClonable.CloneWithUser(vfs.User(), otherOSType)
+
+		if !vfs.HasFeature(avfs.FeatSetOSType) {
+			if !errors.Is(err, avfs.ErrSetOSType) {
+				t.Errorf("CloneWithUser %s : want error to be %v, got %v", otherOSType, avfs.ErrSetOSType, err)
+			}
+
+			return
+		}
+
+		if err != nil {
+			// The clone is allowed, but the content was not converted: a file
+			// system scoped to a path, such as a subtree, may not find it any
+			// more with the rules of the new OS. That is a path error, not a
+			// refusal to change the OS type.
+			var pathError *fs.PathError
+			if !errors.As(err, &pathError) {
+				t.Errorf("CloneWithUser %s : want error to be a *fs.PathError, got %v", otherOSType, err)
+			}
+
+			return
+		}
+
+		if vfsCloned.OSType() != otherOSType {
+			t.Errorf("CloneWithUser %s : want cloned vfs OSType to be %s, got %s",
+				otherOSType, otherOSType, vfsCloned.OSType())
+		}
+	})
 }
 
 // TestCreate tests Create function.
@@ -537,7 +728,7 @@ func (ts *Suite) TestCreate(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "create")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			newFile := vfs.Join(path, defaultFile)
 
 			f, err := vfs.Create(newFile)
@@ -807,7 +998,7 @@ func (ts *Suite) TestLchown(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "lchown")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.Lchown(path, 0, 0)
 		})
 	})
@@ -936,7 +1127,7 @@ func (ts *Suite) TestLink(t *testing.T, testDir string) {
 		oldFile := vfs.Join(pts.permDir, "OldFile")
 		ts.createFile(t, oldFile, avfs.DefaultFilePerm)
 
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			newFile := vfs.Join(path, "newFile")
 
 			return vfs.Link(oldFile, newFile)
@@ -1184,7 +1375,7 @@ func (ts *Suite) TestMkdir(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "mkdir")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			newDir := vfs.Join(path, "newDir")
 
 			return vfs.Mkdir(newDir, avfs.DefaultDirPerm)
@@ -1300,7 +1491,7 @@ func (ts *Suite) TestMkdirAll(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "mkdirall")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			newDir := vfs.Join(path, "newDir")
 
 			return vfs.MkdirAll(newDir, avfs.DefaultDirPerm)
@@ -1641,7 +1832,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "openfile-dir")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 			if err != nil {
 				return err
@@ -1659,7 +1850,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTestsWithOptions(t, testDir, "openfile-read", &PermOptions{CreateFiles: true})
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			f, err := vfs.OpenFile(path, os.O_RDONLY, 0)
 			if err != nil {
 				return err
@@ -1677,7 +1868,7 @@ func (ts *Suite) TestOpenFileWrite(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTestsWithOptions(t, testDir, "openfile-write", &PermOptions{CreateFiles: true})
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			f, err := vfs.OpenFile(path, os.O_WRONLY, 0)
 			if err != nil {
 				return err
@@ -1991,7 +2182,7 @@ func (ts *Suite) TestRemove(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "remove")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.Remove(path)
 		})
 	})
@@ -2091,7 +2282,7 @@ func (ts *Suite) TestRemoveAll(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTestsWithOptions(t, testDir, "removeall", &PermOptions{IgnoreOp: true})
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			return vfs.RemoveAll(path)
 		})
 	})
@@ -2231,7 +2422,7 @@ func (ts *Suite) TestRename(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "rename")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			oldPath := vfs.Join(pts.permDir, vfs.Base(path))
 			newPath := vfs.Join(path, "New")
 
@@ -2324,99 +2515,6 @@ func (ts *Suite) TestSameFile(t *testing.T, testDir string) {
 
 			err = vfs.Remove(path2)
 			RequireNoError(t, err, "Remove %s", path2)
-		}
-	})
-}
-
-func (ts *Suite) TestSetUserByName(t *testing.T, testDir string) {
-	vfs := ts.vfsTest
-	idm := vfs.Idm()
-
-	if !vfs.HasFeature(avfs.FeatIdentityMgr) || vfs.HasFeature(avfs.FeatReadOnlyIdm) || vfs.HasFeature(avfs.FeatReadOnly) {
-		userName := vfs.User().Name()
-
-		var wantErr error
-		if !vfs.HasFeature(avfs.FeatReadOnlyIdm) {
-			wantErr = avfs.ErrPermDenied
-		}
-
-		err := vfs.SetUserByName(userName)
-		if err != wantErr {
-			t.Errorf("setUser : want error to be %v, got %v", wantErr, err)
-		}
-
-		return
-	}
-
-	t.Run("UserNotExists", func(t *testing.T) {
-		const userName = "notExistingUser"
-
-		wantErr := avfs.UnknownUserError(userName)
-
-		_, err := idm.LookupUser(userName)
-		if err != wantErr {
-			t.Fatalf("LookupUser %s : want error to be %v, got %v", userName, wantErr, err)
-		}
-
-		err = vfs.SetUserByName(userName)
-		if err != wantErr {
-			t.Errorf("setUser %s : want error to be %v, got %v", userName, wantErr, err)
-		}
-	})
-
-	t.Run("UserExists", func(t *testing.T) {
-		curUser := vfs.User()
-
-		defer func() {
-			err := vfs.SetUserByName(curUser.Name())
-			RequireNoError(t, err, "SetUserByName %s", curUser.Name())
-		}()
-
-		for _, ui := range UserInfos() {
-			userName := ui.Name
-
-			lu, err := idm.LookupUser(userName)
-			if !AssertNoError(t, err, "LookupUser %s", userName) {
-				continue
-			}
-
-			uid := lu.Uid()
-			gid := lu.Gid()
-
-			// loop to test change with the same user
-			for i := range 2 {
-				err = vfs.SetUserByName(userName)
-				if !AssertNoError(t, err, "SetUserByName %s %d", userName, i) {
-					continue
-				}
-
-				u := vfs.User()
-
-				if u.Name() != userName {
-					t.Errorf("setUser %s : want name to be %s, got %s", userName, userName, u.Name())
-				}
-
-				if u.Uid() != uid {
-					t.Errorf("setUser %s : want uid to be %d, got %d", userName, uid, u.Uid())
-				}
-
-				if u.Gid() != gid {
-					t.Errorf("setUser %s : want gid to be %d, got %d", userName, gid, u.Gid())
-				}
-
-				cu := vfs.User()
-				if cu.Name() != userName {
-					t.Errorf("setUser %s : want name to be %s, got %s", userName, userName, cu.Name())
-				}
-
-				if cu.Uid() != uid {
-					t.Errorf("setUser %s : want uid to be %d, got %d", userName, uid, cu.Uid())
-				}
-
-				if cu.Gid() != gid {
-					t.Errorf("setUser %s : want gid to be %d, got %d", userName, gid, cu.Gid())
-				}
-			}
 		}
 	})
 }
@@ -2592,7 +2690,7 @@ func (ts *Suite) TestSymlink(t *testing.T, testDir string) {
 		}
 
 		pts := ts.NewPermTests(t, testDir, "symlink")
-		pts.Test(t, func(path string) error {
+		pts.Test(t, func(vfs avfs.VFSBase, path string) error {
 			newName := vfs.Join(path, "Symlink")
 
 			return vfs.Symlink(path, newName)

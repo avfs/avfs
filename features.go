@@ -28,7 +28,10 @@ const (
 	// FeatIdentityMgr indicates that the file system features and identity manager and supports multiple users.
 	FeatIdentityMgr
 
-	// FeatSetOSType is set if the OS of the emulated file system can be changed (see MemFS).
+	// FeatSetOSType is set if the OS of the emulated file system may differ from
+	// the host OS (build tag avfs_setostype). The OS type of a file system is
+	// immutable: a file system emulating another OS is obtained by cloning
+	// (see Cloner).
 	FeatSetOSType
 
 	// FeatReadOnly is set for read only file systems (see RoFs).

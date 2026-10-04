@@ -135,9 +135,12 @@ type IdmProvider interface {
 	// Idm returns the identity manager of the file system.
 	Idm() IdmMgr
 
-	// SetIdm set the current identity manager.
-	// If the identity manager provider is nil, the idm avfs.DefaultIdm is set.
-	SetIdm(idm IdmMgr) error
+	// InitIdm sets the identity manager of the file system.
+	// It must be called once, during construction: the identity manager of a
+	// file system is immutable, so that the users a file system resolves can
+	// never change under a running operation.
+	// If the identity manager is nil, the idm avfs.DefaultIdm is set.
+	InitIdm(idm IdmMgr) error
 }
 
 // IdmMixin is an embeddable default implementation of the IdmProvider interface.
@@ -155,9 +158,10 @@ func IsValidName(name string) bool {
 	return isValidNameRE.MatchString(name)
 }
 
-// SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm DefaultIdm is set.
-func (idmx *IdmMixin) SetIdm(idm IdmMgr) error {
+// InitIdm sets the identity manager of the file system.
+// It must be called once, during construction.
+// If the identity manager is nil, the identity manager DefaultIdm is set.
+func (idmx *IdmMixin) InitIdm(idm IdmMgr) error {
 	if idm == nil {
 		idm = DefaultIdm
 	}

@@ -26,6 +26,17 @@ const (
 	defaultNonExisting = "defaultNonExisting"
 )
 
+// userSwitcher is implemented by the file systems whose user is the user of the
+// process running them (see ostestfs and osidm). They have no view to clone:
+// changing the user changes the credentials of the whole process, so it is not a
+// file system operation and is only used to run the tests.
+type userSwitcher interface {
+	// SetUserByName sets the user of the process running the file system.
+	// If the user is not found, the returned error is of type
+	// avfs.UnknownUserError.
+	SetUserByName(userName string) error
+}
+
 // Suite is a test suite for virtual file systems and identity managers.
 type Suite struct {
 	vfsSetup    avfs.VFSBase       // vfsSetup is the file system used to set up the tests (generally with read/write access).

@@ -54,8 +54,13 @@ func TestMemIdmAllOSType(t *testing.T) {
 }
 
 func TestMemIdmFeatures(t *testing.T) {
+	// An in memory identity manager advertises the features enabled by the
+	// build: it emulates the OS of its users, so it supports a foreign OS type
+	// in a build with the avfs_setostype tag.
+	wantFeatures := avfs.FeatIdentityMgr | avfs.BuildFeatures()
+
 	idm := memidm.New()
-	if idm.Features() != avfs.FeatIdentityMgr {
-		t.Errorf("Features : want Features to be %d, got %d", avfs.FeatIdentityMgr, idm.Features())
+	if idm.Features() != wantFeatures {
+		t.Errorf("Features : want Features to be %d, got %d", wantFeatures, idm.Features())
 	}
 }

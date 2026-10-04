@@ -25,14 +25,29 @@ import (
 	"github.com/avfs/avfs"
 )
 
+// Storage holds the content shared by an OrefaFS and the clones made from it.
+//
+// It is created once, by the constructor, and is never replaced: every clone
+// points at the same Storage, so a file created through one view is visible
+// from all of them, and the unique file ids stay consistent (see SameFile).
+// It is safe for concurrent use: nodes is guarded by mu and lastId is atomic.
+type Storage struct {
+	nodes  nodes         // nodes is the map of nodes (files or directories) where the key is the absolute path.
+	lastId atomic.Uint64 // lastId is the last unique id used to identify files uniquely.
+	mu     sync.RWMutex  // mu is the RWMutex used to access nodes.
+}
+
 // OrefaFS implements a memory file system using the avfs.VFS interface.
+//
+// An OrefaFS is immutable once built: its user, its emulated OS type and its
+// identity manager are set by the constructor and never change. Use
+// CloneWithUser or CloneWithUserName to obtain a view of the same content
+// acting as another user or emulating another OS.
 type OrefaFS struct {
-	err               *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
-	nodes             nodes             // nodes is the map of nodes (files or directories) where the key is the absolute path.
-	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
-	name              string            // name is the name of the file system.
-	mu                sync.RWMutex      // mu is the RWMutex used to access nodes.
-	avfs.UserDirMixin                   // UserDirMixin is an embeddable default implementation of the VFSUserDir interface.
+	err     *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
+	storage *Storage          // storage is the content shared with the clones of this file system.
+	name    string            // name is the name of the file system.
+	userDir avfs.UserDirMixin // userDir is the identity and the user directories of the file system.
 }
 
 // OrefaFile represents an open file descriptor.

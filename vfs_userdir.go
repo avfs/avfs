@@ -19,9 +19,18 @@ package avfs
 import (
 	"crypto/sha256"
 	"strconv"
+	"sync/atomic"
 )
 
-// VFSUserDir is the interface that manages user directories.
+// VFSUserDir is the interface that provides the identity and the directories
+// associated with the current user of a file system.
+//
+// The identity (user, home and temporary directories) and the emulated OS type
+// are immutable: they are set once, when the file system is built. A file
+// system acting as another user, or emulating another OS, is obtained by
+// cloning (see [Cloner]), so that the identity a file system acts as can never
+// change while an operation is in flight. The current working directory is the
+// only mutable part, as it is for [os.Chdir].
 type VFSUserDir interface {
 	// Abs returns an absolute representation of path.
 	// If the path is not absolute it will be joined with the current
@@ -40,14 +49,6 @@ type VFSUserDir interface {
 	// current directory, it is returned.
 	Getwd() (dir string, err error)
 
-	// SetUser sets the current user.
-	// If the user can't be changed an error is returned.
-	SetUser(user UserReader) error
-
-	// SetUserByName sets the current user by name.
-	// If the user is not found, the returned error is of type UnknownUserError.
-	SetUserByName(name string) error
-
 	// TempDir returns the default directory to use for temporary files.
 	//
 	// On Unix systems, it returns $TMPDIR if non-empty, else /tmp.
@@ -64,13 +65,55 @@ type VFSUserDir interface {
 }
 
 // UserDirMixin is an embeddable default implementation of the VFSUserDir interface.
+//
+// Init must be called once during construction. The user, home and temporary
+// directories are then read-only; only the current directory changes, through
+// SetCurDir (used by Chdir).
 type UserDirMixin struct {
-	user      UserReader // user is the current user of the file system.
-	curDir    string     // curDir is the current directory.
-	homeDir   string     // homeDir is the home directory of the current user.
-	tempDir   string     // tempDir is the temporary directory.
-	IdmMixin             // IdmMixin is an embeddable default implementation of the IdmProvider interface.
-	PathMixin            // PathMixin is an embeddable default implementation of the VFSPath interface.
+	user      UserReader             // user is the current user of the file system.
+	homeDir   string                 // homeDir is the home directory of the current user.
+	tempDir   string                 // tempDir is the temporary directory.
+	curDir    atomic.Pointer[string] // curDir is the current directory.
+	IdmMixin                         // IdmMixin is an embeddable default implementation of the IdmProvider interface.
+	PathMixin                        // PathMixin is an embeddable default implementation of the VFSPath interface.
+}
+
+// Init initializes the identity and the user directories of the file system.
+//
+// It must be called once, during construction, before any other method: it sets
+// the emulated OS type (ost), the identity manager (idm), the current user
+// (user, the identity manager administrator if nil) and the current directory
+// (curDir, the home directory of the user if empty).
+//
+// The home and temporary directories are derived from ost and user, so a file
+// system acting as another user, or emulating another OS, must be built with —
+// or cloned with — that identity.
+func (udmx *UserDirMixin) Init(ost OSType, idm IdmMgr, user UserReader, curDir string) error {
+	err := udmx.InitOSType(ost)
+	if err != nil {
+		return err
+	}
+
+	err = udmx.InitIdm(idm)
+	if err != nil {
+		return err
+	}
+
+	if user == nil {
+		user = udmx.idm.AdminUser()
+	}
+
+	udmx.user = user
+	udmx.homeDir = homeDirUser(udmx.OSType(), user)
+	udmx.tempDir = tempDirUser(udmx.OSType(), user)
+
+	if curDir == "" {
+		curDir = udmx.homeDir
+	}
+
+	udmx.curDir.Store(&curDir)
+
+	return nil
 }
 
 // Abs returns an absolute representation of path.
@@ -83,12 +126,17 @@ func (udmx *UserDirMixin) Abs(path string) (string, error) {
 		return udmx.Clean(path), nil
 	}
 
-	return udmx.Join(udmx.curDir, path), nil
+	return udmx.Join(udmx.CurDir(), path), nil
 }
 
 // CurDir returns the current directory.
 func (udmx *UserDirMixin) CurDir() string {
-	return udmx.curDir
+	curDir := udmx.curDir.Load()
+	if curDir == nil {
+		return ""
+	}
+
+	return *curDir
 }
 
 // Getwd returns an absolute path name corresponding to the
@@ -100,41 +148,17 @@ func (udmx *UserDirMixin) CurDir() string {
 // provides an absolute name, and it is a name of the
 // current directory, it is returned.
 func (udmx *UserDirMixin) Getwd() (dir string, err error) {
-	return udmx.curDir, nil
+	return udmx.CurDir(), nil
 }
 
 // SetCurDir sets the current directory.
+//
+// Unlike Chdir, it resolves nothing and checks no permission: the caller is
+// responsible for having authorized the directory beforehand.
 func (udmx *UserDirMixin) SetCurDir(curDir string) error {
-	udmx.curDir = curDir
+	udmx.curDir.Store(&curDir)
 
 	return nil
-}
-
-// SetUser sets the current user and initializes related directories.
-func (udmx *UserDirMixin) SetUser(user UserReader) error {
-	if user == nil {
-		user = udmx.Idm().AdminUser()
-	}
-
-	udmx.user = user
-	udmx.curDir = homeDirUser(udmx.osType, udmx.user)
-	udmx.homeDir = udmx.curDir
-	udmx.tempDir = tempDirUser(udmx.osType, udmx.user)
-
-	return nil
-}
-
-// SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of the type UnknownUserError.
-func (udmx *UserDirMixin) SetUserByName(userName string) error {
-	idm := udmx.idm
-
-	u, err := idm.LookupUser(userName)
-	if err != nil {
-		return err
-	}
-
-	return udmx.SetUser(u)
 }
 
 // TempDir returns the default directory to use for temporary files.

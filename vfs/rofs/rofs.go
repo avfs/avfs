@@ -450,9 +450,10 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 	return vfs.baseFS.SameFile(fi1, fi2)
 }
 
-// SetIdm set the current identity manager.
-// If the identity manager provider is nil, the idm avfs.DefaultIdm is set.
-func (vfs *RoFS) SetIdm(idm avfs.IdmMgr) error {
+// InitIdm sets the identity manager of the file system.
+// It must be called once, during construction.
+// Setting an identity manager is disabled for read only file systems.
+func (vfs *RoFS) InitIdm(idm avfs.IdmMgr) error {
 	return avfs.ErrPermDenied
 }
 
@@ -460,18 +461,6 @@ func (vfs *RoFS) SetIdm(idm avfs.IdmMgr) error {
 // Setting Umask is disabled for read only file systems.
 func (vfs *RoFS) SetUMask(mask fs.FileMode) error {
 	return vfs.baseFS.SetUMask(mask)
-}
-
-// SetUser sets the current user.
-// If the user can't be changed an error is returned.
-func (vfs *RoFS) SetUser(user avfs.UserReader) error {
-	return avfs.ErrPermDenied
-}
-
-// SetUserByName sets the current user by name.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *RoFS) SetUserByName(name string) error {
-	return avfs.ErrPermDenied
 }
 
 // Split splits path immediately following the final Separator,

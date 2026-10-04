@@ -48,18 +48,20 @@ func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string,
 		options:       *options,
 	}
 
-	vfs := ts.vfsSetup
+	// setUser replaces the file systems of the suite by clones, so they are
+	// read again after each call instead of being captured once: a file system
+	// is bound to the user it was cloned for.
 	ts.setInitUser(t)
 	ts.createDir(t, pts.permDir, avfs.DefaultDirPerm)
 
 	for _, ui := range UserInfos() {
 		ts.setUser(t, ui.Name)
 
-		usrDir := vfs.Join(pts.permDir, ui.Name)
+		usrDir := ts.vfsSetup.Join(pts.permDir, ui.Name)
 		ts.createDir(t, usrDir, avfs.DefaultDirPerm)
 
 		for m := fs.FileMode(0); m <= 0o777; m++ {
-			path := vfs.Join(usrDir, m.String())
+			path := ts.vfsSetup.Join(usrDir, m.String())
 			if pts.options.CreateFiles {
 				ts.createFile(t, path, m)
 			} else {
@@ -67,8 +69,9 @@ func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string,
 			}
 		}
 
-		// Allow updates from user and group.
-		err := vfs.Chmod(usrDir, 0o775)
+		// Allow updates from user and group. Only the owner of usrDir may
+		// change its mode, which is the user it was created for.
+		err := ts.vfsSetup.Chmod(usrDir, 0o775)
 		RequireNoError(t, err, "Chmod %s", usrDir)
 	}
 
@@ -78,7 +81,7 @@ func (ts *Suite) NewPermTestsWithOptions(t *testing.T, testDir, funcName string,
 }
 
 // PermFunc returns an error depending on the permissions of the user and the file mode on the path.
-type PermFunc func(path string) error
+type PermFunc func(vfs avfs.VFSBase, path string) error
 
 // load loads a permissions test file.
 func (pts *PermTests) load(t *testing.T) {
@@ -150,24 +153,27 @@ func (pts *PermTests) newPermError(err error) *permError {
 // Test generates or tests the golden file of the permissions for a specific function.
 func (pts *PermTests) Test(t *testing.T, permFunc PermFunc) {
 	ts := pts.ts
-	vfs := ts.vfsSetup
 
 	pts.load(t)
 
-	if !pts.errFileExists && !vfs.HasFeature(avfs.FeatRealFS) {
-		t.Errorf("Can't test emulated file system %s before a real file system.", vfs.Type())
+	if !pts.errFileExists && !ts.vfsSetup.HasFeature(avfs.FeatRealFS) {
+		t.Errorf("Can't test emulated file system %s before a real file system.", ts.vfsSetup.Type())
 
 		return
 	}
 
+	// setUser replaces the file systems of the suite by clones: the file system
+	// the function under test must run against is the one of the current user,
+	// read after the switch and not captured by the caller.
 	ts.setUser(t, UsrTest)
+	vfs := ts.vfsTest
 
 	for _, ui := range UserInfos() {
 		for m := fs.FileMode(0); m <= 0o777; m++ {
-			relPath := vfs.Join(ui.Name, m.String())
+			relPath := ts.vfsSetup.Join(ui.Name, m.String())
 
-			path := vfs.Join(pts.permDir, relPath)
-			err := permFunc(path)
+			path := ts.vfsSetup.Join(pts.permDir, relPath)
+			err := permFunc(vfs, path)
 			pe := pts.newPermError(err)
 
 			if pts.errFileExists {

@@ -38,39 +38,42 @@ func NewWithOptions(opts *Options) *OrefaFS {
 	idm := avfs.DefaultIdm
 	user := opts.User
 
-	vfs := &OrefaFS{name: opts.Name}
+	vfs := &OrefaFS{name: opts.Name, storage: &Storage{}}
+
+	_ = vfs.SetUMask(avfs.UMask())
+
+	// The current directory of a Windows file system is its default volume,
+	// which is where the file system must start. The separator of a Windows
+	// file system is a backslash (see avfs.OSTypeMixin.InitOSType).
+	curDir := "/"
+	if opts.OSType == avfs.OsWindows {
+		curDir = avfs.DefaultVolume + `\`
+	}
+
+	_ = vfs.userDir.Init(opts.OSType, idm, user, curDir)
 
 	_ = vfs.SetFeatures(features)
-	_ = vfs.SetOSType(opts.OSType)
-	_ = vfs.SetIdm(idm)
-	_ = vfs.SetUser(user)
 
 	vfs.err = avfs.ErrorsFor(vfs.OSType())
 
 	volumeName := ""
-	curDir := "/"
-
 	if vfs.OSType() == avfs.OsWindows {
 		volumeName = avfs.DefaultVolume
-		curDir = volumeName + string(vfs.PathSeparator())
 	}
 
-	vfs.nodes = make(nodes)
-	vfs.nodes[volumeName] = &node{
+	vfs.storage.nodes = make(nodes)
+	vfs.storage.nodes[volumeName] = &node{
 		mode:  fs.ModeDir | 0o755,
 		mtime: time.Now(),
 		uid:   0,
 		gid:   0,
 	}
 
-	_ = vfs.SetCurDir(curDir)
-
 	if len(opts.SystemDirs) == 0 {
 		opts.SystemDirs = avfs.SystemDirs(vfs)
 	}
 
 	_ = avfs.MkDirs(vfs, opts.SystemDirs, "")
-	_ = vfs.SetUMask(avfs.UMask())
 
 	return vfs
 }

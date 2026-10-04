@@ -35,14 +35,88 @@ type MemIOFS struct {
 	MemFS
 }
 
+// userDirKey identifies an identity view of a Storage: a user, by name and by
+// uid, emulating an OS type.
+//
+// The uid is part of the key because a deleted user can be created again with
+// the same name and a different uid: such a user is a different identity, and
+// must not inherit the directories of its predecessor.
+type userDirKey struct {
+	name string      // name is the name of the user.
+	uid  int         // uid is the user id of the user.
+	ost  avfs.OSType // ost is the OS type emulated by the view.
+}
+
+// Storage holds the state shared by a MemFS and the clones made from it.
+//
+// It is created once, by the constructor, and is never replaced: every clone
+// points at the same Storage, so a file created through one view is visible
+// from all of them, and the unique file ids stay consistent (see SameFile).
+// The nodes are guarded by their own locks, lastId is atomic, and volumes and
+// userDirs are guarded by volMu and udMu, so a Storage is safe for concurrent
+// use.
+type Storage struct {
+	rootNode *dirNode                          // rootNode is the root directory of the file system.
+	lastId   atomic.Uint64                     // lastId is the last unique id used to identify files uniquely.
+	volumes  volumes                           // volumes contains the volume names (for Windows only).
+	volMu    sync.RWMutex                      // volMu is the RWMutex used to access volumes.
+	name     string                            // name is the name of the file system.
+	userDirs map[userDirKey]*avfs.UserDirMixin // userDirs are the identity views already built, by user and OS type.
+	udMu     sync.Mutex                        // udMu is the Mutex used to access userDirs.
+}
+
+// userDirFor returns the identity view of the storage for user emulating ost,
+// building it if it does not exist yet.
+//
+// The views are shared: cloning twice for the same user and OS type returns two
+// file systems whose identity is the same object, so they also share their
+// current directory. Chdir on one of them is visible in the others.
+func (s *Storage) userDirFor(
+	idm avfs.IdmMgr, user avfs.UserReader, ost avfs.OSType, features avfs.Features, umask fs.FileMode,
+) (*avfs.UserDirMixin, error) {
+	key := userDirKey{name: user.Name(), uid: user.Uid(), ost: ost}
+
+	s.udMu.Lock()
+	defer s.udMu.Unlock()
+
+	ud, ok := s.userDirs[key]
+	if ok {
+		return ud, nil
+	}
+
+	ud = &avfs.UserDirMixin{}
+
+	// A view whose OS type can't be set is not registered: the next call must
+	// try again rather than hand out a view of the wrong OS.
+	err := ud.Init(ost, idm, user, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// The features and the umask describe the content and the creation policy,
+	// not the identity: a view gets those of the file system it is cloned from.
+	_ = ud.SetFeatures(features)
+	_ = ud.SetUMask(umask)
+
+	if s.userDirs == nil {
+		s.userDirs = make(map[userDirKey]*avfs.UserDirMixin)
+	}
+
+	s.userDirs[key] = ud
+
+	return ud, nil
+}
+
 // MemFS implements a memory file system using the avfs.VFS interface.
+//
+// A MemFS is immutable once built: its user, its emulated OS type and its
+// identity manager are set by the constructor and never change. Use
+// CloneWithUser or CloneWithUserName to obtain a view of the same content
+// acting as another user or emulating another OS.
 type MemFS struct {
-	err               *avfs.ErrorsForOS // err regroups errors depending on the OS emulated.
-	rootNode          *dirNode          // rootNode represent the root directory of the file system.
-	volumes           volumes           // volumes contains the volume names (for Windows only).
-	lastId            atomic.Uint64     // lastId is the last unique id used to identify files uniquely.
-	name              string            // name is the name of the file system.
-	avfs.UserDirMixin                   // UserDirMixin is an embeddable default implementation of the VFSUserDir interface.
+	err     *avfs.ErrorsForOS  // err regroups errors depending on the OS emulated.
+	storage *Storage           // storage is the state shared with the clones of this file system.
+	userDir *avfs.UserDirMixin // userDir is the identity and the user directories of the file system.
 }
 
 // MemFile represents an open file descriptor.

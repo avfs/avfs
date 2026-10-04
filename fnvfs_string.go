@@ -43,24 +43,22 @@ func _() {
 	_ = x[FnRemove-33]
 	_ = x[FnRemoveAll-34]
 	_ = x[FnRename-35]
-	_ = x[FnSetUser-36]
-	_ = x[FnSetUserByName-37]
-	_ = x[FnStat-38]
-	_ = x[FnSub-39]
-	_ = x[FnSymlink-40]
-	_ = x[FnTruncate-41]
-	_ = x[FnWalkDir-42]
-	_ = x[FnWriteFile-43]
+	_ = x[FnStat-36]
+	_ = x[FnSub-37]
+	_ = x[FnSymlink-38]
+	_ = x[FnTruncate-39]
+	_ = x[FnWalkDir-40]
+	_ = x[FnWriteFile-41]
 }
 
-const _FnVFS_name = "AbsChdirChmodChownChtimesCreateTempEvalSymlinksFileChdirFileChmodFileChownFileCloseFileReadFileReadAtFileReadDirFileReaddirnamesFileSeekFileStatFileSyncFileTruncateFileWriteFileWriteAtGetwdLchownLinkLstatMkdirMkdirAllMkdirTempOpenFileReadDirReadFileReadlinkRemoveRemoveAllRenameSetUserSetUserByNameStatSubSymlinkTruncateWalkDirWriteFile"
+const _FnVFS_name = "AbsChdirChmodChownChtimesCreateTempEvalSymlinksFileChdirFileChmodFileChownFileCloseFileReadFileReadAtFileReadDirFileReaddirnamesFileSeekFileStatFileSyncFileTruncateFileWriteFileWriteAtGetwdLchownLinkLstatMkdirMkdirAllMkdirTempOpenFileReadDirReadFileReadlinkRemoveRemoveAllRenameStatSubSymlinkTruncateWalkDirWriteFile"
 
-var _FnVFS_index = [...]uint16{0, 3, 8, 13, 18, 25, 35, 47, 56, 65, 74, 83, 91, 101, 112, 128, 136, 144, 152, 164, 173, 184, 189, 195, 199, 204, 209, 217, 226, 234, 241, 249, 257, 263, 272, 278, 285, 298, 302, 305, 312, 320, 327, 336}
+var _FnVFS_index = [...]uint16{0, 3, 8, 13, 18, 25, 35, 47, 56, 65, 74, 83, 91, 101, 112, 128, 136, 144, 152, 164, 173, 184, 189, 195, 199, 204, 209, 217, 226, 234, 241, 249, 257, 263, 272, 278, 282, 285, 292, 300, 307, 316}
 
 func (i FnVFS) String() string {
-	i -= 1
-	if i >= FnVFS(len(_FnVFS_index)-1) {
-		return "FnVFS(" + strconv.FormatInt(int64(i+1), 10) + ")"
+	idx := int(i) - 1
+	if i < 1 || idx >= len(_FnVFS_index)-1 {
+		return "FnVFS(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _FnVFS_name[_FnVFS_index[i]:_FnVFS_index[i+1]]
+	return _FnVFS_name[_FnVFS_index[idx]:_FnVFS_index[idx+1]]
 }

@@ -430,18 +430,6 @@ func (vfs *OsFS) SetUMask(mask fs.FileMode) error {
 	return avfs.SetUMask(mask)
 }
 
-// SetUser sets the current user.
-// If the user can't be changed an error is returned.
-func (vfs *OsFS) SetUser(_ avfs.UserReader) error {
-	return avfs.ErrPermDenied
-}
-
-// SetUserByName sets and returns the current user.
-// If the user is not found, the returned error is of type UnknownUserError.
-func (vfs *OsFS) SetUserByName(name string) error {
-	return avfs.ErrPermDenied
-}
-
 // Split splits path immediately following the final [Separator],
 // separating it into a directory and file name component.
 // If there is no Separator in path, Split returns an empty dir
