@@ -74,6 +74,13 @@ func NewWithOptions(opts *Options) *MemFS {
 		u = idm.AdminUser()
 	}
 
+	// Create the user directories while still the administrator, so that the
+	// Chown done by MkDirs is allowed, then switch to the target user.
+	err = avfs.MkDirs(vfs, avfs.UserDirs(vfs, u), "")
+	if err != nil {
+		panic(err)
+	}
+
 	_ = vfs.SetUser(u)
 
 	return vfs

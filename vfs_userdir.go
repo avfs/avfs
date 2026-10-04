@@ -275,14 +275,14 @@ func UserDirs[T VFSBase](vfs T, u UserReader) []DirInfo {
 	switch vfs.OSType() {
 	case OsWindows:
 		dis = []DirInfo{
-			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
-			{Path: tempDirUserWindows(DefaultName), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: homeDirUser(OsWindows, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: tempDirUserWindows(u.Name()), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()},
 		}
 
 	case OsDarwin:
 		dis = []DirInfo{
 			{Path: homeDirUser(OsDarwin, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
-			{Path: tempDirUserDarwin(vfs.User()), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()},
+			{Path: tempDirUserDarwin(u), Perm: 0o777, Uid: u.Uid(), Gid: u.Gid()},
 		}
 
 	default:
