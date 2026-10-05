@@ -583,7 +583,7 @@ func (ts *Suite) TestCloneWithUser(t *testing.T, testDir string) {
 			homeDir, err := vfsCloned.UserHomeDir()
 			RequireNoError(t, err, "UserHomeDir %s", userName)
 
-			wantHomeDir := avfs.HomeDirInfo(vfs.OSType(), vfsCloned.User()).Path
+			wantHomeDir := avfs.UserDirsInfo(vfs, vfsCloned.User())[0].Path
 			if homeDir != wantHomeDir {
 				t.Errorf("CloneWithUserName %s : want the home directory to be %s, got %s", userName, wantHomeDir, homeDir)
 			}

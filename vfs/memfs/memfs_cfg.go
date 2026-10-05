@@ -94,7 +94,7 @@ func NewWithOptions(opts *Options) (*MemFS, error) {
 	// Create the user directories while still the administrator, so that the
 	// Chown done by MkDirs is allowed, then hand the tree over to the target
 	// user. A file system cannot change user, so this is a clone.
-	err = avfs.MkDirs(vfs, avfs.UserDirs(vfs, u), "")
+	err = avfs.MkDirs(vfs, avfs.UserDirsInfo(vfs, u), "")
 	if err != nil {
 		return nil, err
 	}

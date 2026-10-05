@@ -83,7 +83,7 @@ func (vfs *MemFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*MemFS, 
 		userDir: userDir,
 	}
 
-	err = vfs.createHomeDir(user, userDir.OSType())
+	err = vfs.createUserDirs(user, userDir.OSType())
 	if err != nil {
 		return nil, err
 	}
@@ -91,8 +91,10 @@ func (vfs *MemFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*MemFS, 
 	return clone, nil
 }
 
-// createHomeDir creates the home directory of user in the shared content if it
-// does not exist yet, as a clone starts in it.
+// createUserDirs creates the directories of user in the shared content if they
+// do not exist yet: its home directory, which a clone starts in, and the
+// user-specific directories of the OS, such as the temporary directory on
+// Windows and Darwin.
 //
 // The directory is created by the administrator of the identity manager, through
 // a view of the storage emulating ost: a view acting as user may have neither
@@ -101,7 +103,7 @@ func (vfs *MemFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*MemFS, 
 // Nothing is created when ost is not the OS type of the file system it is
 // cloned from: the content is not converted to another OS (see the AVFS
 // specification), so the directories of that OS are not created either.
-func (vfs *MemFS) createHomeDir(user avfs.UserReader, ost avfs.OSType) error {
+func (vfs *MemFS) createUserDirs(user avfs.UserReader, ost avfs.OSType) error {
 	if ost != vfs.OSType() {
 		return nil
 	}
@@ -119,5 +121,5 @@ func (vfs *MemFS) createHomeDir(user avfs.UserReader, ost avfs.OSType) error {
 		userDir: userDir,
 	}
 
-	return avfs.MkDirs(adminVfs, []avfs.DirInfo{avfs.HomeDirInfo(ost, user)}, "")
+	return avfs.MkDirs(adminVfs, avfs.UserDirsInfo(adminVfs, user), "")
 }

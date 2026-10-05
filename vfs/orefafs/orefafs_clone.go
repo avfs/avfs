@@ -80,11 +80,13 @@ func (vfs *OrefaFS) cloneWithUser(user avfs.UserReader, ost avfs.OSType) (*Orefa
 	c.err = avfs.ErrorsFor(c.OSType())
 
 	// The clone starts in the home directory of user, which is created in the
-	// shared content if it does not exist yet. Nothing is created when the
-	// clone emulates another OS: the content is not converted to it (see the
-	// AVFS specification), so the directories of that OS are not either.
+	// shared content if it does not exist yet, along with the user-specific
+	// directories of the OS, such as the temporary directory on Windows and
+	// Darwin. Nothing is created when the clone emulates another OS: the content
+	// is not converted to it (see the AVFS specification), so the directories of
+	// that OS are not either.
 	if c.OSType() == vfs.OSType() {
-		err = avfs.MkDirs(c, []avfs.DirInfo{avfs.HomeDirInfo(c.OSType(), user)}, "")
+		err = avfs.MkDirs(c, avfs.UserDirsInfo(c, user), "")
 		if err != nil {
 			return nil, err
 		}

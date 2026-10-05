@@ -431,7 +431,8 @@ a `VFSBase`, so that every implementation shares identical behaviour:
 `WalkDir`, `WriteFile`.
 
 Also provided: `MkDirs` (create a set of `DirInfo` directories), `SystemDirs`,
-`UserDirs` and `HomeDirInfo` (OS-specific directory metadata), `homeDirUser`, `tempDirUser`,
+`UserDirsInfo` (OS-specific user directory metadata, home directory first),
+`homeDirUser`, `tempDirUser`,
 `ToSysStat`, `PathIterator[T]`, `CopyFile`, `CopyFileHash`, `HashFile`,
 `Tree`, `NewRndTree`.
 

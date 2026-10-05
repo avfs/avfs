@@ -288,17 +288,17 @@ func SystemDirs[T VFSBase](vfs T) []DirInfo {
 	return dis
 }
 
-// HomeDirInfo returns the metadata of the home directory of the user u,
-// emulating the operating system type ost.
-func HomeDirInfo(ost OSType, u UserReader) DirInfo {
-	return DirInfo{Path: homeDirUser(ost, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()}
-}
+// UserDirsInfo retrieves metadata for all user directories of the user u from
+// the provided virtual file system (vfs). The home directory of u is always
+// the first element of the returned slice.
+func UserDirsInfo[T VFSBase](vfs T, u UserReader) []DirInfo {
+	ost := vfs.OSType()
 
-// UserDirs retrieves metadata for all user directories from the provided virtual file system (vfs).
-func UserDirs[T VFSBase](vfs T, u UserReader) []DirInfo {
-	dis := []DirInfo{HomeDirInfo(vfs.OSType(), u)}
+	dis := []DirInfo{
+		{Path: homeDirUser(ost, u), Perm: 0o755, Uid: u.Uid(), Gid: u.Gid()},
+	}
 
-	switch vfs.OSType() {
+	switch ost {
 	case OsWindows:
 		dis = append(dis, DirInfo{Path: tempDirUserWindows(u.Name()), Perm: DefaultDirPerm, Uid: u.Uid(), Gid: u.Gid()})
 
