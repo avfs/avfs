@@ -63,7 +63,7 @@ func initFS(tb testing.TB) (vfs *basepathfs.BasePathFS, basePath string) {
 		tb.Fatalf("Can't create base directory %s : %v", basePath, err)
 	}
 
-	dirs := avfs.SystemDirs(baseFS)
+	dirs := avfs.SystemDirsInfo(baseFS)
 
 	err = avfs.MkDirs(baseFS, dirs, basePath)
 	if err != nil {

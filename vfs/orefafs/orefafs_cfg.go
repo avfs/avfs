@@ -65,7 +65,7 @@ func NewWithOptions(opts *Options) (*OrefaFS, error) {
 	}
 
 	if len(opts.SystemDirs) == 0 {
-		opts.SystemDirs = avfs.SystemDirs(vfs)
+		opts.SystemDirs = avfs.SystemDirsInfo(vfs)
 	}
 
 	err := avfs.MkDirs(vfs, opts.SystemDirs, "")

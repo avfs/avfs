@@ -414,9 +414,9 @@ func (ts *Suite) TestMkSystemDirs(t *testing.T, testDir string) {
 		return
 	}
 
-	dirs := avfs.SystemDirs(vfs)
+	dirs := avfs.SystemDirsInfo(vfs)
 
-	err := avfs.MkDirs(vfs, dirs, testDir)
+	err := avfs.MkSystemDirs(vfs, testDir)
 	RequireNoError(t, err, "MkSystemDirs %s", testDir)
 
 	for _, dir := range dirs {

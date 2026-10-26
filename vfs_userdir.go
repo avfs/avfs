@@ -259,8 +259,30 @@ func MkDirs[T VFSBase](vfs T, dirs []DirInfo, basePath string) error {
 	return nil
 }
 
-// SystemDirs returns an array of system directories always present in the file system.
-func SystemDirs[T VFSBase](vfs T) []DirInfo {
+func MkSystemDirs[T VFSBase](vfs T, basePath string) error {
+	dirs := SystemDirsInfo(vfs)
+
+	err := MkDirs(vfs, dirs, basePath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func MkUserDirs[T VFSBase](vfs T, user UserReader, basePath string) error {
+	dirs := UserDirsInfo(vfs, user)
+
+	err := MkDirs(vfs, dirs, basePath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SystemDirsInfo returns an array of system directories always present in the file system.
+func SystemDirsInfo[T VFSBase](vfs T) []DirInfo {
 	var dis []DirInfo
 
 	admin := vfs.Idm().AdminUser()
