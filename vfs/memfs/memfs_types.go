@@ -52,14 +52,12 @@ type userDirKey struct {
 // It is created once, by the constructor, and is never replaced: every clone
 // points at the same Storage, so a file created through one view is visible
 // from all of them, and the unique file ids stay consistent (see SameFile).
-// The nodes are guarded by their own locks, lastId is atomic, and volumes and
-// userDirs are guarded by volMu and udMu, so a Storage is safe for concurrent
-// use.
+// The nodes are guarded by their own locks, lastId is atomic, the root node's
+// mutex guards the volume names, and userDirs is guarded by udMu, so a Storage
+// is safe for concurrent use.
 type Storage struct {
-	rootNode *dirNode                          // rootNode is the root directory of the file system.
+	rootNode *dirNode                          // rootNode is the file system root on Unix and a hidden volume container on Windows.
 	lastId   atomic.Uint64                     // lastId is the last unique id used to identify files uniquely.
-	volumes  volumes                           // volumes contains the volume names (for Windows only).
-	volMu    sync.RWMutex                      // volMu is the RWMutex used to access volumes.
 	name     string                            // name is the name of the file system.
 	userDirs map[userDirKey]*avfs.UserDirMixin // userDirs are the identity views already built, by user and OS type.
 	udMu     sync.Mutex                        // udMu is the Mutex used to access userDirs.
@@ -125,8 +123,14 @@ type node interface {
 	size() int64
 }
 
-// volumes are the volumes names for Windows.
-type volumes map[string]*dirNode
+// volumeNode is the structure for a volume root.
+//
+// A volume root wraps a directory whose name is a volume name ("C:", "Z:", ...).
+// The embedded *dirNode is the node path resolution uses: volumeNode is only a
+// marker, recognized by lookupVolume, that identifies a directory as a volume.
+type volumeNode struct {
+	*dirNode // dirNode is the directory at the root of the volume.
+}
 
 // dirNode is the structure for a directory.
 type dirNode struct {

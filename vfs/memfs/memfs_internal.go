@@ -48,7 +48,7 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	absPath, _ := vfs.Abs(path)
 	pi = avfs.NewPathIterator[*MemFS](vfs, absPath)
 
-	volNode := vfs.storage.rootNode
+	volNode := vfs.rootDir()
 
 	if pi.VolumeNameLen() > 0 {
 		nd, ok := vfs.lookupVolume(pi.VolumeName())
@@ -99,6 +99,12 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 
 			parent = c
 
+		case *volumeNode:
+			parent, child, err = vfs.searchVolumeNode(pi, c, parent, child)
+			if err != nil {
+				return parent, child, pi, err
+			}
+
 		case *fileNode:
 			// File permissions are checked by the calling function.
 			if pi.IsLast() {
@@ -146,6 +152,45 @@ func (vfs *MemFS) searchNode(path string, slMode slMode) (
 	}
 
 	return parent, parent, pi, vfs.err.FileExists
+}
+
+// searchVolumeNode handles a volume root encountered as a direct child of a
+// directory. It is only reachable through a foreign-OS view of a tree that has
+// volume nodes as direct children (for example a Unix-built root where a
+// Windows clone added a volume): the wrapper is treated as its embedded
+// directory.
+func (vfs *MemFS) searchVolumeNode(
+	pi *avfs.PathIterator[*MemFS], vn *volumeNode, parent *dirNode, child node,
+) (*dirNode, node, error) {
+	if pi.IsLast() {
+		return parent, vn.dirNode, vfs.err.FileExists
+	}
+
+	vn.mu.RLock()
+	ok := vn.checkPermission(avfs.OpenLookup, vfs.User())
+	vn.mu.RUnlock()
+
+	if !ok {
+		return parent, child, vfs.err.PermDenied
+	}
+
+	return vn.dirNode, child, nil
+}
+
+// createVolumeNode creates a volume root node for a Windows file system.
+func (vfs *MemFS) createVolumeNode() *volumeNode {
+	return &volumeNode{dirNode: vfs.createRootNode()}
+}
+
+// rootDir returns the directory where paths without a volume name start.
+// On a tree built for Windows this is the default volume; on other trees it
+// is the root node.
+func (vfs *MemFS) rootDir() *dirNode {
+	if def, ok := vfs.lookupVolume(avfs.DefaultVolume); ok {
+		return def
+	}
+
+	return vfs.storage.rootNode
 }
 
 // createRootNode creates a root node for a file system.
@@ -217,12 +262,17 @@ func (vfs *MemFS) createSymlink(parent *dirNode, name, link string) *symlinkNode
 
 // lookupVolume returns the root node of the volume named name, and true if it exists.
 func (vfs *MemFS) lookupVolume(name string) (*dirNode, bool) {
-	vfs.storage.volMu.RLock()
-	defer vfs.storage.volMu.RUnlock()
+	root := vfs.storage.rootNode
+	root.mu.RLock()
+	child := root.children[name]
+	root.mu.RUnlock()
 
-	dn, ok := vfs.storage.volumes[name]
+	vn, ok := child.(*volumeNode)
+	if !ok {
+		return nil, false
+	}
 
-	return dn, ok
+	return vn.dirNode, true
 }
 
 // isNotExist is IsNotExist without unwrapping.

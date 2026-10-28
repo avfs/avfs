@@ -72,8 +72,7 @@ func NewWithOptions(opts *Options) (*MemFS, error) {
 	vfs.storage.rootNode = vfs.createRootNode()
 
 	if vfs.OSType() == avfs.OsWindows {
-		vfs.storage.volumes = make(volumes)
-		vfs.storage.volumes[avfs.DefaultVolume] = vfs.storage.rootNode
+		vfs.storage.rootNode.addChild(avfs.DefaultVolume, vfs.createVolumeNode())
 	}
 
 	systemDirs := opts.SystemDirs
@@ -139,20 +138,23 @@ func (vfs *MemFS) VolumeAdd(name string) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
-	vfs.storage.volMu.Lock()
-	defer vfs.storage.volMu.Unlock()
+	root := vfs.storage.rootNode
 
-	_, ok := vfs.storage.volumes[vol]
+	root.mu.Lock()
+	defer root.mu.Unlock()
+
+	_, ok := root.children[vol]
 	if ok {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeAlreadyExists}
 	}
 
-	vfs.storage.volumes[vol] = vfs.createRootNode()
+	root.addChild(vol, vfs.createVolumeNode())
 
 	return nil
 }
 
 // VolumeDelete deletes an existing volume and all its files from a Windows file system.
+// The default volume cannot be deleted.
 // If there is an error, it will be of type [*PathError].
 func (vfs *MemFS) VolumeDelete(name string) error {
 	const op = "VolumeDelete"
@@ -166,22 +168,25 @@ func (vfs *MemFS) VolumeDelete(name string) error {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
-	vfs.storage.volMu.RLock()
-	_, ok := vfs.storage.volumes[vol]
-	vfs.storage.volMu.RUnlock()
+	root := vfs.storage.rootNode
 
-	if !ok {
+	root.mu.Lock()
+	defer root.mu.Unlock()
+
+	child := root.children[vol]
+	if child == nil {
 		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
-	err := vfs.RemoveAll(vol)
-	if err != nil {
-		return err
+	if _, ok := child.(*volumeNode); !ok {
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrVolumeNameInvalid}
 	}
 
-	vfs.storage.volMu.Lock()
-	delete(vfs.storage.volumes, vol)
-	vfs.storage.volMu.Unlock()
+	if vol == avfs.DefaultVolume {
+		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	}
+
+	root.removeChild(vol)
 
 	return nil
 }
@@ -194,11 +199,15 @@ func (vfs *MemFS) VolumeList() []string {
 		return l
 	}
 
-	vfs.storage.volMu.RLock()
-	defer vfs.storage.volMu.RUnlock()
+	root := vfs.storage.rootNode
 
-	for v := range vfs.storage.volumes {
-		l = append(l, v)
+	root.mu.RLock()
+	defer root.mu.RUnlock()
+
+	for v, child := range root.children {
+		if _, ok := child.(*volumeNode); ok {
+			l = append(l, v)
+		}
 	}
 
 	return l

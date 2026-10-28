@@ -29,6 +29,9 @@ var (
 	// Tests that dirNode struct implements node interface.
 	_ node = &dirNode{}
 
+	// Tests that volumeNode struct implements node interface.
+	_ node = &volumeNode{}
+
 	// Tests that fileNode struct implements node interface.
 	_ node = &fileNode{}
 
@@ -45,7 +48,7 @@ func TestSearchNode(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	rn := vfs.storage.rootNode
+	rn := vfs.rootDir()
 
 	// Directories
 	da := vfs.createDir(rn, "a", avfs.DefaultDirPerm)
@@ -139,5 +142,77 @@ func TestSearchNode(t *testing.T) {
 		if wantRest != rest {
 			t.Errorf("%s : want rest to be %s, got %s", path, wantRest, rest)
 		}
+	}
+}
+
+func TestVolumeNode(t *testing.T) {
+	// Building for Windows panics when the build cannot honor a foreign OS
+	// type, so the tag has to be checked before construction.
+	if avfs.BuildFeatures()&avfs.FeatSetOSType == 0 {
+		t.Skip("volume nodes require a build honoring foreign OS types (avfs_setostype)")
+	}
+
+	vfs, err := NewWithOptions(&Options{OSType: avfs.OsWindows})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if vfs.OSType() != avfs.OsWindows {
+		t.Skip("volume nodes require a build honoring foreign OS types (avfs_setostype)")
+	}
+
+	root := vfs.storage.rootNode
+
+	child := root.children[avfs.DefaultVolume]
+
+	vn, ok := child.(*volumeNode)
+	if !ok {
+		t.Fatalf("default volume : want *volumeNode, got %T", child)
+	}
+
+	nd, ok := vfs.lookupVolume(avfs.DefaultVolume)
+	if !ok {
+		t.Fatal("lookupVolume : want default volume to exist")
+	}
+
+	if nd != vn.dirNode {
+		t.Errorf("lookupVolume : want %p, got %p", vn.dirNode, nd)
+	}
+
+	fi, err := vfs.Stat(avfs.DefaultVolume + `\`)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !fi.IsDir() || fi.Mode().Type() != fs.ModeDir {
+		t.Errorf("Stat(%s) : want a directory with ModeDir type, got %v", avfs.DefaultVolume, fi.Mode())
+	}
+
+	const vol = "Z:"
+
+	err = vfs.VolumeAdd(vol)
+	if err != nil {
+		t.Fatalf("VolumeAdd %s : %v", vol, err)
+	}
+
+	child = root.children[vol]
+
+	zvn, ok := child.(*volumeNode)
+	if !ok {
+		t.Fatalf("%s : want *volumeNode, got %T", vol, child)
+	}
+
+	nd, ok = vfs.lookupVolume(vol)
+	if !ok || nd != zvn.dirNode {
+		t.Errorf("lookupVolume %s : want %p, got %p", vol, zvn.dirNode, nd)
+	}
+
+	err = vfs.VolumeDelete(vol)
+	if err != nil {
+		t.Fatalf("VolumeDelete %s : %v", vol, err)
+	}
+
+	if root.children[vol] != nil {
+		t.Errorf("VolumeDelete %s : want the volume node to be removed", vol)
 	}
 }

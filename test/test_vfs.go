@@ -2959,6 +2959,19 @@ func (ts *Suite) TestVolume(t *testing.T, _ string) {
 		err := vm.VolumeAdd(testVolume)
 		RequireNoError(t, err, "VolumeAdd %s", testVolume)
 
+		fi, err := vfs.Stat(testVolume + "\\")
+		RequireNoError(t, err, "Stat %s", testVolume)
+
+		if !fi.IsDir() || fi.Mode().Type() != fs.ModeDir {
+			t.Errorf("Stat %s : want a directory with ModeDir type, got %v", testVolume, fi.Mode())
+		}
+
+		err = vm.VolumeAdd(testVolume)
+		AssertPathError(t, err).Op("VolumeAdd").Path(testVolume).Err(avfs.ErrVolumeAlreadyExists).Test()
+
+		err = vm.VolumeDelete(avfs.DefaultVolume)
+		AssertPathError(t, err).Op("VolumeDelete").Path(avfs.DefaultVolume).Err(avfs.ErrPermDenied).Test()
+
 		vl = vm.VolumeList()
 		if len(vl) != 2 {
 			t.Errorf("VolumeList : want 2 volumes, got %d = %v", len(vl), vl)

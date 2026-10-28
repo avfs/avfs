@@ -1174,8 +1174,14 @@ func (vfs *MemFS) removeAll(parent *dirNode) error {
 	}
 
 	for _, child := range parent.children {
-		if c, ok := child.(*dirNode); ok {
+		switch c := child.(type) {
+		case *dirNode:
 			err := vfs.removeAll(c)
+			if err != nil {
+				return err
+			}
+		case *volumeNode:
+			err := vfs.removeAll(c.dirNode)
 			if err != nil {
 				return err
 			}

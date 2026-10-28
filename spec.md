@@ -327,8 +327,9 @@ verify `OSType()` after construction.
    - the home and temporary directories of the current user, the home
      directory being also the initial current directory (`\Users\x` vs
      `/home/x`);
-   - Windows volume state (`VolumeAdd`/`VolumeDelete`/`VolumeList`): the volume
-     table exists for `OsWindows` and is absent otherwise.
+   - Windows volume state (`VolumeAdd`/`VolumeDelete`/`VolumeList`): on Windows
+     the root node is a hidden volume container whose children are the volume
+     roots; there is no separate volume table.
 
    An emulated identity manager derives its administrator user and group names
    from its own OS type (`avfs.AdminUserName`/`AdminGroupName`), so an idm whose
@@ -479,11 +480,11 @@ select an operation to fail.
 - Features: `FeatHardlink | FeatSubFS | FeatSymlink | BuildFeatures()` plus the
   identity manager's features.
 - `Storage` holds everything shared with its clones: the node tree, the
-  unique-id counter (`lastId`), the Windows volume table (guarded by
-  `volMu`), the file system name, and the memoised identity views
-  (`userDirs`, guarded by `udMu`, keyed by user name, uid and OS type — see
-  §3.3, rule 3). `MemFS` itself holds only its error table and its `userDir`
-  view.
+  unique-id counter (`lastId`), the file system name, and the memoised identity
+  views (`userDirs`, guarded by `udMu`, keyed by user name, uid and OS type —
+  see §3.3, rule 3). On Windows the volume roots are children of the root node,
+  guarded by its mutex. `MemFS` itself holds only its error table and its
+  `userDir` view.
 - Implements `Cloner`: `CloneWithUser`, `CloneWithUserName`. The constructor
   always builds the tree as the administrator (the system and user directories
   need privileges to be created and chowned) and then hands it over with a
