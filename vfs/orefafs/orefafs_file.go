@@ -42,12 +42,7 @@ func (f *OrefaFile) Chdir() error {
 	}
 
 	if !f.nd.mode.IsDir() {
-		err := error(avfs.ErrNotADirectory)
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinDirNameInvalid
-		}
-
-		return &fs.PathError{Op: op, Path: f.name, Err: err}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.DirNameInvalid}
 	}
 
 	_ = f.vfs.SetCurDir(f.name)
@@ -95,8 +90,8 @@ func (f *OrefaFile) Chown(uid, gid int) error {
 		return &fs.PathError{Op: op, Path: f.name, Err: fs.ErrClosed}
 	}
 
-	if f.vfs.OSType() == avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrWinNotSupported}
+	if f.vfs.err.ChownNotSupported != nil {
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.ChownNotSupported}
 	}
 
 	f.nd.setOwner(uid, gid)
@@ -175,12 +170,7 @@ func (f *OrefaFile) Read(b []byte) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		err = avfs.ErrIsADirectory
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinIncorrectFunc
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.IncorrectFunc}
 	}
 
 	if f.openMode&avfs.OpenRead == 0 {
@@ -220,12 +210,7 @@ func (f *OrefaFile) ReadAt(b []byte, off int64) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		err = avfs.ErrIsADirectory
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinIncorrectFunc
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.IncorrectFunc}
 	}
 
 	if off < 0 {
@@ -444,7 +429,7 @@ func (f *OrefaFile) Seek(offset int64, whence int) (ret int64, err error) {
 			return 0, nil
 		}
 
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: avfs.ErrInvalidArgument}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.InvalidArgument}
 	}
 
 	if at < 0 {
@@ -472,12 +457,7 @@ func (f *OrefaFile) Stat() (info fs.FileInfo, err error) {
 	}
 
 	if f.nd == nil {
-		err = fs.ErrClosed
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinInvalidHandle
-		}
-
-		return &OrefaInfo{}, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return &OrefaInfo{}, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.StatFileClosing}
 	}
 
 	_, name := avfs.SplitAbs(f.vfs, f.name)
@@ -525,21 +505,11 @@ func (f *OrefaFile) Truncate(size int64) error {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		err := error(avfs.ErrInvalidArgument)
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return &fs.PathError{Op: op, Path: f.name, Err: err}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.TruncateInvalid}
 	}
 
 	if f.openMode&avfs.OpenWrite == 0 {
-		err := error(avfs.ErrInvalidArgument)
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return &fs.PathError{Op: op, Path: f.name, Err: err}
+		return &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.TruncateInvalid}
 	}
 
 	if size < 0 {
@@ -575,21 +545,11 @@ func (f *OrefaFile) Write(b []byte) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		err = avfs.ErrBadFileDesc
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	if f.openMode&avfs.OpenWrite == 0 {
-		err = avfs.ErrBadFileDesc
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	nd.mu.Lock()
@@ -632,21 +592,11 @@ func (f *OrefaFile) WriteAt(b []byte, off int64) (n int, err error) {
 
 	nd := f.nd
 	if nd.mode.IsDir() {
-		err = avfs.ErrBadFileDesc
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	if f.openMode&avfs.OpenWrite == 0 {
-		err = avfs.ErrBadFileDesc
-		if f.vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return 0, &fs.PathError{Op: op, Path: f.name, Err: err}
+		return 0, &fs.PathError{Op: op, Path: f.name, Err: f.vfs.err.BadFileDesc}
 	}
 
 	nd.mu.Lock()

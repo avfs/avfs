@@ -174,14 +174,11 @@ func (vfs *BasePathFS) Dir(path string) string {
 // EvalSymlinks calls [Clean] on the result.
 func (vfs *BasePathFS) EvalSymlinks(path string) (string, error) {
 	op := "lstat"
-	err := error(avfs.ErrPermDenied)
-
 	if vfs.OSType() == avfs.OsWindows {
 		op = "CreateFile"
-		err = avfs.ErrWinAccessDenied
 	}
 
-	return "", &fs.PathError{Op: op, Path: path, Err: err}
+	return "", &fs.PathError{Op: op, Path: path, Err: vfs.err.PermDenied}
 }
 
 // FromSlash returns the result of replacing each slash ('/') character
@@ -331,12 +328,7 @@ func (vfs *BasePathFS) Match(pattern, name string) (matched bool, err error) {
 // If there is an error, it will be of type [*PathError].
 func (vfs *BasePathFS) Mkdir(name string, perm fs.FileMode) error {
 	if name == "" {
-		err := error(avfs.ErrNoSuchFileOrDir)
-		if vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinPathNotFound
-		}
-
-		return &fs.PathError{Op: "mkdir", Path: "", Err: err}
+		return &fs.PathError{Op: "mkdir", Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	err := vfs.baseFS.Mkdir(vfs.ToBasePath(name), perm)
@@ -429,11 +421,7 @@ func (vfs *BasePathFS) ReadFile(filename string) ([]byte, error) {
 func (vfs *BasePathFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	if vfs.OSType() == avfs.OsWindows {
-		return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrWinNotReparsePoint}
-	}
-
-	return "", &fs.PathError{Op: op, Path: name, Err: avfs.ErrPermDenied}
+	return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.ReadlinkNotSupported}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when

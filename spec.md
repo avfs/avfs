@@ -408,11 +408,18 @@ Errors are file-system independent and OS-shaped:
 All three satisfy `SysError`: `Error() string`, `No() uint`, and
 `Is(target)` mapping to `fs.ErrPermission`, `fs.ErrExist`, `fs.ErrNotExist`.
 
-`ErrorsFor(ost) *ErrorsForOS` normalises semantic errors
-(`PermDenied`, `NoSuchFile`, `NoSuchDir`, `FileExists`, `DirNotEmpty`,
+`ErrorsFor(ost) *ErrorsForOS` normalises semantic errors for a given OSType;
+it **panics** on an unknown `OSType`. The tables are `errsUnix` (shared by
+`OsLinux` and `OsDarwin`) and `errsWindows`. The semantic conditions are
+`PermDenied`, `NoSuchFile`, `NoSuchDir`, `FileExists`, `DirNotEmpty`,
 `IsADirectory`, `NotADirectory`, `OpNotPermitted`, `BadFileDesc`,
-`InvalidArgument`, `NegativeSeek`, `FileClosing`, `TooManySymlinks`) for a given
-OSType; it **panics** on an unknown `OSType`.
+`InvalidArgument`, `NegativeSeek`, `FileClosing`, `TooManySymlinks`,
+`AlreadyExists`, `DirNameInvalid`, `IncorrectFunc`, `InvalidName`, `LinkToDir`,
+`NotAReparsePoint`, `ReadlinkNotSupported`, `RenameConflict`, `StatFileClosing`,
+`TruncateInvalid`; `ChownNotSupported` is non-nil only for Windows (a nil field
+means the operation is valid for the OS). Implementations must never select an
+OS error inline (`if OSType() == OsWindows` on an error value): the OS shape
+comes from the table.
 
 Identity errors are typed: `UnknownUserError`, `UnknownUserIdError`,
 `UnknownGroupError`, `UnknownGroupIdError`, `AlreadyExistsUserError`,

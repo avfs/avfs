@@ -52,17 +52,8 @@ func (vfs *OrefaFS) Base(path string) string {
 func (vfs *OrefaFS) Chdir(dir string) error {
 	const op = "chdir"
 
-	var err error
-
 	if dir == "" {
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinInvalidName
-		default:
-			err = avfs.ErrNoSuchFileOrDir
-		}
-
-		return &fs.PathError{Op: op, Path: "", Err: err}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.InvalidName}
 	}
 
 	absPath, _ := vfs.Abs(dir)
@@ -76,14 +67,7 @@ func (vfs *OrefaFS) Chdir(dir string) error {
 	}
 
 	if !nd.mode.IsDir() {
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinDirNameInvalid
-		default:
-			err = vfs.err.NotADirectory
-		}
-
-		return &fs.PathError{Op: op, Path: dir, Err: err}
+		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.DirNameInvalid}
 	}
 
 	_ = vfs.SetCurDir(absPath)
@@ -143,12 +127,12 @@ func (vfs *OrefaFS) Chmod(name string, mode fs.FileMode) error {
 func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
-	if vfs.OSType() == avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrWinNotSupported}
+	if vfs.err.ChownNotSupported != nil {
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.ChownNotSupported}
 	}
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	absPath, _ := vfs.Abs(name)
@@ -158,7 +142,7 @@ func (vfs *OrefaFS) Chown(name string, uid, gid int) error {
 	vfs.storage.mu.RUnlock()
 
 	if !ok {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.NoSuchFile}
 	}
 
 	nd.mu.Lock()
@@ -450,21 +434,11 @@ func (vfs *OrefaFS) Link(oldname, newname string) error {
 	defer nParent.mu.Unlock()
 
 	if oChild.mode.IsDir() {
-		err := error(avfs.ErrOpNotPermitted)
-		if vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.LinkToDir}
 	}
 
 	if nChildOk {
-		err := vfs.err.FileExists
-		if vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAlreadyExists
-		}
-
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.AlreadyExists}
 	}
 
 	vfs.storage.mu.Lock()
@@ -790,16 +764,7 @@ func (vfs *OrefaFS) ReadFile(name string) ([]byte, error) {
 func (vfs *OrefaFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	var err error
-
-	switch vfs.OSType() {
-	case avfs.OsWindows:
-		err = avfs.ErrWinNotReparsePoint
-	default:
-		err = avfs.ErrPermDenied
-	}
-
-	return "", &fs.PathError{Op: op, Path: name, Err: err}
+	return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.ReadlinkNotSupported}
 }
 
 // Rel returns a relative path that is lexically equivalent to targpath when
@@ -926,12 +891,7 @@ func (vfs *OrefaFS) Rename(oldname, newname string) error {
 	}
 
 	if (oChild.mode.IsDir() && nChildOk) || (!oChild.mode.IsDir() && nChildOk && nChild.mode.IsDir()) {
-		err := vfs.err.FileExists
-		if vfs.OSType() == avfs.OsWindows {
-			err = avfs.ErrWinAccessDenied
-		}
-
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.RenameConflict}
 	}
 
 	nParent.mu.Lock()

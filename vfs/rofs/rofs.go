@@ -455,7 +455,7 @@ func (vfs *RoFS) SameFile(fi1, fi2 fs.FileInfo) bool {
 // It must be called once, during construction.
 // Setting an identity manager is disabled for read only file systems.
 func (vfs *RoFS) InitIdm(idm avfs.IdmMgr) error {
-	return avfs.ErrPermDenied
+	return vfs.err.PermDenied
 }
 
 // SetUMask sets the file mode creation mask.

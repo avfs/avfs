@@ -56,17 +56,8 @@ func (vfs *MemFS) Base(path string) string {
 func (vfs *MemFS) Chdir(dir string) error {
 	const op = "chdir"
 
-	var err error
-
 	if dir == "" {
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinInvalidName
-		default:
-			err = avfs.ErrNoSuchFileOrDir
-		}
-
-		return &fs.PathError{Op: op, Path: "", Err: err}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.InvalidName}
 	}
 
 	_, child, pi, err := vfs.searchNode(dir, slmLstat)
@@ -76,14 +67,7 @@ func (vfs *MemFS) Chdir(dir string) error {
 
 	c, ok := child.(*dirNode)
 	if !ok {
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinDirNameInvalid
-		default:
-			err = avfs.ErrNotADirectory
-		}
-
-		return &fs.PathError{Op: op, Path: dir, Err: err}
+		return &fs.PathError{Op: op, Path: dir, Err: vfs.err.DirNameInvalid}
 	}
 
 	c.mu.RLock()
@@ -153,7 +137,7 @@ func (vfs *MemFS) Chown(name string, uid, gid int) error {
 	}
 
 	if name == "" {
-		return &fs.PathError{Op: op, Path: "", Err: avfs.ErrNoSuchFileOrDir}
+		return &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
 
 	_, child, _, err := vfs.searchNode(name, slmEval)
@@ -417,7 +401,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 	nParent, _, pi, nerr := vfs.searchNode(newname, slmLstat)
 	if !vfs.isNotExist(nerr) {
 		if vfs.OSType() == avfs.OsWindows {
-			nerr = avfs.ErrWinAlreadyExists
+			nerr = vfs.err.AlreadyExists
 		}
 
 		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: nerr}
@@ -432,16 +416,7 @@ func (vfs *MemFS) Link(oldname, newname string) error {
 
 	c, ok := oChild.(*fileNode)
 	if !ok {
-		var err error
-
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinAccessDenied
-		default:
-			err = avfs.ErrOpNotPermitted
-		}
-
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: err}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.LinkToDir}
 	}
 
 	c.mu.Lock()
@@ -761,8 +736,6 @@ func (vfs *MemFS) ReadFile(name string) ([]byte, error) {
 func (vfs *MemFS) Readlink(name string) (string, error) {
 	const op = "readlink"
 
-	var err error
-
 	if name == "" {
 		return "", &fs.PathError{Op: op, Path: "", Err: vfs.err.NoSuchDir}
 	}
@@ -774,14 +747,7 @@ func (vfs *MemFS) Readlink(name string) (string, error) {
 
 	sl, ok := child.(*symlinkNode)
 	if !ok {
-		switch vfs.OSType() {
-		case avfs.OsWindows:
-			err = avfs.ErrWinNotReparsePoint
-		default:
-			err = avfs.ErrInvalidArgument
-		}
-
-		return "", &fs.PathError{Op: op, Path: name, Err: err}
+		return "", &fs.PathError{Op: op, Path: name, Err: vfs.err.NotAReparsePoint}
 	}
 
 	return sl.link, nil
@@ -930,7 +896,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 	case *dirNode:
 		if !vfs.isNotExist(nErr) {
 			if vfs.OSType() == avfs.OsWindows {
-				nErr = avfs.ErrWinAccessDenied
+				nErr = vfs.err.RenameConflict
 			}
 
 			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: nErr}
@@ -945,12 +911,7 @@ func (vfs *MemFS) Rename(oldpath, newpath string) error {
 		case *fileNode:
 			nc.delete()
 		default:
-			err := error(avfs.ErrFileExists)
-			if vfs.OSType() == avfs.OsWindows {
-				err = avfs.ErrWinAccessDenied
-			}
-
-			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: err}
+			return &os.LinkError{Op: op, Old: oldpath, New: newpath, Err: vfs.err.RenameConflict}
 		}
 	}
 
@@ -1065,7 +1026,7 @@ func (vfs *MemFS) Symlink(oldname, newname string) error {
 	}
 
 	if oldname == "" && vfs.OSType() == avfs.OsWindows {
-		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: avfs.ErrWinAlreadyExists}
+		return &os.LinkError{Op: op, Old: oldname, New: newname, Err: vfs.err.AlreadyExists}
 	}
 
 	parent, _, pi, nerr := vfs.searchNode(newname, slmLstat)

@@ -87,7 +87,7 @@ func (vfs *OsFS) Chown(name string, uid, gid int) error {
 	const op = "chown"
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.OSType() != avfs.OsWindows {
-		return &fs.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &fs.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	return os.Chown(name, uid, gid)
@@ -242,7 +242,7 @@ func (vfs *OsFS) Lchown(name string, uid, gid int) error {
 	const op = "lchown"
 
 	if !vfs.HasFeature(avfs.FeatIdentityMgr) && vfs.OSType() != avfs.OsWindows {
-		return &os.PathError{Op: op, Path: name, Err: avfs.ErrOpNotPermitted}
+		return &os.PathError{Op: op, Path: name, Err: vfs.err.OpNotPermitted}
 	}
 
 	return os.Lchown(name, uid, gid)

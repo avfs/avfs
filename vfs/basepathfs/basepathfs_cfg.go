@@ -41,8 +41,10 @@ func New(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
 		return nil, err
 	}
 
+	errs := avfs.ErrorsFor(baseFS.OSType())
+
 	if !info.IsDir() {
-		err = &fs.PathError{Op: op, Path: basePath, Err: avfs.ErrNotADirectory}
+		err = &fs.PathError{Op: op, Path: basePath, Err: errs.DirNameInvalid}
 
 		return nil, err
 	}
@@ -53,7 +55,7 @@ func New(baseFS avfs.VFS, basePath string) (*BasePathFS, error) {
 	}
 
 	_ = vfs.SetFeatures(baseFS.Features() &^ avfs.FeatSymlink)
-	vfs.err = avfs.ErrorsFor(vfs.OSType())
+	vfs.err = errs
 
 	return vfs, nil
 }

@@ -219,78 +219,99 @@ func (i WindowsError) No() uint {
 }
 
 // ErrorsForOS regroups errors depending on the OS emulated.
+// A nil field means that the operation it names is valid for the OS.
 type ErrorsForOS struct {
-	BadFileDesc     error // bad file descriptor.
-	DirNotEmpty     error // Directory not empty.
-	FileClosing     error // use of closed file.
-	FileExists      error // File exists.
-	InvalidArgument error // invalid argument.
-	IsADirectory    error // File Is a directory.
-	NegativeSeek    error // Negative seek invalid argument.
-	NoSuchDir       error // No such directory.
-	NoSuchFile      error // No such file.
-	NotADirectory   error // Not a directory.
-	OpNotPermitted  error // operation not permitted.
-	PermDenied      error // Permission denied.
-	TooManySymlinks error // Too many levels of symbolic links.
+	BadFileDesc          error // bad file descriptor.
+	ChownNotSupported    error // Chown and Lchown are not supported.
+	DirNotEmpty          error // Directory not empty.
+	FileClosing          error // use of closed file.
+	FileExists           error // File exists.
+	InvalidArgument      error // invalid argument.
+	IsADirectory         error // File Is a directory.
+	NegativeSeek         error // Negative seek invalid argument.
+	NoSuchDir            error // No such directory.
+	NoSuchFile           error // No such file.
+	NotADirectory        error // Not a directory.
+	OpNotPermitted       error // operation not permitted.
+	PermDenied           error // Permission denied.
+	TooManySymlinks      error // Too many levels of symbolic links.
+	AlreadyExists        error // Cannot create a file when that file already exists.
+	DirNameInvalid       error // The directory name is invalid.
+	IncorrectFunc        error // Reading a directory.
+	InvalidName          error // Invalid name.
+	LinkToDir            error // Link: oldname is a directory.
+	NotAReparsePoint     error // Readlink: not a reparse point.
+	ReadlinkNotSupported error // Readlink is not supported.
+	RenameConflict       error // Rename: target type conflict.
+	StatFileClosing      error // Stat on a closed file.
+	TruncateInvalid      error // Truncate on a directory or file not open for writing.
 }
 
-// errorsForOS defines common errors for each OS.
-var errorsForOS = map[OSType]*ErrorsForOS{ //nolint:gochecknoglobals // Should be a const.
-	OsLinux: {
-		BadFileDesc:     ErrBadFileDesc,
-		DirNotEmpty:     ErrDirNotEmpty,
-		FileClosing:     ErrFileClosing,
-		FileExists:      ErrFileExists,
-		InvalidArgument: ErrInvalidArgument,
-		IsADirectory:    ErrIsADirectory,
-		NegativeSeek:    ErrInvalidArgument,
-		NoSuchDir:       ErrNoSuchFileOrDir,
-		NoSuchFile:      ErrNoSuchFileOrDir,
-		NotADirectory:   ErrNotADirectory,
-		OpNotPermitted:  ErrOpNotPermitted,
-		PermDenied:      ErrPermDenied,
-		TooManySymlinks: ErrTooManySymlinks,
-	},
-	OsDarwin: {
-		BadFileDesc:     ErrBadFileDesc,
-		DirNotEmpty:     ErrDirNotEmpty,
-		FileClosing:     ErrFileClosing,
-		FileExists:      ErrFileExists,
-		InvalidArgument: ErrInvalidArgument,
-		IsADirectory:    ErrIsADirectory,
-		NegativeSeek:    ErrInvalidArgument,
-		NoSuchDir:       ErrNoSuchFileOrDir,
-		NoSuchFile:      ErrNoSuchFileOrDir,
-		NotADirectory:   ErrNotADirectory,
-		OpNotPermitted:  ErrOpNotPermitted,
-		PermDenied:      ErrPermDenied,
-		TooManySymlinks: ErrTooManySymlinks,
-	},
-	OsWindows: {
-		BadFileDesc:     ErrWinAccessDenied,
-		DirNotEmpty:     ErrWinDirNotEmpty,
-		FileClosing:     ErrWinInvalidHandle,
-		FileExists:      ErrWinFileExists,
-		InvalidArgument: ErrWinInvalidParameter,
-		IsADirectory:    ErrWinIsADirectory,
-		NegativeSeek:    ErrWinNegativeSeek,
-		NoSuchDir:       ErrWinPathNotFound,
-		NoSuchFile:      ErrWinFileNotFound,
-		NotADirectory:   ErrWinPathNotFound,
-		OpNotPermitted:  ErrWinNotSupported,
-		PermDenied:      ErrWinAccessDenied,
-		TooManySymlinks: ErrTooManySymlinks,
-	},
+// errsUnix regroups errors for Linux and Darwin operating systems.
+var errsUnix = &ErrorsForOS{ //nolint:gochecknoglobals // Immutable error table.
+	BadFileDesc:          ErrBadFileDesc,
+	DirNotEmpty:          ErrDirNotEmpty,
+	FileClosing:          ErrFileClosing,
+	FileExists:           ErrFileExists,
+	InvalidArgument:      ErrInvalidArgument,
+	IsADirectory:         ErrIsADirectory,
+	NegativeSeek:         ErrInvalidArgument,
+	NoSuchDir:            ErrNoSuchFileOrDir,
+	NoSuchFile:           ErrNoSuchFileOrDir,
+	NotADirectory:        ErrNotADirectory,
+	OpNotPermitted:       ErrOpNotPermitted,
+	PermDenied:           ErrPermDenied,
+	TooManySymlinks:      ErrTooManySymlinks,
+	AlreadyExists:        ErrFileExists,
+	DirNameInvalid:       ErrNotADirectory,
+	IncorrectFunc:        ErrIsADirectory,
+	InvalidName:          ErrNoSuchFileOrDir,
+	LinkToDir:            ErrOpNotPermitted,
+	NotAReparsePoint:     ErrInvalidArgument,
+	ReadlinkNotSupported: ErrPermDenied,
+	RenameConflict:       ErrFileExists,
+	StatFileClosing:      fs.ErrClosed,
+	TruncateInvalid:      ErrInvalidArgument,
 }
 
+// errsWindows regroups errors for the Windows operating system.
+var errsWindows = &ErrorsForOS{ //nolint:gochecknoglobals // Immutable error table.
+	BadFileDesc:          ErrWinAccessDenied,
+	ChownNotSupported:    ErrWinNotSupported,
+	DirNotEmpty:          ErrWinDirNotEmpty,
+	FileClosing:          ErrWinInvalidHandle,
+	FileExists:           ErrWinFileExists,
+	InvalidArgument:      ErrWinInvalidParameter,
+	IsADirectory:         ErrWinIsADirectory,
+	NegativeSeek:         ErrWinNegativeSeek,
+	NoSuchDir:            ErrWinPathNotFound,
+	NoSuchFile:           ErrWinFileNotFound,
+	NotADirectory:        ErrWinPathNotFound,
+	OpNotPermitted:       ErrWinNotSupported,
+	PermDenied:           ErrWinAccessDenied,
+	TooManySymlinks:      ErrTooManySymlinks,
+	AlreadyExists:        ErrWinAlreadyExists,
+	DirNameInvalid:       ErrWinDirNameInvalid,
+	IncorrectFunc:        ErrWinIncorrectFunc,
+	InvalidName:          ErrWinInvalidName,
+	LinkToDir:            ErrWinAccessDenied,
+	NotAReparsePoint:     ErrWinNotReparsePoint,
+	ReadlinkNotSupported: ErrWinNotReparsePoint,
+	RenameConflict:       ErrWinAccessDenied,
+	StatFileClosing:      ErrWinInvalidHandle,
+	TruncateInvalid:      ErrWinAccessDenied,
+}
+
+// ErrorsFor returns the errors regrouped for the given OS type.
 func ErrorsFor(osType OSType) *ErrorsForOS {
-	errors, ok := errorsForOS[osType]
-	if !ok {
+	switch osType {
+	case OsLinux, OsDarwin:
+		return errsUnix
+	case OsWindows:
+		return errsWindows
+	default:
 		panic("Unknown OS type : " + osType.String())
 	}
-
-	return errors
 }
 
 // Operation constants (most used).
